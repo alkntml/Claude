@@ -4,6 +4,14 @@ import { SourceInput, toRow } from "@/lib/sources/input";
 
 type Ctx = { params: Promise<{ id: string }> };
 
+export const GET = route<Ctx>("source.get", async (_req, { params }) => {
+  const s = await requireUser();
+  const { id } = await params;
+  const { data } = await s.supabase.from("sources").select("*").eq("id", id).eq("user_id", s.user.id).maybeSingle();
+  if (!data) throw new ApiError(404, "Kaynak bulunamadı");
+  return json({ source: data });
+});
+
 export const PATCH = route<Ctx>("source.update", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;

@@ -34,6 +34,19 @@ async function fetchPdf(url: string, signal: AbortSignal): Promise<Buffer> {
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function ingestOpenAccess(db: SupabaseClient, source: any, cfg: ProviderConfig): Promise<IngestResult> {
+  await db.from("sources").update({ fulltext_status: "processing", fulltext_message: null }).eq("id", source.id);
+  const result = await ingestInner(db, source, cfg);
+  const status = result.status === "ingested" ? "done" : result.status === "no_open_access" ? "unavailable" : "failed";
+  await db.from("sources").update({ fulltext_status: status, fulltext_message: result.message }).eq("id", source.id);
+  return result;
+}
+
+/** Açık erişimli kaynağı olanları arka plan kuyruğuna alınmaya uygun mu? */
+export function hasOpenAccessCandidate(s: { oa_url?: string | null; arxiv_id?: string | null; pmcid?: string | null }) {
+  return !!(s.oa_url || s.arxiv_id || s.pmcid);
+}
+
+async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig): Promise<IngestResult> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 45_000);
   try {

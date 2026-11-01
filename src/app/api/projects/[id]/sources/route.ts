@@ -5,6 +5,9 @@ import { normalizeDoi } from "@/lib/citations";
 import { SourceInput, toRow } from "@/lib/sources/input";
 import { providerConfig } from "@/lib/env";
 import { verifySource } from "@/lib/sources/verify";
+import { after } from "next/server";
+import { hasOpenAccessCandidate, ingestOpenAccess } from "@/lib/sources/fulltext";
+import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -57,5 +60,14 @@ export const POST = route<Ctx>("project.sources.add", async (req, { params }) =>
   if (!rows.length) return json({ sources: [], skipped: sources.length });
   const { data, error } = await s.supabase.from("sources").insert(rows).select();
   if (error) throw error;
+  // Açık erişimli kaynakların tam metni arka planda otomatik analiz edilir (yalnızca yasal OA bağlantıları)
+  const oa = (data ?? []).filter(hasOpenAccessCandidate).slice(0, 10);
+  if (oa.length) {
+    await s.supabase.from("sources").update({ fulltext_status: "queued" }).in("id", oa.map((x) => x.id));
+    for (const x of oa) x.fulltext_status = "queued";
+    after(async () => {
+      for (const src of oa) await ingestOpenAccess(adminClient(), src, cfg).catch(() => null);
+    });
+  }
   return json({ sources: data, skipped: sources.length - rows.length }, 201);
 });

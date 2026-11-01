@@ -22,6 +22,7 @@ import { CitationContext } from "./citation-context";
 import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
 import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./panels";
 import { ProjectSources, ResearchModal } from "./sources";
+import { ShareButton } from "./share-modal";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SaveState = "saved" | "dirty" | "saving" | "error";
@@ -268,6 +269,7 @@ export function Workspace(props: Props) {
             {STYLE_IDS.map((s) => <option key={s} value={s}>{STYLES[s].label}</option>)}
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 md:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> Kalite kontrol</Link>
+          <ShareButton projectId={project.id} />
           <ExportMenu onExport={exportAs} />
           <button onClick={() => setSettings(true)} className="rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900" aria-label="Proje ayarları"><Settings2 className="h-4 w-4" /></button>
         </header>

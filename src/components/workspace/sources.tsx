@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Trash2, Unlock } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Badge, Empty, Modal } from "@/components/ui/primitives";
@@ -41,6 +41,8 @@ export function SourceCard({ s, actions, compact, foundBy }: { s: any; actions?:
             {verified === true && <Badge tone="green"><BadgeCheck className="h-3 w-3" /> Doğrulandı</Badge>}
             {verified === false && status && status !== "verified" && <Badge tone={status === "mismatch" || status === "not_found" ? "red" : "amber"}><ShieldQuestion className="h-3 w-3" /> {status === "no_identifier" ? "Tanımlayıcı yok" : status === "mismatch" ? "Eşleşmiyor" : status === "not_found" ? "Bulunamadı" : "Doğrulanmadı"}</Badge>}
             {(s.oa_url || s.oaUrl) && (s.access_level ?? s.accessLevel) !== "full_text" && <Badge tone="brand"><Unlock className="h-3 w-3" /> Açık erişim</Badge>}
+            {(s.fulltext_status === "queued" || s.fulltext_status === "processing") && <Badge tone="brand"><Loader2 className="h-3 w-3 animate-spin" /> Tam metin analiz ediliyor</Badge>}
+            {(s.fulltext_status === "failed" || s.fulltext_status === "unavailable") && <span className="text-[11px] text-ink-400" title={s.fulltext_message ?? ""}>{s.fulltext_status === "unavailable" ? "Açık erişimli tam metin yok" : "Tam metin alınamadı"}</span>}
             {s.citedByCount ? <Badge>{s.citedByCount} atıf</Badge> : null}
             {!compact && origins.map((o) => <span key={o} className="text-[11px] text-ink-400">{PROVIDER_LABELS[o as keyof typeof PROVIDER_LABELS] ?? o}</span>)}
           </div>
@@ -166,13 +168,29 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
     toast({ tone: verification.status === "verified" ? "success" : "warning", title: verification.status === "verified" ? "Kaynak doğrulandı" : "Doğrulanamadı", detail: verification.message });
   });
   const fulltext = (id: string) => run(`f${id}`, async () => {
-    const res = await fetch(`/api/sources/${id}/fulltext`, { method: "POST" });
-    const j = await res.json();
-    if (j.status === "ingested") {
-      setSources((l) => l.map((x) => (x.id === id ? { ...x, access_level: "full_text" } : x)));
-      toast({ tone: "success", title: "Tam metin analiz edildi", detail: j.message });
-    } else toast({ tone: "warning", title: "Tam metin alınamadı", detail: j.message ?? j.error });
+    await api(`/api/sources/${id}/fulltext`, { method: "POST" });
+    setSources((l) => l.map((x) => (x.id === id ? { ...x, fulltext_status: "queued" } : x)));
+    toast({ tone: "info", title: "Tam metin analizi başladı", detail: "Arka planda sürüyor; çalışmaya devam edebilirsiniz." });
   });
+
+  // Arka planda analiz edilen kaynakların durumunu izle
+  const pendingIds = sources.filter((s) => s.fulltext_status === "queued" || s.fulltext_status === "processing").map((s) => s.id).join(",");
+  useEffect(() => {
+    if (!pendingIds) return;
+    const t = setInterval(async () => {
+      for (const id of pendingIds.split(",")) {
+        try {
+          const { source } = await api<{ source: any }>(`/api/sources/${id}`);
+          if (source.fulltext_status !== "queued" && source.fulltext_status !== "processing") {
+            setSources((l) => l.map((x) => (x.id === id ? source : x)));
+            if (source.fulltext_status === "done") toast({ tone: "success", title: "Tam metin analiz edildi", detail: source.title.slice(0, 80) });
+            else toast({ tone: "warning", title: "Tam metin alınamadı", detail: source.fulltext_message ?? undefined });
+          }
+        } catch { /* sonraki turda tekrar dene */ }
+      }
+    }, 3500);
+    return () => clearInterval(t);
+  }, [pendingIds, setSources, toast]);
   const remove = (id: string) => run(`d${id}`, async () => {
     await api(`/api/sources/${id}`, { method: "DELETE" });
     setSources((l) => l.filter((x) => x.id !== id));
@@ -203,7 +221,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
                   <SourceCard s={s} compact actions={<>
                     <Button size="sm" variant="soft" disabled={!canCite} onClick={() => onCite(s.id)} title={canCite ? "İmlecin bulunduğu yere atıf ekle" : "Önce editörde bir yere tıklayın"}><Quote className="h-3.5 w-3.5" /> Atıf ekle</Button>
                     {!s.verified && <Button size="sm" variant="ghost" loading={busy === `v${s.id}`} onClick={() => verify(s.id)}><BadgeCheck className="h-3.5 w-3.5" /> Doğrula</Button>}
-                    {s.access_level !== "full_text" && (s.oa_url || s.doi || s.arxiv_id || s.pmcid) && <Button size="sm" variant="ghost" loading={busy === `f${s.id}`} onClick={() => fulltext(s.id)}><Unlock className="h-3.5 w-3.5" /> Tam metni analiz et</Button>}
+                    {s.access_level !== "full_text" && s.fulltext_status !== "queued" && s.fulltext_status !== "processing" && (s.oa_url || s.doi || s.arxiv_id || s.pmcid) && <Button size="sm" variant="ghost" loading={busy === `f${s.id}`} onClick={() => fulltext(s.id)}><Unlock className="h-3.5 w-3.5" /> Tam metni analiz et</Button>}
                     <Button size="sm" variant="ghost" loading={busy === `d${s.id}`} onClick={() => remove(s.id)} aria-label="Kaynağı sil"><Trash2 className="h-3.5 w-3.5" /></Button>
                   </>} />
                 </div>

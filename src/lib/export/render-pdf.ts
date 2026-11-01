@@ -37,15 +37,21 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
   doc.moveDown(3).font("r").fontSize(12);
   for (const t of [d.author, d.institution, d.date].filter(Boolean)) doc.text(t, { align: "center" }).moveDown(0.5);
 
-  // İçindekiler (sayfa numarası olmadan; PDF yer imleri eklenir)
-  doc.addPage().font("b").fontSize(15).text(d.language === "tr" ? "İçindekiler" : "Contents").moveDown();
-  for (const t of d.toc) doc.font(t.level === 1 ? "b" : "r").fontSize(11).text(`${"    ".repeat(t.level - 1)}${t.number ? `${t.number}  ` : ""}${t.text}`, { lineGap: 3 });
+  // İçindekiler için sayfa(lar) ayrılır; başlıkların sayfa numaraları belge yazıldıktan sonra doldurulur.
+  const tocPerPage = 32;
+  const tocPages = Math.max(1, Math.ceil((d.toc.length + (d.bibliography.length ? 1 : 0)) / tocPerPage));
+  const tocStart = doc.bufferedPageRange().count;
+  for (let k = 0; k < tocPages; k++) doc.addPage();
+  const headingPages: number[] = [];
+  let bibPage = -1;
+  const currentPage = () => { const r = doc.bufferedPageRange(); return r.start + r.count - 1; };
 
   let started = false;
   for (const b of d.blocks) {
     if (b.kind === "heading") {
       if (b.level === 1) { doc.addPage(); started = true; }
       else doc.moveDown(0.6);
+      headingPages.push(currentPage());
       const label = `${b.number ? `${b.number}  ` : ""}${b.runs.map((r) => r.text).join("")}`;
       doc.font("b").fontSize(b.level === 1 ? 15 : b.level === 2 ? 13 : 12).text(label, { align: "left" });
       if (b.level <= 2) doc.outline.addItem(label);
@@ -91,7 +97,9 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
   }
 
   if (d.bibliography.length) {
-    doc.addPage().font("b").fontSize(15).text(d.bibliographyTitle).moveDown();
+    doc.addPage();
+    bibPage = currentPage();
+    doc.font("b").fontSize(15).text(d.bibliographyTitle).moveDown();
     doc.outline.addItem(d.bibliographyTitle);
     for (const e of d.bibliography) {
       const runs: Run[] = [...(d.numericBibliography ? [{ text: `[${e.number}] ` }] : []), ...e.rich.map((s) => ({ text: s.text, italic: s.italic, sup: s.sup }))];
@@ -102,6 +110,36 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
       doc.moveDown(0.4);
     }
   }
+
+  // İçindekiler: noktalı çizgi ve sayfa numaralarıyla
+  const entries = [...d.toc.map((t, k) => ({ ...t, page: headingPages[k] })), ...(bibPage >= 0 ? [{ level: 1, number: "", text: d.bibliographyTitle, page: bibPage }] : [])];
+  const left = 85, right = doc.page.width - 72;
+  entries.forEach((t, k) => {
+    const pageIdx = tocStart + Math.floor(k / tocPerPage);
+    if (k % tocPerPage === 0) {
+      doc.switchToPage(pageIdx);
+      doc.x = left; doc.y = 72;
+      if (k === 0) doc.font("b").fontSize(15).text(d.language === "tr" ? "İçindekiler" : "Contents").moveDown();
+    }
+    const indent = (t.level - 1) * 16;
+    const label = `${t.number ? `${t.number}  ` : ""}${t.text}`;
+    const num = t.page !== undefined ? String(t.page) : "";
+    doc.font(t.level === 1 ? "b" : "r").fontSize(11);
+    const y = doc.y;
+    const numW = doc.widthOfString(num);
+    const maxLabel = right - left - indent - numW - 24;
+    let shown = label;
+    while (doc.widthOfString(shown) > maxLabel && shown.length > 4) shown = `${shown.slice(0, -2)}…`;
+    doc.text(shown, left + indent, y, { lineBreak: false });
+    const labelEnd = left + indent + doc.widthOfString(shown) + 4;
+    doc.font("r");
+    const dotW = doc.widthOfString(".");
+    const dots = Math.max(0, Math.floor((right - numW - 4 - labelEnd) / dotW));
+    doc.fillColor("#8089b0").text(".".repeat(dots), labelEnd, y, { lineBreak: false }).fillColor("black");
+    doc.font(t.level === 1 ? "b" : "r").text(num, right - numW, y, { lineBreak: false });
+    doc.x = left;
+    doc.y = y + 18;
+  });
 
   // Sayfa numaraları (kapak hariç)
   const range = doc.bufferedPageRange();

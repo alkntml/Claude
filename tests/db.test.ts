@@ -171,6 +171,17 @@ describe("ayrıcalık ve yönetici politikaları", () => {
   });
 });
 
+describe("danışman paylaşımı", () => {
+  it("paylaşım bağlantılarını yalnızca sahibi görür; başkasının projesine bağlantı oluşturulamaz", async () => {
+    const [p] = await as<{ id: string }>(A, "select id from public.projects limit 1");
+    await as(A, "insert into public.project_shares (project_id, user_id, token) values ($1, auth.uid(), repeat('a', 32))", [p.id]);
+    expect(await as(A, "select * from public.project_shares")).toHaveLength(1);
+    expect(await as(B, "select * from public.project_shares")).toHaveLength(0);
+    expect(await as(null, "select * from public.project_shares")).toHaveLength(0);
+    await expectError(as(B, "insert into public.project_shares (project_id, user_id, token) values ($1, auth.uid(), repeat('b', 32))", [p.id]), /Proje bu kullanıcıya ait değil/);
+  });
+});
+
 describe("depolama politikaları", () => {
   it("kullanıcı yalnızca kendi klasörüne dosya yükleyebilir", async () => {
     await as(A, `insert into storage.objects (bucket_id, name) values ('user-files', '${A}/makale.pdf')`);

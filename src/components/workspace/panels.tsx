@@ -85,6 +85,7 @@ export function CommentsPanel({ stageId, selection }: { stageId: string; selecti
         {list.map((c) => (
           <div key={c.id} className={`rounded-xl border p-3 text-[13px] ${c.resolved ? "border-ink-100 bg-ink-50 text-ink-400" : "border-amber-100 bg-amber-50/50 text-ink-700"}`}>
             {c.quote && <p className="mb-1.5 border-l-2 border-amber-300 pl-2 font-serif italic text-ink-500">“{c.quote.slice(0, 200)}”</p>}
+            {c.author_name && <p className="mb-1 text-[11px] font-semibold text-brand-700">Danışman: {c.author_name}</p>}
             <p className={c.resolved ? "line-through" : ""}>{c.body}</p>
             <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? "Yeniden aç" : "Çözüldü"}</button><button onClick={() => del(c)} className="text-rose-500">Sil</button></div>
           </div>

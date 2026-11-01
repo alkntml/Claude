@@ -1,3 +1,6 @@
+## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de migration 8’i çalıştır: `supabase/migrations/20261105000008_grants_surveys.sql` (proje önerisi türü + anket tabloları). Çalıştırılmadan anketler ve TÜBİTAK türü hata verir.
+
 # Yapılacaklar
 
 _Son güncelleme: 1 Kasım 2026. Tamamlananı işaretle, yenisini ekle._

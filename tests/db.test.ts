@@ -228,3 +228,26 @@ describe("kurumsal lisans, davet ve krediler", () => {
     await expectError(as(ADMIN, "insert into public.organization_members (org_id, user_id) values ($1, $2)", [org2.id, A]), /duplicate key|unique/);
   });
 });
+
+describe("anketler", () => {
+  it("anketi ve cevaplarını yalnızca sahibi görür; cevap yazımı ve sayaç yalnızca sunucuda", async () => {
+    const [p] = await as<{ id: string }>(A, "select id from public.projects limit 1");
+    const [sv] = await as<{ id: string; token: string }>(A, "insert into public.surveys (user_id, project_id, title) values (auth.uid(), $1, 'Anket') returning id, token", [p.id]);
+    expect(sv.token.length).toBeGreaterThanOrEqual(24);
+    expect(await as(B, "select * from public.surveys")).toHaveLength(0);
+    expect(await as(null, "select * from public.surveys")).toHaveLength(0);
+    // Başkasının projesine anket bağlanamaz
+    await expectError(as(B, "insert into public.surveys (user_id, project_id, title) values (auth.uid(), $1, 'X')", [p.id]), /Proje bu kullanıcıya ait değil/);
+    // Kullanıcı ve anonim cevap ekleyemez (yalnızca service role)
+    await expectError(as(A, "insert into public.survey_responses (survey_id, user_id, answers) values ($1, auth.uid(), '{}')", [sv.id]));
+    await expectError(as(null, "insert into public.survey_responses (survey_id, user_id, answers) values ($1, $2, '{}')", [sv.id, A]));
+    // Sayaç kullanıcı tarafından değiştirilemez
+    await as(A, "update public.surveys set response_count = 999, title = 'Yeni' where id = $1", [sv.id]);
+    const [row] = await as<{ response_count: number; title: string }>(A, "select response_count, title from public.surveys where id = $1", [sv.id]);
+    expect(row).toEqual({ response_count: 0, title: "Yeni" });
+  });
+  it("proje önerisi çalışma türü kullanılabilir", async () => {
+    await as(A, "insert into public.projects (user_id, title, work_type) values (auth.uid(), 'TÜBİTAK', 'grant_proposal')");
+    expect(await as(A, "select id from public.projects where work_type = 'grant_proposal'")).toHaveLength(1);
+  });
+});

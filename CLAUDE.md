@@ -31,7 +31,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 137 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 158 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -40,7 +40,8 @@ Push öncesi asgari kontrol: `npx tsc --noEmit && npm test && npx next lint` (b�
 ## Dizin haritası
 ```
 src/app/                 Sayfalar + API rotaları
-  (app)/                 Oturum gerektiren: panel, yeni, kaynaklar, dosyalar, hesap, yonetim
+  (app)/                 Oturum gerektiren: panel, yeni, kaynaklar, dosyalar, anketler, konu-bul, hesap, kurum, yonetim
+  a/[token]/             Herkese açık anket formu (kimlik bilgisi toplanmaz)
   proje/[id]/            Çalışma alanı (+ /kalite)
   paylasim/[token]/      Danışman salt okunur görünümü
   api/                   REST uçları (aşağıda)
@@ -62,6 +63,11 @@ src/lib/
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
   growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; öğrenci indirimi; uzman desteği bağlantıları
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)
+  surveys.ts             Anket modeli: soru şeması, cevap doğrulama, analize hazır tablo, CSV, kod kitabı
+  stats/charts.ts + charts/svg.ts  Grafik verisi (deterministik) + APA tarzı SVG çizimi (istemcide PNG’ye çevrilir, editörde `figure` düğümü)
+  defense.ts             Savunma provası (jüri soruları, cevap değerlendirme)
+  topics.ts + topics-server.ts     Konu bulma: OpenAlex yıllık eğilim, alt konular, Türkiye payı + verilere dayalı öneriler
+  quality/repetition.ts  Tekrar analizi (kalıp ifadeler, cümle başlangıçları, benzer cümleler)
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                index.ts (t, ülke→dil), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
 supabase/migrations/     Sıralı SQL migration'ları
@@ -70,7 +76,7 @@ demo/                    Sunucusuz tarayıcı demosu (mock API + Next shim'leri)
 tests/                   Vitest
 ```
 
-API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/checkout|webhook|portal`, `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`.
+API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/checkout|webhook|portal`, `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `[id]`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`.
 
 ## Kodlama kuralları
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.

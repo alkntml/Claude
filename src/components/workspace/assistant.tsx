@@ -35,7 +35,7 @@ interface Props {
 
 const STAGE_ACTIONS: AssistantAction[] = ["plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "interpret", "discussion", "consistency"];
 const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure", "reduce_repetition"];
-const ETHICS_STAGES = new Set(["method", "sample", "participants", "instruments", "appendices", "methods_article", "declarations", "risks"]);
+const ETHICS_STAGES = new Set(["method", "sample", "participants", "instruments", "appendices", "methods_article", "declarations", "risks", "grant_method", "grant_management"]);
 /** Bölüme göre ek eylemler: özet/abstract her bölümde, etik kurul belgeleri yöntem ve ek bölümlerinde */
 function extraActions(key?: string): AssistantAction[] {
   return [...(key === "title_abstract" || key === "conclusion" || key === "discussion_article" ? ["abstract" as const] : []), ...(key && ETHICS_STAGES.has(key) ? ["ethics_docs" as const] : []), ...(key !== "title_abstract" && key !== "conclusion" && key !== "discussion_article" ? ["abstract" as const] : [])];

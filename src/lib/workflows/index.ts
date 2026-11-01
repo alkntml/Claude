@@ -2,7 +2,7 @@ import { STAGE_LIBRARY, type StageDef } from "./stages";
 
 export type WorkType =
   | "thesis" | "research_article" | "journal_article" | "capstone"
-  | "literature_review" | "research_proposal" | "text_editing" | "source_research";
+  | "literature_review" | "research_proposal" | "grant_proposal" | "text_editing" | "source_research";
 
 export type AcademicLevel = "bachelor" | "master" | "doctorate" | "postdoc" | "other";
 export type Methodology = "quantitative" | "qualitative" | "mixed" | "theoretical" | "systematic_review";
@@ -23,6 +23,7 @@ export const WORK_TYPES: WorkTypeMeta[] = [
   { id: "capstone", title: "Bitirme projesi", short: "Proje ve rapor", description: "Tasarım, uygulama ve değerlendirme süreçleriyle bitirme projesi raporu.", icon: "Rocket", levels: ["bachelor", "master"] },
   { id: "literature_review", title: "Literatür taraması", short: "Sistematik / anlatı derleme", description: "Arama stratejisi, tarama ve tematik sentez ile derleme çalışması.", icon: "Library", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "research_proposal", title: "Araştırma önerisi", short: "Research proposal", description: "Tez önerisi, proje başvurusu veya burs için araştırma önerisi.", icon: "Lightbulb", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
+  { id: "grant_proposal", title: "TÜBİTAK / BAP proje önerisi", short: "2209-A, 2209-B, 1001, 3501, BAP, burs", description: "Özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleriyle proje başvurusu hazırlayın.", icon: "Landmark", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "text_editing", title: "Akademik metin düzenleme", short: "Dil, yapı ve atıf", description: "Mevcut metninizin dilini, yapısını ve atıflarını geliştirin.", icon: "PenLine", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "source_research", title: "Kaynak ve literatür araştırması", short: "Gerçek veri tabanları", description: "OpenAlex, Crossref, PubMed ve diğer veri tabanlarında doğrulanmış kaynak bulun.", icon: "SearchCheck", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
 ];
@@ -42,14 +43,28 @@ const BASE: Record<WorkType, string[]> = {
   capstone: ["topic", "problem", "purpose", "literature", "method", "design_development", "testing", "conclusion", "references", "appendices"],
   literature_review: ["topic", "review_protocol", "literature", "review_synthesis", "gaps", "conclusion", "references"],
   research_proposal: ["topic", "problem", "purpose", "questions", "literature", "theory", "method", "sample", "instruments", "analysis", "proposal_timeline", "risks", "references"],
+  grant_proposal: ["grant_summary", "grant_originality", "grant_method", "grant_management", "grant_impact", "grant_budget", "references"],
   text_editing: ["editing_input", "editing_language", "editing_structure", "editing_citations", "references"],
   source_research: ["search_strategy", "source_screening", "annotated_notes", "references"],
 };
+
+/** Proje önerisi programları (başvuru formunun güncel hâli çağrı duyurusundan kontrol edilmelidir) */
+export const GRANT_PROGRAMS = [
+  { id: "tubitak_2209a", label: "TÜBİTAK 2209-A Üniversite Öğrencileri Araştırma Projeleri" },
+  { id: "tubitak_2209b", label: "TÜBİTAK 2209-B Sanayiye Yönelik Bitirme Projeleri" },
+  { id: "tubitak_1001", label: "TÜBİTAK 1001 Araştırma Projeleri" },
+  { id: "tubitak_3501", label: "TÜBİTAK 3501 Kariyer Geliştirme Programı" },
+  { id: "bap", label: "Üniversite BAP projesi" },
+  { id: "scholarship", label: "Burs başvurusu için araştırma önerisi (ör. 2211, 2214)" },
+  { id: "other", label: "Diğer kurum / fon" },
+] as const;
+export type GrantProgram = (typeof GRANT_PROGRAMS)[number]["id"];
 
 export interface RoadmapInput {
   workType: WorkType;
   level: AcademicLevel;
   methodology?: Methodology;
+  program?: GrantProgram;
 }
 
 export interface RoadmapStage {
@@ -63,8 +78,10 @@ export interface RoadmapStage {
  * Kullanıcı daha sonra aşama ekleyebilir, silebilir, yeniden adlandırabilir ve sıralayabilir;
  * üniversite kılavuzu yüklendiğinde AI yeni bir düzen önerebilir (bkz. /api/projects/[id]/stages/suggest).
  */
-export function buildRoadmap({ workType, level, methodology = "quantitative" }: RoadmapInput): RoadmapStage[] {
+export function buildRoadmap({ workType, level, methodology = "quantitative", program }: RoadmapInput): RoadmapStage[] {
   let keys = [...BASE[workType]];
+  // Burs başvurusu araştırma önerilerinde bütçe bölümü bulunmaz
+  if (workType === "grant_proposal" && program === "scholarship") keys = keys.filter((k) => k !== "grant_budget");
 
   if (workType === "thesis" || workType === "research_proposal") {
     if (methodology === "qualitative") {

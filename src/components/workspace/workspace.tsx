@@ -33,6 +33,10 @@ import { GoalModal, GoalWidget } from "./goals";
 import { shouldShowTour, Tour } from "./tour";
 import { AnalysisModal } from "./analysis-modal";
 import { JournalModal } from "./journal-modal";
+import { ChartModal } from "./chart-modal";
+import { DefenseModal } from "./defense-modal";
+import { ReviewerModal } from "./reviewer-modal";
+import { ToolsMenu, type ToolId } from "./tools-menu";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SaveState = "saved" | "dirty" | "saving" | "error" | "offline";
@@ -234,6 +238,9 @@ export function Workspace(props: Props) {
   const [tourOpen, setTourOpen] = useState(false);
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const [journalOpen, setJournalOpen] = useState(false);
+  const [chartOpen, setChartOpen] = useState(false);
+  const [defenseOpen, setDefenseOpen] = useState(false);
+  const [reviewerOpen, setReviewerOpen] = useState(false);
   const [presenting, setPresenting] = useState(false);
   /** Savunma sunumu (.pptx) oluşturup indirir */
   async function makePresentation() {
@@ -255,12 +262,29 @@ export function Workspace(props: Props) {
     } finally { setPresenting(false); }
   }
   /** Asistana dışarıdan istek gönderir (panel açık değilse önce açar) */
-  function askAssistant(msg: string, action: string) {
+  function askAssistant(msg: string, action: string, selection?: string) {
     setTab("assistant");
     setMobilePane("panel");
-    setTimeout(() => assistantSend.current?.(msg, action), 350);
+    setTimeout(() => assistantSend.current?.(msg, action, selection), 350);
+  }
+  function openTool(id: ToolId) {
+    if (id === "chart") setChartOpen(true);
+    else if (id === "analysis") setAnalysisOpen(true);
+    else if (id === "reviewer") setReviewerOpen(true);
+    else if (id === "defense") { flush(); setDefenseOpen(true); }
+    else if (id === "survey") router.push(`/anketler?proje=${project.id}`);
+  }
+  // Şekil: başlık (italik) + görsel + not; imlecin bulunduğu yere eklenir
+  function insertFigure(f: { caption: string; src: string; alt: string; note: string }) {
+    if (!editor || isBibliography) return;
+    editor.chain().focus().insertContent([
+      { type: "paragraph", content: [{ type: "text", text: f.caption, marks: [{ type: "italic" }] }] },
+      { type: "figure", attrs: { src: f.src, alt: f.alt } },
+      ...(f.note ? [{ type: "paragraph", content: [{ type: "text", text: project.language === "en" ? "Note." : "Not.", marks: [{ type: "italic" }] }, { type: "text", text: ` ${f.note}` }] }] : []),
+    ]).run();
   }
   // Sonraki tablo numarası: tüm bölümlerdeki "Tablo N." / "Table N." başlıklarının en büyüğü + 1
+  const nextFigureNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Şekil|Figure)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
   const nextTableNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Tablo|Table)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
   useEffect(() => { if (shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 1200); return () => clearTimeout(tm); } }, []);
 
@@ -466,8 +490,9 @@ export function Workspace(props: Props) {
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           <ShareButton projectId={project.id} />
+          <ToolsMenu onPick={openTool} workType={project.work_type} />
           <span data-tour="export"><ExportMenu onExport={exportAs} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
-          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} />
+          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} />
           <button onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
         </header>
@@ -562,6 +587,9 @@ export function Workspace(props: Props) {
         onChecklist={() => { setJournalOpen(false); askAssistant(t("Yüklediğim dergi yazar kılavuzuna göre çalışmamın gönderim öncesi kontrol listesini çıkar."), "journal_checklist"); }}
         onUploadGuideline={() => { setJournalOpen(false); setSettings(true); }} />}
       {analysisOpen && <AnalysisModal open onClose={() => setAnalysisOpen(false)} files={files} language={project.language} tableNo={nextTableNo} onInsert={!isBibliography && editor ? (md) => insertRef.current(md, {}, "append") : undefined} />}
+      {chartOpen && <ChartModal open onClose={() => setChartOpen(false)} files={files} language={project.language} figureNo={nextFigureNo} onInsert={!isBibliography && editor ? insertFigure : undefined} />}
+      {defenseOpen && <DefenseModal open onClose={() => setDefenseOpen(false)} projectId={project.id} language={project.language} />}
+      <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}
       <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} />
@@ -580,7 +608,7 @@ function SaveIndicator({ state }: { state: SaveState }) {
 }
 
 /** Mobil üst menü: atıf stili, kalite kontrol, paylaşım ve proje ayarları */
-function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void }) {
+function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, onTool, workType }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void; onTool: (id: ToolId) => void; workType: string }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   return (
@@ -599,6 +627,7 @@ function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour }
               <div className="mt-4 grid gap-2">
                 <Link href={`/proje/${projectId}/kalite`} onClick={onQuality} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><FileCheck2 className="h-5 w-5 text-emerald-600" /> {t("Kalite kontrol")}</Link>
                 <ShareButton projectId={projectId} variant="row" />
+                <ToolsMenu onPick={(id) => { setOpen(false); onTool(id); }} workType={workType} variant="rows" />
                 <button onClick={() => { setOpen(false); onSettings(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Settings2 className="h-5 w-5 text-ink-500" /> {t("Proje ayarları")}</button>
                 <a href={expertUrl(undefined, "workspace")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><GraduationCap className="h-5 w-5 text-violet-600" /> {t("Uzman desteği")}<ExternalLink className="ml-auto h-4 w-4 text-ink-400" /></a>
                 <button onClick={() => { setOpen(false); onTour(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><HelpCircle className="h-5 w-5 text-brand-600" /> {t("Rehberli tur")}</button>

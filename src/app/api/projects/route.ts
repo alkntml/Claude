@@ -2,14 +2,14 @@ import { z } from "zod";
 import { json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { assertProjectQuota } from "@/lib/usage";
-import { buildRoadmap } from "@/lib/workflows";
+import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram } from "@/lib/workflows";
 import { STYLE_IDS } from "@/lib/citations";
 import { translate } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
 
 const CreateSchema = z.object({
   title: z.string().trim().min(1).max(300),
-  workType: z.enum(["thesis", "research_article", "journal_article", "capstone", "literature_review", "research_proposal", "text_editing", "source_research"]),
+  workType: z.enum(["thesis", "research_article", "journal_article", "capstone", "literature_review", "research_proposal", "grant_proposal", "text_editing", "source_research"]),
   level: z.enum(["bachelor", "master", "doctorate", "postdoc", "other"]).default("master"),
   methodology: z.enum(["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"]).default("quantitative"),
   discipline: z.string().max(200).default(""),
@@ -19,6 +19,7 @@ const CreateSchema = z.object({
   keywords: z.array(z.string().max(80)).max(20).default([]),
   university: z.string().max(300).optional(),
   targetJournal: z.string().max(300).optional(),
+  program: z.enum(GRANT_PROGRAMS.map((p) => p.id) as [GrantProgram, ...GrantProgram[]]).optional(),
 });
 
 export const GET = route("projects.list", async () => {
@@ -49,13 +50,13 @@ export const POST = route("projects.create", async (req) => {
       citation_style: body.citationStyle,
       topic: body.topic,
       keywords: body.keywords,
-      context: { methodology: body.methodology, university: body.university, targetJournal: body.targetJournal },
+      context: { methodology: body.methodology, university: body.university, targetJournal: body.targetJournal, ...(body.workType === "grant_proposal" ? { program: body.program ?? "other" } : {}) },
     })
     .select()
     .single();
   if (error || !project) throw error ?? new Error("Proje oluşturulamadı");
 
-  const roadmap = buildRoadmap({ workType: body.workType, level: body.level, methodology: body.methodology });
+  const roadmap = buildRoadmap({ workType: body.workType, level: body.level, methodology: body.methodology, program: body.program });
   const { error: stErr } = await s.supabase.from("project_stages").insert(
     roadmap.map((st, idx) => ({ project_id: project.id, user_id: s.user.id, key: st.key, title: translate(uiLocale, st.title), description: translate(uiLocale, st.description), position: idx })),
   );

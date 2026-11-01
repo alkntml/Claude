@@ -15,7 +15,7 @@ import {
 import { useEffect, useRef } from "react";
 import { cn } from "@/components/ui/cn";
 import type { JSONNode } from "@/lib/editor/doc";
-import { Citation, Footnote } from "./nodes";
+import { Citation, Figure, Footnote } from "./nodes";
 
 export function useAcademicEditor(opts: { content: JSONNode | null; placeholder: string; onUpdate: (doc: JSONNode, editor: Editor) => void; onSelection?: (text: string) => void }) {
   const cb = useRef(opts);
@@ -33,6 +33,7 @@ export function useAcademicEditor(opts: { content: JSONNode | null; placeholder:
       TableCell,
       Citation,
       Footnote,
+      Figure,
     ],
     content: (opts.content as object) ?? { type: "doc", content: [{ type: "paragraph" }] },
     editorProps: { attributes: { class: "prose-academic numbered min-h-[45vh] pb-24 sm:min-h-[55vh] sm:pb-40", spellcheck: "true" } },

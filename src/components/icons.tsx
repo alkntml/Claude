@@ -1,6 +1,6 @@
-import { BookOpenText, FlaskConical, GraduationCap, Library, Lightbulb, PenLine, Rocket, SearchCheck, type LucideIcon } from "lucide-react";
+import { BookOpenText, FlaskConical, GraduationCap, Landmark, Library, Lightbulb, PenLine, Rocket, SearchCheck, type LucideIcon } from "lucide-react";
 
-export const WORK_ICONS: Record<string, LucideIcon> = { GraduationCap, FlaskConical, BookOpenText, Rocket, Library, Lightbulb, PenLine, SearchCheck };
+export const WORK_ICONS: Record<string, LucideIcon> = { GraduationCap, FlaskConical, BookOpenText, Rocket, Library, Lightbulb, PenLine, SearchCheck, Landmark };
 
 export function Logo({ className = "" }: { className?: string }) {
   return (

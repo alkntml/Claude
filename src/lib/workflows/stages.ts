@@ -351,6 +351,58 @@ const S: StageDef[] = [
     questions: [],
     needsLiterature: true,
   },
+  // ---- Proje önerisi (TÜBİTAK 2209-A/B, 1001, 3501, BAP, burs başvurusu araştırma önerisi)
+  {
+    key: "grant_summary",
+    title: "Proje özeti ve anahtar kelimeler",
+    purpose: "Projenin amacını, yöntemini, beklenen çıktılarını ve etkisini hakemin ilk okumada anlayacağı biçimde özetlemek.",
+    steps: ["Konunun önemini ve çözülecek problemi bir-iki cümleyle verin.", "Amaç ve hedefleri sayın.", "Yöntemi kısaca belirtin.", "Beklenen çıktı ve etkiyi yazın.", "3–5 anahtar kelime seçin."],
+    rules: ["Özet, başvuru formundaki kelime sınırını aşmamalıdır (çağrı duyurusunu kontrol edin).", "Özette kaynak gösterilmez; bulgu veya sonuç iddiası yazılmaz.", "Özet en son, diğer bölümler yazıldıktan sonra güncellenmelidir."],
+    questions: ["Projenin tek cümlelik amacı nedir?", "Hangi programa başvuruyorsunuz (2209-A, 2209-B, 1001, 3501, BAP…)?"],
+  },
+  {
+    key: "grant_originality",
+    title: "Özgün değer",
+    purpose: "Konunun önemini, literatürdeki boşluğu, projenin özgün yanını, araştırma sorusu/hipotezini ve amaç–hedeflerini ortaya koymak.",
+    steps: ["Konunun önemini ve güncelliğini literatürle gösterin.", "Mevcut çalışmaların eksik bıraktığı noktayı (boşluğu) açıkça yazın.", "Projenin bu boşluğa nasıl katkı sağlayacağını ve özgün yönünü belirtin.", "Araştırma sorusunu veya hipotezi yazın.", "Amaç ve ölçülebilir hedefleri maddeleyin."],
+    rules: ["Özgünlük iddiası literatür karşılaştırmasıyla desteklenmelidir; “ilk kez” gibi ifadeler ancak kaynakla gösterilebiliyorsa kullanılır.", "Hedefler ölçülebilir ve proje süresinde ulaşılabilir olmalıdır.", "Değerlendirmede en yüksek ağırlıklı bölümlerden biridir; genel ifadelerden kaçının."],
+    questions: ["Bu konuda yapılmış çalışmaların eksik bıraktığı nokta nedir?", "Projeniz hangi soruyu cevaplayacak?"],
+    needsLiterature: true,
+  },
+  {
+    key: "grant_method",
+    title: "Yöntem",
+    purpose: "Hedeflere ulaşmak için uygulanacak yöntem ve teknikleri, araştırma desenini, örneklem/malzemeyi, veri toplama ve analiz sürecini gerekçeleriyle açıklamak.",
+    steps: ["Araştırma desenini ve gerekçesini yazın.", "Örneklem, malzeme veya deney düzeneğini açıklayın.", "Veri toplama araçlarını ve süreçlerini anlatın.", "Analiz yöntemlerini ve başarı ölçütlerini belirtin.", "Yöntemin her hedefe nasıl hizmet ettiğini eşleştirin."],
+    rules: ["Yöntem, Özgün değer bölümündeki hedeflerle birebir ilişkilendirilmelidir.", "Kullanılacak yöntemler literatürle gerekçelendirilmelidir.", "Henüz elde edilmemiş sonuç yazılmaz; beklenen çıktılar “beklenmektedir” biçiminde ifade edilir."],
+    questions: ["Verileri nasıl toplayacaksınız (deney, anket, ölçüm, arşiv…)?", "Hangi analizleri yapacaksınız?"],
+    needsLiterature: true,
+  },
+  {
+    key: "grant_management",
+    title: "Proje yönetimi (iş-zaman çizelgesi ve risk yönetimi)",
+    purpose: "İş paketlerini, sorumluları, süreleri ve başarı ölçütlerini; olası riskleri ve B planlarını; araştırma olanaklarını göstermek.",
+    steps: ["İş paketlerini (İP1, İP2…) tanımlayın; her biri için kim, ne zaman, hangi başarı ölçütü.", "İş-zaman çizelgesini tablo olarak verin.", "Her kritik iş paketi için risk ve B planını tablo hâlinde yazın.", "Kullanılacak laboratuvar, cihaz, yazılım ve kurum olanaklarını belirtin."],
+    rules: ["İş-zaman çizelgesi ve risk tablosu tablo biçiminde verilmelidir.", "Başarı ölçütleri sayısal veya doğrulanabilir olmalıdır (ör. “anketin en az N katılımcıya uygulanması”).", "Etik kurul onayı gerekiyorsa takvimde ayrı bir iş olarak yer almalıdır."],
+    questions: ["Proje kaç ay sürecek?", "Projede kimler görev alacak (yürütücü, danışman, bursiyer)?"],
+  },
+  {
+    key: "grant_impact",
+    title: "Yaygın etki",
+    purpose: "Projeden beklenen bilimsel, ekonomik/ticari ve toplumsal çıktı ve etkileri; yayın, bildiri, patent, ürün veya sonraki proje gibi somut çıktıları açıklamak.",
+    steps: ["Bilimsel çıktıları (makale, bildiri, tez) yazın.", "Ekonomik/ticari ve toplumsal etkileri belirtin.", "Sonuçların nasıl yaygınlaştırılacağını açıklayın.", "Varsa sonraki aşama projeleri belirtin."],
+    rules: ["Etkiler gerçekçi ve projenin kapsamıyla orantılı olmalıdır.", "Mümkünse çıktı/etki tablosu kullanılmalıdır."],
+    questions: ["Sonuçları nerede yayımlamayı veya sunmayı planlıyorsunuz?"],
+  },
+  {
+    key: "grant_budget",
+    title: "Bütçe ve gerekçesi",
+    purpose: "Talep edilen kalemleri (makine-teçhizat, sarf malzemesi, hizmet alımı, seyahat) miktar ve gerekçeleriyle göstermek.",
+    steps: ["Kalemleri türlerine göre listeleyin.", "Her kalemin yöntemdeki hangi iş için gerekli olduğunu yazın.", "Tutarları güncel fiyat tekliflerine dayandırın."],
+    rules: ["Tutarları ve üst sınırları siz girin; yapay zekâ fiyat veya tutar uydurmaz, [VERİ GİRİLECEK] kullanır.", "Programın destek üst sınırını ve desteklenmeyen kalemleri çağrı duyurusundan kontrol edin.", "Her kalem yöntem bölümüyle ilişkilendirilmelidir."],
+    questions: ["Hangi malzeme, cihaz veya hizmetlere ihtiyacınız var?"],
+    requiresUserData: true,
+  },
 ];
 
 export const STAGE_LIBRARY: Record<string, StageDef> = Object.fromEntries(S.map((s) => [s.key, s]));

@@ -32,6 +32,8 @@ export function DocView({ doc, stageIds }: { doc: ExportDoc; stageIds: Record<st
         }
         if (b.kind === "paragraph") return b.quote ? <blockquote key={i}><p><Runs runs={b.runs} notes={notes} /></p></blockquote> : <p key={i}><Runs runs={b.runs} notes={notes} /></p>;
         if (b.kind === "caption") return <p key={i} className="!text-left text-[15px] italic text-ink-600"><Runs runs={b.runs} notes={notes} /></p>;
+        // eslint-disable-next-line @next/next/no-img-element
+        if (b.kind === "image") return <figure key={i} className="my-6 text-center"><img src={b.src} alt={b.alt} className="mx-auto h-auto max-w-full" style={{ width: Math.min(b.width, 640) }} /></figure>;
         if (b.kind === "list") { const L = b.ordered ? "ol" : "ul"; return <L key={i}>{b.items.map((it, k) => <li key={k}><Runs runs={it} notes={notes} /></li>)}</L>; }
         return (
           <table key={i}><tbody>{b.rows.map((row, ri) => <tr key={ri}>{row.map((c, ci) => (ri === 0 && b.header ? <th key={ci}><Runs runs={c} notes={notes} /></th> : <td key={ci}><Runs runs={c} notes={notes} /></td>))}</tr>)}</tbody></table>

@@ -125,3 +125,19 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D34 — Tekrar önleme
 - Üç katman: (1) OUTPUT_PROTOCOL’de üslup/tekrar kuralları, (2) deterministik analizle bulunan sık kalıplar ve cümle başlangıçları bağlama “TEKRARDAN KAÇIN” listesi olarak eklenir (teknik terimler hariç; proje başlığı/anahtar kelimeleri sayılmaz), (3) üretim sonrası deterministik kontrol: taslakta uyarı + `reduce_repetition` eylemi, kalite raporunda bölüm içi tekrar.
 - Otomatik ikinci yazım turu yapılmadı (maliyet ve süre); düzeltme kullanıcının tek tıkıyla.
+
+### D35 — Proje önerisi türü
+- Yeni `work_type` değeri `grant_proposal` (enum’a migration 8 ile eklendi). Bölüm düzeni TÜBİTAK ARDEB formlarının genel yapısına göre; program ayrıntıları (kelime/bütçe sınırları) uydurulmaz, kullanıcıya çağrı duyurusunu kontrol etmesi söylenir. Burs önerisinde bütçe bölümü yok.
+
+### D36 — Hakem cevabı ve savunma provası
+- Hakem cevabı mevcut sohbet akışında bir eylem (`reviewer_response`); yorumlar `selection` alanıyla gider, bağlam “wholeWork” (diğer bölümler 3500 karakter). Yapılmamış değişiklik [YAPILACAK] ile işaretlenir.
+- Savunma provası ayrı uç (`projects/[id]/defense`), JSON şemalı iki çağrı (sorular / değerlendirme); yalnızca çalışma metnine dayanır. Ses tarayıcıda yazıya çevrilir.
+
+### D37 — Grafikler
+- Değerler sunucuda deterministik hesaplanır (`stats/charts.ts`), çizim saf SVG (`charts/svg.ts`), tarayıcıda 2× PNG’ye çevrilip editörde `figure` düğümü (yalnızca `data:image/png;base64`) olarak saklanır. Dışa aktarımda PNG başlığı doğrulanır, dış adres kabul edilmez.
+
+### D38 — Anketler
+- Cevaplar yalnızca service role ile yazılır (herkese açık uç `public/survey/[token]`); RLS’te kullanıcı/anonim insert yok. IP/e-posta tutulmaz. Kötüye kullanım: bal küpü, <3 sn gönderim, anket başına 10 sn’de 30 cevap sınırı. Cevap gelmeye başlayınca soru yapısı kilitlenir (kopya önerilir). CSV `;` + BOM (Türkçe Excel), formül enjeksiyonu engeli. Projeye aktarımda ters maddeler kodlanır.
+
+### D39 — Konu bulma
+- İstatistikler OpenAlex group_by ile (yıl, topics.id); öneriler yalnızca bu sayılara/başlıklara dayanır, “balanced” model. Kaynak tarama hakkından 1 düşer; öneri için ayrıca 1 AI isteği.

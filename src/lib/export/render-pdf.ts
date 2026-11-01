@@ -1,7 +1,7 @@
 import "server-only";
 import path from "node:path";
 import PDFDocument from "pdfkit";
-import type { ExportDoc, Run } from "./model";
+import { figurePng, type ExportDoc, type Run } from "./model";
 import { coverLines, resolveFormat, type DocFormat } from "./format";
 
 const FONT_DIR = path.join(process.cwd(), "assets", "fonts");
@@ -77,6 +77,13 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     } else if (b.kind === "caption") {
       writeRuns(b.runs.map((r) => ({ ...r, italic: true })), { size: 10.5 });
       doc.moveDown(0.3);
+    } else if (b.kind === "image") {
+      if (!started) { doc.addPage(); started = true; }
+      const maxW = Math.min(doc.page.width - M.left - M.right, 430);
+      const w = Math.min(maxW, b.width), h = (w * b.height) / b.width;
+      if (doc.y + h > doc.page.height - M.bottom) doc.addPage();
+      doc.image(figurePng(b.src), M.left + (doc.page.width - M.left - M.right - w) / 2, doc.y, { width: w, height: h });
+      doc.y += h + 10;
     } else if (b.kind === "list") {
       b.items.forEach((it, k) => { writeRuns([{ text: b.ordered ? `${k + 1}. ` : "•  " }, ...it], { indent: 14, lineGap: 3 }); });
       doc.moveDown(0.5);

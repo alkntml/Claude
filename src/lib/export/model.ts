@@ -20,7 +20,34 @@ export type Block =
   | { kind: "paragraph"; runs: Run[]; quote?: boolean }
   | { kind: "list"; ordered: boolean; items: Run[][] }
   | { kind: "table"; rows: Run[][][]; header: boolean }
-  | { kind: "caption"; runs: Run[] };
+  | { kind: "caption"; runs: Run[] }
+  | { kind: "image"; src: string; width: number; height: number; alt: string };
+
+/** base64 → bayt (sunucuda Buffer, tarayıcıda atob) */
+export function base64Bytes(b64: string): Uint8Array {
+  if (typeof Buffer !== "undefined") return new Uint8Array(Buffer.from(b64, "base64"));
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+/** Belgeye gömülü şekil: yalnızca PNG veri adresi kabul edilir (dış adres yok), en fazla ~3 MB */
+export function figureImage(attrs: Record<string, unknown> | undefined): { src: string; width: number; height: number; alt: string } | null {
+  const src = String(attrs?.src ?? "");
+  const m = src.match(/^data:image\/png;base64,([A-Za-z0-9+/=]+)$/);
+  if (!m || m[1].length > 4_000_000) return null;
+  const head = base64Bytes(m[1].slice(0, 44));
+  if (head.length < 24 || head[0] !== 0x89 || head[1] !== 0x50 || head[2] !== 0x4e || head[3] !== 0x47) return null;
+  // PNG IHDR: genişlik ve yükseklik 16. ve 20. baytlarda (big-endian)
+  const u32 = (o: number) => ((head[o] << 24) >>> 0) + (head[o + 1] << 16) + (head[o + 2] << 8) + head[o + 3];
+  const width = u32(16), height = u32(20);
+  if (!width || !height || width > 10000 || height > 10000) return null;
+  return { src, width, height, alt: String(attrs?.alt ?? "").slice(0, 300) };
+}
+
+/** Şeklin PNG baytları (dışa aktarıcılar için) */
+export const figurePng = (src: string) => Buffer.from(src.slice(src.indexOf(",") + 1), "base64");
 
 export interface ExportDoc {
   title: string;
@@ -111,6 +138,11 @@ export function buildExportDoc(params: {
         const rows = (n.content ?? []).map((row) => (row.content ?? []).map((cell) => (cell.content ?? []).flatMap((p) => inlineRuns(p.content))));
         const header = (n.content?.[0]?.content ?? []).some((c) => c.type === "tableHeader");
         blocks.push({ kind: "table", rows, header });
+        break;
+      }
+      case "figure": {
+        const img = figureImage(n.attrs);
+        if (img) blocks.push({ kind: "image", ...img });
         break;
       }
       default:

@@ -1,0 +1,26 @@
+import { z } from "zod";
+import { ApiError, json, parseBody, route } from "@/lib/api";
+import { requireUser } from "@/lib/auth";
+import { exploreTopic, suggestTopics } from "@/lib/topics-server";
+import { assertWithinLimits, recordUsage } from "@/lib/usage";
+
+export const maxDuration = 60;
+
+/** Tez konusu bulma: OpenAlex istatistikleri (+ isteğe bağlı yapay zekâ önerileri) */
+export const POST = route("topics.explore", async (req) => {
+  const s = await requireUser();
+  const b = await parseBody(req, z.object({ query: z.string().trim().min(3).max(200), ideas: z.boolean().default(true), level: z.string().max(60).default(""), discipline: z.string().max(200).default(""), language: z.enum(["tr", "en"]).default("tr") }));
+  await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+  let data;
+  try { data = await exploreTopic(b.query); } catch { throw new ApiError(502, "Veri tabanına şu anda ulaşılamadı, lütfen biraz sonra tekrar deneyin"); }
+  await recordUsage(s.user.id, "source_search", { quantity: 1, meta: { kind: "topic_explore", query: b.query } });
+  if (!b.ideas || data.total < 5) return json({ data, ideas: [] });
+  await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  try {
+    const out = await suggestTopics({ planId: s.profile.plan_id, data, level: b.level, discipline: b.discipline, language: b.language });
+    await recordUsage(s.user.id, "ai_request", { tokensIn: out.usage.input, tokensOut: out.usage.output, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "topic_ideas" } });
+    return json({ data, ideas: out.ideas });
+  } catch {
+    return json({ data, ideas: [], ideasError: true });
+  }
+});

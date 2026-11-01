@@ -27,6 +27,7 @@ export function toMarkdown(d: ExportDoc): string {
     if (b.kind === "heading") out.push(`${"#".repeat(Math.min(b.level + 1, 6))} ${b.number ? `${b.number} ` : ""}${mdRuns(b.runs, notes)}`, "");
     else if (b.kind === "paragraph") out.push(`${b.quote ? "> " : ""}${mdRuns(b.runs, notes)}`, "");
     else if (b.kind === "caption") out.push(`*${runsToPlain(b.runs)}*`, "");
+    else if (b.kind === "image") out.push(`[${b.alt || "Şekil"}]`, "");
     else if (b.kind === "list") { b.items.forEach((it, k) => out.push(`${b.ordered ? `${k + 1}.` : "-"} ${mdRuns(it, notes)}`)); out.push(""); }
     else if (b.kind === "table") {
       b.rows.forEach((row, ri) => {
@@ -51,6 +52,7 @@ export function toText(d: ExportDoc): string {
   for (const b of d.blocks) {
     if (b.kind === "heading") out.push("", `${b.number ? `${b.number} ` : ""}${plain(b.runs)}${b.level === 1 ? "\n" + "=".repeat(40) : ""}`);
     else if (b.kind === "paragraph" || b.kind === "caption") out.push(`${b.kind === "paragraph" && b.quote ? "    " : ""}${plain(b.runs)}`, "");
+    else if (b.kind === "image") out.push(`[${b.alt || "Şekil"}]`, "");
     else if (b.kind === "list") { b.items.forEach((it, k) => out.push(`${b.ordered ? `${k + 1}.` : "•"} ${plain(it)}`)); out.push(""); }
     else if (b.kind === "table") { b.rows.forEach((r) => out.push(r.map(plain).join("\t"))); out.push(""); }
   }

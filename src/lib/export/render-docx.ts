@@ -1,9 +1,9 @@
 import "server-only";
 import {
   AlignmentType, Document, Footer, FootnoteReferenceRun, HeadingLevel, LevelFormat, Packer, PageBreak, PageNumber, Paragraph,
-  Table, TableCell, TableOfContents, TableRow, TextRun, WidthType, BorderStyle,
+  Table, TableCell, TableOfContents, TableRow, TextRun, WidthType, BorderStyle, ImageRun,
 } from "docx";
-import type { ExportDoc, Run } from "./model";
+import { figurePng, type ExportDoc, type Run } from "./model";
 import { CM, coverLines, resolveFormat, type DocFormat } from "./format";
 import { Header } from "docx";
 
@@ -61,6 +61,10 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       body.push(new Paragraph({ alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {
       body.push(new Paragraph({ spacing: { before: 120, after: 60 }, children: runs(b.runs.map((r) => ({ ...r, italic: true }))) }));
+    } else if (b.kind === "image") {
+      // Metin genişliği ~15 cm (≈ 567 px @96dpi); şekil oranı korunur
+      const w = Math.min(560, b.width), h = Math.round((w * b.height) / b.width);
+      body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 120, after: 160 }, children: [new ImageRun({ type: "png", data: figurePng(b.src), transformation: { width: w, height: h }, altText: { name: "figure", description: b.alt, title: b.alt } })] }));
     } else if (b.kind === "list") {
       b.items.forEach((it) => body.push(new Paragraph({ numbering: { reference: b.ordered ? "ordered" : "bullets", level: 0 }, spacing: { line }, children: runs(it) })));
     } else if (b.kind === "table") {

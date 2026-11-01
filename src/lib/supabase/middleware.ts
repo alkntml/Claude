@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { LOCALE_COOKIE, localeForCountry, normalizeLocale } from "@/i18n";
 
-const PROTECTED = ["/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni"];
+const PROTECTED = ["/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni", "/anketler", "/kurum", "/konu-bul"];
 
 /** İlk ziyarette ülkeye göre dil: Türkiye (veya bilinmeyen) → tr, diğer ülkeler → en. Kullanıcı seçimi (çerez) her zaman önceliklidir. */
 export async function updateSession(request: NextRequest) {

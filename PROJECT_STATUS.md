@@ -66,13 +66,19 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Yönetici paneli: genel bakış/maliyet, kullanıcılar, paketler, model ve prompt ayarları, veri kaynakları, duyurular, geri bildirim, yardım, hata kayıtları
 - KVKK: veri dışa aktarma (JSON), hesap silme
 - **Sık sorulan sorular:** `/sss` (7 grup, 38 soru, TR/EN, FAQPage JSON-LD), ana sayfada 8 öne çıkan soru; içerik `src/lib/faq.ts`
+- **TÜBİTAK / BAP proje önerisi:** yeni çalışma türü `grant_proposal` (özet, özgün değer, yöntem, proje yönetimi, yaygın etki, bütçe); program seçimi (2209-A/B, 1001, 3501, BAP, burs) `projects.context.program`
+- **Hakem yorumlarına cevap:** Araçlar → yorumları yapıştır → `reviewer_response` eylemi, madde madde cevap mektubu ([YAPILACAK: …] işaretleri)
+- **Savunma provası:** Araçlar → yapay zekâ jüri soruları (tutum/sayı/odak), yazılı veya sesli cevap, puan + güçlü/eksik yönler + iskelet + takip sorusu
+- **Anket oluşturucu:** `/anketler`; tek/çoklu seçim, Likert (5/7, ters madde), sayı, metin, bilgi; onam metni; herkese açık bağlantı `/a/[token]`; cevap özeti; CSV (ham / ters kodlanmış), kod kitabı; tek tıkla projeye veri dosyası olarak aktarım
+- **Grafik oluşturucu:** Araçlar → sütun (ortalama+hata çubuğu / sıklık), çizgi (tekrarlı ölçüm), histogram, saçılım (+regresyon), kutu; APA tarzı; editöre şekil olarak eklenir; Word/PDF’e gömülür
+- **Konu bulma:** `/konu-bul`; OpenAlex yıllık yayın, son 3 yıl/önceki 3 yıl, alt konu büyümesi, Türkiye payı, çok atıf alanlar + verilere dayalı 5 öneri → “Bu konuyla tez başlat”
 - **Tekrar önleme:** yazım kurallarında üslup/tekrar maddesi; bölümde ve çalışmada sık geçen kalıplar modele “TEKRARDAN KAÇIN” listesi olarak verilir (`src/lib/quality/repetition.ts`); taslakta tekrar varsa uyarı + “Tekrarları azalt” eylemi; alt başlıklarla yazımda bütün kontrolü; kalite raporunda bölüm içi tekrar uyarısı
 - **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Sağlayıcılar henüz Supabase’de açılmadı (TODO)
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 137 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 158 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)
@@ -97,7 +103,8 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 | 1c2e94f | Ana sayfa veri kaynaklarında Türkiye kaynakları |
 | 5fff0aa | Google ve Apple ile giriş/kayıt |
 | 1414657 | Akademik yazı tipi (Source Serif) |
-| (bu commit) | Tekrar eden ifadelerin önlenmesi |
+| 91f3d6d | Tekrar eden ifadelerin önlenmesi |
+| (bu commit) | Proje önerisi, hakem cevabı, savunma provası, anket, grafik, konu bulma (migration 8) |
 
 ## Oturum dışı üretilen teslimler (depoda değil)
 - **Reels tanıtım videosu** (40 sn, 1080×1920, altyazılı, müzikli, seslendirmesiz — ortamda Türkçe TTS yok, HuggingFace engelli). Kullanıcıya sohbetten gönderildi; seslendirme metni ve SRT de verildi. Yeniden üretmek gerekirse: demo ekranlarından Playwright ile kare kare HTML animasyonu + ffmpeg (yöntem bu oturumda kullanıldı).

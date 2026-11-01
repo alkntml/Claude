@@ -115,3 +115,27 @@ export const Footnote = Node.create({
   renderHTML({ HTMLAttributes }) { return ["span", mergeAttributes(HTMLAttributes, { "data-footnote": "" })]; },
   addNodeView() { return ReactNodeViewRenderer(FootnoteView); },
 });
+
+/** Şekil (grafik): yalnızca PNG veri adresi; dışa aktarımda Word/PDF'e gömülür */
+function FigureView({ node, deleteNode, selected }: NodeViewProps) {
+  const { t } = useT();
+  const ok = /^data:image\/png;base64,/.test(String(node.attrs.src ?? ""));
+  return (
+    <NodeViewWrapper as="figure" className={`group relative my-5 rounded-lg text-center ${selected ? "ring-2 ring-brand-300" : ""}`} data-figure="">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {ok ? <img src={node.attrs.src} alt={node.attrs.alt ?? ""} className="mx-auto h-auto max-w-full" draggable={false} /> : <span className="block rounded-lg bg-ink-50 p-4 text-sm text-ink-400">{t("Şekil görüntülenemiyor")}</span>}
+      <button type="button" contentEditable={false} onClick={deleteNode} className="absolute right-2 top-2 hidden rounded-lg bg-white/90 px-2 py-1 text-xs text-rose-600 shadow group-hover:block">{t("Şekli sil")}</button>
+    </NodeViewWrapper>
+  );
+}
+
+export const Figure = Node.create({
+  name: "figure",
+  group: "block",
+  atom: true,
+  draggable: true,
+  addAttributes() { return { src: { default: "" }, alt: { default: "" } }; },
+  parseHTML() { return [{ tag: "figure[data-figure]", getAttrs: (el) => { const img = (el as HTMLElement).querySelector("img"); return { src: img?.getAttribute("src") ?? "", alt: img?.getAttribute("alt") ?? "" }; } }]; },
+  renderHTML({ HTMLAttributes }) { return ["figure", { "data-figure": "" }, ["img", { src: HTMLAttributes.src, alt: HTMLAttributes.alt }]]; },
+  addNodeView() { return ReactNodeViewRenderer(FigureView); },
+});

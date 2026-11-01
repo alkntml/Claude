@@ -153,7 +153,7 @@ export const POST = route("ai.chat", async (req) => {
       let servedModel = model.model;
       try {
         controller.enqueue(sse("phase", { phase: "write" }));
-        const wholeWork = b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist";
+        const wholeWork = b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist" || b.action === "reviewer_response";
         const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}`, otherChars: wholeWork ? 3500 : undefined });
         if (b.action === "journal_checklist") {
           // Yüklenen dergi/kılavuz metni karşılaştırma için bağlama eklenir

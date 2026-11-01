@@ -10,7 +10,7 @@ import { cn } from "@/components/ui/cn";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api } from "@/lib/client";
-import { buildRoadmap, LEVEL_LABELS, METHODOLOGY_LABELS, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
+import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram, LEVEL_LABELS, METHODOLOGY_LABELS, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
 
 const STEPS = ["Çalışma türü", "Akademik profil", "Araştırma bilgileri"];
 
@@ -26,15 +26,16 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [methodology, setMethodology] = useState<Methodology>("quantitative");
   const [discipline, setDiscipline] = useState("");
   const [title, setTitle] = useState("");
-  const [topic, setTopic] = useState("");
+  const [topic, setTopic] = useState(() => (params.get("konu") ?? "").slice(0, 4000));
   const [keywords, setKeywords] = useState("");
   const [language, setLanguage] = useState<"tr" | "en">(locale);
   const [style, setStyle] = useState(defaultStyle);
   const [university, setUniversity] = useState("");
+  const [program, setProgram] = useState<GrantProgram>("tubitak_2209a");
   const [loading, setLoading] = useState(false);
 
   const wt = WORK_TYPES.find((w) => w.id === workType)!;
-  const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology }), [workType, level, methodology]);
+  const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology, program }), [workType, level, methodology, program]);
   const showMethod = ["thesis", "research_proposal", "research_article", "journal_article"].includes(workType);
 
   async function create() {
@@ -42,7 +43,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
     try {
       const { project } = await api<{ project: { id: string } }>("/api/projects", {
         method: "POST",
-        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology, discipline, language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined },
+        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology, discipline, language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, ...(workType === "grant_proposal" ? { program } : {}) },
       });
       router.push(`/proje/${project.id}`);
     } catch (e) {
@@ -94,6 +95,13 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                     {wt.levels.map((l) => <button key={l} onClick={() => setLevel(l)} className={cn("rounded-xl border px-4 py-2 text-sm font-medium transition", level === l ? "border-ink-900 bg-ink-900 text-white" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300")}>{t(LEVEL_LABELS[l])}</button>)}
                   </div>
                 </div>
+                {workType === "grant_proposal" && (
+                  <div>
+                    <label className="label" htmlFor="program">{t("Başvurulacak program")}</label>
+                    <select id="program" className="input" value={program} onChange={(e) => setProgram(e.target.value as GrantProgram)}>{GRANT_PROGRAMS.map((p) => <option key={p.id} value={p.id}>{t(p.label)}</option>)}</select>
+                    <p className="mt-1.5 text-xs text-ink-400">{t("Bölümler TÜBİTAK başvuru formlarındaki düzene göre hazırlanır. Kelime sınırları, destek üst sınırları ve form ayrıntıları dönemden döneme değişebilir; başvurmadan önce güncel çağrı duyurusunu kontrol edin.")}</p>
+                  </div>
+                )}
                 {showMethod && (
                   <div>
                     <span className="label">{t("Araştırma yaklaşımı")}</span>

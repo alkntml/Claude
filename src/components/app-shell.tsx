@@ -1,7 +1,7 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
+import { Building2, ClipboardList, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,6 +20,8 @@ const NAV = [
   { href: "/panel", label: "Kontrol paneli", icon: Home },
   { href: "/kaynaklar", label: "Kaynak araştırması", icon: Library },
   { href: "/dosyalar", label: "Dosyalarım", icon: FolderOpen },
+  { href: "/anketler", label: "Anketlerim", icon: ClipboardList },
+  { href: "/konu-bul", label: "Konu bulma", icon: Compass },
   { href: "/hesap", label: "Hesap ve abonelik", icon: UserRound },
 ];
 

@@ -153,7 +153,15 @@ export const POST = route("ai.chat", async (req) => {
       let servedModel = model.model;
       try {
         controller.enqueue(sse("phase", { phase: "write" }));
-        const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}` });
+        const wholeWork = b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist";
+        const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}`, otherChars: wholeWork ? 3500 : undefined });
+        if (b.action === "journal_checklist") {
+          // Yüklenen dergi/kılavuz metni karşılaştırma için bağlama eklenir
+          const { data: g } = bundle.project.guideline_file_id
+            ? await s.supabase.from("files").select("name, extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", s.user.id).maybeSingle()
+            : { data: null };
+          ctx.text += g?.extracted_text ? `\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ (${g.name})\n${String(g.extracted_text).slice(0, 20000)}` : "\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ\n(Kılavuz yüklenmemiş.)";
+        }
         controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
         for await (const ev of streamWith(model, { system, context: ctx.text, messages, maxTokens: models.max_output_tokens, effort: models.effort }, req.signal)) {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }

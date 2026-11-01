@@ -8,5 +8,6 @@ export function sourceRowToItemClient(r: any): CitationItem {
     editors: Array.isArray(r.verification?.editors) ? r.verification.editors : undefined, year: r.year, month: r.month,
     containerTitle: r.container_title, volume: r.volume, issue: r.issue, pages: r.pages, publisher: r.publisher, publisherPlace: r.publisher_place,
     edition: r.edition, doi: r.doi, url: r.url, isbn: r.isbn, pmid: r.pmid, arxivId: r.arxiv_id, institution: r.type === "thesis" ? r.publisher : null,
+    genre: r.verification?.genre ?? null, archive: r.verification?.archive ?? null, archiveId: r.verification?.archiveId ?? null,
   };
 }

@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, Check, ListOrdered, Mic, MicOff, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
+import { ArrowUp, BarChart3, Check, ListOrdered, Mic, MicOff, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
 import { cn } from "@/components/ui/cn";
@@ -26,6 +26,7 @@ interface Props {
   onMemoryChanged: () => void;
   onSourcesAdded: (rows: any[]) => void;
   onOpenOutline?: () => void;
+  onOpenAnalysis?: () => void;
   /** Dış bileşenlerin (yorumlar vb.) asistana istek göndermesi için */
   registerSend?: (fn: (text: string, action?: AssistantAction, selection?: string) => void) => void;
   language?: string;
@@ -33,6 +34,11 @@ interface Props {
 
 const STAGE_ACTIONS: AssistantAction[] = ["plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "interpret", "discussion", "consistency"];
 const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure"];
+const ETHICS_STAGES = new Set(["method", "sample", "participants", "instruments", "appendices", "methods_article", "declarations", "risks"]);
+/** Bölüme göre ek eylemler: özet/abstract her bölümde, etik kurul belgeleri yöntem ve ek bölümlerinde */
+function extraActions(key?: string): AssistantAction[] {
+  return [...(key === "title_abstract" || key === "conclusion" || key === "discussion_article" ? ["abstract" as const] : []), ...(key && ETHICS_STAGES.has(key) ? ["ethics_docs" as const] : []), ...(key !== "title_abstract" && key !== "conclusion" && key !== "discussion_article" ? ["abstract" as const] : [])];
+}
 const USAGE_LABEL: Record<string, string> = { ai_requests: "yapay zekâ isteği", tokens: "token", source_searches: "kaynak tarama", storage_mb: "depolama" };
 const PHASE_LABEL: Record<ChatPhase, string> = { plan: "Karar", search: "Arama", verify: "Doğrulama", read: "Okuma", write: "Yazım", gaps: "Eksikler" };
 
@@ -56,7 +62,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, registerSend, language }: Props) {
+export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -251,9 +257,10 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
         )}
         <div className="no-scrollbar -mx-2.5 mb-2 flex gap-1.5 overflow-x-auto px-2.5 sm:-mx-3 sm:px-3">
           {onOpenOutline && <button disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {t("Alt başlıklarla yaz")}</button>}
+          {onOpenAnalysis && (dataFiles.length > 0 || def?.requiresUserData) && <button disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button>}
           <button onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-900 bg-ink-900 text-white hover:bg-ink-800")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>
           {input.trim().length > 20 && <button disabled={busy} onClick={() => send(input, "from_notes")} className={cn(chip, "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100")}>{t(ASSISTANT_ACTIONS.from_notes.label)}</button>}
-          {STAGE_ACTIONS.filter((a) => (a === "interpret" || a === "discussion" ? def?.requiresUserData : true)).map((a) => (
+          {[...STAGE_ACTIONS.filter((a) => (a === "interpret" || a === "discussion" ? def?.requiresUserData : true)), ...extraActions(stage?.key)].map((a) => (
             <button key={a} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[a].label), a)} className={cn(chip, "border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}>{t(ASSISTANT_ACTIONS[a].label)}</button>
           ))}
         </div>

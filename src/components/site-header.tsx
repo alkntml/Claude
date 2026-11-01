@@ -12,6 +12,8 @@ const NAV = [
   { href: "/#nasil", label: "Nasıl çalışır" },
   { href: "/#kaynaklar", label: "Veri kaynakları" },
   { href: "/fiyatlar", label: "Fiyatlar" },
+  { href: "/kurumlar", label: "Kurumlar" },
+  { href: "/uzman-destegi", label: "Uzman desteği" },
   { href: "/yardim", label: "Yardım" },
 ];
 

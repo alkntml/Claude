@@ -1,7 +1,7 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
+import { Building2, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,8 +12,9 @@ import { Modal } from "./ui/primitives";
 import { useToast } from "./ui/toast";
 import { api } from "@/lib/client";
 import { createBrowser } from "@/lib/supabase/browser";
+import { expertUrl } from "@/lib/expert";
 
-interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean } }
+interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null } }
 
 const NAV = [
   { href: "/panel", label: "Kontrol paneli", icon: Home },
@@ -32,7 +33,7 @@ export function AppShell({ children, user }: Props) {
   const [msg, setMsg] = useState("");
   const [sending, setSending] = useState(false);
 
-  const nav = [...NAV, ...(user.isAdmin ? [{ href: "/yonetim", label: "Yönetim", icon: ShieldCheck }] : [])];
+  const nav = [...NAV, ...(user.isOrgAdmin ? [{ href: "/kurum", label: "Kurumum", icon: Building2 }] : []), ...(user.isAdmin ? [{ href: "/yonetim", label: "Yönetim", icon: ShieldCheck }] : [])];
 
   async function logout() {
     await createBrowser().auth.signOut();
@@ -72,6 +73,9 @@ export function AppShell({ children, user }: Props) {
               </Link>
             );
           })}
+          <a href={expertUrl(undefined, "app-menu")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-500 transition-colors hover:text-ink-900">
+            <GraduationCap className="h-[18px] w-[18px]" /><span>{t("Uzman desteği")}</span><ExternalLink className="ml-auto h-3.5 w-3.5 opacity-60" />
+          </a>
         </nav>
       </div>
       <div className="mt-auto space-y-2 p-3">

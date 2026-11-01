@@ -10,7 +10,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const s = await getSession();
   if (!s) redirect("/giris");
   return (
-    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin" }}>
+    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null }}>
       {children}
     </AppShell>
   );

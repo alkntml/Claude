@@ -30,6 +30,8 @@ export async function buildContext(params: {
   memory: any[];
   query: string;
   maxSources?: number;
+  /** Diğer bölümlerden alınacak en fazla karakter (özet/abstract gibi bütünü gerektiren eylemler için artırılır) */
+  otherChars?: number;
 }): Promise<BuiltContext> {
   const { db, project, stage, stages, sources, memory, query } = params;
   const ctx = project.context ?? {};
@@ -54,7 +56,8 @@ export async function buildContext(params: {
   const others = stages.filter((s) => s.id !== stage?.id && s.word_count > 0);
   if (others.length) {
     out.push("\n## DİĞER BÖLÜMLERİN DURUMU");
-    for (const s of others) out.push(`- ${s.title} (${s.word_count} kelime): ${String(s.content_text).slice(0, 400).replace(/\s+/g, " ")}${s.content_text.length > 400 ? "…" : ""}`);
+    const lim = params.otherChars ?? 400;
+    for (const s of others) out.push(`- ${s.title} (${s.word_count} kelime): ${String(s.content_text).slice(0, lim).replace(/\s+/g, " ")}${s.content_text.length > lim ? "…" : ""}`);
   }
 
   if (stage) {

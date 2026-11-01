@@ -60,6 +60,15 @@ export const ADMIN_RESOURCES = {
     create: null,
     deletable: false,
   },
+  organizations: {
+    table: "organizations",
+    select: "id, name, plan_id, seats, join_code, email_domain, active, expires_at, notes, created_at",
+    order: "created_at",
+    search: "name",
+    update: z.object({ name: z.string().min(1).max(200).optional(), plan_id: z.string().max(40).optional(), seats: z.number().int().min(1).max(100000).optional(), email_domain: z.string().max(200).nullable().optional(), active: z.boolean().optional(), expires_at: z.string().datetime().nullable().optional(), notes: z.string().max(5000).optional() }),
+    create: z.object({ name: z.string().min(1).max(200), plan_id: z.string().max(40).default("pro"), seats: z.number().int().min(1).max(100000).default(50), email_domain: z.string().max(200).nullable().optional(), expires_at: z.string().datetime().nullable().optional(), notes: z.string().max(5000).default("") }),
+    deletable: true,
+  },
   errors: {
     table: "error_logs",
     select: "id, user_id, route, message, stack, meta, created_at",
@@ -72,4 +81,4 @@ export const ADMIN_RESOURCES = {
 } as const;
 
 export type AdminResource = keyof typeof ADMIN_RESOURCES;
-export const SETTING_KEYS = ["ai.models", "ai.system_prompt", "ai.stage_prompts", "sources.enabled", "limits.rate", "plagiarism"] as const;
+export const SETTING_KEYS = ["ai.models", "ai.system_prompt", "ai.stage_prompts", "sources.enabled", "limits.rate", "plagiarism", "billing.student", "referral", "site.contact"] as const;

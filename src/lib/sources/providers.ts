@@ -106,21 +106,43 @@ export function parseOpenAlex(json: any): SourceRecord[] {
   });
 }
 
+/** OpenAlex arama adresi (extra: ek filtreler, ör. Türkçe yayınlar) */
+export function openAlexUrl(q: SearchQuery, cfg: ProviderConfig, extra: string[] = []): string {
+  const filters: string[] = [...extra];
+  const [from, to] = yearRange(q);
+  if (from) filters.push(`from_publication_date:${from}-01-01`);
+  if (to) filters.push(`to_publication_date:${to}-12-31`);
+  if (q.openAccessOnly) filters.push("is_oa:true");
+  if (q.author) filters.push(`raw_author_name.search:${q.author.replace(/[,|]/g, " ")}`);
+  const p = new URLSearchParams({ search: q.query, "per-page": String(q.limit ?? 20) });
+  if (filters.length) p.set("filter", filters.join(","));
+  if (cfg.contactEmail) p.set("mailto", cfg.contactEmail);
+  if (cfg.openalexKey) p.set("api_key", cfg.openalexKey);
+  return `https://api.openalex.org/works?${p}`;
+}
+
 const openalex: SourceProvider = {
   id: "openalex",
   label: "OpenAlex",
   async search(q, cfg, signal) {
-    const filters: string[] = [];
-    const [from, to] = yearRange(q);
-    if (from) filters.push(`from_publication_date:${from}-01-01`);
-    if (to) filters.push(`to_publication_date:${to}-12-31`);
-    if (q.openAccessOnly) filters.push("is_oa:true");
-    if (q.author) filters.push(`raw_author_name.search:${q.author.replace(/[,|]/g, " ")}`);
-    const p = new URLSearchParams({ search: q.query, "per-page": String(q.limit ?? 20) });
-    if (filters.length) p.set("filter", filters.join(","));
-    if (cfg.contactEmail) p.set("mailto", cfg.contactEmail);
-    if (cfg.openalexKey) p.set("api_key", cfg.openalexKey);
-    return parseOpenAlex(await getJson(`https://api.openalex.org/works?${p}`, { signal }));
+    return parseOpenAlex(await getJson(openAlexUrl(q, cfg), { signal }));
+  },
+};
+
+/**
+ * Türkiye kaynakları: OpenAlex'te Türkçe yayınlar ve Türkiye adresli yazarların yayınları.
+ * DergiPark ve TR Dizin dergilerinin büyük bölümü OpenAlex'te dizinlidir; kayıtlar gerçek ve doğrulanabilirdir.
+ */
+const turkiye: SourceProvider = {
+  id: "turkiye",
+  label: "Türkiye (Türkçe ve Türkiye adresli yayınlar)",
+  async search(q, cfg, signal) {
+    const half = { ...q, limit: Math.max(5, Math.ceil((q.limit ?? 20) / 2)) };
+    const [tr, inst] = await Promise.all([
+      getJson(openAlexUrl(half, cfg, ["language:tr"]), { signal }).then(parseOpenAlex).catch(() => [] as SourceRecord[]),
+      getJson(openAlexUrl(half, cfg, ["institutions.country_code:tr"]), { signal }).then(parseOpenAlex).catch(() => [] as SourceRecord[]),
+    ]);
+    return [...tr, ...inst].map((r) => ({ ...r, origins: ["turkiye" as const] }));
   },
 };
 
@@ -512,7 +534,7 @@ const unpaywall: SourceProvider = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export const PROVIDERS: Record<SourceProviderId, SourceProvider> = {
-  openalex, crossref, semantic_scholar: semanticScholar, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall,
+  openalex, crossref, semantic_scholar: semanticScholar, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall, turkiye,
 };
 
 export const PROVIDER_LABELS: Record<SourceProviderId, string> = Object.fromEntries(

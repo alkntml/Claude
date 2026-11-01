@@ -2,6 +2,7 @@ import "server-only";
 import { ApiError } from "@/lib/api";
 import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
+import { activeCredits } from "@/lib/growth";
 
 export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check";
 
@@ -22,6 +23,16 @@ function monthStart(): string {
 export async function planLimits(planId: string): Promise<PlanLimits> {
   const { data } = await adminClient().from("plans").select("limits").eq("id", planId).maybeSingle();
   return (data?.limits ?? {}) as PlanLimits;
+}
+
+/** Paket limitleri + süresi dolmamış krediler (davet ödülü vb.) */
+export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
+  const [l, c] = await Promise.all([planLimits(planId), activeCredits(userId)]);
+  return {
+    ...l,
+    ai_requests_month: l.ai_requests_month == null ? l.ai_requests_month : l.ai_requests_month + c.ai_requests,
+    source_searches_month: l.source_searches_month == null ? l.source_searches_month : l.source_searches_month + c.source_searches,
+  };
 }
 
 export interface UsageSummary {
@@ -63,7 +74,7 @@ async function rateLimit(userId: string, kind: UsageKind) {
 /** İşlem öncesi paket limitlerini kontrol eder; aşılmışsa 402 döner. */
 export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string } = {}) {
   await rateLimit(userId, kind);
-  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
+  const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   const over = (used: number, lim: number | null | undefined) => lim !== null && lim !== undefined && used >= lim;
   if (kind === "ai_request") {
     if (over(usage.ai_requests, limits.ai_requests_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
@@ -90,7 +101,7 @@ export interface UsageWarning { kind: "ai_requests" | "tokens" | "source_searche
 
 /** Paket limitinin %80'ine ulaşılan kalemler (kullanıcıya önceden uyarı göstermek için). */
 export async function usageWarnings(userId: string, planId: string, threshold = 0.8): Promise<UsageWarning[]> {
-  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
+  const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   const pairs: [UsageWarning["kind"], number, number | null | undefined][] = [
     ["ai_requests", usage.ai_requests, limits.ai_requests_month],
     ["tokens", usage.tokens, limits.tokens_month],

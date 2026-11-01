@@ -3,7 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
 import { adminClient } from "@/lib/supabase/admin";
-import { planLimits, usageSummary } from "@/lib/usage";
+import { effectiveLimits, usageSummary } from "@/lib/usage";
 
 export const GET = route("account.get", async (req) => {
   const s = await requireUser();
@@ -20,7 +20,7 @@ export const GET = route("account.get", async (req) => {
   }
   const [usage, limits, subs] = await Promise.all([
     usageSummary(s.user.id),
-    planLimits(s.profile.plan_id),
+    effectiveLimits(s.user.id, s.profile.plan_id),
     s.supabase.from("subscriptions").select("*").eq("user_id", s.user.id).order("created_at", { ascending: false }).limit(5),
   ]);
   return json({ profile: s.profile, usage, limits, subscriptions: subs.data ?? [] });

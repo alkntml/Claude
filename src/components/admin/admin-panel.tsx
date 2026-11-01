@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Activity, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
+import { Activity, Building2, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -12,9 +12,9 @@ import { STAGE_LIBRARY } from "@/lib/workflows";
 import { DailyBars } from "./chart";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "overview" | "users" | "plans" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors";
+type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors";
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package },
+  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
   { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon },
 ];
@@ -49,6 +49,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "overview" && <Overview />}
         {tab === "users" && <UsersTab selfId={selfId} />}
         {tab === "plans" && <PlansTab />}
+        {tab === "orgs" && <OrgsTab />}
         {tab === "ai" && <AiTab />}
         {tab === "sources" && <SourcesTab />}
         {tab === "announcements" && <AnnouncementsTab />}
@@ -232,7 +233,7 @@ function SourcesTab() {
   const { get, load, ready } = useSettings();
   const [enabled, setEnabled] = useState<Record<string, boolean>>({});
   useEffect(() => {
-    if (ready) setEnabled(get("sources.enabled") ?? {});
+    if (ready) setEnabled({ turkiye: true, ...(get("sources.enabled") ?? {}) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
   async function toggle(k: string) {
@@ -240,7 +241,7 @@ function SourcesTab() {
     setEnabled(next);
     try { await api("/api/admin/settings", { method: "PATCH", json: { id: "sources.enabled", value: next } }); load(); } catch (e) { toast({ tone: "error", title: "Kaydedilemedi", detail: (e as Error).message }); }
   }
-  const notes: Record<string, string> = { core: "CORE_API_KEY gerektirir.", unpaywall: "Yalnızca DOI ile açık erişim bulma; ACADEMIC_CONTACT_EMAIL gerektirir.", google_books: "Yalnızca kitap künyesi; açıklamalar özet olarak kullanılmaz. Kullanım koşullarını kontrol edin.", semantic_scholar: "Anahtarsız kullanımda düşük hız limiti vardır.", openaire: "Graph API v1." };
+  const notes: Record<string, string> = { turkiye: "OpenAlex üzerinden Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil).", core: "CORE_API_KEY gerektirir.", unpaywall: "Yalnızca DOI ile açık erişim bulma; ACADEMIC_CONTACT_EMAIL gerektirir.", google_books: "Yalnızca kitap künyesi; açıklamalar özet olarak kullanılmaz. Kullanım koşullarını kontrol edin.", semantic_scholar: "Anahtarsız kullanımda düşük hız limiti vardır.", openaire: "Graph API v1." };
   return (
     <div className="grid gap-3 md:grid-cols-2">
       {Object.entries(PROVIDER_LABELS).map(([k, l]) => (
@@ -249,6 +250,98 @@ function SourcesTab() {
           <button onClick={() => toggle(k)} role="switch" aria-checked={!!enabled[k]} className={cn("relative h-6 w-11 shrink-0 rounded-full transition", enabled[k] ? "bg-brand-600" : "bg-ink-200")}><motion.span layout className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow" style={{ left: enabled[k] ? 22 : 2 }} /></button>
         </div>
       ))}
+    </div>
+  );
+}
+
+/** Büyüme ve iletişim ayarları: öğrenci indirimi, davet ödülü, iletişim e-postası */
+function GrowthSettings() {
+  const toast = useToast();
+  const { get, load, ready } = useSettings();
+  const [student, setStudent] = useState({ enabled: true, percent: 30, domains: "edu.tr, edu" });
+  const [ref, setRef] = useState({ enabled: true, ai_requests: 50, source_searches: 50, valid_days: 60, monthly_cap: 20 });
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    if (!ready) return;
+    const st = get("billing.student"); if (st) setStudent({ enabled: st.enabled !== false, percent: st.percent ?? 30, domains: (st.domains ?? ["edu.tr", "edu"]).join(", ") });
+    const rf = get("referral"); if (rf) setRef((r) => ({ ...r, ...rf }));
+    setEmail(get("site.contact")?.email ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
+  async function save() {
+    try {
+      await api("/api/admin/settings", { method: "PATCH", json: { id: "billing.student", value: { enabled: student.enabled, percent: Math.max(0, Math.min(90, Number(student.percent) || 0)), domains: student.domains.split(",").map((d) => d.trim().replace(/^[.@]/, "")).filter(Boolean) } } });
+      await api("/api/admin/settings", { method: "PATCH", json: { id: "referral", value: { enabled: ref.enabled, ai_requests: Number(ref.ai_requests) || 0, source_searches: Number(ref.source_searches) || 0, valid_days: Number(ref.valid_days) || 30, monthly_cap: Number(ref.monthly_cap) || 0 } } });
+      await api("/api/admin/settings", { method: "PATCH", json: { id: "site.contact", value: { email: email.trim() } } });
+      toast({ tone: "success", title: "Ayarlar kaydedildi" }); load();
+    } catch (e) { toast({ tone: "error", title: "Kaydedilemedi", detail: (e as Error).message }); }
+  }
+  const n = (v: number, f: (x: number) => void) => <input className="input !py-1.5" type="number" value={v} onChange={(e) => f(Number(e.target.value))} />;
+  return (
+    <div className="card h-fit space-y-3 p-5">
+      <h3 className="font-semibold">Öğrenci indirimi, davet ve iletişim</h3>
+      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={student.enabled} onChange={(e) => setStudent({ ...student, enabled: e.target.checked })} /> Öğrenci indirimi etkin</label>
+      <div className="grid grid-cols-2 gap-2"><label className="text-xs text-ink-500">İndirim %{n(student.percent, (x) => setStudent({ ...student, percent: x }))}</label><label className="text-xs text-ink-500">Alan adları<input className="input !py-1.5" value={student.domains} onChange={(e) => setStudent({ ...student, domains: e.target.value })} /></label></div>
+      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={ref.enabled} onChange={(e) => setRef({ ...ref, enabled: e.target.checked })} /> Davet programı etkin</label>
+      <div className="grid grid-cols-2 gap-2 text-xs text-ink-500">
+        <label>AI isteği ödülü{n(ref.ai_requests, (x) => setRef({ ...ref, ai_requests: x }))}</label>
+        <label>Tarama ödülü{n(ref.source_searches, (x) => setRef({ ...ref, source_searches: x }))}</label>
+        <label>Geçerlilik (gün){n(ref.valid_days, (x) => setRef({ ...ref, valid_days: x }))}</label>
+        <label>Aylık ödül sınırı (davet eden){n(ref.monthly_cap, (x) => setRef({ ...ref, monthly_cap: x }))}</label>
+      </div>
+      <label className="block text-xs text-ink-500">Kurum teklifleri için iletişim e-postası<input className="input !py-1.5" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="iletisim@alanadi.com" /></label>
+      <Button onClick={save}>Kaydet</Button>
+    </div>
+  );
+}
+
+function OrgsTab() {
+  const toast = useToast();
+  const { rows, load } = useRows("organizations");
+  const [form, setForm] = useState({ name: "", plan_id: "pro", seats: 50, email_domain: "", expires_at: "" });
+  const [adminEmail, setAdminEmail] = useState<Record<string, string>>({});
+  async function create() {
+    try {
+      await api("/api/admin/organizations", { method: "POST", json: { name: form.name, plan_id: form.plan_id, seats: Number(form.seats) || 1, email_domain: form.email_domain.trim() || null, expires_at: form.expires_at ? new Date(`${form.expires_at}T23:59:59`).toISOString() : null } });
+      setForm({ name: "", plan_id: "pro", seats: 50, email_domain: "", expires_at: "" }); load();
+    } catch (e) { toast({ tone: "error", title: "Oluşturulamadı", detail: (e as Error).message }); }
+  }
+  async function setAdmin(orgId: string) {
+    try { await api("/api/admin/org-member", { method: "POST", json: { orgId, email: adminEmail[orgId], role: "admin" } }); toast({ tone: "success", title: "Kurum yöneticisi atandı" }); setAdminEmail((m) => ({ ...m, [orgId]: "" })); }
+    catch (e) { toast({ tone: "error", title: "Atanamadı", detail: (e as Error).message }); }
+  }
+  return (
+    <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
+      <div className="space-y-4">
+      <div className="card h-fit space-y-3 p-5">
+        <h3 className="font-semibold">Yeni kurum lisansı</h3>
+        <input className="input" placeholder="Kurum adı (ör. Hacettepe Üniversitesi SBE)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+        <div className="grid grid-cols-2 gap-2">
+          <select className="input" value={form.plan_id} onChange={(e) => setForm({ ...form, plan_id: e.target.value })}><option value="basic">Basic</option><option value="pro">Pro</option><option value="premium">Premium</option></select>
+          <input className="input" type="number" min={1} placeholder="Kullanıcı sayısı" value={form.seats} onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })} />
+        </div>
+        <input className="input" placeholder="E-posta alan adı (isteğe bağlı, ör. hacettepe.edu.tr)" value={form.email_domain} onChange={(e) => setForm({ ...form, email_domain: e.target.value })} />
+        <label className="block"><span className="label">Bitiş tarihi (isteğe bağlı)</span><input className="input" type="date" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} /></label>
+        <Button onClick={create} disabled={!form.name.trim()}>Oluştur</Button>
+        <p className="text-xs text-ink-500">Oluşturduktan sonra kurum yöneticisinin e-postasını girip atayın. Katılım kodunu kuruma iletin; kullanıcılar Hesap sayfasından katılır.</p>
+      </div>
+      <GrowthSettings />
+      </div>
+      <div className="space-y-2">
+        {rows.length === 0 && <Empty icon={<Users className="h-5 w-5" />} title="Kurum yok" />}
+        {rows.map((o) => (
+          <div key={o.id} className="card space-y-2 p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="flex-1 font-medium">{o.name}</p>
+              <Badge tone="brand">{o.plan_id}</Badge><Badge>{o.seats} kullanıcı</Badge>
+              <code className="rounded bg-ink-100 px-2 py-0.5 text-xs">{o.join_code}</code>
+              <button onClick={async () => { await api("/api/admin/organizations", { method: "PATCH", json: { id: o.id, active: !o.active } }); load(); }}><Badge tone={o.active ? "green" : "ink"}>{o.active ? "Etkin" : "Pasif"}</Badge></button>
+            </div>
+            <p className="text-xs text-ink-500">{o.email_domain ? `Yalnızca @${o.email_domain}` : "Alan adı kısıtı yok"}{o.expires_at ? ` · bitiş ${new Date(o.expires_at).toLocaleDateString("tr-TR")}` : ""}</p>
+            <div className="flex gap-2"><input className="input !py-1.5 text-sm" placeholder="Kurum yöneticisi e-postası" value={adminEmail[o.id] ?? ""} onChange={(e) => setAdminEmail((m) => ({ ...m, [o.id]: e.target.value }))} /><Button size="sm" onClick={() => setAdmin(o.id)} disabled={!adminEmail[o.id]?.includes("@")}>Yönetici ata</Button></div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

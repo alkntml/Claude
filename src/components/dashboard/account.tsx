@@ -9,6 +9,7 @@ import { Badge, Modal, ProgressBar } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api } from "@/lib/client";
+import { GrowthSection } from "./growth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function AccountView({ profile, usage, limits, plans, subscriptions, payments }: { profile: any; usage: any; limits: any; plans: any[]; subscriptions: any[]; payments: { id: string; label: string; usable: boolean; implemented: boolean; configured: boolean }[] }) {
@@ -75,6 +76,8 @@ export function AccountView({ profile, usage, limits, plans, subscriptions, paym
           </div>
         </section>
       </div>
+
+      <GrowthSection />
 
       <section>
         <div className="flex flex-wrap items-center justify-between gap-3">

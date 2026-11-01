@@ -33,6 +33,8 @@ export interface CitationItem {
   arxivId?: string | null;
   institution?: string | null; // tez/rapor
   genre?: string | null;       // "Doktora tezi", "Yüksek lisans tezi"
+  archive?: string | null;     // ör. "YÖK Ulusal Tez Merkezi"
+  archiveId?: string | null;   // ör. tez numarası
   accessed?: string | null;    // ISO tarih (web sayfası)
 }
 

@@ -30,6 +30,10 @@ export const SourceInput = z.object({
   accessLevel: z.enum(["metadata", "abstract", "full_text"]).optional(),
   origins: z.array(z.string()).max(12).default(["manual"]),
   relevanceNote: z.string().max(4000).optional(),
+  /** Tez türü ("Yüksek lisans tezi", "Doktora tezi") ve arşiv bilgisi (ör. YÖK Ulusal Tez Merkezi, tez no) */
+  genre: z.string().max(100).nullable().optional(),
+  archive: z.string().max(200).nullable().optional(),
+  archiveId: z.string().max(50).nullable().optional(),
 });
 
 export function toRow(b: z.infer<typeof SourceInput>) {
@@ -43,7 +47,10 @@ export function toRow(b: z.infer<typeof SourceInput>) {
     openalex_id: b.openalexId ?? null, url: b.url || null, oa_url: b.oaUrl || null, abstract: b.abstract ?? null,
     license: b.license ?? null, language: b.language ?? null, access_level: access,
     origin: b.origins[0] ?? "manual", relevance_note: b.relevanceNote ?? "",
-    ...(b.editors?.length ? { verification: { editors: b.editors } } : {}),
+    // Ek künye alanları verification JSON’unda tutulur (şema değişikliği gerektirmez)
+    ...(b.editors?.length || b.genre || b.archive || b.archiveId
+      ? { verification: { ...(b.editors?.length ? { editors: b.editors } : {}), ...(b.genre ? { genre: b.genre } : {}), ...(b.archive ? { archive: b.archive } : {}), ...(b.archiveId ? { archiveId: b.archiveId } : {}) } }
+      : {}),
   };
 }
 

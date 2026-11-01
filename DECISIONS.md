@@ -90,3 +90,21 @@ Uzun işler (alt başlıklarla yazım, toplu yer tutucu düzeltme, matris) sunuc
 - Pencereler (`Modal`) her zaman `document.body`'ye portal ile çizilir: dönüşümlü/`backdrop-blur` üst öğeler sabit konumu bozuyordu. Üst çubuk `z-30`.
 - Limit uyarıları: sohbet `done` olayında %80 üstü kalemler (oturum başına bir kez bildirim) ve panelde şerit.
 
+### D26 — Türk kaynakları: gerçek API + bağlantı, kazıma yok
+DergiPark'ın OAI-PMH arayüzü anahtar kelime araması sunmuyor; TR Dizin ve YÖK Tez Merkezi'nin herkese açık arama API'si yok (YÖK Tez kazımaya kapalı). Bu yüzden: yeni `turkiye` sağlayıcısı OpenAlex'te `language:tr` ve `institutions.country_code:tr` filtreleriyle arar (DergiPark/TR Dizin dergilerinin çoğu OpenAlex'te dizinli); DergiPark kayıtları bağlantıdan tanınıp etiketlenir; DergiPark/TR Dizin/YÖK Tez için aynı sorguyla yeni sekme bağlantıları verilir (YÖK Tez sorgu parametresi almadığı için sorgu panoya kopyalanır). Tezler `genre` (master/doctoral/art) ve `archive: "yok"` + `archiveId` ile `sources.verification` JSON'unda saklanır (şema değişikliği yok); APA 7'de "[Yüksek lisans tezi, Üniversite]. YÖK Ulusal Tez Merkezi (Tez No. …)" üretilir. Daha önce tez türü saklanmadığı için tüm tezler "Doktora tezi" görünüyordu; düzeltildi.
+
+### D27 — Kaynak yöneticisi alışverişi: kendi ayrıştırıcımız
+BibTeX/BibLaTeX (iç içe parantez, @string, # birleştirme, LaTeX Türkçe karakterleri, kurumsal yazar), RIS (satır devamı) ve CSL-JSON için bağımlılıksız ayrıştırıcı (`src/lib/sources/bib.ts`), gidiş-dönüş testli. İçe aktarmada en fazla 300 kayıt; DOI doğrulaması 8'li eşzamanlılıkla (`mapLimit`), aynı DOI veya ≥0,92 başlık benzerliği atlanır.
+
+### D28 — İstatistik: kendi uygulamamız, bilinen değerlerle test
+`src/lib/stats/dist.ts` (Lanczos log-gama, Numerical Recipes eksik beta/gama; t, F, χ², normal) ve `tests.ts` (Student/Welch t + Levene, eşleştirilmiş/tek örneklem t, ANOVA + η²/ω² + Bonferroni, Pearson/Spearman + Fisher z GA, OLS çoklu regresyon + β + VIF, χ² + Cramér V, Cronbach α, Mann-Whitney U, Kruskal-Wallis, SPSS çarpıklık/basıklık). Tablo değerleri ve elle hesaplanmış örneklerle doğrulandı. `apa.ts` APA 7 tablo (Markdown) + TR/EN sonuç cümlesi üretir; p < .001 ve başta sıfırsız gösterim. Yapay zekâ sayı üretmez. Shapiro-Wilk eklenmedi (karmaşık ve hataya açık); normallik için çarpıklık/basıklık ±1,5 ölçütü kullanılır ve kaynağın projeye eklenmesi gerektiği notu verilir.
+
+### D29 — Sunum, Abstract, etik, dergi
+Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, `pptxgenjs` ile .pptx; atıflar [[kaynak:Sn]] → gerçek künyeye çevrilir, listede olmayan atıf silinir, son slayt(lar)da yalnızca kullanılan kaynakların kaynakçası. Özet/Abstract, etik kurul belgeleri, ön yazı ve dergi kılavuzu kontrol listesi asistan eylemleri (bilinmeyen bilgiler [DOLDURULACAK]); bu eylemlerde diğer bölümlerden 3500 karakter bağlama girer. Dergi önerisi yapay zekâdan değil, OpenAlex'te benzer makalelerin yayımlandığı dergilerden (son 6 yıl, Türkçe yayınlar dahil) çıkarılır; h-endeksi ve DOAJ bilgisi `/sources` uç noktasından.
+
+### D30 — Büyüme: kurum lisansı, öğrenci indirimi, davet, uzman desteği
+- Kurumlar `organizations` + `organization_members` (kullanıcı başına tek kurum). Katılma/ayrılma sunucuda service role ile ve açık kontrollerle (koltuk, alan adı, süre, e-posta doğrulaması). Etkin paket = kişisel ve kurum paketinin yükseği (`getSession`). Kurum yöneticisi üyelerin yalnızca kullanım sayılarını görür (içerik/başlık yok).
+- Davet: `profiles.referral_code` (tekil, 8 hane), kayıtta `raw_user_meta_data.ref` ile `referred_by`; e-posta doğrulanınca (geri dönüş veya ilk panel ziyareti) önce `referral_rewarded_at` koşullu güncellenir (çift ödül yok), sonra `usage_credits` yazılır; davet edene aylık üst sınır. Krediler süresi dolana kadar aylık limite eklenir (`effectiveLimits`). Kullanıcı davet alanlarını değiştiremez (tetikleyici).
+- Öğrenci indirimi: doğrulanmış e-posta + alan adı listesi (`billing.student`), ödeme sayfasında fiyat sunucuda düşürülür.
+- Uzman desteği insan hizmeti olarak dermanlik.com.tr'ye UTM'li bağlantıyla yönlendirilir; kişisel veri gönderilmez.
+

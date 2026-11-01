@@ -26,18 +26,20 @@ function CitationView({ node, updateAttributes, deleteNode, selected, editor, ge
   const ctx = useCitations();
   const [open, setOpen] = useState(false);
   const [check, setCheck] = useState<{ id: string; sentence: string } | null>(null);
+  // Pencere ekranın dışına taşmasın: atfın konumuna göre sola kaydırılır
+  const [shift, setShift] = useState(0);
   const ids: string[] = node.attrs.ids ?? [];
   const missing = !ctx || ids.some((id) => !ctx.sources[id]);
   const label = ctx && !missing ? richToPlain(ctx.engine.cite(ids, { locator: node.attrs.locator, narrative: node.attrs.narrative })) : t("[kaynak bulunamadı]");
   const sup = ctx?.engine.style === "ama";
   return (
     <NodeViewWrapper as="span" className="relative">
-      <span contentEditable={false} onClick={() => setOpen((o) => !o)} className={`citation-node ${missing ? "missing" : ""} ${selected ? "ring-2 ring-brand-300" : ""}`} data-citation data-ids={ids.join(",")}>
+      <span contentEditable={false} onClick={(e) => { const r = (e.currentTarget as HTMLElement).getBoundingClientRect(); const w = Math.min(320, window.innerWidth - 32); setShift(Math.min(0, window.innerWidth - 16 - (r.left + w))); setOpen((o) => !o); }} className={`citation-node ${missing ? "missing" : ""} ${selected ? "ring-2 ring-brand-300" : ""}`} data-citation data-ids={ids.join(",")}>
         {sup ? <sup>{label}</sup> : label}
       </span>
       <AnimatePresence>
         {open && (
-          <motion.span contentEditable={false} initial={{ opacity: 0, y: 4, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 4 }} className="absolute left-0 top-7 z-30 block w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-ink-100 bg-white p-3 font-sans text-[13px] leading-snug shadow-xl" onMouseDown={(e) => e.stopPropagation()}>
+          <motion.span contentEditable={false} initial={{ opacity: 0, y: 4, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 4 }} style={{ left: shift }} className="absolute top-7 z-30 block w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-ink-100 bg-white p-3 font-sans text-[13px] leading-snug shadow-xl" onMouseDown={(e) => e.stopPropagation()}>
             {ids.map((id) => {
               const s = ctx?.sources[id];
               return (

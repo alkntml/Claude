@@ -15,6 +15,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const params = useSearchParams();
   const next = params.get("next") ?? "/panel";
   const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/panel";
+  // Davet kodu: bağlantıdan gelir, oturum boyunca saklanır (kayıt formuna geçişte kaybolmasın)
+  const [ref] = useState(() => {
+    const fromUrl = (params.get("ref") ?? "").replace(/[^A-Za-z0-9]/g, "").slice(0, 16).toUpperCase();
+    try { if (fromUrl) sessionStorage.setItem("akademi:ref", fromUrl); return fromUrl || sessionStorage.getItem("akademi:ref") || ""; } catch { return fromUrl; }
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -33,7 +38,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       if (mode === "signup") {
         if (password.length < 8) throw new Error(t("Şifre en az 8 karakter olmalıdır."));
         if (!consent) throw new Error(t("Devam etmek için aydınlatma metnini onaylayın."));
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, ...(ref ? { ref } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
         if (error) throw error;
         if (!data.session) { setSent(true); return; }
       } else {
@@ -66,6 +71,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             <>
               <h1 className="text-2xl font-semibold tracking-tight text-ink-900">{mode === "login" ? t("Tekrar hoş geldiniz") : t("Akademik çalışma alanınızı oluşturun")}</h1>
               <p className="mt-1.5 text-sm text-ink-500">{mode === "login" ? t("Kaldığınız yerden devam edin.") : t("Ücretsiz başlayın, kredi kartı gerekmez.")}</p>
+              {mode === "signup" && ref && <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">{t("Davetle geldiniz: e-postanızı doğruladığınızda size ve sizi davet edene ek yapay zekâ isteği ve kaynak tarama hakkı tanımlanır.")}</p>}
+              {mode === "signup" && <p className="mt-2 text-[12.5px] text-ink-500">{t("Üniversite e-postanızla (.edu.tr) kayıt olursanız ücretli paketlerde öğrenci indirimi uygulanır.")}</p>}
               <form onSubmit={submit} className="mt-7 space-y-4">
                 {mode === "signup" && (
                   <div><label className="label" htmlFor="name">{t("Ad soyad")}</label><input id="name" className="input" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" /></div>

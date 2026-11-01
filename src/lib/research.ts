@@ -16,6 +16,16 @@ import { recordUsage } from "@/lib/usage";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+/** Eşzamanlılığı sınırlı map (dış servislere aynı anda çok istek gitmesin) */
+export async function mapLimit<T, R>(items: T[], limit: number, fn: (x: T, i: number) => Promise<R>): Promise<R[]> {
+  const out = new Array<R>(items.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) { const i = next++; out[i] = await fn(items[i], i); }
+  }));
+  return out;
+}
+
 /** SourceRecord (arama sonucu) -> SourceInput (ekleme isteği) */
 export function recordToInput(r: SourceRecord): z.infer<typeof SourceInput> {
   return {
@@ -42,8 +52,7 @@ export async function addSourcesToProject(db: SupabaseClient, projectId: string,
     have.add(d);
     return true;
   });
-  const rows = await Promise.all(
-    fresh.map(async (b) => {
+  const rows = await mapLimit(fresh, 8, async (b) => {
       const row = toRow(b);
       const v = await verifySource({ title: row.title, doi: row.doi, pmid: row.pmid, arxivId: row.arxiv_id }, cfg);
       const filled: Record<string, unknown> = {};
@@ -60,8 +69,7 @@ export async function addSourcesToProject(db: SupabaseClient, projectId: string,
       const { record: _omit, ...vMeta } = v;
       void _omit;
       return { ...row, ...filled, project_id: projectId, user_id: userId, verified: v.status === "verified", verification: { ...("verification" in row ? (row as any).verification : {}), ...vMeta } };
-    }),
-  );
+  });
   if (!rows.length) return { sources: [] as any[], skipped: inputs.length, openAccess: [] as any[] };
   const { data, error } = await db.from("sources").insert(rows).select();
   if (error) throw error;

@@ -1,7 +1,8 @@
 import { getT } from "@/i18n/server";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { getSession } from "@/lib/auth";
-import { planLimits, usageSummary } from "@/lib/usage";
+import { grantReferralReward } from "@/lib/growth";
+import { effectiveLimits, usageSummary } from "@/lib/usage";
 
 export async function generateMetadata() {
   const { t } = await getT();
@@ -12,6 +13,8 @@ export default async function Panel() {
   const s = (await getSession())!;
   const db = s.supabase;
   const uid = s.user.id;
+  // E-posta doğrulaması geri dönüş bağlantısı olmadan yapıldıysa davet ödülü burada verilir (tek seferlik)
+  await grantReferralReward(uid, !!s.user.email_confirmed_at).catch(() => false);
   const [projects, recentStages, sourcesCount, convs, files, ann, usage, limits] = await Promise.all([
     db.from("projects").select("id, title, work_type, academic_level, status, progress, citation_style, updated_at, context").eq("user_id", uid).order("updated_at", { ascending: false }),
     db.from("project_stages").select("id, title, project_id, word_count, updated_at, status").eq("user_id", uid).gt("word_count", 0).order("updated_at", { ascending: false }).limit(6),
@@ -20,7 +23,7 @@ export default async function Panel() {
     db.from("files").select("id, name, purpose, size_bytes, created_at").eq("user_id", uid).order("created_at", { ascending: false }).limit(5),
     db.from("announcements").select("id, title, body, level").order("starts_at", { ascending: false }).limit(3),
     usageSummary(uid).catch(() => null),
-    planLimits(s.profile.plan_id).catch(() => ({})),
+    effectiveLimits(s.user.id, s.profile.plan_id).catch(() => ({})),
   ]);
   return (
     <Dashboard

@@ -190,3 +190,41 @@ describe("depolama politikaları", () => {
     expect(await as(A, "select * from storage.objects")).toHaveLength(1);
   });
 });
+
+describe("kurumsal lisans, davet ve krediler", () => {
+  const C = "44444444-4444-4444-4444-444444444444";
+  it("her profilin tekil davet kodu var; kayıtta ref ile davet eden bağlanır", async () => {
+    const [a] = await as<{ referral_code: string }>(A, "select referral_code from public.profiles where id = auth.uid()");
+    expect(a.referral_code).toMatch(/^[0-9A-F]{8}$/);
+    await db.query("insert into auth.users (id, email, raw_user_meta_data) values ($1, 'c@ornek.com', $2)", [C, JSON.stringify({ ref: a.referral_code.toLowerCase() })]);
+    const [c] = await as<{ referred_by: string; referral_code: string }>(C, "select referred_by, referral_code from public.profiles where id = auth.uid()");
+    expect(c.referred_by).toBe(A);
+    expect(c.referral_code).not.toBe(a.referral_code);
+  });
+  it("kullanıcı davet alanlarını kendisi değiştiremez", async () => {
+    await expectError(as(C, "update public.profiles set referred_by = null where id = auth.uid()"), /yetkiniz yok/);
+    await expectError(as(C, "update public.profiles set referral_code = 'AAAAAAAA' where id = auth.uid()"), /yetkiniz yok/);
+    await expectError(as(C, "update public.profiles set referral_rewarded_at = now() where id = auth.uid()"), /yetkiniz yok/);
+  });
+  it("krediler: kullanıcı yalnızca kendininkini görür, yazamaz", async () => {
+    await db.query("insert into public.usage_credits (user_id, kind, amount, reason) values ($1, 'ai_requests', 50, 'davet')", [A]);
+    expect(await as(A, "select * from public.usage_credits")).toHaveLength(1);
+    expect(await as(B, "select * from public.usage_credits")).toHaveLength(0);
+    await expectError(as(A, "insert into public.usage_credits (user_id, kind, amount, reason) values (auth.uid(), 'ai_requests', 9999, 'hile')"), /row-level security/);
+  });
+  it("kurum: üye kendi kurumunu görür, başkası göremez; üyeliği kendisi ekleyemez", async () => {
+    const [org] = await as<{ id: string; join_code: string }>(ADMIN, "insert into public.organizations (name, plan_id, seats) values ('Örnek Üniversite', 'premium', 2) returning id, join_code");
+    expect(org.join_code).toMatch(/^[0-9A-F]{10}$/);
+    await as(ADMIN, "insert into public.organization_members (org_id, user_id, role) values ($1, $2, 'admin'), ($1, $3, 'member')", [org.id, A, C]);
+    expect(await as(A, "select * from public.organizations")).toHaveLength(1);
+    expect(await as(B, "select * from public.organizations")).toHaveLength(0);
+    // Kurum yöneticisi üyeleri görür, sıradan üye yalnızca kendini
+    expect(await as(A, "select * from public.organization_members")).toHaveLength(2);
+    expect(await as(C, "select * from public.organization_members")).toHaveLength(1);
+    await expectError(as(B, "insert into public.organization_members (org_id, user_id) values ($1, auth.uid())", [org.id]), /row-level security/);
+    await expectError(as(A, "update public.organizations set plan_id = 'premium', seats = 9999 where id = $1", [org.id]).then((r) => { if (!r.length) throw new Error("row-level security: güncelleme engellendi"); }), /row-level security/);
+    // Bir kullanıcı ikinci bir kuruma üye olamaz
+    const [org2] = await as<{ id: string }>(ADMIN, "insert into public.organizations (name) values ('İkinci') returning id");
+    await expectError(as(ADMIN, "insert into public.organization_members (org_id, user_id) values ($1, $2)", [org2.id, A]), /duplicate key|unique/);
+  });
+});

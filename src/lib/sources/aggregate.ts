@@ -86,8 +86,8 @@ export async function searchAll(
   enabled: SourceProviderId[],
   cfg: ProviderConfig,
 ): Promise<SearchResponse> {
-  const ids = (q.providers?.length ? q.providers.filter((p) => enabled.includes(p)) : enabled)
-    .filter((id) => PROVIDERS[id]?.search);
+  const wanted = q.turkishOnly ? (["turkiye"] as SourceProviderId[]) : q.providers?.length ? q.providers : enabled;
+  const ids = wanted.filter((p) => enabled.includes(p) && PROVIDERS[p]?.search);
   const providers: ProviderResult[] = [];
 
   const settled = await Promise.all(

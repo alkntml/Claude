@@ -16,7 +16,7 @@ export interface DataSummary {
   correlations: { a: string; b: string; r: number; n: number }[];
 }
 
-const toNum = (s: string) => {
+export const toNum = (s: string) => {
   const t = s.trim().replace(/\s/g, "");
   if (!t) return NaN;
   // Türkçe ondalık virgül desteği: "3,5" -> 3.5 (binlik ayırıcı noktası varsa kaldır)

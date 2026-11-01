@@ -3,6 +3,8 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { ApiError } from "@/lib/api";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { activeOrg, type OrgInfo } from "@/lib/growth";
+import { higherPlan } from "@/lib/pricing";
 
 export interface Profile {
   id: string;
@@ -15,6 +17,11 @@ export interface Profile {
   default_citation_style: string;
   is_suspended: boolean;
   created_at: string;
+  /** Kişisel paket (kurum paketi uygulanmadan önce) */
+  personal_plan_id?: string;
+  /** Etkin kurum üyeliği (kurumsal lisans) */
+  org?: OrgInfo | null;
+  referral_code?: string | null;
 }
 
 export interface Session {
@@ -30,7 +37,13 @@ export async function getSession(): Promise<Session | null> {
   if (!user) return null;
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   if (!profile) return null;
-  return { supabase, user, profile: profile as Profile };
+  const p = profile as Profile;
+  // Kurumsal lisans: kurum paketi kişisel paketten yüksekse o geçerlidir
+  const org = await activeOrg(supabase, user.id);
+  p.personal_plan_id = p.plan_id;
+  p.org = org;
+  if (org) p.plan_id = higherPlan(p.plan_id, org.plan_id);
+  return { supabase, user, profile: p };
 }
 
 export async function requireUser(): Promise<Session> {

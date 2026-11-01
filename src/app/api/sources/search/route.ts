@@ -14,6 +14,7 @@ const Schema = z.object({
   openAccessOnly: z.boolean().optional(),
   limit: z.number().int().min(1).max(50).default(15),
   providers: z.array(z.string()).max(12).optional(),
+  turkishOnly: z.boolean().optional(),
 });
 
 export const POST = route("sources.search", async (req) => {

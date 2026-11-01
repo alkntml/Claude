@@ -1,6 +1,7 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { MatrixButton, MatrixModal } from "./matrix";
+import { RefsImportExport } from "./refs-io";
 import { motion } from "framer-motion";
 import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Trash2, Unlock } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,7 +10,7 @@ import { cn } from "@/components/ui/cn";
 import { Badge, Empty, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
-import { PROVIDER_LABELS } from "@/lib/sources/labels";
+import { isDergiPark, PROVIDER_LABELS, turkishSearchLinks } from "@/lib/sources/labels";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const ACCESS: Record<string, { label: string; tone: "ink" | "amber" | "green"; hint: string }> = {
@@ -23,6 +24,8 @@ export function authorLine(authors: any[], max = 3) {
   if (!names.length) return "Yazar bilgisi yok";
   return names.length > max ? `${names.slice(0, max).join(", ")} vd.` : names.join(", ");
 }
+
+const GENRE_LABEL: Record<string, string> = { master: "Yüksek lisans tezi", doctoral: "Doktora tezi", art: "Sanatta yeterlik tezi" };
 
 /** Arama sonucu (SourceRecord) veya veritabanı satırı için ortak kart. */
 export function SourceCard({ s, actions, compact, foundBy }: { s: any; actions?: React.ReactNode; compact?: boolean; foundBy?: string }) {
@@ -47,6 +50,8 @@ export function SourceCard({ s, actions, compact, foundBy }: { s: any; actions?:
             {(s.fulltext_status === "queued" || s.fulltext_status === "processing") && <Badge tone="brand"><Loader2 className="h-3 w-3 animate-spin" /> {t("Tam metin analiz ediliyor")}</Badge>}
             {(s.fulltext_status === "failed" || s.fulltext_status === "unavailable") && <span className="text-[11px] text-ink-400" title={s.fulltext_message ?? ""}>{s.fulltext_status === "unavailable" ? t("Açık erişimli tam metin yok") : t("Tam metin alınamadı")}</span>}
             {s.citedByCount ? <Badge>{t("{n} atıf", { n: s.citedByCount })}</Badge> : null}
+            {isDergiPark(s) && <Badge tone="violet">DergiPark</Badge>}
+            {s.type === "thesis" && (s.verification?.genre || s.genre) && <Badge>{t(GENRE_LABEL[s.verification?.genre ?? s.genre] ?? (s.verification?.genre ?? s.genre))}</Badge>}
             {!compact && origins.map((o) => <span key={o} className="text-[11px] text-ink-400">{PROVIDER_LABELS[o as keyof typeof PROVIDER_LABELS] ?? o}</span>)}
           </div>
           {foundBy && <p className="mt-1.5 text-[11px] text-ink-400">{t("Sorgu: “{q}”", { q: foundBy })}</p>}
@@ -68,6 +73,24 @@ export function toSourceInput(r: any) {
   };
 }
 
+/** DergiPark, TR Dizin ve YÖK Tez Merkezi'nde aynı sorguyla arama (yeni sekme). Bulunan kaynak DOI veya elle eklenir. */
+function TurkishLinks({ query }: { query: string }) {
+  const { t } = useT();
+  const toast = useToast();
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[12px]">
+      <span className="text-ink-400">{t("Türk veri tabanlarında da ara:")}</span>
+      {turkishSearchLinks(query || "").map((l) => (
+        <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer"
+          onClick={() => { if (l.id === "yoktez" && query.trim()) { navigator.clipboard?.writeText(query.trim()).catch(() => {}); toast({ tone: "info", title: t("Sorgu panoya kopyalandı"), detail: t("YÖK Tez Merkezi’nde arama kutusuna yapıştırın. Bulduğunuz tezi “DOI / elle ekle” sekmesinden Tez türüyle ekleyin.") }); } }}
+          className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 font-medium text-ink-700 transition hover:border-brand-300 hover:text-brand-700">
+          {l.label}<ExternalLink className="h-3 w-3" />
+        </a>
+      ))}
+    </div>
+  );
+}
+
 /** Akademik veri tabanlarında arama (kaynak paneli ve /kaynaklar sayfası). */
 export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?: string; onAdded?: (rows: any[]) => void; existingDois: Set<string> }) {
   const { t } = useT();
@@ -76,6 +99,7 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
   const [yearFrom, setYearFrom] = useState("");
   const [yearTo, setYearTo] = useState("");
   const [oa, setOa] = useState(false);
+  const [turkish, setTurkish] = useState(false);
   const [filters, setFilters] = useState(false);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any[] | null>(null);
@@ -88,7 +112,7 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
     if (q.trim().length < 2) return;
     setLoading(true);
     try {
-      const r = await api<{ results: any[]; providers: any[]; demoNotice?: string }>("/api/sources/search", { method: "POST", json: { query: q, yearFrom: yearFrom ? Number(yearFrom) : undefined, yearTo: yearTo ? Number(yearTo) : undefined, openAccessOnly: oa, limit: 15 } });
+      const r = await api<{ results: any[]; providers: any[]; demoNotice?: string }>("/api/sources/search", { method: "POST", json: { query: q, yearFrom: yearFrom ? Number(yearFrom) : undefined, yearTo: yearTo ? Number(yearTo) : undefined, openAccessOnly: oa, turkishOnly: turkish || undefined, limit: 15 } });
       setResults(r.results);
       setProviders(r.demoNotice ? [] : r.providers);
       setNotice(r.demoNotice ?? null);
@@ -132,7 +156,9 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
             <label className="col-span-2 flex items-center gap-2 text-[13px] text-ink-600"><input type="checkbox" checked={oa} onChange={(e) => setOa(e.target.checked)} /> {t("Yalnızca açık erişimli")}</label>
           </motion.div>
         )}
+        <label className="flex items-center gap-2 text-[13px] text-ink-600"><input type="checkbox" checked={turkish} onChange={(e) => setTurkish(e.target.checked)} /> {t("Yalnızca Türkiye kaynakları (Türkçe ve Türkiye adresli yayınlar; DergiPark dahil)")}</label>
       </form>
+      <TurkishLinks query={q} />
 
       {loading && <div className="mt-4 space-y-2">{[0, 1, 2].map((i) => <div key={i} className="skeleton h-24" />)}</div>}
       {!loading && results && (
@@ -242,13 +268,17 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
         <MatrixModal open={matrix} onClose={() => setMatrix(false)} projectId={projectId} sources={sources} setSources={setSources} language={language} onInsertTable={onInsertTable} />
         {mode === "list" && (
           sources.length === 0 ? (
-            <Empty icon={<FileText className="h-5 w-5" />} title={t("Henüz kaynak yok")} action={<Button size="sm" onClick={() => setMode("search")}><Search className="h-3.5 w-3.5" /> {t("Kaynak ara")}</Button>}>{t("Asistan yalnızca bu listedeki kaynaklara atıf yapabilir.")}</Empty>
+            <div className="space-y-3">
+              <Empty icon={<FileText className="h-5 w-5" />} title={t("Henüz kaynak yok")} action={<Button size="sm" onClick={() => setMode("search")}><Search className="h-3.5 w-3.5" /> {t("Kaynak ara")}</Button>}>{t("Asistan yalnızca bu listedeki kaynaklara atıf yapabilir.")}</Empty>
+              <div className="flex flex-col items-center gap-1.5 text-center text-xs text-ink-500">{t("Zotero, Mendeley veya EndNote kütüphaneniz mi var?")}<RefsImportExport projectId={projectId} onAdded={(rows) => setSources((l) => [...l, ...rows])} /></div>
+            </div>
           ) : (
             <div className="space-y-2">
               <div className="flex gap-2">
                 <input className="input !py-2 text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
                 <MatrixButton onClick={() => setMatrix(true)} />
               </div>
+              <RefsImportExport projectId={projectId} onAdded={(rows) => setSources((l) => [...l, ...rows.filter((r) => !l.some((x) => x.id === r.id))])} />
               {noFull.length > 0 && (
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-3 text-[13px] text-amber-900">
                   <button type="button" onClick={() => setPdfOpen((o) => !o)} className="flex w-full items-start gap-2 text-left">
@@ -295,7 +325,7 @@ function ManualSource({ projectId, onAdded }: { projectId: string; onAdded: (row
   const [id, setId] = useState("");
   const [lookup, setLookup] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ type: "article-journal", title: "", authors: "", year: "", containerTitle: "", volume: "", issue: "", pages: "", publisher: "", doi: "", url: "" });
+  const [form, setForm] = useState({ type: "article-journal", title: "", authors: "", year: "", containerTitle: "", volume: "", issue: "", pages: "", publisher: "", doi: "", url: "", genre: "master", archiveId: "" });
 
   async function find() {
     setLoading(true);
@@ -323,6 +353,7 @@ function ManualSource({ projectId, onAdded }: { projectId: string; onAdded: (row
   const manual = () => save({
     type: form.type, title: form.title, year: form.year ? Number(form.year) : null, containerTitle: form.containerTitle || null, volume: form.volume || null, issue: form.issue || null,
     pages: form.pages || null, publisher: form.publisher || null, doi: form.doi || null, url: form.url || null, origins: ["manual"],
+    ...(form.type === "thesis" ? { genre: form.genre, containerTitle: null, archive: form.archiveId ? "yok" : null, archiveId: form.archiveId || null } : {}),
     authors: form.authors.split(";").map((a) => a.trim()).filter(Boolean).map((a) => { const [family, given] = a.split(",").map((x) => x.trim()); return given ? { family, given } : { literal: family }; }),
   });
 
@@ -341,11 +372,23 @@ function ManualSource({ projectId, onAdded }: { projectId: string; onAdded: (row
         <input className="input col-span-2" placeholder={t("Başlık *")} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         <input className="input col-span-2" placeholder={t("Yazarlar: Soyad, Ad; Soyad, Ad")} value={form.authors} onChange={(e) => setForm({ ...form, authors: e.target.value })} />
         <input className="input" placeholder={t("Yıl")} value={form.year} onChange={(e) => setForm({ ...form, year: e.target.value.replace(/\D/g, "").slice(0, 4) })} />
-        <input className="input" placeholder={t("Dergi / kitap adı")} value={form.containerTitle} onChange={(e) => setForm({ ...form, containerTitle: e.target.value })} />
-        <input className="input" placeholder={t("Cilt")} value={form.volume} onChange={(e) => setForm({ ...form, volume: e.target.value })} />
-        <input className="input" placeholder={t("Sayı")} value={form.issue} onChange={(e) => setForm({ ...form, issue: e.target.value })} />
-        <input className="input" placeholder={t("Sayfalar (ör. 12-30)")} value={form.pages} onChange={(e) => setForm({ ...form, pages: e.target.value })} />
-        <input className="input" placeholder={t("Yayınevi / kurum")} value={form.publisher} onChange={(e) => setForm({ ...form, publisher: e.target.value })} />
+        {form.type === "thesis" ? (
+          <>
+            <select className="input" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })} aria-label={t("Tez türü")}>
+              <option value="master">{t("Yüksek lisans tezi")}</option><option value="doctoral">{t("Doktora tezi")}</option><option value="art">{t("Sanatta yeterlik tezi")}</option>
+            </select>
+            <input className="input col-span-2" placeholder={t("Üniversite (ör. Ankara Üniversitesi)")} value={form.publisher} onChange={(e) => setForm({ ...form, publisher: e.target.value })} />
+            <input className="input" placeholder={t("YÖK Tez No (isteğe bağlı)")} inputMode="numeric" value={form.archiveId} onChange={(e) => setForm({ ...form, archiveId: e.target.value.replace(/\D/g, "").slice(0, 10) })} />
+          </>
+        ) : (
+          <>
+            <input className="input" placeholder={t("Dergi / kitap adı")} value={form.containerTitle} onChange={(e) => setForm({ ...form, containerTitle: e.target.value })} />
+            <input className="input" placeholder={t("Cilt")} value={form.volume} onChange={(e) => setForm({ ...form, volume: e.target.value })} />
+            <input className="input" placeholder={t("Sayı")} value={form.issue} onChange={(e) => setForm({ ...form, issue: e.target.value })} />
+            <input className="input" placeholder={t("Sayfalar (ör. 12-30)")} value={form.pages} onChange={(e) => setForm({ ...form, pages: e.target.value })} />
+            <input className="input" placeholder={t("Yayınevi / kurum")} value={form.publisher} onChange={(e) => setForm({ ...form, publisher: e.target.value })} />
+          </>
+        )}
         <input className="input" placeholder={t("DOI")} value={form.doi} onChange={(e) => setForm({ ...form, doi: e.target.value })} />
         <input className="input" placeholder={t("URL (https://…)")} value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} />
       </div>

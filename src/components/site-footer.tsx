@@ -18,6 +18,8 @@ export function SiteFooter() {
             <li><Link href="/#ozellikler" className="hover:text-ink-900">{t("Özellikler")}</Link></li>
             <li><Link href="/fiyatlar" className="hover:text-ink-900">{t("Fiyatlar")}</Link></li>
             <li><Link href="/yardim" className="hover:text-ink-900">{t("Yardım merkezi")}</Link></li>
+            <li><Link href="/kurumlar" className="hover:text-ink-900">{t("Kurumlar için")}</Link></li>
+            <li><Link href="/uzman-destegi" className="hover:text-ink-900">{t("Uzman desteği")}</Link></li>
           </ul>
         </div>
         <div>

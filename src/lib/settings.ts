@@ -31,8 +31,14 @@ export const DEFAULTS = {
   } as AiModelsSetting,
   "ai.system_prompt": { text: "Sen titiz ve dürüst bir akademik danışmansın. Asla kaynak, veri veya bulgu uydurma. Yalnızca KAYNAKLAR listesindeki eserlere atıf yap; listede olmayan hiçbir yazar veya eser adını notlarda bile anma, bunun yerine Literatür araştır özelliğini öner." },
   "ai.stage_prompts": {} as Record<string, string>,
-  "sources.enabled": { openalex: true, crossref: true, semantic_scholar: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true } as Record<SourceProviderId, boolean>,
+  "sources.enabled": { openalex: true, crossref: true, semantic_scholar: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true, turkiye: true } as Record<SourceProviderId, boolean>,
   "limits.rate": { ai_per_minute: 12, search_per_minute: 30 },
+  /** Öğrenci indirimi: üniversite e-postasıyla kayıtlı kullanıcılara ödeme sayfasında uygulanır */
+  "billing.student": { enabled: true, percent: 30, domains: ["edu.tr", "edu"] },
+  /** Davet programı: davet edilen e-postasını doğrulayınca her iki tarafa kredi */
+  "referral": { enabled: true, ai_requests: 50, source_searches: 50, valid_days: 60, monthly_cap: 20 },
+  /** Site iletişim ve dış hizmetler */
+  "site.contact": { email: "" },
 };
 
 type Key = keyof typeof DEFAULTS;

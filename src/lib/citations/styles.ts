@@ -21,12 +21,12 @@ export const STYLE_IDS = Object.keys(STYLES) as CitationStyleId[];
 interface Terms {
   and: string; amp: string; etal: string; p: string; pp: string; nd: string; ed: string; eds: string;
   editionSuffix: string; in: string; retrieved: string; availableAt: string; accessed: string;
-  thesisDoctoral: string; thesisMaster: string; preprint: string;
+  thesisDoctoral: string; thesisMaster: string; preprint: string; thesisNo: string; thesisArt: string; yokArchive: string;
 }
 
 const TERMS: Record<CiteLocale, Terms> = {
-  en: { and: "and", amp: "&", etal: "et al.", p: "p.", pp: "pp.", nd: "n.d.", ed: "Ed.", eds: "Eds.", editionSuffix: "ed.", in: "In", retrieved: "Retrieved from", availableAt: "Available at:", accessed: "Accessed", thesisDoctoral: "Doctoral dissertation", thesisMaster: "Master's thesis", preprint: "Preprint" },
-  tr: { and: "ve", amp: "&", etal: "vd.", p: "s.", pp: "ss.", nd: "t.y.", ed: "Ed.", eds: "Ed.", editionSuffix: "bs.", in: "İçinde", retrieved: "Erişim adresi:", availableAt: "Erişim adresi:", accessed: "Erişim tarihi:", thesisDoctoral: "Doktora tezi", thesisMaster: "Yüksek lisans tezi", preprint: "Ön baskı" },
+  en: { and: "and", amp: "&", etal: "et al.", p: "p.", pp: "pp.", nd: "n.d.", ed: "Ed.", eds: "Eds.", editionSuffix: "ed.", in: "In", retrieved: "Retrieved from", availableAt: "Available at:", accessed: "Accessed", thesisDoctoral: "Doctoral dissertation", thesisMaster: "Master's thesis", preprint: "Preprint", thesisNo: "Publication No.", thesisArt: "Proficiency in art thesis", yokArchive: "YÖK National Thesis Center" },
+  tr: { and: "ve", amp: "&", etal: "vd.", p: "s.", pp: "ss.", nd: "t.y.", ed: "Ed.", eds: "Ed.", editionSuffix: "bs.", in: "İçinde", retrieved: "Erişim adresi:", availableAt: "Erişim adresi:", accessed: "Erişim tarihi:", thesisDoctoral: "Doktora tezi", thesisMaster: "Yüksek lisans tezi", preprint: "Ön baskı", thesisNo: "Tez No.", thesisArt: "Sanatta yeterlik tezi", yokArchive: "YÖK Ulusal Tez Merkezi" },
 };
 
 const MONTHS: Record<CiteLocale, string[]> = {
@@ -374,8 +374,16 @@ export class CitationEngine {
   }
 
   private thesisLabel(it: CitationItem): string {
+    // Kodlu türler çalışma diline göre yazılır; serbest metin olduğu gibi kullanılır
+    if (it.genre === "master") return this.tm.thesisMaster;
+    if (it.genre === "doctoral") return this.tm.thesisDoctoral;
+    if (it.genre === "art") return this.tm.thesisArt;
     if (it.genre) return it.genre;
     return this.tm.thesisDoctoral;
+  }
+
+  private archiveName(a: string): string {
+    return a === "yok" ? this.tm.yokArchive : clean(a);
   }
 
   private apa(it: CitationItem): Rich {
@@ -423,6 +431,8 @@ export class CitationEngine {
         const inst = clean(it.institution ?? it.publisher);
         out.push(t(style === "apa7" ? ` [${this.thesisLabel(it)}${inst ? `, ${inst}` : ""}]. ` : ` (${this.thesisLabel(it)}). `));
         if (style === "apa6" && inst) out.push(t(`${inst}. `));
+        // Veri tabanından erişilen tez: APA 7 "Arşiv adı (Yayın No. 123)."
+        if (it.archive) out.push(t(`${this.archiveName(it.archive)}${it.archiveId ? ` (${this.tm.thesisNo} ${clean(it.archiveId)})` : ""}. `));
         break;
       }
       case "paper-conference": {

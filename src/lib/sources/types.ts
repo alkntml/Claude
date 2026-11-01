@@ -2,7 +2,7 @@ import type { ItemType, Person } from "@/lib/citations/types";
 
 export type SourceProviderId =
   | "openalex" | "crossref" | "semantic_scholar" | "europepmc" | "arxiv"
-  | "doaj" | "core" | "openaire" | "google_books" | "unpaywall";
+  | "doaj" | "core" | "openaire" | "google_books" | "unpaywall" | "turkiye";
 
 export type AccessLevel = "metadata" | "abstract" | "full_text";
 
@@ -46,6 +46,8 @@ export interface SearchQuery {
   author?: string;
   openAccessOnly?: boolean;
   limit?: number;
+  /** Türkçe veya Türkiye adresli yayınlarla sınırla (DergiPark, TR Dizin dergileri vb.) */
+  turkishOnly?: boolean;
   /** Yalnızca belirli sağlayıcılar */
   providers?: SourceProviderId[];
 }

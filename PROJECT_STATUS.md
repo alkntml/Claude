@@ -6,7 +6,7 @@ _Son güncelleme: 1 Kasım 2026_
 | Bileşen | Durum | Ayrıntı |
 |---|---|---|
 | Site | ✅ Yayında | https://akademi-ai-umber.vercel.app (Vercel projesi `akademi-ai`, Hobby plan, bölge fra1) |
-| Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (ilk 4 migration). **Migration 5 ve 6 (`20261103000006_source_summary.sql`, literatür matrisi için) kullanıcı tarafından çalıştırılmalı** |
+| Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (ilk 4 migration). **Migration 5, 6 ve 7 (`20261104000007_orgs_referrals.sql`: kurumlar, davet, krediler) kullanıcı tarafından çalıştırılmalı** |
 | Kimlik doğrulama | ✅ Çalışıyor | Site URL ve Redirect URL (`/api/auth/callback`) ayarlandı. Sahip kayıt oldu |
 | Yönetici | ✅ | Sahibin hesabı `role = admin`, `plan_id = premium` |
 | Claude API | ✅ Çalışıyor | Opus 5.5 ve Haiku 5.5 canlı anahtarla test edildi. Asistan canlı sitede yanıt veriyor |
@@ -30,6 +30,11 @@ _Son güncelleme: 1 Kasım 2026_
 - Ayrı "Literatür araştır" penceresi (kullanıcı seçerek ekler)
 - Sistem talimatı: listede olmayan eser adı önerilerde bile anılmaz
 - **Bölüm/alt başlık bazlı kaynak taraması:** her yeni alt konuda ilgili kaynak yetersizse yeniden arar (tez başına 50+ kaynak), yazmadan önce açık erişimli tam metinleri okur ve atıflara yayındaki sayfa numarasını ekler
+- **Türk kaynakları:** Türkçe/Türkiye adresli yayın araması (DergiPark etiketi), DergiPark/TR Dizin/YÖK Tez bağlantıları, YÖK tez künyesi (APA 7)
+- **Zotero/Mendeley/EndNote:** BibTeX, RIS, CSL-JSON içe aktarma; BibTeX/RIS dışa aktarma
+- **İstatistik analizleri:** t testleri, ANOVA, korelasyon, regresyon, ki-kare, Cronbach α, Mann-Whitney, Kruskal-Wallis; APA 7 tablo ve cümle belgeye eklenir
+- **Savunma sunumu (.pptx), Özet + İngilizce Abstract, etik kurul belgeleri, dergi önerisi + ön yazı + kılavuz kontrol listesi**
+- **Kurum lisansı** (katılım kodu, kurum yöneticisi paneli), **öğrenci indirimi**, **davet programı** (kredi), **uzman desteği** (dermanlik.com.tr)
 - **Alt başlıklarla yaz:** alt başlık listesi (asistan önerebilir) sırayla araştırılıp okunup yazılır, sonunda özet; adımlı ilerleme çubuğu (Karar → Arama → Doğrulama → Okuma → Yazım → Eksikler)
 - **Atıf doğrulama:** atfa tıkla → "Kaynakta doğrula": kaynaktaki ilgili bölümler sayfasıyla ve AI değerlendirmesi (destekliyor/kısmen/desteklemiyor/yetersiz)
 - **Toplu [KAYNAK GEREKLİ] düzeltme:** projedeki tüm işaretli paragraflar için kaynak arama + onaylı düzeltme
@@ -63,7 +68,7 @@ _Son güncelleme: 1 Kasım 2026_
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 81 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 131 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

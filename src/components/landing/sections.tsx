@@ -77,7 +77,7 @@ export function HowItWorks() {
 
 export function SourcesStrip() {
   const { t } = useT();
-  const sources = ["OpenAlex", "Crossref", "Semantic Scholar", "PubMed", "Europe PMC", "arXiv", "DOAJ", "CORE", "OpenAIRE", "Unpaywall", "DataCite", "Google Books"];
+  const sources = ["OpenAlex", "DergiPark", "Crossref", "Semantic Scholar", "PubMed", "Europe PMC", "arXiv", "DOAJ", "CORE", "OpenAIRE", "Unpaywall", "DataCite", "Google Books"];
   return (
     <section id="kaynaklar" className="py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -93,6 +93,7 @@ export function SourcesStrip() {
                 <span key={s} className="rounded-xl border border-ink-100 bg-ink-50/70 px-3.5 py-2 text-sm font-medium text-ink-700 transition hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700" style={{ transitionDelay: `${i * 10}ms` }}>{s}</span>
               ))}
             </div>
+            <p className="mt-4 rounded-2xl bg-brand-50 px-4 py-3 text-[13.5px] leading-relaxed text-ink-700"><b>{t("Türkiye kaynakları:")}</b> {t("Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil) otomatik taranır. TR Dizin ve YÖK Tez Merkezi’nde aynı konuyla tek tıkla arama yapılır; bulduğunuz tezi veya makaleyi kolayca eklersiniz.")}</p>
             <div className="mt-6 grid grid-cols-3 gap-3 text-center">
               {[["Künye", "bg-ink-100 text-ink-600"], ["Özet", "bg-amber-50 text-amber-700"], ["Tam metin", "bg-emerald-50 text-emerald-700"]].map(([l, c]) => (
                 <div key={l} className={`rounded-2xl px-3 py-3 text-sm font-medium ${c}`}>{t(l)}</div>

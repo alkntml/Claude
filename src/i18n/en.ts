@@ -1511,4 +1511,6 @@ export const EN: Record<string, string> = {
   "Abonelik sayfası açılamadı": "Could not open the subscription page",
   "Aboneliği yönet / iptal et": "Manage / cancel subscription",
   "Yönetilecek bir aboneliğiniz bulunamadı": "No subscription found to manage",
+  "Türkiye kaynakları:": "Turkish sources:",
+  "Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil) otomatik taranır. TR Dizin ve YÖK Tez Merkezi’nde aynı konuyla tek tıkla arama yapılır; bulduğunuz tezi veya makaleyi kolayca eklersiniz.": "Turkish-language and Turkey-affiliated publications (including DergiPark journals) are searched automatically. TR Dizin and the YÖK Thesis Center can be searched for the same topic in one click, and you can easily add the thesis or article you find.",
 };

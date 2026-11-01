@@ -17,3 +17,5 @@ export default function Page() {
     </StaticPage>
   );
 }
+
+export const dynamic = "force-dynamic";

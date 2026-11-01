@@ -31,6 +31,8 @@
     "isomorphic-dompurify": "^2.26.0",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.10.0",
+    "motion-dom": "^12.23.12",
+    "motion-utils": "^12.23.6",
     "next": "^15.5.4",
     "papaparse": "^5.5.3",
     "pdfkit": "^0.17.2",

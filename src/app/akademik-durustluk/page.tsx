@@ -8,7 +8,7 @@ export default function Page() {
       <h2>2. Erişim seviyesi açıkça belirtilir</h2>
       <p>Her kaynak için yalnızca künyenin mi, özetin mi, yoksa tam metnin mi okunduğu gösterilir. Yalnızca özeti okunan bir makale tam metni okunmuş gibi değerlendirilmez. Doğrudan alıntı ve sayfa numarası yalnızca tam metni analiz edilen kaynaklarda kullanılır.</p>
       <h2>3. Doğrulama</h2>
-      <p>DOI'ler Crossref ve DataCite, PMID'ler Europe PMC, arXiv kimlikleri arXiv üzerinden doğrulanır. Doğrulanamayan kaynaklar uyarıyla gösterilir.</p>
+      <p>DOI’ler Crossref ve DataCite, PMID’ler Europe PMC, arXiv kimlikleri arXiv üzerinden doğrulanır. Doğrulanamayan kaynaklar uyarıyla gösterilir.</p>
       <h2>4. Veri ve bulgu üretilmez</h2>
       <p>Bulgular, istatistikler ve analiz sonuçları yalnızca sizin verinizden gelir. Yüklediğiniz CSV/XLSX dosyalarının betimsel istatistikleri deterministik olarak hesaplanır. Yapay zekâ bu değerleri yorumlayabilir ama uyduramaz.</p>
       <h2>5. İntihal</h2>
@@ -16,3 +16,5 @@ export default function Page() {
     </StaticPage>
   );
 }
+
+export const dynamic = "force-dynamic";

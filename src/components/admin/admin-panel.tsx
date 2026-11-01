@@ -231,7 +231,10 @@ function SourcesTab() {
   const toast = useToast();
   const { get, load, ready } = useSettings();
   const [enabled, setEnabled] = useState<Record<string, boolean>>({});
-  useEffect(() => { if (ready) setEnabled(get("sources.enabled") ?? {}); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [ready]);
+  useEffect(() => {
+    if (ready) setEnabled(get("sources.enabled") ?? {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
   async function toggle(k: string) {
     const next = { ...enabled, [k]: !enabled[k] };
     setEnabled(next);

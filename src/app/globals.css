@@ -45,7 +45,8 @@ body { background: rgb(var(--bg)); color: #151829; }
 .prose-academic.numbered h2::before { content: var(--chapter) "." counter(h2) "  "; color: #8089b0; font-weight: 500; }
 .prose-academic.numbered h3 { counter-increment: h3; }
 .prose-academic.numbered h3::before { content: var(--chapter) "." counter(h2) "." counter(h3) "  "; color: #8089b0; font-weight: 500; }
-.prose-academic p { text-align: justify; hyphens: auto; }
+.prose-academic p { text-align: left; hyphens: auto; }
+@media (min-width: 640px) { .prose-academic p { text-align: justify; } }
 .prose-academic ul { list-style: disc; padding-left: 1.4em; }
 .prose-academic ol { list-style: decimal; padding-left: 1.4em; }
 .prose-academic blockquote { border-left: 3px solid #bcd2ff; padding-left: 1em; color: #454d74; }
@@ -54,7 +55,7 @@ body { background: rgb(var(--bg)); color: #151829; }
 .prose-academic th { background: #f6f7fb; font-weight: 600; }
 .prose-academic .selectedCell { background: #eef4ff; }
 .prose-academic p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: #b0b7d3; float: left; height: 0; pointer-events: none; }
-.prose-academic .citation-node { font-family: var(--font-sans); font-size: 0.86em; background: #eef4ff; color: #2038b2; border-radius: 6px; padding: 1px 6px; margin: 0 1px; cursor: pointer; white-space: nowrap; border: 1px solid #dbe7ff; transition: all .15s ease; }
+.prose-academic .citation-node { font-family: var(--font-sans); font-size: 0.86em; background: #eef4ff; color: #2038b2; border-radius: 6px; padding: 1px 6px; margin: 0 1px; cursor: pointer; white-space: nowrap; display: inline-block; line-height: 1.5; text-align: left; border: 1px solid #dbe7ff; transition: all .15s ease; }
 .prose-academic .citation-node:hover { background: #dbe7ff; }
 .prose-academic .citation-node.missing { background: #fff1f0; color: #b42318; border-color: #fecdca; }
 .prose-academic .footnote-node { font-family: var(--font-sans); font-size: 0.7em; vertical-align: super; color: #2747dc; cursor: help; padding: 0 2px; }

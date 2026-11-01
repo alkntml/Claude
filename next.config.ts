@@ -10,7 +10,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  serverExternalPackages: ["pdfkit", "unpdf", "mammoth"],
+  serverExternalPackages: ["pdfkit", "unpdf", "mammoth", "read-excel-file", "unzipper"],
+  outputFileTracingIncludes: { "/api/projects/[id]/export": ["./assets/fonts/**"] },
   experimental: { serverActions: { bodySizeLimit: "2mb" } },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];

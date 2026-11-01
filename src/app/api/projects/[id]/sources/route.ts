@@ -27,7 +27,14 @@ export const POST = route<Ctx>("project.sources.add", async (req, { params }) =>
   const cfg = providerConfig();
 
   const rows = await Promise.all(
-    sources.filter((b) => !normalizeDoi(b.doi) || !have.has(normalizeDoi(b.doi))).map(async (b) => {
+    sources.filter((b) => {
+      // Hem projede var olan hem de aynı istek içinde tekrarlanan DOI'leri ayıkla
+      const d = normalizeDoi(b.doi);
+      if (!d) return true;
+      if (have.has(d)) return false;
+      have.add(d);
+      return true;
+    }).map(async (b) => {
       const row = toRow(b);
       const v = await verifySource({ title: row.title, doi: row.doi, pmid: row.pmid, arxivId: row.arxiv_id }, cfg);
       const filled: Record<string, unknown> = {};

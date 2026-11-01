@@ -172,6 +172,15 @@ export function Workspace(props: Props) {
       toast({ tone: "error", title: "Güncellenemedi", detail: (e as Error).message });
     }
   }
+  /** Atıf stili iyimser olarak uygulanır: metin anında yeni stile döner, kayıt başarısız olursa geri alınır. */
+  async function changeStyle(style: CitationStyleId) {
+    const prev = project.citation_style;
+    setProject((p: any) => ({ ...p, citation_style: style }));
+    const ok = await patchProject({ citationStyle: style });
+    if (ok) toast({ tone: "success", title: `Atıf stili: ${STYLES[style].label}`, detail: "Tüm metin içi atıflar ve kaynakça yeni stile dönüştürüldü." });
+    else setProject((p: any) => ({ ...p, citation_style: prev }));
+  }
+
   async function patchStage(id: string, update: Record<string, unknown>) {
     try {
       const r = await api<{ stage: any; progress: number }>(`/api/stages/${id}`, { method: "PATCH", json: update });
@@ -255,7 +264,7 @@ export function Workspace(props: Props) {
             <p className="truncate text-[14.5px] font-semibold text-ink-900">{project.title}</p>
             <SaveIndicator state={save} />
           </div>
-          <select aria-label="Atıf stili" value={project.citation_style} onChange={(e) => patchProject({ citationStyle: e.target.value }).then((p) => p && toast({ tone: "success", title: `Atıf stili: ${STYLES[e.target.value as CitationStyleId].label}`, detail: "Tüm metin içi atıflar ve kaynakça yeni stile dönüştürüldü." }))} className="hidden h-9 rounded-xl border border-ink-200 bg-white px-2.5 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 sm:block">
+          <select aria-label="Atıf stili" value={project.citation_style} onChange={(e) => changeStyle(e.target.value as CitationStyleId)} className="hidden h-9 rounded-xl border border-ink-200 bg-white px-2.5 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 sm:block">
             {STYLE_IDS.map((s) => <option key={s} value={s}>{STYLES[s].label}</option>)}
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 md:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> Kalite kontrol</Link>
@@ -301,7 +310,7 @@ export function Workspace(props: Props) {
 
           <aside className={cn("flex min-h-0 flex-col border-l border-ink-100 bg-white/60", mobilePane === "panel" ? "flex" : "hidden lg:flex")}>
             <div className="border-b border-ink-100 p-2.5">
-              <Tabs value={tab} onChange={setTab} tabs={[
+              <Tabs compact value={tab} onChange={setTab} tabs={[
                 { id: "assistant", label: "Asistan", icon: <Bot className="h-3.5 w-3.5" /> },
                 { id: "sources", label: "Kaynaklar", icon: <BookMarked className="h-3.5 w-3.5" />, count: sources.length },
                 { id: "memory", label: "Hafıza", icon: <Brain className="h-3.5 w-3.5" /> },

@@ -74,14 +74,14 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
   );
 }
 
-export function Tabs<T extends string>({ tabs, value, onChange, className }: { tabs: { id: T; label: string; icon?: React.ReactNode; count?: number }[]; value: T; onChange: (v: T) => void; className?: string }) {
+export function Tabs<T extends string>({ tabs, value, onChange, className, compact }: { tabs: { id: T; label: string; icon?: React.ReactNode; count?: number }[]; value: T; onChange: (v: T) => void; className?: string; compact?: boolean }) {
   return (
     <div className={cn("relative flex gap-1 rounded-xl bg-ink-100/70 p-1", className)} role="tablist">
       {tabs.map((t) => (
-        <button key={t.id} role="tab" aria-selected={value === t.id} onClick={() => onChange(t.id)} className={cn("relative z-10 flex flex-1 items-center justify-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-[13px] font-medium transition-colors", value === t.id ? "text-ink-900" : "text-ink-500 hover:text-ink-800")}>
+        <button key={t.id} role="tab" aria-selected={value === t.id} aria-label={t.label} title={t.label} onClick={() => onChange(t.id)} className={cn("relative z-10 flex items-center justify-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-[13px] font-medium transition-colors", compact ? (value === t.id ? "flex-[2.2]" : "flex-1") : "flex-1", value === t.id ? "text-ink-900" : "text-ink-500 hover:text-ink-800")}>
           {value === t.id && <motion.span layoutId={`tab-${tabs.map((x) => x.id).join("")}`} className="absolute inset-0 -z-10 rounded-[10px] bg-white shadow-sm" transition={{ type: "spring", stiffness: 500, damping: 38 }} />}
           {t.icon}
-          <span className="truncate">{t.label}</span>
+          {(!compact || value === t.id) && <span className="truncate">{t.label}</span>}
           {t.count !== undefined && t.count > 0 && <span className="rounded-full bg-ink-200/80 px-1.5 text-[10px] text-ink-600">{t.count}</span>}
         </button>
       ))}

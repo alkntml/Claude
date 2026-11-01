@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Replace, SearchCheck, Send, Sparkles, Square, TriangleAlert } from "lucide-react";
+import { BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, Replace, SearchCheck, Send, Sparkles, Square, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -12,7 +12,7 @@ import type { StageDef } from "@/lib/workflows";
 import { Markdown, parseAnswer } from "./markdown";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number }
+interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[] }
 
 interface Props {
   projectId: string;
@@ -23,6 +23,7 @@ interface Props {
   onInsert: (markdown: string, sourceMap: Record<string, string>, mode: "append" | "replace") => void;
   onOpenResearch: (prefill: string) => void;
   onMemoryChanged: () => void;
+  onSourcesAdded: (rows: any[]) => void;
 }
 
 const STAGE_ACTIONS: AssistantAction[] = ["plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "interpret", "discussion", "consistency"];
@@ -47,7 +48,7 @@ async function* readSSE(res: Response): AsyncGenerator<{ event: string; data: an
   }
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged }: Props) {
+export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded }: Props) {
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -102,7 +103,12 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
         throw new Error(j.error ?? `Hata ${res.status}`);
       }
       for await (const ev of readSSE(res)) {
-        if (ev.event === "meta") { setConversationId(ev.data.conversationId); setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? { ...x, sourceMap: ev.data.sourceMap } : x))); }
+        if (ev.event === "status") setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? { ...x, status: [...(x.status ?? []), ev.data.text] } : x)));
+        else if (ev.event === "sources_added") {
+          onSourcesAdded(ev.data.sources);
+          setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? { ...x, added: ev.data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) } : x)));
+        }
+        else if (ev.event === "meta") { setConversationId(ev.data.conversationId); setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? { ...x, sourceMap: ev.data.sourceMap } : x))); }
         else if (ev.event === "text") setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? { ...x, content: x.content + ev.data.text } : x)));
         else if (ev.event === "done") { if (ev.data.memoryAdded) { onMemoryChanged(); setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? { ...x, memoryAdded: ev.data.memoryAdded } : x))); } }
         else if (ev.event === "error") throw new Error(ev.data.error);
@@ -114,7 +120,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
       setBusy(false);
       abort.current = null;
     }
-  }, [busy, conversationId, onMemoryChanged, projectId, selection, stage]);
+  }, [busy, conversationId, onMemoryChanged, onSourcesAdded, projectId, selection, stage]);
 
   async function attachData(fileId: string, name: string) {
     setDataOpen(false);
@@ -218,11 +224,30 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
 function AssistantBubble({ msg, streaming, onInsert }: { msg: Msg; streaming: boolean; onInsert: Props["onInsert"] }) {
   const toast = useToast();
   if (msg.error) return <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-rose-100 bg-rose-50 px-3.5 py-2.5 text-[13.5px] text-rose-700"><TriangleAlert className="mr-1.5 inline h-4 w-4" />{msg.content}</div>;
-  if (!msg.content && streaming) return <div className="rounded-2xl rounded-bl-md border border-ink-100 bg-white px-4 py-3"><Dots /></div>;
+  const research = (msg.status?.length || msg.added?.length) ? (
+    <div className="space-y-1.5 rounded-2xl border border-ink-100 bg-ink-50/70 px-3.5 py-2.5 text-[12.5px] text-ink-600">
+      {msg.status?.map((st, i) => (
+        <p key={i} className="flex items-start gap-2">
+          {streaming && !msg.content && i === (msg.status?.length ?? 0) - 1 && !msg.added ? <Loader2 className="mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin text-brand-500" /> : <SearchCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />}
+          <span>{st}</span>
+        </p>
+      ))}
+      {msg.added && msg.added.length > 0 && (
+        <div>
+          <p className="font-medium text-ink-800">{msg.added.length} kaynak projeye eklendi (Kaynaklar sekmesinden çıkarabilirsiniz):</p>
+          <ul className="mt-1 space-y-0.5">
+            {msg.added.map((a, i) => <li key={i} className="flex gap-1.5"><span className={a.verified ? "text-emerald-600" : "text-amber-600"}>{a.verified ? "✓" : "?"}</span><span className="line-clamp-1">{a.title} ({a.year ?? "t.y."})</span></li>)}
+          </ul>
+        </div>
+      )}
+    </div>
+  ) : null;
+  if (!msg.content && streaming) return <div className="w-full max-w-[96%] space-y-2.5">{research}<div className="inline-block rounded-2xl rounded-bl-md border border-ink-100 bg-white px-4 py-3"><Dots /></div></div>;
   const parsed = parseAnswer(msg.content);
   return (
     <div className="w-full max-w-[96%] space-y-2.5">
       <div className="flex items-center gap-1.5 text-[11px] font-medium text-ink-400"><Sparkles className="h-3 w-3 text-brand-500" /> Akademik asistan</div>
+      {research}
       {parsed.parts.map((p, i) =>
         p.kind === "text" ? (
           <div key={i} className="rounded-2xl rounded-tl-md border border-ink-100 bg-white px-3.5 py-3 text-ink-700"><Markdown text={p.text} sourceMap={msg.sourceMap} /></div>

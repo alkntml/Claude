@@ -6,6 +6,7 @@ import { ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
 import { getSetting } from "@/lib/settings";
+import { addSourcesToProject, executeSearch, pickForAutoAdd, planResearch, recordResearchUsage, recordToInput } from "@/lib/research";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
 
 export const maxDuration = 300;
@@ -18,6 +19,9 @@ const Schema = z.object({
   action: z.enum(Object.keys(ASSISTANT_ACTIONS) as [AssistantAction, ...AssistantAction[]]).default("chat"),
   selection: z.string().max(30000).optional(),
 });
+
+/** Otomatik araştırma kararının verildiği eylemler (seçili metin düzenleme ve veri yorumlama hariç) */
+const RESEARCH_ACTIONS = new Set<AssistantAction>(["chat", "plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "discussion"]);
 
 const enc = new TextEncoder();
 const sse = (event: string, data: unknown) => enc.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
@@ -50,7 +54,6 @@ export const POST = route("ai.chat", async (req) => {
   const { data: history } = await s.supabase.from("ai_messages").select("role, content").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(16);
 
   const [sysSetting, stagePrompts, models] = await Promise.all([getSetting("ai.system_prompt"), getSetting("ai.stage_prompts"), getSetting("ai.models")]);
-  const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}` });
 
   const action = ASSISTANT_ACTIONS[b.action];
   const userContent = [
@@ -67,12 +70,46 @@ export const POST = route("ai.chat", async (req) => {
 
   const stream = new ReadableStream({
     async start(controller) {
-      controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
+      // 1) Otomatik literatür araştırması: hızlı model, araştırma gerekip gerekmediğine karar verir ve sorguları üretir.
+      //    Gerekiyorsa sorgular gerçek veri tabanlarında çalıştırılır, en uygun kaynaklar doğrulanıp projeye eklenir.
+      if (RESEARCH_ACTIONS.has(b.action)) {
+        try {
+          const planned = await planResearch({ planId: s.profile.plan_id, project: bundle.project, stageTitle: stage?.title, request: `${b.action !== "chat" ? `[${action.label}] ` : ""}${b.message}`, existingTitles: bundle.sources.map((x) => x.title) });
+          let queries: string[] = [];
+          if (planned.plan.needsSearch && planned.plan.queries.length) {
+            try {
+              await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+              queries = planned.plan.queries.map((q) => q.query);
+              controller.enqueue(sse("status", { text: `Akademik veri tabanları taranıyor: ${queries.join(" · ")}` }));
+              const { results } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
+              const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
+              const picks = pickForAutoAdd(results, existing, 8);
+              if (picks.length) {
+                controller.enqueue(sse("status", { text: `${results.length} sonuç bulundu; en uygun ${picks.length} kaynak doğrulanıyor…` }));
+                const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput));
+                bundle.sources.push(...added.sources);
+                controller.enqueue(sse("sources_added", { sources: added.sources, queries }));
+              } else {
+                controller.enqueue(sse("status", { text: "Veri tabanlarında uygun yeni kaynak bulunamadı." }));
+              }
+            } catch (e) {
+              const msg = e instanceof ApiError ? e.message : "Kaynak araması şu an yapılamadı.";
+              controller.enqueue(sse("status", { text: msg }));
+            }
+          }
+          await recordResearchUsage(s.user.id, planned, queries, { countAsRequest: false });
+        } catch (e) {
+          await logError("ai.chat.research", e, s.user.id);
+        }
+      }
+
       let answer = "";
       let usage = { input: 0, output: 0 };
       let stopReason: string | null = null;
       let servedModel = model.model;
       try {
+        const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}` });
+        controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
         for await (const ev of streamWith(model, { system, context: ctx.text, messages, maxTokens: models.max_output_tokens, effort: models.effort }, req.signal)) {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
           else { usage = ev.usage; stopReason = ev.stopReason; servedModel = ev.model; }

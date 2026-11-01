@@ -224,6 +224,7 @@ export function Workspace(props: Props) {
     }
   }
 
+  const addSources = useCallback((rows: any[]) => setSources((l) => [...l, ...rows.filter((r) => !l.some((x) => x.id === r.id))]), []);
   const existingDois = useMemo(() => new Set(sources.map((s) => s.doi).filter(Boolean)), [sources]);
   const wt = WORK_TYPES.find((w) => w.id === project.work_type);
   const chapterNumber = stages.filter((s, i) => i <= activeIndex && (s.content_text ?? "").trim() && s.key !== "references").length || activeIndex + 1;
@@ -323,7 +324,7 @@ export function Workspace(props: Props) {
             <div className="min-h-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title} bölümü için literatür` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} />}
+                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title} bölümü için literatür` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} />}
                   {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={cite} canCite={!!editor && !isBibliography} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} />}

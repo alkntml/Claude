@@ -3,15 +3,29 @@ import { useT } from "@/i18n/client";
 import { mergeAttributes, Node } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer, type NodeViewProps } from "@tiptap/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Trash2 } from "lucide-react";
+import { ShieldCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { richToPlain } from "@/lib/citations/util";
 import { useCitations } from "./citation-context";
+import { EvidenceDialog } from "./evidence-dialog";
 
-function CitationView({ node, updateAttributes, deleteNode, selected }: NodeViewProps) {
+/** Atfın geçtiği cümle (paragraf içinde atıftan önceki ve sonraki cümle parçaları) */
+function sentenceAround(editor: NodeViewProps["editor"], pos: number): string {
+  try {
+    const $p = editor.state.doc.resolve(pos);
+    const parent = $p.parent;
+    const off = pos - $p.start();
+    const before = parent.textBetween(0, off, " ", " ").split(/(?<=[.!?])\s+/).pop() ?? "";
+    const after = parent.textBetween(Math.min(off + 1, parent.content.size), parent.content.size, " ", " ").split(/(?<=[.!?])\s+/)[0] ?? "";
+    return `${before.trim()} ${after.trim()}`.replace(/\s+/g, " ").trim() || parent.textContent;
+  } catch { return ""; }
+}
+
+function CitationView({ node, updateAttributes, deleteNode, selected, editor, getPos }: NodeViewProps) {
   const { t } = useT();
   const ctx = useCitations();
   const [open, setOpen] = useState(false);
+  const [check, setCheck] = useState<{ id: string; sentence: string } | null>(null);
   const ids: string[] = node.attrs.ids ?? [];
   const missing = !ctx || ids.some((id) => !ctx.sources[id]);
   const label = ctx && !missing ? richToPlain(ctx.engine.cite(ids, { locator: node.attrs.locator, narrative: node.attrs.narrative })) : t("[kaynak bulunamadı]");
@@ -23,13 +37,16 @@ function CitationView({ node, updateAttributes, deleteNode, selected }: NodeView
       </span>
       <AnimatePresence>
         {open && (
-          <motion.span contentEditable={false} initial={{ opacity: 0, y: 4, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 4 }} className="absolute left-0 top-7 z-30 block w-80 rounded-2xl border border-ink-100 bg-white p-3 font-sans text-[13px] leading-snug shadow-xl" onMouseDown={(e) => e.stopPropagation()}>
+          <motion.span contentEditable={false} initial={{ opacity: 0, y: 4, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 4 }} className="absolute left-0 top-7 z-30 block w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-ink-100 bg-white p-3 font-sans text-[13px] leading-snug shadow-xl" onMouseDown={(e) => e.stopPropagation()}>
             {ids.map((id) => {
               const s = ctx?.sources[id];
               return (
                 <span key={id} className="mb-2 block rounded-lg bg-ink-50 p-2 text-ink-700">
                   {s ? <><b className="block text-ink-900">{s.title}</b><span className="text-ink-500">{s.year ?? "t.y."} · {s.container_title ?? s.publisher ?? ""}</span></> : <span className="text-rose-600">{t("Bu kaynak kütüphaneden silinmiş.")}</span>}
-                  {s && ctx?.onOpenSource && <button type="button" onClick={() => ctx.onOpenSource!(id)} className="mt-1 block text-brand-600">{t("Kaynağı göster")}</button>}
+                  <span className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                    {s && ctx?.onOpenSource && <button type="button" onClick={() => ctx.onOpenSource!(id)} className="text-brand-600">{t("Kaynağı göster")}</button>}
+                    {s && <button type="button" onClick={() => { const pos = typeof getPos === "function" ? getPos() : undefined; setCheck({ id, sentence: pos != null ? sentenceAround(editor, pos) : "" }); setOpen(false); }} className="flex items-center gap-1 font-medium text-emerald-700"><ShieldCheck className="h-3.5 w-3.5" /> {t("Kaynakta doğrula")}</button>}
+                  </span>
                 </span>
               );
             })}
@@ -44,6 +61,7 @@ function CitationView({ node, updateAttributes, deleteNode, selected }: NodeView
           </motion.span>
         )}
       </AnimatePresence>
+      {check && <EvidenceDialog sourceId={check.id} source={ctx?.sources[check.id]} sentence={check.sentence || t("(cümle bulunamadı)")} locator={node.attrs.locator ?? null} onClose={() => setCheck(null)} />}
     </NodeViewWrapper>
   );
 }

@@ -2,7 +2,8 @@
 import { useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "./cn";
 
 export function Badge({ tone = "ink", children, className }: { tone?: "ink" | "brand" | "green" | "amber" | "red" | "violet"; children: React.ReactNode; className?: string }) {
@@ -52,7 +53,11 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [open, onClose]);
-  return (
+  // Pencere her zaman sayfa köküne çizilir (dönüşümlü/bulanık üst öğelerin içinde konumu bozulmasın)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -68,11 +73,12 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
               <button onClick={onClose} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700" aria-label={t("Kapat")}><X className="h-5 w-5" /></button>
             </div>
             <div className="overflow-y-auto px-6 py-5">{children}</div>
-            {footer && <div className="flex justify-end gap-2 border-t border-ink-100 bg-ink-50/60 px-6 py-3.5">{footer}</div>}
+            {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-ink-100 bg-ink-50/60 px-4 py-3.5 sm:px-6" style={{ paddingBottom: "max(14px, env(safe-area-inset-bottom, 0px))" }}>{footer}</div>}
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
 

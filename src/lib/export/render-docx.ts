@@ -4,13 +4,17 @@ import {
   Table, TableCell, TableOfContents, TableRow, TextRun, WidthType, BorderStyle,
 } from "docx";
 import type { ExportDoc, Run } from "./model";
+import { CM, coverLines, resolveFormat, type DocFormat } from "./format";
+import { Header } from "docx";
 
 const HEADINGS = [HeadingLevel.HEADING_1, HeadingLevel.HEADING_2, HeadingLevel.HEADING_3, HeadingLevel.HEADING_4];
 
-export async function toDocx(d: ExportDoc, opts: { fontFamily?: string; fontSizePt?: number; lineSpacing?: number } = {}): Promise<Buffer> {
-  const font = opts.fontFamily ?? "Times New Roman";
-  const size = (opts.fontSizePt ?? 12) * 2;
-  const line = Math.round((opts.lineSpacing ?? 1.5) * 240);
+export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise<Buffer> {
+  const f = resolveFormat(raw);
+  const font = f.fontFamily;
+  const size = f.fontSizePt * 2;
+  const line = Math.round(f.lineSpacing * 240);
+  const after = f.paragraphAfterPt * 20;
   const footnotes: Record<number, { children: Paragraph[] }> = {};
   let fnId = 0;
 
@@ -26,10 +30,18 @@ export async function toDocx(d: ExportDoc, opts: { fontFamily?: string; fontSize
 
   const body: (Paragraph | Table | TableOfContents)[] = [];
 
-  // Kapak
-  body.push(new Paragraph({ spacing: { before: 2400 }, alignment: AlignmentType.CENTER, children: [new TextRun({ text: d.title, bold: true, size: 32, font })] }));
-  if (d.subtitle) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 200 }, children: [new TextRun({ text: d.subtitle, italics: true, size: 26, font })] }));
-  for (const t of [d.author, d.institution, d.date].filter(Boolean)) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 400 }, children: [new TextRun({ text: t, size, font })] }));
+  // Kapak (şablondaki kurum bilgileriyle)
+  const cv = coverLines(f, d);
+  const center = (text: string, o: { bold?: boolean; italics?: boolean; size?: number; before?: number } = {}) =>
+    text.split("\n").forEach((tx, k) => body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: k === 0 ? o.before ?? 0 : 0, line: 300 }, children: [new TextRun({ text: tx, bold: o.bold, italics: o.italics, size: o.size ?? size, font })] })));
+  cv.top.forEach((tx, k) => center(tx, { bold: true, before: k === 0 ? 0 : 0 }));
+  center(cv.title, { bold: true, size: 32, before: cv.top.length ? 2400 : 3200 });
+  if (cv.subtitle) center(cv.subtitle, { italics: true, size: 26, before: 200 });
+  if (cv.thesisType) center(cv.thesisType, { bold: true, before: 1600 });
+  if (cv.author) center(cv.author, { before: cv.thesisType ? 800 : 1600 });
+  if (cv.advisor) center(cv.advisor, { before: 800 });
+  if (!f.cover.university && d.institution) center(d.institution, { before: 400 });
+  center(cv.bottom, { before: 2400 });
   body.push(new Paragraph({ children: [new PageBreak()] }));
 
   // İçindekiler (Word açılışta alanları günceller)
@@ -40,11 +52,13 @@ export async function toDocx(d: ExportDoc, opts: { fontFamily?: string; fontSize
   let firstChapter = true;
   for (const b of d.blocks) {
     if (b.kind === "heading") {
-      if (b.level === 1 && !firstChapter) body.push(new Paragraph({ children: [new PageBreak()] }));
+      if (b.level === 1 && !firstChapter && f.chapterOnNewPage) body.push(new Paragraph({ children: [new PageBreak()] }));
       if (b.level === 1) firstChapter = false;
-      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], spacing: { before: 240, after: 120 }, children: [new TextRun({ text: `${b.number ? `${b.number} ` : ""}${b.runs.map((r) => r.text).join("")}`, bold: true, font, size: b.level === 1 ? 28 : size })] }));
+      const htext = b.runs.map((r) => r.text).join("");
+      const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language === "tr" ? "tr" : "en") : htext;
+      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [new TextRun({ text: `${b.number ? `${b.number} ` : ""}${shown}`, bold: true, font, size: b.level === 1 ? Math.max(size, 28) : size, color: "000000" })] }));
     } else if (b.kind === "paragraph") {
-      body.push(new Paragraph({ alignment: AlignmentType.JUSTIFIED, spacing: { line, after: 120 }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: 567 }, children: runs(b.runs) }));
+      body.push(new Paragraph({ alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {
       body.push(new Paragraph({ spacing: { before: 120, after: 60 }, children: runs(b.runs.map((r) => ({ ...r, italic: true }))) }));
     } else if (b.kind === "list") {
@@ -92,8 +106,10 @@ export async function toDocx(d: ExportDoc, opts: { fontFamily?: string; fontSize
       ],
     },
     sections: [{
-      properties: { page: { margin: { top: 1418, bottom: 1418, left: 1701, right: 1418 } } },
-      footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }) },
+      properties: { page: { margin: { top: Math.round(f.margins.top * CM), bottom: Math.round(f.margins.bottom * CM), left: Math.round(f.margins.left * CM), right: Math.round(f.margins.right * CM) } } },
+      ...(f.pageNumber === "top-right"
+        ? { headers: { default: new Header({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }) } }
+        : { footers: { default: new Footer({ children: [new Paragraph({ alignment: f.pageNumber === "bottom-right" ? AlignmentType.RIGHT : AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }) } }),
       children: body,
     }],
   });

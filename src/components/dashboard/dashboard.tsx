@@ -1,4 +1,5 @@
 "use client";
+import { daysLeft, wordsThisWeek } from "@/lib/goals";
 import { useT } from "@/i18n/client";
 import { makeT, type TFn } from "@/i18n";
 import { motion } from "framer-motion";
@@ -47,6 +48,18 @@ export function Dashboard(p: Props) {
         <Link href="/yeni" className="inline-flex items-center gap-2 rounded-2xl bg-ink-900 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-ink-900/20 transition hover:-translate-y-0.5"><Plus className="h-4 w-4" /> {t("Yeni çalışma")}</Link>
       </motion.div>
 
+      {(() => {
+        // Paket limitinin %80'ine yaklaşınca önceden uyar
+        const items: [string, number, number | null | undefined][] = [["yapay zekâ isteği", p.usage?.ai_requests ?? 0, p.limits?.ai_requests_month], ["kaynak tarama", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["depolama", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]];
+        const near = items.filter(([, u, l]) => l && l > 0 && u / l >= 0.8);
+        if (!near.length) return null;
+        return (
+          <Link href="/hesap" className="mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 transition hover:bg-amber-100">
+            <span className="mt-0.5">⚠️</span>
+            <span>{near.map(([k, u, l]) => t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(k), pct: Math.min(100, Math.round((u / (l as number)) * 100)) })).join(" · ")}. <b>{t("Paketi yönet")}</b></span>
+          </Link>
+        );
+      })()}
       {p.announcements.map((a) => (
         <motion.div variants={item} key={a.id} className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${a.level === "warning" || a.level === "critical" ? "border-amber-200 bg-amber-50" : "border-brand-100 bg-brand-50/70"}`}>
           <Megaphone className="mt-0.5 h-4 w-4 text-brand-600" />
@@ -95,6 +108,15 @@ export function Dashboard(p: Props) {
                       <Badge tone="brand">{t(LEVEL_LABELS[pr.academic_level as AcademicLevel])}</Badge>
                       <Badge tone="violet">{STYLES[pr.citation_style as CitationStyleId]?.label}</Badge>
                     </div>
+                    {(() => {
+                      const g = pr.context?.goal; const log = pr.context?.wordLog;
+                      if (!g?.weeklyWords && !g?.deadline) return null;
+                      const keys = Object.keys(log ?? {}).sort();
+                      const total = keys.length ? log[keys[keys.length - 1]] : 0;
+                      const week = keys.length ? wordsThisWeek(log, new Date(), total) : 0;
+                      const left = daysLeft(g.deadline, new Date());
+                      return <p className="mt-3 text-xs text-ink-500">{g.weeklyWords ? t("Bu hafta {w} / {g} kelime", { w: week.toLocaleString(dl), g: Number(g.weeklyWords).toLocaleString(dl) }) : ""}{g.weeklyWords && left !== null ? " · " : ""}{left !== null ? (left > 0 ? t("Teslime {n} gün", { n: left }) : t("Teslim tarihi geçti")) : ""}</p>;
+                    })()}
                     <p className="mt-auto pt-4 text-xs text-ink-400">{t("Son düzenleme {x}", { x: ago(pr.updated_at) })}</p>
                   </Link>
                 );

@@ -13,7 +13,7 @@ export default async function Panel() {
   const db = s.supabase;
   const uid = s.user.id;
   const [projects, recentStages, sourcesCount, convs, files, ann, usage, limits] = await Promise.all([
-    db.from("projects").select("id, title, work_type, academic_level, status, progress, citation_style, updated_at").eq("user_id", uid).order("updated_at", { ascending: false }),
+    db.from("projects").select("id, title, work_type, academic_level, status, progress, citation_style, updated_at, context").eq("user_id", uid).order("updated_at", { ascending: false }),
     db.from("project_stages").select("id, title, project_id, word_count, updated_at, status").eq("user_id", uid).gt("word_count", 0).order("updated_at", { ascending: false }).limit(6),
     db.from("sources").select("id", { count: "exact", head: true }).eq("user_id", uid),
     db.from("ai_conversations").select("id, title, project_id, stage_id, updated_at").eq("user_id", uid).order("updated_at", { ascending: false }).limit(5),

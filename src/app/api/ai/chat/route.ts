@@ -11,7 +11,7 @@ import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { addSourcesToProject, executeSearch, ingestWithBudget, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertWithinLimits, recordUsage, usageWarnings } from "@/lib/usage";
 
 export const maxDuration = 300;
 
@@ -25,7 +25,7 @@ const Schema = z.object({
 });
 
 /** Otomatik araştırma kararının verildiği eylemler (seçili metin düzenleme ve veri yorumlama hariç) */
-const RESEARCH_ACTIONS = new Set<AssistantAction>(["chat", "plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "discussion"]);
+const RESEARCH_ACTIONS = new Set<AssistantAction>(["chat", "plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "discussion", "from_notes", "fix_claim"]);
 
 /** Bir projeye otomatik eklenebilecek en fazla kaynak (tez başına 50+ kaynağa izin verir) */
 const MAX_PROJECT_SOURCES = 150;
@@ -83,6 +83,7 @@ export const POST = route("ai.chat", async (req) => {
       // 1) Otomatik literatür araştırması: hızlı model, araştırma gerekip gerekmediğine karar verir ve sorguları üretir.
       //    Gerekiyorsa sorgular gerçek veri tabanlarında çalıştırılır, en uygun kaynaklar doğrulanıp projeye eklenir.
       if (RESEARCH_ACTIONS.has(b.action)) {
+        controller.enqueue(sse("phase", { phase: "plan" }));
         try {
           // Karar, projenin toplamına değil üzerinde çalışılan bölüm / alt başlık için ilgili kaynaklara göre verilir
           const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text).filter(Boolean).slice(0, 20) : [];
@@ -99,11 +100,13 @@ export const POST = route("ai.chat", async (req) => {
             try {
               await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
               queries = planned.plan.queries.map((q) => q.query);
+              controller.enqueue(sse("phase", { phase: "search" }));
               controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
               const { results } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
               const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
               const picks = pickForAutoAdd(results, existing, Math.min(8, MAX_PROJECT_SOURCES - bundle.sources.length));
               if (picks.length) {
+                controller.enqueue(sse("phase", { phase: "verify" }));
                 controller.enqueue(sse("status", { text: T("{n} sonuç bulundu; en uygun {k} kaynak doğrulanıyor…", { n: results.length, k: picks.length }) }));
                 const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput), { deferFulltext: true });
                 bundle.sources.push(...added.sources);
@@ -126,9 +129,10 @@ export const POST = route("ai.chat", async (req) => {
         try {
           const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
           const toRead = rankSources(bundle.sources, `${b.message} ${stage?.title ?? ""}`, citedHere)
-            .filter((x) => x.access_level !== "full_text" && hasOpenAccessCandidate(x) && (!x.fulltext_status || x.fulltext_status === "queued"))
+            .filter((x) => x.access_level !== "full_text" && hasOpenAccessCandidate(x) && (!x.fulltext_status || x.fulltext_status === "none" || x.fulltext_status === "queued"))
             .slice(0, 6);
           if (toRead.length) {
+            controller.enqueue(sse("phase", { phase: "read" }));
             controller.enqueue(sse("status", { text: T("{n} kaynağın açık erişimli tam metni okunuyor…", { n: toRead.length }) }));
             const readIds = await ingestWithBudget(toRead, FULLTEXT_WAIT_MS);
             if (readIds.length) {
@@ -148,6 +152,7 @@ export const POST = route("ai.chat", async (req) => {
       let stopReason: string | null = null;
       let servedModel = model.model;
       try {
+        controller.enqueue(sse("phase", { phase: "write" }));
         const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}` });
         controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
         for await (const ev of streamWith(model, { system, context: ctx.text, messages, maxTokens: models.max_output_tokens, effort: models.effort }, req.signal)) {
@@ -171,6 +176,7 @@ export const POST = route("ai.chat", async (req) => {
         if (gaps.length && RESEARCH_ACTIONS.has(b.action)) {
           try {
             await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+            controller.enqueue(sse("phase", { phase: "gaps" }));
             controller.enqueue(sse("status", { text: T("Taslakta kaynağı eksik kalan konular aranıyor: {q}", { q: gaps.join(" · ") }) }));
             const { results } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8 });
             const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
@@ -186,7 +192,8 @@ export const POST = route("ai.chat", async (req) => {
             controller.enqueue(sse("status", { text: e instanceof ApiError ? T(e.message) : T("Eksik konular için kaynak araması yapılamadı.") }));
           }
         }
-        controller.enqueue(sse("done", { usage, stopReason, memoryAdded: memory.length, gapAdded }));
+        const warnings = await usageWarnings(s.user.id, s.profile.plan_id).catch(() => []);
+        controller.enqueue(sse("done", { usage, stopReason, memoryAdded: memory.length, gapAdded, warnings }));
       } catch (e) {
         await logError("ai.chat.stream", e, s.user.id);
         controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));

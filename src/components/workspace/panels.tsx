@@ -1,7 +1,7 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
-import { AlertTriangle, ArrowRight, Brain, Check, ChevronDown, History, MessageSquare, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
+import { Wand2, AlertTriangle, ArrowRight, Brain, Check, ChevronDown, History, MessageSquare, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge, Empty } from "@/components/ui/primitives";
@@ -65,7 +65,7 @@ export function MemoryPanel({ projectId, memory, setMemory }: { projectId: strin
   );
 }
 
-export function CommentsPanel({ stageId, selection }: { stageId: string; selection: string }) {
+export function CommentsPanel({ stageId, selection, onApply }: { stageId: string; selection: string; onApply?: (c: { body: string; quote: string | null }) => void }) {
   const { t, dl } = useT();
   const [list, setList] = useState<any[]>([]);
   const [body, setBody] = useState("");
@@ -92,7 +92,7 @@ export function CommentsPanel({ stageId, selection }: { stageId: string; selecti
             {c.quote && <p className="mb-1.5 border-l-2 border-amber-300 pl-2 font-serif italic text-ink-500">“{c.quote.slice(0, 200)}”</p>}
             {c.author_name && <p className="mb-1 text-[11px] font-semibold text-brand-700">{t("Danışman:")} {c.author_name}</p>}
             <p className={c.resolved ? "line-through" : ""}>{c.body}</p>
-            <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at, t, dl)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? t("Yeniden aç") : t("Çözüldü")}</button><button onClick={() => del(c)} className="text-rose-500">{t("Sil")}</button></div>
+            <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at, t, dl)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? t("Yeniden aç") : t("Çözüldü")}</button><button onClick={() => del(c)} className="text-rose-500">{t("Sil")}</button>{!c.resolved && onApply && <button onClick={() => { onApply({ body: c.body, quote: c.quote ?? null }); toggle(c); }} className="ml-auto flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 font-medium text-white hover:bg-brand-700"><Wand2 className="h-3 w-3" />{t("Asistanla uygula")}</button>}</div>
           </div>
         ))}
       </div>

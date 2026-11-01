@@ -1,6 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUp, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
+import { ArrowUp, Check, ListOrdered, Mic, MicOff, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
 import { cn } from "@/components/ui/cn";
@@ -8,11 +8,12 @@ import { Dots } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { ASSISTANT_ACTIONS, type AssistantAction } from "@/lib/ai/prompts";
 import { api } from "@/lib/client";
+import { PHASES, shouldWarnOnce, streamChat, type ChatPhase } from "@/lib/ai/chat-client";
 import type { StageDef } from "@/lib/workflows";
 import { Markdown, parseAnswer } from "./markdown";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[] }
+interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[]; phase?: ChatPhase; phasesSeen?: ChatPhase[] }
 
 interface Props {
   projectId: string;
@@ -24,31 +25,38 @@ interface Props {
   onOpenResearch: (prefill: string) => void;
   onMemoryChanged: () => void;
   onSourcesAdded: (rows: any[]) => void;
+  onOpenOutline?: () => void;
+  /** Dış bileşenlerin (yorumlar vb.) asistana istek göndermesi için */
+  registerSend?: (fn: (text: string, action?: AssistantAction, selection?: string) => void) => void;
+  language?: string;
 }
 
 const STAGE_ACTIONS: AssistantAction[] = ["plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "interpret", "discussion", "consistency"];
 const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure"];
+const USAGE_LABEL: Record<string, string> = { ai_requests: "yapay zekâ isteği", tokens: "token", source_searches: "kaynak tarama", storage_mb: "depolama" };
+const PHASE_LABEL: Record<ChatPhase, string> = { plan: "Karar", search: "Arama", verify: "Doğrulama", read: "Okuma", write: "Yazım", gaps: "Eksikler" };
 
-async function* readSSE(res: Response): AsyncGenerator<{ event: string; data: any }> {
-  const reader = res.body!.getReader();
-  const dec = new TextDecoder();
-  let buf = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buf += dec.decode(value, { stream: true });
-    let idx;
-    while ((idx = buf.indexOf("\n\n")) >= 0) {
-      const chunk = buf.slice(0, idx);
-      buf = buf.slice(idx + 2);
-      const ev = chunk.match(/^event: (.*)$/m)?.[1] ?? "message";
-      const data = chunk.match(/^data: (.*)$/m)?.[1];
-      if (data) yield { event: ev, data: JSON.parse(data) };
-    }
-  }
+/** Uzun işlerde adımlı ilerleme: hangi aşamada olduğunu gösterir */
+export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhase[] }) {
+  const { t } = useT();
+  if (!phase && !seen?.length) return null;
+  const visible = PHASES.filter((p) => p === "plan" || p === "write" || seen?.includes(p));
+  const cur = phase ? visible.indexOf(phase) : visible.length;
+  return (
+    <ol className="flex flex-wrap items-center gap-1 text-[11px] font-medium" aria-label={t("İlerleme")}>
+      {visible.map((p, i) => (
+        <li key={p} className="flex items-center gap-1">
+          {i > 0 && <span className={cn("h-px w-3", i <= cur ? "bg-brand-300" : "bg-ink-200")} />}
+          <span className={cn("flex items-center gap-1 rounded-full px-2 py-0.5", i < cur ? "bg-emerald-50 text-emerald-700" : i === cur ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-400")}>
+            {i < cur ? <Check className="h-3 w-3" /> : i === cur ? <Loader2 className="h-3 w-3 animate-spin" /> : null}{t(PHASE_LABEL[p])}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded }: Props) {
+export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, registerSend, language }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -95,9 +103,10 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [input]);
 
-  const send = useCallback(async (text: string, action: AssistantAction = "chat", extra?: string) => {
+  const send = useCallback(async (text: string, action: AssistantAction = "chat", extra?: string, selOverride?: string) => {
     if (!text.trim() || busy) return;
-    const useSel = SELECTION_ACTIONS.includes(action) || (action === "chat" && selection.length > 0 && selection.length < 30000);
+    const sel = selOverride ?? selection;
+    const useSel = selOverride !== undefined || SELECTION_ACTIONS.includes(action) || (action === "chat" && sel.length > 0 && sel.length < 30000);
     const userMsg: Msg = { id: `u${Date.now()}`, role: "user", content: text, sourceMap: {} };
     const aiMsg: Msg = { id: `a${Date.now()}`, role: "assistant", content: "", sourceMap: {} };
     setMsgs((m) => [...m, userMsg, aiMsg]);
@@ -107,31 +116,32 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     abort.current = new AbortController();
     const patch = (fn: (x: Msg) => Msg) => setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? fn(x) : x)));
     try {
-      const res = await fetch("/api/ai/chat", {
-        method: "POST", signal: abort.current.signal, headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, stageId: stage?.id ?? null, conversationId, message: extra ? `${text}\n\n${extra}` : text, action, selection: useSel ? selection : undefined }),
-      });
-      if (!res.ok || !res.body) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.error ?? t("Hata {n}", { n: res.status }));
-      }
-      for await (const ev of readSSE(res)) {
-        // Yanıt başladıktan sonra gelen durum mesajları (eksik konu araması) yanıtın altında gösterilir
-        if (ev.event === "status") patch((x) => (x.content ? { ...x, post: [...(x.post ?? []), ev.data.text] } : { ...x, status: [...(x.status ?? []), ev.data.text] }));
-        else if (ev.event === "sources_added") {
-          onSourcesAdded(ev.data.sources);
-          patch((x) => ({ ...x, added: ev.data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
-        }
-        else if (ev.event === "fulltext_read") onSourcesAdded(ev.data.sources);
-        else if (ev.event === "gap_sources") {
-          onSourcesAdded(ev.data.sources);
-          patch((x) => ({ ...x, gapAdded: ev.data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
-        }
-        else if (ev.event === "meta") { setConversationId(ev.data.conversationId); patch((x) => ({ ...x, sourceMap: ev.data.sourceMap })); }
-        else if (ev.event === "text") patch((x) => ({ ...x, content: x.content + ev.data.text }));
-        else if (ev.event === "done") { if (ev.data.memoryAdded) { onMemoryChanged(); patch((x) => ({ ...x, memoryAdded: ev.data.memoryAdded })); } }
-        else if (ev.event === "error") throw new Error(ev.data.error);
-      }
+      await streamChat(
+        { projectId, stageId: stage?.id ?? null, conversationId, message: extra ? `${text}\n\n${extra}` : text, action, selection: useSel ? sel : undefined },
+        abort.current.signal,
+        (event, data) => {
+          // Yanıt başladıktan sonra gelen durum mesajları (eksik konu araması) yanıtın altında gösterilir
+          if (event === "status") patch((x) => (x.content ? { ...x, post: [...(x.post ?? []), data.text] } : { ...x, status: [...(x.status ?? []), data.text] }));
+          else if (event === "phase") patch((x) => ({ ...x, phase: data.phase, phasesSeen: [...new Set([...(x.phasesSeen ?? []), data.phase as ChatPhase])] }));
+          else if (event === "sources_added") {
+            onSourcesAdded(data.sources);
+            patch((x) => ({ ...x, added: data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
+          }
+          else if (event === "fulltext_read") onSourcesAdded(data.sources);
+          else if (event === "gap_sources") {
+            onSourcesAdded(data.sources);
+            patch((x) => ({ ...x, gapAdded: data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
+          }
+          else if (event === "meta") { setConversationId(data.conversationId); patch((x) => ({ ...x, sourceMap: data.sourceMap })); }
+          else if (event === "text") patch((x) => ({ ...x, content: x.content + data.text }));
+          else if (event === "done") {
+            patch((x) => ({ ...x, phase: undefined }));
+            if (data.memoryAdded) { onMemoryChanged(); patch((x) => ({ ...x, memoryAdded: data.memoryAdded })); }
+            for (const w of data.warnings ?? []) if (shouldWarnOnce(`${w.kind}:${w.pct >= 100 ? 100 : 80}`)) toast({ tone: "warning", title: t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(USAGE_LABEL[w.kind] ?? w.kind), pct: w.pct }), detail: t("{used} / {limit}. Paketinizi Hesap sayfasından yükseltebilirsiniz.", { used: w.used, limit: w.limit }) });
+          }
+        },
+        t("Hata"),
+      );
     } catch (e) {
       if ((e as Error).name === "AbortError") return;
       patch((x) => ({ ...x, content: (e as Error).message, error: true }));
@@ -139,7 +149,34 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
       setBusy(false);
       abort.current = null;
     }
-  }, [busy, conversationId, onMemoryChanged, onSourcesAdded, projectId, selection, stage, t]);
+  }, [busy, conversationId, onMemoryChanged, onSourcesAdded, projectId, selection, stage, t, toast]);
+
+  useEffect(() => { registerSend?.((text, action = "chat", sel) => send(text, action, undefined, sel)); }, [registerSend, send]);
+
+  // Sesle not alma (tarayıcının konuşma tanıma özelliği; ses sunucuya gönderilmez)
+  const [listening, setListening] = useState(false);
+  const recog = useRef<any>(null);
+  const speechSupported = typeof window !== "undefined" && !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+  function toggleDictation() {
+    if (listening) { recog.current?.stop(); return; }
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) { toast({ tone: "warning", title: t("Tarayıcınız sesle yazmayı desteklemiyor"), detail: t("Chrome, Edge veya Safari’nin güncel sürümünü deneyin.") }); return; }
+    const r = new SR();
+    r.lang = language === "en" ? "en-US" : "tr-TR";
+    r.continuous = true;
+    r.interimResults = false;
+    r.onresult = (e: any) => {
+      let txt = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) txt += e.results[i][0].transcript;
+      if (txt.trim()) setInput((v) => `${v}${v && !v.endsWith(" ") ? " " : ""}${txt.trim()}`);
+    };
+    r.onerror = (e: any) => { if (e.error !== "no-speech" && e.error !== "aborted") toast({ tone: "error", title: t("Mikrofon kullanılamadı"), detail: e.error === "not-allowed" ? t("Tarayıcı ayarlarından mikrofon izni verin.") : String(e.error) }); };
+    r.onend = () => setListening(false);
+    recog.current = r;
+    r.start();
+    setListening(true);
+  }
+  useEffect(() => () => recog.current?.stop?.(), []);
 
   async function attachData(fileId: string, name: string) {
     setDataOpen(false);
@@ -213,7 +250,9 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
           </div>
         )}
         <div className="no-scrollbar -mx-2.5 mb-2 flex gap-1.5 overflow-x-auto px-2.5 sm:-mx-3 sm:px-3">
+          {onOpenOutline && <button disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {t("Alt başlıklarla yaz")}</button>}
           <button onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-900 bg-ink-900 text-white hover:bg-ink-800")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>
+          {input.trim().length > 20 && <button disabled={busy} onClick={() => send(input, "from_notes")} className={cn(chip, "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100")}>{t(ASSISTANT_ACTIONS.from_notes.label)}</button>}
           {STAGE_ACTIONS.filter((a) => (a === "interpret" || a === "discussion" ? def?.requiresUserData : true)).map((a) => (
             <button key={a} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[a].label), a)} className={cn(chip, "border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}>{t(ASSISTANT_ACTIONS[a].label)}</button>
           ))}
@@ -229,9 +268,10 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
               )}
             </div>
           )}
+          <button type="button" onClick={toggleDictation} className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition", listening ? "animate-pulse bg-rose-500 text-white" : "text-ink-500 hover:bg-ink-100", !speechSupported && "opacity-50")} aria-label={listening ? t("Dinlemeyi durdur") : t("Sesle yaz")} title={listening ? t("Dinlemeyi durdur") : t("Sesle yaz")}>{listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}</button>
           <textarea ref={ta} rows={1} value={input} onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && window.matchMedia("(min-width: 1024px)").matches) { e.preventDefault(); send(input); } }}
-            placeholder={stage ? t("“{title}” hakkında yazın…", { title: stage.title }) : t("Mesajınızı yazın…")}
+            placeholder={listening ? t("Dinleniyor… konuşun") : stage ? t("“{title}” hakkında yazın…", { title: stage.title }) : t("Mesajınızı yazın…")}
             aria-label={t("Asistana mesaj")}
             className="max-h-40 min-h-[36px] flex-1 resize-none bg-transparent px-2 py-2 text-[16px] leading-snug text-ink-900 outline-none placeholder:text-ink-400 sm:text-[14px]" />
           {busy
@@ -261,8 +301,9 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, busy }: { ms
   const { t } = useT();
   const toast = useToast();
   if (msg.error) return <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-rose-100 bg-rose-50 px-3.5 py-2.5 text-[13.5px] text-rose-700"><TriangleAlert className="mr-1.5 inline h-4 w-4" />{msg.content}</div>;
-  const research = (msg.status?.length || msg.added?.length) ? (
+  const research = (msg.status?.length || msg.added?.length || msg.phase) ? (
     <div className="space-y-1.5 rounded-2xl border border-ink-100 bg-ink-50/70 px-3.5 py-2.5 text-[12.5px] text-ink-600">
+      {streaming && <PhaseSteps phase={msg.phase} seen={msg.phasesSeen} />}
       {msg.status?.map((st, i) => (
         <p key={i} className="flex items-start gap-2">
           {streaming && !msg.content && i === (msg.status?.length ?? 0) - 1 && !msg.added ? <Loader2 className="mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin text-brand-500" /> : <SearchCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />}

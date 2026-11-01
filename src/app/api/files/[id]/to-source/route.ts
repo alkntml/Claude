@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { providerConfig } from "@/lib/env";
 import { SourceInput, toRow } from "@/lib/sources/input";
 import { verifySource } from "@/lib/sources/verify";
+import { remapChunkPages } from "@/lib/sources/chunk-pages";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -31,5 +32,6 @@ export const POST = route<Ctx>("file.toSource", async (req, { params }) => {
   if (error) throw error;
   // Dosyanın RAG parçalarını kaynağa bağla
   await s.supabase.from("source_chunks").update({ source_id: src.id }).eq("file_id", f.id);
+  await remapChunkPages(s.supabase, src.id, src.pages);
   return json({ source: src }, 201);
 });

@@ -42,7 +42,7 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
 
   let body: Buffer | string;
   if (format === "docx") body = await toDocx(doc, bundle.project.context?.format ?? {});
-  else if (format === "pdf") body = await toPdf(doc);
+  else if (format === "pdf") body = await toPdf(doc, bundle.project.context?.format ?? {});
   else if (format === "md") body = toMarkdown(doc);
   else body = toText(doc);
 

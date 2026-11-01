@@ -85,3 +85,19 @@ export async function recordUsage(userId: string, kind: UsageKind, data: { quant
     cost_usd: data.costUsd ?? 0, provider: data.provider ?? null, model: data.model ?? null, meta: data.meta ?? {},
   });
 }
+
+export interface UsageWarning { kind: "ai_requests" | "tokens" | "source_searches" | "storage_mb"; used: number; limit: number; pct: number }
+
+/** Paket limitinin %80'ine ulaşılan kalemler (kullanıcıya önceden uyarı göstermek için). */
+export async function usageWarnings(userId: string, planId: string, threshold = 0.8): Promise<UsageWarning[]> {
+  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
+  const pairs: [UsageWarning["kind"], number, number | null | undefined][] = [
+    ["ai_requests", usage.ai_requests, limits.ai_requests_month],
+    ["tokens", usage.tokens, limits.tokens_month],
+    ["source_searches", usage.source_searches, limits.source_searches_month],
+    ["storage_mb", usage.storage_mb, limits.storage_mb],
+  ];
+  return pairs
+    .filter(([, used, lim]) => lim != null && lim > 0 && used / lim >= threshold)
+    .map(([kind, used, lim]) => ({ kind, used, limit: lim as number, pct: Math.min(100, Math.round((used / (lim as number)) * 100)) }));
+}

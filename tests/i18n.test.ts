@@ -37,7 +37,7 @@ describe("i18n", () => {
       if (/[\\/](admin|yonetim)[\\/]/.test(f) || f.endsWith("en.ts")) continue;
       const src = readFileSync(f, "utf8");
       for (const m of src.matchAll(/(?<![\w.])(?:t|T)\(\s*"((?:[^"\\\n]|\\.)*)"/g)) {
-        const key = m[1].replace(/\\"/g, '"');
+        const key = m[1].replace(/\\"/g, '"').replace(/\\n/g, "\n");
         if (/[A-Za-zÇĞİÖŞÜçğıöşü]/.test(key) && !(key in EN)) missing.add(`${path.relative(root, f)}: ${key}`);
       }
     }

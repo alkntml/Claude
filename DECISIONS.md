@@ -76,3 +76,17 @@ Mobilde üç sütun yerine tek panel + alt çubuk (Bölümler, Metin, Asistan, K
 Yazımdan önce bu istekle en ilgili, açık erişimli ve henüz okunmamış en fazla 6 kaynağın tam metni paralel okunur (en fazla 15 sn beklenir; kalanlar arka planda biter). Tam metin parçalarındaki sayfa ipucu PDF sırası değil yayındaki sayfadır (`pdfPageLabels`: künyedeki aralık PDF sayfa sayısıyla eşleşirse; bir fazla sayfa = kapak; eşleşmezse sayfa verilmez). Model sayfayı yalnızca parçada yazandan alır; biçimi (p./s./pp.) atıf motoru stile göre üretir.
 Kaynakça yalnızca metinde atıf yapılan kaynakları içerir (APA/MLA vb. kuralı); kaynak eklenince değil, metinde atıf yapılınca kaynakçaya girer ve anında güncellenir. Kaynakçada her kaydın kullanıldığı yerler (`citationUsages`) gösterilir; "Git" bölümü açıp atfı vurgular. Veritabanı değişikliği gerekmedi.
 
+### D25 — Kullanıcı deneyimi paketi (kuyruk olmadan)
+Uzun işler (alt başlıklarla yazım, toplu yer tutucu düzeltme, matris) sunucuda tek uzun istek yerine **istemcinin sırayla gönderdiği kısa isteklerle** yürütülür: Vercel süre sınırına takılmaz, ilerleme her adımda görünür, kullanıcı durdurabilir. Kalıcı iş kuyruğu kullanıcı isteğiyle yapılmadı; sayfa kapanırsa sıradaki adımlar çalışmaz.
+- Sohbet akışı `phase` olayları gönderir (plan/search/verify/read/write/gaps); arayüz adım çubuğu gösterir. Ortak istemci `src/lib/ai/chat-client.ts`.
+- Atıf doğrulama (`/api/sources/[id]/evidence`): Haiku iki dilde anahtar kelime üretir, tam metin parçaları sıralanır (atıftaki sayfaya ek puan), ikinci çağrı supports/partial/not_supported/insufficient kararı verir. Model alıntısı kaynak metninde birebir yoksa gösterilmez. Künye düzeyindeki kaynakta AI çağrılmaz.
+- [KAYNAK GEREKLİ] düzeltme: paragraftaki mevcut atıflar ⟦C1⟧ işaretine çevrilip `fix_claim` eylemiyle gönderilir, dönüşte özgün atıf düğümleri geri konur; paragraf düz metniyle bulunup değiştirilir; her öneri onayla uygulanır.
+- Literatür matrisi `sources.summary` (migration 6). Yalnızca okunan özet/tam metinden; boş alan uydurulmaz. Excel için CSV (TR'de `;` ayırıcı, BOM).
+- Kapalı erişimli kaynağa PDF bağlama `/api/sources/[id]/attach-file`; yüklenen PDF'lerin sayfa ipuçları da yayındaki sayfaya eşlenir (`remapChunkPages`).
+- Biçim şablonu `projects.context.format` (`src/lib/export/format.ts`: 3 hazır şablon, kenar/punto/aralık/girinti/sayfa no, Türk tezi kapak alanları). PDF gömülü DejaVu fontuyla kalır (Times gömülemez).
+- Yazım hedefi `context.goal`, günlük kelime kaydı `context.wordLog` bölüm kaydında sunucuda tutulur; ilk kayıtta mevcut metin bu haftaya sayılmaz. Takvim deterministik (AI yok): kalan bölümler haftalara eşit dağıtılır, son hafta düzeltmeye bırakılır.
+- Sesle not: tarayıcının Web Speech API'si (ses sunucuya gitmez); `from_notes` eylemi notları akademik metne çevirir.
+- Çevrimdışı güvence: kaydedilmemiş bölüm `localStorage`'da; açılışta sunucudakinden yeniyse geri yüklenir; çevrimiçi olunca ve 15 sn'de bir yeniden denenir.
+- Pencereler (`Modal`) her zaman `document.body`'ye portal ile çizilir: dönüşümlü/`backdrop-blur` üst öğeler sabit konumu bozuyordu. Üst çubuk `z-30`.
+- Limit uyarıları: sohbet `done` olayında %80 üstü kalemler (oturum başına bir kez bildirim) ve panelde şerit.
+

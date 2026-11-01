@@ -1,7 +1,8 @@
 "use client";
 import { useT } from "@/i18n/client";
+import { MatrixButton, MatrixModal } from "./matrix";
 import { motion } from "framer-motion";
-import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Trash2, Unlock } from "lucide-react";
+import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Trash2, Unlock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -157,8 +158,29 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
   );
 }
 
-export function ProjectSources({ projectId, sources, setSources, onCite, canCite }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean }) {
+export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string> }) {
   const { t } = useT();
+  const [matrix, setMatrix] = useState(false);
+  const [pdfOpen, setPdfOpen] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
+  // Tam metni okunamayan (kapalı erişim) kaynaklar: önce metinde atıf yapılanlar
+  const noFull = sources.filter((x) => x.access_level !== "full_text" && (x.fulltext_status === "unavailable" || x.fulltext_status === "failed" || (!x.oa_url && !x.arxiv_id && !x.pmcid && !x.doi)))
+    .sort((a, b) => Number(citedIds?.has(b.id) ?? 0) - Number(citedIds?.has(a.id) ?? 0));
+  async function uploadPdf(src: any, file: File) {
+    setUploading(src.id);
+    try {
+      const fd = new FormData();
+      fd.set("file", file); fd.set("projectId", projectId); fd.set("purpose", "article");
+      const res = await fetch("/api/files", { method: "POST", body: fd });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.error);
+      const { source } = await api<{ source: any }>(`/api/sources/${src.id}/attach-file`, { method: "POST", json: { fileId: j.file.id } });
+      setSources((l) => l.map((x) => (x.id === source.id ? source : x)));
+      toast({ tone: "success", title: t("Tam metin eklendi"), detail: t("Artık bu kaynaktan sayfa numaralı atıf ve doğrulama yapılabilir.") });
+    } catch (e) {
+      toast({ tone: "error", title: t("PDF eklenemedi"), detail: (e as Error).message });
+    } finally { setUploading(null); }
+  }
   const toast = useToast();
   const [mode, setMode] = useState<"list" | "search" | "manual">("list");
   const [busy, setBusy] = useState<string | null>(null);
@@ -217,12 +239,38 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
       <div className="flex-1 overflow-y-auto p-4">
         {mode === "search" && <SourceSearch projectId={projectId} existingDois={existing} onAdded={(rows) => setSources((l) => [...l, ...rows])} />}
         {mode === "manual" && <ManualSource projectId={projectId} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setMode("list"); }} />}
+        <MatrixModal open={matrix} onClose={() => setMatrix(false)} projectId={projectId} sources={sources} setSources={setSources} language={language} onInsertTable={onInsertTable} />
         {mode === "list" && (
           sources.length === 0 ? (
             <Empty icon={<FileText className="h-5 w-5" />} title={t("Henüz kaynak yok")} action={<Button size="sm" onClick={() => setMode("search")}><Search className="h-3.5 w-3.5" /> {t("Kaynak ara")}</Button>}>{t("Asistan yalnızca bu listedeki kaynaklara atıf yapabilir.")}</Empty>
           ) : (
             <div className="space-y-2">
-              <input className="input !py-2 text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
+              <div className="flex gap-2">
+                <input className="input !py-2 text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
+                <MatrixButton onClick={() => setMatrix(true)} />
+              </div>
+              {noFull.length > 0 && (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-3 text-[13px] text-amber-900">
+                  <button type="button" onClick={() => setPdfOpen((o) => !o)} className="flex w-full items-start gap-2 text-left">
+                    <FileUp className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                    <span className="flex-1">{t("{n} kaynağın tam metni okunamadı (kapalı erişim). PDF’iniz varsa yükleyin; sayfa numaralı atıf ve doğrulama mümkün olur.", { n: noFull.length })}</span>
+                    <span className="shrink-0 font-medium underline">{pdfOpen ? t("Gizle") : t("Göster")}</span>
+                  </button>
+                  {pdfOpen && (
+                    <ul className="mt-2 space-y-1.5">
+                      {noFull.map((x) => (
+                        <li key={x.id} className="flex items-center gap-2 rounded-xl bg-white px-2.5 py-2">
+                          <span className="min-w-0 flex-1"><span className="line-clamp-1 text-ink-800">{x.title}</span>{citedIds?.has(x.id) && <span className="text-[11px] text-brand-700">{t("metinde atıf var")}</span>}</span>
+                          <label className="inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-2.5 text-[12px] font-medium text-ink-700 hover:bg-ink-50">
+                            {uploading === x.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileUp className="h-3.5 w-3.5" />} {t("PDF yükle")}
+                            <input type="file" accept="application/pdf,.pdf" className="hidden" disabled={!!uploading} onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPdf(x, f); e.target.value = ""; }} />
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
               {shown.map((s) => (
                 <div key={s.id} id={`src-${s.id}`}>
                   <SourceCard s={s} compact actions={<>

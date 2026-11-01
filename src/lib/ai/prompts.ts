@@ -13,6 +13,8 @@ export const ASSISTANT_ACTIONS = {
   methodology: { label: "Yöntem önerisi", instruction: "Araştırma sorularına uygun desen, örnekleme, veri toplama ve analiz seçeneklerini artı/eksi yönleriyle karşılaştır ve gerekçeli bir öneri sun." },
   consistency: { label: "Tutarlılık kontrolü", instruction: "Bu bölümü PROJE BAĞLAMI ve diğer bölümlerin özetleriyle karşılaştır; kavram, amaç, hipotez ve yöntem tutarsızlıklarını madde madde listele. Metin yazma." },
   interpret: { label: "Bulguları yorumla", instruction: "Kullanıcının sağladığı GERÇEK analiz sonuçlarını akademik dille yorumla. Sağlanmayan hiçbir değer, istatistik veya bulgu yazma; eksikler için [VERİ GİRİLECEK] kullan." },
+  from_notes: { label: "Notları akademik metne çevir", instruction: "Kullanıcının (çoğunlukla sesle dikte ettiği) dağınık notlarını, anlamını koruyarak akademik, akıcı paragraflara dönüştür. Notlarda olmayan yeni bilgi, veri veya bulgu ekleme. Olgusal iddiaları KAYNAKLAR listesindeki çalışmalarla destekle; destekleyemediğin iddiayı kesin biçimde yazma." },
+  fix_claim: { label: "Kaynakla düzelt", instruction: "Verilen paragraftaki [KAYNAK GEREKLİ] işaretli iddiaları KAYNAKLAR listesindeki uygun çalışmalarla destekle ve işareti kaldır. Uygun kaynak yoksa o iddiayı kaynak gerektirmeyecek biçimde yumuşat veya çıkar. Paragraftaki mevcut atıfları ve anlamı koru. Yalnızca düzeltilmiş paragrafı tek bir :::taslak bloğunda ver." },
   discussion: { label: "Tartışma geliştir", instruction: "Kullanıcının bulgularını literatürle karşılaştırarak tartışma paragrafları yaz; destekleyen ve çelişen çalışmaları göster. Bulgu uydurma." },
 } as const;
 

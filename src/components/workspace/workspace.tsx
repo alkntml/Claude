@@ -2,7 +2,7 @@
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import {
-  ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
+  ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,7 @@ import { useToast } from "@/components/ui/toast";
 import { CitationEngine, STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
 import { api } from "@/lib/client";
-import { citedIdsInOrder, docToPlain, markdownToDoc, wordCount, type JSONNode } from "@/lib/editor/doc";
+import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, headings, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 import { AssistantPanel } from "./assistant";
@@ -25,9 +25,14 @@ import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
 import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./panels";
 import { ProjectSources, ResearchModal } from "./sources";
 import { ShareButton } from "./share-modal";
+import { OutlineWriter } from "./outline-writer";
+import { FixClaimsModal } from "./fix-claims";
+import { FormatModal } from "./format-modal";
+import { GoalModal, GoalWidget } from "./goals";
+import { shouldShowTour, Tour } from "./tour";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type SaveState = "saved" | "dirty" | "saving" | "error";
+type SaveState = "saved" | "dirty" | "saving" | "error" | "offline";
 type RightTab = "assistant" | "sources" | "memory" | "comments" | "history";
 
 const STATUS = [
@@ -36,6 +41,12 @@ const STATUS = [
   { id: "review", label: "İncelemede", dot: "bg-amber-400" },
   { id: "done", label: "Tamamlandı", dot: "bg-emerald-500" },
 ] as const;
+
+/** Çevrimdışı güvence: kaydedilmemiş bölüm metni bu cihazda saklanır */
+const DRAFT_KEY = (id: string) => `akademi:draft:${id}`;
+function saveDraft(id: string, doc: JSONNode) { try { localStorage.setItem(DRAFT_KEY(id), JSON.stringify({ at: Date.now(), doc })); } catch { /* depolama dolu veya kapalı */ } }
+function readDraft(id: string): { at: number; doc: JSONNode } | null { try { const v = localStorage.getItem(DRAFT_KEY(id)); return v ? JSON.parse(v) : null; } catch { return null; } }
+function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); } catch { /* yok */ } }
 
 interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null }
 
@@ -71,6 +82,7 @@ export function Workspace(props: Props) {
     () => new CitationEngine(project.citation_style as CitationStyleId, sources.map(sourceRowToItemClient), { locale: project.language === "en" ? "en" : "tr", citedOrder }),
     [project.citation_style, project.language, sources, citedOrder],
   );
+  const citedSet = useMemo(() => new Set(citedOrder), [citedOrder]);
   const sourceIndex = useMemo(() => Object.fromEntries(sources.map((s) => [s.id, s])), [sources]);
   const citeCtx = useMemo(() => ({ engine, sources: sourceIndex, onOpenSource: (id: string) => { setTab("sources"); setTimeout(() => document.getElementById(`src-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 120); } }), [engine, sourceIndex]);
 
@@ -79,7 +91,7 @@ export function Workspace(props: Props) {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const flush = useCallback(async (snapshot?: { note: string; author: "user" | "ai" }) => {
+  const flush = useCallback(async (snapshot?: { note: string; author: "user" | "ai" | "system" }) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     const p = pending.current;
     if (!p && !snapshot) return;
@@ -92,11 +104,14 @@ export function Workspace(props: Props) {
       setStages((l) => l.map((s) => (s.id === r.stage.id ? { ...s, status: r.stage.status, word_count: r.stage.word_count, updated_at: r.stage.updated_at, ...(pending.current?.id === s.id ? {} : { content: r.stage.content, content_text: r.stage.content_text }) } : s)));
       setProgress(r.progress);
       setSave(pending.current ? "dirty" : "saved");
+      if ((pending.current as { id: string } | null)?.id !== target.id) clearDraft(target.id);
       if (snapshot) setHistVer((v) => v + 1);
     } catch (e) {
       pending.current = pending.current ?? target;
-      setSave("error");
-      toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message });
+      saveDraft(target.id, target.doc as JSONNode);
+      const offline = typeof navigator !== "undefined" && !navigator.onLine;
+      setSave(offline ? "offline" : "error");
+      if (!offline) toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message });
     }
   }, [activeId, stages, toast, t]);
 
@@ -114,6 +129,7 @@ export function Workspace(props: Props) {
       setSave("dirty");
       if (stateTimer.current) clearTimeout(stateTimer.current);
       stateTimer.current = setTimeout(() => {
+        saveDraft(activeId, doc);
         const text = docToPlain(doc);
         setStages((l) => l.map((s) => (s.id === activeId ? { ...s, content: doc, content_text: text, word_count: wordCount(text) } : s)));
       }, 350);
@@ -123,6 +139,46 @@ export function Workspace(props: Props) {
   });
 
   editorRef.current = editor;
+
+  // Bağlantı geri gelince ve hata sonrası düzenli aralıklarla yeniden kaydet
+  useEffect(() => {
+    const on = () => { if (pending.current) flushRef.current(); else setSave((x) => (x === "offline" ? "saved" : x)); };
+    const off = () => setSave((x) => (pending.current ? "offline" : x));
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+  useEffect(() => {
+    if (save !== "error" && save !== "offline") return;
+    const iv = setInterval(() => { if (navigator.onLine && pending.current) flushRef.current(); }, 15_000);
+    return () => clearInterval(iv);
+  }, [save]);
+
+  // Açılışta: sunucudakinden yeni, kaydedilmemiş yerel taslak varsa geri yükle
+  const restored = useRef(false);
+  useEffect(() => {
+    if (restored.current || !editor) return;
+    restored.current = true;
+    let count = 0;
+    for (const st of props.stages) {
+      const d = readDraft(st.id);
+      if (!d) continue;
+      const serverAt = Date.parse(st.updated_at ?? "") || 0;
+      if (d.at <= serverAt || JSON.stringify(d.doc) === JSON.stringify(st.content)) { clearDraft(st.id); continue; }
+      count++;
+      if (st.id === activeId) {
+        editor.commands.setContent(d.doc as object, false);
+        pending.current = { id: st.id, doc: d.doc };
+        flushRef.current({ note: t("Cihazda saklanan taslak geri yüklendi"), author: "system" });
+      } else {
+        api(`/api/stages/${st.id}`, { method: "PATCH", json: { content: d.doc, snapshot: { note: t("Cihazda saklanan taslak geri yüklendi"), author: "system" } } })
+          .then(() => { clearDraft(st.id); setStages((l) => l.map((x) => (x.id === st.id ? { ...x, content: d.doc } : x))); })
+          .catch(() => {});
+      }
+    }
+    if (count) toast({ tone: "info", title: t("Kaydedilmemiş değişiklikleriniz geri yüklendi"), detail: t("Bağlantı koptuğunda bu cihazda saklanan metin sunucuya kaydedildi.") });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor]);
 
   // Sekme kapanırken kaydedilmemiş değişiklik uyarısı
   useEffect(() => {
@@ -149,18 +205,94 @@ export function Workspace(props: Props) {
   }
 
   // --- Asistan çıktısını belgeye ekle
-  const insertMarkdown = useCallback((md: string, map: Record<string, string>, mode: "append" | "replace") => {
+  const sourceIndexRef = useRef(sourceIndex);
+  sourceIndexRef.current = sourceIndex;
+  const insertMarkdown = useCallback((md: string, map: Record<string, string>, mode: "append" | "replace", opts: { silent?: boolean } = {}) => {
     if (!editor || isBibliography) return;
-    const doc = markdownToDoc(md, (sid) => (map[sid] && sourceIndex[map[sid]] ? map[sid] : null));
+    const doc = markdownToDoc(md, (sid) => (map[sid] && sourceIndexRef.current[map[sid]] ? map[sid] : null));
     const { from, to } = editor.state.selection;
     if (mode === "replace" && from !== to) editor.chain().focus().insertContentAt({ from, to }, doc.content ?? []).run();
     else if (mode === "replace") { toast({ tone: "info", title: t("Önce editörde değiştirilecek metni seçin") }); return; }
     else editor.chain().focus("end").insertContent(doc.content ?? []).run();
     pending.current = { id: activeId, doc: editor.getJSON() as JSONNode };
     flush({ note: mode === "replace" ? t("AI: seçili metin değiştirildi") : t("AI: taslak eklendi"), author: "ai" });
+    if (opts.silent) return;
     toast({ tone: "success", title: t("Belgeye eklendi"), detail: t("Önceki hâl sürüm geçmişinde saklandı.") });
     setMobilePane("editor");
-  }, [activeId, editor, flush, isBibliography, sourceIndex, toast, t]);
+  }, [activeId, editor, flush, isBibliography, toast, t]);
+  const insertRef = useRef(insertMarkdown);
+  insertRef.current = insertMarkdown;
+  const assistantSend = useRef<((text: string, action?: any, selection?: string) => void) | null>(null);
+  const registerSend = useCallback((fn: (text: string, action?: any, selection?: string) => void) => { assistantSend.current = fn; }, []);
+  const [outline, setOutline] = useState(false);
+  const [fixOpen, setFixOpen] = useState(false);
+  const [formatOpen, setFormatOpen] = useState(false);
+  const [goalOpen, setGoalOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  useEffect(() => { if (shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 1200); return () => clearTimeout(tm); } }, []);
+
+  /** Editörde bir metni bulup seçer (danışman yorumunun alıntısı için). Bulursa seçili metni döndürür. */
+  function selectQuote(quote: string): string | null {
+    if (!editor || !quote.trim()) return null;
+    const needle = quote.replace(/\s+/g, " ").trim().slice(0, 120);
+    let found: { from: number; to: number } | null = null;
+    editor.state.doc.descendants((node, pos) => {
+      if (found || !node.isTextblock) return !found;
+      // Metin konumlarını belge konumlarına eşle (atıf gibi atom düğümler 1 konum kaplar)
+      let text = "";
+      const map: number[] = [];
+      node.forEach((child, offset) => {
+        if (child.isText) for (let k = 0; k < (child.text ?? "").length; k++) { text += child.text![k]; map.push(pos + 1 + offset + k); }
+      });
+      const norm = text.replace(/\s/g, " ");
+      const i = norm.indexOf(needle);
+      if (i >= 0) {
+        const fullLen = Math.min(quote.length, norm.length - i);
+        found = { from: map[i], to: map[Math.min(i + fullLen, map.length) - 1] + 1 };
+      }
+      return false;
+    });
+    if (!found) return null;
+    editor.chain().focus().setTextSelection(found).run();
+    return editor.state.doc.textBetween((found as { from: number }).from, (found as { to: number }).to, "\n");
+  }
+
+  /** Danışman yorumunu asistana uygulatır: alıntılanan metni seçer, asistana yorumla birlikte gönderir */
+  function applyComment(c: { body: string; quote: string | null }) {
+    const sel = c.quote ? selectQuote(c.quote) : null;
+    setTab("assistant");
+    setMobilePane("panel");
+    const msg = sel
+      ? t("Danışman yorumu: “{c}”. Seçili metni bu yoruma göre düzelt; düzeltilmiş metni tek bir taslak olarak ver, mevcut atıfları koru. Yaptığın değişiklikleri kısaca açıkla.", { c: c.body })
+      : t("Danışman yorumu: “{c}”. Bu bölümün mevcut metnini bu yoruma göre nasıl düzeltmem gerektiğini açıkla; gerekiyorsa düzeltilmiş paragrafları taslak olarak ver.", { c: c.body });
+    setTimeout(() => assistantSend.current?.(msg, "chat", sel ?? undefined), 350);
+    if (c.quote && !sel) toast({ tone: "info", title: t("Yorumdaki alıntı metinde bulunamadı"), detail: t("Asistan bölümün tamamına göre öneri verecek.") });
+  }
+  const placeholderCount = useMemo(() => stages.reduce((a, st) => a + findPlaceholderBlocks(st.content as JSONNode).length, 0), [stages]);
+
+  /** Bir paragrafı (düz metniyle bulunur) yeni düğümlerle değiştirir; etkin bölümde editör, diğerlerinde API ile */
+  const applyBlock = async (stageId: string, plain: string, nodes: JSONNode[]): Promise<boolean> => {
+    const note = t("AI: kaynakla düzeltildi");
+    if (stageId === activeId && editor) {
+      const next = replaceBlockByText(editor.getJSON() as JSONNode, plain, nodes);
+      if (!next) return false;
+      editor.commands.setContent(next as object, false);
+      pending.current = { id: activeId, doc: next };
+      await flush({ note, author: "ai" });
+      return true;
+    }
+    const st = stages.find((x) => x.id === stageId);
+    const next = st && replaceBlockByText(st.content as JSONNode, plain, nodes);
+    if (!next) return false;
+    try {
+      const r = await api<{ stage: any; progress: number }>(`/api/stages/${stageId}`, { method: "PATCH", json: { content: next, snapshot: { note, author: "ai" } } });
+      setStages((l) => l.map((x) => (x.id === stageId ? { ...x, content: next, content_text: r.stage.content_text, word_count: r.stage.word_count } : x)));
+      setProgress(r.progress);
+      return true;
+    } catch { return false; }
+  };
+  const applyBlockRef = useRef(applyBlock);
+  applyBlockRef.current = applyBlock;
 
   function cite(id: string) {
     if (!editor) return;
@@ -254,12 +386,13 @@ export function Workspace(props: Props) {
         <div className="relative flex items-center justify-center"><ProgressRing value={progress} size={40} /><span className="absolute text-[10px] font-semibold">{progress}%</span></div>
         <div className="min-w-0"><p className="text-[11px] font-medium uppercase tracking-wider text-ink-400">{t("Yol haritası")}</p><p className="truncate text-[13px] text-ink-600">{t(wt?.title ?? "")} · {t(LEVEL_LABELS[project.academic_level as AcademicLevel])}</p></div>
       </div>
+      <div data-tour="goal"><GoalWidget project={project} stages={stages} onOpen={() => setGoalOpen(true)} /></div>
       <Reorder.Group axis="y" values={stages} onReorder={reorder} className="flex-1 space-y-0.5 overflow-y-auto p-2">
         {stages.map((s, i) => {
           const st = STATUS.find((x) => x.id === s.status) ?? STATUS[0];
           const sel = s.id === activeId;
           return (
-            <Reorder.Item key={s.id} value={s} className={cn("group relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-2.5 transition-colors lg:py-2", sel ? "bg-white shadow-sm ring-1 ring-ink-100" : "hover:bg-white/70")} onClick={() => selectStage(s.id)} whileDrag={{ scale: 1.02, boxShadow: "0 12px 30px -10px rgb(21 24 41 / 0.25)" }}>
+            <Reorder.Item key={s.id} value={s} data-tour={s.key === "references" ? "stage-references" : undefined} className={cn("group relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-2.5 transition-colors lg:py-2", sel ? "bg-white shadow-sm ring-1 ring-ink-100" : "hover:bg-white/70")} onClick={() => selectStage(s.id)} whileDrag={{ scale: 1.02, boxShadow: "0 12px 30px -10px rgb(21 24 41 / 0.25)" }}>
               <GripVertical className="hidden h-3.5 w-3.5 shrink-0 cursor-grab text-ink-200 opacity-0 transition group-hover:opacity-100 lg:block" />
               <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
@@ -289,7 +422,7 @@ export function Workspace(props: Props) {
     <CitationContext.Provider value={citeCtx}>
       <div className="flex h-[100dvh] flex-col bg-[rgb(var(--bg))]">
         {/* Üst çubuk */}
-        <header className="flex h-14 shrink-0 items-center gap-1.5 border-b border-ink-100 bg-white/85 px-2 backdrop-blur sm:gap-2 sm:px-4" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+        <header className="relative z-30 flex h-14 shrink-0 items-center gap-1.5 border-b border-ink-100 bg-white/85 px-2 backdrop-blur sm:gap-2 sm:px-4" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
           <Link href="/panel" className="rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900" aria-label={t("Panele dön")}><ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" /></Link>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[14px] font-semibold text-ink-900 sm:text-[14.5px]">{mobilePane !== "nav" && active ? <span className="lg:hidden">{active.title}</span> : null}<span className={mobilePane !== "nav" && active ? "hidden lg:inline" : ""}>{project.title}</span></p>
@@ -300,13 +433,14 @@ export function Workspace(props: Props) {
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           <ShareButton projectId={project.id} />
-          <ExportMenu onExport={exportAs} />
-          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} />
+          <span data-tour="export"><ExportMenu onExport={exportAs} onFormat={() => setFormatOpen(true)} /></span>
+          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} />
+          <button onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
         </header>
 
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)_420px] xl:grid-cols-[280px_minmax(0,1fr)_460px]">
-          <aside className={cn("min-h-0 border-r border-ink-100 bg-ink-50/50", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
+          <aside data-tour="nav" className={cn("min-h-0 border-r border-ink-100 bg-ink-50/50", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
 
           <section className={cn("min-h-0 overflow-y-auto", mobilePane === "editor" ? "block" : "hidden lg:block")}>
             {active && (
@@ -315,6 +449,12 @@ export function Workspace(props: Props) {
                   <BibliographyView engine={engine} sources={sources} citedOrder={citedOrder} title={engine.meta.bibliographyTitle[project.language === "en" ? "en" : "tr"]} stages={stages} onJump={jumpToCitation} />
                 ) : (
                   <>
+                    {placeholderCount > 0 && (
+                      <button onClick={() => setFixOpen(true)} className="mb-3 flex w-full items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-left text-[13px] text-amber-900 transition hover:bg-amber-100">
+                        <Wand2 className="h-4 w-4 shrink-0 text-amber-600" />
+                        <span className="min-w-0 flex-1">{t("Projede {n} yerde “[KAYNAK GEREKLİ]” var.", { n: placeholderCount })} <b>{t("Kaynak bul ve düzelt")}</b></span>
+                      </button>
+                    )}
                     <div className="mb-3 sm:mb-5">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge tone="brand">{t("Bölüm {n}", { n: activeIndex + 1 })}</Badge>
@@ -324,7 +464,7 @@ export function Workspace(props: Props) {
                       <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[32px]" aria-label={t("Bölüm başlığı")} />
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
-                    <div className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
+                    <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
                       <Toolbar editor={editor} onFootnote={() => setFootnote("")} />
                     </div>
                     <AcademicEditor editor={editor} chapter={chapterNumber} />
@@ -336,7 +476,7 @@ export function Workspace(props: Props) {
 
           <aside className={cn("min-h-0 min-w-0 flex-col border-l border-ink-100 bg-white/60", mobilePane === "panel" ? "flex" : "hidden lg:flex")}>
             <div className={cn("border-b border-ink-100 p-2 sm:p-2.5", !isMore && "hidden lg:block")}>
-              <div className="hidden lg:block">
+              <div className="hidden lg:block" data-tour="panel-tabs">
                 <Tabs compact value={tab} onChange={setTab} tabs={[
                   { id: "assistant", label: t("Asistan"), icon: <Bot className="h-3.5 w-3.5" /> },
                   { id: "sources", label: t("Kaynaklar"), icon: <BookMarked className="h-3.5 w-3.5" />, count: sources.length },
@@ -356,10 +496,10 @@ export function Workspace(props: Props) {
             <div className="min-h-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} />}
-                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} />}
+                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={isBibliography ? undefined : () => setOutline(true)} registerSend={registerSend} language={project.language} />}
+                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: editor.getJSON() as JSONNode }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
-                  {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} />}
+                  {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={applyComment} />}
                   {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }} />}
                 </motion.div>
               </AnimatePresence>
@@ -370,7 +510,7 @@ export function Workspace(props: Props) {
         {/* Mobil alt gezinme */}
         <nav className="grid shrink-0 grid-cols-5 border-t border-ink-100 bg-white/95 backdrop-blur lg:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }} aria-label={t("Çalışma alanı gezinmesi")}>
           {MOBILE_NAV.map((n) => (
-            <button key={n.key} onClick={n.onClick} aria-current={n.active ? "page" : undefined} className={cn("relative flex flex-col items-center justify-center gap-0.5 py-2 text-[10.5px] font-medium transition-colors", n.active ? "text-brand-700" : "text-ink-400")}>
+            <button key={n.key} data-tour={`m-${n.key}`} onClick={n.onClick} aria-current={n.active ? "page" : undefined} className={cn("relative flex flex-col items-center justify-center gap-0.5 py-2 text-[10.5px] font-medium transition-colors", n.active ? "text-brand-700" : "text-ink-400")}>
               {n.active && <motion.span layoutId="mnav" className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-brand-600" />}
               <span className="relative">{n.icon}{n.badge ? <span className="absolute -right-2.5 -top-1.5 rounded-full bg-brand-600 px-1 text-[9px] font-semibold leading-4 text-white">{n.badge}</span> : null}</span>
               {n.label}
@@ -381,6 +521,11 @@ export function Workspace(props: Props) {
 
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { setStages((l) => { const n = [...l]; n.splice(activeIndex + 1, 0, st); return n.map((x, i) => ({ ...x, position: i })); }); setAddStage(false); }} />
+      <OutlineWriter open={outline} onClose={() => setOutline(false)} projectId={project.id} stage={active && !isBibliography ? { id: active.id, title: active.title } : null} existingHeadings={active ? headings(active.content as JSONNode).filter((h) => h.level === 2).map((h) => h.text) : []} onInsert={(md, map) => insertRef.current(md, map, "append", { silent: true })} onSourcesAdded={addSources} />
+      <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
+      <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
+      {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
+      {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}
       <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} />
       <Modal open={footnote !== null} onClose={() => setFootnote(null)} title={t("Dipnot ekle")} footer={<><Button variant="ghost" onClick={() => setFootnote(null)}>{t("Vazgeç")}</Button><Button disabled={!footnote?.trim()} onClick={() => { editor?.chain().focus().insertContent({ type: "footnote", attrs: { text: footnote } }).run(); setFootnote(null); }}>{t("Ekle")}</Button></>}>
         <textarea autoFocus className="input min-h-[120px]" placeholder={t("Dipnot metni…")} value={footnote ?? ""} onChange={(e) => setFootnote(e.target.value)} />
@@ -391,18 +536,18 @@ export function Workspace(props: Props) {
 
 function SaveIndicator({ state }: { state: SaveState }) {
   const { t } = useT();
-  const map = { saved: [CloudCheck, "Tüm değişiklikler kaydedildi", "text-ink-400"], dirty: [Loader2, "Değişiklikler kaydedilecek…", "text-ink-400"], saving: [Loader2, "Kaydediliyor…", "text-brand-600"], error: [CloudOff, "Kaydedilemedi, yeniden denenecek", "text-rose-600"] } as const;
+  const map = { saved: [CloudCheck, "Tüm değişiklikler kaydedildi", "text-ink-400"], dirty: [Loader2, "Değişiklikler kaydedilecek…", "text-ink-400"], saving: [Loader2, "Kaydediliyor…", "text-brand-600"], error: [CloudOff, "Kaydedilemedi, yeniden denenecek", "text-rose-600"], offline: [CloudOff, "Çevrimdışı: değişiklikler bu cihazda saklanıyor", "text-amber-600"] } as const;
   const [I, label, cls] = map[state];
   return <p className={cn("flex items-center gap-1 truncate text-[11px] sm:text-[11.5px]", cls)}><I className={cn("h-3 w-3 shrink-0", state === "saving" && "animate-spin")} /> <span className="truncate">{t(label)}</span></p>;
 }
 
 /** Mobil üst menü: atıf stili, kalite kontrol, paylaşım ve proje ayarları */
-function MobileMenu({ projectId, style, onStyle, onQuality, onSettings }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void }) {
+function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   return (
     <div className="lg:hidden">
-      <button onClick={() => setOpen(true)} className="rounded-xl p-2 text-ink-600 transition hover:bg-ink-100" aria-label={t("Daha fazla")}><MoreHorizontal className="h-5 w-5" /></button>
+      <button data-tour="m-more" onClick={() => setOpen(true)} className="rounded-xl p-2 text-ink-600 transition hover:bg-ink-100" aria-label={t("Daha fazla")}><MoreHorizontal className="h-5 w-5" /></button>
       {typeof document !== "undefined" && createPortal(<AnimatePresence>
         {open && (
           <>
@@ -417,6 +562,7 @@ function MobileMenu({ projectId, style, onStyle, onQuality, onSettings }: { proj
                 <Link href={`/proje/${projectId}/kalite`} onClick={onQuality} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><FileCheck2 className="h-5 w-5 text-emerald-600" /> {t("Kalite kontrol")}</Link>
                 <ShareButton projectId={projectId} variant="row" />
                 <button onClick={() => { setOpen(false); onSettings(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Settings2 className="h-5 w-5 text-ink-500" /> {t("Proje ayarları")}</button>
+                <button onClick={() => { setOpen(false); onTour(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><HelpCircle className="h-5 w-5 text-brand-600" /> {t("Rehberli tur")}</button>
                 <div className="flex items-center justify-between rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800">{t("Dil")} <LanguageSwitch /></div>
               </div>
             </motion.div>
@@ -445,7 +591,7 @@ function StatusPicker({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
-function ExportMenu({ onExport }: { onExport: (f: string) => Promise<void> }) {
+function ExportMenu({ onExport, onFormat }: { onExport: (f: string) => Promise<void>; onFormat: () => void }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
@@ -459,6 +605,7 @@ function ExportMenu({ onExport }: { onExport: (f: string) => Promise<void> }) {
             <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
             <motion.div initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} className="absolute right-0 top-11 z-40 w-60 rounded-2xl border border-ink-100 bg-white p-1.5 shadow-2xl">
               {items.map(([f, l]) => <button key={f} onClick={async () => { setBusy(f); await onExport(f); setBusy(null); setOpen(false); }} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50">{l}{busy === f && <Loader2 className="h-4 w-4 animate-spin" />}</button>)}
+              <button onClick={() => { setOpen(false); onFormat(); }} className="mt-1 flex w-full items-center gap-2 rounded-xl border-t border-ink-100 px-3 py-2 text-left text-[13.5px] font-medium text-brand-700 transition hover:bg-brand-50"><Settings2 className="h-4 w-4" /> {t("Biçim ve kapak ayarları")}</button>
               <p className="px-3 pb-1.5 pt-1 text-[11px] text-ink-400">{t("Kapak, içindekiler, numaralandırma, dipnotlar ve kaynakça eklenir.")}</p>
             </motion.div>
           </>
@@ -543,7 +690,7 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
       } catch { /* aynı anahtar varsa atla */ }
     }
     const f = suggestion.formatting;
-    await patch({ context: { format: { fontFamily: f.fontFamily, fontSizePt: f.fontSizePt, lineSpacing: f.lineSpacing } }, ...(STYLE_IDS.includes(f.citationStyle) ? { citationStyle: f.citationStyle } : {}) });
+    await patch({ context: { format: { ...(project.context?.format ?? {}), fontFamily: f.fontFamily, fontSizePt: f.fontSizePt, lineSpacing: f.lineSpacing } }, ...(STYLE_IDS.includes(f.citationStyle) ? { citationStyle: f.citationStyle } : {}) });
     onStagesAdded(added);
     toast({ tone: "success", title: t("Kılavuz uygulandı"), detail: t("{n} bölüm eklendi; biçim kuralları dışa aktarmada kullanılacak. Gereksiz bölümleri silebilir, sırayı değiştirebilirsiniz.", { n: added.length }) });
     setSuggestion(null);

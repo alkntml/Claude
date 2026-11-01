@@ -2,6 +2,7 @@ import "server-only";
 import path from "node:path";
 import PDFDocument from "pdfkit";
 import type { ExportDoc, Run } from "./model";
+import { coverLines, resolveFormat, type DocFormat } from "./format";
 
 const FONT_DIR = path.join(process.cwd(), "assets", "fonts");
 const F = {
@@ -12,8 +13,14 @@ const F = {
 };
 
 /** PDF: A4, Türkçe karakter destekli gömülü yazı tipi, sayfa numarası, dipnotlar bölüm sonunda. */
-export async function toPdf(d: ExportDoc): Promise<Buffer> {
-  const doc = new PDFDocument({ size: "A4", margins: { top: 72, bottom: 72, left: 85, right: 72 }, bufferPages: true, info: { Title: d.title, Author: d.author, Creator: "Akademi AI" } });
+export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise<Buffer> {
+  const f = resolveFormat(raw);
+  const pt = (cm: number) => Math.round(cm * 28.3465);
+  const M = { top: pt(f.margins.top), bottom: pt(f.margins.bottom), left: pt(f.margins.left), right: pt(f.margins.right) };
+  // Gömülü serif yazı tipi kullanılır (Türkçe karakter); punto ve satır aralığı şablondan
+  const base = Math.min(f.fontSizePt, 13) - 0.5;
+  const gap = Math.max(1, (f.lineSpacing - 1) * base * 0.9 + 2);
+  const doc = new PDFDocument({ size: "A4", margins: M, bufferPages: true, info: { Title: d.title, Author: d.author, Creator: "Akademi AI" } });
   doc.registerFont("r", F.regular).registerFont("b", F.bold).registerFont("i", F.italic).registerFont("bi", F.boldItalic);
   const chunks: Buffer[] = [];
   doc.on("data", (c: Buffer) => chunks.push(c));
@@ -32,10 +39,17 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
   };
 
   // Kapak
-  doc.moveDown(8).font("b").fontSize(20).text(d.title, { align: "center" });
-  if (d.subtitle) doc.moveDown(0.6).font("i").fontSize(14).text(d.subtitle, { align: "center" });
+  const cv = coverLines(f, d);
+  doc.font("b").fontSize(12);
+  for (const tx of cv.top) doc.text(tx, { align: "center" });
+  doc.moveDown(cv.top.length ? 6 : 8).font("b").fontSize(18).text(cv.title, { align: "center" });
+  if (cv.subtitle) doc.moveDown(0.6).font("i").fontSize(14).text(cv.subtitle, { align: "center" });
+  if (cv.thesisType) doc.moveDown(4).font("b").fontSize(12).text(cv.thesisType, { align: "center" });
   doc.moveDown(3).font("r").fontSize(12);
-  for (const t of [d.author, d.institution, d.date].filter(Boolean)) doc.text(t, { align: "center" }).moveDown(0.5);
+  if (cv.author) doc.text(cv.author, { align: "center" }).moveDown(1.5);
+  if (cv.advisor) doc.text(cv.advisor, { align: "center" }).moveDown(1.5);
+  if (!f.cover.university && d.institution) doc.text(d.institution, { align: "center" }).moveDown(1);
+  doc.moveDown(4).text(cv.bottom, { align: "center" });
 
   // İçindekiler için sayfa(lar) ayrılır; başlıkların sayfa numaraları belge yazıldıktan sonra doldurulur.
   const tocPerPage = 32;
@@ -49,7 +63,7 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
   let started = false;
   for (const b of d.blocks) {
     if (b.kind === "heading") {
-      if (b.level === 1) { doc.addPage(); started = true; }
+      if (b.level === 1 && (f.chapterOnNewPage || !started)) { doc.addPage(); started = true; } else if (b.level === 1) doc.moveDown(1.2);
       else doc.moveDown(0.6);
       headingPages.push(currentPage());
       const label = `${b.number ? `${b.number}  ` : ""}${b.runs.map((r) => r.text).join("")}`;
@@ -58,7 +72,7 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
       doc.moveDown(0.5);
     } else if (b.kind === "paragraph") {
       if (!started) { doc.addPage(); started = true; }
-      writeRuns(b.runs, { align: "justify", lineGap: 4, indent: b.quote ? 0 : 24, ...(b.quote ? { width: doc.page.width - 85 - 72 - 60 } : {}) });
+      writeRuns(b.runs, { size: base, align: f.justify ? "justify" : "left", lineGap: gap, indent: b.quote ? 0 : pt(f.firstLineIndentCm), ...(b.quote ? { width: doc.page.width - M.left - M.right - 60 } : {}) });
       doc.moveDown(0.5);
     } else if (b.kind === "caption") {
       writeRuns(b.runs.map((r) => ({ ...r, italic: true })), { size: 10.5 });
@@ -68,9 +82,9 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
       doc.moveDown(0.5);
     } else if (b.kind === "table") {
       const cols = Math.max(...b.rows.map((r) => r.length));
-      const width = doc.page.width - 85 - 72;
+      const width = doc.page.width - M.left - M.right;
       const colW = width / cols;
-      doc.moveTo(85, doc.y).lineTo(85 + width, doc.y).lineWidth(0.8).stroke();
+      doc.moveTo(M.left, doc.y).lineTo(M.left + width, doc.y).lineWidth(0.8).stroke();
       b.rows.forEach((row, ri) => {
         const y = doc.y + 4;
         let maxH = 0;
@@ -78,15 +92,15 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
           const text = (row[ci] ?? []).map((r) => r.text).join("");
           doc.font(ri === 0 && b.header ? "b" : "r").fontSize(10);
           const h = doc.heightOfString(text, { width: colW - 6 });
-          doc.text(text, 85 + ci * colW + 3, y, { width: colW - 6 });
+          doc.text(text, M.left + ci * colW + 3, y, { width: colW - 6 });
           maxH = Math.max(maxH, h);
         }
         doc.y = y + maxH + 4;
-        if (ri === 0 && b.header) doc.moveTo(85, doc.y).lineTo(85 + width, doc.y).lineWidth(0.5).stroke();
+        if (ri === 0 && b.header) doc.moveTo(M.left, doc.y).lineTo(M.left + width, doc.y).lineWidth(0.5).stroke();
         if (doc.y > doc.page.height - 100) doc.addPage();
       });
-      doc.moveTo(85, doc.y).lineTo(85 + width, doc.y).lineWidth(0.8).stroke();
-      doc.x = 85;
+      doc.moveTo(M.left, doc.y).lineTo(M.left + width, doc.y).lineWidth(0.8).stroke();
+      doc.x = M.left;
       doc.moveDown();
     }
   }
@@ -104,21 +118,21 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
     for (const e of d.bibliography) {
       const runs: Run[] = [...(d.numericBibliography ? [{ text: `[${e.number}] ` }] : []), ...e.rich.map((s) => ({ text: s.text, italic: s.italic, sup: s.sup }))];
       // Asılı girinti: metin bloğu 22pt içeriden başlar, ilk satır sola taşar
-      doc.x = 85 + 22;
-      writeRuns(runs, { size: 11, lineGap: 3, indent: -22, width: doc.page.width - 85 - 72 - 22 });
-      doc.x = 85;
+      doc.x = M.left + 22;
+      writeRuns(runs, { size: 11, lineGap: 3, indent: -22, width: doc.page.width - M.left - M.right - 22 });
+      doc.x = M.left;
       doc.moveDown(0.4);
     }
   }
 
   // İçindekiler: noktalı çizgi ve sayfa numaralarıyla
   const entries = [...d.toc.map((t, k) => ({ ...t, page: headingPages[k] })), ...(bibPage >= 0 ? [{ level: 1, number: "", text: d.bibliographyTitle, page: bibPage }] : [])];
-  const left = 85, right = doc.page.width - 72;
+  const left = M.left, right = doc.page.width - M.right;
   entries.forEach((t, k) => {
     const pageIdx = tocStart + Math.floor(k / tocPerPage);
     if (k % tocPerPage === 0) {
       doc.switchToPage(pageIdx);
-      doc.x = left; doc.y = 72;
+      doc.x = left; doc.y = M.top;
       if (k === 0) doc.font("b").fontSize(15).text(d.language === "tr" ? "İçindekiler" : "Contents").moveDown();
     }
     const indent = (t.level - 1) * 16;
@@ -147,7 +161,8 @@ export async function toPdf(d: ExportDoc): Promise<Buffer> {
     doc.switchToPage(p);
     const bottom = doc.page.margins.bottom;
     doc.page.margins.bottom = 0;
-    doc.font("r").fontSize(9).text(String(p), 0, doc.page.height - 40, { align: "center", width: doc.page.width });
+    const top = f.pageNumber === "top-right";
+    doc.font("r").fontSize(9).text(String(p), f.pageNumber === "bottom-center" ? 0 : 0, top ? 28 : doc.page.height - 40, { align: f.pageNumber === "bottom-center" ? "center" : "right", width: doc.page.width - (f.pageNumber === "bottom-center" ? 0 : M.right) });
     doc.page.margins.bottom = bottom;
   }
   doc.end();

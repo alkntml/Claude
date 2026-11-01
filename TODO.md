@@ -14,6 +14,8 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] Uzun AI yanıtlarında Vercel Hobby zaman sınırı (gerekirse Pro plan veya `maxDuration` ayarı)
 
 ## 🔴 Kullanıcının yapması gerekenler
+- [ ] **Supabase SQL Editor’de `supabase/migrations/20261103000006_source_summary.sql` çalıştır** (literatür matrisi)
+- [ ] Yeni özellikleri canlıda dene: Alt başlıklarla yaz, Kaynakta doğrula, [KAYNAK GEREKLİ] düzelt, Literatür matrisi, PDF yükle, biçim/kapak ile Word çıktısı, hedef/takvim, mikrofon
 - [ ] **Supabase SQL Editor’de `supabase/migrations/20261102000005_no_placeholder_claims.sql` çalıştır** (sistem talimatından [KAYNAK GEREKLİ] kuralını kaldırır)
 - [ ] Telefonda çalışma alanını dene (alt çubuk, asistan, ⋯ menüsü) ve İngilizce/Türkçe geçişini kontrol et
 - [ ] Sohbette paylaşılan Claude API anahtarını Console'dan sil, yenisini oluştur, Vercel'e gir, Redeploy
@@ -45,7 +47,7 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] Vancouver/AMA dergi adı kısaltmaları
 - [x] İngilizce arayüz (i18n): ülkeye göre otomatik, TR/EN düğmesi
 - [ ] Anlam tabanlı arama (pgvector + embedding servisi)
-- [ ] Kalıcı iş kuyruğu (Inngest/QStash) — trafik artınca
+- [ ] Kalıcı iş kuyruğu (Inngest/QStash) — kullanıcı şimdilik istemedi; uzun işler sayfa açıkken istemciden sırayla yürütülüyor
 - [ ] Danışmanla eşzamanlı düzenleme
 - [ ] `.dotx` üniversite şablonu desteği
 - [ ] Lisanslı intihal servisi (iThenticate/Turnitin) — anlaşma gerekir

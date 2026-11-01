@@ -247,3 +247,65 @@ export function citationUsages(stages: { id: string; title: string; content: JSO
   }
   return out;
 }
+
+export const PLACEHOLDER_RE = /\[KAYNAK GEREKLİ\]|\[KAYNAK DOĞRULANAMADI\]/;
+
+/** Yer tutucu içeren paragraf/başlıkları bulur (liste ve alıntı içindekiler dahil). */
+export function findPlaceholderBlocks(doc: JSONNode | null | undefined): JSONNode[] {
+  const out: JSONNode[] = [];
+  walk(doc, (n) => {
+    if ((n.type === "paragraph" || n.type === "heading") && PLACEHOLDER_RE.test(docToPlain({ type: "doc", content: n.content }))) out.push(n);
+  });
+  return out;
+}
+
+/** Paragraftaki atıfları ⟦C1⟧ işaretlerine çevirir (yapay zekâ düzeltirken atıfları bozmasın diye). */
+export function blockToTokenText(block: JSONNode): { text: string; tokens: JSONNode[] } {
+  const tokens: JSONNode[] = [];
+  const text = (block.content ?? []).map((n) => {
+    if (n.type === "citation") { tokens.push(n); return `⟦C${tokens.length}⟧`; }
+    if (n.type === "text") {
+      const t = n.text ?? "";
+      const marks = new Set((n.marks ?? []).map((m) => m.type));
+      return marks.has("bold") ? `**${t}**` : marks.has("italic") ? `*${t}*` : t;
+    }
+    if (n.type === "hardBreak") return "\n";
+    return "";
+  }).join("");
+  return { text, tokens };
+}
+
+/** ⟦Cn⟧ işaretlerini özgün atıf düğümlerine geri çevirir. */
+export function restoreTokens(nodes: JSONNode[], tokens: JSONNode[]): JSONNode[] {
+  const fix = (n: JSONNode): JSONNode[] => {
+    if (n.type === "text" && n.text && /⟦C\d+⟧/.test(n.text)) {
+      const out: JSONNode[] = [];
+      for (const part of n.text.split(/(⟦C\d+⟧)/)) {
+        const m = part.match(/^⟦C(\d+)⟧$/);
+        if (m) { const tk = tokens[Number(m[1]) - 1]; if (tk) out.push(tk); }
+        else if (part) out.push({ ...n, text: part });
+      }
+      return out;
+    }
+    return [n.content ? { ...n, content: n.content.flatMap(fix) } : n];
+  };
+  return nodes.flatMap(fix);
+}
+
+/** Belgede düz metni `plain` olan ilk paragraf/başlığı yeni düğümlerle değiştirir. Bulamazsa null. */
+export function replaceBlockByText(doc: JSONNode, plain: string, replacement: JSONNode[]): JSONNode | null {
+  let done = false;
+  const rec = (n: JSONNode): JSONNode => {
+    if (!n.content) return n;
+    const content: JSONNode[] = [];
+    for (const c of n.content) {
+      if (!done && (c.type === "paragraph" || c.type === "heading") && docToPlain({ type: "doc", content: c.content }) === plain) {
+        content.push(...replacement);
+        done = true;
+      } else content.push(rec(c));
+    }
+    return { ...n, content };
+  };
+  const out = rec(doc);
+  return done ? out : null;
+}

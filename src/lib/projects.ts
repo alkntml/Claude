@@ -1,33 +1,11 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocale } from "@/lib/citations";
+import { CitationEngine, type CitationStyleId, type CiteLocale } from "@/lib/citations";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function sourceRowToItem(r: any): CitationItem {
-  return {
-    id: r.id,
-    type: r.type ?? "article-journal",
-    title: r.title ?? "",
-    authors: Array.isArray(r.authors) ? r.authors : [],
-    editors: Array.isArray(r.verification?.editors) ? r.verification.editors : undefined,
-    year: r.year,
-    month: r.month,
-    containerTitle: r.container_title,
-    volume: r.volume,
-    issue: r.issue,
-    pages: r.pages,
-    publisher: r.publisher,
-    publisherPlace: r.publisher_place,
-    edition: r.edition,
-    doi: r.doi,
-    url: r.url,
-    isbn: r.isbn,
-    pmid: r.pmid,
-    arxivId: r.arxiv_id,
-    institution: r.type === "thesis" ? r.publisher : null,
-  };
-}
+export { sourceRowToItemClient as sourceRowToItem } from "@/lib/sources/row";
+import { sourceRowToItemClient as sourceRowToItem } from "@/lib/sources/row";
 
 export interface ProjectBundle {
   project: any;

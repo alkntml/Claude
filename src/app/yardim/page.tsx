@@ -1,0 +1,27 @@
+import { StaticPage } from "@/components/static-page";
+import { isSupabaseConfigured } from "@/lib/env";
+import { createClient } from "@/lib/supabase/server";
+
+export const metadata = { title: "Yardım merkezi" };
+export const dynamic = "force-dynamic";
+
+export default async function Help() {
+  let articles: { slug: string; title: string; body: string; category: string }[] = [];
+  if (isSupabaseConfigured()) {
+    const db = await createClient();
+    const { data } = await db.from("help_articles").select("slug, title, body, category").eq("is_published", true).order("sort_order");
+    articles = data ?? [];
+  }
+  return (
+    <StaticPage title="Yardım merkezi" lead="Platformu en verimli şekilde kullanmak için rehberler.">
+      {articles.length === 0 && <p className="text-ink-500">Henüz yayınlanmış yardım makalesi yok.</p>}
+      {articles.map((a) => (
+        <section key={a.slug} id={a.slug} className="card p-6">
+          <p className="text-xs font-medium uppercase tracking-wider text-brand-600">{a.category}</p>
+          <h2 className="!mt-1">{a.title}</h2>
+          <p className="mt-2 whitespace-pre-line text-ink-600">{a.body}</p>
+        </section>
+      ))}
+    </StaticPage>
+  );
+}

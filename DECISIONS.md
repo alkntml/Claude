@@ -118,3 +118,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Supabase OAuth kullanılır; düğmeler Supabase `/auth/v1/settings` yanıtına göre yalnızca etkin sağlayıcılar için gösterilir (yapılandırılmamış düğme hata vermesin).
 - Kayıt sayfasında sosyal giriş de KVKK/koşullar onayı ister; giriş sayfasında ilk girişin hesap açacağı ve onay anlamına geldiği yazılır.
 - Davet kodu OAuth’ta meta veriyle taşınamadığından geri dönüş adresindeki `ref` ile, yalnızca 15 dk içinde açılmış ve davet edeni boş hesaplara bağlanır.
+
+### D33 — Yazı tipleri
+- Başlıklar ve editör metni: Source Serif 4 (optik boyutlu, latin-ext); serif + font-medium başlıklar CSS ile yarı kalın ve sıkı aralıklı. Arayüz metni: Inter. Amaç akademik yayın hissi.

@@ -1,0 +1,67 @@
+import { z } from "zod";
+import { json, parseBody, route } from "@/lib/api";
+import { requireUser } from "@/lib/auth";
+import { assertProjectQuota } from "@/lib/usage";
+import { buildRoadmap } from "@/lib/workflows";
+import { STYLE_IDS } from "@/lib/citations";
+
+const CreateSchema = z.object({
+  title: z.string().trim().min(1).max(300),
+  workType: z.enum(["thesis", "research_article", "journal_article", "capstone", "literature_review", "research_proposal", "text_editing", "source_research"]),
+  level: z.enum(["bachelor", "master", "doctorate", "postdoc", "other"]).default("master"),
+  methodology: z.enum(["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"]).default("quantitative"),
+  discipline: z.string().max(200).default(""),
+  language: z.enum(["tr", "en"]).default("tr"),
+  citationStyle: z.enum(STYLE_IDS as [string, ...string[]]).default("apa7"),
+  topic: z.string().max(4000).default(""),
+  keywords: z.array(z.string().max(80)).max(20).default([]),
+  university: z.string().max(300).optional(),
+  targetJournal: z.string().max(300).optional(),
+});
+
+export const GET = route("projects.list", async () => {
+  const s = await requireUser();
+  const { data } = await s.supabase
+    .from("projects")
+    .select("id, title, work_type, academic_level, status, progress, citation_style, updated_at, last_opened_at, discipline")
+    .eq("user_id", s.user.id)
+    .order("updated_at", { ascending: false });
+  return json({ projects: data ?? [] });
+});
+
+export const POST = route("projects.create", async (req) => {
+  const s = await requireUser();
+  const body = await parseBody(req, CreateSchema);
+  await assertProjectQuota(s.user.id, s.profile.plan_id);
+
+  const { data: project, error } = await s.supabase
+    .from("projects")
+    .insert({
+      user_id: s.user.id,
+      title: body.title,
+      work_type: body.workType,
+      academic_level: body.level,
+      discipline: body.discipline,
+      language: body.language,
+      citation_style: body.citationStyle,
+      topic: body.topic,
+      keywords: body.keywords,
+      context: { methodology: body.methodology, university: body.university, targetJournal: body.targetJournal },
+    })
+    .select()
+    .single();
+  if (error || !project) throw error ?? new Error("Proje oluşturulamadı");
+
+  const roadmap = buildRoadmap({ workType: body.workType, level: body.level, methodology: body.methodology });
+  const { error: stErr } = await s.supabase.from("project_stages").insert(
+    roadmap.map((st, idx) => ({ project_id: project.id, user_id: s.user.id, key: st.key, title: st.title, description: st.description, position: idx })),
+  );
+  if (stErr) {
+    await s.supabase.from("projects").delete().eq("id", project.id);
+    throw stErr;
+  }
+  if (body.topic) {
+    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `Araştırma konusu: ${body.topic}`, source: "user", pinned: true });
+  }
+  return json({ project }, 201);
+});

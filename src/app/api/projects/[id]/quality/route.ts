@@ -1,0 +1,85 @@
+import { z } from "zod";
+import { ApiError, json, parseBody, route } from "@/lib/api";
+import { requireUser } from "@/lib/auth";
+import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
+import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
+import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
+import { runQualityChecks } from "@/lib/quality/checks";
+import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { stageDef } from "@/lib/workflows";
+
+type Ctx = { params: Promise<{ id: string }> };
+export const maxDuration = 120;
+
+const AI_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["issues"],
+  properties: {
+    issues: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["category", "severity", "title", "detail", "stageKey"],
+        properties: {
+          category: { type: "string", enum: ["consistency", "alignment", "structure", "language"] },
+          severity: { type: "string", enum: ["info", "warning", "error"] },
+          title: { type: "string" },
+          detail: { type: "string" },
+          stageKey: { type: "string" },
+        },
+      },
+    },
+  },
+};
+
+export const GET = route<Ctx>("quality.latest", async (_req, { params }) => {
+  const s = await requireUser();
+  const { id } = await params;
+  const { data } = await s.supabase.from("quality_reports").select("*").eq("project_id", id).eq("user_id", s.user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+  return json({ report: data });
+});
+
+export const POST = route<Ctx>("quality.run", async (req, { params }) => {
+  const s = await requireUser();
+  const { id } = await params;
+  const { withAi } = await parseBody(req, z.object({ withAi: z.boolean().default(false) }));
+  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  if (!bundle) throw new ApiError(404, "Proje bulunamadı");
+
+  const stages = bundle.stages.map((st) => {
+    const def = stageDef(st.key);
+    return { key: st.key, title: st.title, text: st.content_text ?? "", citedIds: citedIdsInOrder([st.content as JSONNode]), needsLiterature: def?.needsLiterature, requiresUserData: def?.requiresUserData, generated: !!def?.generated };
+  });
+  const sources = bundle.sources.map((r) => ({ ...sourceRowToItem(r), verified: r.verified, accessLevel: r.access_level }));
+  const report = runQualityChecks(stages, sources, { language: bundle.project.language });
+
+  let aiReview: { ran: boolean; error?: string } = { ran: false };
+  if (withAi) {
+    await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+    const model = await resolveModel(s.profile.plan_id);
+    if (!isProviderConfigured(model.provider)) aiReview = { ran: false, error: "Yapay zekâ sağlayıcısı yapılandırılmamış" };
+    else {
+      const summary = stages.filter((x) => x.text).map((x) => `### ${x.key} — ${x.title}\n${x.text.slice(0, 6000)}`).join("\n\n");
+      const res = await complete(model, {
+        system: "Deneyimli bir tez jürisi üyesi gibi akademik çalışmayı değerlendir. Yalnızca mantıksal bütünlük, bilimsel tutarlılık, bölümler arası uyum, araştırma soruları–yöntem uyumu ve hipotez–amaç ilişkisi sorunlarını bildir. Somut ve uygulanabilir ol; metinde olmayan şeyleri varsayma. Türkçe yaz. En fazla 15 sorun.",
+        messages: [{ role: "user", content: `Çalışma: ${bundle.project.title}\nTür: ${bundle.project.work_type}\n\n${summary}` }],
+        maxTokens: 6000,
+        effort: "medium",
+        jsonSchema: AI_SCHEMA,
+      });
+      try {
+        const parsed = JSON.parse(res.text) as { issues: { category: string; severity: "info" | "warning" | "error"; title: string; detail: string; stageKey: string }[] };
+        parsed.issues.slice(0, 15).forEach((it, k) => report.issues.push({ id: `ai-${k}`, category: it.category as "consistency", severity: it.severity, title: it.title, detail: it.detail, stageKey: it.stageKey || undefined }));
+        aiReview = { ran: true };
+      } catch {
+        aiReview = { ran: false, error: "Yapay zekâ değerlendirmesi okunamadı" };
+      }
+      await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output), provider: model.provider, model: res.model, meta: { action: "quality_review" } });
+    }
+  }
+  await recordUsage(s.user.id, "quality_check");
+  const { data } = await s.supabase.from("quality_reports").insert({ project_id: id, user_id: s.user.id, score: report.score, report: { ...report, aiReview } }).select().single();
+  return json({ report: data });
+});

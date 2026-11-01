@@ -1,0 +1,162 @@
+/**
+ * Dışa aktarma için ara belge modeli: TipTap JSON + kaynaklar + atıf stili ->
+ * biçimden bağımsız bloklar. DOCX, PDF, Markdown ve TXT işleyicileri bu modeli kullanır.
+ */
+import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocale, type Rich } from "@/lib/citations";
+import { citedIdsInOrder, citationAttrs, numberHeadings, type HeadingInfo, type JSONNode } from "@/lib/editor/doc";
+
+export interface Run {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  sup?: boolean;
+  /** Bu run bir dipnot işaretidir; değeri dipnot metnidir */
+  footnote?: string;
+}
+
+export type Block =
+  | { kind: "heading"; level: number; number: string; runs: Run[] }
+  | { kind: "paragraph"; runs: Run[]; quote?: boolean }
+  | { kind: "list"; ordered: boolean; items: Run[][] }
+  | { kind: "table"; rows: Run[][][]; header: boolean }
+  | { kind: "caption"; runs: Run[] };
+
+export interface ExportDoc {
+  title: string;
+  author: string;
+  institution: string;
+  subtitle: string;
+  date: string;
+  language: CiteLocale;
+  styleLabel: string;
+  numberHeadings: boolean;
+  toc: { level: number; number: string; text: string }[];
+  blocks: Block[];
+  bibliographyTitle: string;
+  bibliography: { number?: number; rich: Rich }[];
+  numericBibliography: boolean;
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export function buildExportDoc(params: {
+  project: any;
+  stages: any[];
+  sources: any[];
+  engineItems: CitationItem[];
+  authorName: string;
+  options?: { numberHeadings?: boolean };
+}): ExportDoc {
+  const { project, stages } = params;
+  const locale: CiteLocale = project.language === "en" ? "en" : "tr";
+  const ordered = [...stages].sort((a, b) => a.position - b.position);
+  const order = citedIdsInOrder(ordered.map((s) => s.content as JSONNode));
+  const engine = new CitationEngine(project.citation_style as CitationStyleId, params.engineItems, { locale, citedOrder: order });
+  const doNumber = params.options?.numberHeadings ?? true;
+  const firstSeen = new Set<string>();
+
+  const blocks: Block[] = [];
+  const toc: ExportDoc["toc"] = [];
+  let chapter = 0;
+
+  const richToRuns = (r: Rich): Run[] => r.map((s) => ({ text: s.text, italic: s.italic, sup: s.sup }));
+
+  const inlineRuns = (nodes: JSONNode[] | undefined): Run[] => {
+    const out: Run[] = [];
+    for (const n of nodes ?? []) {
+      if (n.type === "text") {
+        const marks = new Set((n.marks ?? []).map((m) => m.type));
+        out.push({ text: n.text ?? "", bold: marks.has("bold"), italic: marks.has("italic"), underline: marks.has("underline"), sup: marks.has("superscript") });
+      } else if (n.type === "citation") {
+        const a = citationAttrs(n);
+        const first = a.ids.some((id) => !firstSeen.has(id));
+        a.ids.forEach((id) => firstSeen.add(id));
+        out.push(...richToRuns(engine.cite(a.ids, { locator: a.locator, narrative: a.narrative }, first)));
+      } else if (n.type === "footnote") {
+        out.push({ text: "", footnote: String(n.attrs?.text ?? "") });
+      } else if (n.type === "hardBreak") {
+        out.push({ text: "\n" });
+      } else {
+        out.push(...inlineRuns(n.content));
+      }
+    }
+    return out;
+  };
+
+  const visit = (n: JSONNode, headingNumbers: string[], hIndex: { k: number }) => {
+    switch (n.type) {
+      case "heading": {
+        const level = Math.min(Math.max(Number(n.attrs?.level ?? 2), 2), 4);
+        const number = doNumber ? headingNumbers[hIndex.k] ?? "" : "";
+        hIndex.k++;
+        const runs = inlineRuns(n.content);
+        blocks.push({ kind: "heading", level, number, runs });
+        toc.push({ level, number, text: runs.map((r) => r.text).join("") });
+        break;
+      }
+      case "paragraph": {
+        const runs = inlineRuns(n.content);
+        const isCaption = /^(Tablo|Şekil|Table|Figure)\s+\d+/.test(runs.map((r) => r.text).join(""));
+        if (runs.some((r) => r.text.trim() || r.footnote)) blocks.push(isCaption ? { kind: "caption", runs } : { kind: "paragraph", runs });
+        break;
+      }
+      case "blockquote":
+        for (const c of n.content ?? []) blocks.push({ kind: "paragraph", runs: inlineRuns(c.content), quote: true });
+        break;
+      case "bulletList":
+      case "orderedList":
+        blocks.push({ kind: "list", ordered: n.type === "orderedList", items: (n.content ?? []).map((li) => (li.content ?? []).flatMap((p) => inlineRuns(p.content))) });
+        break;
+      case "table": {
+        const rows = (n.content ?? []).map((row) => (row.content ?? []).map((cell) => (cell.content ?? []).flatMap((p) => inlineRuns(p.content))));
+        const header = (n.content?.[0]?.content ?? []).some((c) => c.type === "tableHeader");
+        blocks.push({ kind: "table", rows, header });
+        break;
+      }
+      default:
+        for (const c of n.content ?? []) visit(c, headingNumbers, hIndex);
+    }
+  };
+
+  for (const st of ordered) {
+    if (st.key === "references") continue;
+    const doc = st.content as JSONNode | null;
+    const hasText = (st.content_text ?? "").trim().length > 0;
+    if (!hasText) continue;
+    chapter++;
+    const chapterNumber = doNumber ? String(chapter) : "";
+    blocks.push({ kind: "heading", level: 1, number: chapterNumber, runs: [{ text: st.title }] });
+    toc.push({ level: 1, number: chapterNumber, text: st.title });
+    const inner: HeadingInfo[] = [];
+    const collect = (x: JSONNode) => {
+      if (x.type === "heading") inner.push({ level: Math.min(Math.max(Number(x.attrs?.level ?? 2), 2), 4), text: "" });
+      for (const c of x.content ?? []) collect(c);
+    };
+    if (doc) collect(doc);
+    const nums = numberHeadings([{ level: 1, text: "" }, ...inner], chapter).slice(1);
+    if (doc) visit(doc, nums, { k: 0 });
+  }
+
+  const bib = engine.bibliography(order);
+  const meta = engine.meta;
+  return {
+    title: project.title,
+    author: params.authorName,
+    institution: project.context?.university ?? "",
+    subtitle: project.context?.subtitle ?? "",
+    date: new Date().toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", { year: "numeric", month: "long" }),
+    language: locale,
+    styleLabel: meta.label,
+    numberHeadings: doNumber,
+    toc,
+    blocks,
+    bibliographyTitle: meta.bibliographyTitle[locale],
+    bibliography: bib.map((b) => ({ number: b.number, rich: b.rich })),
+    numericBibliography: meta.family === "numeric",
+  };
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+export function runsToPlain(runs: Run[]): string {
+  return runs.map((r) => (r.footnote ? "" : r.text)).join("");
+}

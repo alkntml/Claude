@@ -1,0 +1,87 @@
+import "server-only";
+import { ApiError } from "@/lib/api";
+import { adminClient } from "@/lib/supabase/admin";
+import { getSetting } from "@/lib/settings";
+
+export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check";
+
+export interface PlanLimits {
+  ai_requests_month?: number | null;
+  tokens_month?: number | null;
+  source_searches_month?: number | null;
+  projects?: number | null;
+  storage_mb?: number | null;
+  export_formats?: string[];
+}
+
+function monthStart(): string {
+  const d = new Date();
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)).toISOString();
+}
+
+export async function planLimits(planId: string): Promise<PlanLimits> {
+  const { data } = await adminClient().from("plans").select("limits").eq("id", planId).maybeSingle();
+  return (data?.limits ?? {}) as PlanLimits;
+}
+
+export interface UsageSummary {
+  ai_requests: number;
+  tokens: number;
+  source_searches: number;
+  exports: number;
+  projects: number;
+  storage_mb: number;
+}
+
+export async function usageSummary(userId: string): Promise<UsageSummary> {
+  const db = adminClient();
+  const since = monthStart();
+  const [events, projects, files] = await Promise.all([
+    db.from("usage_events").select("kind, quantity, tokens_in, tokens_out").eq("user_id", userId).gte("created_at", since).limit(20000),
+    db.from("projects").select("id", { count: "exact", head: true }).eq("user_id", userId).neq("status", "archived"),
+    db.from("files").select("size_bytes").eq("user_id", userId).limit(10000),
+  ]);
+  const sum: UsageSummary = { ai_requests: 0, tokens: 0, source_searches: 0, exports: 0, projects: projects.count ?? 0, storage_mb: 0 };
+  for (const e of events.data ?? []) {
+    if (e.kind === "ai_request") { sum.ai_requests += e.quantity; sum.tokens += e.tokens_in + e.tokens_out; }
+    if (e.kind === "source_search") sum.source_searches += e.quantity;
+    if (e.kind === "export") sum.exports += e.quantity;
+  }
+  sum.storage_mb = Math.round(((files.data ?? []).reduce((a, f) => a + Number(f.size_bytes), 0) / 1048576) * 10) / 10;
+  return sum;
+}
+
+/** Dakikalık hız sınırı — veritabanı tabanlı olduğu için birden çok sunucu örneğinde de tutarlıdır. */
+async function rateLimit(userId: string, kind: UsageKind) {
+  const rate = await getSetting("limits.rate");
+  const max = kind === "ai_request" ? rate.ai_per_minute : kind === "source_search" ? rate.search_per_minute : 60;
+  const since = new Date(Date.now() - 60_000).toISOString();
+  const { count } = await adminClient().from("usage_events").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("kind", kind).gte("created_at", since);
+  if ((count ?? 0) >= max) throw new ApiError(429, "Çok fazla istek gönderdiniz. Lütfen bir dakika sonra tekrar deneyin.", "rate_limited");
+}
+
+/** İşlem öncesi paket limitlerini kontrol eder; aşılmışsa 402 döner. */
+export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string } = {}) {
+  await rateLimit(userId, kind);
+  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
+  const over = (used: number, lim: number | null | undefined) => lim !== null && lim !== undefined && used >= lim;
+  if (kind === "ai_request") {
+    if (over(usage.ai_requests, limits.ai_requests_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
+    if (over(usage.tokens, limits.tokens_month)) throw new ApiError(402, "Bu ayki token limitinize ulaştınız.", "limit_tokens");
+  }
+  if (kind === "source_search" && over(usage.source_searches, limits.source_searches_month)) throw new ApiError(402, "Bu ayki kaynak tarama limitinize ulaştınız.", "limit_search");
+  if (kind === "upload" && limits.storage_mb != null && usage.storage_mb + (extra.bytes ?? 0) / 1048576 > limits.storage_mb) throw new ApiError(402, "Depolama kotanız doldu.", "limit_storage");
+  if (kind === "export" && extra.format && limits.export_formats && !limits.export_formats.includes(extra.format)) throw new ApiError(402, `${extra.format.toUpperCase()} dışa aktarma paketinizde yok.`, "limit_export");
+}
+
+export async function assertProjectQuota(userId: string, planId: string) {
+  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
+  if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");
+}
+
+export async function recordUsage(userId: string, kind: UsageKind, data: { quantity?: number; tokensIn?: number; tokensOut?: number; costUsd?: number; provider?: string; model?: string; meta?: Record<string, unknown> } = {}) {
+  await adminClient().from("usage_events").insert({
+    user_id: userId, kind, quantity: data.quantity ?? 1, tokens_in: data.tokensIn ?? 0, tokens_out: data.tokensOut ?? 0,
+    cost_usd: data.costUsd ?? 0, provider: data.provider ?? null, model: data.model ?? null, meta: data.meta ?? {},
+  });
+}

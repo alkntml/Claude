@@ -8,7 +8,9 @@ import { ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
 import { getSetting } from "@/lib/settings";
-import { addSourcesToProject, executeSearch, pickForAutoAdd, planResearch, recordResearchUsage, recordToInput } from "@/lib/research";
+import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
+import { addSourcesToProject, executeSearch, ingestWithBudget, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput } from "@/lib/research";
+import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
 
 export const maxDuration = 300;
@@ -24,6 +26,11 @@ const Schema = z.object({
 
 /** Otomatik araştırma kararının verildiği eylemler (seçili metin düzenleme ve veri yorumlama hariç) */
 const RESEARCH_ACTIONS = new Set<AssistantAction>(["chat", "plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "discussion"]);
+
+/** Bir projeye otomatik eklenebilecek en fazla kaynak (tez başına 50+ kaynağa izin verir) */
+const MAX_PROJECT_SOURCES = 150;
+/** Yazımdan önce tam metin okumayı bekleme süresi */
+const FULLTEXT_WAIT_MS = 15_000;
 
 const enc = new TextEncoder();
 const sse = (event: string, data: unknown) => enc.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
@@ -77,19 +84,28 @@ export const POST = route("ai.chat", async (req) => {
       //    Gerekiyorsa sorgular gerçek veri tabanlarında çalıştırılır, en uygun kaynaklar doğrulanıp projeye eklenir.
       if (RESEARCH_ACTIONS.has(b.action)) {
         try {
-          const planned = await planResearch({ planId: s.profile.plan_id, project: bundle.project, stageTitle: stage?.title, request: `${b.action !== "chat" ? `[${action.label}] ` : ""}${b.message}`, existingTitles: bundle.sources.map((x) => x.title) });
+          // Karar, projenin toplamına değil üzerinde çalışılan bölüm / alt başlık için ilgili kaynaklara göre verilir
+          const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text).filter(Boolean).slice(0, 20) : [];
+          const relevanceQuery = `${b.message} ${b.selection?.slice(0, 600) ?? ""} ${stage?.title ?? ""} ${stageHeads.slice(-2).join(" ")}`;
+          const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
+          const relevant = rankSources(bundle.sources, relevanceQuery, citedHere).slice(0, 15);
+          const planned = await planResearch({
+            planId: s.profile.plan_id, project: bundle.project, stageTitle: stage?.title,
+            request: `${b.action !== "chat" ? `[${action.label}] ` : ""}${b.message}${b.selection ? `\n(Seçili metin: ${b.selection.slice(0, 400)})` : ""}`,
+            existingTitles: bundle.sources.map((x) => x.title), relevantTitles: relevant.map((x) => x.title), stageHeadings: stageHeads,
+          });
           let queries: string[] = [];
-          if (planned.plan.needsSearch && planned.plan.queries.length) {
+          if (planned.plan.needsSearch && planned.plan.queries.length && bundle.sources.length < MAX_PROJECT_SOURCES) {
             try {
               await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
               queries = planned.plan.queries.map((q) => q.query);
               controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
               const { results } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
               const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
-              const picks = pickForAutoAdd(results, existing, 8);
+              const picks = pickForAutoAdd(results, existing, Math.min(8, MAX_PROJECT_SOURCES - bundle.sources.length));
               if (picks.length) {
                 controller.enqueue(sse("status", { text: T("{n} sonuç bulundu; en uygun {k} kaynak doğrulanıyor…", { n: results.length, k: picks.length }) }));
-                const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput));
+                const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput), { deferFulltext: true });
                 bundle.sources.push(...added.sources);
                 controller.enqueue(sse("sources_added", { sources: added.sources, queries }));
               } else {
@@ -103,6 +119,27 @@ export const POST = route("ai.chat", async (req) => {
           await recordResearchUsage(s.user.id, planned, queries, { countAsRequest: false });
         } catch (e) {
           await logError("ai.chat.research", e, s.user.id);
+        }
+
+        // Yazmadan önce oku: bu istekle en ilgili, açık erişimli ve henüz okunmamış kaynakların tam metni
+        // (sayfa numaralı atıf için). Süre sınırlı; bitmeyenler arka planda tamamlanır.
+        try {
+          const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
+          const toRead = rankSources(bundle.sources, `${b.message} ${stage?.title ?? ""}`, citedHere)
+            .filter((x) => x.access_level !== "full_text" && hasOpenAccessCandidate(x) && (!x.fulltext_status || x.fulltext_status === "queued"))
+            .slice(0, 6);
+          if (toRead.length) {
+            controller.enqueue(sse("status", { text: T("{n} kaynağın açık erişimli tam metni okunuyor…", { n: toRead.length }) }));
+            const readIds = await ingestWithBudget(toRead, FULLTEXT_WAIT_MS);
+            if (readIds.length) {
+              const { data: fresh } = await s.supabase.from("sources").select("*").in("id", readIds).eq("project_id", b.projectId);
+              for (const row of fresh ?? []) { const i = bundle.sources.findIndex((x) => x.id === row.id); if (i >= 0) bundle.sources[i] = row; }
+              controller.enqueue(sse("fulltext_read", { sources: fresh ?? [] }));
+              controller.enqueue(sse("status", { text: T("{n} kaynağın tam metni okundu; atıflarda sayfa numarası kullanılabilecek.", { n: readIds.length }) }));
+            }
+          }
+        } catch (e) {
+          await logError("ai.chat.fulltext", e, s.user.id);
         }
       }
 

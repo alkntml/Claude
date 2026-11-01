@@ -27,6 +27,8 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] Paket fiyatlarının belirlenmesi (Yönetim → Paketler)
 - [ ] Otomatik araştırma karar adımı her mesaja 2-5 sn ekliyor: yeterli kaynak varken ve mesaj kaynak istemiyorsa atlama optimizasyonu
 - [ ] Sohbet geçmişi yüklendiğinde "eklenen kaynaklar" bilgisinin de gösterilmesi (şu an yalnızca canlı akışta)
+- [ ] Bölüm bazlı tarama canlıda denenmeli: yeni alt başlıkta yeni kaynak ekleniyor mu, tam metin okunup sayfa numaralı atıf geliyor mu (Vercel süre sınırına dikkat)
+- [ ] Daha önce tam metni okunmuş kaynaklarda sayfa ipuçları PDF sırasına göre; "Tam metni analiz et" ile yeniden okununca yayındaki sayfaya geçer
 - [ ] Eksik konu araması canlıda denenmeli: taslakta `[KAYNAK GEREKLİ]` çıkmamalı, eksik konular için kaynak eklenmeli
 - [ ] Eski metinlerde kalan `[KAYNAK GEREKLİ]` ifadeleri için toplu "kaynak bul ve düzelt" eylemi (şimdilik: metni seçip asistana "bu iddialara kaynak bul" yazılır)
 - [ ] Yönetim panelinin İngilizce çevirisi (şu an yalnızca Türkçe)

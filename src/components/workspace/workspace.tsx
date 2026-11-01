@@ -228,7 +228,22 @@ export function Workspace(props: Props) {
     }
   }
 
-  const addSources = useCallback((rows: any[]) => setSources((l) => [...l, ...rows.filter((r) => !l.some((x) => x.id === r.id))]), []);
+  // Yeni kaynakları ekler, mevcutları günceller (ör. tam metni okunan kaynak)
+  const addSources = useCallback((rows: any[]) => setSources((l) => [...l.map((x) => rows.find((r) => r.id === x.id) ?? x), ...rows.filter((r) => !l.some((x) => x.id === r.id))]), []);
+
+  /** Kaynakçadan atfın geçtiği yere git: bölümü aç, atfı ekrana kaydır ve vurgula */
+  async function jumpToCitation(stageId: string, sourceId: string, occurrence: number) {
+    await selectStage(stageId);
+    setTimeout(() => {
+      const nodes = [...document.querySelectorAll<HTMLElement>(".ProseMirror .citation-node")].filter((el) => (el.dataset.ids ?? "").split(",").includes(sourceId));
+      const el = nodes[occurrence] ?? nodes[0];
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.remove("flash");
+      void el.offsetWidth;
+      el.classList.add("flash");
+    }, 350);
+  }
   const existingDois = useMemo(() => new Set(sources.map((s) => s.doi).filter(Boolean)), [sources]);
   const wt = WORK_TYPES.find((w) => w.id === project.work_type);
   const chapterNumber = stages.filter((s, i) => i <= activeIndex && (s.content_text ?? "").trim() && s.key !== "references").length || activeIndex + 1;
@@ -297,7 +312,7 @@ export function Workspace(props: Props) {
             {active && (
               <div className="mx-auto max-w-[780px] px-4 pb-10 pt-4 sm:px-10 sm:pt-6">
                 {isBibliography ? (
-                  <BibliographyView engine={engine} sources={sources} citedOrder={citedOrder} title={engine.meta.bibliographyTitle[project.language === "en" ? "en" : "tr"]} />
+                  <BibliographyView engine={engine} sources={sources} citedOrder={citedOrder} title={engine.meta.bibliographyTitle[project.language === "en" ? "en" : "tr"]} stages={stages} onJump={jumpToCitation} />
                 ) : (
                   <>
                     <div className="mb-3 sm:mb-5">

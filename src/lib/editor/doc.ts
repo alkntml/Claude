@@ -204,3 +204,46 @@ export function appendDoc(base: JSONNode | null | undefined, extra: JSONNode): J
   const baseContent = (base?.content ?? []).filter((n) => !(n.type === "paragraph" && !n.content?.length));
   return { type: "doc", content: [...baseContent, ...(extra.content ?? [])] };
 }
+
+export interface CitationUsage {
+  stageId: string;
+  stageTitle: string;
+  /** Bölüm içinde aynı kaynağa yapılan kaçıncı atıf (0'dan başlar; editörde konuma gitmek için) */
+  occurrence: number;
+  /** En yakın alt başlık */
+  heading: string | null;
+  /** Atfın geçtiği paragraf (atıf yeri "⟦…⟧" ile işaretli, kısaltılmış) */
+  snippet: string;
+  locator: string | null;
+}
+
+/** Her kaynağın metinde kullanıldığı yerler: bölüm, alt başlık, paragraf ve sayfa bilgisi. */
+export function citationUsages(stages: { id: string; title: string; content: JSONNode | null | undefined }[]): Map<string, CitationUsage[]> {
+  const out = new Map<string, CitationUsage[]>();
+  for (const st of stages) {
+    const counts: Record<string, number> = {};
+    let heading: string | null = null;
+    const visitBlock = (block: JSONNode) => {
+      if (block.type === "heading") { heading = docToPlain({ type: "doc", content: block.content }); return; }
+      const hasCitation = (block.content ?? []).some((c) => c.type === "citation");
+      if (!hasCitation) { for (const c of block.content ?? []) if (c.type !== "text") visitBlock(c); return; }
+      const inline = block.content ?? [];
+      inline.forEach((n, idx) => {
+        if (n.type !== "citation") return;
+        const a = citationAttrs(n);
+        const before = docToPlain({ type: "doc", content: inline.slice(0, idx) }, () => "").replace(/\s+/g, " ");
+        const after = docToPlain({ type: "doc", content: inline.slice(idx + 1) }, () => "").replace(/\s+/g, " ");
+        const snippet = `${before.length > 160 ? `…${before.slice(-160)}` : before}⟦…⟧${after.length > 60 ? `${after.slice(0, 60)}…` : after}`.trim();
+        for (const id of a.ids) {
+          const occurrence = counts[id] ?? 0;
+          counts[id] = occurrence + 1;
+          const list = out.get(id) ?? [];
+          list.push({ stageId: st.id, stageTitle: st.title, occurrence, heading, snippet, locator: a.locator });
+          out.set(id, list);
+        }
+      });
+    };
+    for (const b of st.content?.content ?? []) visitBlock(b);
+  }
+  return out;
+}

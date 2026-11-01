@@ -122,6 +122,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
           onSourcesAdded(ev.data.sources);
           patch((x) => ({ ...x, added: ev.data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
         }
+        else if (ev.event === "fulltext_read") onSourcesAdded(ev.data.sources);
         else if (ev.event === "gap_sources") {
           onSourcesAdded(ev.data.sources);
           patch((x) => ({ ...x, gapAdded: ev.data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));

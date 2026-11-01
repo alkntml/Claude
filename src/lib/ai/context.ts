@@ -2,6 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { scoreRecord } from "@/lib/sources/aggregate";
 import type { SourceRecord } from "@/lib/sources/types";
+import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -67,11 +68,14 @@ export async function buildContext(params: {
   }
 
   // Kaynaklar: soruya ve bölüme en alakalı olanlar
-  const q = `${query} ${stage?.title ?? ""} ${project.topic ?? ""}`;
+  // Bu bölümde zaten atıf yapılan kaynaklar her zaman listede kalır (revizyonda atıflar kaybolmasın)
+  const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text) : [];
+  const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
+  const q = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${project.topic ?? ""}`;
   const ranked = [...sources]
-    .map((s) => ({ s, score: scoreRecord({ title: s.title, abstract: s.abstract, citedByCount: 0, accessLevel: s.access_level } as SourceRecord, q) }))
+    .map((s) => ({ s, score: scoreRecord({ title: s.title, abstract: s.abstract, citedByCount: 0, accessLevel: s.access_level } as SourceRecord, q) + (citedHere.has(s.id) ? 0.5 : 0) }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, params.maxSources ?? 30)
+    .slice(0, params.maxSources ?? 40)
     .map((x) => x.s);
 
   const sourceMap: Record<string, string> = {};
@@ -81,15 +85,16 @@ export async function buildContext(params: {
     const sid = `S${idx + 1}`;
     sourceMap[sid] = s.id;
     const abs = s.access_level !== "metadata" && s.abstract ? `\n  Özet: ${String(s.abstract).slice(0, 1200)}` : "";
-    out.push(`- ${sid}: ${authorShort(s.authors)} (${s.year ?? "t.y."}). ${s.title}. ${s.container_title ?? ""}${s.doi ? ` DOI: ${s.doi}` : ""} [Erişim: ${ACCESS_TR[s.access_level as keyof typeof ACCESS_TR]}; ${s.verified ? "doğrulandı" : "DOĞRULANMADI"}]${s.relevance_note ? `\n  Kullanıcı notu: ${s.relevance_note}` : ""}${abs}`);
+    out.push(`- ${sid}: ${authorShort(s.authors)} (${s.year ?? "t.y."}). ${s.title}. ${s.container_title ?? ""}${s.pages ? `, ss. ${s.pages}` : ""}${s.doi ? ` DOI: ${s.doi}` : ""} [Erişim: ${ACCESS_TR[s.access_level as keyof typeof ACCESS_TR]}; ${s.verified ? "doğrulandı" : "DOĞRULANMADI"}${citedHere.has(s.id) ? "; bu bölümde zaten atıf var" : ""}]${s.relevance_note ? `\n  Kullanıcı notu: ${s.relevance_note}` : ""}${abs}`);
   });
 
   // RAG: tam metin parçaları
   let usedChunks = 0;
   const reverse = Object.fromEntries(Object.entries(sourceMap).map(([k, v]) => [v, k]));
-  const terms = query.replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter((w) => w.length > 3).slice(0, 12).join(" or ");
+  const termSource = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${(project.keywords ?? []).join(" ")}`;
+  const terms = [...new Set(termSource.replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter((w) => w.length > 3).map((w) => w.toLocaleLowerCase("tr")))].slice(0, 16).join(" or ");
   if (terms) {
-    const { data: chunks } = await db.rpc("search_project_chunks", { p_project_id: project.id, p_query: terms, p_limit: 10 });
+    const { data: chunks } = await db.rpc("search_project_chunks", { p_project_id: project.id, p_query: terms, p_limit: 14 });
     const list = (chunks ?? []) as any[];
     const fileIds = [...new Set(list.filter((c) => !c.source_id && c.file_id).map((c) => c.file_id))];
     const names: Record<string, string> = {};
@@ -100,9 +105,9 @@ export async function buildContext(params: {
     const srcChunks = list.filter((c) => c.source_id && reverse[c.source_id]);
     const fileChunks = list.filter((c) => !c.source_id && names[c.file_id]);
     if (srcChunks.length) {
-      out.push("\n## TAM METİN PARÇALARI (doğrudan alıntı yalnızca buradan yapılabilir)");
+      out.push("\n## TAM METİN PARÇALARI (doğrudan alıntı yalnızca buradan yapılabilir; \"s. N\" yayındaki sayfa numarasıdır)");
       for (const c of srcChunks) {
-        out.push(`[${reverse[c.source_id]}${c.page_hint ? `, ${c.page_hint}` : ""}]: ${String(c.content).slice(0, 1500)}`);
+        out.push(`[${reverse[c.source_id]}${c.page_hint ? `, ${c.page_hint}` : ", sayfa bilgisi yok"}]: ${String(c.content).slice(0, 1500)}`);
         usedChunks++;
       }
     }

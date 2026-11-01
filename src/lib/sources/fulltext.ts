@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { chunkText } from "@/lib/files/chunk";
 import { extract } from "@/lib/files/extract";
 import { isSafePublicUrl, stripTags } from "./http";
+import { pdfPageLabels } from "./pages";
 import { unpaywallLookup } from "./providers";
 import type { ProviderConfig } from "./types";
 
@@ -87,7 +88,8 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
 
     if (text.length < 2000) return { status: "failed", message: "Tam metin indirilemedi veya okunamadı (taranmış PDF ya da yayıncı engeli olabilir)." };
 
-    const chunks = chunkText({ pages, text });
+    // Sayfa ipuçları yayındaki gerçek sayfa numaralarıyla yazılır (atıfta sayfa gösterimi için)
+    const chunks = chunkText({ pages, text, pageLabels: pages ? pdfPageLabels(source.pages, pages.length) : undefined });
     await db.from("source_chunks").delete().eq("source_id", source.id);
     for (let k = 0; k < chunks.length; k += 200) {
       const slice = chunks.slice(k, k + 200).map((c, idx) => ({ source_id: source.id, project_id: source.project_id, user_id: source.user_id, chunk_index: k + idx, page_hint: c.pageHint, content: c.content }));

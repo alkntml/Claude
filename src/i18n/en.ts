@@ -1117,4 +1117,11 @@ export const EN: Record<string, string> = {
   "Gizlilik": "Privacy",
   "Chicago (yazar-tarih)": "Chicago (author-date)",
   "Turabian (yazar-tarih)": "Turabian (author-date)",
+  "{n} kaynağın açık erişimli tam metni okunuyor…": "Reading the open-access full text of {n} sources…",
+  "{n} kaynağın tam metni okundu; atıflarda sayfa numarası kullanılabilecek.": "Full text of {n} sources read; page numbers can be used in citations.",
+  "{n} yerde kullanıldı": "cited {n}×",
+  "sayfa numarası yalnızca tam metni okunan kaynaklarda yazılır": "page numbers are only given for sources whose full text was read",
+  "s. {p}": "p. {p}",
+  "Git": "Go",
+  "atıf": "citation",
 };

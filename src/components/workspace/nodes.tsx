@@ -18,7 +18,7 @@ function CitationView({ node, updateAttributes, deleteNode, selected }: NodeView
   const sup = ctx?.engine.style === "ama";
   return (
     <NodeViewWrapper as="span" className="relative">
-      <span contentEditable={false} onClick={() => setOpen((o) => !o)} className={`citation-node ${missing ? "missing" : ""} ${selected ? "ring-2 ring-brand-300" : ""}`} data-citation>
+      <span contentEditable={false} onClick={() => setOpen((o) => !o)} className={`citation-node ${missing ? "missing" : ""} ${selected ? "ring-2 ring-brand-300" : ""}`} data-citation data-ids={ids.join(",")}>
         {sup ? <sup>{label}</sup> : label}
       </span>
       <AnimatePresence>

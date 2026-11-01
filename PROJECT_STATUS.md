@@ -29,6 +29,8 @@ _Son güncelleme: 1 Kasım 2026_
 - **Sohbet içi otomatik literatür araştırması:** Haiku araştırma gerekip gerekmediğine karar verir, sorgu üretir, veri tabanlarında arar, en iyi 8 kaynağı doğrulayıp projeye ekler ve aynı yanıtta atıf yapar
 - Ayrı "Literatür araştır" penceresi (kullanıcı seçerek ekler)
 - Sistem talimatı: listede olmayan eser adı önerilerde bile anılmaz
+- **Bölüm/alt başlık bazlı kaynak taraması:** her yeni alt konuda ilgili kaynak yetersizse yeniden arar (tez başına 50+ kaynak), yazmadan önce açık erişimli tam metinleri okur ve atıflara yayındaki sayfa numarasını ekler
+- **Kaynakçada kullanım yerleri:** kayda tıklayınca hangi bölüm/alt başlıkta, hangi cümlede ve hangi sayfayla atıf yapıldığı görünür; "Git" ile metindeki atfa gidilir
 - **Desteksiz kesin iddia yazılmaz:** `[KAYNAK GEREKLİ]` yer tutucusu yerine model eksik konuları `:::eksik` ile bildirir; sunucu bu konular için ikinci bir arama yapıp kaynak ekler, "Taslağı yeni kaynaklarla güncelle" düğmesi çıkar
 
 **Kaynaklar**
@@ -55,7 +57,7 @@ _Son güncelleme: 1 Kasım 2026_
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 66 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 73 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

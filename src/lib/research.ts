@@ -6,7 +6,7 @@ import { complete, estimateCost, resolveModel, isProviderConfigured } from "@/li
 import { normalizeDoi } from "@/lib/citations";
 import { providerConfig } from "@/lib/env";
 import { enabledProviders } from "@/lib/settings";
-import { dedupe, searchAll } from "@/lib/sources/aggregate";
+import { dedupe, scoreRecord, searchAll } from "@/lib/sources/aggregate";
 import { hasOpenAccessCandidate, ingestOpenAccess } from "@/lib/sources/fulltext";
 import { SourceInput, toRow } from "@/lib/sources/input";
 import type { SourceRecord } from "@/lib/sources/types";
@@ -31,7 +31,7 @@ export function recordToInput(r: SourceRecord): z.infer<typeof SourceInput> {
  * Kaynakları projeye ekler: DOI tekrarlarını ayıklar, kalıcı tanımlayıcıyı doğrular,
  * eksik künyeyi kayıt otoritesinden tamamlar ve açık erişimli tam metinleri arka planda kuyruğa alır.
  */
-export async function addSourcesToProject(db: SupabaseClient, projectId: string, userId: string, inputs: z.infer<typeof SourceInput>[]) {
+export async function addSourcesToProject(db: SupabaseClient, projectId: string, userId: string, inputs: z.infer<typeof SourceInput>[], opts: { deferFulltext?: boolean } = {}) {
   const { data: existing } = await db.from("sources").select("doi").eq("project_id", projectId).not("doi", "is", null);
   const have = new Set((existing ?? []).map((x) => x.doi));
   const cfg = providerConfig();
@@ -62,18 +62,39 @@ export async function addSourcesToProject(db: SupabaseClient, projectId: string,
       return { ...row, ...filled, project_id: projectId, user_id: userId, verified: v.status === "verified", verification: { ...("verification" in row ? (row as any).verification : {}), ...vMeta } };
     }),
   );
-  if (!rows.length) return { sources: [] as any[], skipped: inputs.length };
+  if (!rows.length) return { sources: [] as any[], skipped: inputs.length, openAccess: [] as any[] };
   const { data, error } = await db.from("sources").insert(rows).select();
   if (error) throw error;
   const oa = (data ?? []).filter(hasOpenAccessCandidate).slice(0, 10);
   if (oa.length) {
     await db.from("sources").update({ fulltext_status: "queued" }).in("id", oa.map((x) => x.id));
     for (const x of oa) x.fulltext_status = "queued";
-    after(async () => {
-      for (const src of oa) await ingestOpenAccess(adminClient(), src, cfg).catch(() => null);
-    });
+    // deferFulltext: çağıran taraf tam metinleri hemen okur (ingestWithBudget), aksi hâlde arka planda
+    if (!opts.deferFulltext) {
+      after(async () => {
+        for (const src of oa) await ingestOpenAccess(adminClient(), src, cfg).catch(() => null);
+      });
+    }
   }
-  return { sources: data ?? [], skipped: inputs.length - rows.length };
+  return { sources: data ?? [], skipped: inputs.length - rows.length, openAccess: oa };
+}
+
+/**
+ * Açık erişimli tam metinleri paralel okur ve en fazla waitMs kadar bekler (yazımdan önce okunabilsin diye).
+ * Süre dolunca bitmeyenler yanıt sonrasında arka planda tamamlanır. Tam metni okunan kaynak kimliklerini döndürür.
+ * Kaynaklar çağıranın projesinden yüklenmiş satırlardır; güncelleme kaynak kimliğiyle sınırlıdır.
+ */
+export async function ingestWithBudget(sources: any[], waitMs: number): Promise<string[]> {
+  if (!sources.length) return [];
+  const cfg = providerConfig();
+  const db = adminClient();
+  const done: string[] = [];
+  const all = Promise.all(sources.map((src) => ingestOpenAccess(db, src, cfg).then((r) => { if (r.status === "ingested") done.push(src.id); }).catch(() => null)));
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  await Promise.race([all, new Promise((r) => { timer = setTimeout(r, waitMs); })]);
+  if (timer) clearTimeout(timer);
+  after(() => all.then(() => undefined));
+  return [...done];
 }
 
 // ---------------------------------------------------------------------------
@@ -105,11 +126,12 @@ export interface ResearchPlan {
 }
 
 const PLANNER_SYSTEM = `Akademik bir kütüphaneci gibi davran. Görevin, akademik veri tabanlarında (OpenAlex, Crossref, PubMed) kaynak araması yapılıp yapılmaması gerektiğine karar vermek ve gerekiyorsa arama sorgularını üretmek.
-needsSearch = true olmalı, eğer: kullanıcı açıkça kaynak/literatür/makale/çalışma/referans bulunmasını veya araştırılmasını istiyorsa; YA DA görev bilimsel iddia içeren bir metin yazmayı gerektiriyor ve projedeki mevcut kaynaklar konu için yetersizse (genellikle 5'ten az ilgili kaynak).
-needsSearch = false olmalı, eğer: kullanıcı yalnızca soru soruyor, plan istiyor, dil düzeltmesi istiyor veya mevcut kaynaklar yeterliyse.
-Sorgular: 2–4 adet, İNGİLİZCE, kısa (2–6 kelime), anahtar kavram odaklı; gerekirse 1 Türkçe sorgu ekle. Kaynak, yazar veya eser adı UYDURMA. "plan" alanına bölüm için 3–6 adımlık kısa bir çalışma planı yaz (Türkçe).`;
+needsSearch = true olmalı, eğer: kullanıcı açıkça kaynak/literatür/makale/çalışma/referans bulunmasını veya araştırılmasını istiyorsa; YA DA görev bilimsel iddia içeren bir metin yazmayı gerektiriyor ve ÜZERİNDE ÇALIŞILAN BÖLÜM / ALT BAŞLIK / ALT KONU için doğrudan ilgili kaynak yetersizse (bu alt konuyla doğrudan ilgili 4'ten az kaynak).
+Projedeki TOPLAM kaynak sayısı bir sınır değildir: bir tezde her bölüm ve alt başlık kendi kaynaklarını gerektirir; toplam 50 ve üzeri kaynak normaldir. Kararı yalnızca "bu istekle ilgili görünen mevcut kaynaklar" listesinin bu alt konuyu gerçekten karşılayıp karşılamadığına göre ver. Yeni bir alt başlığa veya yeni bir kavrama geçildiyse ve listedeki kaynaklar bu kavramı ele almıyorsa arama yap.
+needsSearch = false olmalı, eğer: kullanıcı yalnızca soru soruyor, plan istiyor, dil düzeltmesi istiyor veya ilgili kaynaklar bu alt konu için yeterliyse.
+Sorgular: 2–4 adet, İNGİLİZCE, kısa (2–6 kelime), mevcut kaynakların zaten kapsadığı kavramları tekrarlamadan, istenen alt konuya odaklı; gerekirse 1 Türkçe sorgu ekle. Kaynak, yazar veya eser adı UYDURMA. "plan" alanına bölüm için 3–6 adımlık kısa bir çalışma planı yaz (Türkçe).`;
 
-export async function planResearch(params: { planId: string; project: any; stageTitle?: string | null; request: string; existingTitles: string[]; force?: boolean }) {
+export async function planResearch(params: { planId: string; project: any; stageTitle?: string | null; request: string; existingTitles: string[]; relevantTitles?: string[]; stageHeadings?: string[]; force?: boolean }) {
   const model = await resolveModel(params.planId, "fast");
   if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
   const p = params.project;
@@ -117,7 +139,7 @@ export async function planResearch(params: { planId: string; project: any; stage
     system: PLANNER_SYSTEM,
     messages: [{
       role: "user",
-      content: `Proje: ${p.title}\nKonu: ${p.topic || "-"}\nDisiplin: ${p.discipline || "-"}\nBölüm: ${params.stageTitle ?? "genel"}\nProjedeki mevcut kaynaklar (${params.existingTitles.length}):\n${params.existingTitles.slice(0, 30).map((t) => `- ${t}`).join("\n") || "(yok)"}\n\nKullanıcının isteği: ${params.request}${params.force ? "\n\n(Kullanıcı literatür araştırmasını açıkça başlattı: needsSearch = true.)" : ""}`,
+      content: `Proje: ${p.title}\nKonu: ${p.topic || "-"}\nDisiplin: ${p.discipline || "-"}\nBölüm: ${params.stageTitle ?? "genel"}${params.stageHeadings?.length ? `\nBölümdeki mevcut alt başlıklar: ${params.stageHeadings.join(" | ")}` : ""}\nProjedeki toplam kaynak sayısı: ${params.existingTitles.length} (sınır değildir)\nBu istekle ilgili görünen mevcut kaynaklar (${(params.relevantTitles ?? params.existingTitles).length}):\n${(params.relevantTitles ?? params.existingTitles).slice(0, 20).map((t) => `- ${t}`).join("\n") || "(yok)"}\n\nKullanıcının isteği: ${params.request}${params.force ? "\n\n(Kullanıcı literatür araştırmasını açıkça başlattı: needsSearch = true.)" : ""}`,
     }],
     maxTokens: 1500,
     effort: "low",
@@ -143,6 +165,14 @@ export async function executeSearch(queries: { query: string }[], opts: { yearFr
   const tagged = runs.flatMap((r, i) => r.results.map((rec) => ({ ...rec, foundBy: queries[i].query })));
   const merged = dedupe(tagged).sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
   return { results: merged, providers: runs.flatMap((r) => r.providers) };
+}
+
+/** Kaynakları bir isteğe/bölüme göre sıralar; bu bölümde zaten atıf yapılmış kaynaklar öne alınır. */
+export function rankSources<T extends { id: string; title: string; abstract?: string | null; access_level?: string; doi?: string | null }>(sources: T[], query: string, boost: Set<string> = new Set()): T[] {
+  return sources
+    .map((src) => ({ src, score: scoreRecord({ title: src.title, abstract: src.abstract ?? null, citedByCount: 0, accessLevel: src.access_level, doi: src.doi ?? null } as SourceRecord, query) + (boost.has(src.id) ? 0.5 : 0) }))
+    .sort((a, b) => b.score - a.score)
+    .map((x) => x.src);
 }
 
 /** Asistan için otomatik seçim: doğrulanabilir (DOI/PMID/arXiv) ve özeti olan kaynakları öne alır. */

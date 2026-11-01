@@ -4,11 +4,13 @@ export interface Chunk {
 }
 
 /** Metni ~1200 karakterlik, paragraf sınırlarına saygılı ve örtüşmeli parçalara böler. */
-export function chunkText(input: { pages?: string[]; text: string }, size = 1200, overlap = 150): Chunk[] {
+/** pageLabels: PDF sayfalarının yayındaki sayfa numaraları (null = güvenilir sayfa yok). */
+export function chunkText(input: { pages?: string[]; text: string; pageLabels?: (string | null)[] }, size = 1200, overlap = 150): Chunk[] {
   const pages = input.pages?.length ? input.pages : [input.text];
   const out: Chunk[] = [];
   pages.forEach((page, pi) => {
-    const hint = input.pages?.length ? `s. ${pi + 1}` : null;
+    const label = input.pageLabels ? input.pageLabels[pi] : String(pi + 1);
+    const hint = input.pages?.length && label ? `s. ${label}` : null;
     const paras = page.split(/\n{2,}|(?<=[.!?])\s{2,}/).map((p) => p.replace(/\s+/g, " ").trim()).filter(Boolean);
     let buf = "";
     for (const p of paras) {

@@ -69,3 +69,6 @@ body { background: rgb(var(--bg)); color: #151829; }
   .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 }
+
+.prose-academic .citation-node.flash { animation: cite-flash 1.8s ease; }
+@keyframes cite-flash { 0%, 60% { background: #fde68a; border-color: #f59e0b; box-shadow: 0 0 0 4px rgb(245 158 11 / 0.25); } 100% { background: #eef4ff; } }

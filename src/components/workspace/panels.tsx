@@ -1,8 +1,8 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
-import { AlertTriangle, Brain, Check, History, MessageSquare, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { AlertTriangle, ArrowRight, Brain, Check, ChevronDown, History, MessageSquare, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge, Empty } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
@@ -11,6 +11,8 @@ import type { CitationEngine } from "@/lib/citations/styles";
 import { richToHtml } from "@/lib/citations/util";
 import { api } from "@/lib/client";
 import { sourceRowToItemClient } from "@/lib/sources/row";
+import { citationUsages, type JSONNode } from "@/lib/editor/doc";
+import { cn } from "@/components/ui/cn";
 import { timeAgo } from "@/components/dashboard/dashboard";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -133,8 +135,11 @@ export function HistoryPanel({ stageId, onRestore, onSnapshot, version }: { stag
   );
 }
 
-export function BibliographyView({ engine, sources, citedOrder, title }: { engine: CitationEngine; sources: any[]; citedOrder: string[]; title: string }) {
+export function BibliographyView({ engine, sources, citedOrder, title, stages, onJump }: { engine: CitationEngine; sources: any[]; citedOrder: string[]; title: string; stages: { id: string; title: string; content: any }[]; onJump: (stageId: string, sourceId: string, occurrence: number) => void }) {
   const { t } = useT();
+  const [open, setOpen] = useState<string | null>(null);
+  const usages = useMemo(() => citationUsages(stages.map((s) => ({ id: s.id, title: s.title, content: s.content as JSONNode }))), [stages]);
+  const srcById = useMemo(() => Object.fromEntries(sources.map((s) => [s.id, s])), [sources]);
   const items = sources.map(sourceRowToItemClient);
   const cited = new Set(citedOrder);
   const entries = engine.bibliography(citedOrder.filter((id) => sources.some((s) => s.id === id)));
@@ -154,14 +159,39 @@ export function BibliographyView({ engine, sources, citedOrder, title }: { engin
           {uncited.length > 0 && <p className="flex gap-2 rounded-xl bg-ink-100 px-3 py-2 text-[13px] text-ink-600"><AlertTriangle className="h-4 w-4 shrink-0" /> {t("{n} kaynak metinde atıf almadığı için kaynakçaya eklenmedi.", { n: uncited.length })}</p>}
         </div>
       )}
-      <ol className="mt-8 space-y-3.5 font-serif text-[16px] leading-7 text-ink-800">
+      <ol className="mt-8 space-y-2 font-serif text-[16px] leading-7 text-ink-800">
         {entries.length === 0 && <p className="font-sans text-sm text-ink-400">{t("Henüz metinde atıf yok. Bölümlerde kaynaklarınıza atıf yaptıkça kaynakça burada oluşur.")}</p>}
-        {entries.map((e) => (
-          <li key={e.id} className={engine.meta.family === "numeric" ? "flex gap-3" : "pl-8 -indent-8"}>
-            {engine.meta.family === "numeric" && <span className="w-8 shrink-0 font-sans text-sm text-ink-400">[{e.number}]</span>}
-            <span dangerouslySetInnerHTML={{ __html: richToHtml(e.rich) }} />
-          </li>
-        ))}
+        {entries.map((e) => {
+          const list = usages.get(e.id) ?? [];
+          const isOpen = open === e.id;
+          const src = srcById[e.id];
+          return (
+            <li key={e.id} className="group">
+              <button type="button" onClick={() => setOpen(isOpen ? null : e.id)} aria-expanded={isOpen} className={cn("w-full rounded-xl px-2 py-1.5 text-left transition hover:bg-brand-50/60", isOpen && "bg-brand-50/70", engine.meta.family === "numeric" ? "flex gap-3" : "")}>
+                {engine.meta.family === "numeric" && <span className="w-8 shrink-0 font-sans text-sm text-ink-400">[{e.number}]</span>}
+                <span className={engine.meta.family === "numeric" ? "" : "block pl-8 -indent-8"}>
+                  <span dangerouslySetInnerHTML={{ __html: richToHtml(e.rich) }} />
+                  <span className="ml-2 inline-flex translate-y-[-1px] items-center gap-1 whitespace-nowrap rounded-full bg-ink-100 px-2 py-0.5 indent-0 font-sans text-[11px] font-medium text-ink-500 group-hover:bg-white">{t("{n} yerde kullanıldı", { n: list.length })}<ChevronDown className={cn("h-3 w-3 transition", isOpen && "rotate-180")} /></span>
+                </span>
+              </button>
+              {isOpen && (
+                <div className="mb-2 ml-2 mt-1 space-y-1.5 border-l-2 border-brand-100 pl-3 font-sans text-[13px] leading-snug">
+                  {src && <p className="text-[11.5px] text-ink-400">{t(src.access_level === "full_text" ? "Tam metin okundu" : src.access_level === "abstract" ? "Özet okundu" : "Yalnızca künye")}{src.access_level === "full_text" ? "" : ` · ${t("sayfa numarası yalnızca tam metni okunan kaynaklarda yazılır")}`}</p>}
+                  {list.map((u, i) => (
+                    <div key={i} className="rounded-xl border border-ink-100 bg-white p-2.5">
+                      <div className="flex items-center gap-2">
+                        <p className="min-w-0 flex-1 truncate text-[12px] font-semibold text-ink-700">{u.stageTitle}{u.heading ? ` › ${u.heading}` : ""}</p>
+                        {u.locator && <Badge tone="brand">{t("s. {p}", { p: u.locator })}</Badge>}
+                        <button type="button" onClick={() => onJump(u.stageId, e.id, u.occurrence)} className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-[12px] font-medium text-brand-700 hover:bg-brand-50">{t("Git")}<ArrowRight className="h-3.5 w-3.5" /></button>
+                      </div>
+                      <p className="mt-1 text-ink-500">{u.snippet.split("⟦…⟧").map((part, k, arr) => <span key={k}>{part}{k < arr.length - 1 && <mark className="rounded bg-brand-100 px-1 text-brand-800">{t("atıf")}</mark>}</span>)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ol>
     </div>
   );

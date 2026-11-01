@@ -73,7 +73,7 @@ function Overview() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{tiles.map(([l, v, sub]) => <div key={l as string} className="card p-4"><p className="text-[13px] text-ink-500">{l}</p><p className="mt-1 text-2xl font-semibold text-ink-900">{v}</p>{sub && <p className="text-xs text-ink-400">{sub}</p>}</div>)}</div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card p-5"><DailyBars data={d.byDay} valueKey="ai" label="Günlük yapay zekâ istekleri" /></div>
-        <div className="card p-5"><DailyBars data={d.byDay} valueKey="cost" label="Günlük tahmini API maliyeti (USD)" format={(v) => `$${v.toFixed(v < 1 ? 2 : 0)}`} /></div>
+        <div className="card p-5"><DailyBars data={d.byDay} valueKey="cost" label="Günlük tahmini API maliyeti (USD)" format={(v) => `$${v >= 10 ? v.toFixed(0) : v.toFixed(2)}`} /></div>
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="card p-5">

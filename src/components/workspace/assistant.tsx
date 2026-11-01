@@ -76,7 +76,9 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
       } catch { /* sessizce geç */ }
     })();
     return () => { cancel = true; };
-  }, [projectId, stage]);
+    // Yalnızca bölüm kimliği değişince yeniden yükle (nesne her çizimde yeniden oluşur)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, stage?.id]);
 
   useEffect(() => { scroller.current?.scrollTo({ top: scroller.current.scrollHeight, behavior: "smooth" }); }, [msgs]);
 

@@ -67,7 +67,7 @@ export function Dashboard(p: Props) {
       </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-        <motion.section variants={item}>
+        <motion.section variants={item} className="min-w-0">
           <div className="mb-3 flex items-center justify-between"><h2 className="font-semibold text-ink-900">Devam eden çalışmalarım</h2></div>
           {active.length === 0 ? (
             <Empty icon={<FileText className="h-5 w-5" />} title="Henüz çalışma yok" action={<Link href="/yeni" className="text-sm font-medium text-brand-600">Yeni çalışma oluştur →</Link>}>Tez, makale veya araştırma önerinizi başlatın; sistem sizin için bir yol haritası hazırlasın.</Empty>
@@ -111,7 +111,7 @@ export function Dashboard(p: Props) {
           )}
         </motion.section>
 
-        <motion.aside variants={item} className="space-y-6">
+        <motion.aside variants={item} className="min-w-0 space-y-6">
           <div className="card p-5">
             <div className="flex items-center justify-between"><h2 className="font-semibold text-ink-900">Kullanım durumu</h2><Link href="/hesap" className="text-xs font-medium text-brand-600">Paketi yönet</Link></div>
             <div className="mt-4 space-y-4">

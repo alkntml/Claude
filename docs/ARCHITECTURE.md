@@ -73,17 +73,18 @@ Ayrıntılar: `supabase/migrations/20261101000001_init.sql`
 
 ## Bilinen sınırlamalar ve sonraki adımlar
 
-Aşağıdakiler bilinçli olarak yapılmadı veya doğrulanamadı:
+Tamamlananlar (önceki sürümde eksikti): veritabanı şeması ve RLS politikaları PGlite üzerinde gerçek PostgreSQL ile test edilir (`tests/db.test.ts`); tam metin analizi arka planda (`after()`) çalışır; danışman paylaşım bağlantıları; PDF içindekiler tablosunda sayfa numaraları.
 
-1. **Canlı entegrasyon testleri:** Geliştirme ortamında akademik API'lere ağ erişimi yoktu. Adaptörlerin ayrıştırıcıları belgelenmiş yanıt şemalarıyla birim testlerinden geçti, ancak canlı çağrılar (OpenAlex, Crossref vb.), Anthropic API, Supabase RLS politikaları ve Stripe akışı gerçek bir ortamda uçtan uca test edilmedi. Yayına almadan önce bir staging ortamında doğrulanmalıdır.
-2. **iyzico:** Uygulanmadı (`implemented: false`). Abonelik ürün/fiyat planı referansları ve imzalama (HMAC) eklenmelidir.
-3. **İntihal:** Entegre değil. Lisanslı bir servis (ör. iThenticate/Turnitin API) bağlanana kadar yüzde gösterilmez.
-4. **Asenkron görevler:** Tam metin içe aktarma ve AI incelemeleri istek içinde çalışır (`maxDuration`). Yüksek trafikte bir iş kuyruğuna (Inngest, QStash, Supabase Queues) taşınmalıdır.
-5. **Anlamsal arama:** RAG şu an anahtar kelime tabanlıdır (Postgres FTS). `pgvector` ile anlamsal arama eklenebilir.
-6. **Atıf stilleri:** Chicago ve Turabian için yazar-tarih sistemi uygulanmıştır (notlu kaynakça sistemi yok). Vancouver/AMA'da dergi adı kısaltmaları uygulanmaz. Stiller yaygın kaynak türlerini (makale, kitap, bölüm, tez, bildiri, ön baskı, rapor, web) kapsar; uç durumlar için CSL (citeproc) entegrasyonu düşünülebilir.
-7. **Şablonlar:** Kılavuzdan çıkarılan yazı tipi, punto ve satır aralığı DOCX çıktısına uygulanır. Kullanıcının yüklediği `.dotx` şablonunu doğrudan kullanma özelliği yoktur.
-8. **PDF içindekiler:** Sayfa numarası içermez (yer imleri vardır). DOCX içindekiler tablosu Word'de açılışta güncellenir.
-9. **Gerçek zamanlı ortak çalışma:** Yok. Yorumlar tek kullanıcılıdır; danışman paylaşımı ileride eklenebilir.
-10. **Arayüz dili:** Yalnızca Türkçe. Çalışma dili Türkçe veya İngilizce olabilir ve atıf terimleri buna göre değişir (vd./et al., s./p.).
-11. **Yedekleme:** Supabase'in yönetilen yedeklerine güvenilir. Üretimde Point-in-Time Recovery (ücretli plan) etkinleştirilmelidir.
-12. **KVKK metinleri:** `/gizlilik` ve `/kosullar` şablondur ve hukuki inceleme gerektirir.
+Hâlâ açık olanlar:
+
+1. **Canlı entegrasyon testleri:** Akademik API'ler, Anthropic API, Supabase Auth/Storage ve Stripe gerçek bir ortamda uçtan uca test edilmedi (geliştirme ortamında ağ erişimi yoktu). Yayından önce staging ortamında doğrulanmalıdır.
+2. **iyzico:** Uygulanmadı. Abonelik ürün ve fiyat planı referans kodları, müşteri bilgileri (T.C. kimlik no, adres) ve imzalı istekler gerekir; satıcı hesabı ve sandbox anahtarları olmadan test edilemez.
+3. **İntihal:** Entegre değil (lisanslı servis gerekir).
+4. **İş kuyruğu:** Arka plan işleri `after()` ile aynı sunucu örneğinde çalışır. Kalıcı ve yeniden denenebilir kuyruk (Inngest, QStash, Supabase Queues) yüksek trafikte önerilir.
+5. **Anlamsal arama:** RAG anahtar kelime tabanlıdır; `pgvector` ve bir embedding sağlayıcısı (ör. Voyage) ile genişletilebilir.
+6. **Atıf stilleri:** Chicago ve Turabian yalnızca yazar-tarih sistemindedir (notlu sistem yok). Dergi adı kısaltmaları uygulanmaz.
+7. **Şablonlar:** `.dotx` şablonu doğrudan kullanılamaz; kılavuzdan çıkarılan yazı tipi, punto ve satır aralığı uygulanır.
+8. **Gerçek zamanlı ortak düzenleme:** Yok. Danışman salt okunur bağlantıyla görüntüleyip yorum bırakabilir.
+9. **Arayüz dili:** Yalnızca Türkçe.
+10. **Yedekleme:** Supabase yönetilen yedekleri; üretimde Point-in-Time Recovery etkinleştirilmelidir.
+11. **Hukuki metinler:** `/gizlilik` ve `/kosullar` şablondur.

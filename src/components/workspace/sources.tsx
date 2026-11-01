@@ -76,6 +76,7 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any[] | null>(null);
   const [providers, setProviders] = useState<any[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
   const [adding, setAdding] = useState<string | null>(null);
 
   async function search(e?: React.FormEvent) {
@@ -83,9 +84,10 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
     if (q.trim().length < 2) return;
     setLoading(true);
     try {
-      const r = await api<{ results: any[]; providers: any[] }>("/api/sources/search", { method: "POST", json: { query: q, yearFrom: yearFrom ? Number(yearFrom) : undefined, yearTo: yearTo ? Number(yearTo) : undefined, openAccessOnly: oa, limit: 15 } });
+      const r = await api<{ results: any[]; providers: any[]; demoNotice?: string }>("/api/sources/search", { method: "POST", json: { query: q, yearFrom: yearFrom ? Number(yearFrom) : undefined, yearTo: yearTo ? Number(yearTo) : undefined, openAccessOnly: oa, limit: 15 } });
       setResults(r.results);
-      setProviders(r.providers);
+      setProviders(r.demoNotice ? [] : r.providers);
+      setNotice(r.demoNotice ?? null);
     } catch (err) {
       toast({ tone: "error", title: "Arama başarısız", detail: (err as Error).message });
     } finally {
@@ -131,8 +133,9 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
       {loading && <div className="mt-4 space-y-2">{[0, 1, 2].map((i) => <div key={i} className="skeleton h-24" />)}</div>}
       {!loading && results && (
         <div className="mt-4 space-y-2">
+          {notice && <p className="rounded-xl bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800">{notice}</p>}
           <div className="flex flex-wrap gap-1.5">
-            {providers.map((p) => <span key={p.provider} title={p.error} className={cn("rounded-full px-2 py-0.5 text-[11px]", p.ok ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-600")}>{PROVIDER_LABELS[p.provider as keyof typeof PROVIDER_LABELS]} {p.ok ? p.count : "×"}</span>)}
+            {providers.map((p) => <span key={p.provider} title={p.error} className={cn("rounded-full px-2 py-0.5 text-[11px]", p.ok ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-600")}>{PROVIDER_LABELS[p.provider as keyof typeof PROVIDER_LABELS] ?? p.provider} {p.ok ? p.count : "×"}</span>)}
           </div>
           {results.length === 0 && <p className="py-6 text-center text-sm text-ink-400">Sonuç bulunamadı. Farklı anahtar kelimeler (tercihen İngilizce) deneyin.</p>}
           {results.map((r) => {

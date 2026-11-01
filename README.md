@@ -29,6 +29,9 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu. Tez, makale, lite
 | iyzico | ⏳ Arayüz iskeleti var, uygulanmadı |
 | Yönetici paneli: kullanıcılar, paketler, modeller, promptlar, veri kaynakları, duyurular, geri bildirim, yardım, hatalar, maliyet | ✅ |
 | KVKK/GDPR: veri dışa aktarma, hesap silme | ✅ |
+| Danışman paylaşımı: salt okunur, süreli, iptal edilebilir bağlantı + danışman yorumu | ✅ |
+| Tam metin analizinin arka planda çalışması (açık erişimli kaynaklar eklenince otomatik) | ✅ |
+| Veritabanı entegrasyon testleri (PGlite üzerinde gerçek PostgreSQL + RLS) | ✅ |
 | İntihal kontrolü | ❌ Bilinçli olarak yok; lisanslı servis entegre edilmeden yüzde gösterilmez |
 
 Ayrıntılı mimari ve bilinen sınırlamalar için: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
@@ -72,7 +75,7 @@ npx supabase link --project-ref <proje-ref>
 npx supabase db push
 ```
 
-veya `supabase/migrations/` altındaki iki SQL dosyasını sırayla Supabase SQL Editor'de çalıştırın. Bu dosyalar tabloları, RLS politikalarını, indeksleri, tetikleyicileri, `user-files` depolama alanını, varsayılan paketleri ve sistem ayarlarını oluşturur.
+veya `supabase/migrations/` altındaki üç SQL dosyasını sırayla Supabase SQL Editor'de çalıştırın. Bu dosyalar tabloları, RLS politikalarını, indeksleri, tetikleyicileri, `user-files` depolama alanını, varsayılan paketleri ve sistem ayarlarını oluşturur.
 
 **Supabase Auth ayarları:** Authentication → URL Configuration bölümünde *Site URL* olarak uygulama adresinizi, *Redirect URLs* listesine `https://<alan-adınız>/api/auth/callback` adresini ekleyin.
 
@@ -89,7 +92,8 @@ update public.profiles set role = 'admin' where email = 'siz@ornek.com';
 ```bash
 npm run dev        # geliştirme
 npm run build && npm start   # üretim
-npm test           # birim testleri (44 test)
+npm test           # birim + veritabanı entegrasyon testleri (61 test)
+npm run build:demo # tarayıcı demosu: demo/dist/index.html
 npm run typecheck
 ```
 
@@ -98,6 +102,10 @@ Yapılandırma eksikse uygulama `/kurulum` sayfasında hangi değişkenlerin eks
 ### 6. Stripe (isteğe bağlı)
 
 Stripe Dashboard → Developers → Webhooks bölümünde `https://<alan-adınız>/api/billing/webhook` uç noktasını şu olaylarla ekleyin: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`. Fiyatlar veritabanındaki paketlerden alınır; Stripe'ta önceden ürün oluşturmanız gerekmez.
+
+## Tarayıcı demosu
+
+`npm run build:demo`, uygulamanın gerçek bileşenlerini sunucusuz çalışan tek bir HTML dosyasına (`demo/dist/index.html`) paketler. API çağrıları tarayıcı içindeki taklit katman (`demo/mock-api.ts`) tarafından yanıtlanır. Yapay zekâ, canlı kaynak araması, doğrulama, dosya yükleme ve dışa aktarma demoda kapalıdır ve bunu açıkça belirtir. Kaynak aramasında künyeleri gerçek olan birkaç örnek eser gösterilir.
 
 ## Dağıtım
 

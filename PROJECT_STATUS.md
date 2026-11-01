@@ -66,12 +66,13 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Yönetici paneli: genel bakış/maliyet, kullanıcılar, paketler, model ve prompt ayarları, veri kaynakları, duyurular, geri bildirim, yardım, hata kayıtları
 - KVKK: veri dışa aktarma (JSON), hesap silme
 - **Sık sorulan sorular:** `/sss` (7 grup, 38 soru, TR/EN, FAQPage JSON-LD), ana sayfada 8 öne çıkan soru; içerik `src/lib/faq.ts`
+- **Tekrar önleme:** yazım kurallarında üslup/tekrar maddesi; bölümde ve çalışmada sık geçen kalıplar modele “TEKRARDAN KAÇIN” listesi olarak verilir (`src/lib/quality/repetition.ts`); taslakta tekrar varsa uyarı + “Tekrarları azalt” eylemi; alt başlıklarla yazımda bütün kontrolü; kalite raporunda bölüm içi tekrar uyarısı
 - **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Sağlayıcılar henüz Supabase’de açılmadı (TODO)
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 133 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 137 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)
@@ -94,7 +95,9 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 | 5045fef | Türk kaynakları, BibTeX/RIS, istatistik (APA), savunma sunumu, Abstract, etik, dergi önerisi, kurum lisansı, öğrenci indirimi, davet, uzman desteği (dermanlik.com.tr) |
 | 3222759 | SSS sayfası, Stripe abonelik yönetim portalı |
 | 1c2e94f | Ana sayfa veri kaynaklarında Türkiye kaynakları |
-| (bu commit) | Google ve Apple ile giriş/kayıt |
+| 5fff0aa | Google ve Apple ile giriş/kayıt |
+| 1414657 | Akademik yazı tipi (Source Serif) |
+| (bu commit) | Tekrar eden ifadelerin önlenmesi |
 
 ## Oturum dışı üretilen teslimler (depoda değil)
 - **Reels tanıtım videosu** (40 sn, 1080×1920, altyazılı, müzikli, seslendirmesiz — ortamda Türkçe TTS yok, HuggingFace engelli). Kullanıcıya sohbetten gönderildi; seslendirme metni ve SRT de verildi. Yeniden üretmek gerekirse: demo ekranlarından Playwright ile kare kare HTML animasyonu + ffmpeg (yöntem bu oturumda kullanıldı).

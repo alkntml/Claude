@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { scoreRecord } from "@/lib/sources/aggregate";
 import type { SourceRecord } from "@/lib/sources/types";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
+import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -68,6 +69,19 @@ export async function buildContext(params: {
     if (def?.requiresUserData) out.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
     const current = String(stage.content_text ?? "");
     out.push(current ? `Bölümün mevcut metni:\n"""\n${current.slice(0, 12000)}\n"""` : "Bölüm henüz boş.");
+  }
+
+  // Tekrar önleme: bölümde ve çalışmada zaten çok geçen kalıplar modele "kullanma" listesi olarak verilir
+  {
+    const keepTerms = [project.title, project.topic ?? "", ...(project.keywords ?? [])];
+    const here = analyzeRepetition(String(stage?.content_text ?? ""), { keepTerms, minCount: 3 });
+    const whole = analyzeRepetition(stages.map((s) => String(s.content_text ?? "")).join("\n"), { keepTerms, minCount: 4 });
+    const seen = new Set<string>();
+    const avoid = [...avoidListForPrompt(here), ...avoidListForPrompt(whole)].filter((x) => (seen.has(x.replace(/ \(\d+ kez\)$/, "")) ? false : (seen.add(x.replace(/ \(\d+ kez\)$/, "")), true))).slice(0, 16);
+    if (avoid.length) {
+      out.push("\n## TEKRARDAN KAÇIN (metinde zaten sık geçiyor; yeni yazacağın metinde kullanma, farklı cümle yapısı seç. Teknik terimler ve kavram adları bu kuralın dışındadır; onları gerektiği kadar kullan)");
+      for (const a of avoid) out.push(`- ${a}`);
+    }
   }
 
   // Kaynaklar: soruya ve bölüme en alakalı olanlar

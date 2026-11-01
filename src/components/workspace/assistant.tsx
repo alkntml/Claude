@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, BarChart3, Check, ListOrdered, Mic, MicOff, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useMemo, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
 import { cn } from "@/components/ui/cn";
 import { Dots } from "@/components/ui/primitives";
@@ -11,6 +11,7 @@ import { api } from "@/lib/client";
 import { PHASES, shouldWarnOnce, streamChat, type ChatPhase } from "@/lib/ai/chat-client";
 import type { StageDef } from "@/lib/workflows";
 import { Markdown, parseAnswer } from "./markdown";
+import { analyzeRepetition, isRepetitive } from "@/lib/quality/repetition";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[]; phase?: ChatPhase; phasesSeen?: ChatPhase[] }
@@ -33,7 +34,7 @@ interface Props {
 }
 
 const STAGE_ACTIONS: AssistantAction[] = ["plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "interpret", "discussion", "consistency"];
-const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure"];
+const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure", "reduce_repetition"];
 const ETHICS_STAGES = new Set(["method", "sample", "participants", "instruments", "appendices", "methods_article", "declarations", "risks"]);
 /** Bölüme göre ek eylemler: özet/abstract her bölümde, etik kurul belgeleri yöntem ve ek bölümlerinde */
 function extraActions(key?: string): AssistantAction[] {
@@ -242,7 +243,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
             {m.role === "user" ? (
               <div className="max-w-[88%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-ink-900 px-3.5 py-2.5 text-[14px] text-white sm:text-[13.5px]">{m.content.length > 1200 ? `${m.content.slice(0, 1200)}…` : m.content}</div>
             ) : (
-              <AssistantBubble msg={m} streaming={busy && m === msgs[msgs.length - 1]} onInsert={onInsert} onUpdateDraft={() => send(t("Yeni eklenen kaynakları kullanarak az önceki taslağı güncelle; önceki taslakta eksik kalan konuları bu kaynaklarla destekle."), "draft")} busy={busy} />
+              <AssistantBubble msg={m} streaming={busy && m === msgs[msgs.length - 1]} onInsert={onInsert} onUpdateDraft={() => send(t("Yeni eklenen kaynakları kullanarak az önceki taslağı güncelle; önceki taslakta eksik kalan konuları bu kaynaklarla destekle."), "draft")} onReduce={(text) => send(t("Tekrarları azalt"), "reduce_repetition", undefined, text)} busy={busy} />
             )}
           </motion.div>
         ))}
@@ -304,7 +305,22 @@ function AddedList({ items, title }: { items: Added; title: string }) {
   );
 }
 
-function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, busy }: { msg: Msg; streaming: boolean; onInsert: Props["onInsert"]; onUpdateDraft: () => void; busy: boolean }) {
+/** Taslakta tekrar eden kalıplar varsa uyarı ve tek tıkla düzeltme */
+function RepetitionNote({ text, busy, onReduce }: { text: string; busy: boolean; onReduce: (text: string) => void }) {
+  const { t } = useT();
+  const r = useMemo(() => analyzeRepetition(text, { minCount: 3 }), [text]);
+  if (!isRepetitive(r)) return null;
+  const example = r.openers[0] ? `${r.openers[0].opener}…` : r.phrases[0]?.phrase ?? "";
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-t border-amber-100 bg-amber-50/70 px-3.5 py-2 text-[12.5px] text-amber-800">
+      <TriangleAlert className="h-3.5 w-3.5 shrink-0" />
+      <span className="min-w-0 flex-1">{r.nearDuplicates.length >= 2 ? t("Bu taslakta birbirine çok benzeyen cümleler var.") : t("Bu taslakta tekrar eden ifadeler var (ör. “{e}”).", { e: example })}</span>
+      <button disabled={busy} onClick={() => onReduce(text)} className="rounded-lg border border-amber-200 bg-white px-2.5 py-1 font-medium text-amber-800 hover:bg-amber-100 disabled:opacity-50">{t("Tekrarları azalt")}</button>
+    </div>
+  );
+}
+
+function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, busy }: { msg: Msg; streaming: boolean; onInsert: Props["onInsert"]; onUpdateDraft: () => void; onReduce: (text: string) => void; busy: boolean }) {
   const { t } = useT();
   const toast = useToast();
   if (msg.error) return <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-rose-100 bg-rose-50 px-3.5 py-2.5 text-[13.5px] text-rose-700"><TriangleAlert className="mr-1.5 inline h-4 w-4" />{msg.content}</div>;
@@ -337,6 +353,7 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, busy }: { ms
               {(p.complete || !streaming) && <button onClick={() => { navigator.clipboard.writeText(p.text); toast({ tone: "success", title: t("Kopyalandı") }); }} className="rounded-lg p-1.5 text-ink-500 hover:bg-white" title={t("Kopyala")} aria-label={t("Kopyala")}><ClipboardCopy className="h-3.5 w-3.5" /></button>}
             </div>
             <div className="max-h-[50vh] overflow-y-auto px-4 py-3 text-ink-800 sm:max-h-[420px]"><Markdown text={p.text} sourceMap={msg.sourceMap} serif /></div>
+            {(p.complete || !streaming) && <RepetitionNote text={p.text} busy={busy} onReduce={onReduce} />}
             {(p.complete || !streaming) && (
               <div className="flex flex-wrap justify-end gap-1.5 border-t border-brand-100 bg-brand-50/40 px-2.5 py-2">
                 <button onClick={() => onInsert(p.text, msg.sourceMap, "replace")} className="flex h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 hover:border-ink-300 sm:h-8 sm:text-[12px]" title={t("Seçili metnin yerine koy")}><Replace className="h-3.5 w-3.5" /> {t("Seçimin yerine")}</button>

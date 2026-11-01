@@ -121,3 +121,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D33 — Yazı tipleri
 - Başlıklar ve editör metni: Source Serif 4 (optik boyutlu, latin-ext); serif + font-medium başlıklar CSS ile yarı kalın ve sıkı aralıklı. Arayüz metni: Inter. Amaç akademik yayın hissi.
+
+### D34 — Tekrar önleme
+- Üç katman: (1) OUTPUT_PROTOCOL’de üslup/tekrar kuralları, (2) deterministik analizle bulunan sık kalıplar ve cümle başlangıçları bağlama “TEKRARDAN KAÇIN” listesi olarak eklenir (teknik terimler hariç; proje başlığı/anahtar kelimeleri sayılmaz), (3) üretim sonrası deterministik kontrol: taslakta uyarı + `reduce_repetition` eylemi, kalite raporunda bölüm içi tekrar.
+- Otomatik ikinci yazım turu yapılmadı (maliyet ve süre); düzeltme kullanıcının tek tıkıyla.

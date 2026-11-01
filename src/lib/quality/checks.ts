@@ -6,6 +6,7 @@
 import { checkConsistency, findDuplicates, missingFields, FIELD_LABELS, type CitationItem } from "@/lib/citations";
 import { makeT, type Locale } from "@/i18n";
 import { wordCount } from "@/lib/editor/doc";
+import { analyzeRepetition, isRepetitive } from "@/lib/quality/repetition";
 
 export type Severity = "info" | "warning" | "error";
 
@@ -121,6 +122,17 @@ export function runQualityChecks(stages: StageInput[], sources: SourceInput[], o
   if (repeated.size) {
     const examples = [...repeated.keys()].slice(0, 5);
     issues.push({ id: nid("rep"), category: "repetition", severity: "info", title: T("Bölümler arası tekrar eden ifadeler"), detail: T("{n} ifade birden fazla bölümde aynen geçiyor. Örnek: “{e}”.", { n: repeated.size, e: examples[0] }), excerpt: examples.join(" · ") });
+  }
+
+  // --- Bölüm içi tekrar: kalıp ifadeler, aynı geçiş ifadesiyle başlayan cümleler, birbirine çok benzeyen cümleler
+  for (const s of writable) {
+    if (s.text.length < 600) continue;
+    const r = analyzeRepetition(s.text, { minCount: 3 });
+    if (!isRepetitive(r)) continue;
+    const parts = [...r.openers.slice(0, 3).map((o) => `“${o.opener}…” ×${o.count}`), ...r.phrases.slice(0, 4).map((p) => `“${p.phrase}” ×${p.count}`)];
+    issues.push({ id: nid("rep"), category: "repetition", severity: "warning", stageKey: s.key, title: T("Bölüm içinde tekrar eden ifadeler: {s}", { s: s.title }),
+      detail: r.nearDuplicates.length ? T("Birbirine çok benzeyen {n} cümle çifti ve tekrar eden kalıplar var. Metni seçip asistanda “Tekrarları azalt”ı kullanın.", { n: r.nearDuplicates.length }) : T("Aynı kalıplar sık tekrar ediyor. Metni seçip asistanda “Tekrarları azalt”ı kullanın."),
+      excerpt: parts.join(" · ") || r.nearDuplicates[0]?.a });
   }
 
   // --- Hipotez – analiz – bulgu uyumu

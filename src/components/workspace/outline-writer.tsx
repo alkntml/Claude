@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Modal } from "@/components/ui/primitives";
 import { useT } from "@/i18n/client";
+import { analyzeRepetition, isRepetitive } from "@/lib/quality/repetition";
 import { streamChat, type ChatPhase } from "@/lib/ai/chat-client";
 import { parseAnswer } from "./markdown";
 import { PhaseSteps } from "./assistant";
@@ -30,6 +31,7 @@ interface Props {
 export function OutlineWriter({ open, onClose, projectId, stage, existingHeadings, onInsert, onSourcesAdded }: Props) {
   const { t } = useT();
   const [text, setText] = useState("");
+  const [repetitive, setRepetitive] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [running, setRunning] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
@@ -62,10 +64,12 @@ export function OutlineWriter({ open, onClose, projectId, stage, existingHeading
     if (!titles.length) return;
     const list: Item[] = titles.map((title) => ({ title, state: "waiting", added: 0, read: 0, words: 0, gaps: [] }));
     setItems(list);
+    setRepetitive(false);
     setRunning(true);
     stopped.current = false;
     pendingDrafts.current = [];
     let conversationId: string | null = null;
+    const written: string[] = [];
     for (let i = 0; i < titles.length; i++) {
       if (stopped.current) { update(i, (x) => ({ ...x, state: "stopped" })); continue; }
       update(i, (x) => ({ ...x, state: "running" }));
@@ -76,7 +80,7 @@ export function OutlineWriter({ open, onClose, projectId, stage, existingHeading
       try {
         await streamChat({
           projectId, stageId: stage.id, conversationId, action: "draft",
-          message: t("Bu bölümün yalnızca “{h}” alt başlığını yaz. Taslağı “## {h}” başlığıyla başlat; diğer alt başlıkları yazma. Bu alt konu için mevcut kaynaklar yetersizse yeni kaynak ara; tam metni okunan kaynaklardan aktarımlarda sayfa numarası ver.", { h: titles[i] }),
+          message: t("Bu bölümün yalnızca “{h}” alt başlığını yaz. Taslağı “## {h}” başlığıyla başlat; diğer alt başlıkları yazma. Bu alt konu için mevcut kaynaklar yetersizse yeni kaynak ara; tam metni okunan kaynaklardan aktarımlarda sayfa numarası ver. Önceki alt başlıklarda yazılanları tekrar etme, konuya yeniden giriş yapma ve alt başlığı özet cümlesiyle bitirme; yalnızca bu alt başlığa özgü yeni bilgiyi yaz.", { h: titles[i] }),
         }, abort.current.signal, (ev, data) => {
           if (ev === "phase") update(i, (x) => ({ ...x, phase: data.phase, seen: [...new Set([...(x.seen ?? []), data.phase as ChatPhase])] }));
           else if (ev === "meta") { conversationId = data.conversationId; map = data.sourceMap; }
@@ -89,6 +93,7 @@ export function OutlineWriter({ open, onClose, projectId, stage, existingHeading
         let md = parsed.parts.filter((p) => p.kind === "draft").map((p) => p.text).join("\n\n").trim();
         if (md && !/^#{1,4}\s/.test(md)) md = `## ${titles[i]}\n\n${md}`;
         const words = (md.match(/[\p{L}\p{N}]+/gu) ?? []).length;
+        if (md) written.push(md);
         if (md) { if (autoInsert) onInsert(md, map); else pendingDrafts.current.push({ md, map }); }
         update(i, (x) => ({ ...x, state: md ? "done" : "failed", phase: undefined, words, gaps: gapAdded ? [] : parsed.gaps, error: md ? undefined : t("Taslak üretilemedi") }));
       } catch (e) {
@@ -97,6 +102,8 @@ export function OutlineWriter({ open, onClose, projectId, stage, existingHeading
       }
     }
     abort.current = null;
+    // Alt başlıklar ayrı ayrı yazıldığı için aralarındaki tekrarlar bütün üzerinde kontrol edilir
+    setRepetitive(written.length > 1 && isRepetitive(analyzeRepetition(written.join("\n\n"), { minCount: 3 })));
     setRunning(false);
   }
 
@@ -149,6 +156,7 @@ export function OutlineWriter({ open, onClose, projectId, stage, existingHeading
               {withGaps.length > 0
                 ? <p className="mt-1 text-amber-800">{t("{n} alt başlıkta bazı konular için kaynak bulunamadı; bu konular kesin iddia olarak yazılmadı.", { n: withGaps.length })}</p>
                 : done.length > 0 && <p className="mt-1 text-emerald-700">{t("Tüm alt başlıklar kaynaklarla desteklendi.")}</p>}
+              {repetitive && <p className="mt-1 text-amber-800">{t("Alt başlıklar arasında tekrar eden ifadeler bulundu. Bölüm metnini seçip asistanda “Tekrarları azalt”a basarak tek seferde düzeltebilirsiniz.")}</p>}
               {autoInsert && done.length > 0 && <p className="mt-1 text-ink-500">{t("Taslaklar belgeye eklendi; önceki hâl sürüm geçmişinde saklandı.")}</p>}
             </div>
           )}

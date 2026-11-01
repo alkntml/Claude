@@ -3,9 +3,10 @@ import "server-only";
 /** Sunucu tarafı yapılandırma. Gizli anahtarlar yalnızca burada okunur; istemci paketine girmez. */
 export const env = {
   appUrl: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
-  supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+  // Supabase/Vercel entegrasyonu anahtarları eski (anon/service_role) veya yeni (publishable/secret) adlarla verebilir
+  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
+  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "",
+  supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY || "",
   anthropicKey: process.env.ANTHROPIC_API_KEY ?? "",
   openaiKey: process.env.OPENAI_API_KEY ?? "",
   contactEmail: process.env.ACADEMIC_CONTACT_EMAIL ?? "",

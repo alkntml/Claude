@@ -14,7 +14,8 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] Uzun AI yanıtlarında Vercel Hobby zaman sınırı (gerekirse Pro plan veya `maxDuration` ayarı)
 
 ## 🔴 Kullanıcının yapması gerekenler
-- [ ] **Supabase SQL Editor’de `supabase/migrations/20261104000007_orgs_referrals.sql` çalıştır** (kurum lisansı, davet programı, krediler)
+- [x] Migration 7 çalıştırıldı (kullanıcı “Success” onayı verdi)
+- [ ] Migration 5 ve 6 çalıştırıldığından emin ol (tekrar çalıştırmak güvenli)
 - [ ] Yönetim → Kurumlar → “Öğrenci indirimi, davet ve iletişim”: iletişim e-postasını gir (Kurumlar sayfasındaki “Teklif isteyin” için); öğrenci indirimi %30 ve davet ödülü 50 AI isteği + 50 tarama varsayılan
 - [ ] dermanlik.com.tr tarafında UTM’li gelen ziyaretleri karşılayan sayfanın hazır olduğunu kontrol et
 - [ ] **Supabase SQL Editor’de `supabase/migrations/20261103000006_source_summary.sql` çalıştır** (literatür matrisi)

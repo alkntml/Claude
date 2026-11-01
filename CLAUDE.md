@@ -6,6 +6,9 @@ Bu dosya her yeni Claude oturumunun ilk okuması gereken proje kılavuzudur. Ayr
 - `DECISIONS.md`: alınan teknik kararlar ve gerekçeleri
 - `docs/ARCHITECTURE.md`: ayrıntılı mimari
 
+## Oturum sürekliliği
+Bağlam sıfırlanınca önce bu dosyayı, sonra `PROJECT_STATUS.md` (canlı durum + çalışma şekli), `TODO.md` ve `DECISIONS.md`’yi oku. Her büyük değişiklik commit’inde ve kullanıcı “yedekle” dediğinde bu dört dosyayı güncelle.
+
 ## Proje
 Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, literatür taraması, araştırma önerisi). Türkçe arayüz, Türk kullanıcı kitlesi. Sahibi teknik değil; adım adım, sade Türkçe ile iletişim kurulmalı. Ekran görüntüleriyle ilerler.
 

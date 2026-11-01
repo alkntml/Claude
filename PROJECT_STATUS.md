@@ -1,16 +1,16 @@
 # Proje Durumu
 
-_Son güncelleme: 1 Kasım 2026_
+_Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’inde güncellenir_
 
 ## Canlı ortam
 | Bileşen | Durum | Ayrıntı |
 |---|---|---|
 | Site | ✅ Yayında | https://akademi-ai-umber.vercel.app (Vercel projesi `akademi-ai`, Hobby plan, bölge fra1) |
-| Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (ilk 4 migration). **Migration 5, 6 ve 7 (`20261104000007_orgs_referrals.sql`: kurumlar, davet, krediler) kullanıcı tarafından çalıştırılmalı** |
+| Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (ilk 4 migration). Migration 7 (`20261104000007_orgs_referrals.sql`) kullanıcı tarafından çalıştırıldı ✅ (Success). Migration 5 (`no_placeholder_claims`) ve 6 (`source_summary`) için kullanıcı “daha önce de çalıştırdım” dedi ama hangisi olduğu net değil — emin olmak için ikisi de tekrar çalıştırılabilir (güvenli: 5 `replace`, 6 `if not exists`) |
 | Kimlik doğrulama | ✅ Çalışıyor | Site URL ve Redirect URL (`/api/auth/callback`) ayarlandı. Sahip kayıt oldu |
 | Yönetici | ✅ | Sahibin hesabı `role = admin`, `plan_id = premium` |
 | Claude API | ✅ Çalışıyor | Opus 5.5 ve Haiku 5.5 canlı anahtarla test edildi. Asistan canlı sitede yanıt veriyor |
-| Akademik veri tabanı araması | ⚠️ Canlıda doğrulanmadı | Kod hazır; sohbet içi otomatik araştırma yeni eklendi (commit `96b9088`). Kullanıcının denemesi bekleniyor |
+| Akademik veri tabanı araması | ✅ Kullanıcı canlıda çalıştığını doğruladı | Otomatik araştırma ve yazım çalışıyor. Sonraki eklenen özellikler (Türkiye kaynakları, sunum, istatistik, dergi önerisi, kurum lisansı, davet) canlıda henüz denenmedi |
 | Ödeme | ❌ Yapılandırılmadı | Stripe kodu hazır, anahtar yok. iyzico uygulanmadı |
 | E-posta | ⚠️ Supabase varsayılanı | Saatlik gönderim limiti düşük; özel SMTP (Resend vb.) önerildi |
 | Demo | ✅ | Sunucusuz tarayıcı demosu: https://claude.ai/artifact/6ckTR9LQUpjPv2jNnnrhgG (AI, arama ve dışa aktarma kapalı) |
@@ -85,4 +85,17 @@ _Son güncelleme: 1 Kasım 2026_
 | c4dc4d5 | Next.js güvenlik güncellemesi |
 | 96b9088 | Asistanın kendi literatür araştırması |
 | ac53543 | Proje belgeleri (CLAUDE.md vb.) |
-| sonraki | Desteksiz iddia yok + eksik konu araması, İngilizce arayüz, mobil çalışma alanı |
+| 82dd38f | Desteksiz iddia yok + eksik konu araması, İngilizce arayüz (ülkeye göre), mobil çalışma alanı |
+| (ara commit) | Bölüm bazlı kaynak taraması, tam metin okuma + yayındaki sayfa no, kaynakçada kullanım yerleri |
+| (ara commit) | UX paketi: alt başlıklarla yaz, atıf doğrulama, [KAYNAK GEREKLİ] toplu düzeltme, literatür matrisi, Word şablonu/kapak, hedef/takvim, sesle not, çevrimdışı kayıt, tur, limit uyarıları |
+| 5045fef | Türk kaynakları, BibTeX/RIS, istatistik (APA), savunma sunumu, Abstract, etik, dergi önerisi, kurum lisansı, öğrenci indirimi, davet, uzman desteği (dermanlik.com.tr) |
+
+## Oturum dışı üretilen teslimler (depoda değil)
+- **Reels tanıtım videosu** (40 sn, 1080×1920, altyazılı, müzikli, seslendirmesiz — ortamda Türkçe TTS yok, HuggingFace engelli). Kullanıcıya sohbetten gönderildi; seslendirme metni ve SRT de verildi. Yeniden üretmek gerekirse: demo ekranlarından Playwright ile kare kare HTML animasyonu + ffmpeg (yöntem bu oturumda kullanıldı).
+
+## Çalışma şekli (kullanıcıyla)
+- Kullanıcı teknik değil; sade Türkçe, adım adım. Ekran görüntüleriyle ilerler.
+- Kod: Claude yazar, test eder, `main`’e push eder; Vercel otomatik yayınlar. PR açılmaz (istenmedikçe).
+- Veritabanı: yeni migration’ın SQL’i sohbette verilir; kullanıcı Supabase → SQL Editor → **+ New query** → yapıştır → **Run** yapar (Save gerekmez).
+- Claude’un oturumundan canlı siteye ve akademik API’lere ağ erişimi yok; canlı doğrulama kullanıcının ekran görüntüleriyle.
+- Kullanıcı bağlam penceresi dolmadan “yedekle” diyebilir: bu dosyalar (PROJECT_STATUS, TODO, DECISIONS, CLAUDE.md) güncellenip commit edilir.

@@ -44,6 +44,8 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 
 ## 🟠 Ticari hazırlık
 - [ ] iyzico entegrasyonu (kullanıcı satıcı hesabı + sandbox anahtarları sağlayınca): abonelik checkout form, webhook/callback, HMAC imza
+- [ ] Google ile giriş: Google Cloud’da OAuth istemcisi (yönlendirme adresi: Supabase → Authentication → Providers → Google’da yazan callback URL) → Supabase’de Google’ı aç, Client ID/Secret gir. Supabase → Authentication → URL Configuration: Site URL ve Redirect URLs’e `https://akademi-ai-umber.vercel.app/**`
+- [ ] Apple ile giriş: Apple Developer hesabı (yıllık ücretli) gerekir; Services ID + anahtar → Supabase’de Apple’ı aç
 - [ ] Stripe anahtarları + webhook (`/api/billing/webhook`); Stripe panelinde “Customer portal” etkinleştir (abonelik iptal/kart değişikliği için)
 - [ ] KVKK, gizlilik, kullanım koşulları avukat incelemesi (şu an şablon)
 - [ ] Supabase Pro + Point-in-Time Recovery (yedekleme)

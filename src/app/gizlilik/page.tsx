@@ -11,7 +11,7 @@ export default async function Page() {
       <StaticPage title="Privacy notice" lead="How your personal data and academic work are processed.">
         <p>This notice is a template prepared under Turkey&apos;s Personal Data Protection Law (KVKK) and the EU General Data Protection Regulation (GDPR). It must be completed with the data controller&apos;s details and reviewed by a lawyer before publication.</p>
         <h2>Data we process</h2>
-        <ul><li>Account data: name, email, institution.</li><li>Academic content: projects, section texts, sources, uploaded files, AI conversations.</li><li>Usage data: request counts, token usage, error logs.</li><li>Payment data: processed by the payment provider; card details are never stored on our servers.</li></ul>
+        <ul><li>Account data: name, email, institution. If you sign in with Google or Apple, we receive only your name and email address from that service (with Apple, possibly a private relay address); we never see your Google or Apple password.</li><li>Academic content: projects, section texts, sources, uploaded files, AI conversations.</li><li>Usage data: request counts, token usage, error logs.</li><li>Payment data: processed by the payment provider; card details are never stored on our servers.</li></ul>
         <h2>Purposes</h2>
         <p>Providing the service, enforcing usage limits, ensuring security and meeting legal obligations.</p>
         <h2>Transfer to AI providers</h2>
@@ -27,7 +27,7 @@ export default async function Page() {
     <StaticPage title="Gizlilik ve KVKK aydınlatma metni" lead="Kişisel verileriniz ve akademik çalışmalarınız nasıl işlenir?">
       <p>Bu metin, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) kapsamında hazırlanmış bir şablondur. Yayına almadan önce veri sorumlusu bilgileriyle güncellenmeli ve hukuki inceleme yapılmalıdır.</p>
       <h2>İşlenen veriler</h2>
-      <ul><li>Hesap bilgileri: ad soyad, e-posta, kurum.</li><li>Akademik içerik: projeler, bölüm metinleri, kaynaklar, yüklenen dosyalar, yapay zekâ sohbetleri.</li><li>Kullanım verileri: istek sayıları, token kullanımı, hata kayıtları.</li><li>Ödeme bilgileri: ödeme sağlayıcısı tarafından işlenir; kart bilgileri sunucularımızda saklanmaz.</li></ul>
+      <ul><li>Hesap bilgileri: ad soyad, e-posta, kurum. Google veya Apple ile giriş yaparsanız bu hizmetten yalnızca adınızı ve e-posta adresinizi (Apple’da gizli yönlendirme adresi olabilir) alırız; Google veya Apple şifrenizi hiçbir zaman görmeyiz.</li><li>Akademik içerik: projeler, bölüm metinleri, kaynaklar, yüklenen dosyalar, yapay zekâ sohbetleri.</li><li>Kullanım verileri: istek sayıları, token kullanımı, hata kayıtları.</li><li>Ödeme bilgileri: ödeme sağlayıcısı tarafından işlenir; kart bilgileri sunucularımızda saklanmaz.</li></ul>
       <h2>İşleme amaçları</h2>
       <p>Hizmetin sunulması, kullanım limitlerinin uygulanması, güvenliğin sağlanması ve yasal yükümlülüklerin yerine getirilmesi.</p>
       <h2>Yapay zekâ sağlayıcılarına aktarım</h2>

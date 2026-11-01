@@ -9,7 +9,27 @@ import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { createBrowser } from "@/lib/supabase/browser";
 
-export function AuthForm({ mode }: { mode: "login" | "signup" }) {
+type OAuthProvider = "google" | "apple";
+
+function GoogleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden="true">
+      <path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.46a5.52 5.52 0 0 1-2.4 3.62v3h3.88c2.27-2.09 3.58-5.17 3.58-8.81z" />
+      <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.92l-3.88-3c-1.07.72-2.45 1.15-4.06 1.15-3.12 0-5.77-2.11-6.71-4.95H1.28v3.1A12 12 0 0 0 12 24z" />
+      <path fill="#FBBC05" d="M5.29 14.28A7.2 7.2 0 0 1 4.91 12c0-.79.14-1.56.38-2.28v-3.1H1.28A12 12 0 0 0 0 12c0 1.94.46 3.77 1.28 5.38l4.01-3.1z" />
+      <path fill="#EA4335" d="M12 4.77c1.76 0 3.34.61 4.59 1.8l3.44-3.44A11.5 11.5 0 0 0 12 0 12 12 0 0 0 1.28 6.62l4.01 3.1C6.23 6.88 8.88 4.77 12 4.77z" />
+    </svg>
+  );
+}
+function AppleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden="true" fill="currentColor">
+      <path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.77-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-2.99-.79a4.43 4.43 0 0 0-3.75 2.27c-1.6 2.77-.41 6.87 1.15 9.12.76 1.1 1.67 2.33 2.86 2.29 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.77-2.22.87-1.27 1.23-2.5 1.25-2.57-.03-.01-2.39-.92-2.41-3.65zM14.1 5.86c.63-.77 1.06-1.83.94-2.89-.91.04-2.02.61-2.67 1.37-.58.67-1.1 1.76-.96 2.8 1.02.08 2.06-.52 2.69-1.28z" />
+    </svg>
+  );
+}
+
+export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; providers?: OAuthProvider[] }) {
   const { t } = useT();
   const router = useRouter();
   const params = useSearchParams();
@@ -28,6 +48,17 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(params.get("hata") ? t("Doğrulama bağlantısı geçersiz veya süresi dolmuş.") : null);
   const [sent, setSent] = useState(false);
+  const [oauthBusy, setOauthBusy] = useState<OAuthProvider | null>(null);
+
+  async function oauth(provider: OAuthProvider) {
+    setError(null);
+    if (mode === "signup" && !consent) { setError(t("Devam etmek için aydınlatma metnini onaylayın.")); return; }
+    setOauthBusy(provider);
+    const q = new URLSearchParams({ next: safeNext, ...(ref ? { ref } : {}) });
+    const { error } = await createBrowser().auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/api/auth/callback?${q}` } });
+    // Başarılıysa tarayıcı sağlayıcının sayfasına yönlenir; hata olursa burada kalırız
+    if (error) { setError(t("{p} ile giriş şu anda kullanılamıyor. E-posta ile devam edebilirsiniz.", { p: provider === "google" ? "Google" : "Apple" })); setOauthBusy(null); }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -73,7 +104,24 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
               <p className="mt-1.5 text-sm text-ink-500">{mode === "login" ? t("Kaldığınız yerden devam edin.") : t("Ücretsiz başlayın, kredi kartı gerekmez.")}</p>
               {mode === "signup" && ref && <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">{t("Davetle geldiniz: e-postanızı doğruladığınızda size ve sizi davet edene ek yapay zekâ isteği ve kaynak tarama hakkı tanımlanır.")}</p>}
               {mode === "signup" && <p className="mt-2 text-[12.5px] text-ink-500">{t("Üniversite e-postanızla (.edu.tr) kayıt olursanız ücretli paketlerde öğrenci indirimi uygulanır.")}</p>}
-              <form onSubmit={submit} className="mt-7 space-y-4">
+              {providers.length > 0 && (
+                <div className="mt-7 space-y-2.5">
+                  {providers.includes("google") && (
+                    <button type="button" onClick={() => oauth("google")} disabled={!!oauthBusy} className="flex h-11 w-full items-center justify-center gap-2.5 rounded-xl border border-ink-200 bg-white text-[15px] font-medium text-ink-800 transition hover:bg-ink-50 disabled:opacity-60">
+                      <GoogleIcon /> {oauthBusy === "google" ? t("Yönlendiriliyor…") : t("Google ile devam et")}
+                    </button>
+                  )}
+                  {providers.includes("apple") && (
+                    <button type="button" onClick={() => oauth("apple")} disabled={!!oauthBusy} className="flex h-11 w-full items-center justify-center gap-2.5 rounded-xl bg-black text-[15px] font-medium text-white transition hover:bg-ink-900 disabled:opacity-60">
+                      <AppleIcon /> {oauthBusy === "apple" ? t("Yönlendiriliyor…") : t("Apple ile devam et")}
+                    </button>
+                  )}
+                  {mode === "login" && <p className="text-center text-[12px] leading-snug text-ink-400">{t("Google veya Apple ile ilk kez girişte hesabınız oluşturulur ve KVKK aydınlatma metni ile kullanım koşullarını kabul etmiş olursunuz.")}</p>}
+                  {mode === "signup" && <p className="text-center text-[12px] text-ink-400">{t("Önce aşağıdaki onay kutusunu işaretleyin.")}</p>}
+                  <div className="flex items-center gap-3 pt-2 text-xs text-ink-400"><span className="h-px flex-1 bg-ink-100" />{t("veya e-posta ile")}<span className="h-px flex-1 bg-ink-100" /></div>
+                </div>
+              )}
+              <form onSubmit={submit} className={providers.length ? "mt-4 space-y-4" : "mt-7 space-y-4"}>
                 {mode === "signup" && (
                   <div><label className="label" htmlFor="name">{t("Ad soyad")}</label><input id="name" className="input" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" /></div>
                 )}

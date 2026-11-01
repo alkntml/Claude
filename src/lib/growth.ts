@@ -36,6 +36,20 @@ export async function activeCredits(userId: string): Promise<{ ai_requests: numb
 }
 
 /**
+ * Sosyal girişle (Google/Apple) yeni açılan hesaba davet kodunu bağlar. Kayıt formundaki gibi
+ * kullanıcı meta verisi taşınamadığından kod geri dönüş adresinden gelir. Yalnızca yeni hesaplarda
+ * (15 dk) ve henüz davet eden atanmamışsa; kendi kendini davet geçersiz.
+ */
+export async function attachReferral(userId: string, code: string, createdAt: string | undefined): Promise<void> {
+  const clean = code.replace(/[^A-Za-z0-9]/g, "").slice(0, 16).toUpperCase();
+  if (!clean || !createdAt || Date.now() - new Date(createdAt).getTime() > 15 * 60_000) return;
+  const db = adminClient();
+  const { data: inviter } = await db.from("profiles").select("id").eq("referral_code", clean).maybeSingle();
+  if (!inviter || inviter.id === userId) return;
+  await db.from("profiles").update({ referred_by: inviter.id }).eq("id", userId).is("referred_by", null);
+}
+
+/**
  * Davet ödülü: davet edilen kullanıcı e-postasını doğruladığında (bir kez) her iki tarafa kredi verilir.
  * Kötüye kullanıma karşı: davet edenin aylık ödül sayısı sınırlı, kendi kendini davet geçersiz.
  */

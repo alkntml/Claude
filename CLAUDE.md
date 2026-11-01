@@ -61,6 +61,7 @@ src/lib/
   export/presentation.ts Savunma sunumu (.pptx); export/format.ts biçim şablonları
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
   growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; öğrenci indirimi; uzman desteği bağlantıları
+  auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                index.ts (t, ülke→dil), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
 supabase/migrations/     Sıralı SQL migration'ları

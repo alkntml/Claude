@@ -1513,4 +1513,11 @@ export const EN: Record<string, string> = {
   "Yönetilecek bir aboneliğiniz bulunamadı": "No subscription found to manage",
   "Türkiye kaynakları:": "Turkish sources:",
   "Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil) otomatik taranır. TR Dizin ve YÖK Tez Merkezi’nde aynı konuyla tek tıkla arama yapılır; bulduğunuz tezi veya makaleyi kolayca eklersiniz.": "Turkish-language and Turkey-affiliated publications (including DergiPark journals) are searched automatically. TR Dizin and the YÖK Thesis Center can be searched for the same topic in one click, and you can easily add the thesis or article you find.",
+  "{p} ile giriş şu anda kullanılamıyor. E-posta ile devam edebilirsiniz.": "Sign-in with {p} is not available right now. You can continue with email.",
+  "Yönlendiriliyor…": "Redirecting…",
+  "Google ile devam et": "Continue with Google",
+  "Apple ile devam et": "Continue with Apple",
+  "Google veya Apple ile ilk kez girişte hesabınız oluşturulur ve KVKK aydınlatma metni ile kullanım koşullarını kabul etmiş olursunuz.": "Signing in with Google or Apple for the first time creates your account, and you accept the privacy notice and terms of use.",
+  "Önce aşağıdaki onay kutusunu işaretleyin.": "First tick the consent box below.",
+  "veya e-posta ile": "or with email",
 };

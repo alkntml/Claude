@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { grantReferralReward } from "@/lib/growth";
+import { attachReferral, grantReferralReward } from "@/lib/growth";
 
 /** E-posta doğrulama ve OAuth dönüşü: kodu oturuma çevirir. */
 export async function GET(req: Request) {
@@ -13,6 +13,9 @@ export async function GET(req: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       // Davet ödülü: e-posta doğrulandığında (bir kez) her iki tarafa kredi
+      // Google/Apple ile ilk girişte davet kodu geri dönüş adresinden gelir
+      const ref = url.searchParams.get("ref");
+      if (data.user && ref) await attachReferral(data.user.id, ref, data.user.created_at).catch(() => {});
       if (data.user) await grantReferralReward(data.user.id, !!data.user.email_confirmed_at).catch(() => false);
       return NextResponse.redirect(new URL(safeNext, url.origin));
     }

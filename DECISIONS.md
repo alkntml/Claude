@@ -113,3 +113,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - SSS içeriği tek kaynaktan (`src/lib/faq.ts`, TR/EN) hem `/sss` hem ana sayfada kullanılır; cevaplar platformun gerçek davranışını anlatır, vaat içermez (ör. AI tespitini atlatma vaadi yok, intihal oranı yok).
 - “Kim görür” cevabı platform yöneticisinin teknik erişimini açıkça söyler (yalnızca destek, güvenlik, yasal zorunluluk). Yönetici erişimi kaldırılırsa bu cevap da güncellenmeli.
 - İptal cevabının doğru olması için Stripe müşteri portalı eklendi; Stripe panelinde Customer portal etkinleştirilmelidir.
+
+### D32 — Google / Apple ile giriş
+- Supabase OAuth kullanılır; düğmeler Supabase `/auth/v1/settings` yanıtına göre yalnızca etkin sağlayıcılar için gösterilir (yapılandırılmamış düğme hata vermesin).
+- Kayıt sayfasında sosyal giriş de KVKK/koşullar onayı ister; giriş sayfasında ilk girişin hesap açacağı ve onay anlamına geldiği yazılır.
+- Davet kodu OAuth’ta meta veriyle taşınamadığından geri dönüş adresindeki `ref` ile, yalnızca 15 dk içinde açılmış ve davet edeni boş hesaplara bağlanır.

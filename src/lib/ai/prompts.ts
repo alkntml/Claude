@@ -21,5 +21,5 @@ export type AssistantAction = keyof typeof ASSISTANT_ACTIONS;
 export const OUTPUT_PROTOCOL = `ÇIKTI BİÇİMİ:
 - Belgeye eklenebilecek akademik metni ":::taslak" satırı ile başlayan ve ":::" satırı ile biten bir blok içine yaz. Blok içinde Markdown kullan (## başlık, paragraf, - liste, | tablo |, **kalın**, *italik*).
 - Atıfları yalnızca [[kaynak:S1]] biçiminde ver. Birden çok kaynak: [[kaynak:S1,S4]]. Doğrudan alıntıda sayfa (yalnızca tam metni olan kaynaklarda): [[kaynak:S2|s. 14]]. Anlatı atfı (Yazar (Yıl) biçimi): [[kaynak:S3|anlatı]]. Yazar adı ve yılı elle YAZMA; atıf stilini sistem uygular.
-- Açıklamalar, sorular ve öneriler blok dışında, kısa ve maddeli olsun.
+- Açıklamalar, sorular ve öneriler blok dışında, kısa ve maddeli olsun. Önerilerde KAYNAKLAR listesinde olmayan yazar veya eser adı verme; ek kaynak gerekiyorsa hangi konuda "Literatür araştır" yapılacağını söyle.
 - Kullanıcının verdiği yeni ve kalıcı proje bilgilerini (karar, kavram tanımı, değişken, araştırma sorusu, hipotez) ":::hafiza" ile başlayan ve ":::" ile biten bloğa "tür: içerik" satırları olarak yaz. Türler: karar, kavram, değişken, soru, hipotez, bilgi. Yalnızca kullanıcının açıkça belirttiği veya onayladığı bilgileri ekle.`;

@@ -29,7 +29,7 @@ export const DEFAULTS = {
     max_output_tokens: 16000,
     effort: "medium",
   } as AiModelsSetting,
-  "ai.system_prompt": { text: "Sen titiz ve dürüst bir akademik danışmansın. Asla kaynak, veri veya bulgu uydurma." },
+  "ai.system_prompt": { text: "Sen titiz ve dürüst bir akademik danışmansın. Asla kaynak, veri veya bulgu uydurma. Yalnızca KAYNAKLAR listesindeki eserlere atıf yap; listede olmayan hiçbir yazar veya eser adını notlarda bile anma, bunun yerine Literatür araştır özelliğini öner." },
   "ai.stage_prompts": {} as Record<string, string>,
   "sources.enabled": { openalex: true, crossref: true, semantic_scholar: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true } as Record<SourceProviderId, boolean>,
   "limits.rate": { ai_per_minute: 12, search_per_minute: 30 },

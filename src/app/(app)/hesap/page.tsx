@@ -1,3 +1,4 @@
+import { getT } from "@/i18n/server";
 import { Suspense } from "react";
 import { AccountView } from "@/components/dashboard/account";
 import { getSession } from "@/lib/auth";
@@ -5,7 +6,10 @@ import { availableProviders } from "@/lib/payments";
 import { publicPlans } from "@/lib/plans";
 import { planLimits, usageSummary } from "@/lib/usage";
 
-export const metadata = { title: "Hesap ve abonelik" };
+export async function generateMetadata() {
+  const { t } = await getT();
+  return { title: t("Hesap ve abonelik") };
+}
 
 export default async function Page() {
   const s = (await getSession())!;

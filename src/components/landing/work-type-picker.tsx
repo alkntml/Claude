@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { WORK_ICONS } from "@/components/icons";
 import { WORK_TYPES } from "@/lib/workflows";
 
 export function WorkTypePicker({ signedIn, compact = false }: { signedIn: boolean; compact?: boolean }) {
+  const { t } = useT();
   return (
     <div className={`grid gap-4 ${compact ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2 lg:grid-cols-4"}`}>
       {WORK_TYPES.map((w, i) => {
@@ -21,9 +23,9 @@ export function WorkTypePicker({ signedIn, compact = false }: { signedIn: boolea
                 </span>
                 <ArrowUpRight className="h-4 w-4 text-ink-300 transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand-600" />
               </div>
-              <h3 className="relative mt-4 font-semibold text-ink-900">{w.title}</h3>
-              <p className="relative text-[12.5px] font-medium text-brand-600/80">{w.short}</p>
-              <p className="relative mt-2 text-[13.5px] leading-relaxed text-ink-500">{w.description}</p>
+              <h3 className="relative mt-4 font-semibold text-ink-900">{t(w.title)}</h3>
+              <p className="relative text-[12.5px] font-medium text-brand-600/80">{t(w.short)}</p>
+              <p className="relative mt-2 text-[13.5px] leading-relaxed text-ink-500">{t(w.description)}</p>
             </Link>
           </motion.div>
         );

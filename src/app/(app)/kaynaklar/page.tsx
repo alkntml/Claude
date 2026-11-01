@@ -1,7 +1,11 @@
+import { getT } from "@/i18n/server";
 import { LibraryView } from "@/components/dashboard/library";
 import { getSession } from "@/lib/auth";
 
-export const metadata = { title: "Kaynak araştırması" };
+export async function generateMetadata() {
+  const { t } = await getT();
+  return { title: t("Kaynak araştırması") };
+}
 
 export default async function Page() {
   const s = (await getSession())!;

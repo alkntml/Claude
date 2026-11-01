@@ -1,3 +1,4 @@
+import { getT } from "@/i18n/server";
 import { notFound, redirect } from "next/navigation";
 import { Workspace } from "@/components/workspace/workspace";
 import { getSession } from "@/lib/auth";
@@ -9,9 +10,10 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const s = await getSession().catch(() => null);
-  if (!s) return { title: "Çalışma" };
+  const { t } = await getT();
+  if (!s) return { title: t("Çalışma") };
   const { data } = await s.supabase.from("projects").select("title").eq("id", id).maybeSingle();
-  return { title: data?.title ?? "Çalışma" };
+  return { title: data?.title ?? t("Çalışma") };
 }
 
 export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ bolum?: string }> }) {

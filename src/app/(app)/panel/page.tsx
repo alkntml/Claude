@@ -1,8 +1,12 @@
+import { getT } from "@/i18n/server";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { getSession } from "@/lib/auth";
 import { planLimits, usageSummary } from "@/lib/usage";
 
-export const metadata = { title: "Kontrol paneli" };
+export async function generateMetadata() {
+  const { t } = await getT();
+  return { title: t("Kontrol paneli") };
+}
 
 export default async function Panel() {
   const s = (await getSession())!;

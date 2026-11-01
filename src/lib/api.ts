@@ -1,4 +1,6 @@
 import "server-only";
+import { makeT } from "@/i18n";
+import { localeFromRequest } from "@/i18n/server";
 import { NextResponse } from "next/server";
 import { ZodError, type ZodTypeAny, type output } from "zod";
 import { adminClient } from "@/lib/supabase/admin";
@@ -55,10 +57,12 @@ export function route<C>(name: string, fn: Handler<C>): Handler<C> {
       assertSameOrigin(req);
       return await fn(req, ctx);
     } catch (e) {
-      if (e instanceof ApiError) return json({ error: e.message, code: e.code, ...e.extra }, e.status);
-      if (e instanceof ZodError) return json({ error: "Geçersiz istek" }, 422);
+      // Hata mesajları kullanıcının arayüz diline çevrilir (sözlükte yoksa Türkçe kalır)
+      const T = makeT(localeFromRequest(req));
+      if (e instanceof ApiError) return json({ error: T(e.message), code: e.code, ...e.extra }, e.status);
+      if (e instanceof ZodError) return json({ error: T("Geçersiz istek") }, 422);
       await logError(name, e);
-      return json({ error: "Beklenmeyen bir hata oluştu" }, 500);
+      return json({ error: T("Beklenmeyen bir hata oluştu") }, 500);
     }
   };
 }

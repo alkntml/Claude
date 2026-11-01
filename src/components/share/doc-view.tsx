@@ -1,3 +1,4 @@
+import { useT } from "@/i18n/client";
 import { richToHtml } from "@/lib/citations/util";
 import type { ExportDoc, Run } from "@/lib/export/model";
 
@@ -19,6 +20,7 @@ function Runs({ runs, notes }: { runs: Run[]; notes: string[] }) {
 
 /** Dışa aktarma modelini salt okunur HTML olarak gösterir (danışman paylaşımı). */
 export function DocView({ doc, stageIds }: { doc: ExportDoc; stageIds: Record<string, string> }) {
+  const { t } = useT();
   const notes: string[] = [];
   return (
     <article className="prose-academic">
@@ -35,7 +37,7 @@ export function DocView({ doc, stageIds }: { doc: ExportDoc; stageIds: Record<st
           <table key={i}><tbody>{b.rows.map((row, ri) => <tr key={ri}>{row.map((c, ci) => (ri === 0 && b.header ? <th key={ci}><Runs runs={c} notes={notes} /></th> : <td key={ci}><Runs runs={c} notes={notes} /></td>))}</tr>)}</tbody></table>
         );
       })}
-      {notes.length > 0 && <><h4>Notlar</h4><ol className="text-[14px]">{notes.map((n, i) => <li key={i}>{n}</li>)}</ol></>}
+      {notes.length > 0 && <><h4>{t("Notlar")}</h4><ol className="text-[14px]">{notes.map((n, i) => <li key={i}>{n}</li>)}</ol></>}
       {doc.bibliography.length > 0 && (
         <>
           <h2 className="!mt-14 font-serif !text-[1.6em]">{doc.bibliographyTitle}</h2>

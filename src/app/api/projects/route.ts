@@ -4,6 +4,8 @@ import { requireUser } from "@/lib/auth";
 import { assertProjectQuota } from "@/lib/usage";
 import { buildRoadmap } from "@/lib/workflows";
 import { STYLE_IDS } from "@/lib/citations";
+import { translate } from "@/i18n";
+import { localeFromRequest } from "@/i18n/server";
 
 const CreateSchema = z.object({
   title: z.string().trim().min(1).max(300),
@@ -32,6 +34,7 @@ export const GET = route("projects.list", async () => {
 export const POST = route("projects.create", async (req) => {
   const s = await requireUser();
   const body = await parseBody(req, CreateSchema);
+  const uiLocale = localeFromRequest(req);
   await assertProjectQuota(s.user.id, s.profile.plan_id);
 
   const { data: project, error } = await s.supabase
@@ -54,14 +57,14 @@ export const POST = route("projects.create", async (req) => {
 
   const roadmap = buildRoadmap({ workType: body.workType, level: body.level, methodology: body.methodology });
   const { error: stErr } = await s.supabase.from("project_stages").insert(
-    roadmap.map((st, idx) => ({ project_id: project.id, user_id: s.user.id, key: st.key, title: st.title, description: st.description, position: idx })),
+    roadmap.map((st, idx) => ({ project_id: project.id, user_id: s.user.id, key: st.key, title: translate(uiLocale, st.title), description: translate(uiLocale, st.description), position: idx })),
   );
   if (stErr) {
     await s.supabase.from("projects").delete().eq("id", project.id);
     throw stErr;
   }
   if (body.topic) {
-    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `Araştırma konusu: ${body.topic}`, source: "user", pinned: true });
+    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `${uiLocale === "en" ? "Research topic" : "Araştırma konusu"}: ${body.topic}`, source: "user", pinned: true });
   }
   return json({ project }, 201);
 });

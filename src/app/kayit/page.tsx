@@ -1,6 +1,10 @@
+import { getT } from "@/i18n/server";
 import { Suspense } from "react";
 import { AuthForm } from "@/components/auth/auth-form";
-export const metadata = { title: "Kayıt ol" };
+export async function generateMetadata() {
+  const { t } = await getT();
+  return { title: t("Kayıt ol") };
+}
 export default function Page() {
   return <Suspense><AuthForm mode="signup" /></Suspense>;
 }

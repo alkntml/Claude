@@ -1,6 +1,28 @@
 import { StaticPage } from "@/components/static-page";
-export const metadata = { title: "Gizlilik ve KVKK" };
-export default function Page() {
+import { getLocale } from "@/i18n/server";
+
+export async function generateMetadata() {
+  return { title: (await getLocale()) === "en" ? "Privacy" : "Gizlilik ve KVKK" };
+}
+
+export default async function Page() {
+  if ((await getLocale()) === "en") {
+    return (
+      <StaticPage title="Privacy notice" lead="How your personal data and academic work are processed.">
+        <p>This notice is a template prepared under Turkey&apos;s Personal Data Protection Law (KVKK) and the EU General Data Protection Regulation (GDPR). It must be completed with the data controller&apos;s details and reviewed by a lawyer before publication.</p>
+        <h2>Data we process</h2>
+        <ul><li>Account data: name, email, institution.</li><li>Academic content: projects, section texts, sources, uploaded files, AI conversations.</li><li>Usage data: request counts, token usage, error logs.</li><li>Payment data: processed by the payment provider; card details are never stored on our servers.</li></ul>
+        <h2>Purposes</h2>
+        <p>Providing the service, enforcing usage limits, ensuring security and meeting legal obligations.</p>
+        <h2>Transfer to AI providers</h2>
+        <p>When you use AI features, the relevant section text, project context and selected source abstracts are sent to the configured AI provider (e.g. Anthropic) solely to answer your request.</p>
+        <h2>Your rights</h2>
+        <p>From your account page you can download all your data in a portable format (JSON) and permanently delete your account with all its data. For other requests, contact the data controller.</p>
+        <h2>Security</h2>
+        <p>Data is protected with row-level security (RLS) policies; no user can access another user&apos;s work. Files are kept in private storage and can only be downloaded through time-limited signed links.</p>
+      </StaticPage>
+    );
+  }
   return (
     <StaticPage title="Gizlilik ve KVKK aydınlatma metni" lead="Kişisel verileriniz ve akademik çalışmalarınız nasıl işlenir?">
       <p>Bu metin, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) kapsamında hazırlanmış bir şablondur. Yayına almadan önce veri sorumlusu bilgileriyle güncellenmeli ve hukuki inceleme yapılmalıdır.</p>

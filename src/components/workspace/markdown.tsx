@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/client";
 import { Fragment } from "react";
 import { richToPlain } from "@/lib/citations/util";
 import { useCitations } from "./citation-context";
@@ -6,28 +7,31 @@ import { useCitations } from "./citation-context";
 export interface ParsedAnswer {
   parts: ({ kind: "text"; text: string } | { kind: "draft"; text: string; complete: boolean })[];
   memory: string[];
+  gaps: string[];
 }
 
 /** :::taslak ... ::: ve :::hafiza ... ::: bloklarını ayrıştırır (akış sırasında yarım bloklar da desteklenir). */
 export function parseAnswer(src: string): ParsedAnswer {
   const parts: ParsedAnswer["parts"] = [];
   const memory: string[] = [];
-  const re = /:::(taslak|hafiza)\s*\n([\s\S]*?)(\n:::\s*(?:\n|$)|$)/g;
+  const gaps: string[] = [];
+  const re = /:::(taslak|hafiza|eksik)\s*\n([\s\S]*?)(\n:::\s*(?:\n|$)|$)/g;
   let last = 0;
   for (const m of src.matchAll(re)) {
     const before = src.slice(last, m.index);
     if (before.trim()) parts.push({ kind: "text", text: before });
     if (m[1] === "taslak") parts.push({ kind: "draft", text: m[2], complete: !!m[3] });
-    else memory.push(...m[2].split("\n").map((l) => l.replace(/^[-*]\s*/, "").trim()).filter(Boolean));
+    else (m[1] === "eksik" ? gaps : memory).push(...m[2].split("\n").map((l) => l.replace(/^[-*]\s*/, "").trim()).filter(Boolean));
     last = (m.index ?? 0) + m[0].length;
   }
   const rest = src.slice(last);
   if (rest.trim()) parts.push({ kind: "text", text: rest.replace(/:::\w*\s*$/, "") });
-  return { parts, memory };
+  return { parts, memory, gaps };
 }
 
 function Inline({ text, sourceMap }: { text: string; sourceMap: Record<string, string> }) {
   const ctx = useCitations();
+  const { t } = useT();
   const out: React.ReactNode[] = [];
   const re = /(\[\[kaynak:([A-Za-z0-9,\s-]+)(?:\|([^\]]+))?\]\]|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|\[KAYNAK GEREKLİ\]|\[VERİ GİRİLECEK[^\]]*\])/g;
   let last = 0;
@@ -39,7 +43,7 @@ function Inline({ text, sourceMap }: { text: string; sourceMap: Record<string, s
       const ids = m[2].split(",").map((x) => sourceMap[x.trim()]).filter(Boolean);
       const narrative = /^(anlatı|narrative)$/i.test((m[3] ?? "").trim());
       const locator = !narrative && m[3] ? m[3].replace(/^(s|ss|p|pp)\.\s*/i, "") : null;
-      const label = ctx && ids.length ? richToPlain(ctx.engine.cite(ids, { locator, narrative })) : "[kaynak doğrulanamadı]";
+      const label = ctx && ids.length ? richToPlain(ctx.engine.cite(ids, { locator, narrative })) : t("[kaynak doğrulanamadı]");
       out.push(<span key={k++} className={`mx-0.5 rounded-md border px-1.5 py-px font-sans text-[12px] ${ids.length ? "border-brand-100 bg-brand-50 text-brand-700" : "border-rose-200 bg-rose-50 text-rose-700"}`}>{label}</span>);
     } else if (tok.startsWith("**")) out.push(<strong key={k++}>{tok.slice(2, -2)}</strong>);
     else if (tok.startsWith("[KAYNAK") || tok.startsWith("[VERİ")) out.push(<mark key={k++} className="rounded bg-amber-100 px-1 text-[12px] text-amber-800">{tok}</mark>);

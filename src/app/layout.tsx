@@ -2,22 +2,30 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
+import { I18nProvider } from "@/i18n/client";
+import { getLocale } from "@/i18n/server";
 
 const sans = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-sans", display: "swap" });
 const serif = Fraunces({ subsets: ["latin", "latin-ext"], variable: "--font-serif", display: "swap", axes: ["opsz"] });
 
-export const metadata: Metadata = {
-  title: { default: "Akademi AI — Yapay zekâ destekli akademik araştırma ve yazım platformu", template: "%s · Akademi AI" },
-  description: "Tez, makale ve araştırma önerinizi gerçek akademik kaynaklarla, doğru atıflarla ve adım adım hazırlayın.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const en = (await getLocale()) === "en";
+  return {
+    title: { default: en ? "Akademi AI — AI-powered academic research and writing platform" : "Akademi AI — Yapay zekâ destekli akademik araştırma ve yazım platformu", template: "%s · Akademi AI" },
+    description: en ? "Prepare your thesis, article or research proposal step by step, with real academic sources and correct citations." : "Tez, makale ve araştırma önerinizi gerçek akademik kaynaklarla, doğru atıflarla ve adım adım hazırlayın.",
+  };
+}
 
 export const viewport: Viewport = { themeColor: "#151829", width: "device-width", initialScale: 1 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
   return (
-    <html lang="tr" className={`${sans.variable} ${serif.variable}`}>
+    <html lang={locale} className={`${sans.variable} ${serif.variable}`}>
       <body className="font-sans min-h-screen">
-        <ToastProvider>{children}</ToastProvider>
+        <I18nProvider locale={locale}>
+          <ToastProvider>{children}</ToastProvider>
+        </I18nProvider>
       </body>
     </html>
   );

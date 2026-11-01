@@ -7,6 +7,7 @@ import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
 import { runQualityChecks } from "@/lib/quality/checks";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
 import { stageDef } from "@/lib/workflows";
+import { localeFromRequest } from "@/i18n/server";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 120;
@@ -53,7 +54,8 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
     return { key: st.key, title: st.title, text: st.content_text ?? "", citedIds: citedIdsInOrder([st.content as JSONNode]), needsLiterature: def?.needsLiterature, requiresUserData: def?.requiresUserData, generated: !!def?.generated };
   });
   const sources = bundle.sources.map((r) => ({ ...sourceRowToItem(r), verified: r.verified, accessLevel: r.access_level }));
-  const report = runQualityChecks(stages, sources, { language: bundle.project.language });
+  const uiLocale = localeFromRequest(req);
+  const report = runQualityChecks(stages, sources, { language: bundle.project.language, uiLocale });
 
   let aiReview: { ran: boolean; error?: string } = { ran: false };
   if (withAi) {
@@ -63,7 +65,7 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
     else {
       const summary = stages.filter((x) => x.text).map((x) => `### ${x.key} — ${x.title}\n${x.text.slice(0, 6000)}`).join("\n\n");
       const res = await complete(model, {
-        system: "Deneyimli bir tez jürisi üyesi gibi akademik çalışmayı değerlendir. Yalnızca mantıksal bütünlük, bilimsel tutarlılık, bölümler arası uyum, araştırma soruları–yöntem uyumu ve hipotez–amaç ilişkisi sorunlarını bildir. Somut ve uygulanabilir ol; metinde olmayan şeyleri varsayma. Türkçe yaz. En fazla 15 sorun.",
+        system: `Deneyimli bir tez jürisi üyesi gibi akademik çalışmayı değerlendir. Yalnızca mantıksal bütünlük, bilimsel tutarlılık, bölümler arası uyum, araştırma soruları–yöntem uyumu ve hipotez–amaç ilişkisi sorunlarını bildir. Somut ve uygulanabilir ol; metinde olmayan şeyleri varsayma. ${uiLocale === "en" ? "İngilizce" : "Türkçe"} yaz. En fazla 15 sorun.`,
         messages: [{ role: "user", content: `Çalışma: ${bundle.project.title}\nTür: ${bundle.project.work_type}\n\n${summary}` }],
         maxTokens: 6000,
         effort: "medium",

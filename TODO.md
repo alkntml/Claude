@@ -14,6 +14,8 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] Uzun AI yanıtlarında Vercel Hobby zaman sınırı (gerekirse Pro plan veya `maxDuration` ayarı)
 
 ## 🔴 Kullanıcının yapması gerekenler
+- [ ] **Supabase SQL Editor’de `supabase/migrations/20261102000005_no_placeholder_claims.sql` çalıştır** (sistem talimatından [KAYNAK GEREKLİ] kuralını kaldırır)
+- [ ] Telefonda çalışma alanını dene (alt çubuk, asistan, ⋯ menüsü) ve İngilizce/Türkçe geçişini kontrol et
 - [ ] Sohbette paylaşılan Claude API anahtarını Console'dan sil, yenisini oluştur, Vercel'e gir, Redeploy
 - [ ] Anthropic Console'da aylık harcama limiti
 - [ ] `ACADEMIC_CONTACT_EMAIL` Vercel'e eklendi mi kontrol et (OpenAlex/Crossref polite pool, Unpaywall için gerekli)
@@ -25,6 +27,10 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] Paket fiyatlarının belirlenmesi (Yönetim → Paketler)
 - [ ] Otomatik araştırma karar adımı her mesaja 2-5 sn ekliyor: yeterli kaynak varken ve mesaj kaynak istemiyorsa atlama optimizasyonu
 - [ ] Sohbet geçmişi yüklendiğinde "eklenen kaynaklar" bilgisinin de gösterilmesi (şu an yalnızca canlı akışta)
+- [ ] Eksik konu araması canlıda denenmeli: taslakta `[KAYNAK GEREKLİ]` çıkmamalı, eksik konular için kaynak eklenmeli
+- [ ] Eski metinlerde kalan `[KAYNAK GEREKLİ]` ifadeleri için toplu "kaynak bul ve düzelt" eylemi (şimdilik: metni seçip asistana "bu iddialara kaynak bul" yazılır)
+- [ ] Yönetim panelinin İngilizce çevirisi (şu an yalnızca Türkçe)
+- [ ] AI yanıt dili proje diline göre; arayüz İngilizce ama proje Türkçe ise sohbet Türkçe kalır (gerekirse ayrı ayar)
 
 ## 🟠 Ticari hazırlık
 - [ ] iyzico entegrasyonu (kullanıcı satıcı hesabı + sandbox anahtarları sağlayınca): abonelik checkout form, webhook/callback, HMAC imza
@@ -35,7 +41,7 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 ## 🟢 Sonraki geliştirmeler
 - [ ] Chicago/Turabian notlu (dipnot) atıf sistemi
 - [ ] Vancouver/AMA dergi adı kısaltmaları
-- [ ] İngilizce arayüz (i18n)
+- [x] İngilizce arayüz (i18n): ülkeye göre otomatik, TR/EN düğmesi
 - [ ] Anlam tabanlı arama (pgvector + embedding servisi)
 - [ ] Kalıcı iş kuyruğu (Inngest/QStash) — trafik artınca
 - [ ] Danışmanla eşzamanlı düzenleme

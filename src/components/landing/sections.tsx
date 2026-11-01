@@ -1,9 +1,12 @@
+"use client";
+import { useT } from "@/i18n/client";
 import { BookCheck, Brain, CheckCircle2, FileDown, FileSearch2, Layers3, Library, ListChecks, Lock, Map, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Link from "next/link";
 import { FadeIn } from "@/components/ui/primitives";
 import type { PlanLike } from "@/lib/plans-fallback";
 
 export function Pillars() {
+  const { t } = useT();
   const items = [
     { icon: Map, title: "Akademik süreç yönetimi", text: "Çalışma türünüze, seviyenize ve yönteminize göre oluşan yol haritası. Her aşamanın kendine özel bir asistanı ve kuralları var. Bölümler arasında geçerken proje hafızası korunur.", points: ["Dinamik aşama yapısı", "Üniversite kılavuzundan bölüm önerisi", "İlerleme takibi"] },
     { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, Semantic Scholar, PubMed, arXiv, DOAJ ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["Erişim seviyesi şeffaflığı", "Açık erişimli tam metin analizi", "Yinelenen kayıt birleştirme"] },
@@ -13,8 +16,8 @@ export function Pillars() {
     <section id="ozellikler" className="relative py-24">
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">Üç temel güç</p>
-          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">Metin üretmekten öte: <span className="italic">yönlendirilen</span> bir akademik süreç</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Üç temel güç")}</p>
+          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">{t("Metin üretmekten öte:")} <span className="italic">{t("yönlendirilen")}</span> {t("bir akademik süreç")}</h2>
         </FadeIn>
         <div className="mt-14 grid gap-5 lg:grid-cols-3">
           {items.map((it, i) => (
@@ -22,10 +25,10 @@ export function Pillars() {
               <div className="group relative h-full overflow-hidden rounded-3xl border border-ink-100 bg-white p-7 shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgb(39_71_220/0.35)]">
                 <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ink-900 text-white shadow-lg shadow-ink-900/20"><it.icon className="h-5 w-5" /></span>
-                <h3 className="mt-5 text-xl font-semibold text-ink-900">{it.title}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-500">{it.text}</p>
+                <h3 className="mt-5 text-xl font-semibold text-ink-900">{t(it.title)}</h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-ink-500">{t(it.text)}</p>
                 <ul className="mt-5 space-y-2">
-                  {it.points.map((p) => <li key={p} className="flex items-center gap-2 text-sm text-ink-700"><CheckCircle2 className="h-4 w-4 text-brand-500" /> {p}</li>)}
+                  {it.points.map((p) => <li key={p} className="flex items-center gap-2 text-sm text-ink-700"><CheckCircle2 className="h-4 w-4 text-brand-500" /> {t(p)}</li>)}
                 </ul>
               </div>
             </FadeIn>
@@ -37,6 +40,7 @@ export function Pillars() {
 }
 
 export function HowItWorks() {
+  const { t } = useT();
   const steps = [
     { icon: Layers3, title: "Çalışma türünü seçin", text: "Tez, makale, derleme veya araştırma önerisi seçin. Platform akademik standartlara uygun bir yol haritası çıkarır." },
     { icon: Brain, title: "Konunuzu tanımlayın", text: "Asistan konunuzu analiz eder, kavramları ayrıştırır ve sizinle birlikte bir çalışma planı yapar." },
@@ -51,8 +55,8 @@ export function HowItWorks() {
       <div className="absolute -top-40 left-1/2 h-80 w-[700px] -translate-x-1/2 rounded-full bg-brand-600/30 blur-3xl" />
       <div className="relative mx-auto max-w-6xl px-6">
         <FadeIn className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-300">Nasıl çalışır</p>
-          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight sm:text-5xl">Altı adımda, kontrol hep sizde.</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-300">{t("Nasıl çalışır")}</p>
+          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight sm:text-5xl">{t("Altı adımda, kontrol hep sizde.")}</h2>
         </FadeIn>
         <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
           {steps.map((s, i) => (
@@ -61,8 +65,8 @@ export function HowItWorks() {
                 <span className="font-serif text-3xl italic text-brand-300/70">{String(i + 1).padStart(2, "0")}</span>
                 <s.icon className="h-5 w-5 text-white/70" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold">{s.title}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-white/60">{s.text}</p>
+              <h3 className="mt-4 text-lg font-semibold">{t(s.title)}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-white/60">{t(s.text)}</p>
             </FadeIn>
           ))}
         </div>
@@ -72,15 +76,16 @@ export function HowItWorks() {
 }
 
 export function SourcesStrip() {
+  const { t } = useT();
   const sources = ["OpenAlex", "Crossref", "Semantic Scholar", "PubMed", "Europe PMC", "arXiv", "DOAJ", "CORE", "OpenAIRE", "Unpaywall", "DataCite", "Google Books"];
   return (
     <section id="kaynaklar" className="py-20">
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="grid items-center gap-10 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">Veri kaynakları</p>
-            <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950">Erişebildiği kadarını kullanır, ne kadarını okuduğunu söyler.</h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-ink-500">Her kaynağın yanında erişim seviyesi açıkça yazar: <b>yalnızca künye</b>, <b>özet okundu</b> veya <b>tam metin okundu</b>. Yapay zekâ, yalnızca özetini gördüğü bir makaleyi tam metnini okumuş gibi yorumlamaz. Doğrulanamayan kaynaklar ise kesin referans olarak gösterilmez.</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Veri kaynakları")}</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Erişebildiği kadarını kullanır, ne kadarını okuduğunu söyler.")}</h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-ink-500">{t("Her kaynağın yanında erişim seviyesi açıkça yazar:")} <b>{t("yalnızca künye")}</b>, <b>{t("özet okundu")}</b> {t("veya")} <b>{t("tam metin okundu")}</b>. {t("Yapay zekâ, yalnızca özetini gördüğü bir makaleyi tam metnini okumuş gibi yorumlamaz. Doğrulanamayan kaynaklar ise kesin referans olarak gösterilmez.")}</p>
           </div>
           <div className="relative overflow-hidden rounded-3xl border border-ink-100 bg-white p-6 shadow-soft">
             <div className="flex flex-wrap gap-2">
@@ -90,7 +95,7 @@ export function SourcesStrip() {
             </div>
             <div className="mt-6 grid grid-cols-3 gap-3 text-center">
               {[["Künye", "bg-ink-100 text-ink-600"], ["Özet", "bg-amber-50 text-amber-700"], ["Tam metin", "bg-emerald-50 text-emerald-700"]].map(([l, c]) => (
-                <div key={l} className={`rounded-2xl px-3 py-3 text-sm font-medium ${c}`}>{l}</div>
+                <div key={l} className={`rounded-2xl px-3 py-3 text-sm font-medium ${c}`}>{t(l)}</div>
               ))}
             </div>
           </div>
@@ -101,8 +106,9 @@ export function SourcesStrip() {
 }
 
 export function Principles() {
+  const { t } = useT();
   const items = [
-    { icon: ShieldCheck, title: "Uydurma yok", text: "Kaynak, veri, istatistik ve bulgu üretilmez. Kanıt bulunamayan iddiada [KAYNAK GEREKLİ] uyarısı çıkar." },
+    { icon: ShieldCheck, title: "Uydurma yok", text: "Kaynak, veri, istatistik ve bulgu üretilmez. Kaynakla desteklenemeyen kesin iddia yazılmaz; eksik konular için kaynak aranır." },
     { icon: Sparkles, title: "Sizin verileriniz", text: "Bulgular bölümü sizin analizinize dayanır. Yüklediğiniz veriler gerçek hesaplamayla özetlenir." },
     { icon: Lock, title: "Gizlilik", text: "Çalışmalarınız yalnızca size görünür. Satır düzeyinde güvenlik, şifreli depolama ve tek tıkla veri silme." },
     { icon: BookCheck, title: "İntihal şeffaflığı", text: "Lisanslı bir servis bağlanmadan intihal yüzdesi gösterilmez. Sahte oranlar üretilmez." },
@@ -111,13 +117,13 @@ export function Principles() {
     <section className="py-20">
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="rounded-[2rem] border border-ink-100 bg-gradient-to-br from-white via-white to-brand-50/60 p-8 shadow-soft sm:p-12">
-          <h2 className="font-serif text-3xl font-medium tracking-tight text-ink-950 sm:text-4xl">Akademik dürüstlük, tasarımın merkezinde.</h2>
+          <h2 className="font-serif text-3xl font-medium tracking-tight text-ink-950 sm:text-4xl">{t("Akademik dürüstlük, tasarımın merkezinde.")}</h2>
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {items.map((it) => (
               <div key={it.title}>
                 <it.icon className="h-6 w-6 text-brand-600" />
-                <h3 className="mt-3 font-semibold text-ink-900">{it.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{it.text}</p>
+                <h3 className="mt-3 font-semibold text-ink-900">{t(it.title)}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-500">{t(it.text)}</p>
               </div>
             ))}
           </div>
@@ -128,6 +134,7 @@ export function Principles() {
 }
 
 export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn: boolean }) {
+  const { t } = useT();
   return (
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {plans.map((p, i) => {
@@ -135,18 +142,18 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
         return (
           <FadeIn key={p.id} delay={i * 0.06}>
             <div className={`relative flex h-full flex-col rounded-3xl border p-6 transition duration-300 hover:-translate-y-1 ${featured ? "border-transparent bg-ink-950 text-white shadow-[0_30px_60px_-25px_rgb(21_24_41/0.6)]" : "border-ink-100 bg-white shadow-soft"}`}>
-              {featured && <span className="absolute -top-3 left-6 rounded-full bg-gradient-to-r from-brand-500 to-sky-400 px-3 py-1 text-xs font-semibold text-white">En çok tercih edilen</span>}
-              <h3 className="text-lg font-semibold">{p.name}</h3>
-              <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{p.description}</p>
+              {featured && <span className="absolute -top-3 left-6 rounded-full bg-gradient-to-r from-brand-500 to-sky-400 px-3 py-1 text-xs font-semibold text-white">{t("En çok tercih edilen")}</span>}
+              <h3 className="text-lg font-semibold">{t(p.name)}</h3>
+              <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{t(p.description)}</p>
               <div className="mt-5 flex items-baseline gap-1">
                 <span className="text-4xl font-semibold tracking-tight">{Number(p.price_monthly) === 0 ? "₺0" : `₺${Number(p.price_monthly).toLocaleString("tr-TR")}`}</span>
-                <span className={featured ? "text-white/50" : "text-ink-400"}>/ay</span>
+                <span className={featured ? "text-white/50" : "text-ink-400"}>{t("/ay")}</span>
               </div>
               <ul className="mt-6 flex-1 space-y-2.5">
-                {p.features.map((f) => <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-sky-300" : "text-brand-500"}`} />{f}</li>)}
+                {p.features.map((f) => <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-sky-300" : "text-brand-500"}`} />{t(f)}</li>)}
               </ul>
               <Link href={signedIn ? (Number(p.price_monthly) === 0 ? "/panel" : `/hesap?paket=${p.id}`) : `/kayit?paket=${p.id}`} className={`mt-7 inline-flex h-11 items-center justify-center rounded-2xl text-sm font-medium transition hover:-translate-y-0.5 ${featured ? "bg-white text-ink-900 hover:bg-white/90" : "bg-ink-900 text-white hover:bg-ink-800"}`}>
-                {Number(p.price_monthly) === 0 ? "Ücretsiz başla" : `${p.name} paketini seç`}
+                {Number(p.price_monthly) === 0 ? t("Ücretsiz başla") : t("{name} paketini seç", { name: t(p.name) })}
               </Link>
             </div>
           </FadeIn>

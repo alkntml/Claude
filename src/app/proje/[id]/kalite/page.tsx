@@ -1,9 +1,13 @@
+import { getT } from "@/i18n/server";
 import { notFound, redirect } from "next/navigation";
 import { QualityView } from "@/components/workspace/quality";
 import { getSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Kalite kontrol" };
+export async function generateMetadata() {
+  const { t } = await getT();
+  return { title: t("Kalite kontrol") };
+}
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const s = await getSession();

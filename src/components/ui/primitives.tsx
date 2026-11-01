@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect } from "react";
@@ -44,6 +45,7 @@ export function ProgressBar({ value, max = 100, tone = "brand", className }: { v
 }
 
 export function Modal({ open, onClose, title, children, wide, footer }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode; wide?: boolean; footer?: React.ReactNode }) {
+  const { t } = useT();
   useEffect(() => {
     if (!open) return;
     const fn = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -63,7 +65,7 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
           >
             <div className="flex items-center justify-between border-b border-ink-100 px-6 py-4">
               <h2 className="text-[17px] font-semibold text-ink-900">{title}</h2>
-              <button onClick={onClose} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700" aria-label="Kapat"><X className="h-5 w-5" /></button>
+              <button onClick={onClose} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700" aria-label={t("Kapat")}><X className="h-5 w-5" /></button>
             </div>
             <div className="overflow-y-auto px-6 py-5">{children}</div>
             {footer && <div className="flex justify-end gap-2 border-t border-ink-100 bg-ink-50/60 px-6 py-3.5">{footer}</div>}
@@ -109,8 +111,9 @@ export function FadeIn({ children, delay = 0, className, y = 14 }: { children: R
 }
 
 export function Dots() {
+  const { t } = useT();
   return (
-    <span className="inline-flex gap-1" aria-label="yükleniyor">
+    <span className="inline-flex gap-1" aria-label={t("yükleniyor")}>
       {[0, 1, 2].map((i) => (
         <motion.span key={i} className="h-1.5 w-1.5 rounded-full bg-brand-500" animate={{ opacity: [0.25, 1, 0.25], y: [0, -3, 0] }} transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }} />
       ))}

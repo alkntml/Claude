@@ -76,7 +76,7 @@ export async function buildContext(params: {
 
   const sourceMap: Record<string, string> = {};
   out.push("\n## KAYNAKLAR (yalnızca bunlara atıf yapabilirsin)");
-  if (!ranked.length) out.push("Projede henüz kaynak yok. İddialar için [KAYNAK GEREKLİ] kullan ve kullanıcıya kaynak taraması önermeyi unutma.");
+  if (!ranked.length) out.push("Projede henüz kaynak yok. Kaynak gerektiren kesin iddialar yazma; ihtiyaç duyulan konuları :::eksik bloğunda arama sorgusu olarak bildir.");
   ranked.forEach((s, idx) => {
     const sid = `S${idx + 1}`;
     sourceMap[sid] = s.id;
@@ -131,3 +131,15 @@ export function extractMemory(answer: string): { kind: string; content: string }
   return out.slice(0, 10);
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
+
+/** Asistan yanıtındaki :::eksik bloğundan arama sorgularını çıkarır. */
+export function extractGaps(answer: string): string[] {
+  const out: string[] = [];
+  for (const block of answer.matchAll(/:::eksik\s*\n([\s\S]*?)\n:::/g)) {
+    for (const line of block[1].split("\n")) {
+      const q = line.replace(/^[-*\d.)\s]+/, "").replace(/["“”]/g, "").trim();
+      if (q.length >= 3 && q.length <= 120) out.push(q);
+    }
+  }
+  return [...new Set(out)].slice(0, 4);
+}

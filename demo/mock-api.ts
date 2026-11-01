@@ -65,7 +65,7 @@ function seed(): DB {
       h(2, "Bağlanma"),
       p(t("Bağlanma kuramı, erken dönemde bakım verenle kurulan ilişkinin sonraki yakın ilişkilerin zihinsel temsillerini şekillendirdiğini öne sürer "), cite([bowlby]), t(". Yetişkin romantik ilişkilerinin de bir bağlanma süreci olarak ele alınabileceği gösterilmiştir "), cite([hazan]), t(".")),
       h(2, "İlişki odaklı obsesif kompulsif belirtiler"),
-      p(cite([doron], null, true), t(" ilişki odaklı belirtileri iki temel boyutta ele almıştır: ilişkinin kendisine odaklanan ve partnere odaklanan belirtiler. Bilişsel kuram açısından obsesyonların sürmesinde, istenmeyen düşüncelere yüklenen anlamın belirleyici olduğu ileri sürülmüştür "), cite([rachman]), t(". [KAYNAK GEREKLİ] Türkiye örnekleminde yapılan çalışmalar henüz sınırlıdır.")),
+      p(cite([doron], null, true), t(" ilişki odaklı belirtileri iki temel boyutta ele almıştır: ilişkinin kendisine odaklanan ve partnere odaklanan belirtiler. Bilişsel kuram açısından obsesyonların sürmesinde, istenmeyen düşüncelere yüklenen anlamın belirleyici olduğu ileri sürülmüştür "), cite([rachman]), t(". Türkiye örneklemine ilişkin çalışmalar literatür taraması bölümünde ayrıca ele alınacaktır.")),
     ] },
   };
   const stages = buildRoadmap({ workType: "thesis", level: "master", methodology: "quantitative" }).map((r, i) => {

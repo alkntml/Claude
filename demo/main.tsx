@@ -20,6 +20,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { FadeIn } from "@/components/ui/primitives";
 import { ToastProvider } from "@/components/ui/toast";
+import { I18nProvider } from "@/i18n/client";
+import { normalizeLocale } from "@/i18n";
 import { QualityView } from "@/components/workspace/quality";
 import { Workspace } from "@/components/workspace/workspace";
 import { DEMO_PLANS, getDB, getVersion, installMockApi, resetDemo, subscribe } from "./mock-api";
@@ -54,7 +56,7 @@ function DemoBanner() {
   }, []);
   if (!open) return null;
   return (
-    <div className="fixed bottom-3 left-3 z-[70] max-w-[min(92vw,420px)] rounded-2xl bg-ink-950/95 p-3.5 pr-9 text-[12.5px] leading-relaxed text-white/85 shadow-2xl backdrop-blur" style={{ marginBottom: "env(safe-area-inset-bottom, 0px)", marginLeft: "env(safe-area-inset-left, 0px)" }}>
+    <div className="fixed bottom-20 left-3 z-[70] lg:bottom-3 max-w-[min(92vw,420px)] rounded-2xl bg-ink-950/95 p-3.5 pr-9 text-[12.5px] leading-relaxed text-white/85 shadow-2xl backdrop-blur" style={{ marginBottom: "env(safe-area-inset-bottom, 0px)", marginLeft: "env(safe-area-inset-left, 0px)" }}>
       {note && <p className="mb-2 rounded-lg bg-amber-400/15 px-2 py-1.5 text-amber-200">{note}</p>}
       <p><b className="text-white">Tarayıcı demosu.</b> Veriler yalnızca bu tarayıcıda saklanır. Yapay zekâ, canlı kaynak araması, doğrulama ve dışa aktarma tam sürümde çalışır.</p>
       <button onClick={() => { resetDemo(); navigate("/panel"); }} className="mt-2 inline-flex items-center gap-1 rounded-lg bg-white/10 px-2 py-1 text-white transition hover:bg-white/20"><RotateCcw className="h-3 w-3" /> Demoyu sıfırla</button>
@@ -128,9 +130,17 @@ function App() {
   return <AppShell user={USER}>{page}</AppShell>;
 }
 
+// Demo dili: seçilen dil çerezi, yoksa tarayıcı dili (Türkçe değilse İngilizce)
+const demoLocale = (() => {
+  try { const m = document.cookie.match(/(?:^|;\s*)lang=(tr|en)/); if (m) return normalizeLocale(m[1]) ?? "tr"; } catch { /* çerez yok */ }
+  return navigator.language?.toLowerCase().startsWith("tr") || !navigator.language ? "tr" : "en";
+})();
+
 createRoot(document.getElementById("root")!).render(
-  <ToastProvider>
-    <DemoBanner />
-    <App />
-  </ToastProvider>,
+  <I18nProvider locale={demoLocale}>
+    <ToastProvider>
+      <DemoBanner />
+      <App />
+    </ToastProvider>
+  </I18nProvider>,
 );

@@ -1,6 +1,23 @@
 import { StaticPage } from "@/components/static-page";
-export const metadata = { title: "Kullanım koşulları" };
-export default function Page() {
+import { getLocale } from "@/i18n/server";
+
+export async function generateMetadata() {
+  return { title: (await getLocale()) === "en" ? "Terms of use" : "Kullanım koşulları" };
+}
+
+export default async function Page() {
+  if ((await getLocale()) === "en") {
+    return (
+      <StaticPage title="Terms of use" lead="Template text: must be reviewed by a lawyer before publication.">
+        <h2>Nature of the service</h2>
+        <p>Akademi AI is a tool that helps you plan, research, write and format academic work. You remain responsible for the scientific accuracy and originality of the content and for compliance with your institution&apos;s rules.</p>
+        <h2>Academic integrity</h2>
+        <p>You agree to use the platform in line with your institution&apos;s AI policies and to disclose AI use where required.</p>
+        <h2>Usage limits</h2>
+        <p>Each plan&apos;s monthly limits are shown on your account page. Accounts found to be abusing the service may be suspended.</p>
+      </StaticPage>
+    );
+  }
   return (
     <StaticPage title="Kullanım koşulları" lead="Şablon metin: yayına almadan önce hukuki inceleme yapılmalıdır.">
       <h2>Hizmetin niteliği</h2>

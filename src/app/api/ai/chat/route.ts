@@ -1,7 +1,9 @@
+import { makeT } from "@/i18n";
+import { localeFromRequest } from "@/i18n/server";
 import { z } from "zod";
 import { ApiError, json, logError, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
-import { buildContext, extractMemory } from "@/lib/ai/context";
+import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
@@ -27,6 +29,7 @@ const enc = new TextEncoder();
 const sse = (event: string, data: unknown) => enc.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 
 export const POST = route("ai.chat", async (req) => {
+  const T = makeT(localeFromRequest(req));
   const s = await requireUser();
   const b = await parseBody(req, Schema);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
@@ -80,20 +83,20 @@ export const POST = route("ai.chat", async (req) => {
             try {
               await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
               queries = planned.plan.queries.map((q) => q.query);
-              controller.enqueue(sse("status", { text: `Akademik veri tabanları taranıyor: ${queries.join(" · ")}` }));
+              controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
               const { results } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
               const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
               const picks = pickForAutoAdd(results, existing, 8);
               if (picks.length) {
-                controller.enqueue(sse("status", { text: `${results.length} sonuç bulundu; en uygun ${picks.length} kaynak doğrulanıyor…` }));
+                controller.enqueue(sse("status", { text: T("{n} sonuç bulundu; en uygun {k} kaynak doğrulanıyor…", { n: results.length, k: picks.length }) }));
                 const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput));
                 bundle.sources.push(...added.sources);
                 controller.enqueue(sse("sources_added", { sources: added.sources, queries }));
               } else {
-                controller.enqueue(sse("status", { text: "Veri tabanlarında uygun yeni kaynak bulunamadı." }));
+                controller.enqueue(sse("status", { text: T("Veri tabanlarında uygun yeni kaynak bulunamadı.") }));
               }
             } catch (e) {
-              const msg = e instanceof ApiError ? e.message : "Kaynak araması şu an yapılamadı.";
+              const msg = e instanceof ApiError ? T(e.message) : T("Kaynak araması şu an yapılamadı.");
               controller.enqueue(sse("status", { text: msg }));
             }
           }
@@ -114,7 +117,7 @@ export const POST = route("ai.chat", async (req) => {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
           else { usage = ev.usage; stopReason = ev.stopReason; servedModel = ev.model; }
         }
-        if (stopReason === "refusal" && !answer) answer = "Bu istek güvenlik nedeniyle yanıtlanamadı. Lütfen isteğinizi farklı ifade edin.";
+        if (stopReason === "refusal" && !answer) answer = T("Bu istek güvenlik nedeniyle yanıtlanamadı. Lütfen isteğinizi farklı ifade edin.");
         const memory = extractMemory(answer);
         if (memory.length) {
           await s.supabase.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: s.user.id, kind: m.kind, content: m.content, source: "ai" })));
@@ -125,10 +128,31 @@ export const POST = route("ai.chat", async (req) => {
           s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
           recordUsage(s.user.id, "ai_request", { tokensIn: usage.input, tokensOut: usage.output, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
         ]);
-        controller.enqueue(sse("done", { usage, stopReason, memoryAdded: memory.length }));
+        // 3) Eksik konular: asistanın :::eksik bloğundaki sorgularla ek kaynak araması (mesaj başına bir kez)
+        let gapAdded = 0;
+        const gaps = extractGaps(answer);
+        if (gaps.length && RESEARCH_ACTIONS.has(b.action)) {
+          try {
+            await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+            controller.enqueue(sse("status", { text: T("Taslakta kaynağı eksik kalan konular aranıyor: {q}", { q: gaps.join(" · ") }) }));
+            const { results } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8 });
+            const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
+            const picks = pickForAutoAdd(results, existing, 6);
+            if (picks.length) {
+              const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput));
+              gapAdded = added.sources.length;
+              if (gapAdded) controller.enqueue(sse("gap_sources", { sources: added.sources, queries: gaps }));
+            }
+            if (!gapAdded) controller.enqueue(sse("status", { text: T("Eksik konular için veri tabanlarında uygun yeni kaynak bulunamadı. Bu konular taslağa kesin iddia olarak eklenmedi.") }));
+            await recordUsage(s.user.id, "source_search", { quantity: gaps.length, meta: { queries: gaps, kind: "gap" } });
+          } catch (e) {
+            controller.enqueue(sse("status", { text: e instanceof ApiError ? T(e.message) : T("Eksik konular için kaynak araması yapılamadı.") }));
+          }
+        }
+        controller.enqueue(sse("done", { usage, stopReason, memoryAdded: memory.length, gapAdded }));
       } catch (e) {
         await logError("ai.chat.stream", e, s.user.id);
-        controller.enqueue(sse("error", { error: req.signal.aborted ? "İstek iptal edildi" : "Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin." }));
+        controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));
       } finally {
         controller.close();
       }

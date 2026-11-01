@@ -1,4 +1,5 @@
 "use client";
+import { LanguageSwitch, useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
 import Link from "next/link";
@@ -22,6 +23,7 @@ const NAV = [
 ];
 
 export function AppShell({ children, user }: Props) {
+  const { t } = useT();
   const path = usePathname();
   const router = useRouter();
   const toast = useToast();
@@ -42,11 +44,11 @@ export function AppShell({ children, user }: Props) {
     setSending(true);
     try {
       await api("/api/feedback", { method: "POST", json: { message: msg, page: path } });
-      toast({ tone: "success", title: "Geri bildiriminiz alındı", detail: "Teşekkür ederiz!" });
+      toast({ tone: "success", title: t("Geri bildiriminiz alındı"), detail: t("Teşekkür ederiz!") });
       setFb(false);
       setMsg("");
     } catch (e) {
-      toast({ tone: "error", title: "Gönderilemedi", detail: (e as Error).message });
+      toast({ tone: "error", title: t("Gönderilemedi"), detail: t((e as Error).message) });
     } finally {
       setSending(false);
     }
@@ -57,7 +59,7 @@ export function AppShell({ children, user }: Props) {
       <div className="px-5 pb-6 pt-6"><Link href="/panel"><Logo /></Link></div>
       <div className="px-3">
         <Link href="/yeni" className="group mb-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_24px_-10px_rgb(39_71_220/0.8)] transition hover:-translate-y-px">
-          <Plus className="h-4 w-4 transition group-hover:rotate-90" /> Yeni çalışma
+          <Plus className="h-4 w-4 transition group-hover:rotate-90" /> {t("Yeni çalışma")}
         </Link>
         <nav className="space-y-0.5">
           {nav.map((n) => {
@@ -66,22 +68,23 @@ export function AppShell({ children, user }: Props) {
               <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className={cn("relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors", active ? "text-ink-900" : "text-ink-500 hover:text-ink-900")}>
                 {active && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-xl bg-white shadow-sm ring-1 ring-ink-100" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
                 <n.icon className="relative h-[18px] w-[18px]" />
-                <span className="relative">{n.label}</span>
+                <span className="relative">{t(n.label)}</span>
               </Link>
             );
           })}
         </nav>
       </div>
       <div className="mt-auto space-y-2 p-3">
-        <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-500 transition hover:bg-white hover:text-ink-900"><MessageSquarePlus className="h-[18px] w-[18px]" /> Geri bildirim</button>
+        <div className="px-3"><LanguageSwitch /></div>
+        <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-500 transition hover:bg-white hover:text-ink-900"><MessageSquarePlus className="h-[18px] w-[18px]" /> {t("Geri bildirim")}</button>
         <div className="flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-950 text-sm font-semibold text-white">{(user.name || user.email).slice(0, 1).toLocaleUpperCase("tr")}</div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-ink-900">{user.name || user.email}</p>
-            <p className="text-xs capitalize text-ink-400">{user.plan} paket</p>
+            <p className="text-xs capitalize text-ink-400">{t("{plan} paket", { plan: user.plan })}</p>
           </div>
-          <Link href="/hesap" className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label="Ayarlar"><Settings2 className="h-4 w-4" /></Link>
-          <button onClick={logout} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label="Çıkış yap"><LogOut className="h-4 w-4" /></button>
+          <Link href="/hesap" className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Ayarlar")}><Settings2 className="h-4 w-4" /></Link>
+          <button onClick={logout} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Çıkış yap")}><LogOut className="h-4 w-4" /></button>
         </div>
       </div>
     </div>
@@ -92,14 +95,14 @@ export function AppShell({ children, user }: Props) {
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-100 bg-ink-50/50 lg:block">{Side}</aside>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/80 px-4 py-3 backdrop-blur lg:hidden">
         <Logo />
-        <button onClick={() => setOpen(true)} aria-label="Menü" className="rounded-lg p-2"><Menu /></button>
+        <button onClick={() => setOpen(true)} aria-label={t("Menü")} className="rounded-lg p-2"><Menu /></button>
       </div>
       <AnimatePresence>
         {open && (
           <>
             <motion.div className="fixed inset-0 z-40 bg-ink-950/30 backdrop-blur-sm lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} />
             <motion.aside className="fixed inset-y-0 left-0 z-50 w-72 bg-ink-50 shadow-2xl lg:hidden" initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ type: "spring", stiffness: 380, damping: 36 }}>
-              <button onClick={() => setOpen(false)} className="absolute right-3 top-5 rounded-lg p-1.5" aria-label="Kapat"><X className="h-5 w-5" /></button>
+              <button onClick={() => setOpen(false)} className="absolute right-3 top-5 rounded-lg p-1.5" aria-label={t("Kapat")}><X className="h-5 w-5" /></button>
               {Side}
             </motion.aside>
           </>
@@ -110,8 +113,8 @@ export function AppShell({ children, user }: Props) {
           {children}
         </motion.div>
       </main>
-      <Modal open={fb} onClose={() => setFb(false)} title="Geri bildirim gönder" footer={<><Button variant="ghost" onClick={() => setFb(false)}>Vazgeç</Button><Button onClick={sendFeedback} loading={sending} disabled={msg.trim().length < 3}>Gönder</Button></>}>
-        <textarea className="input min-h-[140px]" placeholder="Önerinizi, karşılaştığınız sorunu veya eksik gördüğünüz özelliği yazın…" value={msg} onChange={(e) => setMsg(e.target.value)} />
+      <Modal open={fb} onClose={() => setFb(false)} title={t("Geri bildirim gönder")} footer={<><Button variant="ghost" onClick={() => setFb(false)}>{t("Vazgeç")}</Button><Button onClick={sendFeedback} loading={sending} disabled={msg.trim().length < 3}>{t("Gönder")}</Button></>}>
+        <textarea className="input min-h-[140px]" placeholder={t("Önerinizi, karşılaştığınız sorunu veya eksik gördüğünüz özelliği yazın…")} value={msg} onChange={(e) => setMsg(e.target.value)} />
       </Modal>
     </div>
   );

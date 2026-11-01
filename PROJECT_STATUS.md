@@ -6,7 +6,7 @@ _Son güncelleme: 1 Kasım 2026_
 | Bileşen | Durum | Ayrıntı |
 |---|---|---|
 | Site | ✅ Yayında | https://akademi-ai-umber.vercel.app (Vercel projesi `akademi-ai`, Hobby plan, bölge fra1) |
-| Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (4 migration'ın hepsi) |
+| Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (ilk 4 migration). **Migration 5 (`20261102000005_no_placeholder_claims.sql`) kullanıcı tarafından çalıştırılmalı** |
 | Kimlik doğrulama | ✅ Çalışıyor | Site URL ve Redirect URL (`/api/auth/callback`) ayarlandı. Sahip kayıt oldu |
 | Yönetici | ✅ | Sahibin hesabı `role = admin`, `plan_id = premium` |
 | Claude API | ✅ Çalışıyor | Opus 5.5 ve Haiku 5.5 canlı anahtarla test edildi. Asistan canlı sitede yanıt veriyor |
@@ -29,6 +29,7 @@ _Son güncelleme: 1 Kasım 2026_
 - **Sohbet içi otomatik literatür araştırması:** Haiku araştırma gerekip gerekmediğine karar verir, sorgu üretir, veri tabanlarında arar, en iyi 8 kaynağı doğrulayıp projeye ekler ve aynı yanıtta atıf yapar
 - Ayrı "Literatür araştır" penceresi (kullanıcı seçerek ekler)
 - Sistem talimatı: listede olmayan eser adı önerilerde bile anılmaz
+- **Desteksiz kesin iddia yazılmaz:** `[KAYNAK GEREKLİ]` yer tutucusu yerine model eksik konuları `:::eksik` ile bildirir; sunucu bu konular için ikinci bir arama yapıp kaynak ekler, "Taslağı yeni kaynaklarla güncelle" düğmesi çıkar
 
 **Kaynaklar**
 - 10 adaptör: OpenAlex, Crossref, Semantic Scholar, Europe PMC/PubMed, arXiv, DOAJ, CORE, OpenAIRE, Google Books, Unpaywall
@@ -44,6 +45,8 @@ _Son güncelleme: 1 Kasım 2026_
 - Kalite kontrol: kural tabanlı + isteğe bağlı AI incelemesi
 
 **Platform**
+- **İki dil (TR/EN):** ziyaretçi Türkiye dışından geliyorsa site İngilizce, Türkiye’den geliyorsa Türkçe açılır; TR/EN düğmesi. ~1100 metinlik sözlük (`src/i18n/en.ts`)
+- **Mobil çalışma alanı:** alt gezinme çubuğu, kaydırmalı araç çubuğu, sade asistan giriş kutusu, ⋯ menüsü
 - Kontrol paneli, kaynak kütüphanesi, dosyalar (PDF/DOCX/XLSX/CSV/TXT + deterministik istatistik)
 - Danışman paylaşım bağlantısı (salt okunur, süreli, iptal edilebilir, yorum)
 - Paketler ve limitler (AI isteği, token, arama, proje, depolama, dışa aktarma biçimi), dakikalık hız sınırı
@@ -52,7 +55,7 @@ _Son güncelleme: 1 Kasım 2026_
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 61 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 66 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)
@@ -68,3 +71,5 @@ _Son güncelleme: 1 Kasım 2026_
 | 752d451 | vercel.json (fra1) |
 | c4dc4d5 | Next.js güvenlik güncellemesi |
 | 96b9088 | Asistanın kendi literatür araştırması |
+| ac53543 | Proje belgeleri (CLAUDE.md vb.) |
+| sonraki | Desteksiz iddia yok + eksik konu araması, İngilizce arayüz, mobil çalışma alanı |

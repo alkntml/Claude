@@ -86,8 +86,8 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 | 96b9088 | Asistanın kendi literatür araştırması |
 | ac53543 | Proje belgeleri (CLAUDE.md vb.) |
 | 82dd38f | Desteksiz iddia yok + eksik konu araması, İngilizce arayüz (ülkeye göre), mobil çalışma alanı |
-| (ara commit) | Bölüm bazlı kaynak taraması, tam metin okuma + yayındaki sayfa no, kaynakçada kullanım yerleri |
-| (ara commit) | UX paketi: alt başlıklarla yaz, atıf doğrulama, [KAYNAK GEREKLİ] toplu düzeltme, literatür matrisi, Word şablonu/kapak, hedef/takvim, sesle not, çevrimdışı kayıt, tur, limit uyarıları |
+| 78b169f | Bölüm bazlı kaynak taraması, tam metin okuma + yayındaki sayfa no, kaynakçada kullanım yerleri |
+| b4c3c85 | UX paketi: alt başlıklarla yaz, atıf doğrulama, [KAYNAK GEREKLİ] toplu düzeltme, literatür matrisi, Word şablonu/kapak, hedef/takvim, sesle not, çevrimdışı kayıt, tur, limit uyarıları |
 | 5045fef | Türk kaynakları, BibTeX/RIS, istatistik (APA), savunma sunumu, Abstract, etik, dergi önerisi, kurum lisansı, öğrenci indirimi, davet, uzman desteği (dermanlik.com.tr) |
 
 ## Oturum dışı üretilen teslimler (depoda değil)

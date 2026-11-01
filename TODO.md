@@ -44,7 +44,7 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 
 ## 🟠 Ticari hazırlık
 - [ ] iyzico entegrasyonu (kullanıcı satıcı hesabı + sandbox anahtarları sağlayınca): abonelik checkout form, webhook/callback, HMAC imza
-- [ ] Stripe anahtarları + webhook (`/api/billing/webhook`)
+- [ ] Stripe anahtarları + webhook (`/api/billing/webhook`); Stripe panelinde “Customer portal” etkinleştir (abonelik iptal/kart değişikliği için)
 - [ ] KVKK, gizlilik, kullanım koşulları avukat incelemesi (şu an şablon)
 - [ ] Supabase Pro + Point-in-Time Recovery (yedekleme)
 

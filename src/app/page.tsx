@@ -7,10 +7,15 @@ import { SiteHeader } from "@/components/site-header";
 import { FadeIn } from "@/components/ui/primitives";
 import { getSession } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
+import Link from "next/link";
+import { FaqList } from "@/components/faq-list";
+import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
 
 export default async function Home() {
-  const [session, plans, { t }] = await Promise.all([getSession().catch(() => null), publicPlans(), getT()]);
+  const [session, plans, { t, locale }] = await Promise.all([getSession().catch(() => null), publicPlans(), getT()]);
   const signedIn = !!session;
+  const all = FAQ.flatMap((g) => g.items);
+  const faq = FAQ_HIGHLIGHTS.map((id) => all.find((i) => i.id === id)!).filter(Boolean);
   return (
     <>
       <SiteHeader signedIn={signedIn} />
@@ -36,6 +41,16 @@ export default async function Home() {
               <p className="mt-3 text-ink-500">{t("İstediğiniz zaman yükseltin veya iptal edin.")}</p>
             </FadeIn>
             <PricingCards plans={plans} signedIn={signedIn} />
+          </div>
+        </section>
+        <section id="sss" className="scroll-mt-24 pb-24">
+          <div className="mx-auto max-w-3xl px-6">
+            <FadeIn className="mb-10 text-center">
+              <h2 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Sık sorulan sorular")}</h2>
+              <p className="mt-3 text-ink-500">{t("En çok merak edilenlere açık ve dürüst cevaplar.")}</p>
+            </FadeIn>
+            <FaqList items={faq} locale={locale === "en" ? "en" : "tr"} />
+            <p className="mt-6 text-center"><Link href="/sss" className="text-sm font-medium text-brand-700 hover:underline">{t("Tüm soruları gör →")}</Link></p>
           </div>
         </section>
       </main>

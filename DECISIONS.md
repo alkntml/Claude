@@ -108,3 +108,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Öğrenci indirimi: doğrulanmış e-posta + alan adı listesi (`billing.student`), ödeme sayfasında fiyat sunucuda düşürülür.
 - Uzman desteği insan hizmeti olarak dermanlik.com.tr'ye UTM'li bağlantıyla yönlendirilir; kişisel veri gönderilmez.
 
+
+### D31 — SSS ve abonelik iptali
+- SSS içeriği tek kaynaktan (`src/lib/faq.ts`, TR/EN) hem `/sss` hem ana sayfada kullanılır; cevaplar platformun gerçek davranışını anlatır, vaat içermez (ör. AI tespitini atlatma vaadi yok, intihal oranı yok).
+- “Kim görür” cevabı platform yöneticisinin teknik erişimini açıkça söyler (yalnızca destek, güvenlik, yasal zorunluluk). Yönetici erişimi kaldırılırsa bu cevap da güncellenmeli.
+- İptal cevabının doğru olması için Stripe müşteri portalı eklendi; Stripe panelinde Customer portal etkinleştirilmelidir.

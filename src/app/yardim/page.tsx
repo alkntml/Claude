@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getT } from "@/i18n/server";
 import { StaticPage } from "@/components/static-page";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -19,6 +20,7 @@ export default async function Help() {
   }
   return (
     <StaticPage title={t("Yardım merkezi")} lead={t("Platformu en verimli şekilde kullanmak için rehberler.")}>
+      <p className="rounded-2xl bg-brand-50 p-4 text-[15px] text-ink-700">{t("Kaynaklar, gizlilik, ödeme ve iptal gibi konulardaki sorularınız için")} <Link href="/sss" className="font-medium text-brand-700 hover:underline">{t("Sık sorulan sorular")} →</Link></p>
       {articles.length === 0 && <p className="text-ink-500">{t("Henüz yayınlanmış yardım makalesi yok.")}</p>}
       {articles.map((a) => (
         <section key={a.slug} id={a.slug} className="card p-6">

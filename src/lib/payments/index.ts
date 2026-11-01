@@ -52,6 +52,12 @@ async function stripe<T>(path: string, body?: URLSearchParams, method = "POST"):
   return j as T;
 }
 
+/** Stripe müşteri portalı: kullanıcı aboneliğini iptal eder, kartını değiştirir, faturalarını indirir. */
+export async function stripePortalUrl(customerId: string, returnUrl: string): Promise<string> {
+  const r = await stripe<{ url: string }>("billing_portal/sessions", form({ customer: customerId, return_url: returnUrl }));
+  return r.url;
+}
+
 /** Stripe-Signature başlığını doğrular (t=..., v1=...), 5 dk tolerans. */
 export function verifyStripeSignature(payload: string, header: string | null, secret: string, toleranceSec = 300): boolean {
   if (!header) return false;

@@ -14,7 +14,7 @@ const NAV = [
   { href: "/fiyatlar", label: "Fiyatlar" },
   { href: "/kurumlar", label: "Kurumlar" },
   { href: "/uzman-destegi", label: "Uzman desteği" },
-  { href: "/yardim", label: "Yardım" },
+  { href: "/sss", label: "SSS" },
 ];
 
 export function SiteHeader({ signedIn }: { signedIn: boolean }) {

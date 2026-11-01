@@ -99,7 +99,12 @@ export function AccountView({ profile, usage, limits, plans, subscriptions, paym
             );
           })}
         </div>
-        {subscriptions.length > 0 && <div className="mt-4 text-sm text-ink-500">{subscriptions.map((s) => <p key={s.id}>{s.provider} · {s.plan_id} · {s.status}{s.current_period_end ? ` · ${t("yenileme")}: ${new Date(s.current_period_end).toLocaleDateString(dl)}` : ""}</p>)}</div>}
+        {subscriptions.length > 0 && (
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-ink-500">
+            <div>{subscriptions.map((s) => <p key={s.id}>{s.provider} · {s.plan_id} · {s.status}{s.cancel_at_period_end ? ` · ${t("dönem sonunda iptal edilecek")}` : ""}{s.current_period_end ? ` · ${t("yenileme")}: ${new Date(s.current_period_end).toLocaleDateString(dl)}` : ""}</p>)}</div>
+            {subscriptions.some((s) => s.provider === "stripe") && <Button size="sm" variant="secondary" onClick={async () => { try { const { url } = await api<{ url: string }>("/api/billing/portal", { method: "POST" }); window.location.href = url; } catch (e) { toast({ tone: "error", title: t("Abonelik sayfası açılamadı"), detail: (e as Error).message }); } }}>{t("Aboneliği yönet / iptal et")}</Button>}
+          </div>
+        )}
       </section>
 
       <section className="card p-6">

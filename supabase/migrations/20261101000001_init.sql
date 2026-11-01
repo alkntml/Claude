@@ -74,7 +74,9 @@ $$;
 create or replace function public.protect_profile_privileged_columns()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  if auth.role() = 'service_role' or public.is_admin() then
+  -- auth.uid() boşsa istek bir uç kullanıcıdan gelmiyordur (SQL Editor, migration, service role);
+  -- uç kullanıcı isteklerinde JWT her zaman bulunur ve aşağıdaki kontrol uygulanır.
+  if auth.uid() is null or auth.role() = 'service_role' or public.is_admin() then
     return new;
   end if;
   if new.role is distinct from old.role

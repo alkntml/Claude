@@ -24,13 +24,15 @@ if (typeof window !== "undefined") {
 
 function useInstall() {
   const [, force] = useState(0);
-  const [env, setEnv] = useState({ standalone: false, ios: false });
+  const [env, setEnv] = useState<{ standalone: boolean; ios: boolean; platform: "ios" | "android" | "mac-safari" | "desktop" }>({ standalone: false, ios: false, platform: "desktop" });
   useEffect(() => {
     const f = () => force((x) => x + 1);
     listeners.add(f);
     const ua = navigator.userAgent;
     const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    setEnv({ standalone: window.matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true, ios });
+    const android = /Android/i.test(ua);
+    const macSafari = !ios && /Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg|Firefox/.test(ua);
+    setEnv({ standalone: window.matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone === true, ios, platform: ios ? "ios" : android ? "android" : macSafari ? "mac-safari" : "desktop" });
     return () => { listeners.delete(f); };
   }, []);
   return { canPrompt: !!deferred, ...env };
@@ -39,11 +41,12 @@ function useInstall() {
 /** “Uygulamayı yükle”: Android/Chrome’da sistem penceresi, iPhone’da adım adım yönerge */
 export function InstallApp({ variant = "row", className }: { variant?: "row" | "banner"; className?: string }) {
   const { t } = useT();
-  const { canPrompt, standalone, ios } = useInstall();
+  const { canPrompt, standalone, platform } = useInstall();
   const [help, setHelp] = useState(false);
   const [hidden, setHidden] = useState(false);
   useEffect(() => { try { setHidden(variant === "banner" && !!localStorage.getItem("akademi:install-dismissed")); } catch { /* yok */ } }, [variant]);
-  if (standalone || hidden || (!canPrompt && !ios)) return null;
+  // Düğme her zaman görünür (uygulama olarak açılmadıysa); tarayıcı kendi kurulum penceresini sunmuyorsa platforma göre yönerge gösterilir
+  if (standalone || hidden) return null;
 
   async function install() {
     if (deferred) { deferred.prompt(); await deferred.userChoice.catch(() => null); deferred = null; listeners.forEach((f) => f()); }
@@ -66,12 +69,18 @@ export function InstallApp({ variant = "row", className }: { variant?: "row" | "
           <Download className="h-[18px] w-[18px]" /> {t("Uygulamayı yükle")}
         </button>
       )}
-      <Modal open={help} onClose={() => setHelp(false)} title={t("iPhone / iPad’e kurulum")}>
+      <Modal open={help} onClose={() => setHelp(false)} title={platform === "ios" ? t("iPhone / iPad’e kurulum") : platform === "android" ? t("Android’e kurulum") : t("Bilgisayara kurulum")}>
         <ol className="space-y-3 text-[15px] text-ink-700">
-          <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">1</span><span>{t("Bu sayfayı Safari’de açın (Chrome’da “Paylaş” menüsü de kullanılabilir).")}</span></li>
-          <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">2</span><span>{t("Alttaki veya üstteki Paylaş düğmesine dokunun:")} <Share className="inline h-4 w-4 align-[-2px] text-brand-600" /></span></li>
-          <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">3</span><span>{t("Listeyi aşağı kaydırıp “Ana Ekrana Ekle”yi seçin:")} <SquarePlus className="inline h-4 w-4 align-[-2px] text-brand-600" /></span></li>
-          <li className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">4</span><span>{t("Sağ üstteki “Ekle”ye dokunun. Akademi AI simgesi ana ekranınıza gelir.")}</span></li>
+          {(platform === "ios"
+            ? [t("Bu sayfayı Safari’de açın (Chrome’da “Paylaş” menüsü de kullanılabilir)."), <>{t("Alttaki veya üstteki Paylaş düğmesine dokunun:")} <Share className="inline h-4 w-4 align-[-2px] text-brand-600" /></>, <>{t("Listeyi aşağı kaydırıp “Ana Ekrana Ekle”yi seçin:")} <SquarePlus className="inline h-4 w-4 align-[-2px] text-brand-600" /></>, t("Sağ üstteki “Ekle”ye dokunun. Akademi AI simgesi ana ekranınıza gelir.")]
+            : platform === "android"
+              ? [t("Bu sayfayı Chrome’da açın."), t("Sağ üstteki üç nokta (⋮) menüsüne dokunun."), t("“Uygulamayı yükle” veya “Ana ekrana ekle”yi seçin."), t("“Yükle”ye dokunun. Akademi AI simgesi ana ekranınıza gelir.")]
+              : platform === "mac-safari"
+                ? [t("Safari’de üst menüden “Dosya”yı açın (veya Paylaş düğmesine tıklayın)."), t("“Dock’a Ekle”yi seçin."), t("“Ekle”ye tıklayın. Akademi AI, Dock’ta ayrı bir uygulama olarak açılır.")]
+                : [t("Chrome veya Edge kullanın."), t("Adres çubuğunun sağındaki kurulum simgesine (ekran ve ok) tıklayın ya da sağ üstteki menüden “Akademi AI’ı yükle” / “Uygulamayı yükle”yi seçin."), t("“Yükle”ye tıklayın. Akademi AI masaüstünüzde ve başlat menüsünde ayrı bir uygulama olarak açılır.")]
+          ).map((step, i) => (
+            <li key={i} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">{i + 1}</span><span>{step}</span></li>
+          ))}
         </ol>
       </Modal>
     </>

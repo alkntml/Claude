@@ -2,7 +2,7 @@
 import { useT } from "@/i18n/client";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, BadgeCheck, BookMarked, FileCheck2, Quote, Sparkles } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/l-link";
 import { useRef } from "react";
 
 export function Hero({ signedIn }: { signedIn: boolean }) {

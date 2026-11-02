@@ -2,7 +2,7 @@
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/l-link";
 import { WORK_ICONS } from "@/components/icons";
 import { WORK_TYPES } from "@/lib/workflows";
 

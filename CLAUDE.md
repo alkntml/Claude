@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 168 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 175 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -64,6 +64,10 @@ src/lib/
   sources/bib.ts         BibTeX/RIS/CSL-JSON; sources/journals.ts dergi önerisi
   export/presentation.ts Savunma sunumu (.pptx); export/format.ts biçim şablonları
   blog/                  Blog yazıları (posts-1..3.ts; basit Markdown gövde), index.ts (liste, ayrıştırıcı, ilgili yazılar)
+  seo.ts                 Dil bazlı adresler (/en öneki), localizedPath, bot tanıma
+  seo-pages.ts           Herkese açık sayfaların TR/EN başlık, açıklama, anahtar kelimeleri
+  seo-server.ts          buildMeta/pageMeta: canonical, hreflang, Open Graph, Twitter, robots
+  structured-data.ts     JSON-LD: Organization, WebSite, SoftwareApplication, ItemList, BreadcrumbList, WebPage
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
   growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; öğrenci indirimi; uzman desteği bağlantıları
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)
@@ -83,6 +87,13 @@ tests/                   Vitest
 ```
 
 API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/checkout|webhook|portal`, `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `[id]`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`, `stages/[id]/review`.
+
+## Arama motoru (SEO) altyapısı
+- Herkese açık sayfalar iki adreste: Türkçe öneksiz (`/fiyatlar`), İngilizce `/en` önekli (`/en/fiyatlar`). Ara katman `/en/*` isteğini öneksiz sayfaya yeniden yazar ve `x-locale` başlığını koyar; `getLocale()` önce bu başlığa bakar. Uygulama sayfaları (panel, proje…) çerezdeki dili kullanır, önek almaz.
+- Tercihi İngilizce olan **insan** ziyaretçi öneksiz sayfadan `/en`’e 307 ile yönlenir; botlar yönlendirilmez (Google her dili ayrı adreste görsün).
+- Herkese açık sayfa bağlantıları `@/components/l-link` ile verilir (dile göre /en ekler). Yeni herkese açık sayfa: `PUBLIC_PATHS` (seo.ts) + `PAGE_SEO` (seo-pages.ts) + `generateMetadata() { return pageMeta("/yol") }` + gerekirse JSON-LD + sitemap.
+- Blog yazılarının İngilizcesi `blog/en-*.ts` (ayrı İngilizce adres); `postPath(post, locale)`. Paylaşım görseli `/api/og?t=&s=&l=`.
+- Sahte puan/yorum (aggregateRating/review) yapılandırılmış veriye eklenmez.
 
 ## Kodlama kuralları
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.

@@ -1,14 +1,15 @@
 import { StaticPage } from "@/components/static-page";
+import { pageMeta } from "@/lib/seo-server";
 import { getLocale } from "@/i18n/server";
 
 export async function generateMetadata() {
-  return { title: (await getLocale()) === "en" ? "Terms of use" : "Kullanım koşulları" };
+  return pageMeta("/kosullar");
 }
 
 export default async function Page() {
   if ((await getLocale()) === "en") {
     return (
-      <StaticPage title="Terms of use" lead="Template text: must be reviewed by a lawyer before publication.">
+      <StaticPage path="/kosullar" title="Terms of use" lead="Template text: must be reviewed by a lawyer before publication.">
         <h2>Nature of the service</h2>
         <p>Academiana is a tool that helps you plan, research, write and format academic work. You remain responsible for the scientific accuracy and originality of the content and for compliance with your institution&apos;s rules.</p>
         <h2>Academic integrity</h2>
@@ -19,7 +20,7 @@ export default async function Page() {
     );
   }
   return (
-    <StaticPage title="Kullanım koşulları" lead="Şablon metin: yayına almadan önce hukuki inceleme yapılmalıdır.">
+    <StaticPage path="/kosullar" title="Kullanım koşulları" lead="Şablon metin: yayına almadan önce hukuki inceleme yapılmalıdır.">
       <h2>Hizmetin niteliği</h2>
       <p>Academiana, akademik çalışmaların planlanması, kaynak bulunması, yazımı ve biçimlendirilmesi için yardımcı bir araçtır. Üretilen içeriğin bilimsel doğruluğu, özgünlüğü ve kurumunuzun kurallarına uygunluğu konusunda nihai sorumluluk kullanıcıya aittir.</p>
       <h2>Akademik dürüstlük</h2>

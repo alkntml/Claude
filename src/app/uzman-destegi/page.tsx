@@ -1,18 +1,18 @@
 import { ExternalLink } from "lucide-react";
+import { pageMeta } from "@/lib/seo-server";
 import { StaticPage } from "@/components/static-page";
 import { getT } from "@/i18n/server";
 import { EXPERT_SERVICES, expertUrl } from "@/lib/expert";
 
 export async function generateMetadata() {
-  const { t } = await getT();
-  return { title: t("Uzman desteği") };
+  return pageMeta("/uzman-destegi");
 }
 
 /** İnsan uzman hizmetleri: iş ortağı dermanlik.com.tr'ye yönlendirir */
 export default async function Expert() {
   const { t } = await getT();
   return (
-    <StaticPage title={t("Uzman desteği")} lead={t("Yapay zekânın yetmediği yerde akademik uzmanlar: redaksiyon, istatistik, çeviri ve biçim kontrolü.")}>
+    <StaticPage path="/uzman-destegi" title={t("Uzman desteği")} lead={t("Yapay zekânın yetmediği yerde akademik uzmanlar: redaksiyon, istatistik, çeviri ve biçim kontrolü.")}>
       <div className="grid gap-3 sm:grid-cols-2">
         {EXPERT_SERVICES.map((s) => (
           <a key={s.id} href={expertUrl(s.id, "expert-page")} target="_blank" rel="noopener noreferrer" className="card group block p-5 transition hover:-translate-y-0.5 hover:border-brand-200">

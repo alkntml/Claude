@@ -1,10 +1,9 @@
-import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo-server";
 import { Suspense } from "react";
 import { AuthForm } from "@/components/auth/auth-form";
 import { enabledOAuthProviders } from "@/lib/auth-providers";
 export async function generateMetadata() {
-  const { t } = await getT();
-  return { title: t("Giriş yap") };
+  return pageMeta("/giris");
 }
 export default async function Page() {
   const providers = await enabledOAuthProviders();

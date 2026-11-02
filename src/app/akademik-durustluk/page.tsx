@@ -1,14 +1,15 @@
 import { StaticPage } from "@/components/static-page";
+import { pageMeta } from "@/lib/seo-server";
 import { getLocale } from "@/i18n/server";
 
 export async function generateMetadata() {
-  return { title: (await getLocale()) === "en" ? "Academic integrity" : "Akademik dürüstlük ilkeleri" };
+  return pageMeta("/akademik-durustluk");
 }
 
 export default async function Page() {
   if ((await getLocale()) === "en") {
     return (
-      <StaticPage title="Our academic integrity principles" lead="We state plainly how the platform behaves and why.">
+      <StaticPage path="/akademik-durustluk" title="Our academic integrity principles" lead="We state plainly how the platform behaves and why.">
         <h2>1. Sources are real</h2>
         <p>Source suggestions come only from academic databases (OpenAlex, Crossref, PubMed and others). The AI can cite only the sources in your project. It does not write definite claims it cannot support with a source; it reports such topics separately and the system searches for sources for them.</p>
         <h2>2. Access level is stated</h2>
@@ -23,7 +24,7 @@ export default async function Page() {
     );
   }
   return (
-    <StaticPage title="Akademik dürüstlük ilkelerimiz" lead="Platformun nasıl davrandığını ve neden öyle davrandığını açıkça yazıyoruz.">
+    <StaticPage path="/akademik-durustluk" title="Akademik dürüstlük ilkelerimiz" lead="Platformun nasıl davrandığını ve neden öyle davrandığını açıkça yazıyoruz.">
       <h2>1. Kaynaklar gerçektir</h2>
       <p>Kaynak önerileri yalnızca akademik veri tabanlarından (OpenAlex, Crossref, PubMed vb.) gelen sonuçlardır. Yapay zekâ yalnızca projenize eklenen kaynaklara atıf yapabilir. Kaynakla destekleyemediği kesin iddiaları yazmaz; bu konuları ayrıca bildirir ve sistem bunlar için kaynak arar.</p>
       <h2>2. Erişim seviyesi açıkça belirtilir</h2>

@@ -1,4 +1,10 @@
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo-server";
+import { JsonLd } from "@/components/json-ld";
+import { softwareLd, webPageLd } from "@/lib/structured-data";
+import { PAGE_SEO } from "@/lib/seo-pages";
+import { localizedPath } from "@/lib/seo";
+import { getPost, localizePost, postPath } from "@/lib/blog";
 import { Hero } from "@/components/landing/hero";
 import { HowItWorks, Pillars, PricingCards, Principles, SourcesStrip } from "@/components/landing/sections";
 import { WorkTypePicker } from "@/components/landing/work-type-picker";
@@ -7,9 +13,15 @@ import { SiteHeader } from "@/components/site-header";
 import { FadeIn } from "@/components/ui/primitives";
 import { getSession } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
-import Link from "next/link";
+import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
+
+const GUIDES = ["tez-nasil-yazilir", "apa-7-atif-kurallari", "intihal-nasil-onlenir", "literatur-taramasi-nasil-yapilir", "hangi-istatistik-analizi-secilmeli", "yapay-zeka-ile-tez-yazmak-etik-mi"];
+
+export async function generateMetadata() {
+  return pageMeta("/");
+}
 
 export default async function Home() {
   const [session, plans, { t, locale }] = await Promise.all([getSession().catch(() => null), publicPlans(), getT()]);
@@ -19,6 +31,7 @@ export default async function Home() {
   return (
     <>
       <SiteHeader signedIn={signedIn} />
+      <JsonLd data={[softwareLd(locale, plans), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] })]} />
       <main>
         <Hero signedIn={signedIn} />
         <section id="tur-sec" className="relative scroll-mt-24 py-16">
@@ -41,6 +54,22 @@ export default async function Home() {
               <p className="mt-3 text-ink-500">{t("İstediğiniz zaman yükseltin veya iptal edin.")}</p>
             </FadeIn>
             <PricingCards plans={plans} signedIn={signedIn} />
+          </div>
+        </section>
+        <section className="pb-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <FadeIn className="mb-10 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Akademik yazım rehberleri")}</h2>
+                <p className="mt-3 text-ink-500">{t("Tez, makale ve araştırma sürecinde en çok merak edilen soruların cevapları: adım adım, örneklerle ve sade bir dille.")}</p>
+              </div>
+              <Link href="/blog" className="text-sm font-medium text-brand-700 hover:underline">{t("Bütün yazılar")} →</Link>
+            </FadeIn>
+            <ul className="grid gap-5 md:grid-cols-3">
+              {GUIDES.map((slug) => getPost(slug)).filter((x): x is NonNullable<typeof x> => !!x).map((p) => { const l = localizePost(p, locale); return (
+                <li key={p.slug}><Link href={postPath(p, locale)} className="card block h-full p-6 transition hover:-translate-y-0.5 hover:shadow-soft"><span className="text-xs font-medium uppercase tracking-wider text-brand-600">{t(p.category)}</span><p className="mt-2 font-serif text-[19px] font-semibold leading-snug text-ink-950">{l.title}</p><p className="mt-2 line-clamp-2 text-[14px] text-ink-500">{l.description}</p></Link></li>
+              ); })}
+            </ul>
           </div>
         </section>
         <section id="sss" className="scroll-mt-24 pb-24">

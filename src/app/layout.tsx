@@ -6,6 +6,8 @@ import { I18nProvider } from "@/i18n/client";
 import { getLocale } from "@/i18n/server";
 import { PwaRegister } from "@/components/pwa";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { JsonLd } from "@/components/json-ld";
+import { organizationLd, websiteLd } from "@/lib/structured-data";
 
 const sans = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-sans", display: "swap" });
 // Başlıklar ve metin editörü: klasik akademik yayın hissi veren Source Serif (optik boyutlu, Türkçe karakter destekli)
@@ -23,6 +25,15 @@ export async function generateMetadata(): Promise<Metadata> {
     appleWebApp: { capable: true, title: "Academiana", statusBarStyle: "default" },
     icons: { icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }, { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" }], apple: "/icons/apple-touch-icon.png" },
     formatDetection: { telephone: false },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+    twitter: { card: "summary_large_image" },
+    category: "education",
+    // Arama motoru doğrulama kodları Vercel ortam değişkenlerinden okunur (Search Console, Bing, Yandex)
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+      yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,
+      other: process.env.NEXT_PUBLIC_BING_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION } : undefined,
+    },
   };
 }
 
@@ -36,6 +47,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <I18nProvider locale={locale}>
           <ToastProvider>{children}</ToastProvider>
           <PwaRegister />
+          <JsonLd data={[organizationLd(), websiteLd(locale)]} />
         </I18nProvider>
       </body>
     </html>

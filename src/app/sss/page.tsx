@@ -1,12 +1,12 @@
-import Link from "next/link";
+import Link from "@/components/l-link";
+import { pageMeta } from "@/lib/seo-server";
 import { getT } from "@/i18n/server";
 import { StaticPage } from "@/components/static-page";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, faqText } from "@/lib/faq";
 
 export async function generateMetadata() {
-  const { t } = await getT();
-  return { title: t("Sık sorulan sorular"), description: t("Kaynakların gerçekliği, gizlilik, yapay zekâ tespiti, intihal, ödeme ve iptal hakkında merak edilenler.") };
+  return pageMeta("/sss");
 }
 
 export default async function Faq() {
@@ -18,7 +18,7 @@ export default async function Faq() {
     mainEntity: faqText(l).map((i) => ({ "@type": "Question", name: i.q, acceptedAnswer: { "@type": "Answer", text: i.a.replace(/\*\*/g, "") } })),
   };
   return (
-    <StaticPage title={t("Sık sorulan sorular")} lead={t("Aklınıza takılabilecek her şeyi açık ve dürüst biçimde cevapladık. Cevabını bulamadığınız bir soru olursa giriş yaptıktan sonra “Geri bildirim” bölümünden bize yazın.")}>
+    <StaticPage path="/sss" title={t("Sık sorulan sorular")} lead={t("Aklınıza takılabilecek her şeyi açık ve dürüst biçimde cevapladık. Cevabını bulamadığınız bir soru olursa giriş yaptıktan sonra “Geri bildirim” bölümünden bize yazın.")}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <nav className="flex flex-wrap gap-2">
         {FAQ.map((g) => <a key={g.id} href={`#g-${g.id}`} className="rounded-full border border-ink-200 px-3 py-1.5 text-sm text-ink-600 hover:border-brand-300 hover:text-brand-700">{g.title[l]}</a>)}

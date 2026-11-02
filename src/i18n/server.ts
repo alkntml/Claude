@@ -3,6 +3,10 @@ import { cookies, headers } from "next/headers";
 import { LOCALE_COOKIE, localeForCountry, makeT, normalizeLocale, type Locale } from "./index";
 
 export async function getLocale(): Promise<Locale> {
+  // Herkese açık sayfalarda dil adresten gelir (/en önekli → en, öneksiz → tr); ara katman bu başlığı yazar
+  const h0 = await headers();
+  const fromUrl = normalizeLocale(h0.get("x-locale"));
+  if (fromUrl) return fromUrl;
   const c = await cookies();
   const fromCookie = normalizeLocale(c.get(LOCALE_COOKIE)?.value);
   if (fromCookie) return fromCookie;

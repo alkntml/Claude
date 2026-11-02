@@ -2,7 +2,7 @@
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/l-link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/icons";

@@ -1,22 +1,26 @@
 import { getT } from "@/i18n/server";
+import { pageMeta } from "@/lib/seo-server";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbLd, offersLd, softwareLd } from "@/lib/structured-data";
+import { localizedPath } from "@/lib/seo";
 import { PricingCards } from "@/components/landing/sections";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getSession } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import { getSetting } from "@/lib/settings";
-import Link from "next/link";
+import Link from "@/components/l-link";
 
 export async function generateMetadata() {
-  const { t } = await getT();
-  return { title: t("Fiyatlar") };
+  return pageMeta("/fiyatlar");
 }
 
 export default async function Pricing() {
-  const [s, plans, { t }, student, referral] = await Promise.all([getSession().catch(() => null), publicPlans(), getT(), getSetting("billing.student"), getSetting("referral")]);
+  const [s, plans, { t, locale }, student, referral] = await Promise.all([getSession().catch(() => null), publicPlans(), getT(), getSetting("billing.student"), getSetting("referral")]);
   return (
     <>
       <SiteHeader signedIn={!!s} />
+      <JsonLd data={[softwareLd(locale, plans), offersLd(locale, plans), breadcrumbLd(locale, [{ name: t("Fiyatlar"), path: localizedPath("/fiyatlar", locale) }])]} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Şeffaf fiyatlandırma")}</h1>

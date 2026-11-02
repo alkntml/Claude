@@ -162,3 +162,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D44 — Blog
 - İçerik kodda (TS dosyaları), veritabanında değil: sürümlenir, statik üretilir, SEO için hızlıdır. Yeni yazı = `src/lib/blog/posts-*.ts`’e bir nesne; `tests/blog.test.ts` biçimi denetler.
 - Yazılar yalnızca Türkçe; dış bağlantı yok (yalnız site içi). Kurallar/üst sınırlar gibi değişebilen bilgiler “kurumunuzun güncel yönergesine bakın” biçiminde, rakam uydurmadan yazıldı. “İntihalden kurtulma” konusu atlatma değil önleme olarak ele alındı.
+
+### D45 — Çok dilli SEO
+- Aynı adreste çerez/ülkeye göre dil değiştirmek arama motorları için yanlıştı (Googlebot ABD’den gelir → Türkçe sayfalar İngilizce dizinlenirdi). Çözüm: dil adreste (`/en` öneki), hreflang ile eşleştirme, x-default Türkçe.
+- Coğrafi yönlendirme yalnızca insanlara (307) ve yalnızca herkese açık sayfalarda; botlar ve açık /en adresleri yönlendirilmez. Dil düğmesi sayfadaki hreflang bağlantısına gider.
+- FAQPage verisi eklendi; ancak Google 2023’ten beri SSS zengin sonuçlarını çoğu site için göstermiyor. Asıl kazanç: BlogPosting/Breadcrumb, Organization/logo, site bağlantıları ve iki dilli dizinleme. HowTo ve puan (rating) kullanılmadı (kaldırıldı / sahte veri olurdu).
+- Blog İngilizce yazıları çeviri değil uyarlama; İngilizce adres (ör. how-to-write-a-thesis) İngilizce aramalar için.

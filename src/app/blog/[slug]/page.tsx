@@ -1,55 +1,85 @@
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getT } from "@/i18n/server";
+import Link from "@/components/l-link";
+import { notFound, permanentRedirect } from "next/navigation";
+import { getLocale, getT } from "@/i18n/server";
 import { BlogBody } from "@/components/blog/rich";
+import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getSession } from "@/lib/auth";
-import { getPost, parseBody, plainText, POSTS, readingMinutes, relatedPosts } from "@/lib/blog";
+import { EN_POSTS, findPost, localizePost, parseBody, plainText, POSTS, postPath, readingMinutes, relatedPosts } from "@/lib/blog";
+import { absoluteUrl, localizedPath } from "@/lib/seo";
+import { buildMeta, ogImage } from "@/lib/seo-server";
+import { breadcrumbLd } from "@/lib/structured-data";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export function generateStaticParams() {
-  return POSTS.map((p) => ({ slug: p.slug }));
+  return [...POSTS.map((p) => ({ slug: p.slug })), ...Object.values(EN_POSTS).map((e) => ({ slug: e.slug }))];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = getPost(slug);
-  if (!p) return {};
-  return {
-    title: p.title,
-    description: p.description,
-    keywords: p.keywords,
-    alternates: { canonical: `/blog/${p.slug}` },
-    openGraph: { type: "article", title: p.title, description: p.description, url: `${SITE_URL}/blog/${p.slug}`, siteName: SITE_NAME, locale: "tr_TR", publishedTime: p.date },
-  };
+  const found = findPost(slug);
+  if (!found) return {};
+  const locale = await getLocale();
+  const tr = found.post, en = localizePost(tr, "en");
+  return buildMeta({
+    path: postPath(tr, "tr"),
+    paths: { tr: postPath(tr, "tr"), en: postPath(tr, "en") },
+    title: { tr: tr.title, en: en.title },
+    description: { tr: tr.description, en: en.description },
+    keywords: { tr: tr.keywords, en: en.keywords },
+    tagline: { tr: `Blog · ${tr.category}`, en: "Academiana Blog" },
+    type: "article",
+    publishedTime: tr.date,
+    section: tr.category,
+  }, locale);
 }
 
-export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = getPost(slug);
-  if (!p) notFound();
-  const [{ t }, s] = await Promise.all([getT(), getSession().catch(() => null)]);
+  const found = findPost(slug);
+  if (!found) notFound();
+  const [{ t, locale }, s] = await Promise.all([getT(), getSession().catch(() => null)]);
+  // Adres ile dil uyuşmuyorsa (ör. /en/blog/<türkçe-adres>) doğru adrese kalıcı yönlendir
+  if (found.lang !== locale && (locale === "tr" || EN_POSTS[found.post.slug])) permanentRedirect(postPath(found.post, locale));
+  const p = localizePost(found.post, locale);
   const blocks = parseBody(p.body);
   const toc = blocks.map((b, i) => ({ b, i })).filter((x) => x.b.t === "h2") as { b: { t: "h2"; text: string }; i: number }[];
+  const url = absoluteUrl(postPath(found.post, locale));
   const jsonLd = [
-    { "@context": "https://schema.org", "@type": "BlogPosting", headline: p.title, description: p.description, datePublished: p.date, dateModified: p.date, inLanguage: "tr-TR", keywords: p.keywords.join(", "), articleSection: p.category, wordCount: plainText(p.body).split(/\s+/).length, mainEntityOfPage: `${SITE_URL}/blog/${p.slug}`, author: { "@type": "Organization", name: `${SITE_NAME} Editör Ekibi` }, publisher: { "@type": "Organization", name: SITE_NAME, logo: { "@type": "ImageObject", url: `${SITE_URL}/icons/icon-512.png` } } },
-    { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: SITE_NAME, item: SITE_URL }, { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` }, { "@type": "ListItem", position: 3, name: p.title, item: `${SITE_URL}/blog/${p.slug}` }] },
+    {
+      "@context": "https://schema.org", "@type": "BlogPosting", "@id": `${url}#article`,
+      headline: p.title, description: p.description, datePublished: p.date, dateModified: p.date,
+      inLanguage: locale === "en" ? "en" : "tr-TR", keywords: p.keywords.join(", "), articleSection: t(p.category),
+      wordCount: plainText(p.body).split(/\s+/).length, mainEntityOfPage: { "@type": "WebPage", "@id": url }, url,
+      image: { "@type": "ImageObject", url: `${SITE_URL}${ogImage(p.title, locale === "en" ? "Academiana Blog" : `Blog · ${p.category}`, locale)}`, width: 1200, height: 630 },
+      author: { "@type": "Organization", name: `${SITE_NAME}`, url: SITE_URL },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+      isPartOf: { "@id": `${SITE_URL}/blog#blog` },
+    },
+    breadcrumbLd(locale, [{ name: "Blog", path: localizedPath("/blog", locale) }, { name: p.title, path: postPath(found.post, locale) }]),
   ];
-  const related = relatedPosts(p);
+  const related = relatedPosts(found.post).map((r) => ({ r, l: localizePost(r, locale) }));
   return (
     <>
       <SiteHeader signedIn={!!s} />
+      <JsonLd data={jsonLd} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-32">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-        <Link href="/blog" className="inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900"><ArrowLeft className="h-4 w-4" /> {t("Bütün yazılar")}</Link>
+        <nav aria-label={t("Konum")} className="flex flex-wrap items-center gap-1.5 text-sm text-ink-500">
+          <Link href="/" className="hover:text-ink-900">{SITE_NAME}</Link><span>/</span>
+          <Link href="/blog" className="inline-flex items-center gap-1 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" /> {t("Blog")}</Link>
+        </nav>
         <div className="mt-6 grid gap-12 lg:grid-cols-[minmax(0,1fr)_260px]">
           <article className="min-w-0 max-w-[720px]">
-            <Link href={`/blog?kategori=${encodeURIComponent(p.category)}`} className="text-xs font-semibold uppercase tracking-wider text-brand-600">{t(p.category)}</Link>
+            <Link href={`/blog?kategori=${encodeURIComponent(found.post.category)}`} className="text-xs font-semibold uppercase tracking-wider text-brand-600">{t(p.category)}</Link>
             <h1 className="mt-3 font-serif text-[34px] font-semibold leading-[1.15] tracking-tight text-ink-950 sm:text-[44px]">{p.title}</h1>
             <p className="mt-4 text-lg leading-relaxed text-ink-500">{p.description}</p>
-            <p className="mt-4 flex items-center gap-3 border-b border-ink-100 pb-6 text-sm text-ink-400"><span>{t("{s} Editör Ekibi", { s: SITE_NAME })}</span><span>·</span><span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t("{n} dk okuma", { n: readingMinutes(p) })}</span></p>
+            <p className="mt-4 flex flex-wrap items-center gap-3 border-b border-ink-100 pb-6 text-sm text-ink-400">
+              <span>{t("{s} Editör Ekibi", { s: SITE_NAME })}</span><span>·</span>
+              <time dateTime={p.date}>{new Date(p.date).toLocaleDateString(locale === "en" ? "en-US" : "tr-TR", { day: "numeric", month: "long", year: "numeric" })}</time><span>·</span>
+              <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t("{n} dk okuma", { n: readingMinutes(p) })}</span>
+            </p>
             <div className="mt-8"><BlogBody blocks={blocks} /></div>
             <div className="mt-12 rounded-3xl bg-gradient-to-br from-brand-600 to-indigo-600 p-7 text-white shadow-glow">
               <p className="font-serif text-2xl font-semibold leading-snug">{t("Bunu Academiana ile kolayca yapın")}</p>
@@ -75,8 +105,8 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         <section className="mt-20">
           <h2 className="font-serif text-2xl font-semibold text-ink-950">{t("İlgili yazılar")}</h2>
           <ul className="mt-6 grid gap-5 md:grid-cols-3">
-            {related.map((r) => (
-              <li key={r.slug}><Link href={`/blog/${r.slug}`} className="card block h-full p-5 transition hover:-translate-y-0.5 hover:shadow-soft"><span className="text-xs font-medium uppercase tracking-wider text-brand-600">{t(r.category)}</span><p className="mt-1.5 font-serif text-[17px] font-semibold leading-snug text-ink-950">{r.title}</p></Link></li>
+            {related.map(({ r, l }) => (
+              <li key={r.slug}><Link href={postPath(r, locale)} className="card block h-full p-5 transition hover:-translate-y-0.5 hover:shadow-soft"><span className="text-xs font-medium uppercase tracking-wider text-brand-600">{t(r.category)}</span><p className="mt-1.5 font-serif text-[17px] font-semibold leading-snug text-ink-950">{l.title}</p></Link></li>
             ))}
           </ul>
         </section>

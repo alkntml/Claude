@@ -10,6 +10,9 @@ export function I18nProvider({ locale, children }: { locale: Locale; children: R
     try {
       document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
     } catch { /* çerez engelli olabilir */ }
+    // Sayfanın bu dildeki adresi varsa (hreflang) oraya git; yoksa (uygulama sayfaları) yenile
+    const alt = document.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${l}"]`);
+    if (alt?.href) { const u = new URL(alt.href); window.location.href = `${u.pathname}${window.location.search}${window.location.hash}`; return; }
     window.location.reload();
   }, []);
   const value = useMemo(() => ({ locale, t: makeT(locale), setLocale, dl: dateLocale(locale) }), [locale, setLocale]);

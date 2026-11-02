@@ -2,7 +2,7 @@
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/l-link";
 import { useState } from "react";
 import { Logo } from "./icons";
 import { cn } from "./ui/cn";

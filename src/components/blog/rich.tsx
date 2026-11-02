@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/l-link";
 import { Fragment } from "react";
 import type { Block } from "@/lib/blog";
 

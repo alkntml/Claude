@@ -11,3 +11,13 @@ export interface BlogPost {
   /** Basit Markdown: ##, ###, paragraf, - liste, 1. liste, **kalın**, [bağlantı](/yol), > not */
   body: string;
 }
+
+/** Yazının İngilizce sürümü (ayrı adres: /en/blog/<slug>) */
+export interface BlogPostEn {
+  slug: string;
+  title: string;
+  description: string;
+  keywords: string[];
+  cta: { text: string; label: string };
+  body: string;
+}

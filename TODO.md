@@ -4,6 +4,7 @@
 - [x] (2026-11-02) Supabase → Authentication → URL Configuration: Site URL `https://www.academiana.com.tr`; Redirect URLs `https://www.academiana.com.tr/**`, `https://academiana.com.tr/**` (eski vercel.app satırı bir süre kalsın)
 - [ ] Supabase e-posta şablonlarında (Authentication → Emails) “Akademi AI” geçiyorsa “Academiana” yap
 - [ ] Alan adı yeşile döndükten sonra Vercel env: `REDIRECT_TO_DOMAIN=1` (eski vercel.app adresi yeni adrese yönlenir) + Redeploy
+- [ ] Alan adı yeşile dönünce: Google Search Console’a `https://www.academiana.com.tr` ekle (HTML etiketi yöntemi → kodu Vercel’e `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` olarak gir, Redeploy, Doğrula) → Site haritaları: `sitemap.xml` gönder. İsteğe bağlı: Bing Webmaster (`NEXT_PUBLIC_BING_VERIFICATION`, ya da Search Console’dan içe aktar), Yandex Webmaster (`NEXT_PUBLIC_YANDEX_VERIFICATION`).
 - [ ] Google ile giriş açılırsa: Google Cloud OAuth “Authorized JavaScript origins”e `https://www.academiana.com.tr`
 - [x] (2026-11-02, kullanıcı “Success” onayladı) Supabase SQL Editor’de migration 8’i çalıştır: `supabase/migrations/20261105000008_grants_surveys.sql` (proje önerisi türü + anket tabloları). Çalıştırılmadan anketler ve TÜBİTAK türü hata verir.
 

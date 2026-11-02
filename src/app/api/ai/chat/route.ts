@@ -11,7 +11,7 @@ import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { addSourcesToProject, executeSearch, ingestWithBudget, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
-import { assertFeature, assertWithinLimits, recordUsage, usageWarnings } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining } from "@/lib/usage";
 
 export const maxDuration = 300;
 
@@ -101,6 +101,9 @@ export const POST = route("ai.chat", async (req) => {
           if (planned.plan.needsSearch && planned.plan.queries.length && bundle.sources.length < MAX_PROJECT_SOURCES) {
             try {
               await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+              // Kalan tarama hakkından fazla sorgu çalıştırılmaz (D51)
+              const left = await searchesRemaining(s.user.id, s.profile.plan_id);
+              if (left != null) planned.plan.queries = planned.plan.queries.slice(0, Math.max(1, left));
               queries = planned.plan.queries.map((q) => q.query);
               controller.enqueue(sse("phase", { phase: "search" }));
               controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
@@ -150,6 +153,8 @@ export const POST = route("ai.chat", async (req) => {
       }
 
       let answer = "";
+      /** Yanıt yarıda kesilse (iptal/hata) bile harcanan istek sayılır (D51) */
+      let usageRecorded = false;
       let usage = { input: 0, output: 0 };
       let stopReason: string | null = null;
       let servedModel = model.model;
@@ -175,6 +180,7 @@ export const POST = route("ai.chat", async (req) => {
           await s.supabase.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: s.user.id, kind: m.kind, content: m.content, source: "ai" })));
         }
         const cost = await estimateCost(servedModel, usage.input, usage.output);
+        usageRecorded = true;
         await Promise.all([
           s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action } }),
           s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
@@ -182,10 +188,12 @@ export const POST = route("ai.chat", async (req) => {
         ]);
         // 3) Eksik konular: asistanın :::eksik bloğundaki sorgularla ek kaynak araması (mesaj başına bir kez)
         let gapAdded = 0;
-        const gaps = extractGaps(answer);
+        let gaps = extractGaps(answer);
         if (gaps.length && RESEARCH_ACTIONS.has(b.action)) {
           try {
             await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+            const leftGap = await searchesRemaining(s.user.id, s.profile.plan_id);
+            if (leftGap != null) gaps = gaps.slice(0, Math.max(1, leftGap));
             controller.enqueue(sse("phase", { phase: "gaps" }));
             controller.enqueue(sse("status", { text: T("Taslakta kaynağı eksik kalan konular aranıyor: {q}", { q: gaps.join(" · ") }) }));
             const { results } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8 });
@@ -206,6 +214,11 @@ export const POST = route("ai.chat", async (req) => {
         controller.enqueue(sse("done", { usage, stopReason, memoryAdded: memory.length, gapAdded, warnings }));
       } catch (e) {
         await logError("ai.chat.stream", e, s.user.id);
+        if (!usageRecorded && answer) {
+          // Akış başladıysa model çalışmıştır: kesin token bilinmiyorsa metin uzunluğundan tahmin edilir
+          const out = usage.output || Math.ceil(answer.length / 3.5);
+          await recordUsage(s.user.id, "ai_request", { tokensIn: usage.input || Math.ceil(system.length / 3.5), tokensOut: out, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, partial: true } }).catch(() => {});
+        }
         controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));
       } finally {
         controller.close();

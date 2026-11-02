@@ -6,6 +6,7 @@ import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram } from "@/lib/workflows
 import { STYLE_IDS } from "@/lib/citations";
 import { translate } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
+import { adminClient } from "@/lib/supabase/admin";
 
 const CreateSchema = z.object({
   title: z.string().trim().min(1).max(300),
@@ -38,7 +39,8 @@ export const POST = route("projects.create", async (req) => {
   const uiLocale = localeFromRequest(req);
   await assertProjectQuota(s.user.id, s.profile.plan_id);
 
-  const { data: project, error } = await s.supabase
+  // Proje yalnızca sunucuda, kota kontrolünden sonra oluşturulur (kullanıcının doğrudan ekleme yetkisi yok; D51)
+  const { data: project, error } = await adminClient()
     .from("projects")
     .insert({
       user_id: s.user.id,

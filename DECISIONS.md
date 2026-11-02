@@ -205,3 +205,11 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - KVKK: kilitliyken anında “Verilerimi indir” yerine `data_requests` talebi oluşturulur; yönetici Kilitler sekmesinden JSON indirip 30 gün içinde ücretsiz iletir (yasal zorunluluk; ücret alınamaz).
 - Şeffaflık: SSS ve Kullanım Koşulları kilit kuralını, 100 TL seçeneğini ve KVKK hakkını açıkça yazar.
 
+### D51 — Sayaç denetimi ve düzeltmeleri
+- Aylık toplam artık veritabanında (`usage_totals` RPC) hesaplanır; önceki kod Supabase API’nin 1000 satır sınırı yüzünden yoğun kullanıcılarda eksik sayıyordu. RPC yoksa sayfalı yedek okuma.
+- Dönem Türkiye saatine göre: haklar her ayın 1’i 00:00 TR’de yenilenir (önceden 03:00).
+- Proje kotası atlatılamaz: kullanıcıların `projects` tablosuna doğrudan ekleme yetkisi kaldırıldı (sunucu kota kontrolünden sonra service role ile ekler); arşivden çıkarma kotaya tabi ve yalnızca sunucuda (tetikleyici).
+- Yarıda kesilen/iptal edilen yapay zekâ yanıtı da 1 istek sayılır (token tahmini metin uzunluğundan).
+- Çok sorgulu aramalar kalan tarama hakkına göre kırpılır (ücretsiz pakette 7 hakla 4 sorgu limiti aşmasın).
+- Açık konu (kullanıcıya soruldu): token limitleri (`tokens_month`) istek limitlerinden çok önce doluyor (bir istek ≈ 10–20 bin token); D50 kilidini erken tetikler.
+

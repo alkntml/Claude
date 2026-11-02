@@ -16,9 +16,11 @@ export interface PlanLimits {
   export_formats?: string[];
 }
 
-function monthStart(): string {
-  const d = new Date();
-  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)).toISOString();
+/** Ay başı Türkiye saatiyle (UTC+3, yaz saati uygulanmıyor): haklar her ayın 1’inde 00:00’da yenilenir. */
+export function monthStart(now = new Date()): string {
+  const TR = 3 * 3600_000;
+  const tr = new Date(now.getTime() + TR);
+  return new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth(), 1) - TR).toISOString();
 }
 
 export async function planLimits(planId: string): Promise<PlanLimits> {
@@ -48,19 +50,43 @@ export interface UsageSummary {
 export async function usageSummary(userId: string): Promise<UsageSummary> {
   const db = adminClient();
   const since = monthStart();
-  const [events, projects, files] = await Promise.all([
-    db.from("usage_events").select("kind, quantity, tokens_in, tokens_out").eq("user_id", userId).gte("created_at", since).limit(20000),
+  const [totals, projects] = await Promise.all([
+    db.rpc("usage_totals", { p_user: userId, p_since: since }),
     db.from("projects").select("id", { count: "exact", head: true }).eq("user_id", userId).neq("status", "archived"),
-    db.from("files").select("size_bytes").eq("user_id", userId).limit(10000),
   ]);
   const sum: UsageSummary = { ai_requests: 0, tokens: 0, source_searches: 0, exports: 0, projects: projects.count ?? 0, storage_mb: 0 };
-  for (const e of events.data ?? []) {
-    if (e.kind === "ai_request") { sum.ai_requests += e.quantity; sum.tokens += e.tokens_in + e.tokens_out; }
-    if (e.kind === "source_search") sum.source_searches += e.quantity;
-    if (e.kind === "export") sum.exports += e.quantity;
+  const row = Array.isArray(totals.data) ? totals.data[0] : totals.data;
+  if (!totals.error && row) {
+    // Toplam veritabanında hesaplanır (D51); satır sınırına takılmaz
+    sum.ai_requests = Number(row.ai_requests); sum.tokens = Number(row.tokens); sum.source_searches = Number(row.source_searches); sum.exports = Number(row.exports);
+    sum.storage_mb = Math.round((Number(row.storage_bytes) / 1048576) * 10) / 10;
+    return sum;
   }
-  sum.storage_mb = Math.round(((files.data ?? []).reduce((a, f) => a + Number(f.size_bytes), 0) / 1048576) * 10) / 10;
+  // Yedek (migration 12 henüz çalıştırılmadıysa): sayfalı okuma — API satır sınırı (1000) yüzünden eksik saymasın
+  let bytes = 0;
+  for (let from = 0; ; from += 1000) {
+    const { data } = await db.from("usage_events").select("kind, quantity, tokens_in, tokens_out").eq("user_id", userId).gte("created_at", since).order("id").range(from, from + 999);
+    for (const e of data ?? []) {
+      if (e.kind === "ai_request") { sum.ai_requests += e.quantity; sum.tokens += e.tokens_in + e.tokens_out; }
+      if (e.kind === "source_search") sum.source_searches += e.quantity;
+      if (e.kind === "export") sum.exports += e.quantity;
+    }
+    if (!data || data.length < 1000) break;
+  }
+  for (let from = 0; ; from += 1000) {
+    const { data } = await db.from("files").select("size_bytes").eq("user_id", userId).order("id").range(from, from + 999);
+    bytes += (data ?? []).reduce((a, f) => a + Number(f.size_bytes), 0);
+    if (!data || data.length < 1000) break;
+  }
+  sum.storage_mb = Math.round((bytes / 1048576) * 10) / 10;
   return sum;
+}
+
+/** Bu ay kalan kaynak tarama hakkı (sınırsızsa null). Çok sorgulu aramalarda limit aşımını önlemek için. */
+export async function searchesRemaining(userId: string, planId: string): Promise<number | null> {
+  const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
+  if (limits.source_searches_month == null) return null;
+  return Math.max(0, limits.source_searches_month - usage.source_searches);
 }
 
 /** Dakikalık hız sınırı — veritabanı tabanlı olduğu için birden çok sunucu örneğinde de tutarlıdır. */

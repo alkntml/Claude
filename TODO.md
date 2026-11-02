@@ -4,6 +4,8 @@
 - [ ] Supabase SQL Editor’de migration 11’i çalıştır (`20261107000011_work_lock.sql`: çalışma kilidi)
 - [ ] 100 TL ödemesi gelince: Yönetim → Kilitler → çalışma kodunu yapıştır → “Hakkı tanımla”
 - [ ] KVKK veri talepleri: Yönetim → Kilitler’de bekleyenleri 30 gün içinde ücretsiz yanıtla
+- [ ] Supabase SQL Editor’de migration 12’yi çalıştır (`20261108000012_usage_integrity.sql`: sayaç güvenilirliği)
+- [ ] Karar: token limitleri istek limitleriyle uyumlu hâle getirilsin mi (D51)?
 - [ ] Ödeme gelince: Yönetim → Kullanıcılar’dan kullanıcının paketini elle değiştir
 - [ ] Alan adı: 2026-11-03’te hâlâ “Invalid Configuration” ise hosting.com.tr desteğine TRABIS iletimini sorun; gerekirse B planı (hosting.com.tr DNS + A @ 216.198.79.1, CNAME www → 4d8ff7a9ca75c5bb.vercel-dns-017.com)
 - [x] (2026-11-02, DNS yayılımı bekleniyor) Alan adı: hosting.com.tr’de nameserver → ns1.vercel-dns.com / ns2.vercel-dns.com (yapıldıysa Vercel’de “Valid Configuration” bekleniyor)

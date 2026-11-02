@@ -2,6 +2,8 @@ import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
+import { assertProjectQuota } from "@/lib/usage";
+import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -32,7 +34,10 @@ export const PATCH = route<Ctx>("projects.update", async (req, { params }) => {
   const b = await parseBody(req, PatchSchema);
   const update: Record<string, unknown> = {};
   if (b.title !== undefined) update.title = b.title;
-  if (b.status !== undefined) update.status = b.status;
+  // Arşivden çıkarma proje kotasına tabidir ve yalnızca sunucuda yapılır (D51)
+  const unarchive = b.status !== undefined && current.status === "archived" && b.status !== "archived";
+  if (unarchive) await assertProjectQuota(s.user.id, s.profile.plan_id);
+  else if (b.status !== undefined) update.status = b.status;
   if (b.citationStyle !== undefined) update.citation_style = b.citationStyle;
   if (b.language !== undefined) update.language = b.language;
   if (b.discipline !== undefined) update.discipline = b.discipline;
@@ -43,7 +48,13 @@ export const PATCH = route<Ctx>("projects.update", async (req, { params }) => {
     if (JSON.stringify(b.context).length > 20000) throw new ApiError(413, "Bağlam çok büyük");
     update.context = { ...(current.context ?? {}), ...b.context };
   }
-  const { data, error } = await s.supabase.from("projects").update(update).eq("id", id).select().single();
+  if (unarchive) {
+    const { error: ue } = await adminClient().from("projects").update({ status: b.status }).eq("id", id).eq("user_id", s.user.id);
+    if (ue) throw ue;
+  }
+  const { data, error } = Object.keys(update).length
+    ? await s.supabase.from("projects").update(update).eq("id", id).select().single()
+    : await s.supabase.from("projects").select("*").eq("id", id).single();
   if (error) throw error;
   return json({ project: data });
 });

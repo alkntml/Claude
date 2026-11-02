@@ -100,7 +100,9 @@ describe("RLS: kullanıcı izolasyonu", () => {
   let stageId = "";
 
   it("kullanıcı kendi projesini oluşturur ve görür", async () => {
-    const [p] = await as<{ id: string }>(A, "insert into public.projects (user_id, title, work_type) values (auth.uid(), 'Tezim', 'thesis') returning id");
+    // Projeleri yalnızca sunucu oluşturur (kota kontrolü; D51)
+    await expectError(as(A, "insert into public.projects (user_id, title, work_type) values (auth.uid(), 'x', 'thesis')"), /row-level security/);
+    const [p] = (await db.query<{ id: string }>("insert into public.projects (user_id, title, work_type) values ($1, 'Tezim', 'thesis') returning id", [A])).rows;
     projectId = p.id;
     const [st] = await as<{ id: string }>(A, "insert into public.project_stages (project_id, user_id, key, title, position, content_text) values ($1, auth.uid(), 'topic', 'Konu', 0, 'gizli metin') returning id", [projectId]);
     stageId = st.id;
@@ -273,8 +275,25 @@ describe("anketler", () => {
     expect(await as(B, "select * from public.download_passes")).toHaveLength(0);
   });
 
+  it("sayaçlar: aylık toplam veritabanında doğru hesaplanır; arşivden çıkarma yalnızca sunucuda", async () => {
+    const U = "33333333-3333-3333-3333-333333333333";
+    await db.query("insert into auth.users (id, email) values ($1, 'u3@x.com') on conflict do nothing", [U]);
+    const rows = Array.from({ length: 1500 }, (_, i) => `('${U}', 'ai_request', 1, 10, 5, now() - interval '${i % 3} minutes')`).join(",");
+    await db.query(`insert into public.usage_events (user_id, kind, quantity, tokens_in, tokens_out, created_at) values ${rows}`);
+    await db.query(`insert into public.usage_events (user_id, kind, quantity, created_at) values ('${U}', 'source_search', 4, now()), ('${U}', 'source_search', 3, now() - interval '60 days')`);
+    const [t] = (await db.query<{ ai_requests: string; tokens: string; source_searches: string }>("select * from public.usage_totals($1, date_trunc('month', now()))", [U])).rows;
+    expect(Number(t.ai_requests)).toBe(1500); // 1000 satır sınırına takılmaz
+    expect(Number(t.tokens)).toBe(1500 * 15);
+    expect(Number(t.source_searches)).toBe(4); // önceki ayın kaydı sayılmaz
+    const other = await as<{ ai_requests: string }>(A, "select ai_requests from public.usage_totals($1, date_trunc('month', now()))", [U]);
+    expect(Number(other[0]?.ai_requests ?? 0)).toBe(0); // başkasının sayacını göremez
+    const [p] = (await db.query<{ id: string }>("insert into public.projects (user_id, title, work_type, status) values ($1, 'Eski', 'thesis', 'archived') returning id", [A])).rows;
+    await expectError(as(A, "update public.projects set status = 'active' where id = $1", [p.id]), /Arşivden çıkarma/);
+    await as(A, "update public.projects set status = 'archived' where id = $1", [p.id]); // arşive almak serbest
+  });
+
   it("proje önerisi çalışma türü kullanılabilir", async () => {
-    await as(A, "insert into public.projects (user_id, title, work_type) values (auth.uid(), 'TÜBİTAK', 'grant_proposal')");
+    await db.query("insert into public.projects (user_id, title, work_type) values ($1, 'TÜBİTAK', 'grant_proposal')", [A]);
     expect(await as(A, "select id from public.projects where work_type = 'grant_proposal'")).toHaveLength(1);
   });
 });

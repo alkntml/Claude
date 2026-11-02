@@ -4,7 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
 import { executeSearch, planResearch, recordResearchUsage } from "@/lib/research";
-import { assertWithinLimits } from "@/lib/usage";
+import { assertWithinLimits, searchesRemaining } from "@/lib/usage";
 
 export const maxDuration = 120;
 
@@ -32,6 +32,9 @@ export const POST = route("ai.research", async (req) => {
   if (!isProviderConfigured(model.provider)) throw new ApiError(503, "Yapay zekâ sağlayıcısı yapılandırılmamış", "ai_not_configured");
 
   const planned = await planResearch({ planId: s.profile.plan_id, project: bundle.project, stageTitle: stage?.title, request: b.request, existingTitles: bundle.sources.map((x) => x.title), force: true });
+  // Kalan tarama hakkından fazla sorgu çalıştırılmaz (sayaç limiti aşmasın; D51)
+  const left = await searchesRemaining(s.user.id, s.profile.plan_id);
+  if (left != null) planned.plan.queries = planned.plan.queries.slice(0, Math.max(1, left));
   const { results, providers } = await executeSearch(planned.plan.queries, { yearFrom: b.yearFrom, yearTo: b.yearTo });
   await recordResearchUsage(s.user.id, planned, planned.plan.queries.map((q) => q.query));
   return json({ plan: planned.plan, results: results.slice(0, 30), providers });

@@ -3,7 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
 import { adminClient } from "@/lib/supabase/admin";
-import { WORK_LOCKED_MESSAGE, effectiveLimits, usageSummary } from "@/lib/usage";
+import { WORK_LOCKED_MESSAGE, effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 import { getWorkLock } from "@/lib/lock";
 import { buildUserExport } from "@/lib/data-export";
 
@@ -21,7 +21,7 @@ export const GET = route("account.get", async (req) => {
     effectiveLimits(s.user.id, s.profile.plan_id),
     s.supabase.from("subscriptions").select("*").eq("user_id", s.user.id).order("created_at", { ascending: false }).limit(5),
   ]);
-  return json({ profile: s.profile, usage, limits, subscriptions: subs.data ?? [] });
+  return json({ profile: s.profile, ...forClient(usage, limits), subscriptions: subs.data ?? [] });
 });
 
 export const PATCH = route("account.update", async (req) => {

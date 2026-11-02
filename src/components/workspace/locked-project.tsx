@@ -17,7 +17,7 @@ interface Props {
   email: string;
 }
 
-const REASON: Record<string, string> = { ai_requests: "yapay zekâ kullanım hakkınız", tokens: "yapay zekâ kullanım hakkınız", source_searches: "kaynak tarama hakkınız" };
+const REASON: Record<string, string> = { ai_requests: "yapay zekâ kullanım hakkınız", tokens: "yapay zekâ kullanım hakkınız", cost: "yapay zekâ kullanım hakkınız", source_searches: "kaynak tarama hakkınız" };
 
 /**
  * Kilitli çalışma görünümü (D50): aylık kullanım hakkı dolunca çalışma ve kaynaklar buğulu gösterilir.

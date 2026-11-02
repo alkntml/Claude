@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { AccountView } from "@/components/dashboard/account";
 import { getSession } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
-import { effectiveLimits, usageSummary } from "@/lib/usage";
+import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 import { getWorkLock } from "@/lib/lock";
 
 export async function generateMetadata() {
@@ -19,5 +19,5 @@ export default async function Page() {
     publicPlans(),
     getWorkLock(),
   ]);
-  return <Suspense><AccountView profile={s.profile} usage={usage} limits={limits} plans={plans} locked={lock.locked} /></Suspense>;
+  return <Suspense><AccountView profile={s.profile} usage={forClient(usage, limits).usage} limits={forClient(usage, limits).limits} plans={plans} locked={lock.locked} /></Suspense>;
 }

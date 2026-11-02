@@ -83,6 +83,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Tekrar önleme:** yazım kurallarında üslup/tekrar maddesi; bölümde ve çalışmada sık geçen kalıplar modele “TEKRARDAN KAÇIN” listesi olarak verilir (`src/lib/quality/repetition.ts`); taslakta tekrar varsa uyarı + “Tekrarları azalt” eylemi; alt başlıklarla yazımda bütün kontrolü; kalite raporunda bölüm içi tekrar uyarısı
 - **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Sağlayıcılar henüz Supabase’de açılmadı (TODO)
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
+- **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
 - **Sayaç denetimi (D51):** aylık toplam veritabanında, TR saatine göre ay başı, proje kotası ve arşiv atlatma kapatıldı, yarıda kesilen yanıt sayılır, tarama aşımı önlenir
 - **Çalışma kilidi (D50):** aylık hak dolunca çalışma + kaynaklar buğulu (sunucuda karartılmış), indirme kapalı; “Mevcut çalışmayı indir — 100 TL” (WhatsApp) veya abonelik; yönetici indirme hakkını Yönetim → Kilitler’den tanımlar; KVKK talepleri de orada
 - **Özellik kilitleri ve yükseltme penceresi (D49):** paket kartları özellik listesi gösterir; Basic/Pro araçları kilitli (sunucuda `assertFeature`), kilitli araçta Pro/Basic rozeti; sınıra ulaşınca veya “Yükselt”te paketler sınırlarıyla gösterilir

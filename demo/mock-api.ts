@@ -115,10 +115,10 @@ const on = (method: string, pattern: string, fn: Handler) => routes.push([method
 // --- Projeler
 on("GET", "/api/projects", () => ({ projects: db.projects }));
 on("GET", "/api/account/plans", () => ({ current: "free", email: "demo@akademi.ai", plans: [
-  { id: "free", name: "Ücretsiz", price_monthly: 0, limits: { ai_requests_month: 20, source_searches_month: 7, projects: 1, storage_mb: 50 } },
-  { id: "basic", name: "Basic", price_monthly: 499, limits: { ai_requests_month: 150, source_searches_month: 100, projects: 3, storage_mb: 500 } },
-  { id: "pro", name: "Pro", price_monthly: 899, limits: { ai_requests_month: 1500, source_searches_month: 2000, projects: 10, storage_mb: 3000 } },
-  { id: "premium", name: "Premium", price_monthly: 1499, limits: { ai_requests_month: 5000, source_searches_month: 8000, projects: null, storage_mb: 15000 } },
+  { id: "free", name: "Ücretsiz", price_monthly: 0, limits: { ai_requests_month: 10, source_searches_month: 7, projects: 1, storage_mb: 50 } },
+  { id: "basic", name: "Basic", price_monthly: 499, limits: { ai_requests_month: 40, source_searches_month: 100, projects: 3, storage_mb: 500 } },
+  { id: "pro", name: "Pro", price_monthly: 899, limits: { ai_requests_month: 75, source_searches_month: 2000, projects: 10, storage_mb: 3000 } },
+  { id: "premium", name: "Premium", price_monthly: 1499, limits: { ai_requests_month: 125, source_searches_month: 8000, projects: null, storage_mb: 15000 } },
 ] }));
 on("POST", "/api/projects", (_m, b) => {
   const project = { id: uid(), user_id: "demo", title: b.title, work_type: b.workType, academic_level: b.level, discipline: b.discipline ?? "", language: b.language ?? "tr", citation_style: b.citationStyle ?? "apa7", status: "active", topic: b.topic ?? "", keywords: b.keywords ?? [], context: { methodology: b.methodology, university: b.university }, progress: 0, created_at: now(), updated_at: now(), last_opened_at: now() };

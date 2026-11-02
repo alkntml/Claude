@@ -15,7 +15,7 @@ import { LEVEL_LABELS, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
   name: string; plan: string; projects: any[]; recentStages: any[]; sourcesCount: number; conversations: any[]; files: any[]; announcements: any[];
-  usage: { ai_requests: number; tokens: number; source_searches: number; projects: number; storage_mb: number } | null; limits: any;
+  usage: { ai_requests: number; source_searches: number; projects: number; storage_mb: number; ai_near?: boolean } | null; limits: any;
 }
 
 export function timeAgo(iso: string, t: TFn = makeDictT(null), dl = "tr-TR") {
@@ -55,7 +55,7 @@ export function Dashboard(p: Props) {
         const items: [string, number, number | null | undefined][] = [["kaynak tarama", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["depolama", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]];
         const near = items.filter(([, u, l]) => l && l > 0 && u / l >= 0.8);
         // Yapay zekâ sınırı sayı olarak gösterilmez (D49); yalnızca yaklaşıldığı söylenir
-        const aiNear = !!p.limits?.ai_requests_month && (p.usage?.ai_requests ?? 0) / p.limits.ai_requests_month >= 0.8;
+        const aiNear = !!p.usage?.ai_near;
         if (!near.length && !aiNear) return null;
         return (
           <Link href="/hesap" className="mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 transition hover:bg-amber-100">

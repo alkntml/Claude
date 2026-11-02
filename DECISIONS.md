@@ -213,3 +213,10 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Çok sorgulu aramalar kalan tarama hakkına göre kırpılır (ücretsiz pakette 7 hakla 4 sorgu limiti aşmasın).
 - Token limitleri istek limitlerinden önce dolmasın diye yükseltildi (migration 13): ücretsiz 800 bin, Basic 6 M, Pro 60 M, Premium 200 M; müşteriyi bağlayan sınır istek sayısıdır.
 
+### D52 — Kârlılık: maliyet gelirin en fazla 1/3’ü
+- Kullanıcı kararı: fiyatlar aynı (499 / 899 / 1.499 TL), API maliyeti KDV hariç gelirin 1/3’ü, 2/3 kazanç.
+- Ortalama istek maliyeti ≈ 0,07 $ (Haiku/Sonnet/Opus karışımı, ~15 bin giriş + 4 bin çıkış token) ile yeni istek hakları: ücretsiz 10, Basic 40, Pro 75, Premium 125 (migration 14).
+- Garanti: görünmez aylık maliyet tavanı `cost_usd_month` = fiyat / 1,2 / kur × 1/3 (Basic ≈ 2,89 $, Pro ≈ 5,20 $, Premium ≈ 8,67 $; ücretsiz 1 $ sabit). `usage_totals` artık `cost_usd` döndürür; tavan dolunca kilit nedeni `cost` (kullanıcıya “yapay zekâ hakkı” olarak görünür). Kur ve pay Yönetim → Ayarlar’da (`billing.margin`); kur ayda bir güncellenmeli.
+- Maliyet ve token rakamları istemciye gönderilmez (`forClient`); yalnızca `ai_near` bayrağı.
+- Not: Yalnızca pahalı (Opus) işleri kullanan biri tavana istek hakkından önce ulaşabilir; bu, 1/3 oranının garantisi için bilinçli bir tercih.
+

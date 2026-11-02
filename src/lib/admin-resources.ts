@@ -81,4 +81,4 @@ export const ADMIN_RESOURCES = {
 } as const;
 
 export type AdminResource = keyof typeof ADMIN_RESOURCES;
-export const SETTING_KEYS = ["ai.models", "ai.system_prompt", "ai.stage_prompts", "sources.enabled", "limits.rate", "plagiarism", "referral", "site.contact"] as const;
+export const SETTING_KEYS = ["ai.models", "ai.system_prompt", "ai.stage_prompts", "sources.enabled", "limits.rate", "plagiarism", "billing.margin", "referral", "site.contact"] as const;

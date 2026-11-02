@@ -32,6 +32,8 @@ export const DEFAULTS = {
   "sources.enabled": { openalex: true, crossref: true, semantic_scholar: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true, turkiye: true } as Record<SourceProviderId, boolean>,
   "limits.rate": { ai_per_minute: 12, search_per_minute: 30 },
   /** Davet programı: davet edilen e-postasını doğrulayınca her iki tarafa kredi */
+  /** Kârlılık (D52): API maliyeti KDV hariç gelirin en fazla cost_share’i; dolar kuru güncel tutulmalı */
+  "billing.margin": { usd_try: 48, vat_rate: 0.2, cost_share: 0.3333, avg_request_usd: 0.07 },
   "referral": { enabled: true, ai_requests: 50, source_searches: 50, valid_days: 60, monthly_cap: 20 },
   /** Site iletişim ve dış hizmetler */
   "site.contact": { email: "" },

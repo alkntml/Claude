@@ -2,7 +2,7 @@ import { getT } from "@/i18n/server";
 import { Dashboard } from "@/components/dashboard/dashboard";
 import { getSession } from "@/lib/auth";
 import { grantReferralReward } from "@/lib/growth";
-import { effectiveLimits, usageSummary } from "@/lib/usage";
+import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 
 export async function generateMetadata() {
   const { t } = await getT();
@@ -28,6 +28,7 @@ export default async function Panel() {
     usageSummary(uid).catch(() => null),
     effectiveLimits(s.user.id, s.profile.plan_id).catch(() => ({})),
   ]);
+  const safe = forClient(usage, limits);
   return (
     <Dashboard
       name={s.profile.full_name?.split(" ")[0] ?? ""}
@@ -38,8 +39,8 @@ export default async function Panel() {
       conversations={convs.data ?? []}
       files={files.data ?? []}
       announcements={ann.data ?? []}
-      usage={usage}
-      limits={limits}
+      usage={safe.usage}
+      limits={safe.limits}
     />
   );
 }

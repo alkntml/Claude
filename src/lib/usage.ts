@@ -14,6 +14,8 @@ export interface PlanLimits {
   projects?: number | null;
   storage_mb?: number | null;
   export_formats?: string[];
+  /** Aylık API maliyet tavanı ($). Pakette yazmıyorsa fiyattan hesaplanır (D52). Kullanıcıya gösterilmez. */
+  cost_usd_month?: number | null;
 }
 
 /** Ay başı Türkiye saatiyle (UTC+3, yaz saati uygulanmıyor): haklar her ayın 1’inde 00:00’da yenilenir. */
@@ -24,15 +26,29 @@ export function monthStart(now = new Date()): string {
 }
 
 export async function planLimits(planId: string): Promise<PlanLimits> {
-  const { data } = await adminClient().from("plans").select("limits").eq("id", planId).maybeSingle();
-  return (data?.limits ?? {}) as PlanLimits;
+  const { data } = await adminClient().from("plans").select("limits, price_monthly").eq("id", planId).maybeSingle();
+  const limits = { ...((data?.limits ?? {}) as PlanLimits) };
+  if (limits.cost_usd_month === undefined) {
+    // Gelirin (KDV hariç, dolara çevrilmiş) belirlenen payı kadar API maliyetine izin verilir
+    const m = await getSetting("billing.margin");
+    const price = Number(data?.price_monthly ?? 0);
+    limits.cost_usd_month = price > 0 ? costCapUsd(price, m) : null;
+  }
+  return limits;
+}
+
+/** Aylık API maliyet tavanı: fiyat / (1+KDV) / kur × maliyet payı */
+export function costCapUsd(priceTry: number, m: { usd_try: number; vat_rate: number; cost_share: number }): number {
+  return Math.round((priceTry / (1 + m.vat_rate) / Math.max(1, m.usd_try)) * m.cost_share * 100) / 100;
 }
 
 /** Paket limitleri + süresi dolmamış krediler (davet ödülü vb.) */
 export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
-  const [l, c] = await Promise.all([planLimits(planId), activeCredits(userId)]);
+  const [l, c, m] = await Promise.all([planLimits(planId), activeCredits(userId), getSetting("billing.margin")]);
   return {
     ...l,
+    // Davet ödülü istekleri maliyet tavanına ortalama istek maliyetiyle eklenir
+    cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : l.cost_usd_month + c.ai_requests * m.avg_request_usd,
     ai_requests_month: l.ai_requests_month == null ? l.ai_requests_month : l.ai_requests_month + c.ai_requests,
     source_searches_month: l.source_searches_month == null ? l.source_searches_month : l.source_searches_month + c.source_searches,
   };
@@ -45,6 +61,8 @@ export interface UsageSummary {
   exports: number;
   projects: number;
   storage_mb: number;
+  /** Bu ayki toplam API maliyeti ($) */
+  cost_usd: number;
 }
 
 export async function usageSummary(userId: string): Promise<UsageSummary> {
@@ -54,22 +72,24 @@ export async function usageSummary(userId: string): Promise<UsageSummary> {
     db.rpc("usage_totals", { p_user: userId, p_since: since }),
     db.from("projects").select("id", { count: "exact", head: true }).eq("user_id", userId).neq("status", "archived"),
   ]);
-  const sum: UsageSummary = { ai_requests: 0, tokens: 0, source_searches: 0, exports: 0, projects: projects.count ?? 0, storage_mb: 0 };
+  const sum: UsageSummary = { ai_requests: 0, tokens: 0, source_searches: 0, exports: 0, projects: projects.count ?? 0, storage_mb: 0, cost_usd: 0 };
   const row = Array.isArray(totals.data) ? totals.data[0] : totals.data;
   if (!totals.error && row) {
     // Toplam veritabanında hesaplanır (D51); satır sınırına takılmaz
     sum.ai_requests = Number(row.ai_requests); sum.tokens = Number(row.tokens); sum.source_searches = Number(row.source_searches); sum.exports = Number(row.exports);
+    sum.cost_usd = Number(row.cost_usd ?? 0);
     sum.storage_mb = Math.round((Number(row.storage_bytes) / 1048576) * 10) / 10;
     return sum;
   }
   // Yedek (migration 12 henüz çalıştırılmadıysa): sayfalı okuma — API satır sınırı (1000) yüzünden eksik saymasın
   let bytes = 0;
   for (let from = 0; ; from += 1000) {
-    const { data } = await db.from("usage_events").select("kind, quantity, tokens_in, tokens_out").eq("user_id", userId).gte("created_at", since).order("id").range(from, from + 999);
+    const { data } = await db.from("usage_events").select("kind, quantity, tokens_in, tokens_out, cost_usd").eq("user_id", userId).gte("created_at", since).order("id").range(from, from + 999);
     for (const e of data ?? []) {
       if (e.kind === "ai_request") { sum.ai_requests += e.quantity; sum.tokens += e.tokens_in + e.tokens_out; }
       if (e.kind === "source_search") sum.source_searches += e.quantity;
       if (e.kind === "export") sum.exports += e.quantity;
+      sum.cost_usd += Number(e.cost_usd ?? 0);
     }
     if (!data || data.length < 1000) break;
   }
@@ -80,6 +100,20 @@ export async function usageSummary(userId: string): Promise<UsageSummary> {
   }
   sum.storage_mb = Math.round((bytes / 1048576) * 10) / 10;
   return sum;
+}
+
+/**
+ * İstemciye gönderilecek kullanım/limit: maliyet ve token sayıları gizlenir (D49/D52);
+ * yapay zekâ hakkına (istek veya maliyet tavanı) yaklaşıldıysa yalnızca ai_near bayrağı gider.
+ */
+export function forClient(usage: UsageSummary | null, limits: PlanLimits | Record<string, never>) {
+  const l = limits as PlanLimits;
+  const ratio = (u: number, lim: number | null | undefined) => (lim ? u / lim : 0);
+  const ai_near = !!usage && Math.max(ratio(usage.ai_requests, l.ai_requests_month), ratio(usage.tokens, l.tokens_month), ratio(usage.cost_usd, l.cost_usd_month)) >= 0.8;
+  const { cost_usd: _c, tokens: _t, ...u } = usage ?? ({} as UsageSummary);
+  const { cost_usd_month: _cm, tokens_month: _tm, ...lim } = l;
+  void _c; void _t; void _cm; void _tm;
+  return { usage: usage ? { ...u, ai_near } : null, limits: lim };
 }
 
 /** Bu ay kalan kaynak tarama hakkı (sınırsızsa null). Çok sorgulu aramalarda limit aşımını önlemek için. */
@@ -103,7 +137,7 @@ async function rateLimit(userId: string, kind: UsageKind) {
  * kullanıcının çalışmaları kilitlenir. Bayrak profiles.work_locked’ta tutulur; veritabanı kuralları
  * (RLS) bu bayrakla içerik tablolarına doğrudan erişimi kapatır. Yalnızca sunucu değiştirir.
  * ------------------------------------------------------------------- */
-export type LockReason = "ai_requests" | "tokens" | "source_searches";
+export type LockReason = "ai_requests" | "tokens" | "source_searches" | "cost";
 
 export function lockReasons(limits: PlanLimits, usage: UsageSummary): LockReason[] {
   const out: LockReason[] = [];
@@ -111,6 +145,8 @@ export function lockReasons(limits: PlanLimits, usage: UsageSummary): LockReason
   if (hit(usage.ai_requests, limits.ai_requests_month)) out.push("ai_requests");
   if (hit(usage.tokens, limits.tokens_month)) out.push("tokens");
   if (hit(usage.source_searches, limits.source_searches_month)) out.push("source_searches");
+  // Maliyet tavanı (D52): gelirin 1/3’ünden fazla API maliyetine izin verilmez; kullanıcıya “yapay zekâ hakkı” olarak görünür
+  if (hit(usage.cost_usd ?? 0, limits.cost_usd_month)) out.push("cost");
   return out;
 }
 
@@ -190,6 +226,8 @@ export async function usageWarnings(userId: string, planId: string, threshold = 
   const pairs: [UsageWarning["kind"], number, number | null | undefined][] = [
     ["ai_requests", usage.ai_requests, limits.ai_requests_month],
     ["tokens", usage.tokens, limits.tokens_month],
+    // Maliyet tavanına yaklaşma da “yapay zekâ hakkı” uyarısı olarak gösterilir (sayı verilmez; D49/D52)
+    ["tokens", usage.cost_usd, limits.cost_usd_month],
     ["source_searches", usage.source_searches, limits.source_searches_month],
     ["storage_mb", usage.storage_mb, limits.storage_mb],
   ];

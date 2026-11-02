@@ -76,9 +76,11 @@ describe("migration'lar ve seed", () => {
     expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium"]);
     const p = await db.query<{ id: string; price_monthly: string; limits: Record<string, number | null> }>("select id, price_monthly, limits from public.plans order by sort_order");
     const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
-    expect(by.free.limits.ai_requests_month).toBe(20);
+    expect(by.free.limits.ai_requests_month).toBe(10); // D52: gelirin 1/3’ü maliyet
     expect(by.free.limits.source_searches_month).toBe(7);
-    expect(by.basic.limits).toMatchObject({ projects: 3, ai_requests_month: 150, source_searches_month: 100 });
+    expect(by.basic.limits).toMatchObject({ projects: 3, ai_requests_month: 40, source_searches_month: 100 });
+    expect(by.pro.limits.ai_requests_month).toBe(75);
+    expect(by.premium.limits.ai_requests_month).toBe(125);
     expect(Number(by.basic.price_monthly)).toBe(499);
     expect(by.pro.limits.projects).toBe(10);
     expect(Number(by.pro.price_monthly)).toBe(899);
@@ -278,13 +280,14 @@ describe("anketler", () => {
   it("sayaçlar: aylık toplam veritabanında doğru hesaplanır; arşivden çıkarma yalnızca sunucuda", async () => {
     const U = "33333333-3333-3333-3333-333333333333";
     await db.query("insert into auth.users (id, email) values ($1, 'u3@x.com') on conflict do nothing", [U]);
-    const rows = Array.from({ length: 1500 }, (_, i) => `('${U}', 'ai_request', 1, 10, 5, now() - interval '${i % 3} minutes')`).join(",");
-    await db.query(`insert into public.usage_events (user_id, kind, quantity, tokens_in, tokens_out, created_at) values ${rows}`);
+    const rows = Array.from({ length: 1500 }, (_, i) => `('${U}', 'ai_request', 1, 10, 5, 0.01, now() - interval '${i % 3} minutes')`).join(",");
+    await db.query(`insert into public.usage_events (user_id, kind, quantity, tokens_in, tokens_out, cost_usd, created_at) values ${rows}`);
     await db.query(`insert into public.usage_events (user_id, kind, quantity, created_at) values ('${U}', 'source_search', 4, now()), ('${U}', 'source_search', 3, now() - interval '60 days')`);
     const [t] = (await db.query<{ ai_requests: string; tokens: string; source_searches: string }>("select * from public.usage_totals($1, date_trunc('month', now()))", [U])).rows;
     expect(Number(t.ai_requests)).toBe(1500); // 1000 satır sınırına takılmaz
     expect(Number(t.tokens)).toBe(1500 * 15);
     expect(Number(t.source_searches)).toBe(4); // önceki ayın kaydı sayılmaz
+    expect(Number((t as unknown as { cost_usd: string }).cost_usd)).toBeCloseTo(15, 5); // aylık API maliyeti
     const other = await as<{ ai_requests: string }>(A, "select ai_requests from public.usage_totals($1, date_trunc('month', now()))", [U]);
     expect(Number(other[0]?.ai_requests ?? 0)).toBe(0); // başkasının sayacını göremez
     const [p] = (await db.query<{ id: string }>("insert into public.projects (user_id, title, work_type, status) values ($1, 'Eski', 'thesis', 'archived') returning id", [A])).rows;

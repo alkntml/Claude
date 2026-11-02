@@ -261,8 +261,10 @@ function GrowthSettings() {
   const { get, load, ready } = useSettings();
   const [ref, setRef] = useState({ enabled: true, ai_requests: 50, source_searches: 50, valid_days: 60, monthly_cap: 20 });
   const [email, setEmail] = useState("");
+  const [margin, setMargin] = useState({ usd_try: 48, vat_rate: 0.2, cost_share: 0.3333, avg_request_usd: 0.07 });
   useEffect(() => {
     if (!ready) return;
+    const mg = get("billing.margin"); if (mg) setMargin((x) => ({ ...x, ...mg }));
     const rf = get("referral"); if (rf) setRef((r) => ({ ...r, ...rf }));
     setEmail(get("site.contact")?.email ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -271,6 +273,7 @@ function GrowthSettings() {
     try {
       await api("/api/admin/settings", { method: "PATCH", json: { id: "referral", value: { enabled: ref.enabled, ai_requests: Number(ref.ai_requests) || 0, source_searches: Number(ref.source_searches) || 0, valid_days: Number(ref.valid_days) || 30, monthly_cap: Number(ref.monthly_cap) || 0 } } });
       await api("/api/admin/settings", { method: "PATCH", json: { id: "site.contact", value: { email: email.trim() } } });
+      await api("/api/admin/settings", { method: "PATCH", json: { id: "billing.margin", value: { usd_try: Math.max(1, Number(margin.usd_try) || 48), vat_rate: Number(margin.vat_rate) || 0, cost_share: Math.min(1, Math.max(0.05, Number(margin.cost_share) || 0.3333)), avg_request_usd: Number(margin.avg_request_usd) || 0.07 } } });
       toast({ tone: "success", title: "Ayarlar kaydedildi" }); load();
     } catch (e) { toast({ tone: "error", title: "Kaydedilemedi", detail: (e as Error).message }); }
   }
@@ -284,6 +287,14 @@ function GrowthSettings() {
         <label>Tarama ödülü{n(ref.source_searches, (x) => setRef({ ...ref, source_searches: x }))}</label>
         <label>Geçerlilik (gün){n(ref.valid_days, (x) => setRef({ ...ref, valid_days: x }))}</label>
         <label>Aylık ödül sınırı (davet eden){n(ref.monthly_cap, (x) => setRef({ ...ref, monthly_cap: x }))}</label>
+      </div>
+      <div className="rounded-xl bg-ink-50 p-3">
+        <p className="text-sm font-medium">Kârlılık (maliyet tavanı)</p>
+        <p className="mt-0.5 text-xs text-ink-500">Her paketin aylık API maliyeti, KDV hariç gelirinin bu payını aşamaz (aşınca kullanıcının yapay zekâ hakkı dolmuş sayılır). Dolar kurunu ayda bir güncelleyin.</p>
+        <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-ink-500">
+          <label>Dolar kuru (TL){n(margin.usd_try, (x) => setMargin({ ...margin, usd_try: x }))}</label>
+          <label>Maliyet payı (0,33 = 1/3){n(margin.cost_share, (x) => setMargin({ ...margin, cost_share: x }))}</label>
+        </div>
       </div>
       <label className="block text-xs text-ink-500">Kurum teklifleri için iletişim e-postası<input className="input !py-1.5" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="iletisim@alanadi.com" /></label>
       <Button onClick={save}>Kaydet</Button>

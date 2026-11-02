@@ -1,7 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] Alan adı: hosting.com.tr’de nameserver → ns1.vercel-dns.com / ns2.vercel-dns.com (yapıldıysa Vercel’de “Valid Configuration” bekleniyor)
-- [ ] Vercel env: `NEXT_PUBLIC_APP_URL=https://www.academiana.com.tr` + Redeploy
-- [ ] Supabase → Authentication → URL Configuration: Site URL `https://www.academiana.com.tr`; Redirect URLs `https://www.academiana.com.tr/**`, `https://academiana.com.tr/**` (eski vercel.app satırı bir süre kalsın)
+- [x] (2026-11-02, DNS yayılımı bekleniyor) Alan adı: hosting.com.tr’de nameserver → ns1.vercel-dns.com / ns2.vercel-dns.com (yapıldıysa Vercel’de “Valid Configuration” bekleniyor)
+- [x] (2026-11-02) Vercel env: `NEXT_PUBLIC_APP_URL=https://www.academiana.com.tr` + Redeploy
+- [x] (2026-11-02) Supabase → Authentication → URL Configuration: Site URL `https://www.academiana.com.tr`; Redirect URLs `https://www.academiana.com.tr/**`, `https://academiana.com.tr/**` (eski vercel.app satırı bir süre kalsın)
 - [ ] Supabase e-posta şablonlarında (Authentication → Emails) “Akademi AI” geçiyorsa “Academiana” yap
 - [ ] Alan adı yeşile döndükten sonra Vercel env: `REDIRECT_TO_DOMAIN=1` (eski vercel.app adresi yeni adrese yönlenir) + Redeploy
 - [ ] Google ile giriş açılırsa: Google Cloud OAuth “Authorized JavaScript origins”e `https://www.academiana.com.tr`

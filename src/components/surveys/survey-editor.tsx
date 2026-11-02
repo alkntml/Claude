@@ -163,7 +163,7 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block"><span className="label">{t("En fazla cevap (isteğe bağlı)")}</span><input className="input" inputMode="numeric" value={s.max_responses ?? ""} onChange={(e) => setField("max_responses", e.target.value ? Math.max(1, Math.min(100000, Number(e.target.value.replace(/\D/g, "")) || 1)) : null)} /></label>
             <label className="block"><span className="label">{t("Kapanış tarihi (isteğe bağlı)")}</span><input type="date" className="input" value={s.closes_at ? String(s.closes_at).slice(0, 10) : ""} onChange={(e) => setField("closes_at", e.target.value ? new Date(`${e.target.value}T23:59:59`).toISOString() : null)} /></label>
-            <label className="block"><span className="label">{t("Bağlı çalışma")}</span><select className="input" value={s.project_id ?? ""} onChange={(e) => setField("project_id", e.target.value || null)}><option value="">{t("Yok")}</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
+            <label className="block"><span className="label">{t("Cevapların kullanılacağı çalışma")}</span><select className="input" value={s.project_id ?? ""} onChange={(e) => setField("project_id", e.target.value || null)}><option value="">{t("Yok")}</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select></label>
           </div>
           <div className="flex flex-wrap gap-2 border-t border-ink-100 pt-4">
             <Button variant="secondary" onClick={() => save()} loading={busy} disabled={!dirty}><Save className="h-4 w-4" /> {t("Kaydet")}</Button>

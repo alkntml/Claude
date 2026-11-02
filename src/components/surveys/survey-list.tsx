@@ -36,14 +36,18 @@ export function SurveyList({ surveys, projects, defaultProject }: { surveys: Row
       </div>
       <section className="card p-5">
         <h2 className="font-semibold">{t("Yeni anket")}</h2>
-        <div className="mt-3 grid gap-3 md:grid-cols-[1fr_280px_auto]">
-          <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("ör. Üniversite öğrencilerinde dijital okuryazarlık anketi")} />
-          <select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)} aria-label={t("Bağlı çalışma")}>
-            <option value="">{t("Çalışmaya bağlama (isteğe bağlı)")}</option>
-            {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-          </select>
-          <Button onClick={create} loading={busy} disabled={!title.trim()}><Plus className="h-4 w-4" /> {t("Oluştur")}</Button>
+        <div className="mt-3 grid gap-4 md:grid-cols-2">
+          <label className="block"><span className="label">{t("Anketin adı")}</span><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("ör. Üniversite öğrencilerinde dijital okuryazarlık anketi")} /></label>
+          <label className="block">
+            <span className="label">{t("Cevaplar hangi çalışmanızda kullanılacak? (isteğe bağlı)")}</span>
+            <select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}>
+              <option value="">{t("Şimdilik hiçbir çalışmaya bağlama")}</option>
+              {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+            </select>
+            <span className="mt-1 block text-xs text-ink-400">{t("Listede kendi tez ve makale çalışmalarınız görünür. Seçerseniz anket cevaplarını o çalışmaya tek tıkla aktarıp istatistik analizi ve grafik yapabilirsiniz. Daha sonra da değiştirebilirsiniz.")}</span>
+          </label>
         </div>
+        <Button className="mt-4" onClick={create} loading={busy} disabled={!title.trim()}><Plus className="h-4 w-4" /> {t("Anketi oluştur")}</Button>
       </section>
       {surveys.length === 0 ? (
         <div className="card flex flex-col items-center p-10 text-center text-ink-500"><ClipboardList className="mb-3 h-8 w-8 text-ink-300" />{t("Henüz anketiniz yok.")}</div>

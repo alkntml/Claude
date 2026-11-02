@@ -1824,4 +1824,10 @@ export const EN: Record<string, string> = {
   "Son 5 yılın en çok atıf alan çalışmaları": "Most cited works of the last 5 years",
   "Veri tabanına şu anda ulaşılamadı, lütfen biraz sonra tekrar deneyin": "The database could not be reached right now, please try again shortly",
   "Öneriler oluşturulamadı, lütfen tekrar deneyin": "Suggestions could not be generated, please try again",
+  "Anketin adı": "Survey name",
+  "Cevaplar hangi çalışmanızda kullanılacak? (isteğe bağlı)": "Which of your projects will use the responses? (optional)",
+  "Şimdilik hiçbir çalışmaya bağlama": "Don’t link to a project for now",
+  "Listede kendi tez ve makale çalışmalarınız görünür. Seçerseniz anket cevaplarını o çalışmaya tek tıkla aktarıp istatistik analizi ve grafik yapabilirsiniz. Daha sonra da değiştirebilirsiniz.": "The list shows your own thesis and article projects. If you choose one, you can send the survey responses to it in one click for statistical analysis and charts. You can change this later.",
+  "Anketi oluştur": "Create survey",
+  "Cevapların kullanılacağı çalışma": "Project that will use the responses",
 };

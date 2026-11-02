@@ -141,3 +141,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D39 — Konu bulma
 - İstatistikler OpenAlex group_by ile (yıl, topics.id); öneriler yalnızca bu sayılara/başlıklara dayanır, “balanced” model. Kaynak tarama hakkından 1 düşer; öneri için ayrıca 1 AI isteği.
+
+### D40 — Adım adım akış
+- Başlık seçimi ilk adım: seçilmediyse çalışma alanı açılışında öneri penceresi (yapay zekâ, “balanced”); “sonra” denirse o cihazda tekrar otomatik açılmaz, sol panelde “Adım 1: Başlık seç” kalır. Seçim `projects.context.titleChosen` ile saklanır (migration gerekmez).
+- Yazım sırası yol haritası sırasıdır; `title_abstract` ve `grant_summary` en sona alınır (`lib/workflows/order.ts`). Bölüm tamamlama mevcut `status = done` alanını kullanır; yeni durum alanı eklenmedi.

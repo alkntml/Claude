@@ -37,6 +37,8 @@ import { ChartModal } from "./chart-modal";
 import { DefenseModal } from "./defense-modal";
 import { ReviewerModal } from "./reviewer-modal";
 import { ToolsMenu, type ToolId } from "./tools-menu";
+import { TitleChooser } from "./title-chooser";
+import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SaveState = "saved" | "dirty" | "saving" | "error" | "offline";
@@ -66,7 +68,7 @@ export function Workspace(props: Props) {
   const [sources, setSources] = useState<any[]>(props.sources);
   const [memory, setMemory] = useState<any[]>(props.memory);
   const [files, setFiles] = useState<any[]>(props.files);
-  const [activeId, setActiveId] = useState<string>(props.initialStageId && props.stages.some((s) => s.id === props.initialStageId) ? props.initialStageId : (props.stages.find((s) => s.status !== "done") ?? props.stages[0])?.id);
+  const [activeId, setActiveId] = useState<string>(props.initialStageId && props.stages.some((s) => s.id === props.initialStageId) ? props.initialStageId : (nextStage(props.stages) ?? props.stages[0])?.id);
   const [selection, setSelection] = useState("");
   const [save, setSave] = useState<SaveState>("saved");
   const [tab, setTab] = useState<RightTab>("assistant");
@@ -241,6 +243,35 @@ export function Workspace(props: Props) {
   const [chartOpen, setChartOpen] = useState(false);
   const [defenseOpen, setDefenseOpen] = useState(false);
   const [reviewerOpen, setReviewerOpen] = useState(false);
+  // Adım 1: başlık seçimi (seçilmediyse ilk açılışta sorulur; "sonra" denirse bu cihazda tekrar açılmaz)
+  const [titleOpen, setTitleOpen] = useState(false);
+  useEffect(() => {
+    if (project.context?.titleChosen) return;
+    let later = false;
+    try { later = !!localStorage.getItem(`akademi:title-later:${project.id}`); } catch { /* yok */ }
+    if (!later) setTitleOpen(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  async function chooseTitle(title: string) {
+    const p = await patchProject({ title, context: { titleChosen: true } });
+    if (p) {
+      const first = nextStage(stages);
+      toast({ tone: "success", title: t("Başlık kaydedildi"), detail: first ? t("Sıradaki adım: {s}", { s: first.title }) : undefined });
+      if (first && first.id !== activeId) selectStage(first.id);
+    }
+  }
+  function closeTitle() {
+    setTitleOpen(false);
+    if (!project.context?.titleChosen) { try { localStorage.setItem(`akademi:title-later:${project.id}`, "1"); } catch { /* yok */ } }
+  }
+  // Bölümü tamamla → önerilen sıradaki bölüme geç
+  async function completeStage() {
+    if (!active) return;
+    await flush();
+    await patchStage(active.id, { status: "done" });
+    const next = nextStage(stages.map((x) => (x.id === active.id ? { ...x, status: "done" } : x)), active.id);
+    if (next) { toast({ tone: "success", title: t("“{s}” tamamlandı", { s: active.title }), detail: t("Sıradaki bölüm: {s}", { s: next.title }) }); selectStage(next.id); }
+    else toast({ tone: "success", title: t("Tüm bölümler tamamlandı!"), detail: t("Kalite kontrolünü çalıştırıp çalışmanızı Word veya PDF olarak indirebilirsiniz.") });
+  }
   const [presenting, setPresenting] = useState(false);
   /** Savunma sunumu (.pptx) oluşturup indirir */
   async function makePresentation() {
@@ -286,7 +317,8 @@ export function Workspace(props: Props) {
   // Sonraki tablo numarası: tüm bölümlerdeki "Tablo N." / "Table N." başlıklarının en büyüğü + 1
   const nextFigureNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Şekil|Figure)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
   const nextTableNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Tablo|Table)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
-  useEffect(() => { if (shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 1200); return () => clearTimeout(tm); } }, []);
+  // Rehberli tur, başlık seçim penceresi kapandıktan sonra başlar (iki pencere üst üste açılmasın)
+  useEffect(() => { if (!titleOpen && shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 900); return () => clearTimeout(tm); } }, [titleOpen]);
 
   /** Editörde bir metni bulup seçer (danışman yorumunun alıntısı için). Bulursa seçili metni döndürür. */
   function selectQuote(quote: string): string | null {
@@ -437,6 +469,9 @@ export function Workspace(props: Props) {
   const wt = WORK_TYPES.find((w) => w.id === project.work_type);
   const chapterNumber = stages.filter((s, i) => i <= activeIndex && (s.content_text ?? "").trim() && s.key !== "references").length || activeIndex + 1;
 
+  const done = completion(stages);
+  const nextId = nextStage(stages)?.id;
+  const waitFor = active && !isBibliography && active.status !== "done" ? shouldWaitFor(stages, active) : undefined;
   const Nav = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 border-b border-ink-100 px-4 py-3.5">
@@ -444,6 +479,13 @@ export function Workspace(props: Props) {
         <div className="min-w-0"><p className="text-[11px] font-medium uppercase tracking-wider text-ink-400">{t("Yol haritası")}</p><p className="truncate text-[13px] text-ink-600">{t(wt?.title ?? "")} · {t(LEVEL_LABELS[project.academic_level as AcademicLevel])}</p></div>
       </div>
       <div data-tour="goal"><GoalWidget project={project} stages={stages} onOpen={() => setGoalOpen(true)} /></div>
+      <div className="space-y-1.5 px-3 pt-2">
+        <button onClick={() => setTitleOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", project.context?.titleChosen ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
+          <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", project.context?.titleChosen ? "bg-emerald-500 text-white" : "bg-brand-600 text-white")}>{project.context?.titleChosen ? <Check className="h-3 w-3" /> : <Wand2 className="h-3 w-3" />}</span>
+          <span className="min-w-0 flex-1"><span className="block font-medium">{project.context?.titleChosen ? t("Başlık seçildi") : t("Adım 1: Başlık seç")}</span><span className="block truncate text-[11.5px] opacity-80">{project.title}</span></span>
+        </button>
+        <p className="px-1 text-[11.5px] text-ink-500">{t("{d}/{n} bölüm tamamlandı", { d: done.done, n: done.total })}</p>
+      </div>
       <Reorder.Group axis="y" values={stages} onReorder={reorder} className="flex-1 space-y-0.5 overflow-y-auto p-2">
         {stages.map((s, i) => {
           const st = STATUS.find((x) => x.id === s.status) ?? STATUS[0];
@@ -454,7 +496,7 @@ export function Workspace(props: Props) {
               <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
                 <span className={cn("block truncate text-[14px] leading-tight lg:text-[13px]", sel ? "font-semibold text-ink-900" : "text-ink-700")}>{s.title}</span>
-                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}</span>
+                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
               </span>
               <button onClick={(e) => { e.stopPropagation(); removeStage(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-rose-50 hover:text-rose-500 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölümü sil")}><Trash2 className="h-3.5 w-3.5" /></button>
             </Reorder.Item>
@@ -513,11 +555,20 @@ export function Workspace(props: Props) {
                         <span className="min-w-0 flex-1">{t("Projede {n} yerde “[KAYNAK GEREKLİ]” var.", { n: placeholderCount })} <b>{t("Kaynak bul ve düzelt")}</b></span>
                       </button>
                     )}
+                    {waitFor && (
+                      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-2xl border border-brand-100 bg-brand-50/70 px-3.5 py-2.5 text-[13px] text-ink-700">
+                        <span className="min-w-0 flex-1">{t("Özet, çalışmanın tamamı yazıldıktan sonra yazılır; çünkü bütün bölümleri özetler. Önce sıradaki bölümü tamamlayın.")}</span>
+                        <Button size="sm" onClick={() => selectStage(waitFor.id)}>{t("Sıradakine git: {s}", { s: waitFor.title })}</Button>
+                      </div>
+                    )}
                     <div className="mb-3 sm:mb-5">
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge tone="brand">{t("Bölüm {n}", { n: activeIndex + 1 })}</Badge>
                         <StatusPicker value={active.status} onChange={(v) => patchStage(active.id, { status: v })} />
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
+                        <span className="ml-auto">{active.status === "done"
+                          ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")}</span>
+                          : <Button size="sm" variant="secondary" onClick={completeStage} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
                       </div>
                       <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[32px]" aria-label={t("Bölüm başlığı")} />
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
@@ -590,6 +641,7 @@ export function Workspace(props: Props) {
       {chartOpen && <ChartModal open onClose={() => setChartOpen(false)} files={files} language={project.language} figureNo={nextFigureNo} onInsert={!isBibliography && editor ? insertFigure : undefined} />}
       {defenseOpen && <DefenseModal open onClose={() => setDefenseOpen(false)} projectId={project.id} language={project.language} />}
       <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />
+      <TitleChooser open={titleOpen} onClose={closeTitle} projectId={project.id} currentTitle={project.title} onChoose={chooseTitle} />
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}
       <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} />

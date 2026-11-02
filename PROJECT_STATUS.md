@@ -68,6 +68,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Yönetici paneli: genel bakış/maliyet, kullanıcılar, paketler, model ve prompt ayarları, veri kaynakları, duyurular, geri bildirim, yardım, hata kayıtları
 - KVKK: veri dışa aktarma (JSON), hesap silme
 - **Sık sorulan sorular:** `/sss` (7 grup, 38 soru, TR/EN, FAQPage JSON-LD), ana sayfada 8 öne çıkan soru; içerik `src/lib/faq.ts`
+- **Adım adım akış:** çalışma ilk açıldığında başlık önerileri + seçim (`context.titleChosen`); önerilen yazım sırası (özet/abstract en son), “Sıradaki” etiketi, “Bölümü tamamladım” → sıradaki bölüme geçiş, tamamlanan bölümlerde yeşil tik ve “x/y bölüm tamamlandı”; özet erken açılırsa uyarı. Rehberli tur başlık penceresinden sonra açılır.
 - **TÜBİTAK / BAP proje önerisi:** yeni çalışma türü `grant_proposal` (özet, özgün değer, yöntem, proje yönetimi, yaygın etki, bütçe); program seçimi (2209-A/B, 1001, 3501, BAP, burs) `projects.context.program`
 - **Hakem yorumlarına cevap:** Araçlar → yorumları yapıştır → `reviewer_response` eylemi, madde madde cevap mektubu ([YAPILACAK: …] işaretleri)
 - **Savunma provası:** Araçlar → yapay zekâ jüri soruları (tutum/sayı/odak), yazılı veya sesli cevap, puan + güçlü/eksik yönler + iskelet + takip sorusu
@@ -80,7 +81,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 158 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 162 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)
@@ -106,7 +107,8 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 | 5fff0aa | Google ve Apple ile giriş/kayıt |
 | 1414657 | Akademik yazı tipi (Source Serif) |
 | 91f3d6d | Tekrar eden ifadelerin önlenmesi |
-| (bu commit) | Proje önerisi, hakem cevabı, savunma provası, anket, grafik, konu bulma (migration 8) |
+| 636d42b | Proje önerisi, hakem cevabı, savunma provası, anket, grafik, konu bulma (migration 8) |
+| (bu commit) | Başlık seçimiyle başlayan adım adım akış, bölüm tamamlama işaretleri |
 
 ## Oturum dışı üretilen teslimler (depoda değil)
 - **Reels tanıtım videosu** (40 sn, 1080×1920, altyazılı, müzikli, seslendirmesiz — ortamda Türkçe TTS yok, HuggingFace engelli). Kullanıcıya sohbetten gönderildi; seslendirme metni ve SRT de verildi. Yeniden üretmek gerekirse: demo ekranlarından Playwright ile kare kare HTML animasyonu + ffmpeg (yöntem bu oturumda kullanıldı).

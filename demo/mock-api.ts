@@ -123,6 +123,16 @@ on("POST", "/api/projects", (_m, b) => {
 });
 const proj = (id: string) => db.projects.find((x) => x.id === id) ?? fail(404, "Proje bulunamadı", "not_found");
 on("GET", "/api/projects/([^/]+)", (m) => ({ project: proj(m[1]) }));
+// Demo: gerçek yapay zekâ çağrısı yerine örnek başlık önerileri
+on("POST", "/api/projects/([^/]+)/titles", (m) => {
+  const p = proj(m[1]);
+  const base = (p.topic || p.title || "Araştırma konusu").replace(/\s+/g, " ").trim().slice(0, 80);
+  return { titles: [
+    { title: `${base}: Bir İnceleme`, note: "Demo önerisi: konuyu genel çerçevede ele alır." },
+    { title: `${base} Üzerine Nicel Bir Araştırma`, note: "Demo önerisi: yöntemi başlıkta öne çıkarır." },
+    { title: `${base}: Üniversite Öğrencileri Örneği`, note: "Demo önerisi: örneklemle daraltır." },
+  ] };
+});
 on("PATCH", "/api/projects/([^/]+)", (m, b) => {
   const pr = proj(m[1]);
   const map: Record<string, string> = { citationStyle: "citation_style", academicLevel: "academic_level" };

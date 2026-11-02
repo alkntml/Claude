@@ -15,6 +15,8 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 | E-posta | ⚠️ Supabase varsayılanı | Saatlik gönderim limiti düşük; özel SMTP (Resend vb.) önerildi |
 | Demo | ✅ | Sunucusuz tarayıcı demosu: https://claude.ai/artifact/6ckTR9LQUpjPv2jNnnrhgG (AI, arama ve dışa aktarma kapalı) |
 
+- Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
+
 ## Tamamlanan özellikler
 **Akademik süreç**
 - 8 çalışma türü; seviye ve yönteme göre dinamik yol haritası (35 aşama şablonu)

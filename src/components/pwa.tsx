@@ -41,7 +41,7 @@ function useInstall() {
 /** “Uygulamayı yükle”: Android/Chrome’da sistem penceresi, iPhone’da adım adım yönerge */
 export function InstallApp({ variant = "row", className }: { variant?: "row" | "banner"; className?: string }) {
   const { t } = useT();
-  const { canPrompt, standalone, platform } = useInstall();
+  const { standalone, platform } = useInstall();
   const [help, setHelp] = useState(false);
   const [hidden, setHidden] = useState(false);
   useEffect(() => { try { setHidden(variant === "banner" && !!localStorage.getItem("akademi:install-dismissed")); } catch { /* yok */ } }, [variant]);

@@ -4,7 +4,7 @@ import { Activity, Building2, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashe
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
-import { Badge, Empty } from "@/components/ui/primitives";
+import { Badge, Empty, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
 import { PROVIDER_LABELS } from "@/lib/sources/labels";
@@ -73,6 +73,28 @@ function Overview() {
     <div className="space-y-6">
       <div className="flex justify-end gap-1">{[7, 30, 90].map((n) => <button key={n} onClick={() => setDays(n)} className={cn("rounded-lg px-3 py-1 text-sm", days === n ? "bg-ink-900 text-white" : "bg-white text-ink-600 ring-1 ring-ink-100")}>{n} gün</button>)}</div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{tiles.map(([l, v, sub]) => <div key={l as string} className="card p-4"><p className="text-[13px] text-ink-500">{l}</p><p className="mt-1 text-2xl font-semibold text-ink-900">{v}</p>{sub && <p className="text-xs text-ink-400">{sub}</p>}</div>)}</div>
+      {d.money && (
+        <div className="card p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Bu ay gelir ve kâr</h3><span className="text-xs text-ink-400">Kur: {d.money.usdTry} TL · gelir KDV hariç, süresi geçerli ücretli kullanıcılardan tahmini</span></div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-4">
+            {[["Ücretli kullanıcı", d.money.paidUsers.toLocaleString("tr-TR"), ""], ["Aylık gelir", `${d.money.revenueTry.toLocaleString("tr-TR")} TL`, ""], ["API maliyeti", `${d.money.costTry.toLocaleString("tr-TR")} TL`, d.money.costShare != null ? `gelirin %${d.money.costShare}’i` : ""], ["Kâr", `${d.money.profitTry.toLocaleString("tr-TR")} TL`, d.money.costShare != null ? (d.money.costShare <= 33 ? "hedefte (≤ %33 maliyet)" : "maliyet hedefin üstünde") : ""]].map(([l, v, sub]) => (
+              <div key={l} className="rounded-xl bg-ink-50 p-3"><p className="text-[12.5px] text-ink-500">{l}</p><p className={cn("mt-0.5 text-xl font-semibold", l === "Kâr" && d.money.profitTry < 0 ? "text-rose-600" : "text-ink-900")}>{v}</p>{sub && <p className="text-[11.5px] text-ink-400">{sub}</p>}</div>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div>
+              <p className="text-sm font-medium">7 gün içinde süresi bitecekler ({d.expiring.length})</p>
+              {d.expiring.length === 0 && <p className="mt-1 text-sm text-ink-400">Yok.</p>}
+              {d.expiring.map((u: any) => <p key={u.id} className="flex justify-between border-t border-ink-50 py-1 text-[13px]"><span className="truncate">{u.full_name || u.email} <span className="text-ink-400">· {u.plan_id}</span></span><span className="shrink-0 text-amber-700">{new Date(u.plan_expires_at).toLocaleDateString("tr-TR")}</span></p>)}
+            </div>
+            <div>
+              <p className="text-sm font-medium">Kilitli kullanıcı</p>
+              <p className="mt-1 text-2xl font-semibold">{d.locked}</p>
+              <p className="text-xs text-ink-400">Aylık hakkı dolanlar; yükseltme veya 100 TL indirme için potansiyel müşteri. Ayrıntı: Kullanıcılar → “Kilitli” filtresi.</p>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card p-5"><DailyBars data={d.byDay} valueKey="ai" label="Günlük yapay zekâ istekleri" /></div>
         <div className="card p-5"><DailyBars data={d.byDay} valueKey="cost" label="Günlük tahmini API maliyeti (USD)" format={(v) => `$${v >= 10 ? v.toFixed(0) : v.toFixed(2)}`} /></div>
@@ -102,33 +124,145 @@ function Overview() {
   );
 }
 
+const USER_FILTERS: [string, string][] = [["all", "Tümü"], ["paid", "Ücretli"], ["expiring", "7 gün içinde bitiyor"], ["expired", "Süresi doldu"], ["locked", "Kilitli"], ["suspended", "Askıda"]];
+
+function expiryBadge(u: any) {
+  if (u.plan_id === "free") return <span className="text-xs text-ink-400">—</span>;
+  if (!u.plan_expires_at) return <Badge tone="ink">Süresiz</Badge>;
+  const left = Math.ceil((new Date(u.plan_expires_at).getTime() - Date.now()) / 86400_000);
+  const date = new Date(u.plan_expires_at).toLocaleDateString("tr-TR");
+  if (left < 0) return <Badge tone="red">Doldu · {date}</Badge>;
+  return <Badge tone={left <= 7 ? "amber" : "green"}>{date} · {left} gün</Badge>;
+}
+
 function UsersTab({ selfId }: { selfId: string }) {
   const toast = useToast();
   const [q, setQ] = useState("");
   const [query, setQuery] = useState("");
-  const { rows, setRows, count, loading } = useRows("users", query);
+  const [filter, setFilter] = useState("all");
+  const [data, setData] = useState<{ rows: any[]; count: number } | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
   const plans = useRows("plans");
+  const load = useCallback(async () => {
+    try { setData(await api(`/api/admin/users-list?filter=${filter}&q=${encodeURIComponent(query)}`)); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); }
+  }, [filter, query, toast]);
+  useEffect(() => { load(); }, [load]);
   async function patch(id: string, update: any) {
-    try { const { row } = await api<{ row: any }>("/api/admin/users", { method: "PATCH", json: { id, ...update } }); setRows((l) => l.map((x) => (x.id === id ? { ...x, ...row } : x))); toast({ tone: "success", title: "Kullanıcı güncellendi" }); }
+    try { await api("/api/admin/users", { method: "PATCH", json: { id, ...update } }); toast({ tone: "success", title: "Kullanıcı güncellendi" }); load(); }
     catch (e) { toast({ tone: "error", title: "Güncellenemedi", detail: (e as Error).message }); }
+  }
+  async function setPlan(id: string, planId: string) {
+    // Ücretli paket atanınca varsayılan 30 günlük süre başlar (D53)
+    try { await api(`/api/admin/user/${id}`, { method: "POST", json: { action: "set_plan", planId, days: planId === "free" ? null : 30 } }); toast({ tone: "success", title: "Paket atandı", detail: planId === "free" ? "" : "30 günlük süre başladı; ayrıntıdan değiştirebilirsiniz." }); load(); }
+    catch (e) { toast({ tone: "error", title: "Atanamadı", detail: (e as Error).message }); }
   }
   return (
     <div className="card overflow-hidden">
-      <form onSubmit={(e) => { e.preventDefault(); setQuery(q); }} className="flex gap-2 border-b border-ink-100 p-3"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" /><input className="input pl-9" placeholder="E-posta ile ara" value={q} onChange={(e) => setQ(e.target.value)} /></div><Button type="submit" variant="secondary">Ara</Button></form>
+      <form onSubmit={(e) => { e.preventDefault(); setQuery(q); }} className="flex flex-wrap gap-2 border-b border-ink-100 p-3">
+        <div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" /><input className="input !pl-9" placeholder="E-posta veya ad ara…" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+        <Button type="submit" variant="secondary">Ara</Button>
+      </form>
+      <div className="flex flex-wrap gap-1.5 border-b border-ink-100 px-3 py-2">
+        {USER_FILTERS.map(([id, label]) => <button key={id} onClick={() => setFilter(id)} className={cn("rounded-full px-3 py-1 text-[12.5px] font-medium", filter === id ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-600 hover:bg-ink-200")}>{label}</button>)}
+      </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm"><thead className="bg-ink-50 text-left text-xs uppercase text-ink-500"><tr><th className="px-4 py-2.5">Kullanıcı</th><th>Paket</th><th>Rol</th><th>Durum</th><th>Kayıt</th></tr></thead>
-          <tbody>{rows.map((u) => (
+        <table className="w-full text-sm"><thead className="bg-ink-50 text-left text-xs uppercase text-ink-500"><tr><th className="px-4 py-2.5">Kullanıcı</th><th>Paket</th><th>Bitiş</th><th>Rol</th><th>Durum</th><th>Kayıt</th><th /></tr></thead>
+          <tbody>{(data?.rows ?? []).map((u) => (
             <tr key={u.id} className="border-t border-ink-100">
-              <td className="px-4 py-2.5"><p className="font-medium text-ink-900">{u.full_name || "—"}</p><p className="text-xs text-ink-500">{u.email}</p></td>
-              <td><select className="rounded-lg border border-ink-200 px-2 py-1 text-[13px]" value={u.plan_id} onChange={(e) => patch(u.id, { plan_id: e.target.value })}>{plans.rows.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></td>
+              <td className="px-4 py-2.5"><button className="text-left" onClick={() => setOpen(u.id)}><p className="font-medium text-ink-900 hover:underline">{u.full_name || "—"}</p><p className="text-xs text-ink-500">{u.email}</p></button></td>
+              <td><select className="rounded-lg border border-ink-200 px-2 py-1 text-[13px]" value={u.plan_id} onChange={(e) => setPlan(u.id, e.target.value)}>{plans.rows.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></td>
+              <td>{expiryBadge(u)}</td>
               <td><select className="rounded-lg border border-ink-200 px-2 py-1 text-[13px]" value={u.role} disabled={u.id === selfId} onChange={(e) => patch(u.id, { role: e.target.value })}><option value="user">Kullanıcı</option><option value="admin">Yönetici</option></select></td>
-              <td><button disabled={u.id === selfId} onClick={() => patch(u.id, { is_suspended: !u.is_suspended })}><Badge tone={u.is_suspended ? "red" : "green"}>{u.is_suspended ? "Askıda" : "Aktif"}</Badge></button></td>
+              <td className="space-x-1"><button disabled={u.id === selfId} onClick={() => patch(u.id, { is_suspended: !u.is_suspended })}><Badge tone={u.is_suspended ? "red" : "green"}>{u.is_suspended ? "Askıda" : "Aktif"}</Badge></button>{u.work_locked && <Badge tone="amber">Kilitli</Badge>}</td>
               <td className="text-xs text-ink-500">{new Date(u.created_at).toLocaleDateString("tr-TR")}</td>
+              <td className="pr-3"><Button size="sm" variant="ghost" onClick={() => setOpen(u.id)}>Ayrıntı</Button></td>
             </tr>
           ))}</tbody></table>
       </div>
-      <p className="border-t border-ink-100 px-4 py-2 text-xs text-ink-400">{loading ? "Yükleniyor…" : `${count} kullanıcı`}</p>
+      <p className="border-t border-ink-100 px-4 py-2 text-xs text-ink-400">{data ? `${data.count} kullanıcı` : "Yükleniyor…"}</p>
+      {open && <UserDetail id={open} plans={plans.rows} onClose={() => setOpen(null)} onChanged={load} />}
     </div>
+  );
+}
+
+/** Kullanıcı ayrıntısı: kullanım ve maliyet, paket süresi (uzat / tarih), ek hak, projeler */
+function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[]; onClose: () => void; onChanged: () => void }) {
+  const toast = useToast();
+  const [d, setD] = useState<any | null>(null);
+  const [days, setDays] = useState(30);
+  const [date, setDate] = useState("");
+  const [credit, setCredit] = useState({ ai: 10, search: 0, days: 30, note: "" });
+  const load = useCallback(async () => { try { const r = await api<any>(`/api/admin/user/${id}`); setD(r); setDate(r.profile.plan_expires_at ? r.profile.plan_expires_at.slice(0, 10) : ""); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [id, toast]);
+  useEffect(() => { load(); }, [load]);
+  async function act(body: any, ok: string) {
+    try { await api(`/api/admin/user/${id}`, { method: "POST", json: body }); toast({ tone: "success", title: ok }); await load(); onChanged(); }
+    catch (e) { toast({ tone: "error", title: "İşlem yapılamadı", detail: (e as Error).message }); }
+  }
+  const row = (l: string, used: number, lim: number | null | undefined) => (
+    <div key={l} className="flex justify-between border-t border-ink-50 py-1 text-[13px]"><span className="text-ink-500">{l}</span><span className="font-medium">{Number(used).toLocaleString("tr-TR")} / {lim == null ? "∞" : Number(lim).toLocaleString("tr-TR")}</span></div>
+  );
+  return (
+    <Modal open onClose={onClose} title={d ? `${d.profile.full_name || d.profile.email}` : "Kullanıcı"} wide>
+      {!d ? <p className="text-sm text-ink-400">Yükleniyor…</p> : (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-ink-100 p-4">
+              <p className="text-sm text-ink-500">{d.profile.email}{d.profile.institution ? ` · ${d.profile.institution}` : ""}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-2"><Badge tone="brand">{d.plan?.name ?? d.profile.plan_id}</Badge>{expiryBadge(d.profile)}{d.profile.work_locked && <Badge tone="amber">Kilitli: {d.reasons.join(", ") || "—"}</Badge>}{d.org && <Badge tone="violet">Kurum: {d.org.organizations?.name}</Badge>}</div>
+              <p className="mt-2 text-xs text-ink-400">Kayıt: {new Date(d.profile.created_at).toLocaleDateString("tr-TR")} · ID: <span className="font-mono">{d.profile.id}</span></p>
+            </div>
+            <div className="rounded-2xl border border-ink-100 p-4">
+              <p className="mb-1 font-semibold">Bu ay</p>
+              {row("Yapay zekâ isteği", d.usage.ai_requests, d.limits.ai_requests_month)}
+              {row("Kaynak taraması", d.usage.source_searches, d.limits.source_searches_month)}
+              {row("Token", d.usage.tokens, d.limits.tokens_month)}
+              {row("Aktif proje", d.usage.projects, d.limits.projects)}
+              {row("Depolama (MB)", d.usage.storage_mb, d.limits.storage_mb)}
+              <div className="mt-2 rounded-xl bg-ink-50 p-2.5 text-[13px]">API maliyeti: <b>{d.money.cost_try.toLocaleString("tr-TR")} TL</b> · Gelir (KDV hariç): <b>{d.money.revenue_try.toLocaleString("tr-TR")} TL</b>{d.money.cost_share != null && <> · Maliyet payı: <b className={d.money.cost_share > 33 ? "text-rose-600" : "text-emerald-700"}>%{d.money.cost_share}</b></>}</div>
+            </div>
+            <div className="rounded-2xl border border-ink-100 p-4">
+              <p className="mb-2 font-semibold">Projeler ({d.projects.length})</p>
+              {d.projects.length === 0 && <p className="text-sm text-ink-400">Proje yok.</p>}
+              {d.projects.map((p: any) => <p key={p.id} className="flex justify-between border-t border-ink-50 py-1 text-[13px]"><span className="truncate">{p.title}</span><span className="shrink-0 text-ink-400">{p.status} · {new Date(p.updated_at).toLocaleDateString("tr-TR")}</span></p>)}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-ink-100 p-4">
+              <p className="font-semibold">Paket ve süre</p>
+              <label className="mt-2 block text-xs text-ink-500">Paket ata (ücretli paketler gün sayısı kadar geçerli olur)</label>
+              <div className="mt-1 flex gap-2">
+                <select id="plan-pick" className="input !py-2" defaultValue={d.profile.plan_id}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+                <input className="input !w-24 !py-2" type="number" min={1} value={days} onChange={(e) => setDays(Number(e.target.value) || 30)} />
+                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" ? null : days }, "Paket atandı"); }}>Ata</Button>
+              </div>
+              <p className="mt-3 text-xs text-ink-500">Ek gün ver (bitiş tarihinden, süresi geçtiyse bugünden itibaren)</p>
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {[7, 15, 30, 90, 365].map((n) => <Button key={n} size="sm" variant="secondary" disabled={d.profile.plan_id === "free"} onClick={() => act({ action: "extend", days: n }, `${n} gün eklendi`)}>+{n} gün</Button>)}
+                <Button size="sm" variant="ghost" disabled={d.profile.plan_id === "free"} onClick={() => { const n = Number(prompt("Kaç gün eklensin? (eksi değer süreyi kısaltır)", "10")); if (n) act({ action: "extend", days: n }, `${n} gün eklendi`); }}>Özel…</Button>
+              </div>
+              <p className="mt-3 text-xs text-ink-500">Bitiş tarihini değiştir</p>
+              <div className="mt-1 flex gap-2">
+                <input className="input !py-2" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <Button size="sm" variant="secondary" disabled={!date} onClick={() => act({ action: "set_expiry", expiresAt: new Date(`${date}T23:59:00+03:00`).toISOString() }, "Bitiş tarihi güncellendi")}>Kaydet</Button>
+                <Button size="sm" variant="ghost" onClick={() => act({ action: "set_expiry", expiresAt: null }, "Süresiz yapıldı")}>Süresiz</Button>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-ink-100 p-4">
+              <p className="font-semibold">Ek kullanım hakkı ver</p>
+              <p className="mt-0.5 text-xs text-ink-500">Paket değiştirmeden bu ayın sınırına ekler (ör. telafi, kampanya). Kilit varsa hemen yeniden değerlendirilir.</p>
+              <div className="mt-2 grid grid-cols-3 gap-2 text-xs text-ink-500">
+                <label>YZ isteği<input className="input !py-1.5" type="number" min={0} value={credit.ai} onChange={(e) => setCredit({ ...credit, ai: Number(e.target.value) || 0 })} /></label>
+                <label>Tarama<input className="input !py-1.5" type="number" min={0} value={credit.search} onChange={(e) => setCredit({ ...credit, search: Number(e.target.value) || 0 })} /></label>
+                <label>Geçerlilik (gün)<input className="input !py-1.5" type="number" min={1} value={credit.days} onChange={(e) => setCredit({ ...credit, days: Number(e.target.value) || 30 })} /></label>
+              </div>
+              <input className="input mt-2 !py-1.5" placeholder="Not (isteğe bağlı)" value={credit.note} onChange={(e) => setCredit({ ...credit, note: e.target.value })} />
+              <Button className="mt-2" size="sm" onClick={() => act({ action: "grant_credits", aiRequests: credit.ai, sourceSearches: credit.search, days: credit.days, note: credit.note }, "Ek hak verildi")}>Hakkı ver</Button>
+              {d.credits.length > 0 && <div className="mt-3 space-y-0.5">{d.credits.map((c: any, i: number) => <p key={i} className="text-[12px] text-ink-500">+{c.amount} {c.kind === "ai_requests" ? "YZ isteği" : "tarama"} · {c.reason} · {c.expires_at ? `${new Date(c.expires_at).toLocaleDateString("tr-TR")}’e kadar` : "süresiz"}</p>)}</div>}
+            </div>
+          </div>
+        </div>
+      )}
+    </Modal>
   );
 }
 

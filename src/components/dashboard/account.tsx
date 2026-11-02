@@ -58,6 +58,19 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
         </section>
         <section className="card p-6">
           <div className="flex items-center justify-between"><h2 className="font-semibold">{t("Bu ayki kullanım")}</h2><Badge tone="brand" className="capitalize">{t("{plan} paket", { plan: profile.plan_id })}</Badge></div>
+          {(() => {
+            // Paket süresi (D53): bitiş tarihi ve kalan gün; 7 günden az kaldıysa uzatma bağlantısı
+            if (!profile.plan_expires_at || profile.plan_id === "free") return null;
+            const end = new Date(profile.plan_expires_at);
+            const left = Math.ceil((end.getTime() - Date.now()) / 86400_000);
+            const soon = left <= 7;
+            return (
+              <div className={cn("mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm", soon ? "bg-amber-50 text-amber-900" : "bg-ink-50 text-ink-600")}>
+                <span>{t("Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).", { date: end.toLocaleDateString(dl), n: Math.max(0, left) })}</span>
+                {soon && <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "" }))}>{t("Süreyi uzat")}</a>}
+              </div>
+            );
+          })()}
           <div className="mt-5 space-y-4">
             {rows.map(([l, v, m]) => <div key={l}><div className="mb-1.5 flex justify-between text-sm"><span className="text-ink-600">{l}</span><span className="font-medium">{v.toLocaleString(dl)} / {m == null ? "∞" : m.toLocaleString(dl)}</span></div><ProgressBar value={v} max={m ?? null} /></div>)}
             <p className="text-xs text-ink-400">Dışa aktarma biçimleri: {(limits?.export_formats ?? []).join(", ").toUpperCase() || "—"}</p>

@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!s) redirect("/giris");
   const { locked } = await getWorkLock();
   return (
-    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null }} locked={locked}>
+    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null }} locked={locked} expiresAt={s.profile.plan_id !== "free" ? s.profile.plan_expires_at ?? null : null}>
       {children}
     </AppShell>
   );

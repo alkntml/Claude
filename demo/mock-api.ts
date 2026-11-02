@@ -249,6 +249,9 @@ on("GET", "/api/files", () => ({ files: [] }));
 on("POST", "/api/files", () => fail(503, DEMO_DISABLED.files));
 on("POST", "/api/feedback", (_m, b) => { db.feedback.push({ ...b, created_at: now() }); return { ok: true }; });
 on("PATCH", "/api/account", () => ({ ok: true }));
+on("GET", "/api/account/growth", () => ({ referral: { code: "DEMO1234", link: "https://www.academiana.com.tr/davet/DEMO1234", invited: 2, rewarded: 1, reward: { ai_requests: 50, source_searches: 50, valid_days: 60 } }, credits: { ai_requests: 0, source_searches: 0 }, org: null, personalPlan: "pro" }));
+on("GET", "/api/admin/users-list", () => ({ rows: adminRows("users").map((u: Record<string, unknown>) => ({ ...u, plan_expires_at: new Date(Date.now() + 5 * 86400000).toISOString(), work_locked: false })), count: 1, page: 0 }));
+on("GET", "/api/admin/user/([^/]+)", () => ({ profile: { id: "demo", email: "demo@akademi.ai", full_name: "Demo Kullanıcı", plan_id: "pro", plan_expires_at: new Date(Date.now() + 5 * 86400000).toISOString(), work_locked: false, created_at: new Date().toISOString() }, usage: { ai_requests: 31, tokens: 410000, source_searches: 120, projects: 2, storage_mb: 12, cost_usd: 2.1 }, limits: { ai_requests_month: 75, tokens_month: 60000000, source_searches_month: 2000, projects: 10, storage_mb: 3000 }, reasons: [], projects: [{ id: "p1", title: "Elektrikli araç bataryaları", status: "active", updated_at: new Date().toISOString() }], credits: [], passes: [], org: null, plan: { name: "Pro", price_monthly: 899 }, money: { revenue_try: 749, cost_try: 101, cost_share: 13 } }));
 on("GET", "/api/admin/stats", () => adminStats());
 on("GET", "/api/admin/([a-z]+)", (m) => ({ rows: adminRows(m[1]), count: adminRows(m[1]).length, page: 0 }));
 on("PATCH", "/api/admin/([a-z]+)", () => fail(503, "Demo sürümünde yönetici değişiklikleri kaydedilmez."));
@@ -268,6 +271,9 @@ function adminStats() {
     byDay, byModel: { "claude-opus-5-5": { requests: Math.round(ai * 0.35), tokens: ai * 2600, cost: 41.2 }, "claude-sonnet-5-5": { requests: Math.round(ai * 0.4), tokens: ai * 2000, cost: 14.6 }, "claude-haiku-5-5": { requests: Math.round(ai * 0.25), tokens: ai * 600, cost: 0.7 } },
     providerHealth: { openalex: { ok: 412, fail: 3 }, crossref: { ok: 405, fail: 9 }, semantic_scholar: { ok: 361, fail: 44 }, europepmc: { ok: 398, fail: 2 }, arxiv: { ok: 401, fail: 6 } },
     planDist: { free: 92, basic: 21, pro: 12, premium: 3 },
+    money: { paidUsers: 36, revenueTry: 21540, costTry: 5980, profitTry: 15560, costShare: 28, usdTry: 48 },
+    expiring: [{ id: "x", email: "ornek@uni.edu.tr", full_name: "Örnek Kullanıcı", plan_id: "pro", plan_expires_at: new Date(Date.now() + 3 * 86400000).toISOString() }],
+    locked: 4,
     integrations: { supabase: true, supabaseServiceRole: true, anthropic: true, openai: false, contactEmail: true, semanticScholarKey: false, coreKey: false, stripe: false, iyzico: false },
     payments: [{ id: "stripe", label: "Stripe (uluslararası kartlar)", configured: false, implemented: true, usable: false }, { id: "iyzico", label: "iyzico (Türkiye)", configured: false, implemented: false, usable: false }],
   };

@@ -220,3 +220,12 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Maliyet ve token rakamları istemciye gönderilmez (`forClient`); yalnızca `ai_near` bayrağı.
 - Not: Yalnızca pahalı (Opus) işleri kullanan biri tavana istek hakkından önce ulaşabilir; bu, 1/3 oranının garantisi için bilinçli bir tercih.
 
+### D53 — Paket süresi ve genişletilmiş yönetim paneli
+- `profiles.plan_expires_at` (yalnızca yönetici/sunucu değiştirir). Süre dolunca `getSession` kullanıcıyı ücretsiz pakete düşürür (kalıcı yazılır, tarih bilgi için kalır). Yönetimde ücretli paket atanınca varsayılan 30 gün başlar.
+- Yönetim → Kullanıcılar: filtreler (ücretli, 7 günde bitecek, süresi dolan, kilitli, askıda), bitiş sütunu, ayrıntı penceresi (bu ayki kullanım ve maliyet payı, projeler, paket ata + gün, +7/+15/+30/+90/+365/özel gün, bitiş tarihi, süresiz, ek kullanım hakkı ver). API: `admin/users-list`, `admin/user/[id]` (GET + POST işlemleri).
+- Genel bakış: bu ay gelir (KDV hariç) / API maliyeti / kâr / maliyet payı, 7 günde bitecekler, kilitli kullanıcı sayısı. İstatistikler artık sayfalı okunur (1000 satır sınırı düzeltildi).
+- Kullanıcı tarafı: Hesap sayfasında bitiş tarihi ve kalan gün; son 3 günde uygulama genelinde uyarı; “Süreyi uzat” WhatsApp.
+
+### D54 — Davet kampanyası hediye kutusu
+- Uygulama sayfalarında sağ altta sabit hediye düğmesi (`components/gift-box.tsx`): görülmediyse veya yeni ödül kazanıldıysa kırmızı bildirim + sallanma; ilk ziyarette kısa baloncuk; açılınca davet bağlantısı, kopyala, WhatsApp, paylaş. Kenar çubuğunda “Davet et, kazan” bağlantısı da açar.
+

@@ -2025,4 +2025,13 @@ export const EN: Record<string, string> = {
   "yapay zekâ kullanım hakkınız": "AI allowance",
   "kaynak tarama hakkınız": "source search allowance",
   "Bu ayki kullanım hakkınız doldu; çalışmalarınız kilitlendi.": "You have used this month’s allowance; your work is locked.",
+  "Davet et, kazan": "Invite & earn",
+  "Paketiniz bugün sona eriyor.": "Your plan ends today.",
+  "Paketinizin bitmesine {n} gün kaldı.": "{n} days left on your plan.",
+  "Süreyi uzat": "Extend",
+  "Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).": "Your plan is valid until {date} ({n} days left).",
+  "Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nHesap e-postam: {email}": "Hello, I would like to extend my Academiana {plan} plan.\nAccount e-mail: {email}",
+  "Arkadaşını davet et, ikiniz de kazanın": "Invite a friend, you both win",
+  "Davet ettiğin her arkadaş e-postasını doğruladığında ikinize de {a} yapay zekâ isteği ve {s} kaynak tarama hakkı ({d} gün geçerli).": "For every friend who verifies their e-mail, you both get {a} AI requests and {s} source searches (valid for {d} days).",
+  "Arkadaşını davet et, ikinize de ek hak!": "Invite a friend — extra usage for both of you!",
 };

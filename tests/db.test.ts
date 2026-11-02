@@ -295,6 +295,13 @@ describe("anketler", () => {
     await as(A, "update public.projects set status = 'archived' where id = $1", [p.id]); // arşive almak serbest
   });
 
+  it("paket bitiş tarihini kullanıcı değiştiremez; yönetici/sunucu değiştirir", async () => {
+    await expectError(as(A, "update public.profiles set plan_expires_at = now() + interval '1 year' where id = auth.uid()"), /yetkiniz yok/);
+    await db.query("update public.profiles set plan_expires_at = now() + interval '30 days' where id = $1", [A]);
+    const [p] = await as<{ plan_expires_at: string }>(A, "select plan_expires_at from public.profiles where id = auth.uid()");
+    expect(new Date(p.plan_expires_at).getTime()).toBeGreaterThan(Date.now());
+  });
+
   it("proje önerisi çalışma türü kullanılabilir", async () => {
     await db.query("insert into public.projects (user_id, title, work_type) values ($1, 'TÜBİTAK', 'grant_proposal')", [A]);
     expect(await as(A, "select id from public.projects where work_type = 'grant_proposal'")).toHaveLength(1);

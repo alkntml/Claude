@@ -7,6 +7,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { activeOrg, type OrgInfo } from "@/lib/growth";
 import { higherPlan } from "@/lib/pricing";
+import { adminClient } from "@/lib/supabase/admin";
 
 export interface Profile {
   id: string;
@@ -26,6 +27,8 @@ export interface Profile {
   referral_code?: string | null;
   /** Çalışma kilidi bayrağı (D50); sunucu yönetir */
   work_locked?: boolean;
+  /** Ücretli paketin bitiş tarihi (D53); null = süresiz */
+  plan_expires_at?: string | null;
 }
 
 export interface Session {
@@ -49,6 +52,11 @@ export const getSession = cache(async (): Promise<Session | null> => {
   ]);
   if (!profile) return null;
   const p = profile as Profile;
+  // Paket süresi dolduysa ücretsiz pakete düşer (D53); tarih bilgi için saklanır
+  if (p.plan_id !== "free" && p.plan_expires_at && new Date(p.plan_expires_at).getTime() < Date.now()) {
+    p.plan_id = "free";
+    try { await adminClient().from("profiles").update({ plan_id: "free" }).eq("id", p.id); } catch { /* service role yoksa yalnızca bu istekte düşer */ }
+  }
   // Kurumsal lisans: kurum paketi kişisel paketten yüksekse o geçerlidir
   p.personal_plan_id = p.plan_id;
   p.org = org;

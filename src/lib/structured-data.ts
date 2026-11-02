@@ -5,6 +5,7 @@
 import type { Locale } from "@/i18n";
 import { absoluteUrl, localizedPath } from "./seo";
 import { SITE_NAME, SITE_URL } from "./site";
+import { priceNumber } from "@/lib/pricing";
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const SITE_ID = `${SITE_URL}/#website`;
@@ -41,10 +42,11 @@ export function websiteLd(locale: Locale) {
 
 interface PlanLike { id: string; name: string; price_monthly: number | string; currency?: string | null }
 
-export function softwareLd(locale: Locale, plans: PlanLike[]) {
+export function softwareLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
   const en = locale === "en";
-  const prices = plans.map((p) => Number(p.price_monthly)).filter((n) => Number.isFinite(n));
-  const currency = plans.find((p) => p.currency)?.currency ?? "TRY";
+  // İngilizce sayfada fiyatlar dolar (D59)
+  const prices = plans.map((p) => priceNumber(Number(p.price_monthly), locale, usdTry).amount).filter((n) => Number.isFinite(n));
+  const currency = en ? "USD" : plans.find((p) => p.currency)?.currency ?? "TRY";
   return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -69,7 +71,7 @@ export function softwareLd(locale: Locale, plans: PlanLike[]) {
   };
 }
 
-export function offersLd(locale: Locale, plans: PlanLike[]) {
+export function offersLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -77,7 +79,7 @@ export function offersLd(locale: Locale, plans: PlanLike[]) {
     itemListElement: plans.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      item: { "@type": "Offer", name: `${SITE_NAME} ${p.name}`, price: Number(p.price_monthly), priceCurrency: p.currency ?? "TRY", url: absoluteUrl(localizedPath("/fiyatlar", locale)), category: "subscription", itemOffered: { "@id": `${SITE_URL}/#software` } },
+      item: { "@type": "Offer", name: `${SITE_NAME} ${p.name}`, price: priceNumber(Number(p.price_monthly), locale, usdTry).amount, priceCurrency: priceNumber(0, locale).currency, url: absoluteUrl(localizedPath("/fiyatlar", locale)), category: "subscription", itemOffered: { "@id": `${SITE_URL}/#software` } },
     })),
   };
 }

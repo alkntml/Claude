@@ -7,6 +7,8 @@ import { getLocale } from "@/i18n/server";
 import { EN } from "@/i18n/en";
 import { PwaRegister } from "@/components/pwa";
 import { UpgradeDialogHost } from "@/components/upgrade-dialog";
+import { PriceProvider } from "@/components/price-context";
+import { getUsdTry } from "@/lib/fx";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, websiteLd } from "@/lib/structured-data";
@@ -42,14 +44,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = { themeColor: "#0f1d3d", width: "device-width", initialScale: 1 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
+  const [locale, usdTry] = await Promise.all([getLocale(), getUsdTry().catch(() => 48)]);
   return (
     <html lang={locale} className={`${sans.variable} ${serif.variable}`}>
       <body className="font-sans min-h-screen">
         <I18nProvider locale={locale} dict={locale === "en" ? EN : null}>
-          <ToastProvider>{children}</ToastProvider>
+          <PriceProvider usdTry={usdTry}><ToastProvider>{children}</ToastProvider>
           <PwaRegister />
-          <UpgradeDialogHost />
+          <UpgradeDialogHost /></PriceProvider>
           <JsonLd data={[organizationLd(), websiteLd(locale)]} />
         </I18nProvider>
       </body>

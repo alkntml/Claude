@@ -13,6 +13,7 @@ import { SiteHeader } from "@/components/site-header";
 import { FadeIn } from "@/components/ui/fade-in";
 import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
+import { getUsdTry } from "@/lib/fx";
 import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
@@ -24,14 +25,14 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const [session, plans, { t, locale }] = await Promise.all([hasAuthCookie(), publicPlans(), getT()]);
+  const [session, plans, { t, locale }, usdTry] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getUsdTry()]);
   const signedIn = session;
   const all = FAQ.flatMap((g) => g.items);
   const faq = FAQ_HIGHLIGHTS.map((id) => all.find((i) => i.id === id)!).filter(Boolean);
   return (
     <>
       <SiteHeader signedIn={signedIn} />
-      <JsonLd data={[softwareLd(locale, plans), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] })]} />
+      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] })]} />
       <main>
         <Hero signedIn={signedIn} />
         <section id="tur-sec" className="relative scroll-mt-24 py-16">

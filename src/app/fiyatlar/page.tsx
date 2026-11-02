@@ -9,6 +9,7 @@ import { SiteHeader } from "@/components/site-header";
 import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import { getSetting } from "@/lib/settings";
+import { getUsdTry } from "@/lib/fx";
 import { TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
 import Link from "@/components/l-link";
 
@@ -17,12 +18,12 @@ export async function generateMetadata() {
 }
 
 export default async function Pricing() {
-  const [s, plans, { t, locale }, referral] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getSetting("referral")]);
+  const [s, plans, { t, locale }, referral, usdTry] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getSetting("referral"), getUsdTry()]);
   const teamHref = whatsappLink(t("Merhaba, Academiana Akademik Ekip İndirimi (%{p}) hakkında bilgi almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket: ", { p: TEAM_DISCOUNT.percent }));
   return (
     <>
       <SiteHeader signedIn={s} />
-      <JsonLd data={[softwareLd(locale, plans), offersLd(locale, plans), breadcrumbLd(locale, [{ name: t("Fiyatlar"), path: localizedPath("/fiyatlar", locale) }])]} />
+      <JsonLd data={[softwareLd(locale, plans, usdTry), offersLd(locale, plans, usdTry), breadcrumbLd(locale, [{ name: t("Fiyatlar"), path: localizedPath("/fiyatlar", locale) }])]} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Şeffaf fiyatlandırma")}</h1>
@@ -47,7 +48,7 @@ export default async function Pricing() {
             </div>
           )}
         </div>
-        <p className="mt-10 text-center text-sm text-ink-400">{t("Fiyatlara KDV dahildir.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
+        <p className="mt-10 text-center text-sm text-ink-400">{locale === "en" ? t("Dolar fiyatları güncel kurla yaklaşık olarak hesaplanır; ödeme TL veya dolar ile yapılabilir.") : t("Fiyatlara KDV dahildir.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
       </main>
       <SiteFooter />
     </>

@@ -4,6 +4,7 @@ import { BookCheck, Brain, CheckCircle2, FileDown, FileSearch2, Layers3, Library
 import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
+import { usePrice } from "@/components/price-context";
 
 export function Pillars() {
   const { t } = useT();
@@ -136,6 +137,7 @@ export function Principles() {
 
 export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn: boolean }) {
   const { t } = useT();
+  const price = usePrice();
   return (
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
       {plans.map((p, i) => {
@@ -147,7 +149,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
               <h3 className="text-lg font-semibold">{t(p.name)}</h3>
               <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{t(p.description)}</p>
               <div className="mt-5 flex items-baseline gap-1">
-                <span className="text-4xl font-semibold tracking-tight">{Number(p.price_monthly) === 0 ? "₺0" : `₺${Number(p.price_monthly).toLocaleString("tr-TR")}`}</span>
+                <span className="text-4xl font-semibold tracking-tight">{price(Number(p.price_monthly))}</span>
                 <span className={featured ? "text-white/50" : "text-ink-400"}>{t("/ay")}</span>
               </div>
               <ul className="mt-6 flex-1 space-y-2.5">

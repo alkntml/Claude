@@ -5,6 +5,7 @@ import { Logo } from "@/components/icons";
 import { useT } from "@/i18n/client";
 import { openUpgrade } from "@/lib/client";
 import { DOWNLOAD_PRICE_TL, whatsappLink } from "@/lib/pricing";
+import { usePrice } from "@/components/price-context";
 
 interface Props {
   project: { id: string; title: string; work_type: string };
@@ -26,8 +27,9 @@ const REASON: Record<string, string> = { ai_requests: "yapay zekâ kullanım hak
  */
 export function LockedProject({ project, stages, sources, reasons, pass, email, memberNo = "" }: Props) {
   const { t } = useT();
+  const price = usePrice();
   const what = [...new Set(reasons.map((r) => REASON[r]).filter(Boolean))].map((x) => t(x)).join(t(" ve "));
-  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price} TL).\nÇalışma: {title}\nÇalışma kodu: {id}\nÜye no: {no}\nHesap e-postam: {email}", { price: DOWNLOAD_PRICE_TL, title: project.title, id: project.id, email, no: memberNo }));
+  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price}).\nÇalışma: {title}\nÇalışma kodu: {id}\nÜye no: {no}\nHesap e-postam: {email}", { price: price(DOWNLOAD_PRICE_TL), title: project.title, id: project.id, email, no: memberNo }));
   const written = stages.filter((s) => s.text.trim());
 
   return (
@@ -72,9 +74,9 @@ export function LockedProject({ project, stages, sources, reasons, pass, email, 
                 </>
               ) : (
                 <>
-                  <p className="mt-1 text-3xl font-semibold text-ink-900">{DOWNLOAD_PRICE_TL} TL</p>
+                  <p className="mt-1 text-3xl font-semibold text-ink-900">{price(DOWNLOAD_PRICE_TL)}</p>
                   <p className="mt-1 flex-1 text-sm text-ink-500">{t("Bu çalışmanın Word / PDF dosyasını tek seferlik indirme hakkı. Ödeme WhatsApp üzerinden alınır; ödemeniz onaylanınca indirme düğmeleri burada açılır.")}</p>
-                  <a href={downloadHref} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-900 hover:bg-ink-50"><MessageCircle className="h-4 w-4" /> {t("Mevcut çalışmayı indir — {price} TL", { price: DOWNLOAD_PRICE_TL })}</a>
+                  <a href={downloadHref} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-900 hover:bg-ink-50"><MessageCircle className="h-4 w-4" /> {t("Mevcut çalışmayı indir — {price}", { price: price(DOWNLOAD_PRICE_TL) })}</a>
                 </>
               )}
             </div>

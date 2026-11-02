@@ -43,3 +43,25 @@ export function whatsappLink(text: string): string {
 
 /** Kilitli çalışmayı (aboneliksiz) bir kez indirme ücreti, TL (D50) */
 export const DOWNLOAD_PRICE_TL = 100;
+
+/* ---------------------------------------------------------------------
+ * Para birimi (D59): İngilizce sayfalarda fiyatlar dolar. Dolar fiyatı TL fiyattan,
+ * yönetim panelindeki kurla (billing.margin.usd_try) hesaplanır ve yukarı yuvarlanır (ör. 10,40 → 10,99).
+ * ------------------------------------------------------------------- */
+export const DEFAULT_USD_TRY = 48;
+
+export function usdFromTry(tl: number, usdTry: number = DEFAULT_USD_TRY): number {
+  if (!tl) return 0;
+  return Math.ceil(tl / Math.max(1, usdTry)) - 0.01;
+}
+
+/** Fiyat metni: tr → “₺499”, en → “$10.99” */
+export function formatPrice(tl: number, locale: "tr" | "en", usdTry: number = DEFAULT_USD_TRY): string {
+  const n = Number(tl) || 0;
+  if (locale === "en") return n === 0 ? "$0" : `$${usdFromTry(n, usdTry).toFixed(2)}`;
+  return `₺${n.toLocaleString("tr-TR")}`;
+}
+
+export function priceNumber(tl: number, locale: "tr" | "en", usdTry: number = DEFAULT_USD_TRY): { amount: number; currency: "TRY" | "USD" } {
+  return locale === "en" ? { amount: usdFromTry(Number(tl) || 0, usdTry), currency: "USD" } : { amount: Number(tl) || 0, currency: "TRY" };
+}

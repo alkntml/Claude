@@ -252,3 +252,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Giriş animasyonları tek bir hafif solmaya indirildi (yalnızca hero); bölüm başlıklarında (`FadeIn`) ve kartlarda animasyon yok. Başlıkta `transition-all` (padding) kaldırıldı.
 - Ölçüm (390 px, işlemci 6× yavaşlatılmış): kaydırmada ~54 kare/sn, 3 sn’de 2 uzun kare.
 
+### D59 — İngilizce sayfalarda dolar fiyatı
+- Dolar fiyatı TL fiyattan yönetimdeki kurla (`billing.margin.usd_try`) hesaplanır ve yukarı yuvarlanır: `ceil(TL/kur) − 0,01` (48 TL kurla 499 → $10.99, 899 → $18.99, 1.499 → $31.99; 100 TL indirme → $2.99). Kur değişince otomatik güncellenir.
+- `formatPrice` / `usdFromTry` (pricing.ts), `getUsdTry` (lib/fx.ts, 1 saat önbellek, `fx` etiketi; kur kaydedilince yenilenir), istemcide `PriceProvider` + `usePrice()` (kök düzen). Fiyat kartları, Hesap, yükseltme penceresi, kilit ekranı, WhatsApp mesajları ve JSON-LD (priceCurrency USD) dile göre.
+- Kâr hesabı (maliyet tavanı) TL fiyat üzerinden kalır.
+

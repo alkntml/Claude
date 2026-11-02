@@ -53,6 +53,7 @@ export const PATCH = route<Ctx>("admin.update", async (req, { params }) => {
     const { data, error } = await db.from("app_settings").upsert({ key: String(id), value: patch.value, updated_by: s.user.id, updated_at: new Date().toISOString() }).select().single();
     if (error) throw error;
     invalidateSettings();
+    if (String(id) === "billing.margin") revalidateTag("fx"); // dolar fiyatları (D59)
     return json({ row: data });
   }
   if (resource === "users" && String(id) === s.user.id && patch.role === "user") throw new ApiError(422, "Kendi yönetici yetkinizi kaldıramazsınız");

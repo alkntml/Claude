@@ -41,3 +41,15 @@ describe("üye numarası", () => {
     expect(parseMemberCode("ali@x.com")).toBeNull();
   });
 });
+
+import { formatPrice, usdFromTry } from "@/lib/pricing";
+describe("dolar fiyatı (İngilizce sayfalar)", () => {
+  it("TL’den yukarı yuvarlanmış dolar fiyatı", () => {
+    expect(usdFromTry(499, 48)).toBeCloseTo(10.99, 2);
+    expect(usdFromTry(899, 48)).toBeCloseTo(18.99, 2);
+    expect(usdFromTry(1499, 48)).toBeCloseTo(31.99, 2);
+    expect(formatPrice(499, "en", 48)).toBe("$10.99");
+    expect(formatPrice(0, "en", 48)).toBe("$0");
+    expect(formatPrice(1499, "tr", 48)).toBe("₺1.499");
+  });
+});

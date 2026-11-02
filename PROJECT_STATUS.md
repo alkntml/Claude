@@ -81,7 +81,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Grafik oluşturucu:** Araçlar → sütun (ortalama+hata çubuğu / sıklık), çizgi (tekrarlı ölçüm), histogram, saçılım (+regresyon), kutu; APA tarzı; editöre şekil olarak eklenir; Word/PDF’e gömülür
 - **Konu bulma:** `/konu-bul`; OpenAlex yıllık yayın, son 3 yıl/önceki 3 yıl, alt konu büyümesi, Türkiye payı, çok atıf alanlar + verilere dayalı 5 öneri → “Bu konuyla tez başlat”
 - **Tekrar önleme:** yazım kurallarında üslup/tekrar maddesi; bölümde ve çalışmada sık geçen kalıplar modele “TEKRARDAN KAÇIN” listesi olarak verilir (`src/lib/quality/repetition.ts`); taslakta tekrar varsa uyarı + “Tekrarları azalt” eylemi; alt başlıklarla yazımda bütün kontrolü; kalite raporunda bölüm içi tekrar uyarısı
-- **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Sağlayıcılar henüz Supabase’de açılmadı (TODO)
+- **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Google girişi 2026-11-02’de açıldı ve çalışıyor (Google Cloud projesi “Academiana”, yayında); Apple ücretli geliştirici hesabı gerektirir
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
 - **Paket süresi + yönetim paneli (D53):** bitiş tarihi, ek gün, ek hak, kullanıcı ayrıntısı, gelir/kâr özeti
 - **Dolar fiyatı (D59):** İngilizce sayfalarda fiyatlar kurdan otomatik dolar

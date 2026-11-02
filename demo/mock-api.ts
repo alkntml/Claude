@@ -123,6 +123,16 @@ on("POST", "/api/projects", (_m, b) => {
 });
 const proj = (id: string) => db.projects.find((x) => x.id === id) ?? fail(404, "Proje bulunamadı", "not_found");
 on("GET", "/api/projects/([^/]+)", (m) => ({ project: proj(m[1]) }));
+// Demo: bölüm kontrolü (yalnızca basit kurallar; gerçek sürümde yapay zekâ incelemesi de yapılır)
+on("POST", "/api/stages/([^/]+)/review", (m) => {
+  const st = db.stages.find((x: any) => x.id === m[1]) ?? fail(404, "Bölüm bulunamadı", "not_found");
+  const text = String(st.content_text ?? "");
+  const words = (text.match(/[\p{L}\p{N}]+/gu) ?? []).length;
+  const issues: any[] = [];
+  if ((text.match(/\[KAYNAK GEREKLİ\]/g) ?? []).length) issues.push({ severity: "error", title: "Kaynak bekleyen iddialar", detail: "Bölümde “[KAYNAK GEREKLİ]” var.", fix: "Kaynak bul ve düzelt ile tamamlayın.", source: "rule" });
+  if (words < 150) issues.push({ severity: "warning", title: "Kısa bölüm", detail: `Bölüm ${words} kelime.`, fix: "Bölümün amacındaki alt konuları genişletin.", source: "rule" });
+  return { review: { verdict: issues.some((i) => i.severity === "error") ? "major" : issues.length ? "minor" : "ok", summary: "Demo: yapay zekâ incelemesi tam sürümde yapılır.", strengths: words >= 150 ? ["Bölüm kaynaklarla desteklenmiş."] : [], issues, aiRun: false, aiRan: false }, aiError: null };
+});
 // Demo: gerçek yapay zekâ çağrısı yerine örnek başlık önerileri
 on("POST", "/api/projects/([^/]+)/titles", (m) => {
   const p = proj(m[1]);

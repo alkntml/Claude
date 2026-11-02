@@ -38,6 +38,7 @@ import { DefenseModal } from "./defense-modal";
 import { ReviewerModal } from "./reviewer-modal";
 import { ToolsMenu, type ToolId } from "./tools-menu";
 import { TitleChooser } from "./title-chooser";
+import { StageReviewModal } from "./stage-review";
 import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -263,10 +264,20 @@ export function Workspace(props: Props) {
     setTitleOpen(false);
     if (!project.context?.titleChosen) { try { localStorage.setItem(`akademi:title-later:${project.id}`, "1"); } catch { /* yok */ } }
   }
+  // Bölümü tamamla: önce kontrol penceresi açılır; uygunsa (veya kullanıcı isterse) tamamlanır
+  const [reviewOpen, setReviewOpen] = useState(false);
+  async function startComplete() {
+    if (!active) return;
+    await flush();
+    setReviewOpen(true);
+  }
+  function fixWithAssistant(issues: { title: string; detail: string; fix?: string }[]) {
+    const list = issues.slice(0, 10).map((i, k) => `${k + 1}. ${i.title}: ${i.detail}${i.fix ? ` → ${i.fix}` : ""}`).join("\n");
+    askAssistant(t("Bu bölümün kontrolünde şu sorunlar bulundu:\n{list}\n\nBölümü bu sorunları giderecek şekilde düzelt. Düzeltilmiş bölümü taslak olarak ver; mevcut atıfları ve sayfa bilgilerini koru, yeni bilgi veya kaynak uydurma. Neyi değiştirdiğini kısaca yaz.", { list }), "chat");
+  }
   // Bölümü tamamla → önerilen sıradaki bölüme geç
   async function completeStage() {
     if (!active) return;
-    await flush();
     await patchStage(active.id, { status: "done" });
     const next = nextStage(stages.map((x) => (x.id === active.id ? { ...x, status: "done" } : x)), active.id);
     if (next) { toast({ tone: "success", title: t("“{s}” tamamlandı", { s: active.title }), detail: t("Sıradaki bölüm: {s}", { s: next.title }) }); selectStage(next.id); }
@@ -568,7 +579,7 @@ export function Workspace(props: Props) {
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                         <span className="ml-auto">{active.status === "done"
                           ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")} · {t("{n} kelime", { n: active.word_count ?? 0 })}</span>
-                          : <Button size="sm" variant="secondary" onClick={completeStage} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
+                          : <Button size="sm" variant="secondary" onClick={startComplete} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
                       </div>
                       <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[32px]" aria-label={t("Bölüm başlığı")} />
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
@@ -641,6 +652,7 @@ export function Workspace(props: Props) {
       {chartOpen && <ChartModal open onClose={() => setChartOpen(false)} files={files} language={project.language} figureNo={nextFigureNo} onInsert={!isBibliography && editor ? insertFigure : undefined} />}
       {defenseOpen && <DefenseModal open onClose={() => setDefenseOpen(false)} projectId={project.id} language={project.language} />}
       <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />
+      {active && reviewOpen && <StageReviewModal open onClose={() => setReviewOpen(false)} stageId={active.id} stageTitle={active.title} onComplete={completeStage} onFix={fixWithAssistant} />}
       <TitleChooser open={titleOpen} onClose={closeTitle} projectId={project.id} currentTitle={project.title} onChoose={chooseTitle} />
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}

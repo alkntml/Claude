@@ -31,7 +31,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 162 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 164 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -68,6 +68,7 @@ src/lib/
   stats/charts.ts + charts/svg.ts  Grafik verisi (deterministik) + APA tarzı SVG çizimi (istemcide PNG’ye çevrilir, editörde `figure` düğümü)
   defense.ts             Savunma provası (jüri soruları, cevap değerlendirme)
   topics.ts + topics-server.ts     Konu bulma: OpenAlex yıllık eğilim, alt konular, Türkiye payı + verilere dayalı öneriler
+  quality/stage-review.ts  Bölüm tamamlama kontrolü (kural + yapay zekâ incelemesi)
   quality/repetition.ts  Tekrar analizi (kalıp ifadeler, cümle başlangıçları, benzer cümleler)
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                index.ts (t, ülke→dil), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
@@ -77,7 +78,7 @@ demo/                    Sunucusuz tarayıcı demosu (mock API + Next shim'leri)
 tests/                   Vitest
 ```
 
-API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/checkout|webhook|portal`, `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `[id]`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`.
+API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/checkout|webhook|portal`, `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `[id]`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`, `stages/[id]/review`.
 
 ## Kodlama kuralları
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.

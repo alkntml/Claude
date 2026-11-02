@@ -145,3 +145,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D40 — Adım adım akış
 - Başlık seçimi ilk adım: seçilmediyse çalışma alanı açılışında öneri penceresi (yapay zekâ, “balanced”); “sonra” denirse o cihazda tekrar otomatik açılmaz, sol panelde “Adım 1: Başlık seç” kalır. Seçim `projects.context.titleChosen` ile saklanır (migration gerekmez).
 - Yazım sırası yol haritası sırasıdır; `title_abstract` ve `grant_summary` en sona alınır (`lib/workflows/order.ts`). Bölüm tamamlama mevcut `status = done` alanını kullanır; yeni durum alanı eklenmedi.
+
+### D41 — Bölüm tamamlama kontrolü
+- `stages/[id]/review`: bu bölüme ait kural sonuçları (runQualityChecks tek bölümle) + “balanced” modelle amaç/kurallar/başlık uyumu incelemesi (JSON şema). Kural hatası (ör. [KAYNAK GEREKLİ]) yapay zekâ “ok” dese bile kararı düşürür. AI limiti/hatasında yalnızca kurallar gösterilir. Kullanıcı her durumda “Yine de tamamlandı işaretle” diyebilir (karar kullanıcının).

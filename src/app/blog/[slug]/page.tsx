@@ -6,7 +6,7 @@ import { BlogBody } from "@/components/blog/rich";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getSession } from "@/lib/auth";
+import { hasAuthCookie } from "@/lib/auth";
 import { EN_POSTS, findPost, localizePost, parseBody, plainText, POSTS, postPath, readingMinutes, relatedPosts } from "@/lib/blog";
 import { absoluteUrl, localizedPath } from "@/lib/seo";
 import { buildMeta, ogImage } from "@/lib/seo-server";
@@ -40,7 +40,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const found = findPost(slug);
   if (!found) notFound();
-  const [{ t, locale }, s] = await Promise.all([getT(), getSession().catch(() => null)]);
+  const [{ t, locale }, s] = await Promise.all([getT(), hasAuthCookie()]);
   // Adres ile dil uyuşmuyorsa (ör. /en/blog/<türkçe-adres>) doğru adrese kalıcı yönlendir
   if (found.lang !== locale && (locale === "tr" || EN_POSTS[found.post.slug])) permanentRedirect(postPath(found.post, locale));
   const p = localizePost(found.post, locale);
@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const related = relatedPosts(found.post).map((r) => ({ r, l: localizePost(r, locale) }));
   return (
     <>
-      <SiteHeader signedIn={!!s} />
+      <SiteHeader signedIn={s} />
       <JsonLd data={jsonLd} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-32">
         <nav aria-label={t("Konum")} className="flex flex-wrap items-center gap-1.5 text-sm text-ink-500">

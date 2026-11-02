@@ -168,3 +168,12 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Coğrafi yönlendirme yalnızca insanlara (307) ve yalnızca herkese açık sayfalarda; botlar ve açık /en adresleri yönlendirilmez. Dil düğmesi sayfadaki hreflang bağlantısına gider.
 - FAQPage verisi eklendi; ancak Google 2023’ten beri SSS zengin sonuçlarını çoğu site için göstermiyor. Asıl kazanç: BlogPosting/Breadcrumb, Organization/logo, site bağlantıları ve iki dilli dizinleme. HowTo ve puan (rating) kullanılmadı (kaldırıldı / sahte veri olurdu).
 - Blog İngilizce yazıları çeviri değil uyarlama; İngilizce adres (ör. how-to-write-a-thesis) İngilizce aramalar için.
+
+### D46 — Sayfa hızı
+- `getSession` istek başına `cache()` ile bir kez çalışır; profil ve kurum sorguları paralel.
+- Ara katman `/api` isteklerinde ve oturum çerezi olmayan ziyaretçilerde Supabase’e gitmez; oturum varsa `getUser` yerine `getClaims` (JWT yerel doğrulama).
+- Herkese açık sayfalar giriş durumunu yalnızca çerezden anlar (`hasAuthCookie`), veritabanına gitmez. Paket listesi 5 dk önbellekte (`unstable_cache`, etiket `plans`; yönetim panelinde değişince yenilenir).
+- Çalışma alanındaki pencereler (`next/dynamic`) ihtiyaç anında yüklenir.
+- İngilizce sözlük (`en.ts`, ~180 KB) istemci paketinden çıkarıldı: istemci `@/i18n/core` (sözlüksüz) kullanır, sözlük yalnızca İngilizce sayfalarda kök düzenden `I18nProvider`’a prop olarak gelir. İstemci bileşeninde `makeT`/`@/i18n` içe aktarma; `useT()` kullan.
+- Sonuç: `/proje/[id]` 438 → 360 kB. Tam statik herkese açık sayfalar daha büyük bir yeniden yapılanma gerektirir (henüz yapılmadı).
+

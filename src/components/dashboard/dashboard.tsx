@@ -2,7 +2,7 @@
 import { daysLeft, wordsThisWeek } from "@/lib/goals";
 import { InstallApp } from "@/components/pwa";
 import { useT } from "@/i18n/client";
-import { makeT, type TFn } from "@/i18n";
+import { makeDictT, type TFn } from "@/i18n/core";
 import { motion } from "framer-motion";
 import { ArrowRight, BookMarked, Bot, CheckCircle2, Clock3, FileText, FolderOpen, Megaphone, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +18,7 @@ interface Props {
   usage: { ai_requests: number; tokens: number; source_searches: number; projects: number; storage_mb: number } | null; limits: any;
 }
 
-export function timeAgo(iso: string, t: TFn = makeT("tr"), dl = "tr-TR") {
+export function timeAgo(iso: string, t: TFn = makeDictT(null), dl = "tr-TR") {
   const d = (Date.now() - new Date(iso).getTime()) / 1000;
   if (d < 60) return t("az önce");
   if (d < 3600) return t("{n} dk önce", { n: Math.floor(d / 60) });

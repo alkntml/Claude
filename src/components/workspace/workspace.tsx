@@ -5,6 +5,7 @@ import {
   ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, GraduationCap, ExternalLink, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
 } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -26,20 +27,32 @@ import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
 import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./panels";
 import { ProjectSources, ResearchModal } from "./sources";
 import { ShareButton } from "./share-modal";
-import { OutlineWriter } from "./outline-writer";
-import { FixClaimsModal } from "./fix-claims";
-import { FormatModal } from "./format-modal";
+
+
+
 import { GoalModal, GoalWidget } from "./goals";
 import { shouldShowTour, Tour } from "./tour";
-import { AnalysisModal } from "./analysis-modal";
-import { JournalModal } from "./journal-modal";
-import { ChartModal } from "./chart-modal";
-import { DefenseModal } from "./defense-modal";
-import { ReviewerModal } from "./reviewer-modal";
+
+
+
+
+
 import { ToolsMenu, type ToolId } from "./tools-menu";
-import { TitleChooser } from "./title-chooser";
-import { StageReviewModal } from "./stage-review";
+
+
 import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
+
+// Açılır pencereler yalnızca gerektiğinde yüklenir (çalışma alanının ilk açılışı hızlansın)
+const OutlineWriter = dynamic(() => import("./outline-writer").then((m) => m.OutlineWriter), { ssr: false });
+const FixClaimsModal = dynamic(() => import("./fix-claims").then((m) => m.FixClaimsModal), { ssr: false });
+const FormatModal = dynamic(() => import("./format-modal").then((m) => m.FormatModal), { ssr: false });
+const AnalysisModal = dynamic(() => import("./analysis-modal").then((m) => m.AnalysisModal), { ssr: false });
+const JournalModal = dynamic(() => import("./journal-modal").then((m) => m.JournalModal), { ssr: false });
+const ChartModal = dynamic(() => import("./chart-modal").then((m) => m.ChartModal), { ssr: false });
+const DefenseModal = dynamic(() => import("./defense-modal").then((m) => m.DefenseModal), { ssr: false });
+const ReviewerModal = dynamic(() => import("./reviewer-modal").then((m) => m.ReviewerModal), { ssr: false });
+const TitleChooser = dynamic(() => import("./title-chooser").then((m) => m.TitleChooser), { ssr: false });
+const StageReviewModal = dynamic(() => import("./stage-review").then((m) => m.StageReviewModal), { ssr: false });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SaveState = "saved" | "dirty" | "saving" | "error" | "offline";
@@ -651,9 +664,9 @@ export function Workspace(props: Props) {
       {analysisOpen && <AnalysisModal open onClose={() => setAnalysisOpen(false)} files={files} language={project.language} tableNo={nextTableNo} onInsert={!isBibliography && editor ? (md) => insertRef.current(md, {}, "append") : undefined} />}
       {chartOpen && <ChartModal open onClose={() => setChartOpen(false)} files={files} language={project.language} figureNo={nextFigureNo} onInsert={!isBibliography && editor ? insertFigure : undefined} />}
       {defenseOpen && <DefenseModal open onClose={() => setDefenseOpen(false)} projectId={project.id} language={project.language} />}
-      <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />
+      {reviewerOpen && <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />}
       {active && reviewOpen && <StageReviewModal open onClose={() => setReviewOpen(false)} stageId={active.id} stageTitle={active.title} onComplete={completeStage} onFix={fixWithAssistant} />}
-      <TitleChooser open={titleOpen} onClose={closeTitle} projectId={project.id} currentTitle={project.title} onChoose={chooseTitle} />
+      {titleOpen && <TitleChooser open={titleOpen} onClose={closeTitle} projectId={project.id} currentTitle={project.title} onChoose={chooseTitle} />}
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}
       <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} />

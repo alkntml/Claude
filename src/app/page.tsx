@@ -11,7 +11,7 @@ import { WorkTypePicker } from "@/components/landing/work-type-picker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { FadeIn } from "@/components/ui/primitives";
-import { getSession } from "@/lib/auth";
+import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
@@ -24,8 +24,8 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const [session, plans, { t, locale }] = await Promise.all([getSession().catch(() => null), publicPlans(), getT()]);
-  const signedIn = !!session;
+  const [session, plans, { t, locale }] = await Promise.all([hasAuthCookie(), publicPlans(), getT()]);
+  const signedIn = session;
   const all = FAQ.flatMap((g) => g.items);
   const faq = FAQ_HIGHLIGHTS.map((id) => all.find((i) => i.id === id)!).filter(Boolean);
   return (

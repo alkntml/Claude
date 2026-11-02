@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { LOCALE_COOKIE, localeForCountry, normalizeLocale } from "@/i18n";
+import { LOCALE_COOKIE, localeForCountry, normalizeLocale } from "@/i18n/core";
 import { SITE_URL } from "@/lib/site";
 import { BOT_UA, isPublicPath, splitLocale } from "@/lib/seo";
 
@@ -57,6 +57,19 @@ async function sessionResponse(request: NextRequest, build: () => NextResponse) 
     return build();
   }
 
+  // API uçları oturumu kendileri doğrular (requireUser); ara katmanda ikinci kez sorgulamaya gerek yok
+  if (path.startsWith("/api/")) return build();
+  // Oturum çerezi yoksa Supabase’e hiç gidilmez (ziyaretçiler ve arama motorları için hızlı)
+  const hasAuth = request.cookies.getAll().some((c) => /^sb-.+-auth-token(\.\d+)?$/.test(c.name));
+  if (!hasAuth) {
+    if (isProtected) {
+      const to = new URL("/giris", request.url);
+      to.searchParams.set("next", path);
+      return NextResponse.redirect(to);
+    }
+    return build();
+  }
+
   let response = build();
   const supabase = createServerClient(url, key, {
     cookies: {
@@ -69,7 +82,9 @@ async function sessionResponse(request: NextRequest, build: () => NextResponse) 
     },
   });
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // Oturumu yeniler; imza yerelde doğrulanabiliyorsa (asimetrik anahtar) ağ isteği yapmaz
+  const { data } = await supabase.auth.getClaims().catch(() => ({ data: null }));
+  const user = data?.claims?.sub ?? null;
   if (!user && isProtected) {
     const to = new URL("/giris", request.url);
     to.searchParams.set("next", path);

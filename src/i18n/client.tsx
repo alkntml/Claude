@@ -1,11 +1,11 @@
 "use client";
 import { createContext, useCallback, useContext, useMemo } from "react";
-import { LOCALE_COOKIE, dateLocale, makeT, type Locale, type TFn } from "./index";
+import { LOCALE_COOKIE, dateLocale, makeDictT, type Dict, type Locale, type TFn } from "./core";
 
 interface Ctx { locale: Locale; t: TFn; setLocale: (l: Locale) => void; dl: string }
-const I18nContext = createContext<Ctx>({ locale: "tr", t: makeT("tr"), setLocale: () => {}, dl: "tr-TR" });
+const I18nContext = createContext<Ctx>({ locale: "tr", t: makeDictT(null), setLocale: () => {}, dl: "tr-TR" });
 
-export function I18nProvider({ locale, children }: { locale: Locale; children: React.ReactNode }) {
+export function I18nProvider({ locale, dict, children }: { locale: Locale; dict?: Dict | null; children: React.ReactNode }) {
   const setLocale = useCallback((l: Locale) => {
     try {
       document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
@@ -15,7 +15,7 @@ export function I18nProvider({ locale, children }: { locale: Locale; children: R
     if (alt?.href) { const u = new URL(alt.href); window.location.href = `${u.pathname}${window.location.search}${window.location.hash}`; return; }
     window.location.reload();
   }, []);
-  const value = useMemo(() => ({ locale, t: makeT(locale), setLocale, dl: dateLocale(locale) }), [locale, setLocale]);
+  const value = useMemo(() => ({ locale, t: makeDictT(locale === "en" ? dict : null), setLocale, dl: dateLocale(locale) }), [locale, dict, setLocale]);
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nProvider } from "@/i18n/client";
 import { getLocale } from "@/i18n/server";
+import { EN } from "@/i18n/en";
 import { PwaRegister } from "@/components/pwa";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/components/json-ld";
@@ -44,7 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`${sans.variable} ${serif.variable}`}>
       <body className="font-sans min-h-screen">
-        <I18nProvider locale={locale}>
+        <I18nProvider locale={locale} dict={locale === "en" ? EN : null}>
           <ToastProvider>{children}</ToastProvider>
           <PwaRegister />
           <JsonLd data={[organizationLd(), websiteLd(locale)]} />

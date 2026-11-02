@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireAdmin } from "@/lib/auth";
 import { ADMIN_RESOURCES, SETTING_KEYS, type AdminResource } from "@/lib/admin-resources";
 import { invalidateSettings } from "@/lib/settings";
+import { revalidateTag } from "next/cache";
 import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ resource: string }> };
@@ -34,6 +35,7 @@ export const POST = route<Ctx>("admin.create", async (req, { params }) => {
   const body = await parseBody(req, r.create as z.ZodTypeAny);
   const { data, error } = await adminClient().from(r.table).insert(body).select().single();
   if (error) throw new ApiError(400, error.message);
+  if (resource === "plans") revalidateTag("plans"); // tanıtım sayfalarındaki paket önbelleğini yenile
   return json({ row: data }, 201);
 });
 
@@ -57,6 +59,7 @@ export const PATCH = route<Ctx>("admin.update", async (req, { params }) => {
   const key = resource === "settings" ? "key" : "id";
   const { data, error } = await db.from(r.table).update(patch).eq(key, id).select().single();
   if (error) throw new ApiError(400, error.message);
+  if (resource === "plans") revalidateTag("plans"); // tanıtım sayfalarındaki paket önbelleğini yenile
   return json({ row: data });
 });
 
@@ -69,5 +72,6 @@ export const DELETE = route<Ctx>("admin.delete", async (req, { params }) => {
   if (resource === "plans" && id === "free") throw new ApiError(422, "Ücretsiz paket silinemez");
   const { error } = await adminClient().from(r.table).delete().eq("id", id);
   if (error) throw new ApiError(400, error.message);
+  if (resource === "plans") revalidateTag("plans"); // tanıtım sayfalarındaki paket önbelleğini yenile
   return json({ ok: true });
 });

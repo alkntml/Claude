@@ -1,4 +1,6 @@
 import "server-only";
+import { cache } from "react";
+import { cookies } from "next/headers";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { ApiError } from "@/lib/api";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -30,20 +32,38 @@ export interface Session {
   profile: Profile;
 }
 
-export async function getSession(): Promise<Session | null> {
+/**
+ * Oturum + profil. Aynı istek içinde (düzen, sayfa, meta veri) tek kez çalışır (React cache).
+ * Profil ve kurum üyeliği paralel sorgulanır.
+ */
+export const getSession = cache(async (): Promise<Session | null> => {
   if (!isSupabaseConfigured()) return null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const [{ data: profile }, org] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    activeOrg(supabase, user.id),
+  ]);
   if (!profile) return null;
   const p = profile as Profile;
   // Kurumsal lisans: kurum paketi kişisel paketten yüksekse o geçerlidir
-  const org = await activeOrg(supabase, user.id);
   p.personal_plan_id = p.plan_id;
   p.org = org;
   if (org) p.plan_id = higherPlan(p.plan_id, org.plan_id);
   return { supabase, user, profile: p };
+});
+
+/**
+ * Tanıtım sayfaları için hızlı kontrol: oturum çerezi var mı? (ağ isteği yapmaz)
+ * Yalnızca “Giriş yap / Çalışma alanım” düğmesini seçmek için; yetki kontrolü değildir.
+ */
+export async function hasAuthCookie(): Promise<boolean> {
+  try {
+    return (await cookies()).getAll().some((c) => /^sb-.+-auth-token(\.\d+)?$/.test(c.name) && c.value.length > 0);
+  } catch {
+    return false;
+  }
 }
 
 export async function requireUser(): Promise<Session> {

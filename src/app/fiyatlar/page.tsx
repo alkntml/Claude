@@ -6,7 +6,7 @@ import { localizedPath } from "@/lib/seo";
 import { PricingCards } from "@/components/landing/sections";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getSession } from "@/lib/auth";
+import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import { getSetting } from "@/lib/settings";
 import Link from "@/components/l-link";
@@ -16,17 +16,17 @@ export async function generateMetadata() {
 }
 
 export default async function Pricing() {
-  const [s, plans, { t, locale }, student, referral] = await Promise.all([getSession().catch(() => null), publicPlans(), getT(), getSetting("billing.student"), getSetting("referral")]);
+  const [s, plans, { t, locale }, student, referral] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getSetting("billing.student"), getSetting("referral")]);
   return (
     <>
-      <SiteHeader signedIn={!!s} />
+      <SiteHeader signedIn={s} />
       <JsonLd data={[softwareLd(locale, plans), offersLd(locale, plans), breadcrumbLd(locale, [{ name: t("Fiyatlar"), path: localizedPath("/fiyatlar", locale) }])]} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Şeffaf fiyatlandırma")}</h1>
           <p className="mt-4 text-ink-500">{t("Yıllık ödemede iki ay ücretsiz. Limitler yapay zekâ istekleri, kaynak taramaları, proje sayısı ve depolama üzerinden belirlenir.")}</p>
         </div>
-        <PricingCards plans={plans} signedIn={!!s} />
+        <PricingCards plans={plans} signedIn={s} />
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           {student.enabled && (
             <div className="card p-5">

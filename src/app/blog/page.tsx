@@ -3,7 +3,7 @@ import { getT } from "@/i18n/server";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { getSession } from "@/lib/auth";
+import { hasAuthCookie } from "@/lib/auth";
 import { CATEGORIES, localizePost, POSTS, postPath, readingMinutes } from "@/lib/blog";
 import { absoluteUrl, localizedPath } from "@/lib/seo";
 import { pageMeta } from "@/lib/seo-server";
@@ -15,7 +15,7 @@ export async function generateMetadata() {
 }
 
 export default async function BlogIndex({ searchParams }: { searchParams: Promise<{ kategori?: string }> }) {
-  const [{ t, locale }, s, { kategori }] = await Promise.all([getT(), getSession().catch(() => null), searchParams]);
+  const [{ t, locale }, s, { kategori }] = await Promise.all([getT(), hasAuthCookie(), searchParams]);
   const all = POSTS.map((p) => ({ p, l: localizePost(p, locale) }));
   const list = kategori ? all.filter((x) => x.p.category === kategori) : all;
   const jsonLd = [
@@ -25,7 +25,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
   ];
   return (
     <>
-      <SiteHeader signedIn={!!s} />
+      <SiteHeader signedIn={s} />
       <JsonLd data={jsonLd} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-32">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Blog")}</p>

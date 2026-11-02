@@ -78,7 +78,7 @@ src/lib/
   quality/stage-review.ts  Bölüm tamamlama kontrolü (kural + yapay zekâ incelemesi)
   quality/repetition.ts  Tekrar analizi (kalıp ifadeler, cümle başlangıçları, benzer cümleler)
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
-src/i18n/                index.ts (t, ülke→dil), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
+src/i18n/                core.ts (sözlüksüz çekirdek; istemci bunu kullanır), index.ts (core + EN, sunucu), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
 supabase/migrations/     Sıralı SQL migration'ları
 supabase/setup.sql       Tüm migration'ların birleşimi (sıfırdan kurulum)
 public/                  brand/ (logo ve amblem PNG), favicon.ico, icons/ (uygulama simgeleri; amblemden üretildi), sw.js (servis çalışanı; sürüm değişince VERSION artır)
@@ -99,7 +99,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.
 - Route dosyalarından yalnızca HTTP metotları ve Next config (`maxDuration` vb.) export edilir; yardımcılar `src/lib`'e.
 - Sunucuya özel modüller `import "server-only"` ile başlar.
-- Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()`, sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e eklenir; `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
+- Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()` — istemci bileşeninde `@/i18n` içe aktarma, sözlük pakete girer; sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e eklenir; `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
 - Atıflar editörde `citation` düğümüdür; asla düz metin "(Yazar, Yıl)" üretme.
 - Yeni AI özelliği: model katmanı `resolveModel(planId, tier)`, kullanım `recordUsage`, limit `assertWithinLimits`.
 - Claude modelleri: `claude-opus-5-5` (default/premium), `claude-sonnet-5-5` (balanced), `claude-haiku-5-5` (fast). Sampling parametresi (temperature) gönderme; `output_config.effort` kullan. Opus/Sonnet'te `fallbacks: "default"` açık.

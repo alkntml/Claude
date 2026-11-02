@@ -23,9 +23,12 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { id } = await params;
   const { bolum } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  // Proje, dosyalar ve “son açılma” güncellemesi paralel yürür
+  const [bundle, { data: files }] = await Promise.all([
+    loadProjectBundle(s.supabase, id, s.user.id),
+    s.supabase.from("files").select("id, name, mime_type, size_bytes, purpose, project_id, extraction_status, created_at").eq("user_id", s.user.id).eq("project_id", id).order("created_at", { ascending: false }),
+    s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", s.user.id),
+  ]);
   if (!bundle) notFound();
-  const { data: files } = await s.supabase.from("files").select("id, name, mime_type, size_bytes, purpose, project_id, extraction_status, created_at").eq("user_id", s.user.id).eq("project_id", id).order("created_at", { ascending: false });
-  await s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id);
   return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} />;
 }

@@ -17,6 +17,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm text-ink-500">
             <li><Link href="/#ozellikler" className="hover:text-ink-900">{t("Özellikler")}</Link></li>
             <li><Link href="/fiyatlar" className="hover:text-ink-900">{t("Fiyatlar")}</Link></li>
+            <li><Link href="/blog" className="hover:text-ink-900">{t("Blog")}</Link></li>
             <li><Link href="/sss" className="hover:text-ink-900">{t("Sık sorulan sorular")}</Link></li>
             <li><Link href="/yardim" className="hover:text-ink-900">{t("Yardım merkezi")}</Link></li>
             <li><Link href="/kurumlar" className="hover:text-ink-900">{t("Kurumlar için")}</Link></li>

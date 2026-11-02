@@ -158,3 +158,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Ad “Academiana”, resmî adres `https://www.academiana.com.tr` (Vercel’in varsayılanı www birincil). Sabitler `src/lib/site.ts`; `env.appUrl` üretimde NEXT_PUBLIC_APP_URL yoksa SITE_URL’e düşer.
 - Eski vercel.app yönlendirmesi ortam değişkeniyle (`REDIRECT_TO_DOMAIN=1`) açılır; DNS doğrulanmadan açılırsa site erişilemez olurdu. API yönlendirilmez (webhook’lar bozulmasın).
 - Yerel depolama anahtarları (`akademi:*`) kullanıcı ayarları kaybolmasın diye değiştirilmedi.
+
+### D44 — Blog
+- İçerik kodda (TS dosyaları), veritabanında değil: sürümlenir, statik üretilir, SEO için hızlıdır. Yeni yazı = `src/lib/blog/posts-*.ts`’e bir nesne; `tests/blog.test.ts` biçimi denetler.
+- Yazılar yalnızca Türkçe; dış bağlantı yok (yalnız site içi). Kurallar/üst sınırlar gibi değişebilen bilgiler “kurumunuzun güncel yönergesine bakın” biçiminde, rakam uydurmadan yazıldı. “İntihalden kurtulma” konusu atlatma değil önleme olarak ele alındı.

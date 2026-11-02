@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 164 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 168 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -43,6 +43,7 @@ Push öncesi asgari kontrol: `npx tsc --noEmit && npm test && npx next lint` (b�
 src/app/                 Sayfalar + API rotaları
   (app)/                 Oturum gerektiren: panel, yeni, kaynaklar, dosyalar, anketler, konu-bul, hesap, kurum, yonetim
   a/[token]/             Herkese açık anket formu (kimlik bilgisi toplanmaz)
+  blog/ + blog/[slug]/   Blog (24 yazı, statik üretim, BlogPosting + Breadcrumb JSON-LD)
   proje/[id]/            Çalışma alanı (+ /kalite)
   paylasim/[token]/      Danışman salt okunur görünümü
   api/                   REST uçları (aşağıda)
@@ -62,6 +63,7 @@ src/lib/
   stats/                 dist.ts (dağılımlar), tests.ts (t, ANOVA, regresyon…), apa.ts (APA rapor)
   sources/bib.ts         BibTeX/RIS/CSL-JSON; sources/journals.ts dergi önerisi
   export/presentation.ts Savunma sunumu (.pptx); export/format.ts biçim şablonları
+  blog/                  Blog yazıları (posts-1..3.ts; basit Markdown gövde), index.ts (liste, ayrıştırıcı, ilgili yazılar)
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
   growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; öğrenci indirimi; uzman desteği bağlantıları
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)

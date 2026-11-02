@@ -7,13 +7,14 @@ import { useState } from "react";
 import { Logo } from "./icons";
 import { cn } from "./ui/cn";
 
-const NAV = [
+const NAV: { href: string; label: string; wide?: boolean }[] = [
   { href: "/#ozellikler", label: "Özellikler" },
-  { href: "/#nasil", label: "Nasıl çalışır" },
-  { href: "/#kaynaklar", label: "Veri kaynakları" },
+  { href: "/#nasil", label: "Nasıl çalışır", wide: true },
+  { href: "/#kaynaklar", label: "Veri kaynakları", wide: true },
   { href: "/fiyatlar", label: "Fiyatlar" },
-  { href: "/kurumlar", label: "Kurumlar" },
+  { href: "/kurumlar", label: "Kurumlar", wide: true },
   { href: "/uzman-destegi", label: "Uzman desteği" },
+  { href: "/blog", label: "Blog" },
   { href: "/sss", label: "SSS" },
 ];
 
@@ -29,7 +30,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
         <Link href="/" aria-label={t("Ana sayfa")}><Logo /></Link>
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className="rounded-lg px-3 py-2 text-sm text-ink-600 transition hover:bg-ink-100/70 hover:text-ink-900">{t(n.label)}</Link>
+            <Link key={n.href} href={n.href} className={cn("whitespace-nowrap rounded-lg px-2.5 py-2 text-sm text-ink-600 transition hover:bg-ink-100/70 hover:text-ink-900", n.wide && "hidden xl:block")}>{t(n.label)}</Link>
           ))}
         </nav>
         <div className="hidden items-center gap-2 md:flex">
@@ -38,8 +39,8 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
             <Link href="/panel" className="rounded-xl bg-ink-900 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-ink-900/20 transition hover:-translate-y-px hover:bg-ink-800">{t("Çalışma alanım")}</Link>
           ) : (
             <>
-              <Link href="/giris" className="rounded-xl px-3.5 py-2 text-sm font-medium text-ink-700 transition hover:bg-ink-100/70">{t("Giriş yap")}</Link>
-              <Link href="/kayit" className="rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2 text-sm font-medium text-white shadow-[0_8px_20px_-8px_rgb(39_71_220/0.65)] transition hover:-translate-y-px">{t("Ücretsiz başla")}</Link>
+              <Link href="/giris" className="whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium text-ink-700 transition hover:bg-ink-100/70">{t("Giriş yap")}</Link>
+              <Link href="/kayit" className="whitespace-nowrap rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2 text-sm font-medium text-white shadow-[0_8px_20px_-8px_rgb(39_71_220/0.65)] transition hover:-translate-y-px">{t("Ücretsiz başla")}</Link>
             </>
           )}
         </div>

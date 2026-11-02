@@ -25,9 +25,9 @@ export const POST = route<Ctx>("stage.review", async (req, { params }) => {
   const rules = ruleIssues(bundle, stage, uiLocale);
   let ai = null;
   let aiError: string | null = null;
-  // Basic pakette bölüm kontrolü aylık yapay zekâ hakkından düşmez (quality_check olarak kaydedilir, maliyet yönetim panelinde görünür);
+  // Ücretsiz ve Basic pakette bölüm kontrolü aylık yapay zekâ hakkından düşmez (quality_check olarak kaydedilir, maliyet yönetim panelinde görünür);
   // diğer paketlerde normal yapay zekâ isteği sayılır. Tüm paketlerde en ekonomik model (fast) kullanılır.
-  const exempt = s.profile.plan_id === "basic";
+  const exempt = s.profile.plan_id === "basic" || s.profile.plan_id === "free";
   try {
     if (exempt) {
       await assertWithinLimits(s.user.id, s.profile.plan_id, "quality_check");

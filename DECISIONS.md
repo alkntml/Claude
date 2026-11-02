@@ -246,3 +246,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Ara katman tanıtım sayfalarında Supabase oturum yenilemesi yapmaz (giriş yapmış kullanıcıda her tıklamada ağ isteği vardı).
 - `loading.tsx` (kök, (app), proje): sayfa geçişinde anında ilerleme çubuğu + iskelet; Next bağlantıları bu sınıra kadar önceden yükler.
 
+### D58 — Takılmayı gideren üçüncü tur
+- Sabit üst menüdeki `.glass` artık backdrop-blur kullanmıyor (kaydırmada her karede yeniden çizim); opak `bg-white/95`. Uygulama mobil üst çubuğunda da aynı.
+- “Nasıl çalışır” bölümündeki ve çalışma türü kartlarındaki `blur-*` ışıklar radyal geçişe çevrildi.
+- Giriş animasyonları tek bir hafif solmaya indirildi (yalnızca hero); bölüm başlıklarında (`FadeIn`) ve kartlarda animasyon yok. Başlıkta `transition-all` (padding) kaldırıldı.
+- Ölçüm (390 px, işlemci 6× yavaşlatılmış): kaydırmada ~54 kare/sn, 3 sn’de 2 uzun kare.
+

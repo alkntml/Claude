@@ -103,7 +103,7 @@ export function AppShell({ children, user, locked, expiresAt }: Props) {
   return (
     <div className="min-h-screen bg-[rgb(var(--bg))]">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-100 bg-ink-50/50 lg:block">{Side}</aside>
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/80 px-4 py-3 backdrop-blur lg:hidden">
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/95 px-4 py-3 lg:hidden">
         <Logo />
         <button onClick={() => setOpen(true)} aria-label={t("Menü")} className="rounded-lg p-2"><Menu /></button>
       </div>

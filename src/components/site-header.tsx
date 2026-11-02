@@ -28,8 +28,8 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
     return () => window.removeEventListener("scroll", on);
   }, []);
   return (
-    <header className={cn("fixed inset-x-0 top-0 z-40 transition-all duration-300", scrolled ? "py-2" : "py-4")}>
-      <div className={cn("mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-2 transition-all duration-300 sm:px-5", scrolled ? "glass mx-3 sm:mx-auto" : "")}>
+    <header className={cn("fixed inset-x-0 top-0 z-40", scrolled ? "py-2" : "py-4")}>
+      <div className={cn("mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-2 transition-colors duration-200 sm:px-5", scrolled ? "glass mx-3 sm:mx-auto" : "")}>
         <Link href="/" aria-label={t("Ana sayfa")} className="shrink-0"><Logo /></Link>
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (

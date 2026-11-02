@@ -17,7 +17,8 @@ body { background: rgb(var(--bg)); color: #151829; }
 }
 
 @layer components {
-  .glass { @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-soft; }
+  /* Sabit öğelerde backdrop-blur kaydırmada sürekli yeniden çizim yapar; yerine opak yüzey (D58) */
+  .glass { @apply bg-white/95 border border-ink-100/70 shadow-soft; }
   .card { @apply bg-white rounded-2xl border border-ink-100 shadow-soft; }
   .label { @apply block text-[13px] font-medium text-ink-600 mb-1.5; }
   .input {

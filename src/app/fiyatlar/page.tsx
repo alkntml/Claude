@@ -26,7 +26,7 @@ export default async function Pricing() {
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Şeffaf fiyatlandırma")}</h1>
-          <p className="mt-4 text-ink-500">{t("Limitler yapay zekâ istekleri, kaynak taramaları, proje sayısı ve depolama üzerinden belirlenir. Taahhüt yok; ücretsiz paketle başlayıp istediğiniz zaman yükseltebilirsiniz.")}</p>
+          <p className="mt-4 text-ink-500">{t("Her paket, çalışmanızın aşamasına uygun araçlar içerir. Taahhüt yok; ücretsiz başlayıp istediğiniz zaman yükseltebilirsiniz.")}</p>
         </div>
         <PricingCards plans={plans} signedIn={s} />
         <div className="mt-12 grid gap-4 md:grid-cols-3">
@@ -47,7 +47,7 @@ export default async function Pricing() {
             </div>
           )}
         </div>
-        <p className="mt-10 text-center text-sm text-ink-400">{t("Fiyatlara KDV dahildir.")}</p>
+        <p className="mt-10 text-center text-sm text-ink-400">{t("Fiyatlara KDV dahildir.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
       </main>
       <SiteFooter />
     </>

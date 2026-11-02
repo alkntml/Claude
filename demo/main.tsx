@@ -21,6 +21,8 @@ import { SiteHeader } from "@/components/site-header";
 import { FadeIn } from "@/components/ui/primitives";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nProvider } from "@/i18n/client";
+import { EN } from "@/i18n/en";
+import { UpgradeDialogHost } from "@/components/upgrade-dialog";
 import { normalizeLocale } from "@/i18n";
 import { QualityView } from "@/components/workspace/quality";
 import { Workspace } from "@/components/workspace/workspace";
@@ -137,10 +139,11 @@ const demoLocale = (() => {
 })();
 
 createRoot(document.getElementById("root")!).render(
-  <I18nProvider locale={demoLocale}>
+  <I18nProvider locale={demoLocale} dict={demoLocale === "en" ? EN : null}>
     <ToastProvider>
       <DemoBanner />
       <App />
+      <UpgradeDialogHost />
     </ToastProvider>
   </I18nProvider>,
 );

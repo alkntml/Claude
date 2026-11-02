@@ -1,4 +1,5 @@
 /* Tarayıcı tarafı: /api/ai/chat SSE akışını okur (asistan paneli ve toplu yazım ortak kullanır). */
+import { handlePlanError } from "@/lib/client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export type ChatPhase = "plan" | "search" | "verify" | "read" | "write" | "gaps";
@@ -37,6 +38,7 @@ export async function streamChat(body: ChatRequest, signal: AbortSignal, onEvent
   const res = await fetch("/api/ai/chat", { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!res.ok || !res.body) {
     const j = await res.json().catch(() => ({}));
+    handlePlanError(res.status, j);
     throw new Error(j.error ?? `${errorLabel} ${res.status}`);
   }
   for await (const ev of readSSE(res)) {

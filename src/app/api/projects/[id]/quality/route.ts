@@ -5,7 +5,7 @@ import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/li
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
 import { runQualityChecks } from "@/lib/quality/checks";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 import { stageDef } from "@/lib/workflows";
 import { localeFromRequest } from "@/i18n/server";
 
@@ -59,6 +59,7 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
 
   let aiReview: { ran: boolean; error?: string } = { ran: false };
   if (withAi) {
+    assertFeature(s.profile.plan_id, "quality_ai");
     await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
     const model = await resolveModel(s.profile.plan_id, "default"); // karmaşık: bütün çalışmanın değerlendirmesi
     if (!isProviderConfigured(model.provider)) aiReview = { ran: false, error: "Yapay zekâ sağlayıcısı yapılandırılmamış" };

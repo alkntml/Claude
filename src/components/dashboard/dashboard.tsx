@@ -52,13 +52,15 @@ export function Dashboard(p: Props) {
 
       {(() => {
         // Paket limitinin %80'ine yaklaşınca önceden uyar
-        const items: [string, number, number | null | undefined][] = [["yapay zekâ isteği", p.usage?.ai_requests ?? 0, p.limits?.ai_requests_month], ["kaynak tarama", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["depolama", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]];
+        const items: [string, number, number | null | undefined][] = [["kaynak tarama", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["depolama", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]];
         const near = items.filter(([, u, l]) => l && l > 0 && u / l >= 0.8);
-        if (!near.length) return null;
+        // Yapay zekâ sınırı sayı olarak gösterilmez (D49); yalnızca yaklaşıldığı söylenir
+        const aiNear = !!p.limits?.ai_requests_month && (p.usage?.ai_requests ?? 0) / p.limits.ai_requests_month >= 0.8;
+        if (!near.length && !aiNear) return null;
         return (
           <Link href="/hesap" className="mb-4 flex items-start gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 transition hover:bg-amber-100">
             <span className="mt-0.5">⚠️</span>
-            <span>{near.map(([k, u, l]) => t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(k), pct: Math.min(100, Math.round((u / (l as number)) * 100)) })).join(" · ")}. <b>{t("Paketi yönet")}</b></span>
+            <span>{[...(aiNear ? [t("Bu ayki yapay zekâ kullanım hakkınızın sonuna yaklaşıyorsunuz")] : []), ...near.map(([k, u, l]) => t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(k), pct: Math.min(100, Math.round((u / (l as number)) * 100)) }))].join(" · ")}. <b>{t("Paketi yönet")}</b></span>
           </Link>
         );
       })()}
@@ -143,7 +145,7 @@ export function Dashboard(p: Props) {
           <div className="card p-5">
             <div className="flex items-center justify-between"><h2 className="font-semibold text-ink-900">{t("Kullanım durumu")}</h2><Link href="/hesap" className="text-xs font-medium text-brand-600">{t("Paketi yönet")}</Link></div>
             <div className="mt-4 space-y-4">
-              {[["Yapay zekâ istekleri", p.usage?.ai_requests ?? 0, p.limits?.ai_requests_month], ["Kaynak taramaları", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["Projeler", p.usage?.projects ?? 0, p.limits?.projects], ["Depolama (MB)", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]].map(([l, v, m]) => (
+              {[["Kaynak taramaları", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["Projeler", p.usage?.projects ?? 0, p.limits?.projects], ["Depolama (MB)", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]].map(([l, v, m]) => (
                 <div key={l as string}>
                   <div className="mb-1.5 flex justify-between text-[13px]"><span className="text-ink-600">{t(l as string)}</span><span className="font-medium text-ink-800">{v as number}{m != null ? ` / ${m}` : " / ∞"}</span></div>
                   <ProgressBar value={v as number} max={m as number | null} />

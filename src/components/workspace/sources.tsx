@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Badge, Empty, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
-import { api } from "@/lib/client";
+import { api, handlePlanError } from "@/lib/client";
 import { isDergiPark, PROVIDER_LABELS, turkishSearchLinks } from "@/lib/sources/labels";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -199,7 +199,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
       fd.set("file", file); fd.set("projectId", projectId); fd.set("purpose", "article");
       const res = await fetch("/api/files", { method: "POST", body: fd });
       const j = await res.json();
-      if (!res.ok) throw new Error(j.error);
+      if (!res.ok) { handlePlanError(res.status, j); throw new Error(j.error); }
       const { source } = await api<{ source: any }>(`/api/sources/${src.id}/attach-file`, { method: "POST", json: { fileId: j.file.id } });
       setSources((l) => l.map((x) => (x.id === source.id ? source : x)));
       toast({ tone: "success", title: t("Tam metin eklendi"), detail: t("Artık bu kaynaktan sayfa numaralı atıf ve doğrulama yapılabilir.") });

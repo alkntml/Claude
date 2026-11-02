@@ -245,8 +245,8 @@ export const FAQ: FaqGroup[] = [
         id: "ucretsiz",
         q: { tr: "Ücretsiz kullanabilir miyim?", en: "Can I use it for free?" },
         a: {
-          tr: "Evet, kredi kartı gerekmeden ücretsiz paketle başlarsınız. Ücretsiz pakette proje sayısı, aylık yapay zekâ isteği ve kaynak tarama hakkı sınırlıdır; güncel limitleri Fiyatlar sayfasında görebilirsiniz. Davet programıyla ek kullanım hakkı da kazanabilirsiniz.",
-          en: "Yes, you start with the free plan without a credit card. The free plan limits the number of projects, monthly AI requests and source searches; see the Pricing page for current limits. You can also earn extra usage through the referral programme.",
+          tr: "Evet, kredi kartı gerekmeden ücretsiz paketle başlarsınız. Ücretsiz pakette proje sayısı, kaynak tarama hakkı ve bazı araçlar sınırlıdır; paketlerin özelliklerini Fiyatlar sayfasında karşılaştırabilirsiniz. Davet programıyla ek kullanım hakkı da kazanabilirsiniz.",
+          en: "Yes, you start with the free plan without a credit card. The free plan limits the number of projects, source searches and some tools; compare plan features on the Pricing page. You can also earn extra usage through the referral programme.",
         },
       },
       {

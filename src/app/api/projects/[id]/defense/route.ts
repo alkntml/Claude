@@ -3,7 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { defenseFeedback, defenseQuestions } from "@/lib/defense";
 import { loadProjectBundle } from "@/lib/projects";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 120;
@@ -16,6 +16,7 @@ const Body = z.discriminatedUnion("mode", [
 /** Savunma provası: jüri soruları üretir veya adayın cevabını değerlendirir. */
 export const POST = route<Ctx>("project.defense", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "defense");
   const { id } = await params;
   const b = await parseBody(req, Body);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");

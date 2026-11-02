@@ -1,11 +1,13 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart3, ClipboardList, Gavel, LineChart, MessageSquareReply, Wrench } from "lucide-react";
+import { BarChart3, ClipboardList, Gavel, LineChart, Lock, MessageSquareReply, Wrench } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/i18n/client";
+import { FEATURE_MIN_PLAN, PLAN_NAME, hasFeature, type FeatureId } from "@/lib/features";
 
 export type ToolId = "chart" | "analysis" | "survey" | "reviewer" | "defense";
+export const TOOL_FEATURE: Record<ToolId, FeatureId> = { chart: "stats", analysis: "stats", survey: "surveys", reviewer: "reviewer", defense: "defense" };
 const TOOLS: { id: ToolId; label: string; hint: string; Icon: typeof Wrench; types?: string[] }[] = [
   { id: "chart", label: "Grafik oluştur", hint: "Verinizden APA biçiminde şekil", Icon: LineChart },
   { id: "analysis", label: "İstatistik analizi", hint: "t testi, ANOVA, korelasyon, regresyon…", Icon: BarChart3 },
@@ -15,8 +17,11 @@ const TOOLS: { id: ToolId; label: string; hint: string; Icon: typeof Wrench; typ
 ];
 
 /** Çalışma alanı araçları: masaüstünde açılır menü, mobil menüde satırlar */
-export function ToolsMenu({ onPick, workType, variant = "button" }: { onPick: (id: ToolId) => void; workType: string; variant?: "button" | "rows" }) {
+export function ToolsMenu({ onPick, workType, variant = "button", planId }: { onPick: (id: ToolId) => void; workType: string; variant?: "button" | "rows"; planId?: string }) {
   const { t } = useT();
+  /** Kilitli araçta gerekli paketin adı (ör. “Pro”) */
+  const lockOf = (id: ToolId) => (hasFeature(planId, TOOL_FEATURE[id]) ? null : PLAN_NAME[FEATURE_MIN_PLAN[TOOL_FEATURE[id]]]);
+  const badge = (id: ToolId) => { const p = lockOf(id); return p ? <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700"><Lock className="h-3 w-3" />{p}</span> : null; };
   const [open, setOpen] = useState(false);
   // Hakem cevabı her türde erişilebilir; makale türlerinde üstte gösterilir
   const tools = [...TOOLS].sort((a, b) => Number(!!b.types?.includes(workType)) - Number(!!a.types?.includes(workType)));
@@ -24,7 +29,7 @@ export function ToolsMenu({ onPick, workType, variant = "button" }: { onPick: (i
     return (
       <>
         {tools.map(({ id, label, Icon }) => (
-          <button key={id} onClick={() => onPick(id)} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Icon className="h-5 w-5 text-brand-600" /> {t(label)}</button>
+          <button key={id} onClick={() => onPick(id)} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Icon className="h-5 w-5 text-brand-600" /> {t(label)}{badge(id)}</button>
         ))}
       </>
     );
@@ -40,7 +45,7 @@ export function ToolsMenu({ onPick, workType, variant = "button" }: { onPick: (i
               {tools.map(({ id, label, hint, Icon }) => (
                 <button key={id} onClick={() => { setOpen(false); onPick(id); }} className="flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-ink-50">
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                  <span><span className="block text-[13.5px] font-medium text-ink-800">{t(label)}</span><span className="block text-[12px] text-ink-500">{t(hint)}</span></span>
+                  <span className="min-w-0 flex-1"><span className="block text-[13.5px] font-medium text-ink-800">{t(label)}</span><span className="block text-[12px] text-ink-500">{t(hint)}</span></span>{badge(id)}
                 </button>
               ))}
             </motion.div>

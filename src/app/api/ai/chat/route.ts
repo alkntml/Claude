@@ -11,7 +11,7 @@ import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { addSourcesToProject, executeSearch, ingestWithBudget, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
-import { assertWithinLimits, recordUsage, usageWarnings } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage, usageWarnings } from "@/lib/usage";
 
 export const maxDuration = 300;
 
@@ -39,6 +39,8 @@ export const POST = route("ai.chat", async (req) => {
   const T = makeT(localeFromRequest(req));
   const s = await requireUser();
   const b = await parseBody(req, Schema);
+  if (b.action === "reviewer_response") assertFeature(s.profile.plan_id, "reviewer");
+  if (b.action === "journal_checklist") assertFeature(s.profile.plan_id, "journals");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
 
   const bundle = await loadProjectBundle(s.supabase, b.projectId, s.user.id);

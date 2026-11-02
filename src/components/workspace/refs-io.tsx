@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { cn } from "@/components/ui/cn";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
-import { api } from "@/lib/client";
+import { api, handlePlanError } from "@/lib/client";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /** Zotero / Mendeley / EndNote ile kaynak alışverişi: BibTeX, RIS, CSL-JSON içe aktarma; BibTeX/RIS dışa aktarma */
@@ -14,6 +14,18 @@ export function RefsImportExport({ projectId, onAdded }: { projectId: string; on
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+
+  /** Dışa aktarma: önce isteği yapar; paket yetmiyorsa yükseltme penceresi açılır, değilse dosya indirilir */
+  async function exportFile(url: string) {
+    setOpen(false);
+    const res = await fetch(url);
+    if (!res.ok) { const j = await res.json().catch(() => ({})); handlePlanError(res.status, j); if (res.status !== 402) toast({ tone: "error", title: t("Dışa aktarılamadı"), detail: j.error }); return; }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(await res.blob());
+    a.download = res.headers.get("content-disposition")?.match(/filename="(.+)"/)?.[1] ?? "kaynaklar";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }
 
   async function importFile(file: File) {
     if (file.size > 4_000_000) { toast({ tone: "error", title: t("Dosya çok büyük"), detail: t("En fazla 4 MB’lık kaynak dosyası yükleyin.") }); return; }
@@ -57,7 +69,7 @@ export function RefsImportExport({ projectId, onAdded }: { projectId: string; on
             <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
             <div className="absolute left-0 top-9 z-40 w-64 rounded-xl border border-ink-100 bg-white p-1.5 text-[13px] shadow-xl">
               {[["bib", "all", "BibTeX (.bib) — tüm kaynaklar"], ["bib", "cited", "BibTeX (.bib) — yalnızca atıf yapılanlar"], ["ris", "all", "RIS (.ris) — tüm kaynaklar"], ["ris", "cited", "RIS (.ris) — yalnızca atıf yapılanlar"]].map(([f, sc, l]) => (
-                <a key={f + sc} href={`/api/projects/${projectId}/sources/export?format=${f}&scope=${sc}`} onClick={() => setOpen(false)} className="block rounded-lg px-2.5 py-1.5 text-ink-700 hover:bg-ink-50">{t(l)}</a>
+                <button type="button" key={f + sc} onClick={() => exportFile(`/api/projects/${projectId}/sources/export?format=${f}&scope=${sc}`)} className="block w-full rounded-lg px-2.5 py-1.5 text-left text-ink-700 hover:bg-ink-50">{t(l)}</button>
               ))}
               <p className="px-2.5 pb-1 pt-1 text-[11px] text-ink-400">{t("Zotero, Mendeley ve EndNote bu dosyaları doğrudan içe aktarır.")}</p>
             </div>

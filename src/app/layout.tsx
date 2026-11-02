@@ -6,6 +6,7 @@ import { I18nProvider } from "@/i18n/client";
 import { getLocale } from "@/i18n/server";
 import { EN } from "@/i18n/en";
 import { PwaRegister } from "@/components/pwa";
+import { UpgradeDialogHost } from "@/components/upgrade-dialog";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, websiteLd } from "@/lib/structured-data";
@@ -48,6 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <I18nProvider locale={locale} dict={locale === "en" ? EN : null}>
           <ToastProvider>{children}</ToastProvider>
           <PwaRegister />
+          <UpgradeDialogHost />
           <JsonLd data={[organizationLd(), websiteLd(locale)]} />
         </I18nProvider>
       </body>

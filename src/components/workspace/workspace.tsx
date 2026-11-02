@@ -16,7 +16,8 @@ import { Badge, Modal, ProgressRing, Tabs } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { CitationEngine, STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
-import { api } from "@/lib/client";
+import { api, handlePlanError, openUpgrade } from "@/lib/client";
+import { FEATURE_MIN_PLAN, hasFeature } from "@/lib/features";
 import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, headings, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
@@ -37,7 +38,7 @@ import { shouldShowTour, Tour } from "./tour";
 
 
 
-import { ToolsMenu, type ToolId } from "./tools-menu";
+import { TOOL_FEATURE, ToolsMenu, type ToolId } from "./tools-menu";
 
 
 import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
@@ -71,7 +72,7 @@ function saveDraft(id: string, doc: JSONNode) { try { localStorage.setItem(DRAFT
 function readDraft(id: string): { at: number; doc: JSONNode } | null { try { const v = localStorage.getItem(DRAFT_KEY(id)); return v ? JSON.parse(v) : null; } catch { return null; } }
 function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); } catch { /* yok */ } }
 
-interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null }
+interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string }
 
 export function Workspace(props: Props) {
   const { t } = useT();
@@ -304,7 +305,7 @@ export function Workspace(props: Props) {
     toast({ tone: "info", title: t("Sunum hazırlanıyor…"), detail: t("Çalışmanızın metninden slaytlar oluşturuluyor; bu 1 dakika kadar sürebilir.") });
     try {
       const res = await fetch(`/api/projects/${project.id}/presentation`, { method: "POST" });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? t("Sunum oluşturulamadı"));
+      if (!res.ok) { const j = await res.json().catch(() => ({})); handlePlanError(res.status, j); throw new Error(j.error ?? t("Sunum oluşturulamadı")); }
       const blob = await res.blob();
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -323,6 +324,9 @@ export function Workspace(props: Props) {
     setTimeout(() => assistantSend.current?.(msg, action, selection), 350);
   }
   function openTool(id: ToolId) {
+    // Pakete bağlı araçlar (D49): paket yetmiyorsa yükseltme penceresi
+    const feature = TOOL_FEATURE[id];
+    if (!hasFeature(props.planId, feature)) { openUpgrade({ code: "feature_locked", feature, plan: FEATURE_MIN_PLAN[feature] }); return; }
     if (id === "chart") setChartOpen(true);
     else if (id === "analysis") setAnalysisOpen(true);
     else if (id === "reviewer") setReviewerOpen(true);
@@ -461,7 +465,7 @@ export function Workspace(props: Props) {
     await flush();
     try {
       const res = await fetch(`/api/projects/${project.id}/export?format=${format}`);
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? t("Dışa aktarılamadı"));
+      if (!res.ok) { const j = await res.json().catch(() => ({})); handlePlanError(res.status, j); throw new Error(j.error ?? t("Dışa aktarılamadı")); }
       const blob = await res.blob();
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -556,9 +560,9 @@ export function Workspace(props: Props) {
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           <ShareButton projectId={project.id} />
-          <ToolsMenu onPick={openTool} workType={project.work_type} />
+          <ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} />
           <span data-tour="export"><ExportMenu onExport={exportAs} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
-          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} />
+          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
           <button onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
         </header>
@@ -685,7 +689,7 @@ function SaveIndicator({ state }: { state: SaveState }) {
 }
 
 /** Mobil üst menü: atıf stili, kalite kontrol, paylaşım ve proje ayarları */
-function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, onTool, workType }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void; onTool: (id: ToolId) => void; workType: string }) {
+function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, onTool, workType, planId }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void; onTool: (id: ToolId) => void; workType: string; planId?: string }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   return (
@@ -704,7 +708,7 @@ function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, 
               <div className="mt-4 grid gap-2">
                 <Link href={`/proje/${projectId}/kalite`} onClick={onQuality} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><FileCheck2 className="h-5 w-5 text-emerald-600" /> {t("Kalite kontrol")}</Link>
                 <ShareButton projectId={projectId} variant="row" />
-                <ToolsMenu onPick={(id) => { setOpen(false); onTool(id); }} workType={workType} variant="rows" />
+                <ToolsMenu onPick={(id) => { setOpen(false); onTool(id); }} workType={workType} variant="rows" planId={planId} />
                 <button onClick={() => { setOpen(false); onSettings(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Settings2 className="h-5 w-5 text-ink-500" /> {t("Proje ayarları")}</button>
                 <a href={expertUrl(undefined, "workspace")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><GraduationCap className="h-5 w-5 text-violet-600" /> {t("Uzman desteği")}<ExternalLink className="ml-auto h-4 w-4 text-ink-400" /></a>
                 <button onClick={() => { setOpen(false); onTour(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><HelpCircle className="h-5 w-5 text-brand-600" /> {t("Rehberli tur")}</button>
@@ -817,7 +821,7 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
       fd.set("file", f); fd.set("projectId", project.id); fd.set("purpose", "guideline");
       const res = await fetch("/api/files", { method: "POST", body: fd });
       const j = await res.json();
-      if (!res.ok) throw new Error(j.error);
+      if (!res.ok) { handlePlanError(res.status, j); throw new Error(j.error); }
       setFiles((l) => [j.file, ...l]);
       await patch({});
       router.refresh();

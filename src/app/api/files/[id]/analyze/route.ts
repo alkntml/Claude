@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { localeFromRequest } from "@/i18n/server";
 import { extract, kindOf } from "@/lib/files/extract";
 import { runAnalysis, type AnalysisSpec } from "@/lib/stats/apa";
+import { assertFeature } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 60;
@@ -26,6 +27,7 @@ const Spec = z.discriminatedUnion("kind", [
 /** Yüklenen veri dosyasında istatistik analizi (deterministik) ve APA raporu */
 export const POST = route<Ctx>("file.analyze", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "stats");
   const { id } = await params;
   const b = await parseBody(req, z.object({ spec: Spec, language: z.enum(["tr", "en"]).optional() }));
   const { data: f } = await s.supabase.from("files").select("*").eq("id", id).eq("user_id", s.user.id).maybeSingle();

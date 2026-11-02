@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { localeFromRequest } from "@/i18n/server";
 import { extract, kindOf } from "@/lib/files/extract";
 import { buildChart, type ChartSpec } from "@/lib/stats/charts";
+import { assertFeature } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 60;
@@ -22,6 +23,7 @@ const Spec = z.discriminatedUnion("kind", [
 /** Veri dosyasından grafik verisi (deterministik). Çizim istemcide yapılır. */
 export const POST = route<Ctx>("file.chart", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "stats");
   const { id } = await params;
   const b = await parseBody(req, z.object({ spec: Spec, language: z.enum(["tr", "en"]).optional() }));
   const { data: f } = await s.supabase.from("files").select("*").eq("id", id).eq("user_id", s.user.id).maybeSingle();

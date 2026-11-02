@@ -5,6 +5,7 @@ import { titleSimilarity } from "@/lib/citations/checks";
 import { addSourcesToProject } from "@/lib/research";
 import { parseReferences } from "@/lib/sources/bib";
 import { SourceInput } from "@/lib/sources/input";
+import { assertFeature } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 300;
@@ -17,6 +18,7 @@ const MAX_ENTRIES = 300;
  */
 export const POST = route<Ctx>("project.sources.import", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "bib_io");
   const { id } = await params;
   await requireProject(s, id);
   const b = await parseBody(req, z.object({ text: z.string().min(10).max(5_000_000), format: z.enum(["bibtex", "ris", "csljson"]).nullable().optional() }));

@@ -4,7 +4,7 @@ import { providerConfig } from "@/lib/env";
 import { getJson } from "@/lib/sources/http";
 import { aggregateVenues, enrichVenues, journalQuery } from "@/lib/sources/journals";
 import { openAlexUrl } from "@/lib/sources/providers";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 60;
@@ -12,6 +12,7 @@ export const maxDuration = 60;
 /** Konuya benzer makalelerin yayımlandığı gerçek dergiler (OpenAlex) + proje kaynaklarının dergileri */
 export const GET = route<Ctx>("project.journals", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "journals");
   const { id } = await params;
   const project = await requireProject(s, id);
   const url = new URL(req.url);

@@ -2,7 +2,7 @@ import { ApiError, json, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -22,6 +22,7 @@ const SCHEMA = {
 /** Yüklenen üniversite tez yazım kılavuzundan bölüm yapısı ve biçim kuralları önerir (uygulanmadan önce kullanıcıya gösterilir). */
 export const POST = route<Ctx>("stages.suggest", async (_req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "guideline");
   const { id } = await params;
   const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");

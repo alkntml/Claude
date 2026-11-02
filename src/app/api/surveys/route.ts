@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
+import { assertFeature } from "@/lib/usage";
 
 const SELECT = "id, title, project_id, is_open, response_count, closes_at, max_responses, created_at, updated_at";
 
@@ -13,6 +14,7 @@ export const GET = route("surveys.list", async () => {
 /** Yeni anket (boş veya mevcut bir anketin kopyası) */
 export const POST = route("surveys.create", async (req) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "surveys");
   const b = await parseBody(req, z.object({ title: z.string().trim().min(1).max(300), projectId: z.string().uuid().nullable().optional(), copyFrom: z.string().uuid().optional() }));
   if (b.projectId) await requireProject(s, b.projectId);
   let base: { description: string; consent: string; questions: unknown } = { description: "", consent: "", questions: [] };

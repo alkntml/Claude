@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Badge, Empty, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
-import { api } from "@/lib/client";
+import { api, handlePlanError } from "@/lib/client";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const PURPOSE: Record<string, string> = { guideline: "Yazım kılavuzu", chapter: "Önceki bölüm", article: "Akademik makale", data: "Veri tablosu", other: "Diğer" };
@@ -36,7 +36,7 @@ export function FilesView({ files: initial, projects }: { files: any[]; projects
         fd.set("purpose", /\.(csv|xlsx)$/i.test(f.name) ? "data" : purpose);
         const res = await fetch("/api/files", { method: "POST", body: fd });
         const j = await res.json();
-        if (!res.ok) throw new Error(j.error);
+        if (!res.ok) { handlePlanError(res.status, j); throw new Error(j.error); }
         setFiles((l) => [j.file, ...l]);
         if (j.file.extraction_meta?.warning) toast({ tone: "warning", title: f.name, detail: j.file.extraction_meta.warning });
       } catch (e) {

@@ -1,4 +1,5 @@
 import "server-only";
+import { FEATURE_MIN_PLAN, hasFeature, type FeatureId } from "@/lib/features";
 import { ApiError } from "@/lib/api";
 import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
@@ -69,6 +70,11 @@ async function rateLimit(userId: string, kind: UsageKind) {
   const since = new Date(Date.now() - 60_000).toISOString();
   const { count } = await adminClient().from("usage_events").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("kind", kind).gte("created_at", since);
   if ((count ?? 0) >= max) throw new ApiError(429, "Çok fazla istek gönderdiniz. Lütfen bir dakika sonra tekrar deneyin.", "rate_limited");
+}
+
+/** Pakete bağlı özellik kontrolü (D49): paket yetmiyorsa 402 + yükseltme penceresi için ayrıntı döner. */
+export function assertFeature(planId: string, feature: FeatureId) {
+  if (!hasFeature(planId, feature)) throw new ApiError(402, "Bu özellik paketinizde yok.", "feature_locked", { feature, plan: FEATURE_MIN_PLAN[feature] });
 }
 
 /** İşlem öncesi paket limitlerini kontrol eder; aşılmışsa 402 döner. */

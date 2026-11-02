@@ -2,7 +2,7 @@ import { ApiError, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { generateDeck, renderPptx } from "@/lib/export/presentation";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 180;
@@ -14,6 +14,7 @@ function safeName(s: string) {
 /** Tez savunması / makale sunumu taslağı (.pptx). İçerik yalnızca çalışmanın kendi metninden üretilir. */
 export const POST = route<Ctx>("project.presentation", async (_req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "defense");
   const { id } = await params;
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { format: "docx" });
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");

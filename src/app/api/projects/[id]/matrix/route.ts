@@ -2,7 +2,7 @@ import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 120;
@@ -19,6 +19,7 @@ const METHOD_HINT = /method|participant|sample|procedure|design|results?|finding
  */
 export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "matrix");
   const { id } = await params;
   const b = await parseBody(req, z.object({ sourceIds: z.array(z.string().uuid()).min(1).max(4) }));
   const { data: project } = await s.supabase.from("projects").select("id, title, topic, language").eq("id", id).eq("user_id", s.user.id).maybeSingle();

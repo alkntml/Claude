@@ -190,3 +190,10 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Öğrenci indirimi tamamen kaldırıldı (ayar, panel, kayıt notu, SSS). Yerine **Akademik Ekip İndirimi** %20 (`TEAM_DISCOUNT`, en az 3 kişi; akademisyen grupları, araştırma ekipleri, laboratuvarlar, bölümler); talep WhatsApp’tan, elle uygulanır.
 - Bir “Literatür araştır” en fazla 4 sorgu = 4 tarama sayar; ücretsiz paketin 7 taraması ≈ 2 araştırma.
 
+### D49 — Paket kartlarında özellikler; kullanım sınırları yalnızca yükseltirken
+- Kullanıcı kararı: paket kartları yapay zekâ isteği sayısı değil özellik listesi gösterir; sınırlar aynen uygulanır ama kullanıcı ancak yükseltme gerektiğinde görür.
+- Özellik kilitleri `src/lib/features.ts` (`FEATURE_MIN_PLAN`), sunucuda `assertFeature` (402 `feature_locked`). Basic: kalite raporu (YZ), istatistik + grafik, anket, konu bulma, Zotero/Mendeley/EndNote. Pro: literatür matrisi, dergi önerisi + kılavuz kontrolü, yazım kılavuzu önerisi, hakem cevabı, savunma sunumu + provası. Premium: sınırsız proje, en yüksek kullanım, 15 GB, öncelikli destek. Mevcut veriler (ör. eski anketler) okunabilir kalır; yalnızca yeni kullanım kilitlenir.
+- Sınırlar `UpgradeDialogHost` (kök düzen) penceresinde gösterilir: 402 `limit_*`/`feature_locked` cevabında veya Hesap → “Yükselt”te açılır; veri `/api/account/plans` (yalnızca giriş yapmış kullanıcı). WhatsApp mesajına paket sınırları da yazılır.
+- Hesap ve panelde yapay zekâ isteği/token satırları kaldırıldı; %80 uyarısı sayı vermeden “sonuna yaklaşıyorsunuz” der. Kaynak tarama, proje, depolama sayıları görünür kalır.
+- Şeffaflık: Fiyatlar sayfasında “aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir” notu var (satın alma öncesi bilgilendirme). Migration 10 özellik listelerini yazar.
+

@@ -3,12 +3,14 @@ import { requireProject, requireUser } from "@/lib/auth";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { toBibTeX, toRIS } from "@/lib/sources/bib";
 import { sourceRowToItemClient } from "@/lib/sources/row";
+import { assertFeature } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 /** Proje kaynaklarını BibTeX veya RIS olarak indirir (Zotero, Mendeley, EndNote içe aktarabilir). */
 export const GET = route<Ctx>("project.sources.export", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "bib_io");
   const { id } = await params;
   await requireProject(s, id);
   const url = new URL(req.url);

@@ -144,7 +144,12 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
           else if (event === "done") {
             patch((x) => ({ ...x, phase: undefined }));
             if (data.memoryAdded) { onMemoryChanged(); patch((x) => ({ ...x, memoryAdded: data.memoryAdded })); }
-            for (const w of data.warnings ?? []) if (shouldWarnOnce(`${w.kind}:${w.pct >= 100 ? 100 : 80}`)) toast({ tone: "warning", title: t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(USAGE_LABEL[w.kind] ?? w.kind), pct: w.pct }), detail: t("{used} / {limit}. Paketinizi Hesap sayfasından yükseltebilirsiniz.", { used: w.used, limit: w.limit }) });
+            for (const w of data.warnings ?? []) {
+              if (!shouldWarnOnce(`${w.kind}:${w.pct >= 100 ? 100 : 80}`)) continue;
+              // Yapay zekâ sınırı sayı olarak gösterilmez (D49)
+              if (w.kind === "ai_requests" || w.kind === "tokens") toast({ tone: "warning", title: t("Bu ayki yapay zekâ kullanım hakkınızın sonuna yaklaşıyorsunuz"), detail: t("Hakkınız dolduğunda paket seçenekleri gösterilir.") });
+              else toast({ tone: "warning", title: t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(USAGE_LABEL[w.kind] ?? w.kind), pct: w.pct }), detail: t("{used} / {limit}. Paketinizi Hesap sayfasından yükseltebilirsiniz.", { used: w.used, limit: w.limit }) });
+            }
           }
         },
         t("Hata"),

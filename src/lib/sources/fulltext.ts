@@ -18,7 +18,7 @@ export interface IngestResult {
 
 async function fetchPdf(url: string, signal: AbortSignal): Promise<Buffer> {
   if (!isSafePublicUrl(url)) throw new Error("Güvenli olmayan URL");
-  const res = await fetch(url, { signal, redirect: "follow", headers: { Accept: "application/pdf", "User-Agent": "AkademiAI/0.1" } });
+  const res = await fetch(url, { signal, redirect: "follow", headers: { Accept: "application/pdf", "User-Agent": "Academiana/1.0 (+https://www.academiana.com.tr)" } });
   if (!res.ok) throw new Error(`İndirme hatası ${res.status}`);
   if (res.url && !isSafePublicUrl(res.url)) throw new Error("Yönlendirme güvenli değil");
   const len = Number(res.headers.get("content-length") ?? 0);

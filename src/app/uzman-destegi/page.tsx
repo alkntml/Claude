@@ -21,7 +21,7 @@ export default async function Expert() {
           </a>
         ))}
       </div>
-      <p className="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600">{t("Bu hizmetler iş ortağımız dermanlik.com.tr tarafından sunulur; sipariş, fiyat ve teslim koşulları o sitede belirlenir. Akademi AI hesabınızdaki çalışmalarınız siz paylaşmadıkça iş ortağıyla paylaşılmaz.")}</p>
+      <p className="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600">{t("Bu hizmetler iş ortağımız dermanlik.com.tr tarafından sunulur; sipariş, fiyat ve teslim koşulları o sitede belirlenir. Academiana hesabınızdaki çalışmalarınız siz paylaşmadıkça iş ortağıyla paylaşılmaz.")}</p>
       <p className="text-sm text-ink-500">{t("Akademik dürüstlük: Uzman desteği metninizin düzeltilmesi ve danışmanlık içindir; çalışmanın başkası tarafından yazılması kurumların etik kurallarına aykırıdır.")}</p>
       <a href={expertUrl(undefined, "expert-page")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-2xl bg-ink-900 px-5 py-3 font-medium text-white transition hover:bg-ink-800">{t("dermanlik.com.tr’ye git")} <ExternalLink className="h-4 w-4" /></a>
     </StaticPage>

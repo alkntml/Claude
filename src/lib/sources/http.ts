@@ -1,4 +1,4 @@
-const UA = "AkademiAI/0.1 (academic research platform)";
+const UA = "Academiana/1.0 (academic research platform; +https://www.academiana.com.tr)";
 
 export class HttpError extends Error {
   constructor(public status: number, message: string) {

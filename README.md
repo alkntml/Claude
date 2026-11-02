@@ -1,4 +1,4 @@
-# Akademi AI
+# Academiana
 
 Yapay zekâ destekli akademik araştırma ve yazım platformu. Tez, makale, literatür taraması ve araştırma önerisi gibi çalışmaları adım adım yönetir. Kaynakları gerçek akademik veri tabanlarında bulur ve doğrular. Atıf ve kaynakçayı seçilen stile göre kendisi oluşturur.
 

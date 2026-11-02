@@ -98,7 +98,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
   }
 
   const doc = new Document({
-    creator: "Akademi AI",
+    creator: "Academiana",
     title: d.title,
     features: { updateFields: true },
     footnotes,

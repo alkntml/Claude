@@ -32,7 +32,7 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-ink-100 py-5 text-center text-xs text-ink-400">© {new Date().getFullYear()} Akademi AI. {t("Platform akademik çalışmanızı destekler; yazarlık ve bilimsel sorumluluk size aittir.")}</div>
+      <div className="border-t border-ink-100 py-5 text-center text-xs text-ink-400">© {new Date().getFullYear()} Academiana. {t("Platform akademik çalışmanızı destekler; yazarlık ve bilimsel sorumluluk size aittir.")}</div>
     </footer>
   );
 }

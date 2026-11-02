@@ -1,5 +1,5 @@
 /**
- * Akademi AI — tarayıcı demosu giriş noktası.
+ * Academiana — tarayıcı demosu giriş noktası.
  * Uygulamanın gerçek bileşenlerini kullanır; sunucu çağrıları mock-api.ts tarafından tarayıcıda yanıtlanır.
  */
 import "./styles.css";
@@ -101,7 +101,7 @@ function App() {
   const db = useDB();
   const path = route.path;
 
-  useEffect(() => { document.title = "Akademi AI Demo"; }, []);
+  useEffect(() => { document.title = "Academiana Demo"; }, []);
 
   if (path === "/" || path === "/fiyatlar" || path === "/yardim" || path.startsWith("/gizlilik") || path.startsWith("/kosullar") || path.startsWith("/akademik")) return <Landing />;
 

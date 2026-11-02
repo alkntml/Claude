@@ -1,11 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { LOCALE_COOKIE, localeForCountry, normalizeLocale } from "@/i18n";
+import { SITE_URL } from "@/lib/site";
 
 const PROTECTED = ["/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni", "/anketler", "/kurum", "/konu-bul"];
 
 /** İlk ziyarette ülkeye göre dil: Türkiye (veya bilinmeyen) → tr, diğer ülkeler → en. Kullanıcı seçimi (çerez) her zaman önceliklidir. */
 export async function updateSession(request: NextRequest) {
+  // Eski Vercel adresinden gelen sayfa ziyaretleri resmî alan adına yönlendirilir (REDIRECT_TO_DOMAIN=1 iken; API hariç)
+  const host = request.headers.get("host") ?? "";
+  if (process.env.REDIRECT_TO_DOMAIN === "1" && host.endsWith(".vercel.app") && !request.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.redirect(new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, SITE_URL), 308);
+  }
   const missing = !normalizeLocale(request.cookies.get(LOCALE_COOKIE)?.value);
   const locale = localeForCountry(request.headers.get("x-vercel-ip-country"));
   // Sunucu bileşenleri ilk istekte de doğru dili görsün diye isteğe de yazılır

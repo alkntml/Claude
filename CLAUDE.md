@@ -1,4 +1,4 @@
-# CLAUDE.md — Akademi AI
+# CLAUDE.md — Academiana (eski adı: Academiana)
 
 Bu dosya her yeni Claude oturumunun ilk okuması gereken proje kılavuzudur. Ayrıntılar:
 - `PROJECT_STATUS.md`: şu ana kadar yapılanlar ve canlı ortam bilgileri
@@ -12,7 +12,8 @@ Bağlam sıfırlanınca önce bu dosyayı, sonra `PROJECT_STATUS.md` (canlı dur
 ## Proje
 Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, literatür taraması, araştırma önerisi). Türkçe arayüz, Türk kullanıcı kitlesi. Sahibi teknik değil; adım adım, sade Türkçe ile iletişim kurulmalı. Ekran görüntüleriyle ilerler.
 
-- **Canlı site:** https://akademi-ai-umber.vercel.app
+- **Canlı site:** https://www.academiana.com.tr (alan adı hosting.com.tr’den alındı, nameserver’lar Vercel DNS’e devredildi; www’siz adres www’ye 308 ile yönlenir). Eski adres: https://akademi-ai-umber.vercel.app
+- **Marka:** Academiana. Ad ve adres `src/lib/site.ts` içinde (SITE_NAME, SITE_URL).
 - **Depo:** github.com/alkntml/Claude, dal `main`. `main`'e her push Vercel'de otomatik yayın başlatır.
 - **Veritabanı:** Supabase (Vercel entegrasyonu ile kuruldu), bölge Frankfurt (eu-central-1). Vercel sunucu bölgesi de `fra1` (`vercel.json`).
 

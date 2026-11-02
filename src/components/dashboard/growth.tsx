@@ -43,7 +43,7 @@ export function GrowthSection() {
   function share() {
     if (!g?.referral) return;
     const text = t("Tez ve makale yazarken gerçek kaynaklarla çalışan bir akademik asistan kullanıyorum. Bu bağlantıyla kaydolursan ikimize de ek kullanım hakkı tanımlanıyor:");
-    if (navigator.share) navigator.share({ title: "Akademi AI", text, url: g.referral.link }).catch(() => {});
+    if (navigator.share) navigator.share({ title: "Academiana", text, url: g.referral.link }).catch(() => {});
     else window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${g.referral.link}`)}`, "_blank", "noopener");
   }
 
@@ -63,7 +63,7 @@ export function GrowthSection() {
           </div>
         ) : (
           <div className="mt-3 space-y-2">
-            <p className="text-sm text-ink-500">{t("Üniversiteniz veya enstitünüz Akademi AI lisansı aldıysa size verilen kurum kodunu girin.")}</p>
+            <p className="text-sm text-ink-500">{t("Üniversiteniz veya enstitünüz Academiana lisansı aldıysa size verilen kurum kodunu girin.")}</p>
             <div className="flex gap-2"><input className="input" placeholder={t("Kurum kodu")} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} /><Button onClick={join} loading={busy} disabled={code.trim().length < 6}>{t("Katıl")}</Button></div>
           </div>
         )}

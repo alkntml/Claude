@@ -1,6 +1,6 @@
-/* Akademi AI servis çalışanı: yalnızca uygulama kabuğu ve çevrimdışı sayfa.
+/* Academiana servis çalışanı: yalnızca uygulama kabuğu ve çevrimdışı sayfa.
  * Kullanıcı verisi ve API yanıtları ÖNBELLEĞE ALINMAZ (gizlilik ve güncellik için). */
-const VERSION = "akademi-v1";
+const VERSION = "academiana-v2";
 const SHELL = ["/offline", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {

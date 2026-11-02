@@ -20,7 +20,7 @@ export default async function Institutions() {
     ["Veri güvenliği", "Avrupa Birliği’nde (Frankfurt) barındırma, satır düzeyinde erişim denetimi, KVKK uyumlu veri silme ve dışa aktarma."],
   ];
   return (
-    <StaticPage title={t("Kurumlar için Akademi AI")} lead={t("Üniversiteler, enstitüler ve araştırma grupları için toplu lisans.")}>
+    <StaticPage title={t("Kurumlar için Academiana")} lead={t("Üniversiteler, enstitüler ve araştırma grupları için toplu lisans.")}>
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map(([h, b]) => <div key={h} className="card p-5"><p className="font-semibold text-ink-900">{t(h)}</p><p className="mt-1 text-[14.5px] text-ink-600">{t(b)}</p></div>)}
       </div>

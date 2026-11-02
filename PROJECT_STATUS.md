@@ -69,6 +69,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - KVKK: veri dışa aktarma (JSON), hesap silme
 - **Sık sorulan sorular:** `/sss` (7 grup, 38 soru, TR/EN, FAQPage JSON-LD), ana sayfada 8 öne çıkan soru; içerik `src/lib/faq.ts`
 - **Adım adım akış:** çalışma ilk açıldığında başlık önerileri + seçim (`context.titleChosen`); önerilen yazım sırası (özet/abstract en son), “Sıradaki” etiketi, “Bölümü tamamladım” → sıradaki bölüme geçiş, tamamlanan bölümlerde yeşil tik ve “x/y bölüm tamamlandı”; özet erken açılırsa uyarı. Rehberli tur başlık penceresinden sonra açılır. “Bölümü tamamladım” önce bölüm kontrolü yapar (kaynak/veri yer tutucuları, tekrar, dil + yapay zekânın amaç/kurallara uygunluk incelemesi): uygunsa tamamlanır; değilse sorunlar, “Asistanla düzelt” veya “Yine de tamamlandı işaretle”. Tamamlanan bölümlerde kelime sayısı da görünür. Bölüm kontrolü tüm paketlerde Haiku ile; Ücretsiz ve Basic’te aylık haktan düşmez (günde 40 sınırı), Pro ve Premium’da 1 istek sayılır.
+- **Marka ve alan adı:** ad Academiana, adres www.academiana.com.tr (`src/lib/site.ts`); metadataBase + Open Graph, `robots.txt` (kullanıcı alanları ve API kapalı), `sitemap.xml`; `REDIRECT_TO_DOMAIN=1` iken *.vercel.app sayfa istekleri yeni adrese 308 ile yönlenir (API hariç).
 - **Telefona kurulum (PWA):** `app/manifest.ts`, simgeler `public/icons`, servis çalışanı `public/sw.js` (yalnızca kabuk + çevrimdışı sayfa; API/kullanıcı verisi önbelleğe alınmaz), `/offline`; “Uygulamayı yükle” (sol menü) ve panelde mobil kurulum bandı; iPhone için adım adım yönerge. Permissions-Policy mikrofon `self` (sesle yazma canlıda çalışsın).
 - **TÜBİTAK / BAP proje önerisi:** yeni çalışma türü `grant_proposal` (özet, özgün değer, yöntem, proje yönetimi, yaygın etki, bütçe); program seçimi (2209-A/B, 1001, 3501, BAP, burs) `projects.context.program`
 - **Hakem yorumlarına cevap:** Araçlar → yorumları yapıştır → `reviewer_response` eylemi, madde madde cevap mektubu ([YAPILACAK: …] işaretleri)
@@ -114,7 +115,8 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 | d9712a0 | Bölüm kontrolü hak dışı + ücretsizde ekonomik model |
 | d2c265c | Bölüm kontrolü: tüm paketlerde Haiku, yalnız Basic’te haktan düşmez |
 | 99b0a43 | Bölüm kontrolü Ücretsiz pakette de haktan düşmez |
-| (bu commit) | Telefona kurulum (PWA), mikrofon izni düzeltmesi |
+| 3fb0ad4 | Telefona kurulum (PWA), mikrofon izni düzeltmesi |
+| (bu commit) | Marka adı Academiana, alan adı www.academiana.com.tr, SEO dosyaları |
 
 ## Oturum dışı üretilen teslimler (depoda değil)
 - **Reels tanıtım videosu** (40 sn, 1080×1920, altyazılı, müzikli, seslendirmesiz — ortamda Türkçe TTS yok, HuggingFace engelli). Kullanıcıya sohbetten gönderildi; seslendirme metni ve SRT de verildi. Yeniden üretmek gerekirse: demo ekranlarından Playwright ile kare kare HTML animasyonu + ffmpeg (yöntem bu oturumda kullanıldı).

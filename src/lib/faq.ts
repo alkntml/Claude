@@ -13,7 +13,7 @@ export const FAQ: FaqGroup[] = [
     items: [
       {
         id: "nedir",
-        q: { tr: "Akademi AI nedir?", en: "What is Akademi AI?" },
+        q: { tr: "Academiana nedir?", en: "What is Academiana?" },
         a: {
           tr: "Tez, makale, literatür taraması ve araştırma önerisi hazırlayanlar için bir çalışma alanıdır. Çalışma türünüze göre bölüm bölüm yol haritası çıkarır; gerçek akademik veri tabanlarından kaynak bulur ve doğrular; atıfları seçtiğiniz stilde otomatik biçimlendirir; yazarken yanınızda bir akademik asistan bulunur. Sonunda çalışmanızı Word veya PDF olarak, kapak ve içindekilerle indirirsiniz.",
           en: "It is a workspace for people preparing a thesis, article, literature review or research proposal. It builds a section-by-section roadmap for your work type, finds and verifies sources in real academic databases, formats citations automatically in the style you choose, and gives you an academic assistant while you write. At the end you download your work as Word or PDF with a cover page and table of contents.",
@@ -53,8 +53,8 @@ export const FAQ: FaqGroup[] = [
         id: "uydurur-mu",
         q: { tr: "Yapay zekâ var olmayan kaynak uydurur mu?", en: "Does the AI make up sources that don’t exist?" },
         a: {
-          tr: "Hayır. Genel amaçlı sohbet botlarının en büyük sorunu budur; Akademi AI’da sistem düzeyinde engellenmiştir. Asistan **yalnızca projenize eklenmiş kaynaklara** atıf yapabilir ve bu kaynaklar gerçek veri tabanlarından gelir; DOI, PubMed veya arXiv kimliği olanlar resmî kayıtlarla doğrulanır. Listede olmayan bir kaynağa atıf yapılamaz.\nKaynağı bulunamayan kesin bir iddiayı da yazmaz: o konuyu size bildirir ve kaynak aramaya devam eder.",
-          en: "No. This is the biggest problem with general-purpose chatbots, and Akademi AI blocks it at the system level. The assistant can cite **only sources added to your project**, which come from real databases; those with a DOI, PubMed or arXiv ID are verified against official records. A source that is not in your list cannot be cited.\nIt also does not write definitive claims it cannot support: it flags the topic and keeps searching for sources.",
+          tr: "Hayır. Genel amaçlı sohbet botlarının en büyük sorunu budur; Academiana’da sistem düzeyinde engellenmiştir. Asistan **yalnızca projenize eklenmiş kaynaklara** atıf yapabilir ve bu kaynaklar gerçek veri tabanlarından gelir; DOI, PubMed veya arXiv kimliği olanlar resmî kayıtlarla doğrulanır. Listede olmayan bir kaynağa atıf yapılamaz.\nKaynağı bulunamayan kesin bir iddiayı da yazmaz: o konuyu size bildirir ve kaynak aramaya devam eder.",
+          en: "No. This is the biggest problem with general-purpose chatbots, and Academiana blocks it at the system level. The assistant can cite **only sources added to your project**, which come from real databases; those with a DOI, PubMed or arXiv ID are verified against official records. A source that is not in your list cannot be cited.\nIt also does not write definitive claims it cannot support: it flags the topic and keeps searching for sources.",
         },
       },
       {

@@ -153,3 +153,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D42 — PWA
 - Servis çalışanı yalnızca uygulama kabuğunu ve `/offline` sayfasını önbelleğe alır; sayfalar ağdan gelir, `/api/` ve kullanıcı verisi hiç önbelleğe alınmaz (gizlilik + güncellik). `_next/static` karmalı dosyalar önbellekten. `sw.js` no-cache başlığıyla sunulur.
 - Permissions-Policy’de mikrofon `self`: önceki `microphone=()` tarayıcının konuşma tanımasını engelliyordu.
+
+### D43 — Marka ve alan adı
+- Ad “Academiana”, resmî adres `https://www.academiana.com.tr` (Vercel’in varsayılanı www birincil). Sabitler `src/lib/site.ts`; `env.appUrl` üretimde NEXT_PUBLIC_APP_URL yoksa SITE_URL’e düşer.
+- Eski vercel.app yönlendirmesi ortam değişkeniyle (`REDIRECT_TO_DOMAIN=1`) açılır; DNS doğrulanmadan açılırsa site erişilemez olurdu. API yönlendirilmez (webhook’lar bozulmasın).
+- Yerel depolama anahtarları (`akademi:*`) kullanıcı ayarları kaybolmasın diye değiştirilmedi.

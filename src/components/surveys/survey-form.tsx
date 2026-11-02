@@ -39,7 +39,7 @@ export function SurveyForm({ token, title, description, consent, questions, acce
         <div className="mb-6 flex items-center justify-between"><Logo /><LanguageSwitch /></div>
         {preview && <p className="mb-4 rounded-xl bg-amber-50 px-4 py-2 text-sm text-amber-800">{t("Önizleme: cevaplar kaydedilmez.")}</p>}
         <div className="card p-6 sm:p-8">{children}</div>
-        <p className="mt-6 text-center text-xs text-ink-400">{t("Bu form Akademi AI ile hazırlandı. Kimlik bilgisi (ad, e-posta, IP adresi) toplanmaz.")}</p>
+        <p className="mt-6 text-center text-xs text-ink-400">{t("Bu form Academiana ile hazırlandı. Kimlik bilgisi (ad, e-posta, IP adresi) toplanmaz.")}</p>
       </div>
     </div>
   );

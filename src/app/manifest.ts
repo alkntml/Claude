@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 /** Telefona/bilgisayara uygulama olarak kurulum (PWA) */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Akademi AI",
-    short_name: "Akademi AI",
+    name: "Academiana",
+    short_name: "Academiana",
     description: "Tez, makale ve araştırma önerinizi gerçek akademik kaynaklarla adım adım hazırlayın.",
     id: "/panel",
     start_url: "/panel?kaynak=uygulama",

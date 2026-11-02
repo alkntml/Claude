@@ -89,7 +89,7 @@ const stripeProvider: PaymentProvider = {
       "line_items[0][price_data][currency]": i.plan.currency.toLowerCase(),
       "line_items[0][price_data][unit_amount]": amount,
       "line_items[0][price_data][recurring][interval]": i.interval === "yearly" ? "year" : "month",
-      "line_items[0][price_data][product_data][name]": `Akademi AI ${i.plan.name}`,
+      "line_items[0][price_data][product_data][name]": `Academiana ${i.plan.name}`,
       "metadata[user_id]": i.userId,
       "metadata[plan_id]": i.plan.id,
       "metadata[interval]": i.interval,

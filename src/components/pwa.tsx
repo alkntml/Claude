@@ -60,7 +60,7 @@ export function InstallApp({ variant = "row", className }: { variant?: "row" | "
         <div className={cn("flex items-center gap-3 rounded-2xl border border-brand-100 bg-brand-50/80 p-3 text-[13.5px] text-ink-700 lg:hidden", className)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icons/icon-192.png" alt="" className="h-10 w-10 shrink-0 rounded-xl" />
-          <span className="min-w-0 flex-1"><b className="block text-ink-900">{t("Akademi AI’ı telefonunuza kurun")}</b>{t("Ana ekrandan tek dokunuşla, tam ekran açılır.")}</span>
+          <span className="min-w-0 flex-1"><b className="block text-ink-900">{t("Academiana’yı telefonunuza kurun")}</b>{t("Ana ekrandan tek dokunuşla, tam ekran açılır.")}</span>
           <button onClick={install} className="shrink-0 rounded-xl bg-brand-600 px-3 py-2 text-[13px] font-medium text-white">{t("Kur")}</button>
           <button onClick={dismiss} className="shrink-0 rounded-lg p-1 text-ink-400" aria-label={t("Kapat")}><X className="h-4 w-4" /></button>
         </div>
@@ -72,12 +72,12 @@ export function InstallApp({ variant = "row", className }: { variant?: "row" | "
       <Modal open={help} onClose={() => setHelp(false)} title={platform === "ios" ? t("iPhone / iPad’e kurulum") : platform === "android" ? t("Android’e kurulum") : t("Bilgisayara kurulum")}>
         <ol className="space-y-3 text-[15px] text-ink-700">
           {(platform === "ios"
-            ? [t("Bu sayfayı Safari’de açın (Chrome’da “Paylaş” menüsü de kullanılabilir)."), <>{t("Alttaki veya üstteki Paylaş düğmesine dokunun:")} <Share className="inline h-4 w-4 align-[-2px] text-brand-600" /></>, <>{t("Listeyi aşağı kaydırıp “Ana Ekrana Ekle”yi seçin:")} <SquarePlus className="inline h-4 w-4 align-[-2px] text-brand-600" /></>, t("Sağ üstteki “Ekle”ye dokunun. Akademi AI simgesi ana ekranınıza gelir.")]
+            ? [t("Bu sayfayı Safari’de açın (Chrome’da “Paylaş” menüsü de kullanılabilir)."), <>{t("Alttaki veya üstteki Paylaş düğmesine dokunun:")} <Share className="inline h-4 w-4 align-[-2px] text-brand-600" /></>, <>{t("Listeyi aşağı kaydırıp “Ana Ekrana Ekle”yi seçin:")} <SquarePlus className="inline h-4 w-4 align-[-2px] text-brand-600" /></>, t("Sağ üstteki “Ekle”ye dokunun. Academiana simgesi ana ekranınıza gelir.")]
             : platform === "android"
-              ? [t("Bu sayfayı Chrome’da açın."), t("Sağ üstteki üç nokta (⋮) menüsüne dokunun."), t("“Uygulamayı yükle” veya “Ana ekrana ekle”yi seçin."), t("“Yükle”ye dokunun. Akademi AI simgesi ana ekranınıza gelir.")]
+              ? [t("Bu sayfayı Chrome’da açın."), t("Sağ üstteki üç nokta (⋮) menüsüne dokunun."), t("“Uygulamayı yükle” veya “Ana ekrana ekle”yi seçin."), t("“Yükle”ye dokunun. Academiana simgesi ana ekranınıza gelir.")]
               : platform === "mac-safari"
-                ? [t("Safari’de üst menüden “Dosya”yı açın (veya Paylaş düğmesine tıklayın)."), t("“Dock’a Ekle”yi seçin."), t("“Ekle”ye tıklayın. Akademi AI, Dock’ta ayrı bir uygulama olarak açılır.")]
-                : [t("Chrome veya Edge kullanın."), t("Adres çubuğunun sağındaki kurulum simgesine (ekran ve ok) tıklayın ya da sağ üstteki menüden “Akademi AI’ı yükle” / “Uygulamayı yükle”yi seçin."), t("“Yükle”ye tıklayın. Akademi AI masaüstünüzde ve başlat menüsünde ayrı bir uygulama olarak açılır.")]
+                ? [t("Safari’de üst menüden “Dosya”yı açın (veya Paylaş düğmesine tıklayın)."), t("“Dock’a Ekle”yi seçin."), t("“Ekle”ye tıklayın. Academiana, Dock’ta ayrı bir uygulama olarak açılır.")]
+                : [t("Chrome veya Edge kullanın."), t("Adres çubuğunun sağındaki kurulum simgesine (ekran ve ok) tıklayın ya da sağ üstteki menüden “Academiana’yı yükle” / “Uygulamayı yükle”yi seçin."), t("“Yükle”ye tıklayın. Academiana masaüstünüzde ve başlat menüsünde ayrı bir uygulama olarak açılır.")]
           ).map((step, i) => (
             <li key={i} className="flex gap-3"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-900 text-xs font-semibold text-white">{i + 1}</span><span>{step}</span></li>
           ))}

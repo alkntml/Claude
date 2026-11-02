@@ -20,7 +20,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   // Gömülü serif yazı tipi kullanılır (Türkçe karakter); punto ve satır aralığı şablondan
   const base = Math.min(f.fontSizePt, 13) - 0.5;
   const gap = Math.max(1, (f.lineSpacing - 1) * base * 0.9 + 2);
-  const doc = new PDFDocument({ size: "A4", margins: M, bufferPages: true, info: { Title: d.title, Author: d.author, Creator: "Akademi AI" } });
+  const doc = new PDFDocument({ size: "A4", margins: M, bufferPages: true, info: { Title: d.title, Author: d.author, Creator: "Academiana" } });
   doc.registerFont("r", F.regular).registerFont("b", F.bold).registerFont("i", F.italic).registerFont("bi", F.boldItalic);
   const chunks: Buffer[] = [];
   doc.on("data", (c: Buffer) => chunks.push(c));

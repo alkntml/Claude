@@ -10,7 +10,7 @@ export default async function Page() {
     return (
       <StaticPage title="Terms of use" lead="Template text: must be reviewed by a lawyer before publication.">
         <h2>Nature of the service</h2>
-        <p>Akademi AI is a tool that helps you plan, research, write and format academic work. You remain responsible for the scientific accuracy and originality of the content and for compliance with your institution&apos;s rules.</p>
+        <p>Academiana is a tool that helps you plan, research, write and format academic work. You remain responsible for the scientific accuracy and originality of the content and for compliance with your institution&apos;s rules.</p>
         <h2>Academic integrity</h2>
         <p>You agree to use the platform in line with your institution&apos;s AI policies and to disclose AI use where required.</p>
         <h2>Usage limits</h2>
@@ -21,7 +21,7 @@ export default async function Page() {
   return (
     <StaticPage title="Kullanım koşulları" lead="Şablon metin: yayına almadan önce hukuki inceleme yapılmalıdır.">
       <h2>Hizmetin niteliği</h2>
-      <p>Akademi AI, akademik çalışmaların planlanması, kaynak bulunması, yazımı ve biçimlendirilmesi için yardımcı bir araçtır. Üretilen içeriğin bilimsel doğruluğu, özgünlüğü ve kurumunuzun kurallarına uygunluğu konusunda nihai sorumluluk kullanıcıya aittir.</p>
+      <p>Academiana, akademik çalışmaların planlanması, kaynak bulunması, yazımı ve biçimlendirilmesi için yardımcı bir araçtır. Üretilen içeriğin bilimsel doğruluğu, özgünlüğü ve kurumunuzun kurallarına uygunluğu konusunda nihai sorumluluk kullanıcıya aittir.</p>
       <h2>Akademik dürüstlük</h2>
       <p>Platformu kurumunuzun yapay zekâ kullanım politikalarına uygun biçimde kullanmayı ve gerektiğinde yapay zekâ kullanımını beyan etmeyi kabul edersiniz.</p>
       <h2>Kullanım limitleri</h2>

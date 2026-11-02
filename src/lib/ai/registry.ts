@@ -12,11 +12,15 @@ const PROVIDERS: Record<ModelRef["provider"], { provider: AiProvider; configured
 
 export type Tier = "default" | "balanced" | "fast" | "premium";
 
-export async function resolveModel(planId: string, tier?: Tier): Promise<ModelRef & { tier: Tier }> {
+/**
+ * Model işe göre seçilir, pakete göre değil (D47):
+ * fast = Haiku (basit düzenleme), balanced = Sonnet (yazım), default = Opus (karmaşık analiz).
+ * Paketler yalnızca kota/limit bakımından ayrışır. planId ileride gerekirse diye imzada tutuluyor.
+ */
+export async function resolveModel(_planId: string, tier: Tier): Promise<ModelRef & { tier: Tier }> {
   const cfg = await getSetting("ai.models");
-  const t: Tier = tier ?? cfg.plan_tiers[planId] ?? "default";
-  const ref = (cfg[t] as ModelRef | undefined) ?? cfg.default;
-  return { ...ref, tier: t };
+  const ref = (cfg[tier] as ModelRef | undefined) ?? cfg.default;
+  return { ...ref, tier };
 }
 
 export function isProviderConfigured(p: ModelRef["provider"]) {

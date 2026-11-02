@@ -33,7 +33,7 @@ const F_SCHEMA = {
 };
 
 async function run(planId: string, system: string, user: string, schema: Record<string, unknown>, maxTokens: number) {
-  const model = await resolveModel(planId);
+  const model = await resolveModel(planId, "default"); // karmaşık: jüri soruları ve cevap değerlendirmesi
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: "medium", jsonSchema: schema });
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
   let data: any;

@@ -202,7 +202,7 @@ function AiTab() {
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="card space-y-3 p-5">
         <h3 className="font-semibold">Model yapılandırması</h3>
-        <p className="text-[13px] text-ink-500">Katmanlar: <code>default</code>, <code>balanced</code>, <code>fast</code>, <code>premium</code>. Her katman bir sağlayıcı (<code>anthropic</code> | <code>openai</code>) ve model kimliği içerir. <code>plan_tiers</code> paketleri katmanlara eşler; <code>pricing_per_mtok</code> maliyet tahmini içindir.</p>
+        <p className="text-[13px] text-ink-500">Katmanlar: <code>default</code>, <code>balanced</code>, <code>fast</code>, <code>premium</code>. Her katman bir sağlayıcı (<code>anthropic</code> | <code>openai</code>) ve model kimliği içerir. Model pakete göre değil işe göre seçilir: <code>fast</code> basit düzenlemeler, <code>balanced</code> yazım, <code>default</code> karmaşık analiz; <code>pricing_per_mtok</code> maliyet tahmini içindir.</p>
         <textarea className="input min-h-[360px] font-mono text-[12px]" value={models} onChange={(e) => setModels(e.target.value)} spellCheck={false} />
         <Button size="sm" onClick={saveModels}><Save className="h-3.5 w-3.5" /> Kaydet</Button>
       </div>

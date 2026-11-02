@@ -41,7 +41,7 @@ export async function generateDeck(params: { planId: string; project: any; stage
   const list = cited.map((s: any, i: number) => { sourceMap[`S${i + 1}`] = s.id; const fam = (s.authors ?? [])[0]?.family ?? (s.authors ?? [])[0]?.literal ?? "?"; return `S${i + 1}: ${fam} (${s.year ?? "t.y."}) ${s.title}`; }).join("\n");
   const lang = project.language === "en" ? "English" : "Türkçe";
 
-  const model = await resolveModel(params.planId);
+  const model = await resolveModel(params.planId, "balanced"); // orta: sunum metni
   const res = await complete(model, {
     system: `Akademik tez/makale savunma sunumu hazırlayan deneyimli bir akademisyensin. Dil: ${lang}.
 KURALLAR:

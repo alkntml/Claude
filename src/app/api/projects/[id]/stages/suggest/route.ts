@@ -29,7 +29,7 @@ export const POST = route<Ctx>("stages.suggest", async (_req, { params }) => {
   const { data: f } = await s.supabase.from("files").select("extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", s.user.id).maybeSingle();
   if (!f?.extracted_text) throw new ApiError(422, "Kılavuz metni okunamadı");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
-  const model = await resolveModel(s.profile.plan_id);
+  const model = await resolveModel(s.profile.plan_id, "balanced"); // orta: kılavuzdan yapı çıkarma
   if (!isProviderConfigured(model.provider)) throw new ApiError(503, "Yapay zekâ sağlayıcısı yapılandırılmamış", "ai_not_configured");
 
   const keys = Object.keys(STAGE_LIBRARY).join(", ");

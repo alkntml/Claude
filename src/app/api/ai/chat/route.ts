@@ -4,7 +4,7 @@ import { z } from "zod";
 import { ApiError, json, logError, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
-import { ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
+import { ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
 import { getSetting } from "@/lib/settings";
@@ -46,7 +46,7 @@ export const POST = route("ai.chat", async (req) => {
   const stage = b.stageId ? bundle.stages.find((x) => x.id === b.stageId) ?? null : null;
   if (b.stageId && !stage) throw new ApiError(404, "Bölüm bulunamadı");
 
-  const model = await resolveModel(s.profile.plan_id);
+  const model = await resolveModel(s.profile.plan_id, ACTION_TIER[b.action]);
   if (!isProviderConfigured(model.provider)) {
     throw new ApiError(503, `Yapay zekâ sağlayıcısı (${model.provider}) yapılandırılmamış. Yönetici ${model.provider === "anthropic" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY"} tanımlamalıdır.`, "ai_not_configured");
   }

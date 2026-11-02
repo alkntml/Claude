@@ -26,6 +26,38 @@ export const ASSISTANT_ACTIONS = {
 
 export type AssistantAction = keyof typeof ASSISTANT_ACTIONS;
 
+/**
+ * Her asistan eyleminin model katmanı (pakete bakılmaz):
+ * fast = Haiku (basit dil düzenlemesi), balanced = Sonnet (yazım), default = Opus (karmaşık analiz ve muhakeme).
+ */
+export const ACTION_TIER: Record<AssistantAction, "fast" | "balanced" | "default"> = {
+  // Basit
+  shorten: "fast",
+  academic_tone: "fast",
+  reduce_repetition: "fast",
+  from_notes: "fast",
+  // Orta
+  chat: "balanced",
+  plan: "balanced",
+  draft: "balanced",
+  expand: "balanced",
+  restructure: "balanced",
+  abstract: "balanced",
+  fix_claim: "balanced",
+  ethics_docs: "balanced",
+  cover_letter: "balanced",
+  research_questions: "balanced",
+  // Karmaşık
+  synthesize: "default",
+  methodology: "default",
+  hypotheses: "default",
+  interpret: "default",
+  discussion: "default",
+  consistency: "default",
+  reviewer_response: "default",
+  journal_checklist: "default",
+};
+
 export const OUTPUT_PROTOCOL = `ÇIKTI BİÇİMİ:
 - Belgeye eklenebilecek akademik metni ":::taslak" satırı ile başlayan ve ":::" satırı ile biten bir blok içine yaz. Blok içinde Markdown kullan (## başlık, paragraf, - liste, | tablo |, **kalın**, *italik*).
 - Atıfları yalnızca [[kaynak:S1]] biçiminde ver. Birden çok kaynak: [[kaynak:S1,S4]]. Sayfa numarası: bir bilgiyi TAM METİN PARÇALARI içindeki bir parçadan aldıysan ve parçanın sayfası (s. N) verilmişse, doğrudan alıntıda ZORUNLU, aktarmada (parafrazda) da mümkün olduğunca sayfayı ekle: [[kaynak:S2|s. 14]], birden çok sayfa: [[kaynak:S2|s. 14-15]]. Sayfa numarasını yalnızca parçada yazanı kullanarak ver; parça "sayfa bilgisi yok" diyorsa veya kaynak yalnızca özet/künye düzeyindeyse sayfa YAZMA, tahmin etme. Sayfa gösterimini (p./s./pp.) stil kurallarına göre sistem biçimlendirir. Anlatı atfı (Yazar (Yıl) biçimi): [[kaynak:S3|anlatı]]. Yazar adı ve yılı elle YAZMA; atıf stilini sistem uygular.

@@ -60,7 +60,7 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
   let aiReview: { ran: boolean; error?: string } = { ran: false };
   if (withAi) {
     await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
-    const model = await resolveModel(s.profile.plan_id);
+    const model = await resolveModel(s.profile.plan_id, "default"); // karmaşık: bütün çalışmanın değerlendirmesi
     if (!isProviderConfigured(model.provider)) aiReview = { ran: false, error: "Yapay zekâ sağlayıcısı yapılandırılmamış" };
     else {
       const summary = stages.filter((x) => x.text).map((x) => `### ${x.key} — ${x.title}\n${x.text.slice(0, 6000)}`).join("\n\n");

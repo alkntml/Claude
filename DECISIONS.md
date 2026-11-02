@@ -177,3 +177,10 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - İngilizce sözlük (`en.ts`, ~180 KB) istemci paketinden çıkarıldı: istemci `@/i18n/core` (sözlüksüz) kullanır, sözlük yalnızca İngilizce sayfalarda kök düzenden `I18nProvider`’a prop olarak gelir. İstemci bileşeninde `makeT`/`@/i18n` içe aktarma; `useT()` kullan.
 - Sonuç: `/proje/[id]` 438 → 360 kB. Tam statik herkese açık sayfalar daha büyük bir yeniden yapılanma gerektirir (henüz yapılmadı).
 
+### D47 — Model işe göre seçilir, pakete göre değil
+- Kullanıcı kararı: basit işler Haiku, orta işler Sonnet, karmaşık işler Opus; paket fark etmez. Paketler yalnızca kota/limitte ayrışır.
+- Asistan eylemleri: `ACTION_TIER` (`src/lib/ai/prompts.ts`). Basit (Haiku): kısalt, akademik dil, tekrar azaltma, notlardan metin. Orta (Sonnet): sohbet, plan, bölüm yazımı, genişlet, yeniden yapılandır, özet/abstract, kaynakla düzelt, etik belgeler, ön yazı, araştırma soruları. Karmaşık (Opus): literatür sentezi, yöntem, hipotez, bulgu yorumu, tartışma, tutarlılık, hakem cevabı, dergi kılavuzu.
+- Diğer: Haiku → araştırma planı, matris, kanıt, bölüm kontrolü; Sonnet → başlık, konu bulma, kılavuzdan bölüm önerisi, sunum; Opus → kalite raporu, savunma provası.
+- `resolveModel(planId, tier)` artık katmanı zorunlu alır; `plan_tiers` ayarı kaldırıldı (veritabanında kalan değer yok sayılır).
+- Not: Paket özellik listelerindeki “Öncelikli modeller / En güçlü modeller” ifadeleri artık geçerli değil; yönetim panelinden güncellenmeli (TODO).
+

@@ -12,7 +12,6 @@ export interface AiModelsSetting {
   balanced?: ModelRef;
   fast: ModelRef;
   premium: ModelRef;
-  plan_tiers: Record<string, "default" | "balanced" | "fast" | "premium">;
   pricing_per_mtok: Record<string, { in: number; out: number }>;
   max_output_tokens: number;
   effort?: "low" | "medium" | "high" | "xhigh" | "max";
@@ -24,7 +23,6 @@ export const DEFAULTS = {
     balanced: { provider: "anthropic", model: "claude-sonnet-5-5" },
     fast: { provider: "anthropic", model: "claude-haiku-5-5" },
     premium: { provider: "anthropic", model: "claude-opus-5-5" },
-    plan_tiers: { free: "fast", basic: "balanced", pro: "default", premium: "premium" },
     pricing_per_mtok: { "claude-haiku-5-5": { in: 0.1, out: 0.5 }, "claude-sonnet-5-5": { in: 2, out: 10 }, "claude-opus-5-5": { in: 4, out: 20 } },
     max_output_tokens: 16000,
     effort: "medium",

@@ -41,10 +41,10 @@ export function ruleIssues(bundle: any, stage: any, uiLocale: Locale): ReviewIss
 }
 
 /** Yapay zekâ incelemesi: bölümün amacına, yazım kurallarına ve çalışma başlığına uygunluğu */
-export async function aiStageReview(params: { planId: string; bundle: any; stage: any; uiLocale: Locale }) {
+export async function aiStageReview(params: { planId: string; bundle: any; stage: any; uiLocale: Locale; tier?: "fast" | "balanced" }) {
   const { bundle, stage } = params;
   const def = stageDef(stage.key);
-  const model = await resolveModel(params.planId, "balanced");
+  const model = await resolveModel(params.planId, params.tier ?? "balanced");
   if (!isProviderConfigured(model.provider)) return null;
   const others = bundle.stages.filter((x: any) => x.id !== stage.id && String(x.content_text ?? "").trim()).map((x: any) => `- ${x.title}: ${String(x.content_text).slice(0, 300).replace(/\s+/g, " ")}…`).join("\n");
   const res = await complete(model, {

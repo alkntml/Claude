@@ -26,9 +26,11 @@ export const GET = route("admin.stats", async (req) => {
   for (const e of events.data ?? []) {
     const day = e.created_at.slice(0, 10);
     byDay[day] ??= { ai: 0, search: 0, cost: 0, tokens: 0 };
-    if (e.kind === "ai_request") {
-      totals.ai += e.quantity; totals.tokens += e.tokens_in + e.tokens_out; totals.cost += Number(e.cost_usd);
-      byDay[day].ai += e.quantity; byDay[day].tokens += e.tokens_in + e.tokens_out; byDay[day].cost += Number(e.cost_usd);
+    if (e.kind === "ai_request") { totals.ai += e.quantity; byDay[day].ai += e.quantity; }
+    // Model maliyeti: kullanıcı hakkından düşmeyen yapay zekâ işlemleri (ör. bölüm kontrolü) dahil
+    if (e.kind === "ai_request" || (e.model && (Number(e.cost_usd) > 0 || e.tokens_in + e.tokens_out > 0))) {
+      totals.tokens += e.tokens_in + e.tokens_out; totals.cost += Number(e.cost_usd);
+      byDay[day].tokens += e.tokens_in + e.tokens_out; byDay[day].cost += Number(e.cost_usd);
       const m = e.model ?? "?";
       byModel[m] ??= { requests: 0, tokens: 0, cost: 0 };
       byModel[m].requests++; byModel[m].tokens += e.tokens_in + e.tokens_out; byModel[m].cost += Number(e.cost_usd);

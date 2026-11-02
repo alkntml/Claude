@@ -1881,4 +1881,5 @@ export const EN: Record<string, string> = {
   "Üstteki “Kaynak bul ve düzelt” ile kaynak ekleyin veya iddiayı çıkarın.": "Add sources with “Find sources and fix” above, or remove the claim.",
   "İyi yanlar": "Strengths",
   "Yapay zekâ incelemesi şu anda yapılamadı": "The AI review could not be run right now",
+  "Bugünkü yapay zekâ bölüm kontrolü sınırına ulaşıldı; yarın tekrar deneyebilirsiniz": "Today’s limit for AI section reviews has been reached; you can try again tomorrow",
 };

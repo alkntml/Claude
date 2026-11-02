@@ -74,6 +74,7 @@ src/lib/
 src/i18n/                index.ts (t, ülke→dil), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
 supabase/migrations/     Sıralı SQL migration'ları
 supabase/setup.sql       Tüm migration'ların birleşimi (sıfırdan kurulum)
+public/                  icons/ (uygulama simgeleri), sw.js (servis çalışanı; sürüm değişince VERSION artır)
 demo/                    Sunucusuz tarayıcı demosu (mock API + Next shim'leri)
 tests/                   Vitest
 ```

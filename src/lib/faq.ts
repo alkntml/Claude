@@ -307,8 +307,8 @@ export const FAQ: FaqGroup[] = [
         id: "telefon",
         q: { tr: "Telefondan veya tabletten kullanabilir miyim?", en: "Can I use it on a phone or tablet?" },
         a: {
-          tr: "Evet. Site telefona göre düzenlenmiştir: alttaki çubukla Bölümler, Metin, Asistan ve Kaynaklar arasında geçersiniz; asistandaki mikrofon (“Sesle yaz”) düğmesiyle konuşarak not alabilir, sonra asistandan bunu akademik paragrafa çevirmesini isteyebilirsiniz. Uzun yazım ve son biçim kontrolü için bilgisayar daha rahattır.",
-          en: "Yes. The site is designed for phones: the bottom bar switches between Sections, Text, Assistant and Sources, and with dictation you can speak notes and have them turned into academic paragraphs. A computer is more comfortable for long writing and final formatting.",
+          tr: "Evet. Site telefona göre düzenlenmiştir: alttaki çubukla Bölümler, Metin, Asistan ve Kaynaklar arasında geçersiniz; asistandaki mikrofon (“Sesle yaz”) düğmesiyle konuşarak not alabilir, sonra asistandan bunu akademik paragrafa çevirmesini isteyebilirsiniz. Siteyi uygulama gibi de kurabilirsiniz: Android’de menüdeki “Uygulamayı yükle”ye, iPhone’da Safari’de Paylaş → “Ana Ekrana Ekle”ye dokunun; simgesi ana ekranınıza gelir ve tam ekran açılır. Uzun yazım ve son biçim kontrolü için bilgisayar daha rahattır.",
+          en: "Yes. The site is designed for phones: the bottom bar switches between Sections, Text, Assistant and Sources, and with dictation you can speak notes and have them turned into academic paragraphs. You can also install it like an app: on Android tap “Install app” in the menu; on iPhone, in Safari tap Share → “Add to Home Screen”. Its icon appears on your home screen and it opens full screen. A computer is more comfortable for long writing and final formatting.",
         },
       },
       {

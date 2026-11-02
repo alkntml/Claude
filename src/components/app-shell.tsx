@@ -1,5 +1,6 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
+import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
 import { Building2, ClipboardList, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
 import Link from "next/link";
@@ -82,6 +83,7 @@ export function AppShell({ children, user }: Props) {
       </div>
       <div className="mt-auto space-y-2 p-3">
         <div className="px-3"><LanguageSwitch /></div>
+        <InstallApp />
         <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-500 transition hover:bg-white hover:text-ink-900"><MessageSquarePlus className="h-[18px] w-[18px]" /> {t("Geri bildirim")}</button>
         <div className="flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-950 text-sm font-semibold text-white">{(user.name || user.email).slice(0, 1).toLocaleUpperCase("tr")}</div>

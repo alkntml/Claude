@@ -1882,4 +1882,13 @@ export const EN: Record<string, string> = {
   "İyi yanlar": "Strengths",
   "Yapay zekâ incelemesi şu anda yapılamadı": "The AI review could not be run right now",
   "Bugünkü yapay zekâ bölüm kontrolü sınırına ulaşıldı; yarın tekrar deneyebilirsiniz": "Today’s limit for AI section reviews has been reached; you can try again tomorrow",
+  "Akademi AI’ı telefonunuza kurun": "Install Akademi AI on your phone",
+  "Alttaki veya üstteki Paylaş düğmesine dokunun:": "Tap the Share button at the bottom or top:",
+  "Ana ekrandan tek dokunuşla, tam ekran açılır.": "Opens full screen from your home screen with one tap.",
+  "Bu sayfayı Safari’de açın (Chrome’da “Paylaş” menüsü de kullanılabilir).": "Open this page in Safari (the “Share” menu in Chrome works too).",
+  "Kur": "Install",
+  "Listeyi aşağı kaydırıp “Ana Ekrana Ekle”yi seçin:": "Scroll down and choose “Add to Home Screen”:",
+  "Sağ üstteki “Ekle”ye dokunun. Akademi AI simgesi ana ekranınıza gelir.": "Tap “Add” at the top right. The Akademi AI icon appears on your home screen.",
+  "Uygulamayı yükle": "Install app",
+  "iPhone / iPad’e kurulum": "Install on iPhone / iPad",
 };

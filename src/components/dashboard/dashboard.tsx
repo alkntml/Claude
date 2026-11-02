@@ -1,5 +1,6 @@
 "use client";
 import { daysLeft, wordsThisWeek } from "@/lib/goals";
+import { InstallApp } from "@/components/pwa";
 import { useT } from "@/i18n/client";
 import { makeT, type TFn } from "@/i18n";
 import { motion } from "framer-motion";
@@ -39,6 +40,7 @@ export function Dashboard(p: Props) {
 
   return (
     <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.05 } } }} className="space-y-8">
+      <InstallApp variant="banner" />
       <motion.div variants={item} className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-ink-400">{new Date().toLocaleDateString(dl, { weekday: "long", day: "numeric", month: "long" })}</p>

@@ -1,11 +1,11 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] Supabase SQL Editor’de migration 9’u çalıştır (`20261106000009_plans_whatsapp.sql`: yeni fiyat/limitler, öğrenci indirimi ayarını siler)
+- [x] (2026-11-02) Supabase SQL Editor’de migration 9’u çalıştır (`20261106000009_plans_whatsapp.sql`: yeni fiyat/limitler, öğrenci indirimi ayarını siler)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 10’u çalıştır (`20261106000010_plan_features.sql`: paket kartlarında özellik listeleri)
-- [ ] Supabase SQL Editor’de migration 11’i çalıştır (`20261107000011_work_lock.sql`: çalışma kilidi)
+- [x] (2026-11-02) Supabase SQL Editor’de migration 11’i çalıştır (`20261107000011_work_lock.sql`: çalışma kilidi)
 - [ ] 100 TL ödemesi gelince: Yönetim → Kilitler → çalışma kodunu yapıştır → “Hakkı tanımla”
 - [ ] KVKK veri talepleri: Yönetim → Kilitler’de bekleyenleri 30 gün içinde ücretsiz yanıtla
-- [ ] Supabase SQL Editor’de migration 12’yi çalıştır (`20261108000012_usage_integrity.sql`: sayaç güvenilirliği)
-- [ ] Karar: token limitleri istek limitleriyle uyumlu hâle getirilsin mi (D51)?
+- [x] (2026-11-02) Supabase SQL Editor’de migration 12’yi çalıştır (`20261108000012_usage_integrity.sql`: sayaç güvenilirliği)
+- [x] (2026-11-02) Token limitleri yükseltildi (migration 13; elle çalıştırıldı)
 - [ ] Ödeme gelince: Yönetim → Kullanıcılar’dan kullanıcının paketini elle değiştir
 - [ ] Alan adı: 2026-11-03’te hâlâ “Invalid Configuration” ise hosting.com.tr desteğine TRABIS iletimini sorun; gerekirse B planı (hosting.com.tr DNS + A @ 216.198.79.1, CNAME www → 4d8ff7a9ca75c5bb.vercel-dns-017.com)
 - [x] (2026-11-02, DNS yayılımı bekleniyor) Alan adı: hosting.com.tr’de nameserver → ns1.vercel-dns.com / ns2.vercel-dns.com (yapıldıysa Vercel’de “Valid Configuration” bekleniyor)

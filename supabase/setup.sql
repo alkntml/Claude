@@ -1005,3 +1005,11 @@ end $$;
 drop trigger if exists projects_protect_unarchive on public.projects;
 create trigger projects_protect_unarchive before update on public.projects
   for each row execute function public.protect_project_unarchive();
+
+-- ---------- 20261108000013_token_limits.sql ----------
+-- Token sınırları istek sınırlarından önce dolmasın (D51; bir istek ≈ 10–20 bin token).
+-- Canlı veritabanında 2026-11-02’de elle çalıştırıldı.
+update public.plans set limits = limits || '{"tokens_month": 800000}'::jsonb where id = 'free';
+update public.plans set limits = limits || '{"tokens_month": 6000000}'::jsonb where id = 'basic';
+update public.plans set limits = limits || '{"tokens_month": 60000000}'::jsonb where id = 'pro';
+update public.plans set limits = limits || '{"tokens_month": 200000000}'::jsonb where id = 'premium';

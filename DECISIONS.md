@@ -211,5 +211,5 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Proje kotası atlatılamaz: kullanıcıların `projects` tablosuna doğrudan ekleme yetkisi kaldırıldı (sunucu kota kontrolünden sonra service role ile ekler); arşivden çıkarma kotaya tabi ve yalnızca sunucuda (tetikleyici).
 - Yarıda kesilen/iptal edilen yapay zekâ yanıtı da 1 istek sayılır (token tahmini metin uzunluğundan).
 - Çok sorgulu aramalar kalan tarama hakkına göre kırpılır (ücretsiz pakette 7 hakla 4 sorgu limiti aşmasın).
-- Açık konu (kullanıcıya soruldu): token limitleri (`tokens_month`) istek limitlerinden çok önce doluyor (bir istek ≈ 10–20 bin token); D50 kilidini erken tetikler.
+- Token limitleri istek limitlerinden önce dolmasın diye yükseltildi (migration 13): ücretsiz 800 bin, Basic 6 M, Pro 60 M, Premium 200 M; müşteriyi bağlayan sınır istek sayısıdır.
 

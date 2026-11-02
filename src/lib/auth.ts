@@ -29,6 +29,8 @@ export interface Profile {
   work_locked?: boolean;
   /** Ücretli paketin bitiş tarihi (D53); null = süresiz */
   plan_expires_at?: string | null;
+  /** Üye numarası (D56) */
+  member_no?: number | null;
 }
 
 export interface Session {

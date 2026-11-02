@@ -4,7 +4,7 @@ import { z } from "zod";
 export const ADMIN_RESOURCES = {
   users: {
     table: "profiles",
-    select: "id, email, full_name, institution, role, plan_id, plan_expires_at, work_locked, is_suspended, created_at",
+    select: "id, member_no, email, full_name, institution, role, plan_id, plan_expires_at, work_locked, is_suspended, created_at",
     order: "created_at",
     search: "email",
     update: z.object({ role: z.enum(["user", "admin"]).optional(), plan_id: z.string().max(40).optional(), plan_expires_at: z.string().datetime({ offset: true }).nullable().optional(), is_suspended: z.boolean().optional(), full_name: z.string().max(200).optional() }),

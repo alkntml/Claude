@@ -10,6 +10,7 @@ import { api } from "@/lib/client";
 import { PROVIDER_LABELS } from "@/lib/sources/labels";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 import { DailyBars } from "./chart";
+import { memberCode } from "@/lib/member";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
@@ -160,17 +161,18 @@ function UsersTab({ selfId }: { selfId: string }) {
   return (
     <div className="card overflow-hidden">
       <form onSubmit={(e) => { e.preventDefault(); setQuery(q); }} className="flex flex-wrap gap-2 border-b border-ink-100 p-3">
-        <div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" /><input className="input !pl-9" placeholder="E-posta veya ad ara…" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+        <div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" /><input className="input !pl-9" placeholder="Üye no (AC001234), e-posta veya ad ara…" value={q} onChange={(e) => setQ(e.target.value)} /></div>
         <Button type="submit" variant="secondary">Ara</Button>
       </form>
       <div className="flex flex-wrap gap-1.5 border-b border-ink-100 px-3 py-2">
         {USER_FILTERS.map(([id, label]) => <button key={id} onClick={() => setFilter(id)} className={cn("rounded-full px-3 py-1 text-[12.5px] font-medium", filter === id ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-600 hover:bg-ink-200")}>{label}</button>)}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm"><thead className="bg-ink-50 text-left text-xs uppercase text-ink-500"><tr><th className="px-4 py-2.5">Kullanıcı</th><th>Paket</th><th>Bitiş</th><th>Rol</th><th>Durum</th><th>Kayıt</th><th /></tr></thead>
+        <table className="w-full text-sm"><thead className="bg-ink-50 text-left text-xs uppercase text-ink-500"><tr><th className="px-4 py-2.5">Üye no</th><th>Kullanıcı</th><th>Paket</th><th>Bitiş</th><th>Rol</th><th>Durum</th><th>Kayıt</th><th /></tr></thead>
           <tbody>{(data?.rows ?? []).map((u) => (
             <tr key={u.id} className="border-t border-ink-100">
-              <td className="px-4 py-2.5"><button className="text-left" onClick={() => setOpen(u.id)}><p className="font-medium text-ink-900 hover:underline">{u.full_name || "—"}</p><p className="text-xs text-ink-500">{u.email}</p></button></td>
+              <td className="px-4 py-2.5 font-mono text-[12.5px] text-ink-600">{memberCode(u.member_no)}</td>
+              <td className="py-2.5"><button className="text-left" onClick={() => setOpen(u.id)}><p className="font-medium text-ink-900 hover:underline">{u.full_name || "—"}</p><p className="text-xs text-ink-500">{u.email}</p></button></td>
               <td><select className="rounded-lg border border-ink-200 px-2 py-1 text-[13px]" value={u.plan_id} onChange={(e) => setPlan(u.id, e.target.value)}>{plans.rows.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></td>
               <td>{expiryBadge(u)}</td>
               <td><select className="rounded-lg border border-ink-200 px-2 py-1 text-[13px]" value={u.role} disabled={u.id === selfId} onChange={(e) => patch(u.id, { role: e.target.value })}><option value="user">Kullanıcı</option><option value="admin">Yönetici</option></select></td>
@@ -210,7 +212,8 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="text-sm text-ink-500">{d.profile.email}{d.profile.institution ? ` · ${d.profile.institution}` : ""}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2"><Badge tone="brand">{d.plan?.name ?? d.profile.plan_id}</Badge>{expiryBadge(d.profile)}{d.profile.work_locked && <Badge tone="amber">Kilitli: {d.reasons.join(", ") || "—"}</Badge>}{d.org && <Badge tone="violet">Kurum: {d.org.organizations?.name}</Badge>}</div>
-              <p className="mt-2 text-xs text-ink-400">Kayıt: {new Date(d.profile.created_at).toLocaleDateString("tr-TR")} · ID: <span className="font-mono">{d.profile.id}</span></p>
+              <p className="mt-2 text-sm">Üye no: <b className="font-mono">{memberCode(d.profile.member_no)}</b></p>
+              <p className="mt-1 text-xs text-ink-400">Kayıt: {new Date(d.profile.created_at).toLocaleDateString("tr-TR")} · Sistem kimliği: <span className="font-mono">{d.profile.id}</span></p>
             </div>
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="mb-1 font-semibold">Bu ay</p>

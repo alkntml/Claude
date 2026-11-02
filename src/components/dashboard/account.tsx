@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, openUpgrade } from "@/lib/client";
 import { TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
+import { memberCode } from "@/lib/member";
 import { GrowthSection } from "./growth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -24,7 +25,7 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
   const [saving, setSaving] = useState(false);
   const [delOpen, setDelOpen] = useState(false);
   const [confirm, setConfirm] = useState("");
-  const teamHref = whatsappLink(t("Merhaba, Academiana Akademik Ekip İndirimi (%{p}) hakkında bilgi almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket: \nHesap e-postam: {email}", { p: TEAM_DISCOUNT.percent, email: profile.email ?? "" }));
+  const teamHref = whatsappLink(t("Merhaba, Academiana Akademik Ekip İndirimi (%{p}) hakkında bilgi almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket: \nÜye no: {no}\nHesap e-postam: {email}", { p: TEAM_DISCOUNT.percent, email: profile.email ?? "", no: memberCode(profile.member_no) }));
 
   async function save() {
     setSaving(true);
@@ -44,7 +45,7 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
 
   return (
     <div className="space-y-8">
-      <div><h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Hesap ve abonelik")}</h1><p className="mt-1 text-ink-500">{profile.email}</p></div>
+      <div><h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Hesap ve abonelik")}</h1><p className="mt-1 text-ink-500">{profile.email}{profile.member_no ? <> · {t("Üye no")}: <b className="font-mono text-ink-800">{memberCode(profile.member_no)}</b></> : null}</p></div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="card p-6">
@@ -67,7 +68,7 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
             return (
               <div className={cn("mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm", soon ? "bg-amber-50 text-amber-900" : "bg-ink-50 text-ink-600")}>
                 <span>{t("Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).", { date: end.toLocaleDateString(dl), n: Math.max(0, left) })}</span>
-                {soon && <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "" }))}>{t("Süreyi uzat")}</a>}
+                {soon && <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nÜye no: {no}\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "", no: memberCode(profile.member_no) }))}>{t("Süreyi uzat")}</a>}
               </div>
             );
           })()}

@@ -30,3 +30,14 @@ describe("sayaç dönemi ve kilit nedenleri", () => {
     expect(lockReasons({ ai_requests_month: 40, cost_usd_month: null }, usage)).toEqual([]);
   });
 });
+
+import { memberCode, parseMemberCode } from "@/lib/member";
+describe("üye numarası", () => {
+  it("biçimlendirme ve arama", () => {
+    expect(memberCode(1234)).toBe("AC001234");
+    expect(parseMemberCode("AC001234")).toBe(1234);
+    expect(parseMemberCode("ac-1234")).toBe(1234);
+    expect(parseMemberCode("1234")).toBe(1234);
+    expect(parseMemberCode("ali@x.com")).toBeNull();
+  });
+});

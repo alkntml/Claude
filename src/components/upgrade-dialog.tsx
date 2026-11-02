@@ -9,7 +9,7 @@ import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
 import { DOWNLOAD_PRICE_TL, PLAN_RANK, whatsappLink } from "@/lib/pricing";
 
 interface PlanRow { id: string; name: string; price_monthly: number; limits: { ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
-interface PlansData { current: string; email: string; plans: PlanRow[] }
+interface PlansData { current: string; email: string; memberNo?: string; plans: PlanRow[] }
 
 const TITLES: Record<string, string> = {
   limit_ai: "Bu ayki yapay zekâ kullanım hakkınız doldu",
@@ -53,7 +53,7 @@ export function UpgradeDialogHost() {
   // Çalışma sırasında kilit devreye girdiyse sayfa yenilenir ve kilitli görünüme geçilir (D50)
   const close = () => { setReq(null); if (workLocked && !req.projectId && typeof window !== "undefined" && /^\/proje\//.test(window.location.pathname)) window.location.reload(); };
   const proj = req.projectId ? { id: req.projectId, title: req.projectTitle ?? "" } : getCurrentProject();
-  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price} TL).\nÇalışma: {title}\nÇalışma kodu: {id}\nHesap e-postam: {email}", { price: DOWNLOAD_PRICE_TL, title: proj?.title ?? "", id: proj?.id ?? "", email: data?.email ?? "" }));
+  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price} TL).\nÇalışma: {title}\nÇalışma kodu: {id}\nÜye no: {no}\nHesap e-postam: {email}", { price: DOWNLOAD_PRICE_TL, title: proj?.title ?? "", id: proj?.id ?? "", email: data?.email ?? "", no: data?.memberNo ?? "" }));
   const currentRank = PLAN_RANK[data?.current ?? "free"] ?? 0;
   const minRank = req.plan ? PLAN_RANK[req.plan] ?? 0 : 0;
   const options = (data?.plans ?? []).filter((p) => (PLAN_RANK[p.id] ?? 0) > currentRank && (PLAN_RANK[p.id] ?? 0) >= minRank && p.price_monthly > 0);
@@ -70,7 +70,7 @@ export function UpgradeDialogHost() {
     p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: p.limits.projects }),
     storage(p.limits.storage_mb),
   ];
-  const href = (p: PlanRow) => whatsappLink(t("Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} (₺{price}/ay)\nPaket sınırları: {limits}\nHesap e-postam: {email}", {
+  const href = (p: PlanRow) => whatsappLink(t("Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} (₺{price}/ay)\nPaket sınırları: {limits}\nÜye no: {no}\nHesap e-postam: {email}", {
     current: t(currentName), target: t(p.name), price: p.price_monthly.toLocaleString("tr-TR"), limits: lines(p).join(", "), email: data?.email ?? "",
   }));
 
@@ -92,7 +92,7 @@ export function UpgradeDialogHost() {
         {data && options.length === 0 && (
           <div className="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600">
             {t("En üst paketi kullanıyorsunuz. Ek kullanım hakkı için bize yazabilirsiniz.")}
-            <a className="ml-1 font-medium text-brand-700 hover:underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana’da ek kullanım hakkı istiyorum.\nMevcut paketim: {current}\nHesap e-postam: {email}", { current: t(currentName), email: data.email }))}>WhatsApp</a>
+            <a className="ml-1 font-medium text-brand-700 hover:underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana’da ek kullanım hakkı istiyorum.\nMevcut paketim: {current}\nÜye no: {no}\nHesap e-postam: {email}", { current: t(currentName), email: data.email, no: data.memberNo ?? "" }))}>WhatsApp</a>
           </div>
         )}
         {options.length > 0 && (

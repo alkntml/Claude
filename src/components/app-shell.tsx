@@ -16,7 +16,7 @@ import { createBrowser } from "@/lib/supabase/browser";
 import { expertUrl } from "@/lib/expert";
 import { GiftBox } from "@/components/gift-box";
 
-interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null }; locked?: boolean; expiresAt?: string | null }
+interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; locked?: boolean; expiresAt?: string | null }
 
 const NAV = [
   { href: "/panel", label: "Kontrol paneli", icon: Home },
@@ -91,7 +91,7 @@ export function AppShell({ children, user, locked, expiresAt }: Props) {
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-950 text-sm font-semibold text-white">{(user.name || user.email).slice(0, 1).toLocaleUpperCase("tr")}</div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-ink-900">{user.name || user.email}</p>
-            <p className="text-xs capitalize text-ink-400">{t("{plan} paket", { plan: user.plan })}</p>
+            <p className="text-xs capitalize text-ink-400">{t("{plan} paket", { plan: user.plan })}{user.memberNo ? <span className="normal-case"> · {user.memberNo}</span> : null}</p>
           </div>
           <Link href="/hesap" className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Ayarlar")}><Settings2 className="h-4 w-4" /></Link>
           <button onClick={logout} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Çıkış yap")}><LogOut className="h-4 w-4" /></button>

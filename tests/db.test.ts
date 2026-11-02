@@ -302,6 +302,13 @@ describe("anketler", () => {
     expect(new Date(p.plan_expires_at).getTime()).toBeGreaterThan(Date.now());
   });
 
+  it("her kullanıcının tekil, değiştirilemez üye numarası var", async () => {
+    const rows = (await db.query<{ member_no: string }>("select member_no from public.profiles")).rows;
+    expect(rows.every((r) => Number(r.member_no) >= 1001)).toBe(true);
+    expect(new Set(rows.map((r) => r.member_no)).size).toBe(rows.length);
+    await expectError(db.query("update public.profiles set member_no = 5 where id = $1", [A]));
+  });
+
   it("proje önerisi çalışma türü kullanılabilir", async () => {
     await db.query("insert into public.projects (user_id, title, work_type) values ($1, 'TÜBİTAK', 'grant_proposal')", [A]);
     expect(await as(A, "select id from public.projects where work_type = 'grant_proposal'")).toHaveLength(1);

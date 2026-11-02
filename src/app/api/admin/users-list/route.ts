@@ -1,6 +1,7 @@
 import { json, route } from "@/lib/api";
 import { requireAdmin } from "@/lib/auth";
 import { adminClient } from "@/lib/supabase/admin";
+import { parseMemberCode } from "@/lib/member";
 
 /** Yönetim → Kullanıcılar: filtreli liste (tümü / ücretli / süresi yaklaşan / süresi dolan / kilitli / askıda) */
 export const GET = route("admin.users_list", async (req) => {
@@ -12,8 +13,13 @@ export const GET = route("admin.users_list", async (req) => {
   const now = new Date().toISOString();
   const week = new Date(Date.now() + 7 * 86400_000).toISOString();
   let query = adminClient().from("profiles")
-    .select("id, email, full_name, institution, role, plan_id, plan_expires_at, work_locked, is_suspended, created_at", { count: "exact" });
-  if (q) query = query.or(`email.ilike.%${q}%,full_name.ilike.%${q}%`);
+    .select("id, member_no, email, full_name, institution, role, plan_id, plan_expires_at, work_locked, is_suspended, created_at", { count: "exact" });
+  // Arama: üye numarası (AC001234 / 1234), kullanıcı kimliği (uuid) veya e-posta / ad
+  const no = q ? parseMemberCode(q) : null;
+  const raw = url.searchParams.get("q")?.trim() ?? "";
+  if (no != null) query = query.eq("member_no", no);
+  else if (/^[0-9a-f-]{36}$/i.test(raw)) query = query.eq("id", raw);
+  else if (q) query = query.or(`email.ilike.%${q}%,full_name.ilike.%${q}%`);
   if (filter === "paid") query = query.neq("plan_id", "free");
   if (filter === "expiring") query = query.neq("plan_id", "free").gte("plan_expires_at", now).lte("plan_expires_at", week);
   if (filter === "expired") query = query.lt("plan_expires_at", now);

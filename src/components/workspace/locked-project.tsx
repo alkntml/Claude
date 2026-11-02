@@ -15,6 +15,7 @@ interface Props {
   /** Yönetici “mevcut çalışmayı indir” hakkı tanımladıysa */
   pass: boolean;
   email: string;
+  memberNo?: string;
 }
 
 const REASON: Record<string, string> = { ai_requests: "yapay zekâ kullanım hakkınız", tokens: "yapay zekâ kullanım hakkınız", cost: "yapay zekâ kullanım hakkınız", source_searches: "kaynak tarama hakkınız" };
@@ -23,10 +24,10 @@ const REASON: Record<string, string> = { ai_requests: "yapay zekâ kullanım hak
  * Kilitli çalışma görünümü (D50): aylık kullanım hakkı dolunca çalışma ve kaynaklar buğulu gösterilir.
  * İki seçenek: mevcut çalışmayı tek seferlik ücretle indirmek (WhatsApp) veya abone olup devam etmek.
  */
-export function LockedProject({ project, stages, sources, reasons, pass, email }: Props) {
+export function LockedProject({ project, stages, sources, reasons, pass, email, memberNo = "" }: Props) {
   const { t } = useT();
   const what = [...new Set(reasons.map((r) => REASON[r]).filter(Boolean))].map((x) => t(x)).join(t(" ve "));
-  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price} TL).\nÇalışma: {title}\nÇalışma kodu: {id}\nHesap e-postam: {email}", { price: DOWNLOAD_PRICE_TL, title: project.title, id: project.id, email }));
+  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price} TL).\nÇalışma: {title}\nÇalışma kodu: {id}\nÜye no: {no}\nHesap e-postam: {email}", { price: DOWNLOAD_PRICE_TL, title: project.title, id: project.id, email, no: memberNo }));
   const written = stages.filter((s) => s.text.trim());
 
   return (

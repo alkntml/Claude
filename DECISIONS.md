@@ -234,3 +234,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Davet ödülü zaten otomatikti (onay gerekmez); artık uygulamanın herhangi bir sayfası açıldığında da verilir (yalnızca panel değil). Koşul: davet edilen e-postasını doğrulamış olmalı (sahte hesaplara karşı; Google/Apple ile kayıt otomatik doğrulanmış sayılır). Davet edenin aylık ödül sınırı (`monthly_cap`) sürer; aylık dönem TR saatine göre.
 - Yönetim → Davetler: toplam/ödüllü/bekleyen davet, bu ayki ödül ve dağıtılan hak, sınıra takılanlar, en çok davet edenler, son davetler (`admin/referrals`).
 
+### D56 — Üye numarası
+- `profiles.member_no` (bigint, GENERATED ALWAYS identity, 1001’den başlar; mevcut kullanıcılara da atanır, kimse değiştiremez). Gösterim `memberCode()` → “AC001234” (`src/lib/member.ts`).
+- Kullanıcı numarasını Hesap sayfasında ve sol menüde görür; tüm WhatsApp mesajlarında (yükseltme, 100 TL indirme, süre uzatma, ekip indirimi) “Üye no” satırı vardır.
+- Yönetim → Kullanıcılar araması: üye no (AC001234 / ac-1234 / 1234), sistem kimliği (uuid) veya e-posta/ad. Listede “Üye no” sütunu, ayrıntıda üye no.
+

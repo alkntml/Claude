@@ -74,6 +74,15 @@ describe("migration'lar ve seed", () => {
   it("paketleri ve ayarları oluşturur", async () => {
     const plans = await db.query<{ id: string }>("select id from public.plans order by sort_order");
     expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium"]);
+    const p = await db.query<{ id: string; price_monthly: string; limits: Record<string, number | null> }>("select id, price_monthly, limits from public.plans order by sort_order");
+    const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
+    expect(by.free.limits.ai_requests_month).toBe(20);
+    expect(by.free.limits.source_searches_month).toBe(7);
+    expect(by.basic.limits).toMatchObject({ projects: 3, ai_requests_month: 150, source_searches_month: 100 });
+    expect(Number(by.basic.price_monthly)).toBe(499);
+    expect(by.pro.limits.projects).toBe(10);
+    expect(Number(by.pro.price_monthly)).toBe(899);
+    expect(Number(by.premium.price_monthly)).toBe(1499);
     const s = await db.query<{ key: string }>("select key from public.app_settings order by key");
     expect(s.rows.map((r) => r.key)).toContain("ai.models");
   });

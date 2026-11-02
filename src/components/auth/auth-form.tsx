@@ -103,7 +103,6 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
               <h1 className="text-2xl font-semibold tracking-tight text-ink-900">{mode === "login" ? t("Tekrar hoş geldiniz") : t("Akademik çalışma alanınızı oluşturun")}</h1>
               <p className="mt-1.5 text-sm text-ink-500">{mode === "login" ? t("Kaldığınız yerden devam edin.") : t("Ücretsiz başlayın, kredi kartı gerekmez.")}</p>
               {mode === "signup" && ref && <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-[13px] text-emerald-800">{t("Davetle geldiniz: e-postanızı doğruladığınızda size ve sizi davet edene ek yapay zekâ isteği ve kaynak tarama hakkı tanımlanır.")}</p>}
-              {mode === "signup" && <p className="mt-2 text-[12.5px] text-ink-500">{t("Üniversite e-postanızla (.edu.tr) kayıt olursanız ücretli paketlerde öğrenci indirimi uygulanır.")}</p>}
               {providers.length > 0 && (
                 <div className="mt-7 space-y-2.5">
                   {providers.includes("google") && (

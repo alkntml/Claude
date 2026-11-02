@@ -30,10 +30,10 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   "/fiyatlar": {
     title: { tr: "Fiyatlar ve Paketler — Ücretsiz Başlayın | Academiana", en: "Pricing & Plans — Start Free | Academiana" },
     description: {
-      tr: "Academiana paketleri: ücretsiz başlangıç, öğrenci indirimi ve kurum lisansı. Yapay zekâ isteği, kaynak tarama ve Word/PDF çıktısı limitlerini karşılaştırın.",
-      en: "Academiana plans: free tier, student discount and institutional licences. Compare AI requests, source searches and Word/PDF export limits.",
+      tr: "Academiana paketleri: ücretsiz başlangıç, %20 akademik ekip indirimi ve kurum lisansı. Yapay zekâ isteği, kaynak tarama ve Word/PDF çıktısı limitlerini karşılaştırın.",
+      en: "Academiana plans: free tier, 20% academic team discount and institutional licences. Compare AI requests, source searches and Word/PDF export limits.",
     },
-    keywords: { tr: ["tez yazma programı fiyat", "akademik yazım aracı ücretsiz", "öğrenci indirimi", "Academiana fiyat"], en: ["academic writing tool pricing", "AI thesis writer free", "student discount academic software", "Academiana pricing"] },
+    keywords: { tr: ["tez yazma programı fiyat", "akademik yazım aracı ücretsiz", "akademisyen indirimi", "Academiana fiyat"], en: ["academic writing tool pricing", "AI thesis writer free", "academic team discount", "Academiana pricing"] },
     tagline: { tr: "Ücretsiz başlayın, ihtiyacınız kadar yükseltin", en: "Start free, upgrade when you need" },
   },
   "/sss": {

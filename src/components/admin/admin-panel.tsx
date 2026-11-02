@@ -254,23 +254,20 @@ function SourcesTab() {
   );
 }
 
-/** Büyüme ve iletişim ayarları: öğrenci indirimi, davet ödülü, iletişim e-postası */
+/** Büyüme ve iletişim ayarları: davet ödülü, iletişim e-postası */
 function GrowthSettings() {
   const toast = useToast();
   const { get, load, ready } = useSettings();
-  const [student, setStudent] = useState({ enabled: true, percent: 30, domains: "edu.tr, edu" });
   const [ref, setRef] = useState({ enabled: true, ai_requests: 50, source_searches: 50, valid_days: 60, monthly_cap: 20 });
   const [email, setEmail] = useState("");
   useEffect(() => {
     if (!ready) return;
-    const st = get("billing.student"); if (st) setStudent({ enabled: st.enabled !== false, percent: st.percent ?? 30, domains: (st.domains ?? ["edu.tr", "edu"]).join(", ") });
     const rf = get("referral"); if (rf) setRef((r) => ({ ...r, ...rf }));
     setEmail(get("site.contact")?.email ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
   async function save() {
     try {
-      await api("/api/admin/settings", { method: "PATCH", json: { id: "billing.student", value: { enabled: student.enabled, percent: Math.max(0, Math.min(90, Number(student.percent) || 0)), domains: student.domains.split(",").map((d) => d.trim().replace(/^[.@]/, "")).filter(Boolean) } } });
       await api("/api/admin/settings", { method: "PATCH", json: { id: "referral", value: { enabled: ref.enabled, ai_requests: Number(ref.ai_requests) || 0, source_searches: Number(ref.source_searches) || 0, valid_days: Number(ref.valid_days) || 30, monthly_cap: Number(ref.monthly_cap) || 0 } } });
       await api("/api/admin/settings", { method: "PATCH", json: { id: "site.contact", value: { email: email.trim() } } });
       toast({ tone: "success", title: "Ayarlar kaydedildi" }); load();
@@ -279,9 +276,7 @@ function GrowthSettings() {
   const n = (v: number, f: (x: number) => void) => <input className="input !py-1.5" type="number" value={v} onChange={(e) => f(Number(e.target.value))} />;
   return (
     <div className="card h-fit space-y-3 p-5">
-      <h3 className="font-semibold">Öğrenci indirimi, davet ve iletişim</h3>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={student.enabled} onChange={(e) => setStudent({ ...student, enabled: e.target.checked })} /> Öğrenci indirimi etkin</label>
-      <div className="grid grid-cols-2 gap-2"><label className="text-xs text-ink-500">İndirim %{n(student.percent, (x) => setStudent({ ...student, percent: x }))}</label><label className="text-xs text-ink-500">Alan adları<input className="input !py-1.5" value={student.domains} onChange={(e) => setStudent({ ...student, domains: e.target.value })} /></label></div>
+      <h3 className="font-semibold">Davet ve iletişim</h3>
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={ref.enabled} onChange={(e) => setRef({ ...ref, enabled: e.target.checked })} /> Davet programı etkin</label>
       <div className="grid grid-cols-2 gap-2 text-xs text-ink-500">
         <label>AI isteği ödülü{n(ref.ai_requests, (x) => setRef({ ...ref, ai_requests: x }))}</label>

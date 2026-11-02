@@ -2,14 +2,13 @@ import { json, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { env } from "@/lib/env";
 import { activeCredits } from "@/lib/growth";
-import { isStudentEmail } from "@/lib/pricing";
 import { getSetting } from "@/lib/settings";
 import { adminClient } from "@/lib/supabase/admin";
 
-/** Davet bağlantısı ve istatistikleri, kurum üyeliği, öğrenci indirimi uygunluğu */
+/** Davet bağlantısı ve istatistikleri, kurum üyeliği */
 export const GET = route("account.growth", async (req) => {
   const s = await requireUser();
-  const [ref, student, credits] = await Promise.all([getSetting("referral"), getSetting("billing.student"), activeCredits(s.user.id)]);
+  const [ref, credits] = await Promise.all([getSetting("referral"), activeCredits(s.user.id)]);
   const db = adminClient();
   const [{ count: invited }, { count: rewarded }] = await Promise.all([
     db.from("profiles").select("id", { count: "exact", head: true }).eq("referred_by", s.user.id),
@@ -21,6 +20,5 @@ export const GET = route("account.growth", async (req) => {
     credits,
     org: s.profile.org ?? null,
     personalPlan: s.profile.personal_plan_id ?? s.profile.plan_id,
-    student: { enabled: student.enabled, percent: student.percent, eligible: student.enabled && !!s.user.email_confirmed_at && isStudentEmail(s.user.email, student.domains), domains: student.domains },
   });
 });

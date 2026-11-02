@@ -59,7 +59,7 @@ src/lib/
   quality/checks.ts      Kural tabanlı kalite kontrol
   export/                model.ts + render-docx/pdf/text
   files/                 extract, chunk, stats (deterministik istatistik)
-  payments/              Stripe (uygulandı), iyzico (iskelet)
+  payments/              Stripe/iyzico kütüphanesi (şimdilik kullanılmıyor; rotalar kaldırıldı, D48)
   stats/                 dist.ts (dağılımlar), tests.ts (t, ANOVA, regresyon…), apa.ts (APA rapor)
   sources/bib.ts         BibTeX/RIS/CSL-JSON; sources/journals.ts dergi önerisi
   export/presentation.ts Savunma sunumu (.pptx); export/format.ts biçim şablonları
@@ -69,7 +69,7 @@ src/lib/
   seo-server.ts          buildMeta/pageMeta: canonical, hreflang, Open Graph, Twitter, robots
   structured-data.ts     JSON-LD: Organization, WebSite, SoftwareApplication, ItemList, BreadcrumbList, WebPage
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
-  growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; öğrenci indirimi; uzman desteği bağlantıları
+  growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; WhatsApp yükseltme bağlantısı + Akademik Ekip İndirimi (pricing.ts); uzman desteği bağlantıları
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)
   surveys.ts             Anket modeli: soru şeması, cevap doğrulama, analize hazır tablo, CSV, kod kitabı
   stats/charts.ts + charts/svg.ts  Grafik verisi (deterministik) + APA tarzı SVG çizimi (istemcide PNG’ye çevrilir, editörde `figure` düğümü)
@@ -86,7 +86,7 @@ demo/                    Sunucusuz tarayıcı demosu (mock API + Next shim'leri)
 tests/                   Vitest
 ```
 
-API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/checkout|webhook|portal`, `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `[id]`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`, `stages/[id]/review`.
+API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/*` (kaldırıldı; ödeme WhatsApp üzerinden, D48), `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `[id]`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`, `stages/[id]/review`.
 
 ## Arama motoru (SEO) altyapısı
 - Herkese açık sayfalar iki adreste: Türkçe öneksiz (`/fiyatlar`), İngilizce `/en` önekli (`/en/fiyatlar`). Ara katman `/en/*` isteğini öneksiz sayfaya yeniden yazar ve `x-locale` başlığını koyar; `getLocale()` önce bu başlığa bakar. Uygulama sayfaları (panel, proje…) çerezdeki dili kullanır, önek almaz.
@@ -114,7 +114,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 
 ## Ortam değişkenleri (Vercel → Settings → Environment Variables)
 Zorunlu: `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (veya `..._PUBLISHABLE_KEY`), `SUPABASE_SERVICE_ROLE_KEY` (veya `SUPABASE_SECRET_KEY`). Supabase değişkenleri Vercel entegrasyonu tarafından otomatik eklendi.
-Önerilen: `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`. İsteğe bağlı: `OPENAI_API_KEY`, `SEMANTIC_SCHOLAR_API_KEY`, `CORE_API_KEY`, `STRIPE_*`, `IYZICO_*`. Değişiklikten sonra Vercel'de Redeploy gerekir.
+Önerilen: `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`. İsteğe bağlı: `OPENAI_API_KEY`, `SEMANTIC_SCHOLAR_API_KEY`, `CORE_API_KEY`, `STRIPE_*`, `IYZICO_*` (ödeme şimdilik kapalı). Değişiklikten sonra Vercel'de Redeploy gerekir.
 
 ## Geliştirme ortamı notu
 Claude'un bulut oturumunda akademik API'lere (OpenAlex, Crossref vb.) ağ erişimi yok; adaptörler fixture testleriyle doğrulanır, canlı davranış kullanıcının ekran görüntüleriyle kontrol edilir. Anthropic API ve npm erişilebilir. Dışarıya tünel açmak yasak/engelli.

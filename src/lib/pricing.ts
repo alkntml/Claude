@@ -25,3 +25,18 @@ export function emailMatchesDomain(email: string | null | undefined, domain: str
   if (!domain) return true;
   return isStudentEmail(email, [domain]);
 }
+
+/* ---------------------------------------------------------------------
+ * Satış iletişimi: ödeme altyapısı şimdilik kapalı (D48). Paket yükseltme ve
+ * ekip indirimi talepleri WhatsApp üzerinden alınır; yönetici paketi panelden tanımlar.
+ * ------------------------------------------------------------------- */
+
+/** WhatsApp numarası (uluslararası biçim, başında + ve 0 olmadan): 0542 526 66 50 */
+export const WHATSAPP_NUMBER = "905425266650";
+
+/** Akademik Ekip İndirimi: akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler */
+export const TEAM_DISCOUNT = { percent: 20, minMembers: 3 } as const;
+
+export function whatsappLink(text: string): string {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+}

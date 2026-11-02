@@ -123,7 +123,7 @@ function App() {
   } else if (path === "/yeni") page = <NewProjectWizard key={route.query.toString()} defaultStyle="apa7" />;
   else if (path === "/kaynaklar") page = <LibraryView projects={db.projects} sources={db.sources} />;
   else if (path === "/dosyalar") page = <FilesView files={[]} projects={db.projects} />;
-  else if (path === "/hesap") page = <AccountView profile={{ full_name: "Demo Kullanıcı", email: "demo@akademi.ai", institution: "Örnek Üniversitesi", plan_id: "pro", default_citation_style: "apa7" }} usage={{ ai_requests: 0, tokens: 0, source_searches: 0, projects: db.projects.length, storage_mb: 0 }} limits={{ ai_requests_month: 1500, tokens_month: 4000000, source_searches_month: 2000, projects: 20, storage_mb: 3000, export_formats: ["txt", "md", "docx", "pdf"] }} plans={DEMO_PLANS} subscriptions={[]} payments={[{ id: "stripe", label: "Stripe", configured: false, implemented: true, usable: false }]} />;
+  else if (path === "/hesap") page = <AccountView profile={{ full_name: "Demo Kullanıcı", email: "demo@akademi.ai", institution: "Örnek Üniversitesi", plan_id: "pro", default_citation_style: "apa7" }} usage={{ ai_requests: 0, tokens: 0, source_searches: 0, projects: db.projects.length, storage_mb: 0 }} limits={{ ai_requests_month: 1500, tokens_month: 4000000, source_searches_month: 2000, projects: 20, storage_mb: 3000, export_formats: ["txt", "md", "docx", "pdf"] }} plans={DEMO_PLANS} />;
   else if (path === "/yonetim") page = <><p className="mb-4 rounded-xl bg-amber-50 px-4 py-2.5 text-sm text-amber-800">Demo: Genel bakıştaki sayılar örnek verilerdir; gerçek kullanım değildir. Değişiklikler kaydedilmez.</p><AdminPanel selfId="demo" /></>;
   else { navigate("/panel", true); return null; }
 

@@ -242,7 +242,6 @@ on("POST", "/api/projects/([^/]+)/shares", () => fail(503, DEMO_DISABLED.share))
 on("GET", "/api/files", () => ({ files: [] }));
 on("POST", "/api/files", () => fail(503, DEMO_DISABLED.files));
 on("POST", "/api/feedback", (_m, b) => { db.feedback.push({ ...b, created_at: now() }); return { ok: true }; });
-on("POST", "/api/billing/checkout", () => fail(503, "Demo sürümünde ödeme alınmaz."));
 on("PATCH", "/api/account", () => ({ ok: true }));
 on("GET", "/api/admin/stats", () => adminStats());
 on("GET", "/api/admin/([a-z]+)", (m) => ({ rows: adminRows(m[1]), count: adminRows(m[1]).length, page: 0 }));
@@ -281,10 +280,10 @@ function adminRows(resource: string): any[] {
 }
 
 export const DEMO_PLANS = [
-  { id: "free", name: "Ücretsiz", description: "Platformu tanımak için sınırlı kullanım.", price_monthly: 0, price_yearly: 0, currency: "TRY", features: ["1 proje", "Aylık 30 yapay zekâ isteği", "Aylık 40 kaynak taraması", "TXT / Markdown dışa aktarma"] },
-  { id: "basic", name: "Basic", description: "Bireysel öğrenciler için temel akademik çalışma.", price_monthly: 249, price_yearly: 2490, currency: "TRY", features: ["5 proje", "Aylık 300 yapay zekâ isteği", "Aylık 400 kaynak taraması", "DOCX / PDF dışa aktarma", "Kalite kontrol"] },
-  { id: "pro", name: "Pro", description: "Gelişmiş araştırma, kaynak analizi ve yüksek limitler.", price_monthly: 549, price_yearly: 5490, currency: "TRY", features: ["20 proje", "Aylık 1.500 yapay zekâ isteği", "Tam metin analizi (RAG)", "Kılavuz yükleme", "Öncelikli modeller"] },
-  { id: "premium", name: "Premium", description: "Yoğun çalışan lisansüstü öğrenciler ve araştırmacılar için.", price_monthly: 999, price_yearly: 9990, currency: "TRY", features: ["Sınırsız proje", "Aylık 5.000 yapay zekâ isteği", "En güçlü modeller", "15 GB depolama", "Öncelikli destek"] },
+  { id: "free", name: "Ücretsiz", description: "Platformu tanımak için sınırlı kullanım.", price_monthly: 0, price_yearly: 0, currency: "TRY", features: ["1 proje", "Aylık 20 yapay zekâ isteği", "Aylık 7 kaynak taraması", "TXT / Markdown dışa aktarma"] },
+  { id: "basic", name: "Basic", description: "Bireysel öğrenciler için temel akademik çalışma.", price_monthly: 499, price_yearly: 4990, currency: "TRY", features: ["3 proje", "Aylık 150 yapay zekâ isteği", "Aylık 100 kaynak taraması", "DOCX / PDF dışa aktarma", "Kalite kontrol"] },
+  { id: "pro", name: "Pro", description: "Gelişmiş araştırma, kaynak analizi ve yüksek limitler.", price_monthly: 899, price_yearly: 8990, currency: "TRY", features: ["10 proje", "Aylık 1.500 yapay zekâ isteği", "Aylık 2.000 kaynak taraması", "Tam metin analizi (RAG)", "Kılavuz yükleme"] },
+  { id: "premium", name: "Premium", description: "Yoğun çalışan lisansüstü öğrenciler ve araştırmacılar için.", price_monthly: 1499, price_yearly: 14990, currency: "TRY", features: ["Sınırsız proje", "Aylık 5.000 yapay zekâ isteği", "Aylık 8.000 kaynak taraması", "15 GB depolama", "Öncelikli destek"] },
 ];
 
 export function installMockApi() {

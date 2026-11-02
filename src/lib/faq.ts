@@ -258,27 +258,27 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "yukseltme",
+        q: { tr: "Paketimi nasıl yükseltirim? Ödemeyi nasıl yaparım?", en: "How do I upgrade and pay?" },
+        a: {
+          tr: "Hesap ve abonelik sayfasında istediğiniz paketin altındaki “Yükselt” düğmesine basın. Mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir WhatsApp mesajı açılır; mesajı gönderdiğinizde ödeme ayrıntıları size iletilir ve ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır. Kart bilgilerinizi sitemize girmezsiniz.",
+          en: "On the Account page, press “Upgrade” under the plan you want. A ready-made WhatsApp message with your current and chosen plan opens; once you send it, we share the payment details and your plan is activated on your account after payment. You never enter card details on our site.",
+        },
+      },
+      {
         id: "iptal",
-        q: { tr: "Aboneliğimi nasıl iptal ederim? Taahhüt var mı?", en: "How do I cancel? Is there a commitment?" },
+        q: { tr: "Taahhüt var mı? Paketimi nasıl iptal ederim?", en: "Is there a commitment? How do I cancel?" },
         a: {
-          tr: "Taahhüt yoktur. Hesap ve abonelik sayfasındaki “Aboneliği yönet / iptal et” ile iptal edebilir, kartınızı değiştirebilir ve faturalarınızı indirebilirsiniz. İptal ettiğinizde ödediğiniz dönemin sonuna kadar paketiniz devam eder, sonra ücretsiz pakete geçersiniz; çalışmalarınız silinmez.",
-          en: "There is no commitment. Use “Manage / cancel subscription” on the Account page to cancel, change your card or download invoices. When you cancel, your plan stays active until the end of the paid period, then you move to the free plan; your work is not deleted.",
+          tr: "Taahhüt yoktur. İptal veya paket değişikliği için WhatsApp üzerinden yazmanız yeterli. İptal ettiğinizde ödediğiniz dönemin sonuna kadar paketiniz devam eder, sonra ücretsiz pakete geçersiniz; çalışmalarınız silinmez.",
+          en: "There is no commitment. To cancel or change your plan, just message us on WhatsApp. Your plan stays active until the end of the paid period, then you move to the free plan; your work is not deleted.",
         },
       },
       {
-        id: "guvenli",
-        q: { tr: "Ödeme güvenli mi? Kart bilgilerim saklanıyor mu?", en: "Is payment secure? Is my card stored?" },
+        id: "ekip",
+        q: { tr: "Akademisyen grupları veya araştırma ekipleri için indirim var mı?", en: "Is there a discount for academic teams or research groups?" },
         a: {
-          tr: "Ödemeler uluslararası ödeme altyapısı Stripe üzerinden alınır; kart bilgileriniz bizim sunucularımıza hiç gelmez ve bizde saklanmaz.",
-          en: "Payments are processed by Stripe; your card details never reach our servers and are not stored by us.",
-        },
-      },
-      {
-        id: "ogrenci",
-        q: { tr: "Öğrenci indirimi var mı?", en: "Is there a student discount?" },
-        a: {
-          tr: "Evet. Üniversite e-postanızla (ör. .edu.tr uzantılı) kayıt olup e-postanızı doğruladığınızda ücretli paketlerde öğrenci indirimi ödeme sayfasında otomatik uygulanır. İndirim oranını Fiyatlar sayfasında görebilirsiniz.",
-          en: "Yes. If you sign up with your university e-mail (e.g. ending in .edu.tr) and verify it, the student discount is applied automatically at checkout for paid plans. See the Pricing page for the rate.",
+          tr: "Evet. Akademik Ekip İndirimi ile akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler en az 3 kişilik ekiplerde tüm ücretli paketlerde %20 indirim alır. Fiyatlar sayfasındaki “WhatsApp’tan bilgi al” bağlantısıyla bize ulaşabilirsiniz.",
+          en: "Yes. With the Academic Team Discount, faculty groups, research teams, labs and departments get 20% off all paid plans for teams of at least 3 people. Contact us via the “Ask on WhatsApp” link on the Pricing page.",
         },
       },
       {

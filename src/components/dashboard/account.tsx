@@ -1,18 +1,19 @@
 "use client";
 import { useT } from "@/i18n/client";
-import { CheckCircle2, CreditCard, Download, ShieldAlert, Trash2, UserRound } from "lucide-react";
+import { CheckCircle2, CreditCard, Download, MessageCircle, ShieldAlert, Trash2, UserRound, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Badge, Modal, ProgressBar } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api } from "@/lib/client";
+import { TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
 import { GrowthSection } from "./growth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function AccountView({ profile, usage, limits, plans, subscriptions, payments }: { profile: any; usage: any; limits: any; plans: any[]; subscriptions: any[]; payments: { id: string; label: string; usable: boolean; implemented: boolean; configured: boolean }[] }) {
+export function AccountView({ profile, usage, limits, plans }: { profile: any; usage: any; limits: any; plans: any[] }) {
   const { t, dl } = useT();
   const toast = useToast();
   const router = useRouter();
@@ -21,25 +22,18 @@ export function AccountView({ profile, usage, limits, plans, subscriptions, paym
   const [inst, setInst] = useState(profile.institution ?? "");
   const [style, setStyle] = useState(profile.default_citation_style);
   const [saving, setSaving] = useState(false);
-  const [interval, setInterval] = useState<"monthly" | "yearly">("monthly");
-  const [checkout, setCheckout] = useState<string | null>(null);
   const [delOpen, setDelOpen] = useState(false);
   const [confirm, setConfirm] = useState("");
-  const usable = payments.find((p) => p.usable);
-
-  useEffect(() => {
-    if (params.get("odeme") === "basarili") toast({ tone: "success", title: t("Ödeme alındı"), detail: t("Paketiniz birkaç saniye içinde etkinleşecek.") });
-  }, [params, toast, t]);
+  const currentPlan = plans.find((p) => p.id === profile.plan_id);
+  const currentName = currentPlan ? t(currentPlan.name) : profile.plan_id;
+  /** Yükseltme: ödeme altyapısı kapalı; hangi paketten hangisine geçmek istediğini belirten mesajla WhatsApp’a yönlendirilir */
+  const upgradeHref = (p: any) => whatsappLink(t("Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} (₺{price}/ay)\nHesap e-postam: {email}", { current: currentName, target: t(p.name), price: Number(p.price_monthly).toLocaleString("tr-TR"), email: profile.email ?? "" }));
+  const teamHref = whatsappLink(t("Merhaba, Academiana Akademik Ekip İndirimi (%{p}) hakkında bilgi almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket: \nHesap e-postam: {email}", { p: TEAM_DISCOUNT.percent, email: profile.email ?? "" }));
 
   async function save() {
     setSaving(true);
     try { await api("/api/account", { method: "PATCH", json: { fullName: name, institution: inst, defaultCitationStyle: style } }); toast({ tone: "success", title: t("Profil güncellendi") }); router.refresh(); }
     catch (e) { toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); } finally { setSaving(false); }
-  }
-  async function buy(planId: string) {
-    setCheckout(planId);
-    try { const { url } = await api<{ url: string }>("/api/billing/checkout", { method: "POST", json: { planId, interval, provider: usable?.id ?? "stripe" } }); window.location.href = url; }
-    catch (e) { toast({ tone: "error", title: t("Ödeme başlatılamadı"), detail: (e as Error).message }); setCheckout(null); }
   }
   async function deleteAccount() {
     try { await api("/api/account", { method: "DELETE", json: { confirm } }); window.location.href = "/"; }
@@ -80,31 +74,32 @@ export function AccountView({ profile, usage, limits, plans, subscriptions, paym
       <GrowthSection />
 
       <section>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="flex items-center gap-2 font-semibold"><CreditCard className="h-4 w-4" /> {t("Paketler")}</h2>
-          <div className="flex rounded-xl bg-ink-100 p-1 text-sm">{(["monthly", "yearly"] as const).map((i) => <button key={i} onClick={() => setInterval(i)} className={cn("rounded-lg px-3 py-1 font-medium", interval === i ? "bg-white shadow-sm" : "text-ink-500")}>{i === "monthly" ? t("Aylık") : t("Yıllık (2 ay ücretsiz)")}</button>)}</div>
-        </div>
-        {!usable && <p className="mt-3 rounded-xl bg-amber-50 px-4 py-2.5 text-sm text-amber-800">{t("Ödeme altyapısı henüz yapılandırılmadı. Yönetici Stripe anahtarlarını tanımladığında paket yükseltme etkinleşecek.")}</p>}
+        <h2 className="flex items-center gap-2 font-semibold"><CreditCard className="h-4 w-4" /> {t("Paketler")}</h2>
+        <p className="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm text-emerald-900">{t("Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir mesaj açılır. Gönderdiğinizde size dönüş yapılır ve paketiniz hesabınıza tanımlanır.")}</p>
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => {
             const current = p.id === profile.plan_id;
-            const price = interval === "monthly" ? p.price_monthly : p.price_yearly;
             return (
               <div key={p.id} className={cn("card flex flex-col p-5 transition", current && "ring-2 ring-brand-400", params.get("paket") === p.id && !current && "ring-2 ring-amber-300")}>
                 <div className="flex items-center justify-between"><h3 className="font-semibold">{t(p.name)}</h3>{current && <Badge tone="green"><CheckCircle2 className="h-3 w-3" /> {t("Mevcut")}</Badge>}</div>
-                <p className="mt-2 text-2xl font-semibold">₺{Number(price).toLocaleString(dl)}<span className="text-sm font-normal text-ink-400">/{interval === "monthly" ? t("ay") : t("yıl")}</span></p>
+                <p className="mt-2 text-2xl font-semibold">₺{Number(p.price_monthly).toLocaleString(dl)}<span className="text-sm font-normal text-ink-400">/{t("ay")}</span></p>
                 <ul className="mt-3 flex-1 space-y-1 text-[13px] text-ink-600">{p.features.map((f: string) => <li key={f}>• {t(f)}</li>)}</ul>
-                {!current && Number(p.price_monthly) > 0 && <Button className="mt-4" variant="dark" disabled={!usable} loading={checkout === p.id} onClick={() => buy(p.id)}>{t("Yükselt")}</Button>}
+                {!current && Number(p.price_monthly) > 0 && (
+                  <a href={upgradeHref(p)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">
+                    <MessageCircle className="h-4 w-4" /> {t("Yükselt")}
+                  </a>
+                )}
               </div>
             );
           })}
         </div>
-        {subscriptions.length > 0 && (
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-ink-500">
-            <div>{subscriptions.map((s) => <p key={s.id}>{s.provider} · {s.plan_id} · {s.status}{s.cancel_at_period_end ? ` · ${t("dönem sonunda iptal edilecek")}` : ""}{s.current_period_end ? ` · ${t("yenileme")}: ${new Date(s.current_period_end).toLocaleDateString(dl)}` : ""}</p>)}</div>
-            {subscriptions.some((s) => s.provider === "stripe") && <Button size="sm" variant="secondary" onClick={async () => { try { const { url } = await api<{ url: string }>("/api/billing/portal", { method: "POST" }); window.location.href = url; } catch (e) { toast({ tone: "error", title: t("Abonelik sayfası açılamadı"), detail: (e as Error).message }); } }}>{t("Aboneliği yönet / iptal et")}</Button>}
+        <div className="card mt-4 flex flex-wrap items-center justify-between gap-3 p-5">
+          <div className="max-w-2xl">
+            <p className="flex items-center gap-2 font-semibold text-ink-900"><Users className="h-4 w-4" /> {t("Akademik Ekip İndirimi: %{p}", { p: TEAM_DISCOUNT.percent })}</p>
+            <p className="mt-1 text-sm text-ink-500">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde tüm ücretli paketlerde %{p} indirim.", { n: TEAM_DISCOUNT.minMembers, p: TEAM_DISCOUNT.percent })}</p>
           </div>
-        )}
+          <a href={teamHref} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><MessageCircle className="h-4 w-4" /> {t("WhatsApp’tan bilgi al")}</a>
+        </div>
       </section>
 
       <section className="card p-6">

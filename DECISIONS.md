@@ -184,3 +184,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - `resolveModel(planId, tier)` artık katmanı zorunlu alır; `plan_tiers` ayarı kaldırıldı (veritabanında kalan değer yok sayılır).
 - Not: Paket özellik listelerindeki “Öncelikli modeller / En güçlü modeller” ifadeleri artık geçerli değil; yönetim panelinden güncellenmeli (TODO).
 
+### D48 — Paketler yeniden düzenlendi; ödeme WhatsApp üzerinden
+- Kullanıcı kararı (2026-11-02): Ücretsiz 20 AI isteği / 7 tarama; Basic ₺499, 3 proje, 150 istek, 100 tarama; Pro ₺899, 10 proje; Premium ₺1.499. Yıllık fiyat = aylık × 10 (arayüzde gösterilmiyor). Migration 9.
+- Ödeme altyapısı kaldırıldı: `api/billing/checkout|portal|webhook` silindi; `src/lib/payments` ve testleri ileride yeniden açmak için duruyor. “Yükselt” → `whatsappLink()` (`src/lib/pricing.ts`, 0542 526 66 50); mesajda mevcut paket, istenen paket, fiyat ve hesap e-postası var. Yönetici ödemeyi aldıktan sonra paketi Yönetim → Kullanıcılar’dan elle tanımlar.
+- Öğrenci indirimi tamamen kaldırıldı (ayar, panel, kayıt notu, SSS). Yerine **Akademik Ekip İndirimi** %20 (`TEAM_DISCOUNT`, en az 3 kişi; akademisyen grupları, araştırma ekipleri, laboratuvarlar, bölümler); talep WhatsApp’tan, elle uygulanır.
+- Bir “Literatür araştır” en fazla 4 sorgu = 4 tarama sayar; ücretsiz paketin 7 taraması ≈ 2 araştırma.
+

@@ -1,5 +1,5 @@
 "use client";
-import { Building2, Copy, Gift, GraduationCap, LogOut, Share2 } from "lucide-react";
+import { Building2, Copy, Gift, LogOut, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,9 @@ interface Growth {
   credits: { ai_requests: number; source_searches: number };
   org: { id: string; name: string; plan_id: string; role: "admin" | "member" } | null;
   personalPlan: string;
-  student: { enabled: boolean; percent: number; eligible: boolean; domains: string[] };
 }
 
-/** Hesap sayfası: kurum lisansı, davet programı, öğrenci indirimi */
+/** Hesap sayfası: kurum lisansı, davet programı */
 export function GrowthSection() {
   const { t } = useT();
   const toast = useToast();
@@ -82,14 +81,6 @@ export function GrowthSection() {
         </section>
       )}
 
-      {g.student.enabled && (
-        <section className="card p-6">
-          <h2 className="flex items-center gap-2 font-semibold"><GraduationCap className="h-4 w-4" /> {t("Öğrenci indirimi")}</h2>
-          {g.student.eligible
-            ? <p className="mt-2 text-sm text-emerald-700">{t("Üniversite e-postanız doğrulandı: ücretli paketlerde %{p} indirim ödeme sayfasında otomatik uygulanır.", { p: g.student.percent })}</p>
-            : <p className="mt-2 text-sm text-ink-500">{t("Üniversite e-postasıyla (ör. {d} uzantılı) kayıtlı ve doğrulanmış hesaplarda ücretli paketlerde %{p} indirim uygulanır. Öğrenciyseniz üniversite e-postanızla yeni bir hesap açabilirsiniz.", { p: g.student.percent, d: g.student.domains.map((x) => `.${x}`).join(", ") })}</p>}
-        </section>
-      )}
     </div>
   );
 }

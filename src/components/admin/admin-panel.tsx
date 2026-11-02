@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Activity, Building2, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
+import { Activity, Building2, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -12,11 +12,11 @@ import { STAGE_LIBRARY } from "@/lib/workflows";
 import { DailyBars } from "./chart";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors";
+type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks";
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Genel bakış", icon: Activity }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
-  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon },
+  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock },
 ];
 
 function useRows(resource: string, q = "") {
@@ -56,6 +56,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "feedback" && <FeedbackTab />}
         {tab === "help" && <HelpTab />}
         {tab === "errors" && <ErrorsTab />}
+        {tab === "locks" && <LocksTab />}
       </motion.div>
     </div>
   );
@@ -408,6 +409,68 @@ function HelpTab() {
           <div className="flex items-center gap-3"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={a.is_published} onChange={(e) => edit(a.id, { is_published: e.target.checked })} /> Yayında</label><Button size="sm" onClick={() => save(a)}><Save className="h-3.5 w-3.5" /> Kaydet</Button><button className="ml-auto text-sm text-rose-500" onClick={async () => { await api("/api/admin/help", { method: "DELETE", json: { id: a.id } }); load(); }}>Sil</button></div>
         </div>
       ))}
+    </div>
+  );
+}
+
+/** Çalışma kilidi (D50): 100 TL indirme hakkı tanımlama, kilitli kullanıcılar, bekleyen KVKK veri talepleri */
+function LocksTab() {
+  const toast = useToast();
+  const [data, setData] = useState<{ passes: any[]; requests: any[]; locked: any[] } | null>(null);
+  const [projectId, setProjectId] = useState("");
+  const [days, setDays] = useState(7);
+  const [note, setNote] = useState("");
+  const load = useCallback(async () => { try { setData(await api("/api/admin/locks")); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [toast]);
+  useEffect(() => { load(); }, [load]);
+  async function grant() {
+    try {
+      const r = await api<{ pass: any }>("/api/admin/locks", { method: "POST", json: { projectId: projectId.trim(), days, note } });
+      toast({ tone: "success", title: "İndirme hakkı tanımlandı", detail: `${r.pass.title} · ${days} gün` }); setProjectId(""); setNote(""); load();
+    } catch (e) { toast({ tone: "error", title: "Tanımlanamadı", detail: (e as Error).message }); }
+  }
+  return (
+    <div className="grid gap-5 lg:grid-cols-2">
+      <div className="card space-y-3 p-5">
+        <h3 className="font-semibold">“Mevcut çalışmayı indir” hakkı tanımla (100 TL)</h3>
+        <p className="text-sm text-ink-500">WhatsApp mesajındaki <b>çalışma kodunu</b> yapıştırın. Ödeme alındıktan sonra tanımlayın; kullanıcı çalışma sayfasında Word / PDF / TXT indirme düğmelerini görür.</p>
+        <label className="block text-xs text-ink-500">Çalışma kodu<input className="input !py-2 font-mono" value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" /></label>
+        <div className="grid grid-cols-2 gap-2">
+          <label className="text-xs text-ink-500">Geçerlilik (gün)<input className="input !py-2" type="number" min={1} max={60} value={days} onChange={(e) => setDays(Number(e.target.value) || 7)} /></label>
+          <label className="text-xs text-ink-500">Not<input className="input !py-2" value={note} onChange={(e) => setNote(e.target.value)} placeholder="ör. havale 12.11" /></label>
+        </div>
+        <Button onClick={grant} disabled={!/^[0-9a-f-]{36}$/i.test(projectId.trim())}>Hakkı tanımla</Button>
+        <div className="border-t border-ink-100 pt-3">
+          <p className="mb-2 text-sm font-medium">Son tanımlanan haklar</p>
+          {(data?.passes ?? []).length === 0 && <p className="text-sm text-ink-400">Kayıt yok.</p>}
+          {(data?.passes ?? []).map((p) => (
+            <div key={p.id} className="flex items-center gap-2 border-t border-ink-50 py-1.5 text-[13px]">
+              <span className="flex-1 truncate">{p.title ?? p.project_id} · <span className="text-ink-500">{p.email}</span></span>
+              <Badge tone={new Date(p.expires_at) > new Date() ? "green" : "ink"}>{new Date(p.expires_at).toLocaleDateString("tr-TR")}</Badge>
+              <button className="text-ink-400 hover:text-rose-600" title="İptal et" onClick={async () => { await api("/api/admin/locks", { method: "DELETE", json: { passId: p.id } }); load(); }}><Trash2 className="h-3.5 w-3.5" /></button>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="space-y-5">
+        <div className="card p-5">
+          <h3 className="font-semibold">Bekleyen KVKK veri talepleri</h3>
+          <p className="mt-1 text-sm text-ink-500">Kilitli kullanıcılar anında indiremez; talebi 30 gün içinde, ücretsiz olarak kullanıcının e-postasına iletmeniz yasal zorunluluktur.</p>
+          {(data?.requests ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Bekleyen talep yok.</p>}
+          {(data?.requests ?? []).map((r) => (
+            <div key={r.id} className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-ink-100 p-2.5 text-[13px]">
+              <span className="flex-1">{r.email ?? r.user_id} · {new Date(r.created_at).toLocaleDateString("tr-TR")}</span>
+              {r.user_id && <a className="font-medium text-brand-700 hover:underline" href={`/api/admin/user-export?userId=${r.user_id}`}>JSON indir</a>}
+              <Button size="sm" variant="secondary" onClick={async () => { await api("/api/admin/locks", { method: "PATCH", json: { requestId: r.id } }); load(); }}>Tamamlandı</Button>
+            </div>
+          ))}
+        </div>
+        <div className="card p-5">
+          <div className="flex items-center justify-between"><h3 className="font-semibold">Kilitli kullanıcılar</h3><Button size="sm" variant="ghost" onClick={load}><RefreshCw className="h-3.5 w-3.5" /></Button></div>
+          {(data?.locked ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Kilitli kullanıcı yok.</p>}
+          {(data?.locked ?? []).map((u) => <p key={u.id} className="border-t border-ink-50 py-1.5 text-[13px]">{u.email} <span className="text-ink-400">· {u.plan_id}</span></p>)}
+          <p className="mt-2 text-xs text-ink-400">Paket yükseltmek için Kullanıcılar sekmesinden paketini değiştirin; kilit kullanıcı sayfayı yenilediğinde kalkar.</p>
+        </div>
+      </div>
     </div>
   );
 }

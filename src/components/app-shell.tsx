@@ -2,7 +2,7 @@
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, ClipboardList, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
+import { Building2, ClipboardList, Lock, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,11 +11,11 @@ import { Button } from "./ui/button";
 import { cn } from "./ui/cn";
 import { Modal } from "./ui/primitives";
 import { useToast } from "./ui/toast";
-import { api } from "@/lib/client";
+import { api, openUpgrade } from "@/lib/client";
 import { createBrowser } from "@/lib/supabase/browser";
 import { expertUrl } from "@/lib/expert";
 
-interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null } }
+interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null }; locked?: boolean }
 
 const NAV = [
   { href: "/panel", label: "Kontrol paneli", icon: Home },
@@ -26,7 +26,7 @@ const NAV = [
   { href: "/hesap", label: "Hesap ve abonelik", icon: UserRound },
 ];
 
-export function AppShell({ children, user }: Props) {
+export function AppShell({ children, user, locked }: Props) {
   const { t } = useT();
   const path = usePathname();
   const router = useRouter();
@@ -118,6 +118,13 @@ export function AppShell({ children, user }: Props) {
       </AnimatePresence>
       <main className="lg:pl-64">
         <motion.div key={path} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-10">
+          {locked && (
+            // Çalışma kilidi (D50): aylık hak dolunca uygulama genelinde uyarı ve seçenekler
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <span className="flex items-center gap-2"><Lock className="h-4 w-4" /> {t("Bu ayki kullanım hakkınız doldu; çalışmalarınız ve kaynaklarınız kilitlendi.")}</span>
+              <button type="button" onClick={() => openUpgrade({ code: "work_locked" })} className="rounded-xl bg-ink-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-ink-800">{t("Seçenekleri gör")}</button>
+            </div>
+          )}
           {children}
         </motion.div>
       </main>

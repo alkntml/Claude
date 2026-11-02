@@ -13,7 +13,7 @@ import { TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
 import { GrowthSection } from "./growth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function AccountView({ profile, usage, limits, plans }: { profile: any; usage: any; limits: any; plans: any[] }) {
+export function AccountView({ profile, usage, limits, plans, locked }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean }) {
   const { t, dl } = useT();
   const toast = useToast();
   const router = useRouter();
@@ -100,7 +100,10 @@ export function AccountView({ profile, usage, limits, plans }: { profile: any; u
         <h2 className="flex items-center gap-2 font-semibold"><ShieldAlert className="h-4 w-4" /> {t("Verilerim (KVKK / GDPR)")}</h2>
         <p className="mt-1 text-sm text-ink-500">{t("Tüm projelerinizi, bölümlerinizi, kaynaklarınızı, sohbetlerinizi ve kullanım kayıtlarınızı taşınabilir JSON biçiminde indirebilir veya hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz.")}</p>
         <div className="mt-4 flex flex-wrap gap-2">
-          <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi indir")}</a>
+          {locked
+            // Kilitliyken anında indirme yerine KVKK talebi: yasal süre içinde ücretsiz yanıtlanır (D50)
+            ? <Button variant="secondary" onClick={async () => { try { await api("/api/account/data-request", { method: "POST" }); toast({ tone: "success", title: t("Veri talebiniz alındı"), detail: t("KVKK kapsamındaki talebiniz yasal süre (30 gün) içinde ücretsiz olarak e-posta adresinize iletilecektir.") }); } catch (e) { toast({ tone: "error", title: t("Talep oluşturulamadı"), detail: (e as Error).message }); } }}><Download className="h-4 w-4" /> {t("Veri talebi oluştur (KVKK)")}</Button>
+            : <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi indir")}</a>}
           <Button variant="danger" onClick={() => setDelOpen(true)}><Trash2 className="h-4 w-4" /> {t("Hesabımı sil")}</Button>
         </div>
       </section>

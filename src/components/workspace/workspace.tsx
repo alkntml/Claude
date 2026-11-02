@@ -16,7 +16,7 @@ import { Badge, Modal, ProgressRing, Tabs } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { CitationEngine, STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
-import { api, handlePlanError, openUpgrade } from "@/lib/client";
+import { api, handlePlanError, openUpgrade, setCurrentProject } from "@/lib/client";
 import { FEATURE_MIN_PLAN, hasFeature } from "@/lib/features";
 import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, headings, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItemClient } from "@/lib/sources/row";
@@ -165,6 +165,8 @@ export function Workspace(props: Props) {
   editorRef.current = editor;
 
   // Bağlantı geri gelince ve hata sonrası düzenli aralıklarla yeniden kaydet
+  // Kilit penceresindeki “mevcut çalışmayı indir” mesajı hangi çalışma olduğunu bilsin (D50)
+  useEffect(() => { setCurrentProject({ id: props.project.id, title: props.project.title }); return () => setCurrentProject(null); }, [props.project.id, props.project.title]);
   useEffect(() => {
     const on = () => { if (pending.current) flushRef.current(); else setSave((x) => (x === "offline" ? "saved" : x)); };
     const off = () => setSave((x) => (pending.current ? "offline" : x));

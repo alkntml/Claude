@@ -29,9 +29,17 @@ export default async function SharedProject({ params }: { params: Promise<{ toke
     db.from("projects").select("*").eq("id", share.project_id).single(),
     db.from("project_stages").select("id, key, title, position, content, content_text").eq("project_id", share.project_id).order("position"),
     db.from("sources").select("*").eq("project_id", share.project_id),
-    db.from("profiles").select("full_name").eq("id", share.user_id).single(),
+    db.from("profiles").select("full_name, work_locked, role").eq("id", share.user_id).single(),
   ]);
   if (!project) notFound();
+  // Sahibinin çalışması kilitliyse (kullanım hakkı doldu) paylaşım bağlantısı içerik göstermez (D50)
+  if (owner?.work_locked && owner.role !== "admin") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white px-6">
+        <div className="max-w-md text-center"><Logo /><h1 className="mt-6 text-xl font-semibold text-ink-900">{t("Bu çalışma şu anda görüntülenemiyor")}</h1><p className="mt-2 text-ink-500">{t("Çalışmanın sahibi erişimi yeniden açtığında bu bağlantı tekrar çalışır.")}</p></div>
+      </div>
+    );
+  }
   await db.from("project_shares").update({ view_count: share.view_count + 1, last_viewed_at: new Date().toISOString() }).eq("id", share.id);
   const doc = buildExportDoc({ project, stages: stages ?? [], sources: sources ?? [], engineItems: (sources ?? []).map(sourceRowToItem), authorName: owner?.full_name ?? "" });
   const written = (stages ?? []).filter((s) => (s.content_text ?? "").trim() && s.key !== "references");

@@ -7,7 +7,12 @@ export class ClientApiError extends Error {
 }
 
 /** Paket sınırı / kilitli özellik: yükseltme penceresini açar (UpgradeDialogHost dinler) */
-export interface UpgradeRequest { code?: string; message?: string; feature?: string; plan?: string; target?: string }
+export interface UpgradeRequest { code?: string; message?: string; feature?: string; plan?: string; target?: string; projectId?: string; projectTitle?: string }
+
+/** Açık çalışma (kilit penceresindeki “mevcut çalışmayı indir” mesajı için) */
+let currentProject: { id: string; title: string } | null = null;
+export function setCurrentProject(p: { id: string; title: string } | null) { currentProject = p; }
+export function getCurrentProject() { return currentProject; }
 export const UPGRADE_EVENT = "academiana:upgrade";
 export function openUpgrade(detail: UpgradeRequest) {
   try { window.dispatchEvent(new CustomEvent<UpgradeRequest>(UPGRADE_EVENT, { detail })); } catch { /* sunucu tarafı */ }
@@ -15,7 +20,7 @@ export function openUpgrade(detail: UpgradeRequest) {
 /** 402 cevabı paket sınırıysa yükseltme penceresini açar */
 export function handlePlanError(status: number, data: { error?: string; code?: string; feature?: string; plan?: string } | null | undefined) {
   if (status !== 402 || !data?.code) return;
-  if (data.code === "feature_locked" || data.code.startsWith("limit_")) openUpgrade({ code: data.code, message: data.error, feature: data.feature, plan: data.plan });
+  if (data.code === "feature_locked" || data.code === "work_locked" || data.code.startsWith("limit_")) openUpgrade({ code: data.code, message: data.error, feature: data.feature, plan: data.plan });
 }
 
 export async function api<T = unknown>(url: string, init: RequestInit & { json?: unknown } = {}): Promise<T> {

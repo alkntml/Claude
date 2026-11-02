@@ -197,3 +197,11 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Hesap ve panelde yapay zekâ isteği/token satırları kaldırıldı; %80 uyarısı sayı vermeden “sonuna yaklaşıyorsunuz” der. Kaynak tarama, proje, depolama sayıları görünür kalır.
 - Şeffaflık: Fiyatlar sayfasında “aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir” notu var (satın alma öncesi bilgilendirme). Migration 10 özellik listelerini yazar.
 
+### D50 — Çalışma kilidi (aylık hak dolunca)
+- Kullanıcı kararı: tüm paketlerde aylık limitlerden biri (yapay zekâ isteği, token, kaynak tarama) dolunca çalışma kilitlenir; metin ve kaynaklar buğulu, düzenleme ve tüm indirmeler kapalı. Seçenekler: “Mevcut çalışmayı indir — 100 TL” (WhatsApp, `DOWNLOAD_PRICE_TL`) veya abonelik (yükseltme penceresi).
+- Üç katman: (1) Veritabanı: `profiles.work_locked` (yalnızca sunucu değiştirir; koruma tetikleyicisine eklendi) + içerik tablolarında kısıtlayıcı RLS (`work_locked()`), böylece istemci anahtarıyla doğrudan sorgu da boş döner; (2) Sunucu: `assertWithinLimits`/`assertProjectQuota`/`assertNotLocked` 402 `work_locked`; `getWorkLock()` (lib/lock.ts) sayfa yüklemesinde bayrağı eşitler (yeni ay / paket yükseltme → kalkar); (3) Ekran: `LockedProject` — metin ve kaynaklar sunucuda `scramble.ts` ile anlamsız harflere çevrilip gönderilir (asıl içerik sayfada yoktur), üstüne CSS buğu.
+- Danışman paylaşım bağlantısı kilitliyken içerik göstermez. Kalite sayfası çalışmaya yönlenir.
+- İndirme hakkı: yönetici ödemeyi alınca Yönetim → Kilitler’den çalışma koduyla `download_passes` tanımlar (varsayılan 7 gün); dışa aktarma ve kaynak dosyası (BibTeX/RIS) bu hakla açılır, sunucu içerik okumayı service role ile açık user_id filtresiyle yapar.
+- KVKK: kilitliyken anında “Verilerimi indir” yerine `data_requests` talebi oluşturulur; yönetici Kilitler sekmesinden JSON indirip 30 gün içinde ücretsiz iletir (yasal zorunluluk; ücret alınamaz).
+- Şeffaflık: SSS ve Kullanım Koşulları kilit kuralını, 100 TL seçeneğini ve KVKK hakkını açıkça yazar.
+

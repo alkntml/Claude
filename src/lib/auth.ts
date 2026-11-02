@@ -24,6 +24,8 @@ export interface Profile {
   /** Etkin kurum üyeliği (kurumsal lisans) */
   org?: OrgInfo | null;
   referral_code?: string | null;
+  /** Çalışma kilidi bayrağı (D50); sunucu yönetir */
+  work_locked?: boolean;
 }
 
 export interface Session {

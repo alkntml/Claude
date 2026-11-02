@@ -4,6 +4,11 @@ import { Workspace } from "@/components/workspace/workspace";
 import { getSession } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { loadProjectBundle } from "@/lib/projects";
+import { getWorkLock } from "@/lib/lock";
+import { hasDownloadPass } from "@/lib/usage";
+import { adminClient } from "@/lib/supabase/admin";
+import { scrambleSource, scrambleText } from "@/lib/scramble";
+import { LockedProject } from "@/components/workspace/locked-project";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +28,16 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { id } = await params;
   const { bolum } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  // Çalışma kilidi (D50): içerik istemciye karartılmış gönderilir; asıl metin ve kaynaklar sayfada hiç bulunmaz
+  const lock = await getWorkLock();
+  if (lock.locked) {
+    const bundle = await loadProjectBundle(adminClient(), id, s.user.id);
+    if (!bundle) notFound();
+    const pass = await hasDownloadPass(s.user.id, id);
+    const stages = bundle.stages.map((st, i) => ({ id: st.id as string, title: st.title as string, key: st.key as string, word_count: Number(st.word_count ?? 0), text: scrambleText(String(st.content_text ?? "").slice(0, 3000), i + 3) }));
+    const sources = bundle.sources.map((src, i) => { const x = scrambleSource(src, i + 5); return { id: x.id as string, title: x.title as string, year: x.year as number | null, authors: x.authors as unknown[] }; });
+    return <LockedProject project={{ id: bundle.project.id, title: bundle.project.title, work_type: bundle.project.work_type }} stages={stages} sources={sources} reasons={lock.reasons} pass={pass} email={s.profile.email ?? s.user.email ?? ""} />;
+  }
   // Proje, dosyalar ve “son açılma” güncellemesi paralel yürür
   const [bundle, { data: files }] = await Promise.all([
     loadProjectBundle(s.supabase, id, s.user.id),

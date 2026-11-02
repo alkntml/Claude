@@ -253,8 +253,8 @@ export const FAQ: FaqGroup[] = [
         id: "limit",
         q: { tr: "Aylık limitim dolarsa ne olur? Çalışmalarım silinir mi?", en: "What happens if I hit my monthly limit? Is my work deleted?" },
         a: {
-          tr: "Hiçbir çalışmanız silinmez; metninizi yazmaya, düzenlemeye ve indirmeye devam edersiniz. Yalnızca limiti dolan işlem (ör. yapay zekâ isteği veya kaynak tarama) ayın sonuna kadar durur. Limitin %80’ine yaklaşınca önceden uyarılırsınız. Paketinizi yükseltebilir, arkadaşlarınızı davet ederek ek hak kazanabilir veya yeni ayı bekleyebilirsiniz.",
-          en: "None of your work is deleted; you can keep writing, editing and downloading. Only the action whose limit is reached (e.g. AI requests or source searches) pauses until the end of the month. You are warned when you reach 80% of a limit. You can upgrade, invite friends for extra usage or wait for the new month.",
+          tr: "Hiçbir çalışmanız silinmez. Ancak aylık haklarınızdan biri (yapay zekâ kullanımı veya kaynak tarama) dolduğunda çalışmalarınız ve kaynaklarınız kilitlenir: metin ve kaynaklar buğulu görünür, düzenleme ve indirme kapanır. Hakkınızın sonuna yaklaşınca önceden uyarılırsınız. Devam etmek için paketinizi yükseltebilir, yalnızca mevcut çalışmanızı 100 TL karşılığında bir kez indirebilir veya yeni ayda hakkınızın yenilenmesini bekleyebilirsiniz. Kişisel verilerinize erişim talebiniz (KVKK) her durumda ücretsiz olarak yanıtlanır.",
+          en: "None of your work is deleted. However, when one of your monthly allowances (AI usage or source searches) runs out, your work and sources are locked: text and sources are blurred, and editing and downloading are disabled. You are warned when you are close to the limit. To continue you can upgrade, download just your current work once for 100 TL, or wait for your allowance to renew next month. Requests to access your personal data (GDPR/KVKK) are always answered free of charge.",
         },
       },
       {

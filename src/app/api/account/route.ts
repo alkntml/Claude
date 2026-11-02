@@ -3,20 +3,18 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
 import { adminClient } from "@/lib/supabase/admin";
-import { effectiveLimits, usageSummary } from "@/lib/usage";
+import { WORK_LOCKED_MESSAGE, effectiveLimits, usageSummary } from "@/lib/usage";
+import { getWorkLock } from "@/lib/lock";
+import { buildUserExport } from "@/lib/data-export";
 
 export const GET = route("account.get", async (req) => {
   const s = await requireUser();
   if (new URL(req.url).searchParams.get("export") === "1") {
-    // KVKK / GDPR: kullanıcının tüm verisini taşınabilir JSON olarak dışa aktar
-    const tables = ["projects", "project_stages", "stage_revisions", "stage_comments", "project_memory", "sources", "ai_conversations", "ai_messages", "files", "quality_reports", "subscriptions", "usage_events", "feedback"];
-    const out: Record<string, unknown> = { exportedAt: new Date().toISOString(), profile: s.profile };
-    for (const t of tables) {
-      const { data } = await s.supabase.from(t).select("*").eq("user_id", s.user.id).limit(50000);
-      out[t] = data ?? [];
-    }
+    // Kilitliyken anında indirme kapalı; KVKK talebi /api/account/data-request ile alınır ve yasal sürede yanıtlanır (D50)
+    if ((await getWorkLock()).locked) throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked");
+    const out = await buildUserExport(s.supabase, s.user.id, s.profile);
     await s.supabase.from("data_requests").insert({ user_id: s.user.id, kind: "export", status: "completed", completed_at: new Date().toISOString() });
-    return new Response(JSON.stringify(out, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="akademi-ai-verilerim.json"` } });
+    return new Response(JSON.stringify(out, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="academiana-verilerim.json"` } });
   }
   const [usage, limits, subs] = await Promise.all([
     usageSummary(s.user.id),

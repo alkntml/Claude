@@ -40,3 +40,6 @@ export const TEAM_DISCOUNT = { percent: 20, minMembers: 3 } as const;
 export function whatsappLink(text: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
+
+/** Kilitli çalışmayı (aboneliksiz) bir kez indirme ücreti, TL (D50) */
+export const DOWNLOAD_PRICE_TL = 100;

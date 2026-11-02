@@ -25,16 +25,20 @@ export const POST = route<Ctx>("stage.review", async (req, { params }) => {
   const rules = ruleIssues(bundle, stage, uiLocale);
   let ai = null;
   let aiError: string | null = null;
+  // Basic pakette bölüm kontrolü aylık yapay zekâ hakkından düşmez (quality_check olarak kaydedilir, maliyet yönetim panelinde görünür);
+  // diğer paketlerde normal yapay zekâ isteği sayılır. Tüm paketlerde en ekonomik model (fast) kullanılır.
+  const exempt = s.profile.plan_id === "basic";
   try {
-    // Bölüm kontrolü aylık yapay zekâ hakkından düşmez (kullanım “quality_check” olarak kaydedilir, maliyet yönetim panelinde görünür).
-    // Kötüye kullanıma karşı: dakikalık hız sınırı + günde en fazla 40 yapay zekâ kontrolü.
-    await assertWithinLimits(s.user.id, s.profile.plan_id, "quality_check");
-    const since = new Date(Date.now() - 86_400_000).toISOString();
-    const { count } = await adminClient().from("usage_events").select("id", { count: "exact", head: true }).eq("user_id", s.user.id).eq("kind", "quality_check").eq("meta->>action", "stage_review").gte("created_at", since);
-    if ((count ?? 0) >= DAILY_AI_REVIEWS) throw new ApiError(429, "Bugünkü yapay zekâ bölüm kontrolü sınırına ulaşıldı; yarın tekrar deneyebilirsiniz");
-    // Ücretsiz pakette en ekonomik model, ücretli paketlerde dengeli model
-    ai = await aiStageReview({ planId: s.profile.plan_id, bundle, stage, uiLocale, tier: s.profile.plan_id === "free" ? "fast" : "balanced" });
-    if (ai) await recordUsage(s.user.id, "quality_check", { tokensIn: ai.usage.input, tokensOut: ai.usage.output, costUsd: ai.cost, provider: ai.provider, model: ai.model, meta: { action: "stage_review", projectId: st.project_id } });
+    if (exempt) {
+      await assertWithinLimits(s.user.id, s.profile.plan_id, "quality_check");
+      const since = new Date(Date.now() - 86_400_000).toISOString();
+      const { count } = await adminClient().from("usage_events").select("id", { count: "exact", head: true }).eq("user_id", s.user.id).eq("kind", "quality_check").eq("meta->>action", "stage_review").gte("created_at", since);
+      if ((count ?? 0) >= DAILY_AI_REVIEWS) throw new ApiError(429, "Bugünkü yapay zekâ bölüm kontrolü sınırına ulaşıldı; yarın tekrar deneyebilirsiniz");
+    } else {
+      await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+    }
+    ai = await aiStageReview({ planId: s.profile.plan_id, bundle, stage, uiLocale, tier: "fast" });
+    if (ai) await recordUsage(s.user.id, exempt ? "quality_check" : "ai_request", { tokensIn: ai.usage.input, tokensOut: ai.usage.output, costUsd: ai.cost, provider: ai.provider, model: ai.model, meta: { action: "stage_review", projectId: st.project_id } });
   } catch (e) {
     aiError = e instanceof ApiError ? e.message : "Yapay zekâ incelemesi şu anda yapılamadı";
   }

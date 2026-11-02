@@ -148,4 +148,4 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D41 — Bölüm tamamlama kontrolü
 - `stages/[id]/review`: bu bölüme ait kural sonuçları (runQualityChecks tek bölümle) + “balanced” modelle amaç/kurallar/başlık uyumu incelemesi (JSON şema). Kural hatası (ör. [KAYNAK GEREKLİ]) yapay zekâ “ok” dese bile kararı düşürür. AI limiti/hatasında yalnızca kurallar gösterilir. Kullanıcı her durumda “Yine de tamamlandı işaretle” diyebilir (karar kullanıcının).
-- (Güncelleme) Bölüm kontrolü aylık yapay zekâ hakkından düşmez: kullanım `quality_check` türünde, token ve maliyetle kaydedilir; yönetim panelindeki maliyet/model istatistikleri bu kayıtları da içerir. Kötüye kullanıma karşı dakikalık hız sınırı ve günde 40 yapay zekâ kontrolü. Ücretsiz pakette “fast” (Haiku), ücretlilerde “balanced” (Sonnet).
+- (Güncelleme, kullanıcı kararı) Bölüm kontrolü tüm paketlerde “fast” (Haiku) modelle yapılır. Basic pakette aylık yapay zekâ hakkından düşmez (`quality_check` olarak token/maliyetle kaydedilir, günde 40 sınırı); Ücretsiz, Pro ve Premium’da normal yapay zekâ isteği sayılır. Yönetim paneli maliyetleri `quality_check` kayıtlarını da içerir.

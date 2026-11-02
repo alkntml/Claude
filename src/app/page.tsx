@@ -10,7 +10,7 @@ import { HowItWorks, Pillars, PricingCards, Principles, SourcesStrip } from "@/c
 import { WorkTypePicker } from "@/components/landing/work-type-picker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { FadeIn } from "@/components/ui/primitives";
+import { FadeIn } from "@/components/ui/fade-in";
 import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import Link from "@/components/l-link";

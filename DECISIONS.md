@@ -239,3 +239,10 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Kullanıcı numarasını Hesap sayfasında ve sol menüde görür; tüm WhatsApp mesajlarında (yükseltme, 100 TL indirme, süre uzatma, ekip indirimi) “Üye no” satırı vardır.
 - Yönetim → Kullanıcılar araması: üye no (AC001234 / ac-1234 / 1234), sistem kimliği (uuid) veya e-posta/ad. Listede “Üye no” sütunu, ayrıntıda üye no.
 
+### D57 — Tanıtım sayfası hızı (ikinci tur)
+- Ana sayfa animasyonları framer-motion’dan CSS’e taşındı (`animate-rise`, tailwind keyframes): içerik sunucu HTML’inde görünür gelir, JavaScript beklemez. Sürekli hareket eden 3 büyük `blur-3xl` top ve kaydırmaya bağlı parallax kaldırıldı; yerine sabit radyal geçiş. `backdrop-blur-xl` kartlardan kaldırıldı. `prefers-reduced-motion` desteklenir.
+- `FadeIn` artık `components/ui/fade-in.tsx` (sunucu bileşeni, framer yok); başlık (site-header) ve çalışma türü kartları da framer’sız.
+- Sonuç: `/` 176 → 131 kB, `/blog` 152 → 112 kB, `/fiyatlar` 161 → 117 kB (ilk yükleme JS).
+- Ara katman tanıtım sayfalarında Supabase oturum yenilemesi yapmaz (giriş yapmış kullanıcıda her tıklamada ağ isteği vardı).
+- `loading.tsx` (kök, (app), proje): sayfa geçişinde anında ilerleme çubuğu + iskelet; Next bağlantıları bu sınıra kadar önceden yükler.
+

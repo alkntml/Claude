@@ -1,50 +1,43 @@
 "use client";
 import { useT } from "@/i18n/client";
-import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, BadgeCheck, BookMarked, FileCheck2, Quote, Sparkles } from "lucide-react";
 import Link from "@/components/l-link";
-import { useRef } from "react";
 
 export function Hero({ signedIn }: { signedIn: boolean }) {
   const { t } = useT();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, -4]);
 
   return (
-    <section ref={ref} className="relative overflow-hidden pb-20 pt-32 sm:pt-40">
+    <section className="relative overflow-hidden pb-20 pt-32 sm:pt-40">
       <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_40%,transparent_75%)]" />
-      <motion.div aria-hidden className="absolute -left-40 -top-40 h-[520px] w-[520px] rounded-full bg-brand-300/40 blur-3xl" animate={{ x: [0, 60, 0], y: [0, 40, 0] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} />
-      <motion.div aria-hidden className="absolute -right-32 top-10 h-[460px] w-[460px] rounded-full bg-sky-300/30 blur-3xl" animate={{ x: [0, -50, 0], y: [0, 60, 0] }} transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }} />
-      <motion.div aria-hidden className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-amber-200/30 blur-3xl" animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 14, repeat: Infinity }} />
+      {/* Arka plan renkleri: bulanıklık yerine yumuşak radyal geçiş (ekran kartını yormaz; D57) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(520px_circle_at_8%_0%,rgb(147_168_250/0.35),transparent_70%),radial-gradient(460px_circle_at_95%_20%,rgb(125_211_252/0.28),transparent_70%),radial-gradient(320px_circle_at_40%_100%,rgb(253_230_138/0.28),transparent_70%)]" />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white/80 px-3 py-1 text-[13px] font-medium text-brand-700 shadow-sm backdrop-blur">
+          <div className="animate-rise mb-6 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white/80 px-3 py-1 text-[13px] font-medium text-brand-700 shadow-sm backdrop-blur">
             <Sparkles className="h-3.5 w-3.5" /> {t("Gerçek kaynaklarla çalışan akademik asistan")}
-          </motion.div>
-          <motion.h1 initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }} className="font-serif text-[42px] font-medium leading-[1.05] tracking-tight text-ink-950 sm:text-6xl">
+          </div>
+          <h1 style={{ animationDelay: ".05s" }} className="animate-rise font-serif text-[42px] font-medium leading-[1.05] tracking-tight text-ink-950 sm:text-6xl">
             {t("Akademik çalışmanızı")} <span className="text-gradient italic">{t("ilk fikirden")}</span> {t("son kaynakçaya kadar yönetin.")}
-          </motion.h1>
-          <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.15 }} className="mt-6 max-w-xl text-lg leading-relaxed text-ink-500">
+          </h1>
+          <p style={{ animationDelay: ".12s" }} className="animate-rise mt-6 max-w-xl text-lg leading-relaxed text-ink-500">
             {t("Tez, makale ve araştırma önerinizi adım adım ilerleyen bir yol haritasıyla hazırlayın. Kaynaklar OpenAlex, Crossref ve PubMed gibi veri tabanlarından gelir ve doğrulanır. Atıflar seçtiğiniz stile göre kendiliğinden biçimlenir.")}
-          </motion.p>
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.25 }} className="mt-9 flex flex-wrap items-center gap-3">
+          </p>
+          <div style={{ animationDelay: ".18s" }} className="animate-rise mt-9 flex flex-wrap items-center gap-3">
             <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-6 font-medium text-white shadow-[0_14px_30px_-12px_rgb(39_71_220/0.8)] transition hover:-translate-y-0.5">
               {t("Çalışmaya başla")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Link>
             <Link href="#tur-sec" className="inline-flex h-12 items-center rounded-2xl border border-ink-200 bg-white/80 px-6 font-medium text-ink-700 backdrop-blur transition hover:border-ink-300 hover:bg-white">{t("Çalışma türlerini gör")}</Link>
-          </motion.div>
-          <motion.ul initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
+          </div>
+          <ul style={{ animationDelay: ".25s" }} className="animate-rise mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("Uydurma kaynak yok")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("9 atıf stili")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("KVKK uyumlu")}</li>
-          </motion.ul>
+          </ul>
         </div>
 
-        <motion.div style={{ y, rotate }} className="relative hidden lg:block">
-          <motion.div initial={{ opacity: 0, y: 30, rotateX: 12 }} animate={{ opacity: 1, y: 0, rotateX: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} className="relative rounded-3xl border border-white/70 bg-white/85 p-6 shadow-[0_40px_80px_-30px_rgb(21_24_41/0.35)] backdrop-blur-xl" aria-hidden>
+        <div className="relative hidden lg:block">
+          <div style={{ animationDelay: ".15s" }} className="animate-rise relative rounded-3xl border border-white/70 bg-white/95 p-6 shadow-[0_40px_80px_-30px_rgb(21_24_41/0.35)]" aria-hidden>
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-medium text-ink-400"><span className="h-2 w-2 rounded-full bg-emerald-400" /> 2.3 {t("Kavramsal çerçeve")}</div>
               <span className="rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700">APA 7</span>
@@ -61,15 +54,15 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
                 </div>
               ))}
             </div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 0.6 }} className="absolute -bottom-8 -left-10 flex items-center gap-3 rounded-2xl border border-white/70 bg-white/90 px-4 py-3 shadow-xl backdrop-blur" aria-hidden>
+          </div>
+          <div style={{ animationDelay: ".35s" }} className="animate-rise absolute -bottom-8 -left-10 flex items-center gap-3 rounded-2xl border border-white/70 bg-white px-4 py-3 shadow-xl" aria-hidden>
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600"><FileCheck2 className="h-5 w-5" /></div>
             <div><p className="text-[13px] font-semibold text-ink-800">{t("Kalite skoru 86")}</p><p className="text-[11px] text-ink-500">{t("2 eksik künye · 0 eşleşmeyen atıf")}</p></div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.6 }} className="absolute -right-6 -top-8 flex items-center gap-2 rounded-2xl bg-ink-900 px-4 py-2.5 text-white shadow-xl" aria-hidden>
+          </div>
+          <div style={{ animationDelay: ".45s" }} className="animate-rise absolute -right-6 -top-8 flex items-center gap-2 rounded-2xl bg-ink-900 px-4 py-2.5 text-white shadow-xl" aria-hidden>
             <Quote className="h-4 w-4 text-amber-300" /><span className="text-[13px]">{t("OpenAlex · Crossref · PubMed taranıyor…")}</span>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

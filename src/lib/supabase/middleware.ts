@@ -33,7 +33,9 @@ export async function updateSession(request: NextRequest) {
       h.set("x-locale", urlLocale);
       return prefixed ? NextResponse.rewrite(new URL(`${basePath}${search}`, request.url), { request: { headers: h } }) : NextResponse.next({ request: { headers: h } });
     };
-    const res = await sessionResponse(request, build);
+    // Tanıtım sayfalarında oturum yenilenmez (Supabase’e ağ isteği yok; giriş durumu yalnızca çerezden okunur — D57).
+    // Oturum, uygulama sayfasına geçildiğinde yenilenir.
+    const res = build();
     if (cookieLang !== urlLocale && (prefixed || !cookieLang)) setLang(res, urlLocale);
     return res;
   }

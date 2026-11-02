@@ -2,7 +2,7 @@
 import { useT } from "@/i18n/client";
 import { BookCheck, Brain, CheckCircle2, FileDown, FileSearch2, Layers3, Library, ListChecks, Lock, Map, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Link from "@/components/l-link";
-import { FadeIn } from "@/components/ui/primitives";
+import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 
 export function Pillars() {

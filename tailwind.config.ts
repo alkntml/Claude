@@ -22,8 +22,17 @@ export default {
       },
       keyframes: {
         shimmer: { "0%": { backgroundPosition: "-400px 0" }, "100%": { backgroundPosition: "400px 0" } },
+        rise: { "0%": { opacity: "0", transform: "translateY(14px)" }, "100%": { opacity: "1", transform: "none" } },
+        drift: { "0%, 100%": { transform: "translate3d(0,0,0)" }, "50%": { transform: "translate3d(40px,30px,0)" } },
+        progress: { "0%": { transform: "translateX(-100%)" }, "100%": { transform: "translateX(250%)" } },
       },
-      animation: { shimmer: "shimmer 1.6s linear infinite" },
+      animation: {
+        shimmer: "shimmer 1.6s linear infinite",
+        // Yalnızca CSS: sayfa JavaScript yüklenmeden görünür ve canlanır (D57)
+        rise: "rise .6s cubic-bezier(.22,1,.36,1) both",
+        drift: "drift 20s ease-in-out infinite",
+        progress: "progress 1.1s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

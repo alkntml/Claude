@@ -1,9 +1,8 @@
 "use client";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { Menu, X } from "lucide-react";
 import Link from "@/components/l-link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./icons";
 import { cn } from "./ui/cn";
 
@@ -20,12 +19,16 @@ const NAV: { href: string; label: string; wide?: 1 | 2 }[] = [
 
 export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   const { t } = useT();
-  const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 12));
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 12);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
   return (
-    <motion.header className={cn("fixed inset-x-0 top-0 z-40 transition-all duration-300", scrolled ? "py-2" : "py-4")}>
+    <header className={cn("fixed inset-x-0 top-0 z-40 transition-all duration-300", scrolled ? "py-2" : "py-4")}>
       <div className={cn("mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-2 transition-all duration-300 sm:px-5", scrolled ? "glass mx-3 sm:mx-auto" : "")}>
         <Link href="/" aria-label={t("Ana sayfa")} className="shrink-0"><Logo /></Link>
         <nav className="hidden items-center gap-1 md:flex">
@@ -47,12 +50,12 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
         <button className="rounded-lg p-2 md:hidden" onClick={() => setOpen((o) => !o)} aria-label={t("Menü")}>{open ? <X /> : <Menu />}</button>
       </div>
       {open && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="glass mx-3 mt-2 rounded-2xl p-3 md:hidden">
+        <div className="glass mx-3 mt-2 animate-rise rounded-2xl p-3 md:hidden">
           {NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-ink-700">{t(n.label)}</Link>)}
           <div className="px-3 py-2"><LanguageSwitch /></div>
           <Link href={signedIn ? "/panel" : "/kayit"} className="mt-2 block rounded-xl bg-brand-600 px-3 py-2.5 text-center font-medium text-white">{signedIn ? t("Çalışma alanım") : t("Ücretsiz başla")}</Link>
-        </motion.div>
+        </div>
       )}
-    </motion.header>
+    </header>
   );
 }

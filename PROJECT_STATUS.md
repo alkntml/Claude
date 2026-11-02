@@ -84,6 +84,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Sağlayıcılar henüz Supabase’de açılmadı (TODO)
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
 - **Paket süresi + yönetim paneli (D53):** bitiş tarihi, ek gün, ek hak, kullanıcı ayrıntısı, gelir/kâr özeti
+- **Hız 2 (D57):** ana sayfa animasyonları CSS, ilk yükleme JS %25–30 küçüldü, sayfa geçişlerinde anında yükleme göstergesi
 - **Üye numarası (D56):** her kullanıcıya AC001001… numarası; yönetimde aranabilir, WhatsApp mesajlarında yer alır
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu

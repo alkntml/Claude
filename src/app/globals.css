@@ -76,3 +76,8 @@ body { background: rgb(var(--bg)); color: #151829; }
 /* Akademik başlıklar: serif başlıklar yarı kalın ve sıkı aralıklı (yayın/dergi hissi) */
 .font-serif { font-optical-sizing: auto; }
 .font-serif.font-medium { font-weight: 600; letter-spacing: -0.022em; }
+
+/* Hareket azaltma tercihi olanlarda süslü animasyonlar kapalı (D57) */
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise, .animate-drift { animation: none !important; }
+}

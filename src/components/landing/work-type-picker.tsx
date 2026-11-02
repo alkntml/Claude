@@ -1,6 +1,5 @@
 "use client";
 import { useT } from "@/i18n/client";
-import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/l-link";
 import { WORK_ICONS } from "@/components/icons";
@@ -14,7 +13,7 @@ export function WorkTypePicker({ signedIn, compact = false }: { signedIn: boolea
         const Icon = WORK_ICONS[w.icon];
         const href = signedIn ? `/yeni?tur=${w.id}` : `/kayit?next=${encodeURIComponent(`/yeni?tur=${w.id}`)}`;
         return (
-          <motion.div key={w.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
+          <div key={w.id} className="animate-rise" style={{ animationDelay: `${i * 0.05}s` }}>
             <Link href={href} className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ink-100 bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-glow">
               <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br from-brand-100 to-sky-100 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
               <div className="relative flex items-start justify-between">
@@ -27,7 +26,7 @@ export function WorkTypePicker({ signedIn, compact = false }: { signedIn: boolea
               <p className="relative text-[12.5px] font-medium text-brand-600/80">{t(w.short)}</p>
               <p className="relative mt-2 text-[13.5px] leading-relaxed text-ink-500">{t(w.description)}</p>
             </Link>
-          </motion.div>
+          </div>
         );
       })}
     </div>

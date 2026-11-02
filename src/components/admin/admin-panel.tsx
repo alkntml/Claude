@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Activity, Building2, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
+import { Activity, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -12,11 +12,11 @@ import { STAGE_LIBRARY } from "@/lib/workflows";
 import { DailyBars } from "./chart";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks";
+type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Genel bakış", icon: Activity }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
-  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock },
+  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift },
 ];
 
 function useRows(resource: string, q = "") {
@@ -57,6 +57,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "help" && <HelpTab />}
         {tab === "errors" && <ErrorsTab />}
         {tab === "locks" && <LocksTab />}
+        {tab === "referrals" && <ReferralsTab />}
       </motion.div>
     </div>
   );
@@ -614,6 +615,49 @@ function LocksTab() {
           {(data?.locked ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Kilitli kullanıcı yok.</p>}
           {(data?.locked ?? []).map((u) => <p key={u.id} className="border-t border-ink-50 py-1.5 text-[13px]">{u.email} <span className="text-ink-400">· {u.plan_id}</span></p>)}
           <p className="mt-2 text-xs text-ink-400">Paket yükseltmek için Kullanıcılar sekmesinden paketini değiştirin; kilit kullanıcı sayfayı yenilediğinde kalkar.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Davet kampanyası sayaçları (D55): ödüller otomatik verilir; burada izlenir */
+function ReferralsTab() {
+  const [d, setD] = useState<any | null>(null);
+  const load = useCallback(() => { api("/api/admin/referrals").then(setD).catch(() => setD({ error: true })); }, []);
+  useEffect(() => { load(); }, [load]);
+  if (!d) return <div className="skeleton h-40" />;
+  if (d.error) return <p className="text-rose-600">Davet istatistikleri yüklenemedi.</p>;
+  const tiles: [string, number, string][] = [
+    ["Toplam davetle kayıt", d.totals.invited, ""],
+    ["Ödül verilen", d.totals.rewarded, "e-postasını doğrulayanlar"],
+    ["Doğrulama bekleyen", d.totals.pending, "henüz ödül verilmedi"],
+    ["Bu ay ödül", d.totals.rewardedMonth, `${d.totals.aiGrantedMonth} YZ isteği dağıtıldı`],
+  ];
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+        <span>Ödüller <b>otomatik</b> verilir: davet edilen kişi e-postasını doğruladığında ikisine de {d.settings.ai_requests} YZ isteği + {d.settings.source_searches} tarama ({d.settings.valid_days} gün). Davet eden ayda en fazla {d.settings.monthly_cap} ödül alır.{!d.settings.enabled && " — Kampanya şu an KAPALI (Ayarlar)."}</span>
+        <Button size="sm" variant="ghost" onClick={load}><RefreshCw className="h-3.5 w-3.5" /></Button>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{tiles.map(([l, v, sub]) => <div key={l} className="card p-4"><p className="text-[13px] text-ink-500">{l}</p><p className="mt-1 text-2xl font-semibold text-ink-900">{v}</p>{sub && <p className="text-xs text-ink-400">{sub}</p>}</div>)}</div>
+      {d.totals.cappedMonth > 0 && <p className="rounded-xl bg-amber-50 px-4 py-2 text-sm text-amber-900">Bu ay {d.totals.cappedMonth} davette, davet eden aylık sınıra ulaştığı için yalnızca davet edilene ödül verildi.</p>}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <div className="card p-5">
+          <h3 className="font-semibold">En çok davet edenler</h3>
+          <table className="mt-2 w-full text-sm"><thead className="text-left text-xs text-ink-400"><tr><th>Kullanıcı</th><th>Davet</th><th>Ödüllü</th><th>Bu ay</th></tr></thead>
+            <tbody>{d.top.map((u: any) => <tr key={u.id} className="border-t border-ink-100"><td className="py-1.5 pr-2">{u.email ?? u.id}</td><td>{u.invited}</td><td>{u.rewarded}</td><td>{u.month}</td></tr>)}</tbody></table>
+          {d.top.length === 0 && <p className="mt-2 text-sm text-ink-400">Henüz davet yok.</p>}
+        </div>
+        <div className="card p-5">
+          <h3 className="font-semibold">Son davetle kayıtlar</h3>
+          {d.recent.length === 0 && <p className="mt-2 text-sm text-ink-400">Henüz davet yok.</p>}
+          {d.recent.map((r: any, i: number) => (
+            <div key={i} className="flex items-center justify-between gap-2 border-t border-ink-100 py-1.5 text-[13px]">
+              <span className="min-w-0 truncate">{r.email} <span className="text-ink-400">← {r.inviter}</span></span>
+              {r.rewarded_at ? <Badge tone="green">Ödül · {new Date(r.rewarded_at).toLocaleDateString("tr-TR")}</Badge> : <Badge tone="amber">Doğrulama bekliyor</Badge>}
+            </div>
+          ))}
         </div>
       </div>
     </div>

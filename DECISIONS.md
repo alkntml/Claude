@@ -229,3 +229,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D54 — Davet kampanyası hediye kutusu
 - Uygulama sayfalarında sağ altta sabit hediye düğmesi (`components/gift-box.tsx`): görülmediyse veya yeni ödül kazanıldıysa kırmızı bildirim + sallanma; ilk ziyarette kısa baloncuk; açılınca davet bağlantısı, kopyala, WhatsApp, paylaş. Kenar çubuğunda “Davet et, kazan” bağlantısı da açar.
 
+### D55 — Ücretsiz pakette tarama kilidi yok; davet ödülü sayaçları
+- Ücretsiz pakette kaynak tarama hakkı dolunca yalnızca tarama kapanır (`limit_search`), çalışma kilitlenmez; kullanıcı diğer özellikleri denemeye devam eder. Yapay zekâ hakkı / maliyet tavanı dolunca kilit yine devreye girer. Ücretli paketlerde değişiklik yok. (`lockReasons(limits, usage, planId)`)
+- Davet ödülü zaten otomatikti (onay gerekmez); artık uygulamanın herhangi bir sayfası açıldığında da verilir (yalnızca panel değil). Koşul: davet edilen e-postasını doğrulamış olmalı (sahte hesaplara karşı; Google/Apple ile kayıt otomatik doğrulanmış sayılır). Davet edenin aylık ödül sınırı (`monthly_cap`) sürer; aylık dönem TR saatine göre.
+- Yönetim → Davetler: toplam/ödüllü/bekleyen davet, bu ayki ödül ve dağıtılan hak, sınıra takılanlar, en çok davet edenler, son davetler (`admin/referrals`).
+

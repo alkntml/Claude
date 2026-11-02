@@ -139,12 +139,14 @@ async function rateLimit(userId: string, kind: UsageKind) {
  * ------------------------------------------------------------------- */
 export type LockReason = "ai_requests" | "tokens" | "source_searches" | "cost";
 
-export function lockReasons(limits: PlanLimits, usage: UsageSummary): LockReason[] {
+export function lockReasons(limits: PlanLimits, usage: UsageSummary, planId?: string): LockReason[] {
   const out: LockReason[] = [];
   const hit = (u: number, l: number | null | undefined) => l !== null && l !== undefined && u >= l;
   if (hit(usage.ai_requests, limits.ai_requests_month)) out.push("ai_requests");
   if (hit(usage.tokens, limits.tokens_month)) out.push("tokens");
-  if (hit(usage.source_searches, limits.source_searches_month)) out.push("source_searches");
+  // Ücretsiz pakette tarama hakkı dolunca yalnızca kaynak tarama kapanır; çalışma kilitlenmez,
+  // kullanıcı diğer özellikleri denemeye devam eder (D55)
+  if (planId !== "free" && hit(usage.source_searches, limits.source_searches_month)) out.push("source_searches");
   // Maliyet tavanı (D52): gelirin 1/3’ünden fazla API maliyetine izin verilmez; kullanıcıya “yapay zekâ hakkı” olarak görünür
   if (hit(usage.cost_usd ?? 0, limits.cost_usd_month)) out.push("cost");
   return out;
@@ -158,7 +160,7 @@ export async function setWorkLock(userId: string, locked: boolean) {
 export async function syncWorkLock(userId: string, planId: string, opts: { isAdmin?: boolean; stored?: boolean } = {}): Promise<{ locked: boolean; reasons: LockReason[] }> {
   if (opts.isAdmin) return { locked: false, reasons: [] };
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
-  const reasons = lockReasons(limits, usage);
+  const reasons = lockReasons(limits, usage, planId);
   const locked = reasons.length > 0;
   if (opts.stored !== locked) await setWorkLock(userId, locked).catch(() => {});
   return { locked, reasons };
@@ -174,7 +176,7 @@ export async function hasDownloadPass(userId: string, projectId: string): Promis
 /** Kilitliyse 402 work_locked fırlatır (limit sayacı olmayan işlemler için). */
 export async function assertNotLocked(userId: string, planId: string) {
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
-  if (lockReasons(limits, usage).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
+  if (lockReasons(limits, usage, planId).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
 }
 
 export const WORK_LOCKED_MESSAGE = "Bu ayki kullanım hakkınız doldu; çalışmalarınız kilitlendi.";
@@ -190,7 +192,7 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   const over = (used: number, lim: number | null | undefined) => lim !== null && lim !== undefined && used >= lim;
   // Aylık limitlerden biri dolduysa tüm çalışma kilitlenir (indirme hakkı tanımlanmış dışa aktarma hariç)
-  const reasons = lockReasons(limits, usage);
+  const reasons = lockReasons(limits, usage, planId);
   if (reasons.length) {
     await setWorkLock(userId, true).catch(() => {});
     const passOk = kind === "export" && extra.projectId ? await hasDownloadPass(userId, extra.projectId) : false;
@@ -207,7 +209,7 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
 
 export async function assertProjectQuota(userId: string, planId: string) {
   const [limits, usage, eff] = await Promise.all([planLimits(planId), usageSummary(userId), effectiveLimits(userId, planId)]);
-  if (lockReasons(eff, usage).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
+  if (lockReasons(eff, usage, planId).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
   if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");
 }
 

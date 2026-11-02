@@ -27,7 +27,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
   ]);
   const revenueUsd = plan.data?.price_monthly ? Number(plan.data.price_monthly) / (1 + margin.vat_rate) / Math.max(1, margin.usd_try) : 0;
   return json({
-    profile, usage, limits, reasons: lockReasons(limits, usage),
+    profile, usage, limits, reasons: lockReasons(limits, usage, profile.plan_id),
     projects: projects.data ?? [], credits: credits.data ?? [], passes: passes.data ?? [], org: org.data?.[0] ?? null,
     plan: plan.data ?? null,
     money: { revenue_try: plan.data ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, cost_try: Math.round(usage.cost_usd * margin.usd_try), cost_share: revenueUsd ? Math.round((usage.cost_usd / revenueUsd) * 100) : null },
@@ -77,7 +77,7 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
   // Paket/hak değişince kilit hemen yeniden değerlendirilir
   const planId = (update.plan_id as string) ?? profile.plan_id;
   const [limits, usage] = await Promise.all([effectiveLimits(id, planId), usageSummary(id)]);
-  await setWorkLock(id, profile.role !== "admin" && lockReasons(limits, usage).length > 0);
+  await setWorkLock(id, profile.role !== "admin" && lockReasons(limits, usage, planId).length > 0);
   const { data: after } = await db.from("profiles").select("id, plan_id, plan_expires_at, work_locked").eq("id", id).single();
   return json({ ok: true, profile: after });
 });

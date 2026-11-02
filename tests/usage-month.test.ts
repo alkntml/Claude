@@ -17,7 +17,9 @@ describe("sayaç dönemi ve kilit nedenleri", () => {
     const usage = { ai_requests: 20, tokens: 100, source_searches: 6, exports: 0, projects: 1, storage_mb: 0, cost_usd: 1.2 };
     expect(lockReasons({ ai_requests_month: 20, source_searches_month: 7, tokens_month: null }, usage)).toEqual(["ai_requests"]);
     expect(lockReasons({ ai_requests_month: 21, source_searches_month: 7 }, usage)).toEqual([]);
-    expect(lockReasons({ ai_requests_month: null, source_searches_month: 6 }, usage)).toEqual(["source_searches"]);
+    expect(lockReasons({ ai_requests_month: null, source_searches_month: 6 }, usage, "basic")).toEqual(["source_searches"]);
+    // Ücretsiz pakette tarama hakkı dolsa da çalışma kilitlenmez (yalnızca tarama kapanır; D55)
+    expect(lockReasons({ ai_requests_month: null, source_searches_month: 6 }, usage, "free")).toEqual([]);
   });
   it("maliyet tavanı: gelirin 1/3’ü (KDV hariç, dolara çevrilmiş); aşılınca kilit", () => {
     const m = { usd_try: 48, vat_rate: 0.2, cost_share: 1 / 3 };

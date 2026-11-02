@@ -84,6 +84,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Sağlayıcılar henüz Supabase’de açılmadı (TODO)
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
 - **Paket süresi + yönetim paneli (D53):** bitiş tarihi, ek gün, ek hak, kullanıcı ayrıntısı, gelir/kâr özeti
+- **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
 - **Sayaç denetimi (D51):** aylık toplam veritabanında, TR saatine göre ay başı, proje kotası ve arşiv atlatma kapatıldı, yarıda kesilen yanıt sayılır, tarama aşımı önlenir

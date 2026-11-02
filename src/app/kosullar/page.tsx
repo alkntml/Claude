@@ -15,7 +15,7 @@ export default async function Page() {
         <h2>Academic integrity</h2>
         <p>You agree to use the platform in line with your institution&apos;s AI policies and to disclose AI use where required.</p>
         <h2>Usage limits</h2>
-        <p>Each plan has monthly fair-use limits, which are shown when you upgrade. When one of your monthly allowances (AI usage or source searches) runs out, your work and sources are locked until you upgrade or your allowance renews: content is blurred and editing and downloading are disabled. Your work is not deleted. You may download a single work once for a fee of 100 TL without subscribing. Requests to access your personal data are answered free of charge within the legal period. Accounts found to be abusing the service may be suspended.</p>
+        <p>Each plan has monthly fair-use limits, which are shown when you upgrade. When one of your monthly allowances (AI usage or source searches; on the free plan only AI usage) runs out, your work and sources are locked until you upgrade or your allowance renews: content is blurred and editing and downloading are disabled. Your work is not deleted. You may download a single work once for a fee of 100 TL without subscribing. Requests to access your personal data are answered free of charge within the legal period. Accounts found to be abusing the service may be suspended.</p>
       </StaticPage>
     );
   }
@@ -26,7 +26,7 @@ export default async function Page() {
       <h2>Akademik dürüstlük</h2>
       <p>Platformu kurumunuzun yapay zekâ kullanım politikalarına uygun biçimde kullanmayı ve gerektiğinde yapay zekâ kullanımını beyan etmeyi kabul edersiniz.</p>
       <h2>Kullanım limitleri</h2>
-      <p>Her paketin aylık adil kullanım sınırları vardır; sınırlar paket yükseltirken gösterilir. Aylık haklarınızdan biri (yapay zekâ kullanımı veya kaynak tarama) dolduğunda, paketinizi yükseltene veya hakkınız yenilenene kadar çalışmalarınız ve kaynaklarınız kilitlenir: içerik buğulu görünür, düzenleme ve indirme kapanır. Çalışmalarınız silinmez. Abone olmadan tek bir çalışmayı 100 TL ücret karşılığında bir kez indirebilirsiniz. Kişisel verilerinize erişim talepleriniz yasal süre içinde ücretsiz olarak yanıtlanır. Kötüye kullanım tespit edilen hesaplar askıya alınabilir.</p>
+      <p>Her paketin aylık adil kullanım sınırları vardır; sınırlar paket yükseltirken gösterilir. Aylık haklarınızdan biri (yapay zekâ kullanımı veya kaynak tarama; ücretsiz pakette yalnızca yapay zekâ kullanımı) dolduğunda, paketinizi yükseltene veya hakkınız yenilenene kadar çalışmalarınız ve kaynaklarınız kilitlenir: içerik buğulu görünür, düzenleme ve indirme kapanır. Çalışmalarınız silinmez. Abone olmadan tek bir çalışmayı 100 TL ücret karşılığında bir kez indirebilirsiniz. Kişisel verilerinize erişim talepleriniz yasal süre içinde ücretsiz olarak yanıtlanır. Kötüye kullanım tespit edilen hesaplar askıya alınabilir.</p>
     </StaticPage>
   );
 }

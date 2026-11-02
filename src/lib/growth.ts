@@ -64,7 +64,9 @@ export async function grantReferralReward(userId: string, emailConfirmed: boolea
     // Önce işaretle (eşzamanlı isteklerde çift ödül olmasın)
     const { data: claimed } = await db.from("profiles").update({ referral_rewarded_at: new Date().toISOString() }).eq("id", userId).is("referral_rewarded_at", null).select("id");
     if (!claimed?.length) return false;
-    const monthStart = new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)).toISOString();
+    // Ay başı Türkiye saatiyle (sayaçlarla aynı dönem)
+    const TR = 3 * 3600_000; const tr = new Date(Date.now() + TR);
+    const monthStart = new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth(), 1) - TR).toISOString();
     const { count } = await db.from("usage_credits").select("id", { count: "exact", head: true }).eq("user_id", p.referred_by).eq("reason", "referral_inviter").gte("created_at", monthStart);
     const expires = new Date(Date.now() + cfg.valid_days * 86_400_000).toISOString();
     const rows: { user_id: string; kind: string; amount: number; reason: string; expires_at: string }[] = [

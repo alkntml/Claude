@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: { type: "website", siteName: SITE_NAME, url: SITE_URL, locale: en ? "en_US" : "tr_TR", title: en ? "Academiana — AI-powered academic writing with real sources" : "Academiana — Gerçek kaynaklarla yapay zekâ destekli akademik yazım", description: en ? "Thesis, article and research proposal, step by step, with verified sources and correct citations." : "Tez, makale ve araştırma önerinizi doğrulanmış kaynaklar ve doğru atıflarla adım adım hazırlayın." },
     keywords: ["tez yazma", "akademik yazım", "literatür taraması", "APA 7", "kaynakça", "yapay zekâ", "makale yazma", "TÜBİTAK 2209", "Academiana"],
     appleWebApp: { capable: true, title: "Academiana", statusBarStyle: "default" },
-    icons: { icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }, { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" }], apple: "/icons/apple-touch-icon.png" },
+    icons: { icon: [{ url: "/favicon.ico", sizes: "any" }, { url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" }, { url: "/icons/favicon-96.png", sizes: "96x96", type: "image/png" }, { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/icons/apple-touch-icon.png" },
     formatDetection: { telephone: false },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
     twitter: { card: "summary_large_image" },
@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export const viewport: Viewport = { themeColor: "#151829", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#0f1d3d", width: "device-width", initialScale: 1 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();

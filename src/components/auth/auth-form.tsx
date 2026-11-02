@@ -90,7 +90,7 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
       <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)]" />
       <div className="absolute left-1/2 top-0 h-96 w-[600px] -translate-x-1/2 rounded-full bg-brand-200/50 blur-3xl" />
       <motion.div initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="relative w-full max-w-md">
-        <div className="mb-8 flex items-center justify-center gap-4"><Link href="/"><Logo /></Link><LanguageSwitch /></div>
+        <div className="mb-8 flex items-center justify-center gap-4"><Link href="/"><Logo variant="full" className="!h-14" /></Link><LanguageSwitch /></div>
         <div className="glass rounded-3xl p-8">
           {sent ? (
             <div className="text-center">

@@ -18,6 +18,8 @@ export function organizationLd() {
     alternateName: ["Academiana AI", "Akademi AI"],
     url: SITE_URL,
     logo: { "@type": "ImageObject", url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512 },
+    image: `${SITE_URL}/brand/academiana-logo.png`,
+    slogan: "Akademik destek ve danışmanlık",
     description: "Yapay zekâ destekli, gerçek akademik kaynaklarla çalışan tez, makale ve araştırma yazım platformu. / AI-assisted academic writing platform that works with real, verified sources.",
     areaServed: ["TR", "Worldwide"],
     knowsLanguage: ["tr", "en"],

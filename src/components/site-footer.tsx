@@ -18,7 +18,7 @@ export function SiteFooter() {
     <footer className="border-t border-ink-100 bg-white">
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-5">
         <div className="md:col-span-2">
-          <Logo />
+          <Logo variant="full" className="!h-14" />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-500">{t("Akademik çalışmanızı gerçek ve doğrulanabilir kaynaklarla, şeffaf erişim seviyeleriyle ve bilimsel standartlara uygun biçimde hazırlayın.")}</p>
         </div>
         <div>

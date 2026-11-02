@@ -7,12 +7,12 @@ import { useState } from "react";
 import { Logo } from "./icons";
 import { cn } from "./ui/cn";
 
-const NAV: { href: string; label: string; wide?: boolean }[] = [
+const NAV: { href: string; label: string; wide?: 1 | 2 }[] = [
   { href: "/#ozellikler", label: "Özellikler" },
-  { href: "/#nasil", label: "Nasıl çalışır", wide: true },
-  { href: "/#kaynaklar", label: "Veri kaynakları", wide: true },
+  { href: "/#nasil", label: "Nasıl çalışır", wide: 2 },
+  { href: "/#kaynaklar", label: "Veri kaynakları", wide: 2 },
   { href: "/fiyatlar", label: "Fiyatlar" },
-  { href: "/kurumlar", label: "Kurumlar", wide: true },
+  { href: "/kurumlar", label: "Kurumlar", wide: 1 },
   { href: "/uzman-destegi", label: "Uzman desteği" },
   { href: "/blog", label: "Blog" },
   { href: "/sss", label: "SSS" },
@@ -27,10 +27,10 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   return (
     <motion.header className={cn("fixed inset-x-0 top-0 z-40 transition-all duration-300", scrolled ? "py-2" : "py-4")}>
       <div className={cn("mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-4 py-2 transition-all duration-300 sm:px-5", scrolled ? "glass mx-3 sm:mx-auto" : "")}>
-        <Link href="/" aria-label={t("Ana sayfa")}><Logo /></Link>
+        <Link href="/" aria-label={t("Ana sayfa")} className="shrink-0"><Logo /></Link>
         <nav className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className={cn("whitespace-nowrap rounded-lg px-2.5 py-2 text-sm text-ink-600 transition hover:bg-ink-100/70 hover:text-ink-900", n.wide && "hidden xl:block")}>{t(n.label)}</Link>
+            <Link key={n.href} href={n.href} className={cn("whitespace-nowrap rounded-lg px-2.5 py-2 text-sm text-ink-600 transition hover:bg-ink-100/70 hover:text-ink-900", n.wide === 1 && "hidden xl:block", n.wide === 2 && "hidden 2xl:block")}>{t(n.label)}</Link>
           ))}
         </nav>
         <div className="hidden items-center gap-2 md:flex">

@@ -1,4 +1,4 @@
-# CLAUDE.md — Academiana (eski adı: Academiana)
+# CLAUDE.md — Academiana (eski adı: Akademi AI)
 
 Bu dosya her yeni Claude oturumunun ilk okuması gereken proje kılavuzudur. Ayrıntılar:
 - `PROJECT_STATUS.md`: şu ana kadar yapılanlar ve canlı ortam bilgileri

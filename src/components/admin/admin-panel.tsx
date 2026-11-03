@@ -1,6 +1,7 @@
 "use client";
+import { AutopilotTab } from "./autopilot";
 import { motion } from "framer-motion";
-import { Activity, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users } from "lucide-react";
+import { Activity, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -13,9 +14,9 @@ import { DailyBars } from "./chart";
 import { memberCode } from "@/lib/member";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
+type Tab = "autopilot" | "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
+  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
   { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift },
 ];
@@ -48,6 +49,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
       </div>
       <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
         {tab === "overview" && <Overview />}
+        {tab === "autopilot" && <AutopilotTab />}
         {tab === "users" && <UsersTab selfId={selfId} />}
         {tab === "plans" && <PlansTab />}
         {tab === "orgs" && <OrgsTab />}

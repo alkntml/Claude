@@ -63,6 +63,8 @@ export const getSession = cache(async (): Promise<Session | null> => {
   p.personal_plan_id = p.plan_id;
   p.org = org;
   if (org) p.plan_id = higherPlan(p.plan_id, org.plan_id);
+  // Yönetici tüm özellikleri kullanır (otomatik çalışma modülü dahil; D77)
+  if (p.role === "admin") p.plan_id = "premium";
   return { supabase, user, profile: p };
 });
 

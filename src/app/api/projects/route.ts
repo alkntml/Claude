@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { json, parseBody, route } from "@/lib/api";
+import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { assertProjectQuota } from "@/lib/usage";
 import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram } from "@/lib/workflows";
@@ -23,8 +23,14 @@ const CreateSchema = z.object({
   program: z.enum(GRANT_PROGRAMS.map((p) => p.id) as [GrantProgram, ...GrantProgram[]]).optional(),
 });
 
-export const GET = route("projects.list", async () => {
+export const GET = route("projects.list", async (req) => {
   const s = await requireUser();
+  // Yöneticinin otomatik çalışmaları (D77)
+  if (new URL(req.url).searchParams.get("autopilot") === "1") {
+    if (s.profile.role !== "admin") throw new ApiError(403, "Yönetici yetkisi gerekiyor", "forbidden");
+    const { data } = await s.supabase.from("projects").select("id, title, work_type, progress, updated_at, autopilot:context->autopilot").eq("user_id", s.user.id).not("context->autopilot", "is", null).order("updated_at", { ascending: false }).limit(50);
+    return json({ projects: data ?? [] });
+  }
   const { data } = await s.supabase
     .from("projects")
     .select("id, title, work_type, academic_level, status, progress, citation_style, updated_at, last_opened_at, discipline")

@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 220 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 224 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -82,6 +82,7 @@ src/lib/
   quality/repetition.ts  Tekrar analizi (kalıp ifadeler, cümle başlangıçları, benzer cümleler)
   features.ts            Pakete göre özellik kilitleri (FEATURE_MIN_PLAN, hasFeature); sunucu: usage.ts assertFeature; istemci: openUpgrade() → components/upgrade-dialog.tsx
   lock.ts + scramble.ts   Çalışma kilidi (D50): getWorkLock (bayrak eşitleme), içerik karartma; RLS work_locked(); download_passes
+  autopilot.ts           Yönetici “Otomatik çalışma” modülü kuralları (D77); motor components/admin/autopilot-engine.ts
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                core.ts (sözlüksüz çekirdek; istemci bunu kullanır), index.ts (core + EN, sunucu), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
 supabase/migrations/     Sıralı SQL migration'ları

@@ -187,7 +187,19 @@ export function assertFeature(planId: string, feature: FeatureId) {
 }
 
 /** İşlem öncesi paket limitlerini kontrol eder; aşılmışsa 402 döner. */
+/** Yönetici (site sahibi) mi? Kısa süreli önbellekli (D77: yönetici paket sınırlarına ve kilide tabi değildir; kullanım yine kaydedilir) */
+const adminCache = new Map<string, { v: boolean; at: number }>();
+export async function isAdminUser(userId: string): Promise<boolean> {
+  const c = adminCache.get(userId);
+  if (c && Date.now() - c.at < 60_000) return c.v;
+  const { data } = await adminClient().from("profiles").select("role").eq("id", userId).maybeSingle();
+  const v = data?.role === "admin";
+  adminCache.set(userId, { v, at: Date.now() });
+  return v;
+}
+
 export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string; projectId?: string } = {}) {
+  if (await isAdminUser(userId).catch(() => false)) return;
   await rateLimit(userId, kind);
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   const over = (used: number, lim: number | null | undefined) => lim !== null && lim !== undefined && used >= lim;
@@ -208,6 +220,7 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
 }
 
 export async function assertProjectQuota(userId: string, planId: string) {
+  if (await isAdminUser(userId).catch(() => false)) return;
   const [limits, usage, eff] = await Promise.all([planLimits(planId), usageSummary(userId), effectiveLimits(userId, planId)]);
   if (lockReasons(eff, usage, planId).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
   if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");

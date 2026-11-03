@@ -92,6 +92,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
+- **Otomatik çalışma (D77, yalnızca yönetici):** kurgu + belgeler → tüm aşamalar otomatik yazılır → kalite kontrolü ve düzeltme turları → puan ≥ 85 ile teslim; kaldığı yerden sürdürülebilir
 - **Akademik usul (D75–D76):** kaynak taraması yalnızca gerektiğinde; aşamaya özel kısayollar; tek özet bildirim; belge GİRİŞ/KURAM/YÖNTEM… ana bölümlerinde, akademik başlıklar, yinelenen başlık ve hatalı numara yok, alt başlık bütçesi
 - **Şifremi unuttum (D74):** /sifremi-unuttum, /sifre-yenile, Hesap → Şifremi değiştir; farklı cihaz için /api/auth/confirm
 - **ISNAD 2 atıf stili (D73):** metin içi biçim; toplam 10 stil (migration 19)
@@ -110,7 +111,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 220 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 224 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

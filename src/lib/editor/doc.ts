@@ -312,3 +312,33 @@ export function replaceBlockByText(doc: JSONNode, plain: string, replacement: JS
   const out = rec(doc);
   return done ? out : null;
 }
+
+/**
+ * Bölümün tamamını atıfları ⟦C1⟧ işaretleriyle koruyarak Markdown’a çevirir (D77: otomatik düzeltmede
+ * yapay zekâ bölümü baştan yazarken mevcut atıfları bozmasın). Başlıklar, paragraflar, listeler ve
+ * tablolar korunur; geri dönüşte `markdownToDoc` + `restoreTokens` kullanılır.
+ */
+export function docToTokenMarkdown(doc: JSONNode | null | undefined): { md: string; tokens: JSONNode[] } {
+  const tokens: JSONNode[] = [];
+  const inlineTok = (nodes: JSONNode[] | undefined): string => (nodes ?? []).map((n) => {
+    if (n.type === "citation") { tokens.push(n); return `⟦C${tokens.length}⟧`; }
+    if (n.type === "text") {
+      const t = n.text ?? "";
+      const marks = new Set((n.marks ?? []).map((m) => m.type));
+      return marks.has("bold") ? `**${t}**` : marks.has("italic") ? `*${t}*` : t;
+    }
+    if (n.type === "hardBreak") return " ";
+    return inlineTok(n.content);
+  }).join("");
+  const out: string[] = [];
+  for (const b of doc?.content ?? []) {
+    if (b.type === "heading") out.push(`${"#".repeat(Math.min(4, Math.max(2, Number(b.attrs?.level ?? 2))))} ${inlineTok(b.content)}`);
+    else if (b.type === "paragraph") { const t = inlineTok(b.content).trim(); if (t) out.push(t); }
+    else if (b.type === "bulletList" || b.type === "orderedList") out.push((b.content ?? []).map((li, i) => `${b.type === "orderedList" ? `${i + 1}.` : "-"} ${(li.content ?? []).map((p) => inlineTok(p.content)).join(" ")}`).join("\n"));
+    else if (b.type === "table") {
+      const rows = (b.content ?? []).map((r) => `| ${(r.content ?? []).map((c) => (c.content ?? []).map((p) => inlineTok(p.content)).join(" ")).join(" | ")} |`);
+      if (rows.length) out.push([rows[0], `| ${rows[0].split("|").slice(1, -1).map(() => "---").join(" | ")} |`, ...rows.slice(1)].join("\n"));
+    } else if (b.type === "blockquote") out.push((b.content ?? []).map((p) => `> ${inlineTok(p.content)}`).join("\n"));
+  }
+  return { md: out.join("\n\n"), tokens };
+}

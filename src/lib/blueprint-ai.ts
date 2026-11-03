@@ -1,6 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel, type Tier } from "@/lib/ai/registry";
-import { BLUEPRINT_FIELDS, BlueprintSchema, countsForLength, distributeWords, pagesFor, WORDS_PER_PAGE, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
+import { BLUEPRINT_FIELDS, BlueprintSchema, countsForLength, distributeWords, WORDS_PER_PAGE, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
 import { GRANT_PROGRAMS, LEVEL_LABELS, METHODOLOGY_LABELS, stageDef, WORK_TYPES, type AcademicLevel, type Methodology } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -50,7 +50,7 @@ export async function generateBlueprint(planId: string, p: { project: any; stage
     projectInfo(p.project),
     p.input.trim() && `\nÖĞRENCİNİN KENDİ GİRİŞİ (önceliklidir; kurguyu buna göre kur):\n${p.input.trim()}`,
     p.previous && `\nÖnceki kurgu taslağı (öğrencinin girişiyle çelişmeyen kısımlarını koruyabilirsin):\n${JSON.stringify({ ...p.previous, chapters: undefined, input: undefined, approvedAt: undefined, updatedAt: undefined })}`,
-    target ? `\nHEDEF UZUNLUK (öğrencinin belirlediği, uy): toplam ${target} kelime (~${pagesFor(target, wpp)} sayfa; sayfa başına ~${wpp} kelime)` : `\nHEDEF UZUNLUK: öğrenci belirtmedi; çalışma türü ve seviyeye uygun, yaygın bir toplam kelime öner (sayfa başına ~${wpp} kelime).`,
+    target ? `\nHEDEF UZUNLUK (öğrencinin belirlediği, uy): toplam ${target} kelime` : `\nHEDEF UZUNLUK: öğrenci belirtmedi; çalışma türü ve seviyeye uygun, yaygın bir toplam kelime öner.`,
     `\nÇALIŞMANIN DEĞİŞMEYECEK BÖLÜMLERİ (sıra numarasıyla):\n${stageList}`,
   ].filter(Boolean).join("\n");
   const out = await run(planId, "default", `${RULES(p.project.language)}

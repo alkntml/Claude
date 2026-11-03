@@ -98,7 +98,7 @@ export function alignChapters(bp: Blueprint, stages: { id: string; key: string; 
 export function blueprintGaps(bp: Blueprint): string[] {
   const gaps: string[] = BLUEPRINT_FIELDS.filter((f) => !bp[f.key].trim()).map((f) => f.label);
   if (!bp.questions.length) gaps.push("Araştırma soruları / hipotezler");
-  if (!bp.targetWords) gaps.push("Hedef uzunluk (kelime / sayfa)");
+  if (!bp.targetWords) gaps.push("Hedef uzunluk (toplam kelime)");
   return gaps;
 }
 
@@ -108,7 +108,7 @@ export function blueprintContext(bp: Blueprint | null, stage?: { id: string; key
   const lines: string[] = [];
   for (const f of BLUEPRINT_FIELDS) if (bp[f.key].trim()) lines.push(`- ${f.label}: ${bp[f.key].trim()}`);
   if (bp.questions.length) lines.push(`- Araştırma soruları / hipotezler:\n${bp.questions.map((q, i) => `  ${i + 1}. ${q}`).join("\n")}`);
-  if (bp.targetWords) lines.push(`- Hedef uzunluk: toplam yaklaşık ${bp.targetWords} kelime (~${pagesFor(bp.targetWords, bp.wordsPerPage)} sayfa)`);
+  if (bp.targetWords) lines.push(`- Hedef uzunluk: toplam yaklaşık ${bp.targetWords} kelime`);
   if (!lines.length && !bp.chapters.some((c) => c.plan.trim())) return "";
   const out = [`## ÇALIŞMANIN KURGUSU (öğrencinin ${bp.approvedAt ? "onayladığı" : "taslak"} planı; yazımı buna uygun sürdür, plan bir kaynak veya bulgu değildir)`, ...lines];
   const plans = bp.chapters.filter((c) => c.plan.trim() || c.words);

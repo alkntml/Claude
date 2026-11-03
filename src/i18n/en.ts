@@ -2309,4 +2309,8 @@ export const EN: Record<string, string> = {
   "ör. 25000": "e.g. 25000",
   "ör. 90": "e.g. 90",
   "Hedef uzunluk (kelime / sayfa)": "Target length (words / pages)",
+  "Boş bırakırsanız çalışma türünüze ve seviyenize uygun bir uzunluk önerilir. Toplam kelime, bölümlere akademik ağırlıklarına göre dağıtılır; her bölümün kelime sayısını sonra değiştirebilirsiniz.": "If left blank, a length suited to your work type and level is suggested. The total is distributed across sections by academic weight; you can change each section’s word count afterwards.",
+  "yaklaşık {n} sayfa (12 punto, 1,5 satır aralığında; kesin değildir)": "about {n} pages (12 pt, 1.5 line spacing; approximate)",
+  "Çalışmanın toplam kelime sayısı": "Total word count of the work",
+  "Hedef uzunluk (toplam kelime)": "Target length (total words)",
 };

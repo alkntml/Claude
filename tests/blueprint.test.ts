@@ -33,7 +33,8 @@ describe("kurgu (D67)", () => {
     expect(txt).toContain("1. İlişki var mı?");
     expect(txt).toContain("BU BÖLÜMÜN KURGUDAKİ PLANI: İlişkisel tarama");
     expect(txt).toContain("yaklaşık 1500 kelime");
-    expect(txt).toContain("toplam yaklaşık 11000 kelime (~40 sayfa)");
+    expect(txt).toContain("toplam yaklaşık 11000 kelime");
+    expect(txt).not.toContain("sayfa");
     expect(blueprintContext(emptyBlueprint())).toBe("");
     expect(blueprintContext(null)).toBe("");
   });

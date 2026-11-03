@@ -302,3 +302,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Dağıtım `distributeWords` (lib/blueprint.ts): yapay zekânın önerdiği oranlar > mevcut oranlar > varsayılan akademik ağırlıklar (literatür/kuram, bulgular, tartışma uzun; giriş, amaç, sorular kısa). Kaynakça ve ekler hariç; 50’lik (kısa çalışmada 10’luk) yuvarlama ve toplam tam eşitlenir. Toplam değişince bölümler oranla ölçeklenir; “Önerilen dağılım” baştan dağıtır, “Toplama eşitle” elle değişiklikten sonra eşitler.
 - Yapay zekâ: öğrenci toplam verdiyse ona uyar, vermediyse tür/seviyeye uygun toplam önerir; bölüm kapsamını uzunluğa göre planlar.
 - Yazım: `blueprintContext` bölümün hedefini verir (±%15, alt başlıklara dengeli dağıt). Alt başlıklarla toplu yazımda her alt başlığa düşen pay ayrıca iletilir. Sol menüde bölüm başına “yazılan / ~hedef kelime” görünür. Onay öncesi hedef uzunluk boşsa uyarılır.
+
+### D69 — Uzunluk yalnızca kelimeyle (sayfa başına kelime kaldırıldı)
+- Kullanıcı geri bildirimi: sayfa başına sığabilecek kelime sınırlıdır; aşmak için punto küçültmek akademik yazım kurallarına aykırıdır. Bu yüzden “sayfa” ve “sayfa başına kelime” girişleri kaldırıldı. Hedef = çalışmanın toplam kelimesi + her bölümün kelime sayısı.
+- Sayfa yalnızca bilgi amaçlı, yaklaşık gösterilir (12 punto, 1,5 satır, ~275 kelime/sayfa; “kesin değildir”). Yapay zekâ bağlamına sayfa bilgisi verilmez. `wordsPerPage` alanı geriye dönük uyum için şemada kalır, arayüzde kullanılmaz.

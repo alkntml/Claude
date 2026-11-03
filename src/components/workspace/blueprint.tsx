@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
-import { alignChapters, BLUEPRINT_FIELDS, blueprintGaps, countsForLength, distributeWords, emptyBlueprint, pagesFor, readBlueprint, WORDS_PER_PAGE, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
+import { alignChapters, BLUEPRINT_FIELDS, blueprintGaps, countsForLength, distributeWords, emptyBlueprint, pagesFor, readBlueprint, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Stage = { id: string; key: string; title: string };
@@ -33,7 +33,7 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
   const [saving, setSaving] = useState<"save" | "approve" | null>(null);
   const [dirty, setDirty] = useState(false);
   // Başlangıç ekranındaki hedef uzunluk (kurgu oluşmadan önce)
-  const [len, setLen] = useState({ words: saved?.targetWords ?? 0, wpp: saved?.wordsPerPage ?? WORDS_PER_PAGE });
+  const [len, setLen] = useState({ words: saved?.targetWords ?? 0 });
 
   useEffect(() => {
     if (!open) return;
@@ -49,7 +49,7 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
     if (bp && dirty && !confirm(t("Kurgu, yazdığınız girişe göre yeniden oluşturulacak. Mevcut taslaktaki değişiklikler değişebilir. Devam edilsin mi?"))) return;
     setBusy(true);
     try {
-      const r = await api<{ blueprint: Blueprint }>(`/api/projects/${project.id}/blueprint`, { method: "POST", json: { mode: "generate", input: text, targetWords: bp ? bp.targetWords : len.words, wordsPerPage: bp ? bp.wordsPerPage : len.wpp } });
+      const r = await api<{ blueprint: Blueprint }>(`/api/projects/${project.id}/blueprint`, { method: "POST", json: { mode: "generate", input: text, targetWords: bp ? bp.targetWords : len.words } });
       setUndo(bp ? { key: "all", bp } : null);
       setBp(r.blueprint); setDirty(true); setInputOpen(false);
     } catch (e) { toast({ tone: "error", title: t("Kurgu oluşturulamadı"), detail: (e as Error).message }); } finally { setBusy(false); }
@@ -82,11 +82,11 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
   }
 
   /** Toplam değişince bölüm kelimeleri mevcut oranlarla ölçeklenir */
-  function setTotal(words: number, wpp: number) {
+  function setTotal(words: number) {
     if (!bp) return;
     // Önceki toplam çok küçükse (rakam rakam yazılırken oluşan ara değerler) oranlar güvenilmez: varsayılan ağırlıklarla dağıt
     const base = bp.targetWords >= 1000 ? bp.chapters : bp.chapters.map((c) => ({ ...c, words: 0 }));
-    set({ targetWords: words, wordsPerPage: wpp, chapters: words !== bp.targetWords ? distributeWords(base, words) : bp.chapters });
+    set({ targetWords: words, chapters: words !== bp.targetWords ? distributeWords(base, words) : bp.chapters });
   }
   const allocated = bp ? bp.chapters.reduce((a, c) => a + (countsForLength(c.key) ? c.words : 0), 0) : 0;
 
@@ -130,10 +130,10 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
                   <textarea className="input min-h-[110px]" value={input} onChange={(e) => setInput(e.target.value)} placeholder={t("ör. Lise öğretmenleriyle görüşme yaparak nitel bir çalışma yapmak istiyorum; özellikle uzaktan eğitimde yaşadıkları zorluklara odaklanacağım.")} />
                   <span className="mt-1 block text-xs text-ink-400">{t("Yöntem tercihiniz, örnekleminiz, danışmanınızın önerileri veya kısıtlarınız varsa yazın; kurgu buna göre kurulur. Boş bırakırsanız çalışma bilgilerinizden kurgulanır.")}</span>
                 </label>
-                <LengthEditor words={len.words} wpp={len.wpp} onChange={(words, wpp) => setLen({ words, wpp })} hint={t("Boş bırakırsanız çalışma türünüze ve seviyenize uygun bir uzunluk önerilir. Toplam uzunluk, bölümlere akademik ağırlıklarına göre dağıtılır.")} />
+                <LengthEditor words={len.words} onChange={(words) => setLen({ words })} hint={t("Boş bırakırsanız çalışma türünüze ve seviyenize uygun bir uzunluk önerilir. Toplam kelime, bölümlere akademik ağırlıklarına göre dağıtılır; her bölümün kelime sayısını sonra değiştirebilirsiniz.")} />
                 <div className="flex flex-wrap gap-2">
                   <Button onClick={() => generate()}><Sparkles className="h-4 w-4" /> {t("Kurguyu yapay zekâ ile oluştur")}</Button>
-                  <Button variant="ghost" onClick={() => { const e = emptyBlueprint(); const ch = alignChapters(e, stages); setBp({ ...e, input, targetWords: len.words, wordsPerPage: len.wpp, chapters: len.words ? distributeWords(ch, len.words) : ch }); setDirty(true); }}><PenLine className="h-4 w-4" /> {t("Kendim yazacağım")}</Button>
+                  <Button variant="ghost" onClick={() => { const e = emptyBlueprint(); const ch = alignChapters(e, stages); setBp({ ...e, input, targetWords: len.words, chapters: len.words ? distributeWords(ch, len.words) : ch }); setDirty(true); }}><PenLine className="h-4 w-4" /> {t("Kendim yazacağım")}</Button>
                 </div>
               </div>
               <ol className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -199,7 +199,7 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
                   <h2 className="font-serif text-2xl text-ink-950">{t("Bölüm bölüm yol haritası")}</h2>
                   <p className="-mt-2 text-[13px] text-ink-500">{t("Bölümler sabittir; her bölümde ne yazılacağını ve yaklaşık kaç kelime olacağını buradan değiştirebilirsiniz. Asistan her bölümü bu plana ve uzunluğa göre yazar.")}</p>
                   <div className="card space-y-3 p-4">
-                    <LengthEditor words={bp.targetWords} wpp={bp.wordsPerPage} onChange={setTotal} />
+                    <LengthEditor words={bp.targetWords} onChange={setTotal} />
                     {bp.targetWords > 0 && (
                       <div className="flex flex-wrap items-center gap-2 text-[12.5px]">
                         <span className={cn("rounded-full px-2.5 py-1 font-medium", Math.abs(allocated - bp.targetWords) <= bp.targetWords * 0.02 ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800")}>{t("Bölümlere dağıtılan: {a} / {t} kelime", { a: allocated.toLocaleString("tr-TR"), t: bp.targetWords.toLocaleString("tr-TR") })}</span>
@@ -218,7 +218,7 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
                             {countsForLength(c.key) && (
                               <label className="flex shrink-0 items-center gap-1 text-[12px] text-ink-500" title={t("Bu bölümün yaklaşık kelime sayısı")}>
                                 ~<input className="w-[68px] rounded-lg border border-ink-200 bg-white px-1.5 py-0.5 text-right text-[12.5px] text-ink-800 outline-none focus:border-brand-400" inputMode="numeric" value={c.words || ""} placeholder="0" onChange={(e) => set({ chapters: bp.chapters.map((x, k) => (k === i ? { ...x, words: Math.min(200000, Number(e.target.value.replace(/\D/g, "")) || 0) } : x)) })} aria-label={t("Kelime")} />
-                                {t("kelime")}{c.words ? <span className="text-ink-400"> · {t("~{n} sf.", { n: pagesFor(c.words, bp.wordsPerPage) })}</span> : null}
+                                {t("kelime")}
                               </label>
                             )}
                           </div>
@@ -246,18 +246,22 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
   );
 }
 
-/** Toplam kelime ↔ sayfa (birini yazınca diğeri hesaplanır); sayfa başına kelime ayarlanabilir */
-function LengthEditor({ words, wpp, onChange, hint }: { words: number; wpp: number; onChange: (words: number, wpp: number) => void; hint?: string }) {
+/**
+ * Hedef uzunluk yalnızca kelimeyle belirlenir (D69): sayfa başına kelime sabit değildir ve sığdırmak için
+ * punto küçültmek akademik yazım kurallarına aykırıdır; sayfa yalnızca yaklaşık bilgi olarak gösterilir.
+ */
+function LengthEditor({ words, onChange, hint }: { words: number; onChange: (words: number) => void; hint?: string }) {
   const { t } = useT();
-  const num = (v: string, max: number) => Math.min(max, Number(v.replace(/\D/g, "")) || 0);
   return (
     <div>
       <p className="mb-1.5 flex items-center gap-2 font-semibold text-ink-900"><Ruler className="h-4 w-4 text-brand-600" /> {t("Hedef uzunluk")}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_1fr_auto]">
-        <label className="block"><span className="label">{t("Toplam kelime")}</span><input className="input" inputMode="numeric" value={words || ""} placeholder={t("ör. 25000")} onChange={(e) => onChange(num(e.target.value, 500000), wpp)} /></label>
-        <label className="block"><span className="label">{t("Sayfa")}</span><input className="input" inputMode="numeric" value={words ? pagesFor(words, wpp) : ""} placeholder={t("ör. 90")} onChange={(e) => onChange(num(e.target.value, 2000) * wpp, wpp)} /></label>
-        <label className="col-span-2 block sm:col-span-1"><span className="label" title={t("A4, 12 punto, 1,5 satır aralığında ortalama ~275 kelime")}>{t("Sayfa başına kelime")}</span><input key={wpp} className="input sm:w-28" inputMode="numeric" defaultValue={wpp} onBlur={(e) => { const w = Math.max(150, Math.min(600, num(e.target.value, 600) || WORDS_PER_PAGE)); e.target.value = String(w); if (w !== wpp) onChange(words, w); }} /></label>
-      </div>
+      <label className="block">
+        <span className="label">{t("Çalışmanın toplam kelime sayısı")}</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <input className="input max-w-[200px]" inputMode="numeric" value={words || ""} placeholder={t("ör. 25000")} onChange={(e) => onChange(Math.min(500000, Number(e.target.value.replace(/\D/g, "")) || 0))} />
+          {words > 0 && <span className="text-[12.5px] text-ink-500">{t("yaklaşık {n} sayfa (12 punto, 1,5 satır aralığında; kesin değildir)", { n: pagesFor(words) })}</span>}
+        </div>
+      </label>
       {hint && <p className="mt-1 text-xs text-ink-400">{hint}</p>}
     </div>
   );

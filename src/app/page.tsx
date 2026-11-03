@@ -53,7 +53,7 @@ export default async function Home() {
         <SourcesStrip />
         <Principles />
         <section className="py-20">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-7xl px-6">
             <FadeIn className="mb-12 text-center">
               <h2 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Size uygun paket")}</h2>
               <p className="mt-3 text-ink-500">{t("İstediğiniz zaman yükseltin veya iptal edin.")}</p>

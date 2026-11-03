@@ -310,3 +310,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D70 — Akademik Ekip: %30 indirim, en az 3 kişi, kişi sınırı yok
 - `TEAM_DISCOUNT = { percent: 30, minMembers: 3 }` (fiyatlar, kurumlar, SSS ve SEO metinleri buradan veya güncellenmiş metinlerden okunur).
 - Kurum lisansında `organizations.seats` artık boş bırakılabilir: boş = sınırsız (migration 18; mevcut kurumların sınırı kaldırıldı). Katılımda sınır yalnızca `seats` doluysa uygulanır. Yönetim → Kurumlar’da kişi sınırı alanı isteğe bağlı.
+
+### D71 — Akademik Ekip paketlerin yanında ayrı kart
+- Fiyatlar sayfasında ve ana sayfadaki paket bölümünde Premium’un sağında “Akademik Ekip” kartı (`TeamCard`, components/landing/sections.tsx): %30 indirim, kişi başı aylık indirimli fiyatlar (Basic/Pro/Premium; paket fiyatlarından hesaplanır, İngilizcede dolar), en az 3 kişi / üst sınır yok, “Ekip teklifi al” → WhatsApp. Ödeme ve tanımlama süreci değişmedi (Yönetim → Kurumlar). Izgara xl’de 5 sütun; kapsayıcı max-w-7xl. Alttaki yinelenen “Akademik Ekip İndirimi” kutusu kaldırıldı.

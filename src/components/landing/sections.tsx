@@ -1,10 +1,11 @@
 "use client";
 import { useT } from "@/i18n/client";
-import { BookCheck, Brain, CheckCircle2, FileDown, FileSearch2, Layers3, Library, ListChecks, Lock, Map, ShieldCheck, Sparkles, Workflow } from "lucide-react";
+import { BookCheck, Brain, CheckCircle2, Users, FileDown, FileSearch2, Layers3, Library, ListChecks, Lock, Map, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 import { usePrice } from "@/components/price-context";
+import { discounted, TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
 
 export function Pillars() {
   const { t } = useT();
@@ -139,7 +140,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
   const { t } = useT();
   const price = usePrice();
   return (
-    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {plans.map((p, i) => {
         const featured = p.id === "pro";
         return (
@@ -162,6 +163,41 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
           </FadeIn>
         );
       })}
+      <FadeIn delay={plans.length * 0.06}><TeamCard plans={plans} /></FadeIn>
+    </div>
+  );
+}
+
+/** Akademik Ekip kartı (D71): paketlerin yanında ayrı bir seçenek; teklif WhatsApp’tan alınır */
+function TeamCard({ plans }: { plans: PlanLike[] }) {
+  const { t } = useT();
+  const price = usePrice();
+  const paid = plans.filter((p) => Number(p.price_monthly) > 0);
+  const href = whatsappLink(t("Merhaba, Academiana Akademik Ekip paketi (%{p} indirim) için teklif almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket (Basic / Pro / Premium): ", { p: TEAM_DISCOUNT.percent }));
+  const features = [
+    t("En az {n} kişi; kişi sayısında üst sınır yok", { n: TEAM_DISCOUNT.minMembers }),
+    t("Basic, Pro veya Premium: seçtiğiniz paketin tüm özellikleri"),
+    t("Her üyeye kendi hesabı, kendi çalışmaları ve kullanım hakları"),
+    t("Tek katılım koduyla ekibe katılım"),
+    t("Ekip yöneticisi paneli: üyeleri görme ve yönetme"),
+    t("Ekip adına tek ödeme"),
+  ];
+  return (
+    <div className="relative flex h-full flex-col rounded-3xl border-2 border-brand-200 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1">
+      <span className="absolute -top-3 left-6 rounded-full bg-gradient-to-r from-violet-500 to-brand-500 px-3 py-1 text-xs font-semibold text-white">{t("%{p} indirim", { p: TEAM_DISCOUNT.percent })}</span>
+      <h3 className="flex items-center gap-2 text-lg font-semibold"><Users className="h-4 w-4 text-brand-600" /> {t("Akademik Ekip")}</h3>
+      <p className="mt-1 text-sm text-ink-500">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için.")}</p>
+      <div className="mt-5">
+        <div className="flex items-baseline gap-1"><span className="text-4xl font-semibold tracking-tight">%{TEAM_DISCOUNT.percent}</span><span className="text-ink-400">{t("indirim")}</span></div>
+        <p className="mt-2 text-[11px] font-medium uppercase tracking-wide text-ink-400">{t("Kişi başı, aylık")}</p>
+        <ul className="mt-1 space-y-0.5 text-[13px] text-ink-600">
+          {paid.map((p) => <li key={p.id} className="flex items-baseline justify-between gap-2"><span className="font-medium text-ink-700">{t(p.name)}</span><span><s className="mr-1.5 text-[12px] text-ink-400">{price(Number(p.price_monthly))}</s><b className="font-semibold text-ink-900">{price(Math.round(discounted(Number(p.price_monthly), TEAM_DISCOUNT.percent)))}</b></span></li>)}
+        </ul>
+      </div>
+      <ul className="mt-5 flex-1 space-y-2.5">
+        {features.map((f) => <li key={f} className="flex items-start gap-2 text-sm text-ink-600"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />{f}</li>)}
+      </ul>
+      <a href={href} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex h-11 items-center justify-center rounded-2xl bg-gradient-to-r from-violet-600 to-brand-600 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:brightness-110">{t("Ekip teklifi al")}</a>
     </div>
   );
 }

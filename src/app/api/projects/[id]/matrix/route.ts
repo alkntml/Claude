@@ -59,7 +59,7 @@ purpose: çalışmanın amacı · method: desen/yöntem/analiz · sample: örnek
     const { data, error } = await s.supabase.from("sources").update({ summary }).eq("id", src.id).select().single();
     if (error) throw migrationError(error);
     out.push(data);
-    await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output), provider: model.provider, model: res.model, meta: { action: "literature_matrix", sourceId: src.id } });
+    await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "literature_matrix", sourceId: src.id } });
   }
   return json({ sources: out });
 });

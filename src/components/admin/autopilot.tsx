@@ -8,7 +8,7 @@ import { Badge, Empty } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { BlueprintScreen } from "@/components/workspace/blueprint";
 import { useT } from "@/i18n/client";
-import { newState, TARGET_SCORE, type AutoState } from "@/lib/autopilot";
+import { newState, TARGET_SCORE, type AutoState, type PendingIssue } from "@/lib/autopilot";
 import { STYLE_IDS, STYLES } from "@/lib/citations/styles";
 import { api } from "@/lib/client";
 import { LEVEL_LABELS, METHODOLOGY_LABELS, WORK_TYPES, type AcademicLevel, type Methodology } from "@/lib/workflows";
@@ -17,7 +17,7 @@ import { Autopilot, type Live } from "./autopilot-engine";
 type Purpose = "article" | "guideline" | "data" | "other";
 const PURPOSE: Record<Purpose, string> = { article: "Makale / kaynak (kaynak olarak eklenir)", guideline: "Yazım kılavuzu", data: "Araştırma verisi (CSV/XLSX)", other: "Diğer belge (taslak, notlar)" };
 const guess = (name: string): Purpose => (/\.(csv|xlsx)$/i.test(name) ? "data" : /kılavuz|kilavuz|guide|yazım|yazim/i.test(name) ? "guideline" : /\.pdf$/i.test(name) ? "article" : "other");
-const STATUS_LABEL: Record<string, string> = { blueprint: "Kurgu onayı bekliyor", running: "Çalışıyor", paused: "Duraklatıldı", done: "Teslim edildi", failed: "Hata" };
+const STATUS_LABEL: Record<string, string> = { blueprint: "Kurgu onayı bekliyor", running: "Çalışıyor", paused: "Duraklatıldı", review: "Onayınız bekleniyor", done: "Teslim edildi", failed: "Hata" };
 
 /**
  * Yönetici modülü (D77): kurgu (konu, kelime, belgeler) yöneticiye sorulur; onaydan sonra çalışma
@@ -196,7 +196,7 @@ function Runner({ projectId, onBack }: { projectId: string; onBack: () => void }
       const st: AutoState = project.context?.autopilot ?? newState();
       setState(st);
       engine.current = new Autopilot(projectId, st, t, (s, l) => { setState(s); setLive(l); });
-      if (st.status !== "done") void start();
+      if (st.status !== "done" && st.status !== "review") void start();
     });
     refresh();
     const iv = setInterval(refresh, 15000);
@@ -219,7 +219,7 @@ function Runner({ projectId, onBack }: { projectId: string; onBack: () => void }
           {state?.score != null && <Badge tone={state.score >= TARGET_SCORE ? "green" : "amber"}>Kalite puanı {state.score}</Badge>}
           <div className="ml-auto flex gap-2">
             {running ? <Button size="sm" variant="secondary" onClick={() => engine.current?.stop()}><Pause className="h-4 w-4" /> Duraklat</Button>
-              : state?.status !== "done" && <Button size="sm" onClick={start}><Play className="h-4 w-4" /> Sürdür</Button>}
+              : state?.status !== "done" && state?.status !== "review" && <Button size="sm" onClick={start}><Play className="h-4 w-4" /> Sürdür</Button>}
             <a href={`/proje/${projectId}`} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-ink-200 px-3 text-sm font-medium text-ink-800 hover:bg-ink-50"><ExternalLink className="h-4 w-4" /> Çalışmayı aç</a>
             {state?.status === "done" && <a href={`/api/projects/${projectId}/export?format=docx`} className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-ink-900 px-3 text-sm font-medium text-white hover:bg-ink-800"><Download className="h-4 w-4" /> Word</a>}
           </div>
@@ -235,6 +235,15 @@ function Runner({ projectId, onBack }: { projectId: string; onBack: () => void }
             {live.status && <p className="mt-1 text-[13px] text-ink-500">{live.status}</p>}
             <p className="mt-1 text-xs text-ink-400">Bu sekmeyi açık tutun. Kapatırsanız iş durur; buradan “Sürdür” ile kaldığı yerden devam eder. Uzun bir tez 1–2 saat sürebilir.</p>
           </div>
+        )}
+        {state?.status === "review" && (
+          <ReviewPanel
+            pending={state.pending ?? []}
+            score={state.score}
+            stageTitle={(k) => stages.find((s) => s.key === k)?.title}
+            onContinue={async (fix) => { await engine.current?.resolveReview(fix); refresh(); }}
+            onDeliver={async () => { await engine.current?.deliverAsIs(); refresh(); }}
+          />
         )}
         {state?.status === "done" && (
           <div className={cn("rounded-xl p-3 text-sm", (state.score ?? 0) >= TARGET_SCORE ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900")}>
@@ -262,6 +271,50 @@ function Runner({ projectId, onBack }: { projectId: string; onBack: () => void }
             {[...(state?.log ?? [])].reverse().map((l, i) => <li key={i} className="flex gap-2"><span className="shrink-0 font-mono text-[11px] text-ink-400">{new Date(l.at).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}</span><span className="text-ink-700">{l.text}</span></li>)}
           </ul>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const REASON: Record<PendingIssue["reason"], string> = {
+  data: "Gerçek araştırma verisi gerekiyor; sistem veri uyduramaz. Veriyi siz girebilirsiniz.",
+  attempted: "Otomatik düzeltme bir kez denendi, bulgu sürüyor.",
+  manual: "Otomatik düzeltme kapsamında değil.",
+};
+
+/**
+ * Döngü önleme (D78): otomatik düzeltilemeyen veya düzeltmeye rağmen süren bulgular listelenir; yönetici
+ * hangilerinin bir kez daha düzeltileceğini, hangilerinin olduğu gibi kalacağını seçer.
+ */
+function ReviewPanel({ pending, score, stageTitle, onContinue, onDeliver }: { pending: PendingIssue[]; score: number | null; stageTitle: (k: string) => string | undefined; onContinue: (fix: string[]) => Promise<void>; onDeliver: () => Promise<void> }) {
+  const [fix, setFix] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
+  const toggle = (k: string) => setFix((f) => { const n = new Set(f); if (n.has(k)) n.delete(k); else n.add(k); return n; });
+  const go = async (fn: () => Promise<void>) => { setBusy(true); try { await fn(); } finally { setBusy(false); } };
+  return (
+    <div className="space-y-3 rounded-xl border border-amber-200 bg-amber-50/60 p-4 text-sm">
+      <div>
+        <p className="font-semibold text-ink-900">Kalite puanı {score ?? "—"}: {pending.length} bulgu otomatik olarak giderilemedi</p>
+        <p className="mt-0.5 text-[13px] text-ink-600">Sistem aynı bulgular için tekrar tekrar düzeltme yapmaz. Bir kez daha düzeltilmesini istediklerinizi işaretleyin; işaretlemedikleriniz olduğu gibi kalır ve bir daha sorulmaz.</p>
+      </div>
+      <ul className="max-h-[360px] space-y-1.5 overflow-y-auto">
+        {pending.map((p) => (
+          <li key={p.key} className="flex gap-2.5 rounded-lg bg-white/80 p-2.5">
+            <input type="checkbox" className="mt-0.5 h-4 w-4 shrink-0" disabled={!p.fixable || busy} checked={fix.has(p.key)} onChange={() => toggle(p.key)} aria-label="Yeniden düzelt" />
+            <div className="min-w-0">
+              <p className="font-medium text-ink-900">
+                <span className={cn("mr-1.5 inline-block h-2 w-2 rounded-full", p.severity === "error" ? "bg-red-500" : p.severity === "warning" ? "bg-amber-500" : "bg-ink-300")} />
+                {p.title}{p.stageKey && stageTitle(p.stageKey) ? <span className="font-normal text-ink-500"> · {stageTitle(p.stageKey)}</span> : null}
+              </p>
+              {p.detail && <p className="text-[13px] text-ink-600">{p.detail}</p>}
+              <p className="text-xs text-ink-400">{REASON[p.reason]}{!p.fixable && p.reason !== "data" ? " Elle düzeltilmesi gerekir." : ""}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" disabled={busy} onClick={() => go(() => onContinue([...fix]))}>{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />} {fix.size ? `${fix.size} bulguyu düzelt, diğerleri kalsın` : "Hepsi olduğu gibi kalsın"}</Button>
+        <Button size="sm" variant="secondary" disabled={busy} onClick={() => go(onDeliver)}>Bu hâliyle teslim et</Button>
       </div>
     </div>
   );

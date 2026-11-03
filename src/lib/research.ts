@@ -160,7 +160,7 @@ export async function planResearch(params: { planId: string; project: any; stage
   }
   if (params.force) plan.needsSearch = true;
   plan.queries = (plan.queries ?? []).filter((q) => q.query?.trim()).slice(0, 4);
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { plan, usage: res.usage, model: res.model, provider: model.provider, cost };
 }
 

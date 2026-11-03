@@ -76,7 +76,7 @@ KURALLAR:
   });
   let ideas: TopicIdea[] = [];
   try { ideas = (JSON.parse(res.text).ideas ?? []).slice(0, 6); } catch { throw new Error("Öneriler oluşturulamadı, lütfen tekrar deneyin"); }
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { ideas, usage: res.usage, model: res.model, provider: model.provider, cost };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

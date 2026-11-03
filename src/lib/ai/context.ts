@@ -4,7 +4,7 @@ import { scoreRecord } from "@/lib/sources/aggregate";
 import type { SourceRecord } from "@/lib/sources/types";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
-import { blueprintContext, readBlueprint } from "@/lib/blueprint";
+import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
 import { GRANT_PROGRAMS, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 
@@ -12,7 +12,15 @@ import { GRANT_PROGRAMS, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Method
 const ACCESS_TR = { metadata: "yalnızca künye", abstract: "özet okundu", full_text: "tam metin okundu" } as const;
 
 export interface BuiltContext {
+  /** Bağlamın tamamı (head + tail); bölmeyi desteklemeyen sağlayıcılar için */
   text: string;
+  /**
+   * Sabit kısım (D78): proje bilgisi, kurgu, kaynak listesi ve hafıza. Aynı çalışmadaki ardışık isteklerde
+   * değişmediği için önbelleğe alınır (önbellekten okuma, normal girdi fiyatının ~%10’u).
+   */
+  head: string;
+  /** Değişken kısım: diğer bölümler, üzerinde çalışılan bölüm, yapı kuralı, tekrar listesi, tam metin parçaları */
+  tail: string;
   /** Kısa kimlik (S1) -> kaynak uuid */
   sourceMap: Record<string, string>;
   usedChunks: number;
@@ -22,6 +30,36 @@ function authorShort(authors: any[]): string {
   const fam = (authors ?? []).map((a) => a.literal ?? a.family ?? "").filter(Boolean);
   if (!fam.length) return "Yazar yok";
   return fam.length > 2 ? `${fam[0]} vd.` : fam.join(" & ");
+}
+
+function sourceLine(s: any, sid: string): string {
+  const abs = s.access_level !== "metadata" && s.abstract ? `\n  Özet: ${String(s.abstract).slice(0, 1200)}` : "";
+  return `- ${sid}: ${authorShort(s.authors)} (${s.year ?? "t.y."}). ${s.title}. ${s.container_title ?? ""}${s.pages ? `, ss. ${s.pages}` : ""}${s.doi ? ` DOI: ${s.doi}` : ""} [Erişim: ${ACCESS_TR[s.access_level as keyof typeof ACCESS_TR]}; ${s.verified ? "doğrulandı" : "DOĞRULANMADI"}]${s.relevance_note ? `\n  Kullanıcı notu: ${s.relevance_note}` : ""}${abs}`;
+}
+
+const relevance = (s: any, q: string) => scoreRecord({ title: s.title, abstract: s.abstract, citedByCount: 0, accessLevel: s.access_level } as SourceRecord, q);
+
+/**
+ * Bağlama girecek kaynaklar (D78). Önbelleğin işe yaraması için sabit kısımdaki liste isteğe göre değişmez:
+ * kaynak sayısı sınırı aşmıyorsa hepsi eklenme sırasıyla; aşıyorsa çalışmanın konusuna en yakın olanlar
+ * (yine eklenme sırasıyla). İsteğe/bölüme özgü ama listede olmayan ilgili ve bu bölümde atıf almış kaynaklar
+ * değişken kısma ek olarak girer. Saf fonksiyon (test edilir).
+ */
+export function selectContextSources<S extends { id: string }>(sources: S[], opts: { max: number; projectQuery: string; query: string; citedHere: Set<string>; extraMax?: number; score?: (s: S, q: string) => number }): { head: S[]; extra: S[] } {
+  const score = opts.score ?? relevance;
+  if (sources.length <= opts.max) return { head: [...sources], extra: [] };
+  const keep = new Set(
+    sources.map((s, i) => ({ s, i, v: score(s, opts.projectQuery) })).sort((a, b) => b.v - a.v || a.i - b.i).slice(0, opts.max).map((x) => x.s.id),
+  );
+  const head = sources.filter((s) => keep.has(s.id));
+  const extra = sources
+    .filter((s) => !keep.has(s.id))
+    .map((s) => ({ s, v: score(s, opts.query) + (opts.citedHere.has(s.id) ? 1 : 0) }))
+    .filter((x) => x.v > 0 || opts.citedHere.has(x.s.id))
+    .sort((a, b) => b.v - a.v)
+    .slice(0, opts.extraMax ?? 12)
+    .map((x) => x.s);
+  return { head, extra };
 }
 
 export async function buildContext(params: {
@@ -35,50 +73,94 @@ export async function buildContext(params: {
   maxSources?: number;
   /** Diğer bölümlerden alınacak en fazla karakter (özet/abstract gibi bütünü gerektiren eylemler için artırılır) */
   otherChars?: number;
+  /** Bölümün tamamı zaten SEÇİLİ METİN olarak gönderiliyorsa mevcut metin bağlama ikinci kez eklenmez */
+  omitCurrentText?: boolean;
+  /** Bölüme özel yönetici talimatı (değişken kısma girer; sistem talimatı bölümden bölüme değişmesin) */
+  stagePrompt?: string;
 }): Promise<BuiltContext> {
   const { db, project, stage, stages, sources, memory, query } = params;
   const ctx = project.context ?? {};
-  const out: string[] = [];
+  const head: string[] = [];
+  const tail: string[] = [];
+  const bp = readBlueprint(ctx.blueprint);
 
-  out.push("## PROJE BAĞLAMI");
-  out.push(`Başlık: ${project.title}`);
-  out.push(`Çalışma türü: ${project.work_type} · Seviye: ${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level} · Disiplin: ${project.discipline || "belirtilmedi"}`);
-  if (ctx.methodology) out.push(`Yöntem yaklaşımı: ${METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology}`);
-  out.push(`Çalışma dili: ${project.language === "en" ? "İngilizce" : "Türkçe"} · Atıf stili: ${project.citation_style}`);
-  if (project.topic) out.push(`Araştırma konusu: ${project.topic}`);
-  if (project.keywords?.length) out.push(`Anahtar kelimeler: ${project.keywords.join(", ")}`);
-  if (ctx.university) out.push(`Üniversite / kılavuz: ${ctx.university}`);
-  if (ctx.targetJournal) out.push(`Hedef dergi: ${ctx.targetJournal}`);
-  if (ctx.program) out.push(`Başvurulan program: ${GRANT_PROGRAMS.find((p) => p.id === ctx.program)?.label ?? ctx.program}. Başvuru formunun bölüm düzenine uy; programın üst sınırları, puanlama ölçütleri veya kuralları hakkında bilmediğin ayrıntıyı uydurma, kullanıcıya çağrı duyurusunu kontrol etmesini söyle.`);
+  // ---------- Sabit kısım (önbelleğe alınır) ----------
+  head.push("## PROJE BAĞLAMI");
+  head.push(`Başlık: ${project.title}`);
+  head.push(`Çalışma türü: ${project.work_type} · Seviye: ${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level} · Disiplin: ${project.discipline || "belirtilmedi"}`);
+  if (ctx.methodology) head.push(`Yöntem yaklaşımı: ${METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology}`);
+  head.push(`Çalışma dili: ${project.language === "en" ? "İngilizce" : "Türkçe"} · Atıf stili: ${project.citation_style}`);
+  if (project.topic) head.push(`Araştırma konusu: ${project.topic}`);
+  if (project.keywords?.length) head.push(`Anahtar kelimeler: ${project.keywords.join(", ")}`);
+  if (ctx.university) head.push(`Üniversite / kılavuz: ${ctx.university}`);
+  if (ctx.targetJournal) head.push(`Hedef dergi: ${ctx.targetJournal}`);
+  if (ctx.program) head.push(`Başvurulan program: ${GRANT_PROGRAMS.find((p) => p.id === ctx.program)?.label ?? ctx.program}. Başvuru formunun bölüm düzenine uy; programın üst sınırları, puanlama ölçütleri veya kuralları hakkında bilmediğin ayrıntıyı uydurma, kullanıcıya çağrı duyurusunu kontrol etmesini söyle.`);
 
-  // Öğrencinin kurgusu (D67): yazım bu plana göre ilerler
-  const plan = blueprintContext(readBlueprint(ctx.blueprint), stage);
-  if (plan) out.push(`\n${plan}`);
+  // Öğrencinin kurgusu (D67): yazım bu plana göre ilerler (bölüme özel not değişken kısımda)
+  const plan = blueprintContext(bp, null);
+  if (plan) head.push(`\n${plan}`);
+
+  // Kaynaklar (D78: sabit sırada; bölüme özgü ekler değişken kısımda)
+  const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text) : [];
+  const citedHere = new Set<string>(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
+  const q = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${project.topic ?? ""}`;
+  const picked = selectContextSources(sources, {
+    max: params.maxSources ?? 40,
+    projectQuery: `${project.title} ${project.topic ?? ""} ${(project.keywords ?? []).join(" ")}`,
+    query: q,
+    citedHere,
+  });
+  const sourceMap: Record<string, string> = {};
+  head.push("\n## KAYNAKLAR (yalnızca bunlara atıf yapabilirsin)");
+  if (!sources.length) head.push("Projede henüz kaynak yok. Kaynak gerektiren kesin iddialar yazma; ihtiyaç duyulan konuları :::eksik bloğunda arama sorgusu olarak bildir.");
+  picked.head.forEach((s, idx) => {
+    const sid = `S${idx + 1}`;
+    sourceMap[sid] = s.id;
+    head.push(sourceLine(s, sid));
+  });
 
   if (memory.length) {
-    out.push("\n## PROJE HAFIZASI (önceki kararlar ve bilgiler)");
-    for (const m of memory.slice(-60)) out.push(`- [${m.kind}] ${m.content}`);
+    head.push("\n## PROJE HAFIZASI (önceki kararlar ve bilgiler)");
+    for (const m of memory.slice(-60)) head.push(`- [${m.kind}] ${m.content}`);
   }
+
+  // ---------- Değişken kısım ----------
+  if (picked.extra.length) {
+    tail.push("## BU İSTEKLE İLGİLİ EK KAYNAKLAR (bunlara da atıf yapabilirsin)");
+    picked.extra.forEach((s, idx) => {
+      const sid = `S${picked.head.length + idx + 1}`;
+      sourceMap[sid] = s.id;
+      tail.push(sourceLine(s, sid));
+    });
+  }
+  const reverse = Object.fromEntries(Object.entries(sourceMap).map(([k, v]) => [v, k]));
+  const citedIds = [...citedHere].map((id) => reverse[id]).filter(Boolean);
+  if (citedIds.length) tail.push(`\nBu bölümde zaten atıf yapılan kaynaklar: ${citedIds.join(", ")} (düzeltme ve genişletmede bu atıfları koru).`);
 
   // Diğer bölümlerin kısa özetleri (bölümler arası tutarlılık için)
   const others = stages.filter((s) => s.id !== stage?.id && s.word_count > 0);
   if (others.length) {
-    out.push("\n## DİĞER BÖLÜMLERİN DURUMU");
+    tail.push("\n## DİĞER BÖLÜMLERİN DURUMU");
     const lim = params.otherChars ?? 400;
-    for (const s of others) out.push(`- ${s.title} (${s.word_count} kelime): ${String(s.content_text).slice(0, lim).replace(/\s+/g, " ")}${s.content_text.length > lim ? "…" : ""}`);
+    for (const s of others) tail.push(`- ${s.title} (${s.word_count} kelime): ${String(s.content_text).slice(0, lim).replace(/\s+/g, " ")}${s.content_text.length > lim ? "…" : ""}`);
   }
 
   if (stage) {
     const def = stageDef(stage.key);
-    out.push(`\n## ÜZERİNDE ÇALIŞILAN BÖLÜM: ${stage.title}`);
-    out.push(`Amaç: ${def?.purpose ?? stage.description}`);
-    if (def?.rules.length) out.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
-    if (def?.requiresUserData) out.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
+    tail.push(`\n## ÜZERİNDE ÇALIŞILAN BÖLÜM: ${stage.title}`);
+    tail.push(`Amaç: ${def?.purpose ?? stage.description}`);
+    if (def?.rules.length) tail.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
+    if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
+    if (def?.requiresUserData) tail.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
+    const note = blueprintStageNote(bp, stage);
+    if (note) tail.push(note);
     // Akademik yapı (D76): aşama adı başlık olarak yazılmaz; alt başlık sayısı bölüm türü ve hedef uzunluğa göre sınırlı
-    const target = Number((readBlueprint(ctx.blueprint)?.chapters ?? []).find((c) => c.stageId === stage.id)?.words) || 0;
-    out.push(structureRule(stage.key, stage.title, target));
+    const target = Number((bp?.chapters ?? []).find((c) => c.stageId === stage.id)?.words) || 0;
+    tail.push(structureRule(stage.key, stage.title, target));
     const current = String(stage.content_text ?? "");
-    out.push(current ? `Bölümün mevcut metni:\n"""\n${current.slice(0, 12000)}\n"""` : "Bölüm henüz boş.");
+    if (!current) tail.push("Bölüm henüz boş.");
+    else if (params.omitCurrentText) tail.push("Bölümün mevcut metninin tamamı aşağıda SEÇİLİ METİN olarak verildi.");
+    else tail.push(`Bölümün mevcut metni:\n"""\n${current.slice(0, 12000)}\n"""`);
   }
 
   // Tekrar önleme: bölümde ve çalışmada zaten çok geçen kalıplar modele "kullanma" listesi olarak verilir
@@ -89,35 +171,13 @@ export async function buildContext(params: {
     const seen = new Set<string>();
     const avoid = [...avoidListForPrompt(here), ...avoidListForPrompt(whole)].filter((x) => (seen.has(x.replace(/ \(\d+ kez\)$/, "")) ? false : (seen.add(x.replace(/ \(\d+ kez\)$/, "")), true))).slice(0, 16);
     if (avoid.length) {
-      out.push("\n## TEKRARDAN KAÇIN (metinde zaten sık geçiyor; yeni yazacağın metinde kullanma, farklı cümle yapısı seç. Teknik terimler ve kavram adları bu kuralın dışındadır; onları gerektiği kadar kullan)");
-      for (const a of avoid) out.push(`- ${a}`);
+      tail.push("\n## TEKRARDAN KAÇIN (metinde zaten sık geçiyor; yeni yazacağın metinde kullanma, farklı cümle yapısı seç. Teknik terimler ve kavram adları bu kuralın dışındadır; onları gerektiği kadar kullan)");
+      for (const a of avoid) tail.push(`- ${a}`);
     }
   }
 
-  // Kaynaklar: soruya ve bölüme en alakalı olanlar
-  // Bu bölümde zaten atıf yapılan kaynaklar her zaman listede kalır (revizyonda atıflar kaybolmasın)
-  const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text) : [];
-  const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
-  const q = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${project.topic ?? ""}`;
-  const ranked = [...sources]
-    .map((s) => ({ s, score: scoreRecord({ title: s.title, abstract: s.abstract, citedByCount: 0, accessLevel: s.access_level } as SourceRecord, q) + (citedHere.has(s.id) ? 0.5 : 0) }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, params.maxSources ?? 40)
-    .map((x) => x.s);
-
-  const sourceMap: Record<string, string> = {};
-  out.push("\n## KAYNAKLAR (yalnızca bunlara atıf yapabilirsin)");
-  if (!ranked.length) out.push("Projede henüz kaynak yok. Kaynak gerektiren kesin iddialar yazma; ihtiyaç duyulan konuları :::eksik bloğunda arama sorgusu olarak bildir.");
-  ranked.forEach((s, idx) => {
-    const sid = `S${idx + 1}`;
-    sourceMap[sid] = s.id;
-    const abs = s.access_level !== "metadata" && s.abstract ? `\n  Özet: ${String(s.abstract).slice(0, 1200)}` : "";
-    out.push(`- ${sid}: ${authorShort(s.authors)} (${s.year ?? "t.y."}). ${s.title}. ${s.container_title ?? ""}${s.pages ? `, ss. ${s.pages}` : ""}${s.doi ? ` DOI: ${s.doi}` : ""} [Erişim: ${ACCESS_TR[s.access_level as keyof typeof ACCESS_TR]}; ${s.verified ? "doğrulandı" : "DOĞRULANMADI"}${citedHere.has(s.id) ? "; bu bölümde zaten atıf var" : ""}]${s.relevance_note ? `\n  Kullanıcı notu: ${s.relevance_note}` : ""}${abs}`);
-  });
-
   // RAG: tam metin parçaları
   let usedChunks = 0;
-  const reverse = Object.fromEntries(Object.entries(sourceMap).map(([k, v]) => [v, k]));
   const termSource = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${(project.keywords ?? []).join(" ")}`;
   const terms = [...new Set(termSource.replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter((w) => w.length > 3).map((w) => w.toLocaleLowerCase("tr")))].slice(0, 16).join(" or ");
   if (terms) {
@@ -132,22 +192,23 @@ export async function buildContext(params: {
     const srcChunks = list.filter((c) => c.source_id && reverse[c.source_id]);
     const fileChunks = list.filter((c) => !c.source_id && names[c.file_id]);
     if (srcChunks.length) {
-      out.push("\n## TAM METİN PARÇALARI (doğrudan alıntı yalnızca buradan yapılabilir; \"s. N\" yayındaki sayfa numarasıdır)");
+      tail.push("\n## TAM METİN PARÇALARI (doğrudan alıntı yalnızca buradan yapılabilir; \"s. N\" yayındaki sayfa numarasıdır)");
       for (const c of srcChunks) {
-        out.push(`[${reverse[c.source_id]}${c.page_hint ? `, ${c.page_hint}` : ", sayfa bilgisi yok"}]: ${String(c.content).slice(0, 1500)}`);
+        tail.push(`[${reverse[c.source_id]}${c.page_hint ? `, ${c.page_hint}` : ", sayfa bilgisi yok"}]: ${String(c.content).slice(0, 1500)}`);
         usedChunks++;
       }
     }
     if (fileChunks.length) {
-      out.push("\n## KULLANICININ YÜKLEDİĞİ DOSYALARDAN PARÇALAR (atıf kaynağı değildir; bağlam ve kurallar için kullan)");
+      tail.push("\n## KULLANICININ YÜKLEDİĞİ DOSYALARDAN PARÇALAR (atıf kaynağı değildir; bağlam ve kurallar için kullan)");
       for (const c of fileChunks.slice(0, 5)) {
-        out.push(`[${names[c.file_id]}${c.page_hint ? `, ${c.page_hint}` : ""}]: ${String(c.content).slice(0, 1200)}`);
+        tail.push(`[${names[c.file_id]}${c.page_hint ? `, ${c.page_hint}` : ""}]: ${String(c.content).slice(0, 1200)}`);
         usedChunks++;
       }
     }
   }
 
-  return { text: out.join("\n"), sourceMap, usedChunks };
+  const h = head.join("\n"), t = tail.join("\n");
+  return { text: t ? `${h}\n\n${t}` : h, head: h, tail: t, sourceMap, usedChunks };
 }
 
 /** Asistan yanıtındaki :::hafiza bloklarını ayrıştırır. */

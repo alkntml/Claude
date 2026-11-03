@@ -14,7 +14,9 @@ export const anthropicProvider: AiProvider = {
   async *stream(p: GenerateParams, signal?: AbortSignal): AsyncIterable<StreamEvent> {
     const useFallback = FALLBACK_MODELS.has(p.model);
     const system: Anthropic.Beta.BetaTextBlockParam[] = [{ type: "text", text: p.system, cache_control: { type: "ephemeral" } }];
-    if (p.context) system.push({ type: "text", text: p.context });
+    // Sabit bağlam da önbelleğe alınır (D78): aynı çalışmadaki ardışık isteklerde ~%90 daha ucuz okunur
+    if (p.context) system.push({ type: "text", text: p.context, cache_control: { type: "ephemeral" } });
+    if (p.contextTail) system.push({ type: "text", text: p.contextTail });
 
     const stream = getClient().beta.messages.stream(
       {
@@ -35,9 +37,11 @@ export const anthropicProvider: AiProvider = {
       if (ev.type === "content_block_delta" && ev.delta.type === "text_delta") yield { type: "text", text: ev.delta.text };
     }
     const final = await stream.finalMessage();
+    const cacheRead = final.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = final.usage.cache_creation_input_tokens ?? 0;
     yield {
       type: "done",
-      usage: { input: (final.usage.input_tokens ?? 0) + (final.usage.cache_read_input_tokens ?? 0) + (final.usage.cache_creation_input_tokens ?? 0), output: final.usage.output_tokens ?? 0 },
+      usage: { input: (final.usage.input_tokens ?? 0) + cacheRead + cacheWrite, output: final.usage.output_tokens ?? 0, cacheRead, cacheWrite },
       stopReason: final.stop_reason ?? null,
       model: final.model,
     };

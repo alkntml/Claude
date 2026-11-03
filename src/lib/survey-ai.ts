@@ -47,7 +47,7 @@ async function run(planId: string, system: string, user: string, schema: Record<
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: "medium", jsonSchema: schema });
   let data: any;
   try { data = JSON.parse(res.text); } catch { throw new Error("Yapay zekâ yanıtı okunamadı, lütfen tekrar deneyin"); }
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { data, usage: res.usage, model: res.model, provider: model.provider, cost };
 }
 

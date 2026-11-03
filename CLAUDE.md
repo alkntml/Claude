@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 224 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 232 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -52,7 +52,7 @@ src/lib/
   citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık)
   sources/               providers.ts (10 veri tabanı), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
   research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme; researchGate: tarama yalnızca gerektiğinde (D75)
-  ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza), prompts
+  ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza; head önbellekte, tail değişken — D78), history (geçmiş kısaltma), cost (önbellekli maliyet), prompts (ACTION_TIER, ACTION_EFFORT)
   workflows/             Çalışma türleri + aşama şablonları (stages.ts); order.ts önerilen yazım sırası (özet en son); structure.ts akademik bölüm yapısı/başlık disiplini (D76); quick-actions.ts aşamaya özel kısayollar (D75)
   blueprint.ts + blueprint-ai.ts  Kurgu modülü (D67): çalışma başında problem/amaç/yöntem/bölüm planı; context.blueprint, yapay zekâ bağlamına girer
   titles.ts              Başlık önerileri (çalışmanın ilk adımı)
@@ -108,6 +108,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()` — istemci bileşeninde `@/i18n` içe aktarma, sözlük pakete girer; sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e eklenir; `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
 - Renkleri `ink-*` / marka sınıflarıyla ver, sabit hex kullanma: gece modu (D61) CSS değişkenleriyle çalışır.
 - Atıflar editörde `citation` düğümüdür; asla düz metin "(Yazar, Yıl)" üretme.
+- API maliyeti (D78): sabit bağlamı `context`, değişkeni `contextTail` ile ver (önbellek); maliyet `estimateCost(model, in, out, usage)`; sohbet geçmişini `compactHistory` ile gönder.
 - Model pakete göre değil işe göre seçilir (D47): basit → `fast` (Haiku), orta → `balanced` (Sonnet), karmaşık → `default` (Opus); asistan eylemleri `ACTION_TIER`’da.
 - Yeni AI özelliği: model katmanı `resolveModel(planId, tier)`, kullanım `recordUsage`, limit `assertWithinLimits`.
 - Claude modelleri: `claude-opus-5-5` (default/premium), `claude-sonnet-5-5` (balanced), `claude-haiku-5-5` (fast). Sampling parametresi (temperature) gönderme; `output_config.effort` kullan. Opus/Sonnet'te `fallbacks: "default"` açık.

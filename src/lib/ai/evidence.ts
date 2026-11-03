@@ -54,7 +54,7 @@ export async function checkEvidence(params: {
   const model = await resolveModel(params.planId, "fast");
   if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
   let tokensIn = 0, tokensOut = 0, cost = 0;
-  const track = async (r: { usage: { input: number; output: number }; model: string }) => { tokensIn += r.usage.input; tokensOut += r.usage.output; cost += await estimateCost(r.model, r.usage.input, r.usage.output); };
+  const track = async (r: { usage: { input: number; output: number; cacheRead?: number; cacheWrite?: number }; model: string }) => { tokensIn += r.usage.input; tokensOut += r.usage.output; cost += await estimateCost(r.model, r.usage.input, r.usage.output, r.usage); };
 
   let best: EvidenceChunk[] = [];
   if (params.chunks.length) {

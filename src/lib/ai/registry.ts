@@ -3,7 +3,9 @@ import { env } from "@/lib/env";
 import { getSetting, type ModelRef } from "@/lib/settings";
 import { anthropicProvider } from "./anthropic";
 import { openaiProvider } from "./openai";
-import type { AiProvider, GenerateParams, StreamEvent } from "./types";
+import type { AiProvider, GenerateParams, StreamEvent, Usage } from "./types";
+import { costFor } from "./cost";
+export { costFor };
 
 const PROVIDERS: Record<ModelRef["provider"], { provider: AiProvider; configured: () => boolean }> = {
   anthropic: { provider: anthropicProvider, configured: () => !!env.anthropicKey },
@@ -27,12 +29,15 @@ export function isProviderConfigured(p: ModelRef["provider"]) {
   return PROVIDERS[p]?.configured() ?? false;
 }
 
-export async function estimateCost(model: string, input: number, output: number) {
+/**
+ * Tahmini maliyet (USD). `input` önbellek dahil toplam girdidir; `cache` verilirse önbellekten okunan kısım
+ * girdi fiyatının %10’u, önbelleğe yazılan kısım %125’i ile hesaplanır (Anthropic fiyatlandırması).
+ */
+export async function estimateCost(model: string, input: number, output: number, cache?: Pick<Usage, "cacheRead" | "cacheWrite">) {
   const cfg = await getSetting("ai.models");
-  const price = cfg.pricing_per_mtok[model];
-  if (!price) return 0;
-  return (input * price.in + output * price.out) / 1_000_000;
+  return costFor(cfg.pricing_per_mtok[model], input, output, cache);
 }
+
 
 export function streamWith(ref: ModelRef, params: Omit<GenerateParams, "model">, signal?: AbortSignal): AsyncIterable<StreamEvent> {
   const entry = PROVIDERS[ref.provider];
@@ -43,7 +48,7 @@ export function streamWith(ref: ModelRef, params: Omit<GenerateParams, "model">,
 /** Akışsız tamamlama — kısa yapılandırılmış görevler için. */
 export async function complete(ref: ModelRef, params: Omit<GenerateParams, "model">, signal?: AbortSignal) {
   let text = "";
-  let usage = { input: 0, output: 0 };
+  let usage: Usage = { input: 0, output: 0 };
   let stopReason: string | null = null;
   let model = ref.model;
   for await (const ev of streamWith(ref, params, signal)) {

@@ -1,6 +1,7 @@
 /** Asistan eylemleri: her biri kullanıcının mesajına eklenen açık bir görev tanımıdır. */
 export const ASSISTANT_ACTIONS = {
   chat: { label: "Sohbet", instruction: "" },
+  outline: { label: "Alt başlık öner", instruction: "Bu bölüm için yalnızca alt başlık önerisi yap; bölüm metni yazma. Önerileri tek bir :::taslak bloğu içinde, her satıra bir alt başlık olacak biçimde ver; numara veya açıklama ekleme. :::eksik ve :::hafiza blokları kullanma." },
   plan: { label: "Çalışma planı öner", instruction: "Bu bölüm için adım adım bir çalışma planı öner. Önce eksik bilgileri belirle ve kullanıcıya en fazla 3 net soru sor." },
   draft: { label: "Bölümü yaz", instruction: "Bu bölüm için akademik standartlara uygun bir taslak yaz. Her olgusal/bilimsel iddiayı KAYNAKLAR listesindeki bir çalışmayla destekle. Destekleyemediğin iddiayı yazma; o konuyu :::eksik bloğunda bildir." },
   expand: { label: "Genişlet", instruction: "Seçili metni anlamını koruyarak, kaynaklarla desteklenmiş biçimde genişlet." },
@@ -38,6 +39,7 @@ export const ACTION_TIER: Record<AssistantAction, "fast" | "balanced" | "default
   from_notes: "fast",
   // Orta
   chat: "balanced",
+  outline: "balanced",
   plan: "balanced",
   draft: "balanced",
   expand: "balanced",
@@ -56,6 +58,19 @@ export const ACTION_TIER: Record<AssistantAction, "fast" | "balanced" | "default
   consistency: "default",
   reviewer_response: "default",
   journal_checklist: "default",
+};
+
+/**
+ * Eylem başına düşünme seviyesi (D78). Verilmeyen eylemler ayarlardaki varsayılanı (medium) kullanır.
+ * Kısa ve kalıbı belli işlerde (kısaltma, üslup, alt başlık önerisi) düşünme tokenı harcamaya gerek yoktur;
+ * yazım ve analiz eylemleri varsayılan seviyede kalır, kaliteden ödün verilmez.
+ */
+export const ACTION_EFFORT: Partial<Record<AssistantAction, "low" | "medium" | "high">> = {
+  outline: "low",
+  shorten: "low",
+  academic_tone: "low",
+  reduce_repetition: "low",
+  from_notes: "low",
 };
 
 export const OUTPUT_PROTOCOL = `ÇIKTI BİÇİMİ:

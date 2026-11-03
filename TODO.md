@@ -40,6 +40,7 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] DOCX ve PDF dışa aktarma (PDF fontları Vercel'de bulunuyor mu?)
 - [ ] Dosya yükleme (Supabase Storage `user-files` bucket) ve PDF metin çıkarma
 - [ ] Kalite kontrol (AI incelemesi dahil)
+- [ ] D78 maliyet düşüşü: aynı boyutta bir otomatik çalışmayı yeniden dene, Yönetim → gelir-maliyet ekranında harcamayı önceki ($1,5 / 2000 kelime) ile karşılaştır; “Onayınız bekleniyor” ekranını dene
 - [ ] Danışman paylaşım bağlantısı ve danışman yorumu
 - [ ] Uzun AI yanıtlarında Vercel Hobby zaman sınırı (gerekirse Pro plan veya `maxDuration` ayarı)
 

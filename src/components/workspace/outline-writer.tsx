@@ -52,7 +52,7 @@ export function OutlineWriter({ open, onClose, projectId, stage, targetWords = 0
     let answer = "";
     try {
       const ctrl = new AbortController();
-      await streamChat({ projectId, stageId: stage.id, conversationId: null, action: "chat",
+      await streamChat({ projectId, stageId: stage.id, conversationId: null, action: "outline",
         message: t("Bu bölüm için akademik usule uygun alt başlıklar öner: en fazla {n} tane; yalnızca birbirinden belirgin biçimde ayrı alt konular için başlık aç, bölüm adını tekrar eden başlık önerme. Mevcut alt başlıkları tekrar etme. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.", { n: Math.max(2, subheadingBudget(stage.key ?? "", targetWords) || 3) }) + (existingHeadings.length ? `\n${t("Mevcut alt başlıklar:")} ${existingHeadings.join(" | ")}` : ""),
       }, ctrl.signal, (ev, data) => { if (ev === "text") answer += data.text; }, t("Hata"));
       const draft = parseAnswer(answer).parts.find((p) => p.kind === "draft")?.text ?? "";

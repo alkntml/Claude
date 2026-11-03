@@ -65,7 +65,7 @@ KURALLAR:
   });
   let parsed: any;
   try { parsed = JSON.parse(res.text); } catch { return null; }
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return {
     verdict: (["ok", "minor", "major"].includes(parsed.verdict) ? parsed.verdict : "minor") as StageReview["verdict"],
     summary: String(parsed.summary ?? ""),

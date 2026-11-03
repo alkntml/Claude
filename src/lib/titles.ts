@@ -44,7 +44,7 @@ KURALLAR:
   });
   let titles: TitleIdea[] = [];
   try { titles = (JSON.parse(res.text).titles ?? []).filter((x: any) => x?.title?.trim()).slice(0, 6).map((x: any) => ({ title: String(x.title).trim().slice(0, 300), note: String(x.note ?? "").trim() })); } catch { throw new Error("Başlık önerileri oluşturulamadı, lütfen tekrar deneyin"); }
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { titles, usage: res.usage, model: res.model, provider: model.provider, cost };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

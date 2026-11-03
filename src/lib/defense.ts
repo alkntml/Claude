@@ -35,7 +35,7 @@ const F_SCHEMA = {
 async function run(planId: string, system: string, user: string, schema: Record<string, unknown>, maxTokens: number) {
   const model = await resolveModel(planId, "default"); // karmaşık: jüri soruları ve cevap değerlendirmesi
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: "medium", jsonSchema: schema });
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   let data: any;
   try { data = JSON.parse(res.text); } catch { throw new Error("Yanıt işlenemedi, lütfen tekrar deneyin"); }
   return { data, usage: res.usage, model: res.model, provider: model.provider, cost };

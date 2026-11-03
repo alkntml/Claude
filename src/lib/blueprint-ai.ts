@@ -98,7 +98,7 @@ async function run(planId: string, tier: Tier, system: string, user: string, sch
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: tier === "default" ? "medium" : "low", jsonSchema: schema });
   let data: any;
   try { data = JSON.parse(res.text); } catch { throw new Error("Kurgu oluşturulamadı, lütfen tekrar deneyin"); }
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { data, meta: { usage: res.usage, model: res.model, provider: model.provider, cost } };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

@@ -58,7 +58,7 @@ KURALLAR:
   let deck: Deck;
   try { deck = JSON.parse(res.text); } catch { throw new Error("Sunum taslağı oluşturulamadı"); }
   deck.slides = (deck.slides ?? []).filter((s) => s.title?.trim()).slice(0, 18).map((s) => ({ title: s.title.trim(), bullets: (s.bullets ?? []).slice(0, 6), notes: s.notes ?? "" }));
-  const cost = await estimateCost(res.model, res.usage.input, res.usage.output);
+  const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { deck, sourceMap, usage: res.usage, model: res.model, provider: model.provider, cost };
 }
 

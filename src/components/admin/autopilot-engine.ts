@@ -10,7 +10,7 @@ import { api } from "@/lib/client";
 import { streamChat } from "@/lib/ai/chat-client";
 import { readBlueprint } from "@/lib/blueprint";
 import { docToPlain, docToTokenMarkdown, findPlaceholderBlocks, blockToTokenText, markdownToDoc, restoreTokens, wordCount, type JSONNode } from "@/lib/editor/doc";
-import { MAX_FIX_ROUNDS, planFixes, parseHeadingLines, pushLog, TARGET_SCORE, type AutoState, type IssueLike } from "@/lib/autopilot";
+import { applyReview, decideNext, parseHeadingLines, pushLog, TARGET_SCORE, type AutoState, type IssueLike } from "@/lib/autopilot";
 import { stageDef } from "@/lib/workflows";
 import { writingOrder } from "@/lib/workflows/order";
 import { sameHeading, subheadingBudget } from "@/lib/workflows/structure";
@@ -31,6 +31,23 @@ export class Autopilot {
   }
 
   stop() { this.stopped = true; this.abort.abort(); }
+
+  /** Kullanıcının bulgu seçimleriyle devam: seçilenler bir kez daha düzeltilir, diğerleri olduğu gibi kalır */
+  async resolveReview(fix: string[]) {
+    const n = (this.state.pending ?? []).length;
+    this.state = applyReview(this.state, fix);
+    this.log(this.t("Seçiminiz kaydedildi: {f} bulgu yeniden düzeltilecek, {k} bulgu olduğu gibi kalacak.", { f: fix.length, k: n - fix.length }));
+    await this.save();
+    await this.run();
+  }
+
+  /** Onay bekleyen bulgular varken “bu hâliyle teslim et” */
+  async deliverAsIs() {
+    this.state = { ...this.state, status: "done", phase: "done", pending: [], finishedAt: new Date().toISOString(), note: this.t("Puan {s}; çalışma sizin onayınızla bu hâliyle teslim edildi.", { s: this.state.score ?? 0 }) };
+    this.log(this.t("Çalışma bu hâliyle teslim edildi."));
+    await this.save();
+    this.emit();
+  }
 
   private emit() { this.onUpdate(this.state, { ...this.live }); }
   private log(text: string) { this.state = pushLog(this.state, text); this.emit(); }
@@ -103,7 +120,7 @@ export class Autopilot {
       let heads: string[] = [];
       if (budget > 0) {
         this.setLive({ step: this.t("Alt başlıklar planlanıyor") });
-        const { answer } = await this.ask(st.id, "chat", `Bu bölüm için akademik usule uygun alt başlıklar öner: en fazla ${budget} tane; yalnızca birbirinden belirgin biçimde ayrı alt konular için başlık aç, bölüm adını tekrar eden başlık önerme. Kurgudaki bölüm planına uy. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.`);
+        const { answer } = await this.ask(st.id, "outline", `Bu bölüm için akademik usule uygun alt başlıklar öner: en fazla ${budget} tane; yalnızca birbirinden belirgin biçimde ayrı alt konular için başlık aç, bölüm adını tekrar eden başlık önerme. Kurgudaki bölüm planına uy. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.`);
         heads = parseHeadingLines(this.draftOf(answer), st.title, budget, sameHeading);
       }
       if (heads.length >= 2) {
@@ -218,26 +235,37 @@ export class Autopilot {
         await this.save();
       }
 
-      // 3) Kalite kontrol → düzeltme döngüsü (85 ve üzeri veya en fazla 3 tur)
+      // 3) Kalite kontrol → düzeltme döngüsü (D78): yapay zekâ jüri incelemesi yalnızca ilk turda; her bulgu en fazla
+      //    bir kez otomatik düzeltilir; düzeltilemeyen veya sürüp giden bulgularda kullanıcıya sorulur (döngü yok)
       while (true) {
         this.check();
+        const withAi = !this.state.aiReviewed;
         this.setLive({ stage: this.t("Kalite kontrol"), step: this.t("Tur {n}", { n: this.state.round + 1 }), status: "" });
-        const { report } = await api<{ report: any }>(`/api/projects/${this.projectId}/quality`, { method: "POST", json: { withAi: true } });
+        const { report } = await api<{ report: any }>(`/api/projects/${this.projectId}/quality`, { method: "POST", json: { withAi } });
+        if (withAi) this.state = { ...this.state, aiReviewed: true };
         const score = Number(report?.score ?? 0);
         const issues: IssueLike[] = report?.report?.issues ?? [];
         this.state = { ...this.state, score };
         this.log(this.t("Kalite puanı: {s} ({n} bulgu)", { s: score, n: issues.length }));
-        const plan = planFixes(issues);
-        if (score >= TARGET_SCORE || this.state.round >= MAX_FIX_ROUNDS) {
-          const note = score >= TARGET_SCORE ? "" : plan.dataPending ? this.t("85 hedefine ulaşmak için gerçek araştırma verisinin girilmesi gerekiyor ([VERİ GİRİLECEK] alanları); veriler uydurulmadı.") : this.t("3 düzeltme turundan sonra puan {s}; kalan bulgular kalite raporunda.", { s: score });
-          this.state = { ...this.state, status: "done", phase: "done", finishedAt: new Date().toISOString(), note };
-          this.log(score >= TARGET_SCORE ? this.t("Çalışma tamamlandı ve teslim edildi.") : this.t("Çalışma tamamlandı; hedef puana ulaşılamadı."));
+        const next = decideNext(score, issues, this.state);
+        if (next.kind === "done") {
+          const note = score >= TARGET_SCORE ? "" : this.t("Puan {s}; kalan bulgular sizin onayınızla olduğu gibi bırakıldı.", { s: score });
+          this.state = { ...this.state, status: "done", phase: "done", pending: [], finishedAt: new Date().toISOString(), note };
+          this.log(score >= TARGET_SCORE ? this.t("Çalışma tamamlandı ve teslim edildi.") : this.t("Çalışma tamamlandı; kalan bulgular onayınızla bırakıldı."));
+          await this.save();
+          this.emit();
+          return;
+        }
+        if (next.kind === "review") {
+          this.state = { ...this.state, status: "review", pending: next.pending };
+          this.log(this.t("Otomatik düzeltilemeyen {n} bulgu var; hangilerinin düzeltileceğini seçmeniz bekleniyor.", { n: next.pending.length }));
           await this.save();
           this.emit();
           return;
         }
         // Düzeltmeler
-        this.state = { ...this.state, phase: "fix", round: this.state.round + 1 };
+        const plan = next.plan;
+        this.state = { ...this.state, phase: "fix", round: this.state.round + 1, attempted: [...new Set([...(this.state.attempted ?? []), ...next.keys])], forceFix: [] };
         await this.save();
         const stages = await this.loadStages();
         const byKey = (k: string) => stages.find((s) => s.key === k);

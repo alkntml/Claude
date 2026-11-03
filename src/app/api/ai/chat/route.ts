@@ -4,7 +4,9 @@ import { z } from "zod";
 import { ApiError, assertDeleted, json, logError, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
-import { ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
+import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
+import { compactHistory, HISTORY_LIMIT } from "@/lib/ai/history";
+import type { Usage } from "@/lib/ai/types";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
 import { getSetting } from "@/lib/settings";
@@ -65,7 +67,7 @@ export const POST = route("ai.chat", async (req) => {
     if (error) throw error;
     conversationId = data.id;
   }
-  const { data: history } = await s.supabase.from("ai_messages").select("role, content, meta, created_at").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(16);
+  const { data: history } = await s.supabase.from("ai_messages").select("role, content, meta, created_at").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(HISTORY_LIMIT);
 
   // Otomatik kaynak taraması kararı (D75): soru/plan/düzeltmede tarama yok; yazımda yalnızca odak konu
   // mevcut kaynaklarla karşılanmıyorsa veya kapsam için kaynak azsa; aynı odakta kısa sürede tekrar yok.
@@ -86,8 +88,10 @@ export const POST = route("ai.chat", async (req) => {
   ].filter(Boolean).join("\n\n");
 
   const stagePrompt = stage ? stagePrompts[stage.key] : undefined;
-  const system = [sysSetting.text, OUTPUT_PROTOCOL, stagePrompt && `BÖLÜME ÖZEL TALİMAT:\n${stagePrompt}`].filter(Boolean).join("\n\n");
-  const messages = [...(history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string })), { role: "user" as const, content: userContent }];
+  // Sistem talimatı her istekte aynıdır (önbellek, D78); bölüme özel talimat değişken bağlama girer
+  const system = [sysSetting.text, OUTPUT_PROTOCOL].filter(Boolean).join("\n\n");
+  // Geçmişteki eski taslaklar kısa notla özetlenir; bölümün güncel metni zaten bağlamda (D78)
+  const messages = [...compactHistory((history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: userContent }];
 
   await s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "user", content: b.message, meta: { action: b.action, hasSelection: !!b.selection } });
 
@@ -169,22 +173,26 @@ export const POST = route("ai.chat", async (req) => {
       let answer = "";
       /** Yanıt yarıda kesilse (iptal/hata) bile harcanan istek sayılır (D51) */
       let usageRecorded = false;
-      let usage = { input: 0, output: 0 };
+      let usage: Usage = { input: 0, output: 0 };
       let stopReason: string | null = null;
       let servedModel = model.model;
       try {
         controller.enqueue(sse("phase", { phase: "write" }));
         const wholeWork = b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist" || b.action === "reviewer_response";
-        const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}`, otherChars: wholeWork ? 3500 : undefined });
+        // Bölümün tamamı seçili metin olarak geldiyse (ör. toplu düzeltme) mevcut metin bağlama ikinci kez eklenmez
+        const currentLen = String(stage?.content_text ?? "").length;
+        const omitCurrentText = !!b.selection && currentLen > 0 && b.selection.length >= currentLen * 0.8;
+        const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}`, otherChars: wholeWork ? 3500 : undefined, omitCurrentText, stagePrompt });
         if (b.action === "journal_checklist") {
           // Yüklenen dergi/kılavuz metni karşılaştırma için bağlama eklenir
           const { data: g } = bundle.project.guideline_file_id
             ? await s.supabase.from("files").select("name, extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", s.user.id).maybeSingle()
             : { data: null };
-          ctx.text += g?.extracted_text ? `\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ (${g.name})\n${String(g.extracted_text).slice(0, 20000)}` : "\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ\n(Kılavuz yüklenmemiş.)";
+          ctx.tail += g?.extracted_text ? `\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ (${g.name})\n${String(g.extracted_text).slice(0, 20000)}` : "\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ\n(Kılavuz yüklenmemiş.)";
         }
         controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
-        for await (const ev of streamWith(model, { system, context: ctx.text, messages, maxTokens: models.max_output_tokens, effort: models.effort }, req.signal)) {
+        const effort = ACTION_EFFORT[b.action] ?? models.effort;
+        for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages, maxTokens: models.max_output_tokens, effort }, req.signal)) {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
           else { usage = ev.usage; stopReason = ev.stopReason; servedModel = ev.model; }
         }
@@ -193,7 +201,7 @@ export const POST = route("ai.chat", async (req) => {
         if (memory.length) {
           await s.supabase.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: s.user.id, kind: m.kind, content: m.content, source: "ai" })));
         }
-        const cost = await estimateCost(servedModel, usage.input, usage.output);
+        const cost = await estimateCost(servedModel, usage.input, usage.output, usage);
         usageRecorded = true;
         await Promise.all([
           s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action, ...(searchedQueries.length ? { research: { focusKey, queries: searchedQueries } } : {}) } }),

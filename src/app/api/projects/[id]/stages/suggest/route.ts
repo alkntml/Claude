@@ -41,7 +41,7 @@ export const POST = route<Ctx>("stages.suggest", async (_req, { params }) => {
     effort: "medium",
     jsonSchema: SCHEMA,
   });
-  await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output), provider: model.provider, model: res.model, meta: { action: "guideline" } });
+  await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "guideline" } });
   try {
     return json({ suggestion: JSON.parse(res.text) });
   } catch {

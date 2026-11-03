@@ -113,8 +113,17 @@ export function blueprintContext(bp: Blueprint | null, stage?: { id: string; key
   const out = [`## ÇALIŞMANIN KURGUSU (öğrencinin ${bp.approvedAt ? "onayladığı" : "taslak"} planı; yazımı buna uygun sürdür, plan bir kaynak veya bulgu değildir)`, ...lines];
   const plans = bp.chapters.filter((c) => c.plan.trim() || c.words);
   if (plans.length) out.push("Bölüm planı:", ...plans.map((c) => `- ${c.title}${c.words ? ` (~${c.words} kelime)` : ""}${c.plan.trim() ? `: ${c.plan.trim()}` : ""}`));
-  const mine = stage ? bp.chapters.find((c) => c.stageId === stage.id) ?? bp.chapters.find((c) => c.key === stage.key) : null;
-  if (mine?.plan.trim()) out.push(`\nBU BÖLÜMÜN KURGUDAKİ PLANI: ${mine.plan.trim()}`);
+  const note = blueprintStageNote(bp, stage);
+  if (note) out.push(`\n${note}`);
+  return out.join("\n");
+}
+
+/** Yalnızca üzerinde çalışılan bölümün kurgu notu (planı ve hedef uzunluğu); önbelleğe alınmayan kısma girer */
+export function blueprintStageNote(bp: Blueprint | null, stage?: { id: string; key: string } | null): string {
+  if (!bp || !stage) return "";
+  const out: string[] = [];
+  const mine = bp.chapters.find((c) => c.stageId === stage.id) ?? bp.chapters.find((c) => c.key === stage.key);
+  if (mine?.plan.trim()) out.push(`BU BÖLÜMÜN KURGUDAKİ PLANI: ${mine.plan.trim()}`);
   if (mine?.words) out.push(`BU BÖLÜMÜN HEDEF UZUNLUĞU: bölümün tamamı yaklaşık ${mine.words} kelime olmalı (±%15). Bölümü alt başlıklara bölerken bu uzunluğu alt başlıklara dengeli dağıt; tek bir alt başlık yazıyorsan yalnızca ona düşen payı yaz. Bölümün mevcut metnini de hesaba kat ve hedefi aşma.`);
   return out.join("\n");
 }

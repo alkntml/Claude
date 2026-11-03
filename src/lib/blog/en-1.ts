@@ -141,7 +141,7 @@ Academiana plans a search strategy for your topic and searches more than 10 data
     title: "APA 7 Citation Guide: In-Text Citations and Reference Examples",
     description: "APA 7th edition rules for in-text citations, direct quotes, multiple authors, and reference list examples for journal articles, books, websites and theses.",
     keywords: ["APA 7 citation", "APA 7th edition", "APA reference examples", "in-text citation APA", "APA format"],
-    cta: { text: "Format citations automatically in 9 styles including APA 7 — change the style and every citation and the reference list update instantly.", label: "Automate my citations" },
+    cta: { text: "Format citations automatically in 10 styles including APA 7 — change the style and every citation and the reference list update instantly.", label: "Automate my citations" },
     body: `APA (American Psychological Association) style is the most widely used citation system in the social sciences and education. The current version is the 7th edition. Below are the rules you will need most often, with examples. If your institution’s guidelines differ, follow them.
 
 ## In-text citations
@@ -204,7 +204,7 @@ Smith, A. (2022). *Title of the thesis* [Master’s thesis, University Name]. Da
 
 ## Automatic APA 7 with Academiana
 
-In Academiana, citations are not typed as plain text; they are linked to the source. The reference list is generated from these links automatically, so deleting a citation removes it from the list too. You can switch between 9 styles — APA 7, MLA, Chicago, IEEE, Vancouver, Harvard, AMA and more — with one click, and the quality check finds missing reference details and mismatches for you.`,
+In Academiana, citations are not typed as plain text; they are linked to the source. The reference list is generated from these links automatically, so deleting a citation removes it from the list too. You can switch between 10 styles — APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver, Harvard and more — with one click, and the quality check finds missing reference details and mismatches for you.`,
   },
   "kaynakca-nasil-hazirlanir": {
     slug: "how-to-write-a-bibliography-citation-styles",
@@ -241,7 +241,7 @@ Used in engineering (IEEE) and medicine (Vancouver). Citations are numbered in s
 
 ### ISNAD
 
-A citation system developed in Türkiye and used especially in theology and parts of the social sciences, with footnote and in-text variants. Many Turkish journals require it. (Academiana does not offer ISNAD yet; if you submit to such a journal, check your reference list against its guidelines.)
+A citation system developed in Türkiye and used especially in theology and parts of the social sciences, with footnote and in-text variants. Many Turkish journals require it. Academiana supports the in-text (author-date) form of ISNAD 2nd edition; for journals using the footnote form, check your reference list against their guidelines.
 
 ## Checklist for a good reference list
 

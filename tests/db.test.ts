@@ -346,4 +346,8 @@ describe("anketler", () => {
     await db.query("insert into public.organizations (name, seats) values ('Sınırlı', 5)");
     await expectError(db.query("insert into public.organizations (name, seats) values ('Hatalı', 0)"), /check/);
   });
+  it("ISNAD atıf stili kullanılabilir; paket özellik metni 10 stil (D73)", async () => {
+    await db.query("insert into public.projects (user_id, title, work_type, citation_style) values ($1, 'ISNAD çalışma', 'thesis', 'isnad')", [A]);
+    expect(await as(A, "select id from public.projects where citation_style = 'isnad'")).toHaveLength(1);
+  });
 });

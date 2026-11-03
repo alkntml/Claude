@@ -1,5 +1,5 @@
 export type CitationStyleId =
-  | "apa7" | "apa6" | "chicago" | "mla" | "harvard" | "vancouver" | "ieee" | "ama" | "turabian";
+  | "apa7" | "apa6" | "isnad" | "chicago" | "mla" | "harvard" | "vancouver" | "ieee" | "ama" | "turabian";
 
 export type ItemType =
   | "article-journal" | "book" | "chapter" | "paper-conference" | "thesis"

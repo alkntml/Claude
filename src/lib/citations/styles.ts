@@ -6,6 +6,7 @@ import {
 
 export const STYLES: Record<CitationStyleId, StyleMeta> = {
   apa7: { id: "apa7", label: "APA 7", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References" }, description: "American Psychological Association, 7. baskı" },
+  isnad: { id: "isnad", label: "ISNAD 2 (metin içi)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Bibliography" }, description: "İSNAD Atıf Sistemi, 2. edisyon, metin içi atıf (yazar-tarih)" },
   apa6: { id: "apa6", label: "APA 6", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References" }, description: "American Psychological Association, 6. baskı" },
   chicago: { id: "chicago", label: "Chicago (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References" }, description: "Chicago Manual of Style 17, yazar-tarih sistemi" },
   turabian: { id: "turabian", label: "Turabian (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Reference List" }, description: "Turabian 9, yazar-tarih (reference list) sistemi" },
@@ -126,6 +127,39 @@ function ieeeAuthors(authors: Person[], tm: Terms): string {
   return `${names.slice(0, -1).join(", ")}, ${tm.and} ${names[names.length - 1]}`;
 }
 
+/** ISNAD 2 kaynakça yazarları: “Soyadı, Ad”; iki yazar “ - ” ile; üç ve daha fazla yazarda ilk yazar + vd. */
+function isnadAuthors(authors: Person[], tm: Terms): string {
+  const names = authors.map(nameFamilyGiven);
+  if (names.length === 0) return "";
+  if (names.length === 1) return names[0];
+  if (names.length === 2) return `${names[0]} - ${names[1]}`;
+  return `${names[0]} ${tm.etal}`;
+}
+
+const SMALL_WORDS = new Set(["ve", "ile", "veya", "ya", "da", "de", "ki", "mi", "ama", "fakat", "a", "an", "the", "and", "or", "nor", "but", "of", "in", "on", "at", "to", "for", "by", "with", "from", "as", "vs."]);
+
+/**
+ * ISNAD başlık yazımı: her kelimenin ilk harfi büyük, bağlaçlar ve edatlar küçük (başta ve iki noktadan sonra büyük).
+ * Kısaltmalar (COVID-19, ABD) korunur; tamamı büyük harfle gelen başlıklar önce küçültülür.
+ */
+export function isnadTitleCase(title: string, locale: CiteLocale = "tr"): string {
+  const loc = locale === "tr" ? "tr" : "en";
+  let s = clean(title);
+  const letters = s.replace(/[^\p{L}]/gu, "");
+  // Tamamı büyük harfli başlık: kelimeler küçültülür; rakam içeren kısaltmalar (COVID-19) korunur
+  if (letters.length > 8 && letters === letters.toLocaleUpperCase(loc)) s = s.split(/(\s+)/).map((w) => (/\d/.test(w) ? w : w.toLocaleLowerCase(loc))).join("");
+  let capNext = true;
+  return s.split(/(\s+)/).map((w) => {
+    if (/^\s+$/.test(w) || !w) return w;
+    const bare = w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}.]+$/gu, "").toLocaleLowerCase(loc);
+    const keepSmall = !capNext && SMALL_WORDS.has(bare);
+    capNext = /[:.?!]$/.test(w);
+    if (keepSmall) return w.toLocaleLowerCase(loc);
+    // Kelimenin içinde büyük harf varsa (kısaltma, özel ad) olduğu gibi bırak; yalnızca ilk harfi büyüt
+    return w.replace(/\p{L}/u, (c) => c.toLocaleUpperCase(loc));
+  }).join("");
+}
+
 // ---------------------------------------------------------------------------
 // Motor
 // ---------------------------------------------------------------------------
@@ -182,7 +216,9 @@ export class CitationEngine {
   }
 
   private yearText(it: CitationItem): string {
-    return `${it.year ?? this.tm.nd}${this.suffix.get(it.id) ?? ""}`;
+    // ISNAD: tarihsiz eserler “ts.” (en: “n.d.”)
+    const nd = this.style === "isnad" && this.locale === "tr" ? "ts." : this.tm.nd;
+    return `${it.year ?? nd}${this.suffix.get(it.id) ?? ""}`;
   }
 
   private locatorText(locator: string | null | undefined, style: "apa" | "harvard" | "chicago" | "mla" | "numeric"): string {
@@ -225,6 +261,11 @@ export class CitationEngine {
         if (fam.length === 1) return fam[0];
         if (fam.length === 2) return `${fam[0]} ${this.tm.and} ${fam[1]}`;
         return etal;
+      case "isnad":
+        // ISNAD 2 metin içi: (Demir - Aksoy, 2022), üç ve daha fazla yazarda (Lee vd., 2020)
+        if (fam.length === 1) return fam[0];
+        if (fam.length === 2) return narrative ? `${fam[0]} ${this.tm.and} ${fam[1]}` : `${fam[0]} - ${fam[1]}`;
+        return etal;
       default:
         return fam[0];
     }
@@ -261,8 +302,9 @@ export class CitationEngine {
       return [t(`(${parts.join("; ")}${loc ? `${parts[0] ? " " : ""}${loc}` : ""})`)];
     }
 
-    const sep = this.style.startsWith("apa") || this.style === "harvard" ? ", " : " ";
-    const locStyle = this.style === "chicago" || this.style === "turabian" ? "chicago" : this.style === "harvard" ? "harvard" : "apa";
+    const sep = this.style.startsWith("apa") || this.style === "harvard" || this.style === "isnad" ? ", " : " ";
+    // ISNAD metin içi sayfa: (Kaya, 2021, 45) — “s.” yazılmaz
+    const locStyle = this.style === "chicago" || this.style === "turabian" || this.style === "isnad" ? "chicago" : this.style === "harvard" ? "harvard" : "apa";
     const loc = single ? this.locatorText(opts.locator, locStyle) : "";
 
     if (opts.narrative) {
@@ -325,6 +367,8 @@ export class CitationEngine {
       case "apa7":
       case "apa6":
         return mergeRich(this.apa(it));
+      case "isnad":
+        return mergeRich(this.isnad(it));
       case "chicago":
       case "turabian":
         return mergeRich(this.chicago(it));
@@ -512,6 +556,67 @@ export class CitationEngine {
     }
     const link = this.link(it, "plain");
     if (link) out.push(t(`${link}.`));
+    return trimEnd(out);
+  }
+
+  /**
+   * ISNAD 2. edisyon kaynakça girdisi (metin içi ve dipnotlu sürümlerde kaynakça aynıdır).
+   * Makale: Soyadı, Ad. “Başlık”. Dergi Cilt/Sayı (Yıl), sayfa. DOI
+   * Kitap:  Soyadı, Ad. Kitap Adı. Yayın Yeri: Yayınevi, Yıl.
+   */
+  private isnad(it: CitationItem): Rich {
+    const authors = isnadAuthors(it.authors, this.tm);
+    const year = this.yearText(it);
+    const title = stripEndPunct(isnadTitleCase(it.title, this.locale));
+    const out: Rich = [];
+    const quoted = ["article-journal", "chapter", "paper-conference", "webpage"].includes(it.type);
+    if (authors) out.push(t(`${endWith(authors, ".")} `));
+    if (quoted) out.push(t(`“${title}”. `));
+    else out.push(i(title), t(". "));
+    const place = clean(it.publisherPlace);
+    const pub = clean(it.publisher);
+    const placePubYear = () => {
+      const pp = [place && pub ? `${place}: ${pub}` : place || pub].filter(Boolean)[0];
+      return `${pp ? `${pp}, ` : ""}${year}.`;
+    };
+    const ed = this.locale === "tr" ? "ed." : "ed.";
+
+    switch (it.type) {
+      case "article-journal": {
+        if (it.containerTitle) out.push(i(isnadTitleCase(clean(it.containerTitle), this.locale)));
+        const vi = `${it.volume ? clean(it.volume) : ""}${it.issue ? `/${clean(it.issue)}` : ""}`;
+        out.push(t(`${vi ? ` ${vi}` : ""} (${year})`));
+        if (it.pages) out.push(t(`, ${pageRange(it.pages, "-")}`));
+        out.push(t(". "));
+        break;
+      }
+      case "chapter":
+      case "paper-conference": {
+        if (it.containerTitle) out.push(i(isnadTitleCase(clean(it.containerTitle), this.locale)), t(". "));
+        const eds = (it.editors ?? []).map(nameGivenFamily);
+        if (eds.length) out.push(t(`${ed} ${eds.join(" - ")}. `));
+        if (it.pages) out.push(t(`${pageRange(it.pages, "-")}. `));
+        out.push(t(`${placePubYear()} `));
+        break;
+      }
+      case "thesis": {
+        const inst = clean(it.institution ?? it.publisher);
+        out.push(t(`${place ? `${place}: ` : ""}${inst ? `${inst}, ` : ""}${isnadTitleCase(this.thesisLabel(it), this.locale)}, ${year}. `));
+        break;
+      }
+      case "webpage": {
+        if (it.containerTitle) out.push(t(`${clean(it.containerTitle)}. `));
+        if (it.year) out.push(t(`${year}. `));
+        if (it.accessed) out.push(t(`${this.locale === "tr" ? "Erişim" : "Accessed"} ${this.fmtDate(it.accessed)}. `));
+        break;
+      }
+      default:
+        if (it.edition) out.push(t(`${clean(it.edition)}. ${this.locale === "tr" ? "Baskı" : "ed"}. `));
+        out.push(t(`${placePubYear()} `));
+    }
+    const doi = normalizeDoi(it.doi);
+    if (doi) out.push(t(doiUrl(doi)));
+    else if (it.url) out.push(t(it.url));
     return trimEnd(out);
   }
 

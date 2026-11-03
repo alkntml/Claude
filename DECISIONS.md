@@ -319,3 +319,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Dürüstlük: tümü tek bir KURGUSAL çalışma üzerinden; kaynaklar/yazarlar kurgusal ve DOI’siz (gerçek yayına işaret etmez), sayfanın başında açıkça belirtilir. İstatistik tabloları (Cronbach α, korelasyon, t testi), grafik ve atıf biçimleri elle yazılmaz: sabit tohumlu örnek veri setinden (N = 120) sitenin kendi motorlarıyla (`runAnalysis`, `buildChart` + `renderChartSvg`, `CitationEngine`) canlı üretilir; özet/abstract ve sunumdaki sayılar bu sonuçlardan gelir. Atıf örneğinde 9 stil arasında geçiş yapılabilir.
 - İçerik `src/lib/samples.ts` ({tr,en}), görünüm `components/samples/samples-view.tsx`. Menüde “Örnekler”, altbilgide “Örnek çıktılar”, ana sayfa ve fiyatlar altında bağlantı; site haritası ve SEO kayıtları eklendi.
 - Ayrıca düzeltildi: sistemde olmayan ISNAD stili, “desteklenen stiller” listelerinden (ana sayfa karşılaştırması, SSS, yapılandırılmış veri, blog) çıkarıldı.
+
+### D73 — ISNAD 2 (metin içi) atıf stili
+- Yeni stil `isnad` (yazar-tarih ailesi), toplam 10 stil. İSNAD Atıf Sistemi 2. edisyonun metin içi biçimi: metin içinde (Kaya, 2021, 45), iki yazar (Demir - Aksoy, 2022), üç ve daha fazla (Lee vd., 2020); anlatı içinde “Demir ve Aksoy (2022)”; tarihsiz “ts.”.
+- Kaynakça: Makale “Soyadı, Ad. “Başlık”. Dergi Cilt/Sayı (Yıl), sayfa. DOI”; kitap “Soyadı, Ad. Kitap Adı. Yer: Yayınevi, Yıl.”; bölüm “… Kitap. ed. Ad Soyad. sayfa. Yer: Yayınevi, Yıl.”; tez “… Yer: Kurum, Yüksek Lisans Tezi, Yıl.”; web “… Site. Erişim gün ay yıl. URL”. İki yazar “ - ” ile, üç ve daha fazla yazarda ilk yazar + vd. Başlıklar ISNAD’a göre kelime başları büyük (`isnadTitleCase`; bağlaçlar küçük, rakamlı kısaltmalar korunur).
+- Dipnotlu ISNAD biçimi yok (editörde dipnot altyapısı gerekir); blog ve SSS bunu belirtir.
+- Migration 19: `citation_style` enum’una `isnad`; paket kartı metni “10 atıf stili ve otomatik kaynakça”. Sitedeki “9 stil” ifadeleri 10’a çıkarıldı.

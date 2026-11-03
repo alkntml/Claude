@@ -148,7 +148,7 @@ Academiana, yazdığınız konu için arama stratejisini planlar ve 10’dan faz
     category: "Kaynak ve atıf",
     keywords: ["APA 7 kuralları", "APA kaynak gösterme", "APA 7 kaynakça örnekleri", "metin içi atıf"],
     date: "2026-11-02",
-    cta: { text: "Atıfları APA 7 dahil 9 stilde otomatik biçimlendirin; stili değiştirdiğinizde bütün atıflar ve kaynakça kendiliğinden dönüşür.", href: "/kayit", label: "Atıfları otomatik yap" },
+    cta: { text: "Atıfları APA 7 dahil 10 stilde otomatik biçimlendirin; stili değiştirdiğinizde bütün atıflar ve kaynakça kendiliğinden dönüşür.", href: "/kayit", label: "Atıfları otomatik yap" },
     body: `APA (American Psychological Association) stili, sosyal bilimlerde ve eğitim alanında en yaygın kullanılan atıf sistemidir. Güncel sürüm 7. baskıdır. Aşağıda en sık ihtiyaç duyulan kuralları örneklerle özetledik. Türkçe çalışmalarda bazı ifadeler Türkçeleştirilir; enstitünüzün kılavuzunda farklı bir uygulama varsa o geçerlidir.
 
 ## Metin içi atıf
@@ -211,7 +211,7 @@ Yılmaz, A. (2022). *Tezin başlığı* [Yüksek lisans tezi, Üniversite Adı].
 
 ## Academiana ile otomatik APA 7
 
-Academiana’da atıflar metne düz yazı olarak değil, kaynağa bağlı bir işaret olarak eklenir. Kaynakça bu işaretlerden otomatik oluşur; metinden bir atıfı sildiğinizde kaynakçadan da kalkar. APA 7, MLA, Chicago, IEEE, Vancouver, Harvard ve AMA dahil 9 stil arasında tek tıkla geçiş yapabilirsiniz. Kalite kontrolü, eksik künye bilgilerini ve metin–kaynakça uyumsuzluklarını sizin yerinize bulur.`,
+Academiana’da atıflar metne düz yazı olarak değil, kaynağa bağlı bir işaret olarak eklenir. Kaynakça bu işaretlerden otomatik oluşur; metinden bir atıfı sildiğinizde kaynakçadan da kalkar. APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver ve Harvard dahil 10 stil arasında tek tıkla geçiş yapabilirsiniz. Kalite kontrolü, eksik künye bilgilerini ve metin–kaynakça uyumsuzluklarını sizin yerinize bulur.`,
   },
   {
     slug: "kaynakca-nasil-hazirlanir",
@@ -250,7 +250,7 @@ Mühendislik (IEEE) ve tıp (Vancouver) alanlarında kullanılır. Atıflar kö�
 
 ### ISNAD
 
-Türkiye’de özellikle ilahiyat ve sosyal bilimlerin bazı alanlarında kullanılan bir atıf sistemidir. Dipnotlu ve metin içi olmak üzere iki biçimi vardır. Türkiye’deki pek çok dergi ISNAD’ı zorunlu tutar. (Academiana’da şu an ISNAD stili yoktur; bu dergilere gönderecekseniz kaynakçayı dergi kılavuzuna göre kontrol edin.)
+Türkiye’de özellikle ilahiyat ve sosyal bilimlerin bazı alanlarında kullanılan bir atıf sistemidir. Dipnotlu ve metin içi olmak üzere iki biçimi vardır. Türkiye’deki pek çok dergi ISNAD’ı zorunlu tutar. Academiana, ISNAD 2. edisyonun metin içi (yazar-tarih) biçimini destekler; dipnotlu biçim kullanan dergilerde kaynakçayı dergi kılavuzuyla karşılaştırın.
 
 ## İyi bir kaynakça için kontrol listesi
 

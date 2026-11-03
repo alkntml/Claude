@@ -92,6 +92,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
+- **ISNAD 2 atıf stili (D73):** metin içi biçim; toplam 10 stil (migration 19)
 - **Örnek çıktılar (D72):** /ornekler; 15 hizmetin örneği, kurgusal çalışma üzerinden; tablo/grafik/atıflar sitenin motorlarıyla canlı üretilir
 - **Akademik Ekip (D70):** %30 indirim, en az 3 kişi, kurum lisansında kişi sınırı yok (migration 18)
 - **Kurguda hedef uzunluk (D68, D69):** toplam kelime (sayfa yalnızca yaklaşık bilgi); bölümlere otomatik kelime dağıtımı (düzenlenebilir); asistan ve alt başlıklarla toplu yazım bu hedeflere göre yazar; sol menüde yazılan / hedef kelime
@@ -107,7 +108,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 199 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 205 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

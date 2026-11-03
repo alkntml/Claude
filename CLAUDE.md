@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 199 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 205 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -49,7 +49,7 @@ src/app/                 Sayfalar + API rotaları
   api/                   REST uçları (aşağıda)
 src/components/          landing, dashboard, workspace, admin, share, ui
 src/lib/
-  citations/             Atıf motoru (9 stil), checks.ts (eksik künye, yinelenen, tutarlılık)
+  citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık)
   sources/               providers.ts (10 veri tabanı), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
   research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme
   ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza), prompts

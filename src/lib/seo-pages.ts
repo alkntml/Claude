@@ -39,8 +39,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   "/ornekler": {
     title: { tr: "Örnek Çıktılar — Tez, Kaynakça, İstatistik ve Daha Fazlası | Academiana", en: "Sample Outputs — Thesis, References, Statistics and More | Academiana" },
     description: {
-      tr: "Academiana’nın her hizmetinden örnek: çalışma kurgusu, doğrulanmış kaynaklar, atıflı bölüm, 9 atıf stili, APA tabloları, grafik, anket, savunma provası ve Word çıktısı.",
-      en: "A sample of every Academiana service: study blueprint, verified sources, cited drafts, 9 citation styles, APA tables, charts, surveys, defence practice and Word export.",
+      tr: "Academiana’nın her hizmetinden örnek: çalışma kurgusu, doğrulanmış kaynaklar, atıflı bölüm, 10 atıf stili, APA tabloları, grafik, anket, savunma provası ve Word çıktısı.",
+      en: "A sample of every Academiana service: study blueprint, verified sources, cited drafts, 10 citation styles, APA tables, charts, surveys, defence practice and Word export.",
     },
     keywords: { tr: ["tez örneği", "APA tablo örneği", "kaynakça örneği", "akademik yazım örneği", "Academiana örnek"], en: ["thesis example", "APA table example", "reference list example", "academic writing sample", "Academiana sample"] },
     tagline: { tr: "Ne elde edeceğinizi görün", en: "See what you get" },

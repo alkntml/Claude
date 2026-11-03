@@ -142,6 +142,39 @@ describe("other author-date styles", () => {
   });
 });
 
+describe("ISNAD 2 (metin içi)", () => {
+  const items: CitationItem[] = [
+    { id: "k1", type: "article-journal", title: "Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme", authors: [{ family: "Kaya", given: "Elif" }], year: 2021, containerTitle: "Psikoloji Dergisi", volume: "12", issue: "3", pages: "45-62", doi: "10.1234/abc" },
+    { id: "k2", type: "article-journal", title: "Gece ekran kullanımı ve uyku kalitesi: bir tarama çalışması", authors: [{ family: "Demir", given: "Ali" }, { family: "Aksoy", given: "Merve" }], year: 2022, containerTitle: "Sağlık Dergisi", volume: "8", pages: "101-118" },
+    { id: "k3", type: "book", title: "Öz düzenleme ve öğrenme", authors: [{ family: "Yılmaz", given: "Burak" }], year: 2019, publisher: "Pegem Akademi", publisherPlace: "Ankara" },
+    { id: "k4", type: "thesis", title: "ERGENLERDE COVID-19 KAYGISI", authors: [{ family: "Tan", given: "Ece" }], year: 2021, institution: "Hacettepe Üniversitesi", publisherPlace: "Ankara", genre: "master" },
+    { ...article, id: "k5" },
+  ];
+  const e = new CitationEngine("isnad", items, { locale: "tr" });
+  it("makale: “Başlık”. Dergi Cilt/Sayı (Yıl), sayfa. DOI", () => {
+    expect(plain(e.entry(items[0]))).toBe("Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Psikoloji Dergisi 12/3 (2021), 45-62. https://doi.org/10.1234/abc");
+    expect(plain(e.entry(items[1]))).toBe("Demir, Ali - Aksoy, Merve. “Gece Ekran Kullanımı ve Uyku Kalitesi: Bir Tarama Çalışması”. Sağlık Dergisi 8 (2022), 101-118.");
+  });
+  it("kitap ve tez", () => {
+    expect(plain(e.entry(items[2]))).toBe("Yılmaz, Burak. Öz Düzenleme ve Öğrenme. Ankara: Pegem Akademi, 2019.");
+    expect(e.entry(items[2]).filter((x) => x.italic).map((x) => x.text)).toEqual(["Öz Düzenleme ve Öğrenme"]);
+    expect(plain(e.entry(items[3]))).toBe("Tan, Ece. Ergenlerde COVID-19 Kaygısı. Ankara: Hacettepe Üniversitesi, Yüksek Lisans Tezi, 2021.");
+  });
+  it("üç ve daha fazla yazarda vd.", () => {
+    expect(plain(e.entry(items[4]))).toMatch(/^Doron, Guy vd\. “Relationship Obsessive Compulsive Disorder: A Review”\./);
+    expect(plain(e.cite(["k5"]))).toBe("(Doron vd., 2014)");
+  });
+  it("metin içi: (Kaya, 2021, 45), (Demir - Aksoy, 2022), anlatı içinde “ve”", () => {
+    expect(plain(e.cite(["k1"], { locator: "45" }))).toBe("(Kaya, 2021, 45)");
+    expect(plain(e.cite(["k2"]))).toBe("(Demir - Aksoy, 2022)");
+    expect(plain(e.cite(["k1", "k2"]))).toBe("(Kaya, 2021; Demir - Aksoy, 2022)");
+    expect(plain(e.cite(["k2"], { narrative: true }))).toBe("Demir ve Aksoy (2022)");
+  });
+  it("kaynakça alfabetik", () => {
+    expect(e.bibliography().map((b) => b.id)).toEqual(["k2", "k5", "k1", "k4", "k3"]);
+  });
+});
+
 describe("checks", () => {
   it("detects missing fields", () => {
     expect(missingFields({ ...single, volume: null, pages: "" })).toEqual(["volume", "pages", "doi"]);

@@ -123,8 +123,8 @@ export const FAQ: FaqGroup[] = [
         id: "stiller",
         q: { tr: "Hangi atıf stillerini destekliyor? Sonradan değiştirebilir miyim?", en: "Which citation styles are supported? Can I change later?" },
         a: {
-          tr: "APA 7, APA 6, MLA 9, Chicago (yazar-tarih), Turabian, Harvard, Vancouver, IEEE ve AMA. İstediğiniz an değiştirebilirsiniz: atıflar metne yazı olarak değil kaynağa bağlı öğe olarak eklendiği için tüm metin içi atıflar ve kaynakça anında yeni stile dönüşür. Kaynakça yalnızca metinde atıf yapılan kaynaklardan otomatik oluşur.",
-          en: "APA 7, APA 6, MLA 9, Chicago (author-date), Turabian, Harvard, Vancouver, IEEE and AMA. You can switch at any time: citations are inserted as elements linked to the source, not as plain text, so all in-text citations and the reference list switch instantly. The reference list is built automatically from the sources cited in the text.",
+          tr: "APA 7, APA 6, ISNAD 2 (metin içi), MLA 9, Chicago (yazar-tarih), Turabian, Harvard, Vancouver, IEEE ve AMA. İstediğiniz an değiştirebilirsiniz: atıflar metne yazı olarak değil kaynağa bağlı öğe olarak eklendiği için tüm metin içi atıflar ve kaynakça anında yeni stile dönüşür. Kaynakça yalnızca metinde atıf yapılan kaynaklardan otomatik oluşur.",
+          en: "APA 7, APA 6, ISNAD 2 (in-text), MLA 9, Chicago (author-date), Turabian, Harvard, Vancouver, IEEE and AMA. You can switch at any time: citations are inserted as elements linked to the source, not as plain text, so all in-text citations and the reference list switch instantly. The reference list is built automatically from the sources cited in the text.",
         },
       },
       {
@@ -193,8 +193,8 @@ export const FAQ: FaqGroup[] = [
         id: "dogrudan-alinti",
         q: { tr: "Doğrudan alıntılar nasıl gösteriliyor?", en: "How are direct quotations handled?" },
         a: {
-          tr: "Kaynaktan birebir aktarılan her ifade tırnak içinde, yazar ve yıl bilgisiyle verilir; kaynağın tam metni okunduysa sayfa numarası da eklenir; uzun alıntılar seçtiğiniz atıf stilinin (APA 7, MLA vb.) blok alıntı kuralına göre biçimlenir. Böylece benzerlik raporunda çıkan alıntılar usulüne uygun gösterilmiş olur.",
-          en: "Every phrase taken verbatim from a source is given in quotation marks with author and year, plus the page number when the full text was read; long quotations follow the block-quote rule of your chosen citation style (APA 7, MLA, etc.). Quotations that appear in a similarity report are therefore properly attributed.",
+          tr: "Kaynaktan birebir aktarılan her ifade tırnak içinde, yazar ve yıl bilgisiyle verilir; kaynağın tam metni okunduysa sayfa numarası da eklenir; uzun alıntılar seçtiğiniz atıf stilinin (APA 7, ISNAD vb.) blok alıntı kuralına göre biçimlenir. Böylece benzerlik raporunda çıkan alıntılar usulüne uygun gösterilmiş olur.",
+          en: "Every phrase taken verbatim from a source is given in quotation marks with author and year, plus the page number when the full text was read; long quotations follow the block-quote rule of your chosen citation style (APA 7, ISNAD, etc.). Quotations that appear in a similarity report are therefore properly attributed.",
         },
       },
     ],

@@ -37,7 +37,7 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
           <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("Uydurma kaynak yok")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("10 akademik veri tabanı")}</li>
-            <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("9 atıf stili")}</li>
+            <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("10 atıf stili")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("KVKK uyumlu")}</li>
           </ul>
         </div>

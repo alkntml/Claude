@@ -60,11 +60,11 @@ export function softwareLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
     publisher: { "@id": ORG_ID },
     image: `${SITE_URL}/icons/icon-512.png`,
     description: en
-      ? "Write theses, research papers, literature reviews and research proposals step by step with verified academic sources, automatic citations in 9 styles, statistics, surveys and charts."
-      : "Tez, makale, literatür taraması ve araştırma önerisini doğrulanmış akademik kaynaklarla adım adım yazın; 9 stilde otomatik atıf, istatistik, anket ve grafik.",
+      ? "Write theses, research papers, literature reviews and research proposals step by step with verified academic sources, automatic citations in 10 styles, statistics, surveys and charts."
+      : "Tez, makale, literatür taraması ve araştırma önerisini doğrulanmış akademik kaynaklarla adım adım yazın; 10 stilde otomatik atıf, istatistik, anket ve grafik.",
     featureList: en
-      ? ["Search 10+ academic databases (OpenAlex, Crossref, PubMed, DergiPark…)", "Source verification via DOI — no fabricated references", "Automatic citations and bibliography (APA 7, MLA, Chicago, IEEE, Vancouver, Harvard, AMA…)", "Section-by-section thesis roadmap with completion checks", "Statistical analysis with APA tables (t-test, ANOVA, regression…)", "Survey builder with Likert scales", "APA-style charts", "Defence rehearsal and reviewer response assistant", "Word and PDF export"]
-      : ["10’dan fazla akademik veri tabanında arama (OpenAlex, Crossref, PubMed, DergiPark…)", "DOI ile kaynak doğrulama — uydurma kaynak yok", "Otomatik atıf ve kaynakça (APA 7, MLA, Chicago, IEEE, Vancouver, Harvard, AMA…)", "Bölüm bölüm tez yol haritası ve bölüm kontrolü", "APA tablolu istatistik analizi (t testi, ANOVA, regresyon…)", "Likert ölçekli anket oluşturucu", "APA tarzı grafikler", "Savunma provası ve hakem cevabı asistanı", "Word ve PDF çıktısı"],
+      ? ["Search 10+ academic databases (OpenAlex, Crossref, PubMed, DergiPark…)", "Source verification via DOI — no fabricated references", "Automatic citations and bibliography (APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver, Harvard…)", "Section-by-section thesis roadmap with completion checks", "Statistical analysis with APA tables (t-test, ANOVA, regression…)", "Survey builder with Likert scales", "APA-style charts", "Defence rehearsal and reviewer response assistant", "Word and PDF export"]
+      : ["10’dan fazla akademik veri tabanında arama (OpenAlex, Crossref, PubMed, DergiPark…)", "DOI ile kaynak doğrulama — uydurma kaynak yok", "Otomatik atıf ve kaynakça (APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver, Harvard…)", "Bölüm bölüm tez yol haritası ve bölüm kontrolü", "APA tablolu istatistik analizi (t testi, ANOVA, regresyon…)", "Likert ölçekli anket oluşturucu", "APA tarzı grafikler", "Savunma provası ve hakem cevabı asistanı", "Word ve PDF çıktısı"],
     offers: prices.length
       ? { "@type": "AggregateOffer", priceCurrency: currency, lowPrice: Math.min(...prices), highPrice: Math.max(...prices), offerCount: plans.length, url: absoluteUrl(localizedPath("/fiyatlar", locale)) }
       : undefined,

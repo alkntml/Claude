@@ -56,7 +56,7 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
             <div><label className="label">{t("Ad soyad")}</label><input className="input" value={name} onChange={(e) => setName(e.target.value)} /></div>
             <div><label className="label">{t("Kurum")}</label><input className="input" value={inst} onChange={(e) => setInst(e.target.value)} /></div>
             <div><label className="label">{t("Varsayılan atıf stili")}</label><select className="input" value={style} onChange={(e) => setStyle(e.target.value)}>{STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}</select></div>
-            <Button onClick={save} loading={saving}>{t("Kaydet")}</Button>
+            <div className="flex flex-wrap items-center gap-3"><Button onClick={save} loading={saving}>{t("Kaydet")}</Button><a href="/sifre-yenile" className="text-sm font-medium text-brand-600 hover:underline">{t("Şifremi değiştir")}</a></div>
           </div>
         </section>
         <section className="card p-6">

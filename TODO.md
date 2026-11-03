@@ -14,6 +14,8 @@
 - [ ] Supabase SQL Editor’de migration 17’yi çalıştır (`20261112000017_price_increase.sql`: %50 fiyat artışı)
 - [ ] Supabase SQL Editor’de migration 18’i çalıştır (`20261113000018_unlimited_seats.sql`: kurum lisansında sınırsız kişi)
 - [ ] Supabase SQL Editor’de migration 19’u çalıştır (`20261114000019_isnad.sql`: ISNAD atıf stili)
+- [ ] Supabase → Authentication → Emails → “Reset Password” şablonunu Türkçeleştir; bağlantıyı `{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` yap (her cihazda çalışsın)
+- [ ] Pazarlama öncesi: Supabase → Authentication → SMTP ile kendi e-posta sağlayıcısını bağla (varsayılan gönderim saatlik birkaç e-postayla sınırlı)
 - [ ] İleride: ISNAD dipnotlu biçim (editörde dipnot altyapısı gerekir)
 - [ ] Ödeme gelince: Yönetim → Kullanıcılar’dan kullanıcının paketini elle değiştir
 - [ ] Alan adı: 2026-11-03’te hâlâ “Invalid Configuration” ise hosting.com.tr desteğine TRABIS iletimini sorun; gerekirse B planı (hosting.com.tr DNS + A @ 216.198.79.1, CNAME www → 4d8ff7a9ca75c5bb.vercel-dns-017.com)

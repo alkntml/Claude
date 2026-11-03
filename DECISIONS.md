@@ -325,3 +325,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Kaynakça: Makale “Soyadı, Ad. “Başlık”. Dergi Cilt/Sayı (Yıl), sayfa. DOI”; kitap “Soyadı, Ad. Kitap Adı. Yer: Yayınevi, Yıl.”; bölüm “… Kitap. ed. Ad Soyad. sayfa. Yer: Yayınevi, Yıl.”; tez “… Yer: Kurum, Yüksek Lisans Tezi, Yıl.”; web “… Site. Erişim gün ay yıl. URL”. İki yazar “ - ” ile, üç ve daha fazla yazarda ilk yazar + vd. Başlıklar ISNAD’a göre kelime başları büyük (`isnadTitleCase`; bağlaçlar küçük, rakamlı kısaltmalar korunur).
 - Dipnotlu ISNAD biçimi yok (editörde dipnot altyapısı gerekir); blog ve SSS bunu belirtir.
 - Migration 19: `citation_style` enum’una `isnad`; paket kartı metni “10 atıf stili ve otomatik kaynakça”. Sitedeki “9 stil” ifadeleri 10’a çıkarıldı.
+
+### D74 — Şifremi unuttum / şifre yenileme
+- Giriş ekranında “Şifremi unuttum” → `/sifremi-unuttum` (e-posta; `resetPasswordForEmail`, dönüş `/api/auth/callback?next=/sifre-yenile`). Hesabın var olup olmadığı açık edilmez; yalnızca sık deneme hatası gösterilir.
+- `/sifre-yenile`: bağlantıyla açılan oturumda yeni şifre (en az 8, tekrar alanı) → `updateUser`; giriş yapmış kullanıcı da Hesap → “Şifremi değiştir” ile aynı ekranı kullanır. Oturum yoksa “bağlantının süresi dolmuş” + yeni bağlantı iste.
+- Geçersiz bağlantı: callback `/sifremi-unuttum?hata=baglanti`’ya döner. Farklı cihazda açılan bağlantılar için `GET /api/auth/confirm` (token_hash + verifyOtp) eklendi; Supabase “Reset Password” şablonu bu adrese yönlendirilirse bağlantı her cihazda çalışır.
+- Sayfalar arama motorlarına kapalı (noindex).

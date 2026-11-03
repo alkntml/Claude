@@ -20,5 +20,6 @@ export async function GET(req: Request) {
       return NextResponse.redirect(new URL(safeNext, url.origin));
     }
   }
-  return NextResponse.redirect(new URL("/giris?hata=dogrulama", url.origin));
+  // Şifre yenileme bağlantısı geçersizse yeni bağlantı isteme sayfasına dön (D74)
+  return NextResponse.redirect(new URL(safeNext === "/sifre-yenile" ? "/sifremi-unuttum?hata=baglanti" : "/giris?hata=dogrulama", url.origin));
 }

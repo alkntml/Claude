@@ -92,6 +92,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
+- **Şifremi unuttum (D74):** /sifremi-unuttum, /sifre-yenile, Hesap → Şifremi değiştir; farklı cihaz için /api/auth/confirm
 - **ISNAD 2 atıf stili (D73):** metin içi biçim; toplam 10 stil (migration 19)
 - **Örnek çıktılar (D72):** /ornekler; 15 hizmetin örneği, kurgusal çalışma üzerinden; tablo/grafik/atıflar sitenin motorlarıyla canlı üretilir
 - **Akademik Ekip (D70):** %30 indirim, en az 3 kişi, kurum lisansında kişi sınırı yok (migration 18)

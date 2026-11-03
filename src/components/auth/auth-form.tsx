@@ -126,7 +126,7 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
                 )}
                 <div><label className="label" htmlFor="email">{t("E-posta")}</label><input id="email" type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></div>
                 <div>
-                  <label className="label" htmlFor="pw">{t("Şifre")}</label>
+                  <div className="flex items-baseline justify-between"><label className="label" htmlFor="pw">{t("Şifre")}</label>{mode === "login" && <Link href={`/sifremi-unuttum${email ? `?email=${encodeURIComponent(email)}` : ""}`} className="text-[12.5px] font-medium text-brand-600 hover:underline">{t("Şifremi unuttum")}</Link>}</div>
                   <div className="relative">
                     <input id="pw" type={show ? "text" : "password"} className="input pr-11" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={mode === "signup" ? 8 : undefined} autoComplete={mode === "login" ? "current-password" : "new-password"} />
                     <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-ink-700" aria-label={t("Şifreyi göster")}>{show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>

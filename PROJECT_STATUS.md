@@ -92,6 +92,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
+- **Kurguda hedef uzunluk (D68):** toplam kelime/sayfa; bölümlere otomatik kelime dağıtımı (düzenlenebilir); asistan ve alt başlıklarla toplu yazım bu hedeflere göre yazar; sol menüde yazılan / hedef kelime
 - **Kurgu modülü (D67):** çalışmanın başında tek ekranda araştırma planı (problem, amaç, sorular, yöntem, örneklem, veri, analiz, katkı + bölüm bölüm plan); yapay zekâyla veya elle, farklı girişle yeniden kurgulama, alan bazında yeniden öneri; onaydan sonra başlık → bölümler; yazım bu plana göre
 - **Anketlerde yapay zekâ (D66):** amaçtan otomatik anket taslağı, talimatla düzenleme (geri alınabilir), tek soruyu iyileştirme / madde önerme, hakem gözüyle inceleme ve tek tıkla öneri uygulama, ücretsiz hızlı kontrol ve tahmini süre
 - **Gerçek silme (D65):** çalışma, kaynak, dosya, anket, hafıza, yorum, sürüm ve asistan sohbeti için onaylı silme düğmesi; sunucu satırın veritabanından gerçekten silindiğini doğrular, alt kayıtlar da kalkar
@@ -104,7 +105,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 197 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 198 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

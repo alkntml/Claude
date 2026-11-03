@@ -19,6 +19,8 @@ interface Props {
   onClose: () => void;
   projectId: string;
   stage: { id: string; title: string } | null;
+  /** Kurgudaki bölüm hedefi (kelime); alt başlıklara eşit pay edilir (D67) */
+  targetWords?: number;
   existingHeadings: string[];
   onInsert: (markdown: string, sourceMap: Record<string, string>) => void;
   onSourcesAdded: (rows: any[]) => void;
@@ -28,7 +30,7 @@ interface Props {
  * Bölümü alt başlıklarla yazar: her alt başlık için ayrı istek gönderilir; asistan o alt konu için
  * kaynak tarar, açık erişimli tam metinleri okur ve yazar. Bitince özet gösterilir.
  */
-export function OutlineWriter({ open, onClose, projectId, stage, existingHeadings, onInsert, onSourcesAdded }: Props) {
+export function OutlineWriter({ open, onClose, projectId, stage, targetWords = 0, existingHeadings, onInsert, onSourcesAdded }: Props) {
   const { t } = useT();
   const [text, setText] = useState("");
   const [repetitive, setRepetitive] = useState(false);
@@ -80,7 +82,7 @@ export function OutlineWriter({ open, onClose, projectId, stage, existingHeading
       try {
         await streamChat({
           projectId, stageId: stage.id, conversationId, action: "draft",
-          message: t("Bu bölümün yalnızca “{h}” alt başlığını yaz. Taslağı “## {h}” başlığıyla başlat; diğer alt başlıkları yazma. Bu alt konu için mevcut kaynaklar yetersizse yeni kaynak ara; tam metni okunan kaynaklardan aktarımlarda sayfa numarası ver. Önceki alt başlıklarda yazılanları tekrar etme, konuya yeniden giriş yapma ve alt başlığı özet cümlesiyle bitirme; yalnızca bu alt başlığa özgü yeni bilgiyi yaz.", { h: titles[i] }),
+          message: t("Bu bölümün yalnızca “{h}” alt başlığını yaz. Taslağı “## {h}” başlığıyla başlat; diğer alt başlıkları yazma. Bu alt konu için mevcut kaynaklar yetersizse yeni kaynak ara; tam metni okunan kaynaklardan aktarımlarda sayfa numarası ver. Önceki alt başlıklarda yazılanları tekrar etme, konuya yeniden giriş yapma ve alt başlığı özet cümlesiyle bitirme; yalnızca bu alt başlığa özgü yeni bilgiyi yaz.", { h: titles[i] }) + (targetWords > 0 ? ` ${t("Uzunluk: bu alt başlık yaklaşık {n} kelime olsun (bölüm hedefi ~{total} kelime, {k} alt başlığa bölünüyor).", { n: Math.max(100, Math.round(targetWords / titles.length / 10) * 10), total: targetWords, k: titles.length })}` : ""),
         }, abort.current.signal, (ev, data) => {
           if (ev === "phase") update(i, (x) => ({ ...x, phase: data.phase, seen: [...new Set([...(x.seen ?? []), data.phase as ChatPhase])] }));
           else if (ev === "meta") { conversationId = data.conversationId; map = data.sourceMap; }

@@ -76,7 +76,7 @@ function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); 
 interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string }
 
 export function Workspace(props: Props) {
-  const { t } = useT();
+  const { t, dl } = useT();
   const router = useRouter();
   const toast = useToast();
   const [project, setProject] = useState(props.project);
@@ -266,6 +266,8 @@ export function Workspace(props: Props) {
   // Başlangıç: kurgu (D67). Henüz yazılmamış ve kurgusu onaylanmamış çalışmada önce kurgu açılır; sonra başlık, sonra bölümler.
   const [bpOpen, setBpOpen] = useState(false);
   const bpApproved = !!project.context?.blueprint?.approvedAt;
+  // Kurgudaki bölüm hedef uzunlukları (D67)
+  const targetOf = (stageId: string): number => Number((project.context?.blueprint?.chapters ?? []).find((c: any) => c.stageId === stageId)?.words) || 0;
   useEffect(() => {
     let laterBp = false, later = false;
     try { laterBp = !!localStorage.getItem(`akademi:blueprint-later:${project.id}`); later = !!localStorage.getItem(`akademi:title-later:${project.id}`); } catch { /* yok */ }
@@ -547,7 +549,7 @@ export function Workspace(props: Props) {
               <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
                 <span className={cn("block truncate text-[14px] leading-tight lg:text-[13px]", sel ? "font-semibold text-ink-900" : "text-ink-700")}>{s.title}</span>
-                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
+                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
               </span>
               <button onClick={(e) => { e.stopPropagation(); removeStage(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-rose-50 hover:text-rose-500 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölümü sil")}><Trash2 className="h-3.5 w-3.5" /></button>
             </Reorder.Item>
@@ -681,7 +683,7 @@ export function Workspace(props: Props) {
 
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { setStages((l) => { const n = [...l]; n.splice(activeIndex + 1, 0, st); return n.map((x, i) => ({ ...x, position: i })); }); setAddStage(false); }} />
-      <OutlineWriter open={outline} onClose={() => setOutline(false)} projectId={project.id} stage={active && !isBibliography ? { id: active.id, title: active.title } : null} existingHeadings={active ? headings(active.content as JSONNode).filter((h) => h.level === 2).map((h) => h.text) : []} onInsert={(md, map) => insertRef.current(md, map, "append", { silent: true })} onSourcesAdded={addSources} />
+      <OutlineWriter open={outline} onClose={() => setOutline(false)} projectId={project.id} stage={active && !isBibliography ? { id: active.id, title: active.title } : null} targetWords={active ? targetOf(active.id) : 0} existingHeadings={active ? headings(active.content as JSONNode).filter((h) => h.level === 2).map((h) => h.text) : []} onInsert={(md, map) => insertRef.current(md, map, "append", { silent: true })} onSourcesAdded={addSources} />
       <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       {journalOpen && <JournalModal open onClose={() => setJournalOpen(false)} projectId={project.id} hasGuideline={!!project.guideline_file_id}

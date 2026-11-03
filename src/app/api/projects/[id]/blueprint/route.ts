@@ -15,7 +15,7 @@ export const POST = route<Ctx>("project.blueprint.ai", async (req, { params }) =
   const s = await requireUser();
   const { id } = await params;
   const b = await parseBody(req, z.discriminatedUnion("mode", [
-    z.object({ mode: z.literal("generate"), input: z.string().max(2000).default("") }),
+    z.object({ mode: z.literal("generate"), input: z.string().max(2000).default(""), targetWords: z.number().int().min(0).max(500000).default(0), wordsPerPage: z.number().int().min(150).max(600).optional() }),
     z.object({ mode: z.literal("field"), field: FIELD, instruction: z.string().max(500).optional(), blueprint: BlueprintSchema }),
   ]));
   const project = await requireProject(s, id);
@@ -25,7 +25,7 @@ export const POST = route<Ctx>("project.blueprint.ai", async (req, { params }) =
   try {
     if (b.mode === "generate") {
       const { data: stages } = await s.supabase.from("project_stages").select("id, key, title, description").eq("project_id", id).eq("user_id", s.user.id).order("position");
-      const out = await generateBlueprint(s.profile.plan_id, { project, stages: stages ?? [], input: b.input, previous: readBlueprint(project.context?.blueprint) });
+      const out = await generateBlueprint(s.profile.plan_id, { project, stages: stages ?? [], input: b.input, previous: readBlueprint(project.context?.blueprint), targetWords: b.targetWords, wordsPerPage: b.wordsPerPage });
       await record(out, "blueprint");
       return json({ blueprint: out.blueprint });
     }

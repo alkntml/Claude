@@ -1,6 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel, type Tier } from "@/lib/ai/registry";
-import { BLUEPRINT_FIELDS, BlueprintSchema, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
+import { BLUEPRINT_FIELDS, BlueprintSchema, countsForLength, distributeWords, pagesFor, WORDS_PER_PAGE, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
 import { GRANT_PROGRAMS, LEVEL_LABELS, METHODOLOGY_LABELS, stageDef, WORK_TYPES, type AcademicLevel, type Methodology } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -32,33 +32,46 @@ KURALLAR:
 const FIELD_PROPS = Object.fromEntries(BLUEPRINT_FIELDS.map((f) => [f.key, { type: "string" }]));
 
 /** Tüm kurguyu üretir (öğrencinin girişi varsa ona göre) */
-export async function generateBlueprint(planId: string, p: { project: any; stages: { id: string; key: string; title: string; description?: string | null }[]; input: string; previous?: Blueprint | null }) {
+export async function generateBlueprint(planId: string, p: { project: any; stages: { id: string; key: string; title: string; description?: string | null }[]; input: string; previous?: Blueprint | null; targetWords?: number; wordsPerPage?: number }) {
+  const wpp = p.wordsPerPage || WORDS_PER_PAGE;
+  const target = p.targetWords && p.targetWords > 0 ? p.targetWords : 0;
   const stages = p.stages.filter((s) => s.key !== "references");
   const schema = {
-    type: "object", additionalProperties: false, required: [...BLUEPRINT_FIELDS.map((f) => f.key), "questions", "chapters"],
+    type: "object", additionalProperties: false, required: [...BLUEPRINT_FIELDS.map((f) => f.key), "questions", "targetWords", "chapters"],
     properties: {
       ...FIELD_PROPS,
       questions: { type: "array", items: { type: "string" } },
-      chapters: { type: "array", items: { type: "object", additionalProperties: false, required: ["n", "plan"], properties: { n: { type: "integer" }, plan: { type: "string" } } } },
+      targetWords: { type: "integer" },
+      chapters: { type: "array", items: { type: "object", additionalProperties: false, required: ["n", "plan", "words"], properties: { n: { type: "integer" }, plan: { type: "string" }, words: { type: "integer" } } } },
     },
   };
-  const stageList = stages.map((s, i) => `${i + 1}. ${s.title} — ${stageDef(s.key)?.purpose ?? s.description ?? ""}`).join("\n");
+  const stageList = stages.map((s, i) => `${i + 1}. ${s.title}${countsForLength(s.key) ? "" : " [uzunluğa dahil değil: words = 0]"} — ${stageDef(s.key)?.purpose ?? s.description ?? ""}`).join("\n");
   const user = [
     projectInfo(p.project),
     p.input.trim() && `\nÖĞRENCİNİN KENDİ GİRİŞİ (önceliklidir; kurguyu buna göre kur):\n${p.input.trim()}`,
     p.previous && `\nÖnceki kurgu taslağı (öğrencinin girişiyle çelişmeyen kısımlarını koruyabilirsin):\n${JSON.stringify({ ...p.previous, chapters: undefined, input: undefined, approvedAt: undefined, updatedAt: undefined })}`,
+    target ? `\nHEDEF UZUNLUK (öğrencinin belirlediği, uy): toplam ${target} kelime (~${pagesFor(target, wpp)} sayfa; sayfa başına ~${wpp} kelime)` : `\nHEDEF UZUNLUK: öğrenci belirtmedi; çalışma türü ve seviyeye uygun, yaygın bir toplam kelime öner (sayfa başına ~${wpp} kelime).`,
     `\nÇALIŞMANIN DEĞİŞMEYECEK BÖLÜMLERİ (sıra numarasıyla):\n${stageList}`,
   ].filter(Boolean).join("\n");
   const out = await run(planId, "default", `${RULES(p.project.language)}
 GÖREV: Çalışmanın kurgusunu çıkar.
 - problem, aim, method, sample, data, analysis, contribution alanlarını doldur. Derleme/kuramsal çalışmada sample = kapsam ve dahil etme ölçütleri, data = veri tabanları ve arama stratejisi, analysis = sentez yöntemi.
 - questions: 2–5 araştırma sorusu veya hipotez (nicel çalışmada test edilebilir hipotez olabilir).
-- chapters: yukarıdaki HER bölüm için (n = sıra numarası) o bölümde neyin yazılacağını 1–2 cümleyle planla; bölüm ekleme/çıkarma yapma.`, user, schema, 8000);
+- targetWords: çalışmanın toplam hedef kelimesi (öğrenci belirlediyse aynısı).
+- chapters: yukarıdaki HER bölüm için (n = sıra numarası) words = o bölümün yaklaşık kelime sayısı (toplamı targetWords’e eşit olsun; bölümün akademik ağırlığına göre dağıt: kuramsal çerçeve/literatür, bulgular ve tartışma uzun; giriş, amaç, sorular kısa) ve plan = o bölümde neyin yazılacağı, 1–2 cümle. Kapsamı uzunluğa göre ayarla (uzun bölümde hangi alt konuların işleneceğini say; kısa bölümde öz tut). Bölüm ekleme/çıkarma yapma.`, user, schema, 8000);
   const d = out.data;
   const bp = BlueprintSchema.parse({
     ...Object.fromEntries(BLUEPRINT_FIELDS.map((f) => [f.key, String(d[f.key] ?? "").trim().slice(0, 2000)])),
     questions: (d.questions ?? []).map((x: unknown) => String(x).trim().slice(0, 500)).filter(Boolean).slice(0, 12),
-    chapters: stages.map((s, i) => ({ stageId: s.id, key: s.key, title: s.title, plan: String((d.chapters ?? []).find((c: any) => Number(c.n) === i + 1)?.plan ?? "").trim().slice(0, 1200) })),
+    chapters: (() => {
+      const found = stages.map((_, i) => (d.chapters ?? []).find((c: any) => Number(c.n) === i + 1));
+      const base = stages.map((s, i) => ({ stageId: s.id, key: s.key, title: s.title, plan: String(found[i]?.plan ?? "").trim().slice(0, 1200) }));
+      // Toplam: öğrencinin hedefi > yapay zekânın önerisi; dağılım yapay zekânın kelimeleri oranında, toplam tam tutturulur
+      const total = target || Math.min(500000, Math.max(0, Math.round(Number(d.targetWords) || 0)));
+      return distributeWords(base, total, found.map((c: any) => Math.max(0, Number(c?.words) || 0)));
+    })(),
+    targetWords: target || Math.min(500000, Math.max(0, Math.round(Number(d.targetWords) || 0))),
+    wordsPerPage: wpp,
     input: p.input.slice(0, 2000),
     approvedAt: null,
     updatedAt: new Date().toISOString(),

@@ -313,4 +313,31 @@ describe("anketler", () => {
     await db.query("insert into public.projects (user_id, title, work_type) values ($1, 'TÜBİTAK', 'grant_proposal')", [A]);
     expect(await as(A, "select id from public.projects where work_type = 'grant_proposal'")).toHaveLength(1);
   });
+  it("silme: kullanıcı kendi kayıtlarını gerçekten siler, başkası silemez; proje silinince alt kayıtlar da kalkar (D65)", async () => {
+    const [p] = (await db.query<{ id: string }>("insert into public.projects (user_id, title, work_type) values ($1, 'Silinecek', 'thesis') returning id", [A])).rows;
+    const [st] = await as<{ id: string }>(A, "insert into public.project_stages (project_id, user_id, key, title, position) values ($1, auth.uid(), 'intro', 'Giriş', 0) returning id", [p.id]);
+    const [rev] = await as<{ id: string }>(A, "insert into public.stage_revisions (stage_id, project_id, user_id, note) values ($1, $2, auth.uid(), 'yedek') returning id", [st.id, p.id]);
+    const [com] = await as<{ id: string }>(A, "insert into public.stage_comments (stage_id, project_id, user_id, body) values ($1, $2, auth.uid(), 'not') returning id", [st.id, p.id]);
+    const [mem] = await as<{ id: string }>(A, "insert into public.project_memory (project_id, user_id, kind, content) values ($1, auth.uid(), 'note', 'hafıza') returning id", [p.id]);
+    const [src] = await as<{ id: string }>(A, "insert into public.sources (project_id, user_id, title, origin) values ($1, auth.uid(), 'Kaynak', 'manual') returning id", [p.id]);
+    await as(A, "insert into public.source_chunks (source_id, project_id, user_id, chunk_index, content) values ($1, $2, auth.uid(), 0, 'parça')", [src.id, p.id]);
+    const [conv] = await as<{ id: string }>(A, "insert into public.ai_conversations (project_id, user_id) values ($1, auth.uid()) returning id", [p.id]);
+    await as(A, "insert into public.ai_messages (conversation_id, user_id, role, content) values ($1, auth.uid(), 'user', 'merhaba')", [conv.id]);
+
+    // Başkası hiçbirini silemez (0 satır döner, sunucu bunu “bulunamadı” hatasına çevirir)
+    for (const [table, id] of [["sources", src.id], ["stage_revisions", rev.id], ["stage_comments", com.id], ["project_memory", mem.id], ["ai_conversations", conv.id], ["projects", p.id]] as const) {
+      expect(await as(B, `delete from public.${table} where id = $1 returning id`, [id])).toHaveLength(0);
+    }
+    // Sahibi tek tek siler: satır gerçekten kalkar, bağlı parçalar/mesajlar da gider
+    expect(await as(A, "delete from public.sources where id = $1 returning id", [src.id])).toHaveLength(1);
+    expect(await as(A, "select id from public.source_chunks where source_id = $1", [src.id])).toHaveLength(0);
+    expect(await as(A, "delete from public.ai_conversations where id = $1 returning id", [conv.id])).toHaveLength(1);
+    expect(await as(A, "select id from public.ai_messages where conversation_id = $1", [conv.id])).toHaveLength(0);
+    expect(await as(A, "delete from public.stage_revisions where id = $1 returning id", [rev.id])).toHaveLength(1);
+    // Proje silinince geri kalan her şey (bölüm, yorum, hafıza) veritabanından kalkar
+    expect(await as(A, "delete from public.projects where id = $1 returning id", [p.id])).toHaveLength(1);
+    for (const table of ["project_stages", "stage_comments", "project_memory", "sources", "ai_conversations"]) {
+      expect((await db.query(`select id from public.${table} where project_id = $1`, [p.id])).rows).toHaveLength(0);
+    }
+  });
 });

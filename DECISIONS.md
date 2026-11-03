@@ -278,3 +278,8 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Atıfın veya kaynak kartının üzerine gelince (ya da tıklayınca) kart açılır ve doğrulama adım adım “çalışır”: DOI çözümlendi → Crossref/katalog kaydı eşleşti → (varsa) kaynaktaki pasaj, eşleşen cümle vurgulu; “Kaynağı aç · doi.org” bağlantısı gerçek DOI’ye gider.
 - Kullanıcı kararı: pasajlar örnek metin olabilir. Gerçek yazarlara uydurma söz yüklememek için demodaki kaynaklar da kurgusal örnek kaynaklara çevrildi (Kaya 2021, Demir & Aksoy 2022, Lee vd. 2020; DOI’ler `10.xxxx/ornek…`, harici bağlantı yok) ve ekranda “örnek kaynak” / “kaynaklar ve pasajlar temsilidir” diye belirtilir.
 
+
+### D65 — Kullanıcı kayıtları için gerçek silme
+- Ortak `components/ui/delete-button.tsx`: onay sorar, sunucu “silindi” demeden listeden çıkarmaz, hata olursa bildirir. Kullanıldığı yerler: panel çalışma kartları (proje), Kaynaklar → Kayıtlı kaynaklarım, çalışma alanı kaynakları, Dosyalar, Anketlerim listesi, proje hafızası, yorumlar, sürümler (yeni), asistan sohbeti (yeni “Sohbeti sil”).
+- Sunucu: tüm silme uçları `assertDeleted()` (lib/api.ts) kullanır; `.delete().select("id")` ile satırın gerçekten silindiği doğrulanır, silinmediyse 404 döner (önceden RLS engellese de “ok” dönüyordu). Dosyada önce depodaki nesne, sonra kayıt silinir (yetim dosya kalmaz).
+- Silmeler kalıcıdır (yumuşak silme yok); alt kayıtlar veritabanındaki ON DELETE CASCADE ile kalkar (proje → bölüm, sürüm, yorum, hafıza, kaynak, parça, sohbet, mesaj). Yeni uçlar: `DELETE /api/stages/[id]/revisions`, `DELETE /api/ai/chat?conversationId=`. Migration gerekmedi. PGlite testi eklendi.

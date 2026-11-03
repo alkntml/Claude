@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Empty, Tabs } from "@/components/ui/primitives";
 import { SourceCard, SourceSearch } from "@/components/workspace/sources";
+import { DeleteButton } from "@/components/ui/delete-button";
+import { api } from "@/lib/client";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function LibraryView({ projects, sources: initial }: { projects: any[]; sources: any[] }) {
@@ -37,7 +39,12 @@ export function LibraryView({ projects, sources: initial }: { projects: any[]; s
         {tab === "saved" && (
           <div className="grid gap-3 md:grid-cols-2">
             {sources.length === 0 && <div className="md:col-span-2"><Empty icon={<BookMarked className="h-5 w-5" />} title={t("Kayıtlı kaynak yok")} /></div>}
-            {sources.map((s) => <SourceCard key={s.id} s={s} actions={s.project_id && <Link href={`/proje/${s.project_id}`} className="text-[12px] font-medium text-brand-600">{titles[s.project_id] ?? t("Proje")} →</Link>} />)}
+            {sources.map((s) => (
+              <SourceCard key={s.id} s={s} actions={<>
+                {s.project_id && <Link href={`/proje/${s.project_id}`} className="text-[12px] font-medium text-brand-600">{titles[s.project_id] ?? t("Proje")} →</Link>}
+                <DeleteButton className="ml-auto" withText label={t("Kaynağı sil")} confirmText={t("“{title}” kaynağı kalıcı olarak silinsin mi? Metinde bu kaynağa verilen atıflar kaynaksız kalır.", { title: s.title.slice(0, 80) })} onDelete={() => api(`/api/sources/${s.id}`, { method: "DELETE" })} onDone={() => setSources((l) => l.filter((x) => x.id !== s.id))} />
+              </>} />
+            ))}
           </div>
         )}
       </div>

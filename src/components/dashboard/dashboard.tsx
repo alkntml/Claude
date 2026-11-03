@@ -6,6 +6,10 @@ import { makeDictT, type TFn } from "@/i18n/core";
 import { motion } from "framer-motion";
 import { ArrowRight, BookMarked, Bot, CheckCircle2, Clock3, FileText, FolderOpen, Megaphone, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { DeleteButton } from "@/components/ui/delete-button";
+import { api } from "@/lib/client";
 import { WORK_ICONS } from "@/components/icons";
 import { Badge, Empty, ProgressBar, ProgressRing } from "@/components/ui/primitives";
 import { STYLES } from "@/lib/citations/styles";
@@ -32,9 +36,16 @@ const item = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transiti
 export function Dashboard(p: Props) {
   const { t, dl } = useT();
   const ago = (iso: string) => timeAgo(iso, t, dl);
-  const active = p.projects.filter((x) => x.status === "active");
-  const done = p.projects.filter((x) => x.status === "completed");
+  const router = useRouter();
+  const [projects, setProjects] = useState(p.projects);
+  const active = projects.filter((x) => x.status === "active");
+  const done = projects.filter((x) => x.status === "completed");
   const titles = Object.fromEntries(p.projects.map((x) => [x.id, x.title]));
+  const delProject = (pr: any) => ({
+    confirmText: t("“{title}” çalışması; tüm bölümleri, kaynakları, sohbetleri ve sürümleriyle birlikte kalıcı olarak silinsin mi? Bu işlem geri alınamaz.", { title: pr.title }),
+    onDelete: () => api(`/api/projects/${pr.id}`, { method: "DELETE" }),
+    onDone: () => { setProjects((l) => l.filter((x) => x.id !== pr.id)); router.refresh(); },
+  });
   const hour = new Date().getHours();
   const greet = t(hour < 6 ? "İyi geceler" : hour < 12 ? "Günaydın" : hour < 18 ? "İyi günler" : "İyi akşamlar");
 
@@ -121,7 +132,7 @@ export function Dashboard(p: Props) {
                       const left = daysLeft(g.deadline, new Date());
                       return <p className="mt-3 text-xs text-ink-500">{g.weeklyWords ? t("Bu hafta {w} / {g} kelime", { w: week.toLocaleString(dl), g: Number(g.weeklyWords).toLocaleString(dl) }) : ""}{g.weeklyWords && left !== null ? " · " : ""}{left !== null ? (left > 0 ? t("Teslime {n} gün", { n: left }) : t("Teslim tarihi geçti")) : ""}</p>;
                     })()}
-                    <p className="mt-auto pt-4 text-xs text-ink-400">{t("Son düzenleme {x}", { x: ago(pr.updated_at) })}</p>
+                    <div className="mt-auto flex items-center justify-between pt-4"><p className="text-xs text-ink-400">{t("Son düzenleme {x}", { x: ago(pr.updated_at) })}</p><DeleteButton label={t("Çalışmayı sil")} {...delProject(pr)} /></div>
                   </Link>
                 );
               })}
@@ -133,7 +144,7 @@ export function Dashboard(p: Props) {
               <div className="card divide-y divide-ink-100">
                 {done.map((pr) => (
                   <Link key={pr.id} href={`/proje/${pr.id}`} className="flex items-center gap-3 px-4 py-3 text-sm transition hover:bg-ink-50">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500" /><span className="flex-1 truncate text-ink-800">{pr.title}</span><ArrowRight className="h-4 w-4 text-ink-300" />
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" /><span className="flex-1 truncate text-ink-800">{pr.title}</span><DeleteButton label={t("Çalışmayı sil")} {...delProject(pr)} /><ArrowRight className="h-4 w-4 text-ink-300" />
                   </Link>
                 ))}
               </div>

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, BarChart3, Check, ListOrdered, Mic, MicOff, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
 import { useCallback, useMemo, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
+import { DeleteButton } from "@/components/ui/delete-button";
 import { cn } from "@/components/ui/cn";
 import { Dots } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
@@ -238,6 +239,12 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+        )}
+
+        {conversationId && msgs.length > 0 && !busy && (
+          <div className="flex justify-end">
+            <DeleteButton withText label={t("Sohbeti sil")} confirmText={t("Bu bölümdeki asistan sohbeti ve tüm mesajları kalıcı olarak silinsin mi? Metninize eklediğiniz yazılar etkilenmez.")} onDelete={() => api(`/api/ai/chat?conversationId=${conversationId}`, { method: "DELETE" })} onDone={() => { setMsgs([]); setConversationId(null); }} />
           </div>
         )}
 

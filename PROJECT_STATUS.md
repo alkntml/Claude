@@ -92,6 +92,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
+- **Gerçek silme (D65):** çalışma, kaynak, dosya, anket, hafıza, yorum, sürüm ve asistan sohbeti için onaylı silme düğmesi; sunucu satırın veritabanından gerçekten silindiğini doğrular, alt kayıtlar da kalkar
 - **Sayaç denetimi (D51):** aylık toplam veritabanında, TR saatine göre ay başı, proje kotası ve arşiv atlatma kapatıldı, yarıda kesilen yanıt sayılır, tarama aşımı önlenir
 - **Çalışma kilidi (D50):** aylık hak dolunca çalışma + kaynaklar buğulu (sunucuda karartılmış), indirme kapalı; “Mevcut çalışmayı indir — 100 TL” (WhatsApp) veya abonelik; yönetici indirme hakkını Yönetim → Kilitler’den tanımlar; KVKK talepleri de orada
 - **Özellik kilitleri ve yükseltme penceresi (D49):** paket kartları özellik listesi gösterir; Basic/Pro araçları kilitli (sunucuda `assertFeature`), kilitli araçta Pro/Basic rozeti; sınıra ulaşınca veya “Yükselt”te paketler sınırlarıyla gösterilir
@@ -101,7 +102,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 175 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 188 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

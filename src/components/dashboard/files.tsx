@@ -1,7 +1,8 @@
 "use client";
 import { useT } from "@/i18n/client";
+import { DeleteButton } from "@/components/ui/delete-button";
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart3, BookPlus, Download, FileSpreadsheet, FileText, FolderOpen, Loader2, Trash2, UploadCloud } from "lucide-react";
+import { BarChart3, BookPlus, Download, FileSpreadsheet, FileText, FolderOpen, Loader2, UploadCloud } from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -45,11 +46,6 @@ export function FilesView({ files: initial, projects }: { files: any[]; projects
         setUploading((u) => u.filter((x) => x !== f.name));
       }
     }
-  }
-  async function del(id: string) {
-    if (!confirm(t("Dosya kalıcı olarak silinsin mi?"))) return;
-    await api(`/api/files/${id}`, { method: "DELETE" });
-    setFiles((l) => l.filter((f) => f.id !== id));
   }
   async function download(id: string) {
     const { downloadUrl } = await api<{ downloadUrl: string }>(`/api/files/${id}`);
@@ -96,7 +92,7 @@ export function FilesView({ files: initial, projects }: { files: any[]; projects
                 {isData && <Button size="sm" variant="soft" onClick={() => showStats(f)}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik")}</Button>}
                 {!isData && f.project_id && f.extraction_status === "done" && <Button size="sm" variant="ghost" onClick={() => setToSource(f)}><BookPlus className="h-3.5 w-3.5" /> {t("Kaynak olarak ekle")}</Button>}
                 <Button size="sm" variant="ghost" onClick={() => download(f.id)} aria-label={t("İndir")}><Download className="h-3.5 w-3.5" /></Button>
-                <Button size="sm" variant="ghost" onClick={() => del(f.id)} aria-label={t("Sil")}><Trash2 className="h-3.5 w-3.5" /></Button>
+                <DeleteButton className="h-8 px-2" label={t("Dosyayı sil")} confirmText={t("“{name}” dosyası kalıcı olarak silinsin mi? Dosya depolamadan da kaldırılır.", { name: f.name })} onDelete={() => api(`/api/files/${f.id}`, { method: "DELETE" })} onDone={() => setFiles((l) => l.filter((x) => x.id !== f.id))} />
               </div>
             </motion.div>
           );

@@ -1,4 +1,4 @@
-import { ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { SourceInput, toRow } from "@/lib/sources/input";
 
@@ -38,6 +38,6 @@ export const PATCH = route<Ctx>("source.update", async (req, { params }) => {
 export const DELETE = route<Ctx>("source.delete", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  await s.supabase.from("sources").delete().eq("id", id).eq("user_id", s.user.id);
+  assertDeleted(await s.supabase.from("sources").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Kaynak bulunamadı");
   return json({ ok: true });
 });

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { QuestionsSchema } from "@/lib/surveys";
 
@@ -54,6 +54,6 @@ export const PATCH = route<Ctx>("survey.update", async (req, { params }) => {
 export const DELETE = route<Ctx>("survey.delete", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  await s.supabase.from("surveys").delete().eq("id", id).eq("user_id", s.user.id);
+  assertDeleted(await s.supabase.from("surveys").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Anket bulunamadı");
   return json({ ok: true });
 });

@@ -11,6 +11,16 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Silme sonucunu doğrular: hata varsa fırlatır, hiçbir satır silinmediyse 404 verir.
+ * Böylece “silindi” yanıtı yalnızca kayıt veritabanından gerçekten kalktığında döner.
+ * Kullanım: `assertDeleted(await q.delete().eq(...).select("id"))`
+ */
+export function assertDeleted(res: { data: unknown[] | null; error: unknown }, message = "Kayıt bulunamadı veya silinemedi") {
+  if (res.error) throw res.error;
+  if (!res.data?.length) throw new ApiError(404, message);
+}
+
 export const json = (data: unknown, status = 200) => NextResponse.json(data, { status });
 
 export async function parseBody<S extends ZodTypeAny>(req: Request, schema: S): Promise<output<S>> {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -25,4 +25,13 @@ export const POST = route<Ctx>("revisions.restore", async (req, { params }) => {
   const { data, error } = await s.supabase.from("project_stages").update({ content: rev.content, content_text: rev.content_text, word_count: rev.word_count, updated_at: new Date().toISOString() }).eq("id", id).select().single();
   if (error) throw error;
   return json({ stage: data });
+});
+
+/** Tek bir sürümü kalıcı olarak siler. */
+export const DELETE = route<Ctx>("revisions.delete", async (req, { params }) => {
+  const s = await requireUser();
+  const { id } = await params;
+  const { revisionId } = await parseBody(req, z.object({ revisionId: z.string().uuid() }));
+  assertDeleted(await s.supabase.from("stage_revisions").delete().eq("id", revisionId).eq("stage_id", id).eq("user_id", s.user.id).select("id"), "Sürüm bulunamadı");
+  return json({ ok: true });
 });

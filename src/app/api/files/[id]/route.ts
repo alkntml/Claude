@@ -1,4 +1,4 @@
-import { ApiError, json, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -17,7 +17,9 @@ export const DELETE = route<Ctx>("file.delete", async (_req, { params }) => {
   const { id } = await params;
   const { data } = await s.supabase.from("files").select("storage_path").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!data) throw new ApiError(404, "Dosya bulunamadı");
-  await s.supabase.storage.from("user-files").remove([data.storage_path]);
-  await s.supabase.from("files").delete().eq("id", id);
+  // Önce depodaki dosya, sonra kayıt: depo silinemezse kayıt da kalır (yetim dosya oluşmaz)
+  const { error: storageError } = await s.supabase.storage.from("user-files").remove([data.storage_path]);
+  if (storageError) throw storageError;
+  assertDeleted(await s.supabase.from("files").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Dosya bulunamadı");
   return json({ ok: true });
 });

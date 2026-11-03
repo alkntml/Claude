@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { docToPlain, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { logWords } from "@/lib/goals";
@@ -76,7 +76,7 @@ export const DELETE = route<Ctx>("stage.delete", async (_req, { params }) => {
   const { id } = await params;
   const { data: stage } = await s.supabase.from("project_stages").select("id, project_id").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!stage) throw new ApiError(404, "Bölüm bulunamadı");
-  await s.supabase.from("project_stages").delete().eq("id", id);
+  assertDeleted(await s.supabase.from("project_stages").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Bölüm bulunamadı");
   await recomputeProgress(s.supabase, stage.project_id);
   return json({ ok: true });
 });

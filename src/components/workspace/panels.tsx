@@ -1,11 +1,12 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
-import { Wand2, AlertTriangle, ArrowRight, Brain, Check, ChevronDown, History, MessageSquare, Plus, RotateCcw, Save, Trash2 } from "lucide-react";
+import { Wand2, AlertTriangle, ArrowRight, Brain, Check, ChevronDown, History, MessageSquare, Plus, RotateCcw, Save } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge, Empty } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { DeleteButton } from "@/components/ui/delete-button";
 import { findDuplicates, missingFields, FIELD_LABELS } from "@/lib/citations/checks";
 import type { CitationEngine } from "@/lib/citations/styles";
 import { richToHtml } from "@/lib/citations/util";
@@ -32,10 +33,6 @@ export function MemoryPanel({ projectId, memory, setMemory }: { projectId: strin
       setText("");
     } catch (e) { toast({ tone: "error", title: t("Eklenemedi"), detail: (e as Error).message }); } finally { setBusy(false); }
   }
-  async function del(id: string) {
-    await api(`/api/projects/${projectId}/memory`, { method: "DELETE", json: { itemId: id } }).catch(() => {});
-    setMemory((m) => m.filter((x) => x.id !== id));
-  }
   const grouped = Object.entries(KIND_LABEL).map(([k, l]) => ({ k, l, items: memory.filter((m) => m.kind === k) })).filter((g) => g.items.length);
   return (
     <div className="flex h-full flex-col">
@@ -50,7 +47,7 @@ export function MemoryPanel({ projectId, memory, setMemory }: { projectId: strin
                 <motion.div layout key={m.id} className="group flex items-start gap-2 rounded-xl border border-ink-100 bg-white px-3 py-2 text-[13px] text-ink-700">
                   <span className="flex-1">{m.content}</span>
                   {m.source === "ai" && <Badge tone="violet" className="!text-[10px]">{t("AI")}</Badge>}
-                  <button onClick={() => del(m.id)} className="text-ink-300 opacity-0 transition hover:text-rose-500 group-hover:opacity-100" aria-label={t("Sil")}><Trash2 className="h-3.5 w-3.5" /></button>
+                  <DeleteButton className="-m-1 sm:opacity-0 sm:group-hover:opacity-100" confirmText={t("Bu hafıza kaydı kalıcı olarak silinsin mi?")} onDelete={() => api(`/api/projects/${projectId}/memory`, { method: "DELETE", json: { itemId: m.id } })} onDone={() => setMemory((l) => l.filter((x) => x.id !== m.id))} />
                 </motion.div>
               ))}
             </div>
@@ -79,10 +76,6 @@ export function CommentsPanel({ stageId, selection, onApply }: { stageId: string
     await api(`/api/stages/${stageId}/comments`, { method: "PATCH", json: { commentId: c.id, resolved: !c.resolved } });
     setList((l) => l.map((x) => (x.id === c.id ? { ...x, resolved: !x.resolved } : x)));
   }
-  async function del(c: any) {
-    await api(`/api/stages/${stageId}/comments`, { method: "PATCH", json: { commentId: c.id, delete: true } });
-    setList((l) => l.filter((x) => x.id !== c.id));
-  }
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 space-y-2 overflow-y-auto p-4">
@@ -92,7 +85,7 @@ export function CommentsPanel({ stageId, selection, onApply }: { stageId: string
             {c.quote && <p className="mb-1.5 border-l-2 border-amber-300 pl-2 font-serif italic text-ink-500">“{c.quote.slice(0, 200)}”</p>}
             {c.author_name && <p className="mb-1 text-[11px] font-semibold text-brand-700">{t("Danışman:")} {c.author_name}</p>}
             <p className={c.resolved ? "line-through" : ""}>{c.body}</p>
-            <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at, t, dl)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? t("Yeniden aç") : t("Çözüldü")}</button><button onClick={() => del(c)} className="text-rose-500">{t("Sil")}</button>{!c.resolved && onApply && <button onClick={() => { onApply({ body: c.body, quote: c.quote ?? null }); toggle(c); }} className="ml-auto flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 font-medium text-white hover:bg-brand-700"><Wand2 className="h-3 w-3" />{t("Asistanla uygula")}</button>}</div>
+            <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at, t, dl)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? t("Yeniden aç") : t("Çözüldü")}</button><DeleteButton className="-my-1 !p-1 text-rose-500" withText confirmText={t("Bu yorum kalıcı olarak silinsin mi?")} onDelete={() => api(`/api/stages/${stageId}/comments`, { method: "PATCH", json: { commentId: c.id, delete: true } })} onDone={() => setList((l) => l.filter((x) => x.id !== c.id))} />{!c.resolved && onApply && <button onClick={() => { onApply({ body: c.body, quote: c.quote ?? null }); toggle(c); }} className="ml-auto flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 font-medium text-white hover:bg-brand-700"><Wand2 className="h-3 w-3" />{t("Asistanla uygula")}</button>}</div>
           </div>
         ))}
       </div>
@@ -128,6 +121,7 @@ export function HistoryPanel({ stageId, onRestore, onSnapshot, version }: { stag
               <p className="text-[11px] text-ink-400">{new Date(r.created_at).toLocaleString(dl)} · {t("{n} kelime", { n: r.word_count })} · {r.author === "ai" ? t("AI ekleme") : r.author === "system" ? t("Otomatik") : t("Elle")}</p>
             </div>
             <button onClick={() => restore(r.id)} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-800" title={t("Geri yükle")}><RotateCcw className="h-4 w-4" /></button>
+            <DeleteButton label={t("Sürümü sil")} confirmText={t("Bu sürüm kalıcı olarak silinsin mi? Bölümün şimdiki metni etkilenmez.")} onDelete={() => api(`/api/stages/${stageId}/revisions`, { method: "DELETE", json: { revisionId: r.id } })} onDone={() => setList((l) => l.filter((x) => x.id !== r.id))} />
           </div>
         ))}
       </div>

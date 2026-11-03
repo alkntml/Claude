@@ -186,6 +186,7 @@ on("PATCH", "/api/stages/([^/]+)", (m, b) => {
 });
 on("DELETE", "/api/stages/([^/]+)", (m) => { const s = stage(m[1]); db.stages = db.stages.filter((x) => x.id !== m[1]); recomputeProgress(db, s.project_id); return { ok: true }; });
 on("GET", "/api/stages/([^/]+)/revisions", (m) => ({ revisions: db.revisions.filter((r) => r.stage_id === m[1]) }));
+on("DELETE", "/api/stages/([^/]+)/revisions", (_m, b) => { db.revisions = db.revisions.filter((r) => r.id !== b.revisionId); return { ok: true }; });
 on("POST", "/api/stages/([^/]+)/revisions", (m, b) => {
   const s = stage(m[1]);
   const r = db.revisions.find((x) => x.id === b.revisionId) ?? fail(404, "Revizyon bulunamadı", "not_found");
@@ -223,6 +224,7 @@ on("GET", "/api/sources/lookup", () => fail(503, DEMO_DISABLED.verify));
 // --- Yapay zekâ (kapalı)
 on("POST", "/api/ai/chat", () => fail(503, DEMO_DISABLED.ai));
 on("GET", "/api/ai/chat", () => ({ conversations: [], messages: [] }));
+on("DELETE", "/api/ai/chat", () => ({ ok: true }));
 on("POST", "/api/ai/research", () => fail(503, DEMO_DISABLED.ai));
 on("POST", "/api/projects/([^/]+)/stages/suggest", () => fail(503, DEMO_DISABLED.ai));
 

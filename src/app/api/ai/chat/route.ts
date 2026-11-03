@@ -1,7 +1,7 @@
 import { makeT } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
 import { z } from "zod";
-import { ApiError, json, logError, parseBody, route } from "@/lib/api";
+import { ApiError, assertDeleted, json, logError, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
@@ -244,4 +244,13 @@ export const GET = route("ai.chat.history", async (req) => {
   if (stageId) q = q.eq("stage_id", stageId);
   const { data } = await q;
   return json({ conversations: data ?? [] });
+});
+
+/** Bir sohbeti ve tüm mesajlarını kalıcı olarak siler (mesajlar ON DELETE CASCADE ile kalkar). */
+export const DELETE = route("ai.chat.delete", async (req) => {
+  const s = await requireUser();
+  const id = z.string().uuid().safeParse(new URL(req.url).searchParams.get("conversationId"));
+  if (!id.success) throw new ApiError(400, "Geçersiz istek");
+  assertDeleted(await s.supabase.from("ai_conversations").delete().eq("id", id.data).eq("user_id", s.user.id).select("id"), "Sohbet bulunamadı");
+  return json({ ok: true });
 });

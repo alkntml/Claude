@@ -1,9 +1,10 @@
 "use client";
 import { useT } from "@/i18n/client";
+import { DeleteButton } from "@/components/ui/delete-button";
 import { MatrixButton, MatrixModal } from "./matrix";
 import { RefsImportExport } from "./refs-io";
 import { motion } from "framer-motion";
-import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Trash2, Unlock } from "lucide-react";
+import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -246,10 +247,6 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
     }, 3500);
     return () => clearInterval(timer);
   }, [pendingIds, setSources, toast, t]);
-  const remove = (id: string) => run(`d${id}`, async () => {
-    await api(`/api/sources/${id}`, { method: "DELETE" });
-    setSources((l) => l.filter((x) => x.id !== id));
-  });
 
   const shown = sources.filter((s) => !filter || `${s.title} ${authorLine(s.authors, 10)}`.toLocaleLowerCase("tr").includes(filter.toLocaleLowerCase("tr")));
 
@@ -307,7 +304,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
                     <Button size="sm" variant="soft" disabled={!canCite} onClick={() => onCite(s.id)} title={canCite ? t("İmlecin bulunduğu yere atıf ekle") : t("Önce editörde bir yere tıklayın")}><Quote className="h-3.5 w-3.5" /> {t("Atıf ekle")}</Button>
                     {!s.verified && <Button size="sm" variant="ghost" loading={busy === `v${s.id}`} onClick={() => verify(s.id)}><BadgeCheck className="h-3.5 w-3.5" /> {t("Doğrula")}</Button>}
                     {s.access_level !== "full_text" && s.fulltext_status !== "queued" && s.fulltext_status !== "processing" && (s.oa_url || s.doi || s.arxiv_id || s.pmcid) && <Button size="sm" variant="ghost" loading={busy === `f${s.id}`} onClick={() => fulltext(s.id)}><Unlock className="h-3.5 w-3.5" /> {t("Tam metni analiz et")}</Button>}
-                    <Button size="sm" variant="ghost" loading={busy === `d${s.id}`} onClick={() => remove(s.id)} aria-label={t("Kaynağı sil")}><Trash2 className="h-3.5 w-3.5" /></Button>
+                    <DeleteButton className="h-8 px-2" label={t("Kaynağı sil")} confirmText={t("“{title}” kaynağı kalıcı olarak silinsin mi? Metinde bu kaynağa verilen atıflar kaynaksız kalır.", { title: s.title.slice(0, 80) })} onDelete={() => api(`/api/sources/${s.id}`, { method: "DELETE" })} onDone={() => setSources((l) => l.filter((x) => x.id !== s.id))} />
                   </>} />
                 </div>
               ))}

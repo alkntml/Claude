@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
 import { assertProjectQuota } from "@/lib/usage";
@@ -63,7 +63,6 @@ export const DELETE = route<Ctx>("projects.delete", async (_req, { params }) => 
   const s = await requireUser();
   const { id } = await params;
   await requireProject(s, id);
-  const { error } = await s.supabase.from("projects").delete().eq("id", id).eq("user_id", s.user.id);
-  if (error) throw error;
+  assertDeleted(await s.supabase.from("projects").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Proje bulunamadı");
   return json({ ok: true });
 });

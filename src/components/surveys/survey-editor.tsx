@@ -97,8 +97,10 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   }
   async function remove() {
     if (!confirm(t("Anket ve tüm cevapları kalıcı olarak silinecek. Emin misiniz?"))) return;
-    await api(`/api/surveys/${s.id}`, { method: "DELETE" }).catch(() => {});
+    try { await api(`/api/surveys/${s.id}`, { method: "DELETE" }); }
+    catch (e) { toast({ tone: "error", title: t("Silinemedi"), detail: (e as Error).message }); return; }
     router.push("/anketler");
+    router.refresh();
   }
   function share() {
     const text = t("Araştırmama katılır mısınız? Anket yaklaşık birkaç dakika sürüyor:");

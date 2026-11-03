@@ -6,12 +6,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { DeleteButton } from "@/components/ui/delete-button";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 
 interface Row { id: string; title: string; project_id: string | null; is_open: boolean; response_count: number; closes_at: string | null; updated_at: string }
 
-export function SurveyList({ surveys, projects, defaultProject }: { surveys: Row[]; projects: { id: string; title: string }[]; defaultProject: string | null }) {
+export function SurveyList({ surveys: initial, projects, defaultProject }: { surveys: Row[]; projects: { id: string; title: string }[]; defaultProject: string | null }) {
+  const [surveys, setSurveys] = useState(initial);
   const { t } = useT();
   const toast = useToast();
   const router = useRouter();
@@ -62,7 +64,10 @@ export function SurveyList({ surveys, projects, defaultProject }: { surveys: Row
                     <p className="font-semibold text-ink-900">{s.title}</p>
                     {s.is_open && !closed ? <Badge tone="green">{t("Yayında")}</Badge> : <Badge>{closed ? t("Süresi doldu") : t("Taslak / kapalı")}</Badge>}
                   </div>
-                  <p className="mt-1 text-sm text-ink-500">{t("{n} cevap", { n: s.response_count })}{pname(s.project_id) ? ` · ${pname(s.project_id)}` : ""}</p>
+                  <div className="mt-1 flex items-center justify-between gap-2">
+                    <p className="text-sm text-ink-500">{t("{n} cevap", { n: s.response_count })}{pname(s.project_id) ? ` · ${pname(s.project_id)}` : ""}</p>
+                    <DeleteButton label={t("Anketi sil")} confirmText={t("“{title}” anketi ve tüm cevapları kalıcı olarak silinsin mi? Bu işlem geri alınamaz.", { title: s.title })} onDelete={() => api(`/api/surveys/${s.id}`, { method: "DELETE" })} onDone={() => setSurveys((l) => l.filter((x) => x.id !== s.id))} />
+                  </div>
                 </Link>
               </li>
             );

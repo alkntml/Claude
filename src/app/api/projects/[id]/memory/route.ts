@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { json, parseBody, route } from "@/lib/api";
+import { assertDeleted, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -27,6 +27,6 @@ export const DELETE = route<Ctx>("memory.delete", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const { itemId } = await parseBody(req, z.object({ itemId: z.string().uuid() }));
-  await s.supabase.from("project_memory").delete().eq("id", itemId).eq("project_id", id).eq("user_id", s.user.id);
+  assertDeleted(await s.supabase.from("project_memory").delete().eq("id", itemId).eq("project_id", id).eq("user_id", s.user.id).select("id"));
   return json({ ok: true });
 });

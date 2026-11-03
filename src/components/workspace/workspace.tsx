@@ -457,7 +457,8 @@ export function Workspace(props: Props) {
   async function removeStage(id: string) {
     const st = stages.find((s) => s.id === id);
     if (!st || !confirm(t("“{title}” bölümü ve içeriği silinsin mi? Bu işlem geri alınamaz.", { title: st.title }))) return;
-    await api(`/api/stages/${id}`, { method: "DELETE" });
+    try { await api(`/api/stages/${id}`, { method: "DELETE" }); }
+    catch (e) { toast({ tone: "error", title: t("Silinemedi"), detail: (e as Error).message }); return; }
     const rest = stages.filter((s) => s.id !== id);
     setStages(rest);
     if (id === activeId && rest[0]) { setActiveId(rest[0].id); editor?.commands.setContent((rest[0].content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }
@@ -855,8 +856,10 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
   }
   async function del() {
     if (prompt(t("Silmek için proje başlığını yazın: {title}", { title: project.title })) !== project.title) return;
-    await api(`/api/projects/${project.id}`, { method: "DELETE" });
+    try { await api(`/api/projects/${project.id}`, { method: "DELETE" }); }
+    catch (e) { toast({ tone: "error", title: t("Silinemedi"), detail: (e as Error).message }); return; }
     router.push("/panel");
+    router.refresh();
   }
 
   return (

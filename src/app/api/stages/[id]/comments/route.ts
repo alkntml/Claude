@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -25,7 +25,7 @@ export const POST = route<Ctx>("comments.add", async (req, { params }) => {
 export const PATCH = route<Ctx>("comments.update", async (req) => {
   const s = await requireUser();
   const b = await parseBody(req, z.object({ commentId: z.string().uuid(), resolved: z.boolean().optional(), delete: z.boolean().optional() }));
-  if (b.delete) await s.supabase.from("stage_comments").delete().eq("id", b.commentId).eq("user_id", s.user.id);
+  if (b.delete) assertDeleted(await s.supabase.from("stage_comments").delete().eq("id", b.commentId).eq("user_id", s.user.id).select("id"), "Yorum bulunamadı");
   else await s.supabase.from("stage_comments").update({ resolved: !!b.resolved }).eq("id", b.commentId).eq("user_id", s.user.id);
   return json({ ok: true });
 });

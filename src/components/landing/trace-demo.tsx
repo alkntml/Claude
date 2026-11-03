@@ -15,7 +15,7 @@ const ITEMS: Item[] = [
   { text: "Ebeveyn tutumları, bireyin yakın ilişkilerdeki bağlanma örüntülerini şekillendiren temel etkenler arasındadır", cite: "Bowlby, 1969", source: { ref: "Bowlby, J. (1969). Attachment and loss: Vol. 1. Attachment.", meta: "Basic Books", badge: "Kitap künyesi doğrulandı" } },
   { text: "Yetişkinlerin romantik ilişkileri de benzer bir bağlanma süreciyle açıklanabilir", cite: "Hazan ve Shaver, 1987", source: { ref: "Hazan, C., & Shaver, P. (1987). Romantic love conceptualized as an attachment process.", meta: "Journal of Personality and Social Psychology, 52(3) · doi:10.1037/0022-3514.52.3.511", badge: "Crossref ile doğrulandı · Özet okundu" } },
   { text: "İlişki odaklı obsesif belirtiler ise partnere yönelik yineleyici şüphelerle karakterizedir", cite: "Doron vd., 2014", source: { ref: "Doron, G., Derby, D. S., & Szepsenwol, O. (2014). Relationship obsessive compulsive disorder (ROCD): A conceptual framework.", meta: "Journal of Obsessive-Compulsive and Related Disorders, 3(2) · doi:10.1016/j.jocrd.2013.12.005", badge: "Crossref ile doğrulandı · Tam metin okundu" } },
-  { text: "Türkiye’deki üniversite öğrencilerinde bu belirtilerin yaygınlığı yüksektir" },
+  { text: "Üniversite öğrencilerinde bu belirtilerin yaygınlığı yüksektir" },
 ];
 const STEP_OF = [0, 1, 1, 2];
 

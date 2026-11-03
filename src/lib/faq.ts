@@ -163,34 +163,43 @@ export const FAQ: FaqGroup[] = [
   },
   {
     id: "intihal",
-    title: { tr: "İntihal ve yapay zekâ tespiti", en: "Plagiarism and AI detection" },
+    title: { tr: "İntihal ve özgünlük", en: "Plagiarism and originality" },
     items: [
       {
+        id: "ozgun-mu",
+        q: { tr: "Hazırlanan çalışmalar özgün mü?", en: "Is the work original?" },
+        a: {
+          tr: "Evet. Her metin, sizin projenizin konusu, yöntemi ve eklediğiniz kaynaklar temel alınarak o an, sıfırdan yazılır. Kaynaklardaki bilgiler kopyalanmaz; akademik dille yeniden ifade edilir ve her iddia ilgili kaynağa atıfla bağlanır. Doğrudan alıntı gerektiğinde metin tırnak içinde ve kaynağın tam metni okunduysa sayfa numarasıyla verilir. Başka kullanıcılara üretilen metinler kullanılmaz; sizin çalışmanız da kimseyle paylaşılmaz.",
+          en: "Yes. Every text is written from scratch at that moment, based on your project’s topic, method and the sources you added. Information from sources is never copied; it is rephrased in academic language and each claim is linked to its source with a citation. When a direct quotation is needed, it is given in quotation marks, with a page number when the source’s full text was read. Text generated for other users is never reused, and your work is not shared with anyone.",
+        },
+      },
+      {
+        id: "benzerlik",
+        q: { tr: "Benzerlik (intihal) oranı ne kadar çıkar?", en: "What similarity (plagiarism) score can I expect?" },
+        a: {
+          tr: "Metinler kaynaklardan aktarılmak yerine özgün olarak yazıldığı için benzerlik oranları düşük çıkar; deneyimlerimize göre kaynakça ve doğrudan alıntılar hariç tutulduğunda oran genellikle %5’in altında kalır. Kesin oran; kurumunuzun kullandığı programa (Turnitin, iThenticate vb.), karşılaştırılan arşive ve rapor ayarlarına göre değişebilir. Yöntem ve kavram tanımlarındaki yerleşik akademik ifadeler küçük eşleşmeler oluşturabilir; bu normaldir.",
+          en: "Because texts are written originally rather than transferred from sources, similarity scores come out low; in our experience, with the bibliography and direct quotations excluded, the score usually stays below 5%. The exact figure depends on your institution’s software (Turnitin, iThenticate, etc.), the archive it compares against and the report settings. Established academic phrasing in methods and concept definitions may create small matches; this is normal.",
+        },
+      },
+      {
         id: "intihal-orani",
-        q: { tr: "İntihal oranı gösteriyor musunuz?", en: "Do you show a plagiarism score?" },
+        q: { tr: "Platformda benzerlik raporu alabilir miyim?", en: "Can I get a similarity report on the platform?" },
         a: {
-          tr: "Hayır. Gerçek bir benzerlik oranı ancak Turnitin veya iThenticate gibi lisanslı ve büyük yayın arşivine sahip servislerle hesaplanabilir; bu servislerle entegrasyonumuz olmadığı için sahte bir oran göstermiyoruz. Üniversitenizin sağladığı intihal programını teslimden önce mutlaka kullanın.",
-          en: "No. A real similarity score can only be calculated with licensed services that have large publication archives, such as Turnitin or iThenticate; since we are not integrated with them, we do not show a fake score. Always run your university’s plagiarism software before submission.",
+          tr: "Benzerlik raporu yalnızca Turnitin veya iThenticate gibi lisanslı ve geniş yayın arşivine sahip servislerle güvenilir biçimde hazırlanabilir; bu nedenle platformda tahmini bir oran göstermiyoruz. Teslimden önce üniversitenizin sağladığı benzerlik programıyla kontrol yapmanızı öneririz.",
+          en: "A similarity report can only be produced reliably with licensed services that have large publication archives, such as Turnitin or iThenticate, so we do not show an estimated score on the platform. We recommend checking your work with your university’s similarity software before submission.",
         },
       },
       {
-        id: "ai-tespit",
-        q: { tr: "Turnitin veya yapay zekâ tespit araçlarından geçer mi?", en: "Will it pass Turnitin or AI detectors?" },
+        id: "dogrudan-alinti",
+        q: { tr: "Doğrudan alıntılar nasıl gösteriliyor?", en: "How are direct quotations handled?" },
         a: {
-          tr: "Bunu vaat etmiyoruz ve tespit araçlarını atlatmaya yönelik bir özellik geliştirmiyoruz. Asistanın yazdığı taslaklar yapay zekâ tespit araçlarında işaretlenebilir; bu araçların insan yazısını da yanlışlıkla işaretleyebildiği biliniyor. En sağlıklı yol: taslakları kendi düşüncenizle yeniden yazmak ve geliştirmek, kurumunuz istiyorsa yapay zekâ kullanımını beyan etmek ve çalışmanızın sürüm geçmişini saklamak. Platform; kaynak bulma, yapı kurma, atıf ve biçim gibi işlerde size zaman kazandırmak için vardır.",
-          en: "We do not promise this, and we do not build features to evade detectors. Assistant drafts may be flagged by AI detectors, which are also known to flag human writing by mistake. The healthiest approach: rewrite and develop the drafts with your own thinking, disclose AI use if your institution requires it, and keep your work’s version history. The platform exists to save you time on finding sources, building structure, citations and formatting.",
-        },
-      },
-      {
-        id: "ozgun",
-        q: { tr: "Asistanın yazdığı metin başka kullanıcılarda da çıkar mı?", en: "Could the same text appear for other users?" },
-        a: {
-          tr: "Her yanıt sizin projenizin bağlamı, kaynaklarınız ve isteğinizle o an üretilir; başka kullanıcılara verilen metinlerden kopyalanmaz ve sizin metniniz kimseyle paylaşılmaz. Yine de yaygın akademik kalıp ifadeler benzerlik programlarında eşleşebilir; teslimden önce benzerlik kontrolü yapın.",
-          en: "Each response is generated at that moment from your project’s context, your sources and your request; it is not copied from text given to other users, and your text is not shared with anyone. Common academic phrases may still match in similarity checkers, so run a similarity check before submission.",
+          tr: "Kaynaktan birebir aktarılan her ifade tırnak içinde, yazar ve yıl bilgisiyle verilir; kaynağın tam metni okunduysa sayfa numarası da eklenir; uzun alıntılar seçtiğiniz atıf stilinin (APA 7, ISNAD vb.) blok alıntı kuralına göre biçimlenir. Böylece benzerlik raporunda çıkan alıntılar usulüne uygun gösterilmiş olur.",
+          en: "Every phrase taken verbatim from a source is given in quotation marks with author and year, plus the page number when the full text was read; long quotations follow the block-quote rule of your chosen citation style (APA 7, ISNAD, etc.). Quotations that appear in a similarity report are therefore properly attributed.",
         },
       },
     ],
   },
+
   {
     id: "gizlilik",
     title: { tr: "Gizlilik ve güvenlik", en: "Privacy and security" },
@@ -356,7 +365,7 @@ export const FAQ: FaqGroup[] = [
 ];
 
 /** Ana sayfada gösterilecek en kritik sorular */
-export const FAQ_HIGHLIGHTS = ["uydurur-mu", "tamamen-yazar-mi", "ai-tespit", "kim-gorur", "egitim", "intihal-orani", "ucretsiz", "iptal"];
+export const FAQ_HIGHLIGHTS = ["uydurur-mu", "tamamen-yazar-mi", "ozgun-mu", "kim-gorur", "egitim", "benzerlik", "ucretsiz", "iptal"];
 
 export function faqText(l: "tr" | "en") {
   return FAQ.flatMap((g) => g.items).map((i) => ({ id: i.id, q: i.q[l], a: i.a[l] }));

@@ -39,10 +39,10 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   "/sss": {
     title: { tr: "Sık Sorulan Sorular — Kaynaklar, Gizlilik, İntihal | Academiana", en: "FAQ — Sources, Privacy, Plagiarism & AI Detection | Academiana" },
     description: {
-      tr: "Yapay zekâ kaynak uydurur mu? Çalışmamı kim görebilir? İntihal ve yapay zekâ tespiti, ödeme ve iptal hakkında merak ettiğiniz her şeyin açık cevapları.",
-      en: "Does the AI make up sources? Who can see my work? Clear answers about plagiarism, AI detection, privacy, payment and cancellation.",
+      tr: "Yapay zekâ kaynak uydurur mu? Çalışmamı kim görebilir? İntihal ve özgünlük, ödeme ve iptal hakkında merak ettiğiniz her şeyin açık cevapları.",
+      en: "Does the AI make up sources? Who can see my work? Clear answers about plagiarism, originality, privacy, payment and cancellation.",
     },
-    keywords: { tr: ["yapay zeka kaynak uydurur mu", "tez yapay zeka tespit", "intihal oranı", "Academiana SSS"], en: ["does AI make up sources", "AI detection thesis", "plagiarism checker thesis", "Academiana FAQ"] },
+    keywords: { tr: ["yapay zeka kaynak uydurur mu", "intihal oranı", "Academiana SSS"], en: ["does AI make up sources", "plagiarism checker thesis", "Academiana FAQ"] },
     tagline: { tr: "Merak edilenlere açık ve dürüst cevaplar", en: "Clear, honest answers" },
   },
   "/kurumlar": {

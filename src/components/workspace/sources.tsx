@@ -234,15 +234,22 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
   useEffect(() => {
     if (!pendingIds) return;
     const timer = setInterval(async () => {
+      // Biten analizler tek bir özet bildirimde toplanır (art arda “Tam metin alınamadı” yığılmasın)
+      const done: string[] = [];
+      let failed = 0;
       for (const id of pendingIds.split(",")) {
         try {
           const { source } = await api<{ source: any }>(`/api/sources/${id}`);
           if (source.fulltext_status !== "queued" && source.fulltext_status !== "processing") {
             setSources((l) => l.map((x) => (x.id === id ? source : x)));
-            if (source.fulltext_status === "done") toast({ tone: "success", title: t("Tam metin analiz edildi"), detail: source.title.slice(0, 80) });
-            else toast({ tone: "warning", title: t("Tam metin alınamadı"), detail: source.fulltext_message ?? undefined });
+            if (source.fulltext_status === "done") done.push(source.title); else failed++;
           }
         } catch { /* sonraki turda tekrar dene */ }
+      }
+      if (done.length === 1 && !failed) toast({ tone: "success", title: t("Tam metin analiz edildi"), detail: done[0].slice(0, 80) });
+      else if (done.length || failed) {
+        const parts = [done.length ? t("{n} kaynağın tam metni okundu", { n: done.length }) : "", failed ? t("{n} kaynak kapalı erişimli veya okunamadı", { n: failed }) : ""].filter(Boolean).join(" · ");
+        toast({ tone: done.length ? "success" : "info", title: t("Tam metin analizi tamamlandı"), detail: `${parts}.${failed ? ` ${t("PDF’iniz varsa kaynağa yükleyebilirsiniz.")}` : ""}` });
       }
     }, 3500);
     return () => clearInterval(timer);

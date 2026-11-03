@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, BarChart3, Check, ListOrdered, Mic, MicOff, BookOpen, Brain, ChevronDown, ClipboardCopy, Database, FilePlus2, Lightbulb, Loader2, RefreshCw, Replace, SearchCheck, Sparkles, Square, TriangleAlert } from "lucide-react";
 import { useCallback, useMemo, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
+import { quickActions } from "@/lib/workflows/quick-actions";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { cn } from "@/components/ui/cn";
 import { Dots } from "@/components/ui/primitives";
@@ -28,19 +29,19 @@ interface Props {
   onMemoryChanged: () => void;
   onSourcesAdded: (rows: any[]) => void;
   onOpenOutline?: () => void;
+  /** Projede kapsam için yeterli kaynak yok (literatür kısayolu her bölümde görünür) */
+  lowSources?: boolean;
+  /** Kurgudaki bölüm hedefi (kelime); uzun bölümlerde “Alt başlıklarla yaz” */
+  targetWords?: number;
   onOpenAnalysis?: () => void;
   /** Dış bileşenlerin (yorumlar vb.) asistana istek göndermesi için */
   registerSend?: (fn: (text: string, action?: AssistantAction, selection?: string) => void) => void;
   language?: string;
 }
 
-const STAGE_ACTIONS: AssistantAction[] = ["plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "interpret", "discussion", "consistency"];
+/** Uzun bölümler: alt başlıklarla yazım kısayolu */
+const LONG_STAGES = new Set(["literature", "theory", "concepts", "review_synthesis", "method", "methods_article", "findings", "results_article", "discussion", "discussion_article", "grant_method"]);
 const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure", "reduce_repetition"];
-const ETHICS_STAGES = new Set(["method", "sample", "participants", "instruments", "appendices", "methods_article", "declarations", "risks", "grant_method", "grant_management"]);
-/** Bölüme göre ek eylemler: özet/abstract her bölümde, etik kurul belgeleri yöntem ve ek bölümlerinde */
-function extraActions(key?: string): AssistantAction[] {
-  return [...(key === "title_abstract" || key === "conclusion" || key === "discussion_article" ? ["abstract" as const] : []), ...(key && ETHICS_STAGES.has(key) ? ["ethics_docs" as const] : []), ...(key !== "title_abstract" && key !== "conclusion" && key !== "discussion_article" ? ["abstract" as const] : [])];
-}
 const USAGE_LABEL: Record<string, string> = { ai_requests: "yapay zekâ isteği", tokens: "token", source_searches: "kaynak tarama", storage_mb: "depolama" };
 const PHASE_LABEL: Record<ChatPhase, string> = { plan: "Karar", search: "Arama", verify: "Doğrulama", read: "Okuma", write: "Yazım", gaps: "Eksikler" };
 
@@ -64,7 +65,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language }: Props) {
+export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0 }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -269,13 +270,16 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
           </div>
         )}
         <div className="no-scrollbar -mx-2.5 mb-2 flex gap-1.5 overflow-x-auto px-2.5 sm:-mx-3 sm:px-3">
-          {onOpenOutline && <button disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {t("Alt başlıklarla yaz")}</button>}
-          {onOpenAnalysis && (dataFiles.length > 0 || def?.requiresUserData) && <button disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button>}
-          <button onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-900 bg-ink-900 text-white hover:bg-ink-800")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>
+          {/* Aşamaya özel kısayollar (D75) */}
+          {quickActions(stage?.key, { lowSources, hasData: dataFiles.length > 0, longSection: targetWords >= 1500 || LONG_STAGES.has(stage?.key ?? "") }).map((q) => {
+            if (q === "outline") return onOpenOutline ? <button key={q} disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {t("Alt başlıklarla yaz")}</button> : null;
+            if (q === "analysis") return onOpenAnalysis ? <button key={q} disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button> : null;
+            if (q === "research") return <button key={q} onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-300 bg-white text-ink-800 hover:border-ink-400")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>;
+            // Bulgu yorumlama yalnızca kullanıcı verisi gereken bölümde veya veri dosyası varken
+            if (q === "interpret" && !def?.requiresUserData && !dataFiles.length) return null;
+            return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-ink-900 bg-ink-900 text-white hover:bg-ink-800" : "border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
+          })}
           {input.trim().length > 20 && <button disabled={busy} onClick={() => send(input, "from_notes")} className={cn(chip, "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100")}>{t(ASSISTANT_ACTIONS.from_notes.label)}</button>}
-          {[...STAGE_ACTIONS.filter((a) => (a === "interpret" || a === "discussion" ? def?.requiresUserData : true)), ...extraActions(stage?.key)].map((a) => (
-            <button key={a} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[a].label), a)} className={cn(chip, "border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}>{t(ASSISTANT_ACTIONS[a].label)}</button>
-          ))}
         </div>
         <div className="flex items-end gap-1.5 rounded-2xl border border-ink-200 bg-white p-1.5 shadow-sm transition focus-within:border-brand-300 focus-within:ring-4 focus-within:ring-brand-100">
           {dataFiles.length > 0 && (

@@ -11,7 +11,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [list, setList] = useState<Toast[]>([]);
   const push = useCallback((t: Omit<Toast, "id">) => {
     const id = Date.now() + Math.random();
-    setList((l) => [...l.slice(-3), { ...t, id }]);
+    // Aynı başlıklı bildirim zaten görünüyorsa yenisi eklenmez, mevcut olan güncellenir (yığılma olmasın)
+    setList((l) => (l.some((x) => x.title === t.title) ? l.map((x) => (x.title === t.title ? { ...x, ...t } : x)) : [...l.slice(-2), { ...t, id }]));
     setTimeout(() => setList((l) => l.filter((x) => x.id !== id)), t.tone === "error" ? 7000 : 4200);
   }, []);
   const icon = { success: <CheckCircle2 className="h-5 w-5 text-emerald-500" />, error: <XCircle className="h-5 w-5 text-rose-500" />, info: <Info className="h-5 w-5 text-brand-500" />, warning: <AlertTriangle className="h-5 w-5 text-amber-500" /> };

@@ -92,11 +92,12 @@ export function Toolbar({ editor, onFootnote }: { editor: Editor | null; onFootn
   );
 }
 
-export function AcademicEditor({ editor, chapter }: { editor: Editor | null; chapter: number }) {
+export function AcademicEditor({ editor, chapter }: { editor: Editor | null; chapter: string }) {
   useEffect(() => {
-    // Bölüm numarasını başlık numaralandırması için CSS değişkenine aktar
+    // Bölüm numara önekini başlık numaralandırması için CSS değişkenine aktar (numarasız kısımda numara gösterilmez)
     const el = editor?.view.dom as HTMLElement | undefined;
     el?.style.setProperty("--chapter", `"${chapter}"`);
+    el?.classList.toggle("unnumbered", !chapter);
   }, [editor, chapter]);
   return <EditorContent editor={editor} />;
 }

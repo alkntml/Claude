@@ -88,6 +88,7 @@ body { background: rgb(var(--bg)); color: rgb(var(--ink-900)); }
 .prose-academic.numbered h2 { counter-increment: h2; counter-reset: h3; }
 .prose-academic.numbered h2::before { content: var(--chapter) "." counter(h2) "  "; color: rgb(var(--ink-400)); font-weight: 500; }
 .prose-academic.numbered h3 { counter-increment: h3; }
+.prose-academic.numbered.unnumbered h2::before, .prose-academic.numbered.unnumbered h3::before { content: none; }
 .prose-academic.numbered h3::before { content: var(--chapter) "." counter(h2) "." counter(h3) "  "; color: rgb(var(--ink-400)); font-weight: 500; }
 .prose-academic p { text-align: left; hyphens: auto; }
 @media (min-width: 640px) { .prose-academic p { text-align: justify; } }

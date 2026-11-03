@@ -2394,4 +2394,10 @@ export const EN: Record<string, string> = {
   "Şifrenizi hatırladınız mı?": "Remembered your password?",
   "Şifrenizi mi unuttunuz?": "Forgot your password?",
   "Şifreyi kaydet": "Save password",
+  // Kaynak taraması, kısayollar, yapı (D75–D76)
+  "Bu bölüm için akademik usule uygun alt başlıklar öner: en fazla {n} tane; yalnızca birbirinden belirgin biçimde ayrı alt konular için başlık aç, bölüm adını tekrar eden başlık önerme. Mevcut alt başlıkları tekrar etme. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.": "Suggest subheadings for this section following academic conventions: at most {n}; only create a heading for clearly distinct subtopics and do not suggest a heading that repeats the section name. Do not repeat existing subheadings. Write only inside one :::taslak block, one subheading per line, without numbers or explanations.",
+  "PDF’iniz varsa kaynağa yükleyebilirsiniz.": "If you have the PDF, you can upload it to the source.",
+  "Tam metin analizi tamamlandı": "Full-text analysis finished",
+  "{n} kaynak kapalı erişimli veya okunamadı": "{n} sources are closed-access or could not be read",
+  "{n} kaynağın tam metni okundu": "Full text read for {n} sources",
 };

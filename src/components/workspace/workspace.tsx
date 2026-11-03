@@ -1,5 +1,7 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
+import { minSourcesFor } from "@/lib/workflows/quick-actions";
+import { sameHeading, stagePrefixes } from "@/lib/workflows/structure";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
   ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, GraduationCap, ExternalLink, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
@@ -234,9 +236,15 @@ export function Workspace(props: Props) {
   // --- Asistan çıktısını belgeye ekle
   const sourceIndexRef = useRef(sourceIndex);
   sourceIndexRef.current = sourceIndex;
+  const stagesRef = useRef(stages);
+  stagesRef.current = stages;
   const insertMarkdown = useCallback((md: string, map: Record<string, string>, mode: "append" | "replace", opts: { silent?: boolean } = {}) => {
     if (!editor || isBibliography) return;
     const doc = markdownToDoc(md, (sid) => (map[sid] && sourceIndexRef.current[map[sid]] ? map[sid] : null));
+    // Bölüm adını tekrar eden ilk başlık eklenmez (belgede başlık zaten bölümden gelir; D76)
+    const first = doc.content?.[0];
+    const stageNow = stagesRef.current.find((x: { id: string }) => x.id === activeId) as { title: string } | undefined;
+    if (first?.type === "heading" && stageNow && sameHeading((first.content ?? []).map((c) => c.text ?? "").join(""), stageNow.title)) doc.content = doc.content!.slice(1);
     const { from, to } = editor.state.selection;
     if (mode === "replace" && from !== to) editor.chain().focus().insertContentAt({ from, to }, doc.content ?? []).run();
     else if (mode === "replace") { toast({ tone: "info", title: t("Önce editörde değiştirilecek metni seçin") }); return; }
@@ -516,7 +524,9 @@ export function Workspace(props: Props) {
   }
   const existingDois = useMemo(() => new Set(sources.map((s) => s.doi).filter(Boolean)), [sources]);
   const wt = WORK_TYPES.find((w) => w.id === project.work_type);
-  const chapterNumber = stages.filter((s, i) => i <= activeIndex && (s.content_text ?? "").trim() && s.key !== "references").length || activeIndex + 1;
+  // Belgedeki akademik yapıya göre numara öneki (GİRİŞ > Problem Durumu → 1.1; D76)
+  const prefixes = useMemo(() => stagePrefixes(stages, Object.fromEntries(stages.map((s) => [s.key, stageDef(s.key)?.title]))), [stages]);
+  const chapterNumber = active ? prefixes[active.id] ?? "" : "";
 
   const done = completion(stages);
   const nextId = nextStage(stages)?.id;
@@ -658,7 +668,7 @@ export function Workspace(props: Props) {
             <div className="min-h-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={isBibliography ? undefined : () => setOutline(true)} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} />}
+                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={isBibliography ? undefined : () => setOutline(true)} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
                   {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: editor.getJSON() as JSONNode }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={applyComment} />}
@@ -683,7 +693,7 @@ export function Workspace(props: Props) {
 
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { setStages((l) => { const n = [...l]; n.splice(activeIndex + 1, 0, st); return n.map((x, i) => ({ ...x, position: i })); }); setAddStage(false); }} />
-      <OutlineWriter open={outline} onClose={() => setOutline(false)} projectId={project.id} stage={active && !isBibliography ? { id: active.id, title: active.title } : null} targetWords={active ? targetOf(active.id) : 0} existingHeadings={active ? headings(active.content as JSONNode).filter((h) => h.level === 2).map((h) => h.text) : []} onInsert={(md, map) => insertRef.current(md, map, "append", { silent: true })} onSourcesAdded={addSources} />
+      <OutlineWriter open={outline} onClose={() => setOutline(false)} projectId={project.id} stage={active && !isBibliography ? { id: active.id, title: active.title, key: active.key } : null} targetWords={active ? targetOf(active.id) : 0} existingHeadings={active ? headings(active.content as JSONNode).filter((h) => h.level === 2).map((h) => h.text) : []} onInsert={(md, map) => insertRef.current(md, map, "append", { silent: true })} onSourcesAdded={addSources} />
       <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       {journalOpen && <JournalModal open onClose={() => setJournalOpen(false)} projectId={project.id} hasGuideline={!!project.guideline_file_id}

@@ -24,11 +24,44 @@ const stages = [
 const project = { title: "İlişki odaklı OKB çalışması", citation_style: "apa7", language: "tr", context: { university: "Örnek Üniversitesi" } };
 const doc = buildExportDoc({ project, stages, sources, engineItems: sources.map(sourceRowToItemClient), authorName: "Ayşe Yılmaz" });
 
+describe("akademik bölüm yapısı (D76)", () => {
+  const p = (t: string) => ({ type: "paragraph", content: [{ type: "text", text: t }] });
+  const h = (level: number, t: string) => ({ type: "heading", attrs: { level }, content: [{ type: "text", text: t }] });
+  const st = (id: string, key: string, title: string, position: number, content: unknown[]) => ({ id, key, title, position, content_text: "metin", content: { type: "doc", content } });
+  const thesis = [
+    st("1", "topic", "Araştırma konusunun belirlenmesi", 0, [h(2, "Araştırma Konusunun Belirlenmesi"), p("Giriş metni.")]),
+    st("2", "problem", "Araştırma probleminin tanımlanması", 1, [p("Problem metni."), h(3, "Atlanan düzey")]),
+    st("3", "purpose", "Araştırmanın amacı ve önemi", 2, [h(2, "Araştırmanın Amacı ve Önemi"), p("Amaç.")]),
+    st("4", "method", "Araştırmanın yöntemi", 3, [p("Model.")]),
+    st("5", "sample", "Evren ve örneklem", 4, [p("Örneklem.")]),
+    st("6", "findings", "Bulgular", 5, [h(2, "Bulgular"), h(2, "Betimsel bulgular"), p("…")]),
+  ];
+  const d = buildExportDoc({ project, stages: thesis, sources: [], engineItems: [], authorName: "" });
+  const toc = d.toc.map((x) => `${x.number} ${x.text}`);
+  it("ardışık aşamalar ana bölümlerde toplanır, aşama adları akademik başlığa dönüşür", () => {
+    expect(toc).toEqual([
+      "1 GİRİŞ", "1.1 Problem Durumu", "1.1.1 Atlanan düzey", "1.2 Araştırmanın Amacı ve Önemi",
+      "2 YÖNTEM", "2.1 Araştırma Modeli", "2.2 Evren ve Örneklem",
+      "3 BULGULAR", "3.1 Betimsel bulgular",
+    ]);
+  });
+  it("aşama adını tekrar eden ilk başlık atlanır; “x.0.y” numarası oluşmaz", () => {
+    expect(toc.some((x) => /\.0\./.test(x))).toBe(false);
+    expect(toc.filter((x) => /Amacı ve Önemi/.test(x))).toHaveLength(1);
+    expect(toc.some((x) => /Konusunun Belirlenmesi/.test(x))).toBe(false);
+  });
+  it("kullanıcı aşama adını değiştirdiyse kendi adı kullanılır", () => {
+    const d2 = buildExportDoc({ project, stages: [st("1", "problem", "Sorunun Tarihsel Arka Planı", 0, [p("x")])], sources: [], engineItems: [], authorName: "" });
+    expect(d2.toc.map((x) => x.text)).toEqual(["GİRİŞ", "Sorunun Tarihsel Arka Planı"]);
+  });
+});
+
 describe("export", () => {
   it("renders citations in the project style and builds a bibliography", () => {
     const md = toMarkdown(doc);
-    expect(md).toContain("## 1 Kavramsal çerçeve");
-    expect(md).toContain("### 1.1 Bağlanma");
+    expect(md).toContain("## 1 KURAMSAL ÇERÇEVE VE İLGİLİ ARAŞTIRMALAR");
+    expect(md).toContain("### 1.1 Temel Kavramlar");
+    expect(md).toContain("#### 1.1.1 Bağlanma");
     expect(md).toContain("(Bowlby, 1969)");
     expect(md).toContain("(Doron vd., 2014, s. 170)");
     expect(md).toContain("[^1]");

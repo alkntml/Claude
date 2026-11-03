@@ -89,8 +89,11 @@ export function headings(doc: JSONNode | null | undefined): HeadingInfo[] {
 /** Otomatik başlık numaralandırma: [1, 1.1, 1.1.1] — bölüm sırası `chapter` ile verilir. */
 export function numberHeadings(list: HeadingInfo[], chapter: number): string[] {
   const counters = [chapter, 0, 0, 0];
+  let last = 1;
   return list.map((h) => {
-    const lvl = Math.min(Math.max(h.level, 1), 4);
+    // Seviye atlanırsa (## olmadan ###) bir üst düzeye çekilir: “1.0.1” yerine “1.1” (D76)
+    const lvl = Math.min(Math.max(h.level, 1), 4, last + 1);
+    last = lvl;
     if (lvl === 1) return String(chapter);
     counters[lvl - 1]++;
     for (let k = lvl; k < counters.length; k++) counters[k] = 0;

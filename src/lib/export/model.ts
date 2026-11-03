@@ -3,7 +3,9 @@
  * biçimden bağımsız bloklar. DOCX, PDF, Markdown ve TXT işleyicileri bu modeli kullanır.
  */
 import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocale, type Rich } from "@/lib/citations";
-import { citedIdsInOrder, citationAttrs, numberHeadings, type HeadingInfo, type JSONNode } from "@/lib/editor/doc";
+import { citedIdsInOrder, citationAttrs, type JSONNode } from "@/lib/editor/doc";
+import { stageDef } from "@/lib/workflows";
+import { chapterGroup, sameHeading, sectionTitle, UNNUMBERED } from "@/lib/workflows/structure";
 
 export interface Run {
   text: string;
@@ -110,15 +112,41 @@ export function buildExportDoc(params: {
     return out;
   };
 
-  const visit = (n: JSONNode, headingNumbers: string[], hIndex: { k: number }) => {
+  // Başlık numaralandırma (D76): bölüm içinde tek sayaç; seviye atlanırsa (## olmadan ###) düzeltilir → “1.0.1” oluşmaz
+  const counters = [0, 0, 0, 0];
+  let lastLevel = 1;
+  let numbered = true;
+  const emit = (level: number, runs: Run[]) => {
+    const lvl = Math.max(1, Math.min(4, level, lastLevel + 1));
+    lastLevel = lvl;
+    let number = "";
+    if (numbered && doNumber) {
+      counters[lvl - 1]++;
+      for (let k = lvl; k < 4; k++) counters[k] = 0;
+      number = counters.slice(0, lvl).join(".");
+    }
+    blocks.push({ kind: "heading", level: lvl, number, runs });
+    // İçindekiler en fazla üç düzey (akademik usul)
+    if (lvl <= 3) toc.push({ level: lvl, number, text: runs.map((r) => r.text).join("") });
+  };
+  const startChapter = (runs: Run[], isNumbered: boolean) => {
+    numbered = isNumbered;
+    if (isNumbered) { chapter++; counters[0] = chapter - 1; }
+    counters[1] = counters[2] = counters[3] = 0;
+    lastLevel = 0;
+    emit(1, runs);
+  };
+  /** Aşama içi başlıklar: ilk başlık aşama adının tekrarıysa atlanır; düzey, bölüm içindeki konuma göre kaydırılır */
+  let headingCtx = { shift: 0, skipTitle: "", seen: 0 };
+
+  const visit = (n: JSONNode) => {
     switch (n.type) {
       case "heading": {
-        const level = Math.min(Math.max(Number(n.attrs?.level ?? 2), 2), 4);
-        const number = doNumber ? headingNumbers[hIndex.k] ?? "" : "";
-        hIndex.k++;
         const runs = inlineRuns(n.content);
-        blocks.push({ kind: "heading", level, number, runs });
-        toc.push({ level, number, text: runs.map((r) => r.text).join("") });
+        const text = runs.map((r) => r.text).join("");
+        headingCtx.seen++;
+        if (headingCtx.seen === 1 && headingCtx.skipTitle && sameHeading(text, headingCtx.skipTitle)) break;
+        emit(Math.min(Math.max(Number(n.attrs?.level ?? 2), 2), 4) + headingCtx.shift, runs);
         break;
       }
       case "paragraph": {
@@ -146,27 +174,31 @@ export function buildExportDoc(params: {
         break;
       }
       default:
-        for (const c of n.content ?? []) visit(c, headingNumbers, hIndex);
+        for (const c of n.content ?? []) visit(c);
     }
   };
 
+  // Aşamalar → akademik ana bölümler (D76): ardışık giriş/kuram/yöntem aşamaları tek ana bölümde toplanır
+  let currentGroup: string | null = null;
   for (const st of ordered) {
     if (st.key === "references") continue;
     const doc = st.content as JSONNode | null;
     const hasText = (st.content_text ?? "").trim().length > 0;
     if (!hasText) continue;
-    chapter++;
-    const chapterNumber = doNumber ? String(chapter) : "";
-    blocks.push({ kind: "heading", level: 1, number: chapterNumber, runs: [{ text: st.title }] });
-    toc.push({ level: 1, number: chapterNumber, text: st.title });
-    const inner: HeadingInfo[] = [];
-    const collect = (x: JSONNode) => {
-      if (x.type === "heading") inner.push({ level: Math.min(Math.max(Number(x.attrs?.level ?? 2), 2), 4), text: "" });
-      for (const c of x.content ?? []) collect(c);
-    };
-    if (doc) collect(doc);
-    const nums = numberHeadings([{ level: 1, text: "" }, ...inner], chapter).slice(1);
-    if (doc) visit(doc, nums, { k: 0 });
+    const def = stageDef(st.key);
+    const title = sectionTitle(st.key, st.title, def?.title, locale);
+    const group = chapterGroup(st.key);
+    const skipTitle = [st.title, def?.title ?? "", title].find((x) => x) ?? "";
+    if (group) {
+      if (currentGroup !== group.id) { startChapter([{ text: group.title[locale] }], true); currentGroup = group.id; }
+      if (title) { emit(2, [{ text: title }]); headingCtx = { shift: 1, skipTitle, seen: 0 }; }
+      else headingCtx = { shift: 0, skipTitle, seen: 0 }; // başlıksız açılış metni (Giriş’in ilk kısmı)
+    } else {
+      currentGroup = null;
+      startChapter([{ text: title || st.title }], !UNNUMBERED.has(st.key));
+      headingCtx = { shift: 0, skipTitle, seen: 0 };
+    }
+    if (doc) visit(doc);
   }
 
   const bib = engine.bibliography(order);

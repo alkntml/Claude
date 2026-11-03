@@ -5,6 +5,7 @@ import type { SourceRecord } from "@/lib/sources/types";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { blueprintContext, readBlueprint } from "@/lib/blueprint";
+import { structureRule } from "@/lib/workflows/structure";
 import { GRANT_PROGRAMS, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -73,6 +74,9 @@ export async function buildContext(params: {
     out.push(`Amaç: ${def?.purpose ?? stage.description}`);
     if (def?.rules.length) out.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
     if (def?.requiresUserData) out.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
+    // Akademik yapı (D76): aşama adı başlık olarak yazılmaz; alt başlık sayısı bölüm türü ve hedef uzunluğa göre sınırlı
+    const target = Number((readBlueprint(ctx.blueprint)?.chapters ?? []).find((c) => c.stageId === stage.id)?.words) || 0;
+    out.push(structureRule(stage.key, stage.title, target));
     const current = String(stage.content_text ?? "");
     out.push(current ? `Bölümün mevcut metni:\n"""\n${current.slice(0, 12000)}\n"""` : "Bölüm henüz boş.");
   }

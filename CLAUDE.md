@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 205 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 220 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -51,9 +51,9 @@ src/components/          landing, dashboard, workspace, admin, share, ui
 src/lib/
   citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık)
   sources/               providers.ts (10 veri tabanı), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
-  research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme
+  research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme; researchGate: tarama yalnızca gerektiğinde (D75)
   ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza), prompts
-  workflows/             Çalışma türleri + aşama şablonları (stages.ts); order.ts önerilen yazım sırası (özet en son)
+  workflows/             Çalışma türleri + aşama şablonları (stages.ts); order.ts önerilen yazım sırası (özet en son); structure.ts akademik bölüm yapısı/başlık disiplini (D76); quick-actions.ts aşamaya özel kısayollar (D75)
   blueprint.ts + blueprint-ai.ts  Kurgu modülü (D67): çalışma başında problem/amaç/yöntem/bölüm planı; context.blueprint, yapay zekâ bağlamına girer
   titles.ts              Başlık önerileri (çalışmanın ilk adımı)
   editor/doc.ts          TipTap JSON yardımcıları, markdownToDoc ([[kaynak:S1]] -> citation düğümü)

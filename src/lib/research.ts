@@ -133,13 +133,12 @@ export interface ResearchPlan {
   plan: string[];
 }
 
-const PLANNER_SYSTEM = `Akademik bir kütüphaneci gibi davran. Görevin, akademik veri tabanlarında (OpenAlex, Crossref, PubMed) kaynak araması yapılıp yapılmaması gerektiğine karar vermek ve gerekiyorsa arama sorgularını üretmek.
-needsSearch = true olmalı, eğer: kullanıcı açıkça kaynak/literatür/makale/çalışma/referans bulunmasını veya araştırılmasını istiyorsa; YA DA görev bilimsel iddia içeren bir metin yazmayı gerektiriyor ve ÜZERİNDE ÇALIŞILAN BÖLÜM / ALT BAŞLIK / ALT KONU için doğrudan ilgili kaynak yetersizse (bu alt konuyla doğrudan ilgili 4'ten az kaynak).
-Projedeki TOPLAM kaynak sayısı bir sınır değildir: bir tezde her bölüm ve alt başlık kendi kaynaklarını gerektirir; toplam 50 ve üzeri kaynak normaldir. Kararı yalnızca "bu istekle ilgili görünen mevcut kaynaklar" listesinin bu alt konuyu gerçekten karşılayıp karşılamadığına göre ver. Yeni bir alt başlığa veya yeni bir kavrama geçildiyse ve listedeki kaynaklar bu kavramı ele almıyorsa arama yap.
-needsSearch = false olmalı, eğer: kullanıcı yalnızca soru soruyor, plan istiyor, dil düzeltmesi istiyor veya ilgili kaynaklar bu alt konu için yeterliyse.
+const PLANNER_SYSTEM = `Akademik bir kütüphaneci gibi davran. Görevin, akademik veri tabanlarında kaynak araması yapılıp yapılmaması gerektiğine karar vermek ve gerekiyorsa arama sorgularını üretmek. VARSAYILAN KARAR needsSearch = false’tur; arama yalnızca gerçekten gerektiğinde yapılır (gereksiz arama kullanıcının hakkını harcar ve kaynak listesini kalabalıklaştırır).
+needsSearch = true yalnızca şu durumlarda: (1) kullanıcı açıkça kaynak/literatür bulunmasını istiyorsa; YA DA (2) görev yeni bir bölüm/alt başlık metni yazmaksa VE ODAK KONU, mevcut kaynakların ele aldığı konulardan belirgin biçimde farklı bir kavram/alt konuysa (ör. robot tasarımından iş gücü etkisine geçmek) ve listedeki kaynakların en fazla 2’si bu odak konuyu anlamca karşılıyorsa; YA DA (3) "kapsam için kaynak az" notu verilmişse.
+Kaynak başlıkları farklı dilde (çoğunlukla İngilizce) olabilir: eşleşmeyi kelimeye göre değil ANLAMA göre değerlendir. Aynı alt konuda yazmaya devam ediliyorsa, mevcut kaynaklar konuyu karşılıyorsa veya istek soru, açıklama, plan, dil düzeltmesi ya da biçim ise needsSearch = false.
 Sorgular: 2–4 adet, İNGİLİZCE, kısa (2–6 kelime), mevcut kaynakların zaten kapsadığı kavramları tekrarlamadan, istenen alt konuya odaklı; gerekirse 1 Türkçe sorgu ekle. Kaynak, yazar veya eser adı UYDURMA. "plan" alanına bölüm için 3–6 adımlık kısa bir çalışma planı yaz (Türkçe).`;
 
-export async function planResearch(params: { planId: string; project: any; stageTitle?: string | null; request: string; existingTitles: string[]; relevantTitles?: string[]; stageHeadings?: string[]; force?: boolean }) {
+export async function planResearch(params: { planId: string; project: any; stageTitle?: string | null; request: string; existingTitles: string[]; relevantTitles?: string[]; stageHeadings?: string[]; force?: boolean; focus?: string; scopeLow?: boolean }) {
   const model = await resolveModel(params.planId, "fast");
   if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
   const p = params.project;
@@ -147,7 +146,7 @@ export async function planResearch(params: { planId: string; project: any; stage
     system: PLANNER_SYSTEM,
     messages: [{
       role: "user",
-      content: `Proje: ${p.title}\nKonu: ${p.topic || "-"}\nDisiplin: ${p.discipline || "-"}\nBölüm: ${params.stageTitle ?? "genel"}${params.stageHeadings?.length ? `\nBölümdeki mevcut alt başlıklar: ${params.stageHeadings.join(" | ")}` : ""}\nProjedeki toplam kaynak sayısı: ${params.existingTitles.length} (sınır değildir)\nBu istekle ilgili görünen mevcut kaynaklar (${(params.relevantTitles ?? params.existingTitles).length}):\n${(params.relevantTitles ?? params.existingTitles).slice(0, 20).map((t) => `- ${t}`).join("\n") || "(yok)"}\n\nKullanıcının isteği: ${params.request}${params.force ? "\n\n(Kullanıcı literatür araştırmasını açıkça başlattı: needsSearch = true.)" : ""}`,
+      content: `Proje: ${p.title}\nKonu: ${p.topic || "-"}\nDisiplin: ${p.discipline || "-"}\nBölüm: ${params.stageTitle ?? "genel"}${params.stageHeadings?.length ? `\nBölümdeki mevcut alt başlıklar: ${params.stageHeadings.join(" | ")}` : ""}\nProjedeki toplam kaynak sayısı: ${params.existingTitles.length} (sınır değildir)\n${params.focus ? `ODAK KONU (yazılacak alt başlık): ${params.focus}\n` : ""}Projedeki kaynaklar (${(params.relevantTitles ?? params.existingTitles).length}; başlıklar farklı dilde olabilir):\n${(params.relevantTitles ?? params.existingTitles).slice(0, 40).map((t) => `- ${t}`).join("\n") || "(yok)"}\n\nKullanıcının isteği: ${params.request}${params.scopeLow ? "\n\n(Not: kapsam için kaynak az — çalışma türüne göre projede henüz yeterli kaynak yok.)" : ""}${params.force ? "\n\n(Kullanıcı literatür araştırmasını açıkça istedi: needsSearch = true.)" : ""}`,
     }],
     maxTokens: 1500,
     effort: "low",
@@ -198,3 +197,41 @@ export async function recordResearchUsage(userId: string, info: { usage: { input
   ]);
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
+
+
+export { minSourcesFor } from "@/lib/workflows/quick-actions";
+
+// ---------------------------------------------------------------------------
+// Otomatik kaynak taraması kararı (D75): her istekte değil, yalnızca gerektiğinde
+// ---------------------------------------------------------------------------
+
+/** Yeni metin yazan (iddia içeren) eylemler: yalnızca bunlarda otomatik tarama değerlendirilir */
+export const WRITING_ACTIONS = new Set(["draft", "synthesize", "discussion", "fix_claim", "research_questions", "hypotheses", "methodology"]);
+
+/** Kullanıcı açıkça kaynak/literatür istiyor mu? (soru sormak, “araştırma sorusu” demek tetiklemez) */
+export function asksForSources(message: string): boolean {
+  const m = message.toLocaleLowerCase("tr");
+  return /(kaynak|literatür|makale|referans|yayın)\p{L}*\s+(\p{L}+\s+)?(bul|ara|tara|ekle|öner|getir|lazım|gerek)/u.test(m)
+    || /(bul|ara|tara|ekle|öner|getir)\p{L}*\s+(\p{L}+\s+)?(kaynak|literatür|makale|referans)/u.test(m)
+    || /(literatür|kaynak)\s+tara|yeni kaynak|daha fazla kaynak|kaynak yetersiz|güncel (kaynak|çalışma)/u.test(m)
+    || /\b(find|search|look up|add|more)\s+(\w+\s+)?(sources|papers|studies|literature|references)\b/.test(m);
+}
+
+/** Yazılacak alt başlık (toplu yazımda mesajda “…” ile gelir), yoksa bölümün son alt başlığı */
+export function focusOf(message: string, stageHeadings: string[]): string {
+  const q = message.match(/[“"]([^”"]{3,140})[”"]\s*alt başlığ/u);
+  return (q?.[1] ?? stageHeadings[stageHeadings.length - 1] ?? "").trim();
+}
+
+export type ResearchGate = "skip" | "planner" | "force";
+
+/**
+ * Tarama kararı: açık istek → zorunlu; yazım dışı eylem (soru, plan, dil düzeltme…) → atla;
+ * aynı odak için yakın zamanda zaten tarandıysa → atla; aksi hâlde planlayıcı (varsayılan: tarama yok) karar verir.
+ */
+export function researchGate(p: { action: string; message: string; recentlySearchedFocus: boolean }): ResearchGate {
+  if (asksForSources(p.message)) return "force";
+  if (!WRITING_ACTIONS.has(p.action)) return "skip";
+  if (p.recentlySearchedFocus) return "skip";
+  return "planner";
+}

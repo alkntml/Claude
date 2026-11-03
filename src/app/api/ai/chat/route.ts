@@ -9,7 +9,7 @@ import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/
 import { loadProjectBundle } from "@/lib/projects";
 import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
-import { addSourcesToProject, executeSearch, ingestWithBudget, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput } from "@/lib/research";
+import { addSourcesToProject, executeSearch, focusOf, ingestWithBudget, minSourcesFor, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput, researchGate } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
 import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining } from "@/lib/usage";
 
@@ -24,8 +24,10 @@ const Schema = z.object({
   selection: z.string().max(30000).optional(),
 });
 
-/** Otomatik araştırma kararının verildiği eylemler (seçili metin düzenleme ve veri yorumlama hariç) */
-const RESEARCH_ACTIONS = new Set<AssistantAction>(["chat", "plan", "draft", "synthesize", "research_questions", "hypotheses", "methodology", "discussion", "from_notes", "fix_claim"]);
+/** Yazımdan önce açık erişimli tam metin okumanın yapıldığı eylemler (soru/cevapta beklenmez) */
+const READ_ACTIONS = new Set<AssistantAction>(["draft", "synthesize", "discussion", "fix_claim", "research_questions", "hypotheses", "methodology"]);
+/** Aynı odak konu için bu süre içinde tekrar otomatik tarama yapılmaz */
+const RESEARCH_COOLDOWN_MS = 45 * 60_000;
 
 /** Bir projeye otomatik eklenebilecek en fazla kaynak (tez başına 50+ kaynağa izin verir) */
 const MAX_PROJECT_SOURCES = 150;
@@ -63,7 +65,16 @@ export const POST = route("ai.chat", async (req) => {
     if (error) throw error;
     conversationId = data.id;
   }
-  const { data: history } = await s.supabase.from("ai_messages").select("role, content").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(16);
+  const { data: history } = await s.supabase.from("ai_messages").select("role, content, meta, created_at").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(16);
+
+  // Otomatik kaynak taraması kararı (D75): soru/plan/düzeltmede tarama yok; yazımda yalnızca odak konu
+  // mevcut kaynaklarla karşılanmıyorsa veya kapsam için kaynak azsa; aynı odakta kısa sürede tekrar yok.
+  const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text).filter(Boolean).slice(0, 20) : [];
+  const focus = focusOf(b.message, stageHeads);
+  const focusKey = `${stage?.id ?? "genel"}|${focus.toLocaleLowerCase("tr")}`;
+  const recentlySearchedFocus = (history ?? []).some((m) => m.role === "assistant" && (m.meta as { research?: { focusKey?: string } } | null)?.research?.focusKey === focusKey && Date.now() - new Date(m.created_at as string).getTime() < RESEARCH_COOLDOWN_MS);
+  const gate = researchGate({ action: b.action, message: b.message, recentlySearchedFocus });
+  let searchedQueries: string[] = [];
 
   const [sysSetting, stagePrompts, models] = await Promise.all([getSetting("ai.system_prompt"), getSetting("ai.stage_prompts"), getSetting("ai.models")]);
 
@@ -76,7 +87,7 @@ export const POST = route("ai.chat", async (req) => {
 
   const stagePrompt = stage ? stagePrompts[stage.key] : undefined;
   const system = [sysSetting.text, OUTPUT_PROTOCOL, stagePrompt && `BÖLÜME ÖZEL TALİMAT:\n${stagePrompt}`].filter(Boolean).join("\n\n");
-  const messages = [...(history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content })), { role: "user" as const, content: userContent }];
+  const messages = [...(history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string })), { role: "user" as const, content: userContent }];
 
   await s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "user", content: b.message, meta: { action: b.action, hasSelection: !!b.selection } });
 
@@ -84,18 +95,18 @@ export const POST = route("ai.chat", async (req) => {
     async start(controller) {
       // 1) Otomatik literatür araştırması: hızlı model, araştırma gerekip gerekmediğine karar verir ve sorguları üretir.
       //    Gerekiyorsa sorgular gerçek veri tabanlarında çalıştırılır, en uygun kaynaklar doğrulanıp projeye eklenir.
-      if (RESEARCH_ACTIONS.has(b.action)) {
+      if (gate !== "skip") {
         controller.enqueue(sse("phase", { phase: "plan" }));
         try {
-          // Karar, projenin toplamına değil üzerinde çalışılan bölüm / alt başlık için ilgili kaynaklara göre verilir
-          const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text).filter(Boolean).slice(0, 20) : [];
-          const relevanceQuery = `${b.message} ${b.selection?.slice(0, 600) ?? ""} ${stage?.title ?? ""} ${stageHeads.slice(-2).join(" ")}`;
+          // Karar, projenin toplamına değil yazılacak alt başlığa (odak) göre verilir; başlıklar dil farkına rağmen anlamca değerlendirilir
+          const relevanceQuery = `${b.message} ${b.selection?.slice(0, 600) ?? ""} ${stage?.title ?? ""} ${focus}`;
           const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
-          const relevant = rankSources(bundle.sources, relevanceQuery, citedHere).slice(0, 15);
+          const relevant = rankSources(bundle.sources, relevanceQuery, citedHere).slice(0, 40);
           const planned = await planResearch({
             planId: s.profile.plan_id, project: bundle.project, stageTitle: stage?.title,
             request: `${b.action !== "chat" ? `[${action.label}] ` : ""}${b.message}${b.selection ? `\n(Seçili metin: ${b.selection.slice(0, 400)})` : ""}`,
             existingTitles: bundle.sources.map((x) => x.title), relevantTitles: relevant.map((x) => x.title), stageHeadings: stageHeads,
+            focus, force: gate === "force", scopeLow: bundle.sources.length < minSourcesFor(bundle.project.work_type, bundle.project.academic_level),
           });
           let queries: string[] = [];
           if (planned.plan.needsSearch && planned.plan.queries.length && bundle.sources.length < MAX_PROJECT_SOURCES) {
@@ -124,11 +135,14 @@ export const POST = route("ai.chat", async (req) => {
               controller.enqueue(sse("status", { text: msg }));
             }
           }
+          searchedQueries = queries;
           await recordResearchUsage(s.user.id, planned, queries, { countAsRequest: false });
         } catch (e) {
           await logError("ai.chat.research", e, s.user.id);
         }
+      }
 
+      if (READ_ACTIONS.has(b.action) || gate === "force") {
         // Yazmadan önce oku: bu istekle en ilgili, açık erişimli ve henüz okunmamış kaynakların tam metni
         // (sayfa numaralı atıf için). Süre sınırlı; bitmeyenler arka planda tamamlanır.
         try {
@@ -182,14 +196,15 @@ export const POST = route("ai.chat", async (req) => {
         const cost = await estimateCost(servedModel, usage.input, usage.output);
         usageRecorded = true;
         await Promise.all([
-          s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action } }),
+          s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action, ...(searchedQueries.length ? { research: { focusKey, queries: searchedQueries } } : {}) } }),
           s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
           recordUsage(s.user.id, "ai_request", { tokensIn: usage.input, tokensOut: usage.output, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
         ]);
         // 3) Eksik konular: asistanın :::eksik bloğundaki sorgularla ek kaynak araması (mesaj başına bir kez)
         let gapAdded = 0;
         let gaps = extractGaps(answer);
-        if (gaps.length && RESEARCH_ACTIONS.has(b.action)) {
+        // Eksik konu araması yalnızca yazım eylemlerinde veya açık istekte (soru/cevapta yapılmaz)
+        if (gaps.length && (READ_ACTIONS.has(b.action) || gate === "force") && !recentlySearchedFocus) {
           try {
             await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
             const leftGap = await searchesRemaining(s.user.id, s.profile.plan_id);

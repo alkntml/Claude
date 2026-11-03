@@ -9,6 +9,7 @@ import { PwaRegister } from "@/components/pwa";
 import { UpgradeDialogHost } from "@/components/upgrade-dialog";
 import { PriceProvider } from "@/components/price-context";
 import { getUsdTry } from "@/lib/fx";
+import { THEME_SCRIPT } from "@/components/theme-toggle";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/components/json-ld";
 import { organizationLd, websiteLd } from "@/lib/structured-data";
@@ -46,7 +47,8 @@ export const viewport: Viewport = { themeColor: "#0f1d3d", width: "device-width"
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [locale, usdTry] = await Promise.all([getLocale(), getUsdTry().catch(() => 48)]);
   return (
-    <html lang={locale} className={`${sans.variable} ${serif.variable}`}>
+    <html lang={locale} className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} /></head>
       <body className="font-sans min-h-screen">
         <I18nProvider locale={locale} dict={locale === "en" ? EN : null}>
           <PriceProvider usdTry={usdTry}><ToastProvider>{children}</ToastProvider>

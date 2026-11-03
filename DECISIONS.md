@@ -260,3 +260,14 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D60 — Fiyatlar %50 artırıldı, haklar aynı
 - Basic 749 TL, Pro 1.349 TL, Premium 2.249 TL (yıllık = aylık × 10); istek/tarama/proje hakları değişmedi (migration 17). Dolar fiyatları kurdan otomatik ($15.99 / $28.99 / $46.99 @48). Ortalama kullanımda maliyet payı ≈ %22’ye düştü; maliyet tavanı (gelirin 1/3’ü) fiyattan hesaplandığı için kendiliğinden yükseldi. 100 TL indirme ücreti değişmedi.
 
+### D61 — Gece / gündüz modu
+- `ink` paleti CSS değişkeni (`--ink-50…950`, tailwind `rgb(var(--ink-N) / <alpha-value>)`); `.dark` sınıfında ölçek ters çevrilir, `--bg`/`--surface` koyulaşır. `bg-white*` yüzeyleri, koyu düğmeler (`bg-ink-900/800` → marka mavisi; `bg-ink-950` koyu bant), açık rozetler (brand/emerald/amber/rose/violet-50 ve -700/800/900 yazılar), editör atıf düğümleri ve logo gece modunda `globals.css`’te geçersiz kılınır.
+- Tercih `localStorage` (`academiana-theme`); yoksa sistem ayarı. `<head>` içindeki küçük betik ilk boyamadan önce sınıfı koyar (yanıp sönme yok). Düğme: `components/theme-toggle.tsx` (tanıtım başlığı, mobil menü, uygulama kenar çubuğu).
+- Yeni bileşen yazarken renkleri `ink-*` ile ver; sabit hex renk kullanma (gece modunda dönmez).
+
+### D62 — Ana sayfa: karşılaştırma, izlenebilirlik demosu, sosyal kanıt
+- “Sıradan bir yapay zekâ değil” (`landing/compare.tsx`): Academiana ve “ChatGPT ve genel sohbet botları” 6 madde; rakip logosu kullanılmaz, iddialar ürünün gerçek davranışına dayanır.
+- “Her iddianın izi sürülebilir” (`landing/trace-demo.tsx`): atıflar sırayla vurgulanır ve kaynak kartıyla eşleşir, son cümle [KAYNAK GEREKLİ]; yalnızca ekranda görünürken döner, tıklayınca durur; örnek kaynaklar gerçek yayınlar (Bowlby 1969, Hazan & Shaver 1987, Doron vd. 2014). “Her cümle” yerine “her iddia” denildi (geçiş cümlelerinin kaynağı olmaz).
+- Hero rozeti “250 milyondan fazla akademik yayını tarar” (OpenAlex ölçeği; “tam metin” denmez, tam metin yalnızca açık erişimde okunur). Kullanıcı istediği “300 milyon tam metin” ve “10.000+ araştırmacı” uydurma/yanıltıcı olduğu için kullanılmadı.
+- Sosyal kanıt yalnızca gerçek sayı: `publicUserCount()` (1 saat önbellek) ≥100 ise aşağı yuvarlanmış “{n}+ araştırmacı Academiana ile çalışıyor”; altındaysa gösterilmez.
+

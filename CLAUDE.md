@@ -102,6 +102,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Route dosyalarından yalnızca HTTP metotları ve Next config (`maxDuration` vb.) export edilir; yardımcılar `src/lib`'e.
 - Sunucuya özel modüller `import "server-only"` ile başlar.
 - Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()` — istemci bileşeninde `@/i18n` içe aktarma, sözlük pakete girer; sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e eklenir; `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
+- Renkleri `ink-*` / marka sınıflarıyla ver, sabit hex kullanma: gece modu (D61) CSS değişkenleriyle çalışır.
 - Atıflar editörde `citation` düğümüdür; asla düz metin "(Yazar, Yıl)" üretme.
 - Model pakete göre değil işe göre seçilir (D47): basit → `fast` (Haiku), orta → `balanced` (Sonnet), karmaşık → `default` (Opus); asistan eylemleri `ACTION_TIER`’da.
 - Yeni AI özelliği: model katmanı `resolveModel(planId, tier)`, kullanım `recordUsage`, limit `assertWithinLimits`.

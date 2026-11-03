@@ -15,6 +15,7 @@ import { api, openUpgrade } from "@/lib/client";
 import { createBrowser } from "@/lib/supabase/browser";
 import { expertUrl } from "@/lib/expert";
 import { GiftBox } from "@/components/gift-box";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; locked?: boolean; expiresAt?: string | null }
 
@@ -83,7 +84,7 @@ export function AppShell({ children, user, locked, expiresAt }: Props) {
         </nav>
       </div>
       <div className="mt-auto space-y-2 p-3">
-        <div className="px-3"><LanguageSwitch /></div>
+        <div className="flex items-center justify-between px-3"><LanguageSwitch /><ThemeToggle /></div>
         <InstallApp />
         <button onClick={() => { setOpen(false); window.dispatchEvent(new Event("academiana:gift")); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-fuchsia-700 transition hover:bg-white"><Gift className="h-[18px] w-[18px]" /> {t("Davet et, kazan")}</button>
         <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-500 transition hover:bg-white hover:text-ink-900"><MessageSquarePlus className="h-[18px] w-[18px]" /> {t("Geri bildirim")}</button>

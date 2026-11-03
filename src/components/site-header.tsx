@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import Link from "@/components/l-link";
 import { useEffect, useState } from "react";
 import { Logo } from "./icons";
+import { ThemeToggle } from "./theme-toggle";
 import { cn } from "./ui/cn";
 
 const NAV: { href: string; label: string; wide?: 1 | 2 }[] = [
@@ -37,6 +38,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
           ))}
         </nav>
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <LanguageSwitch />
           {signedIn ? (
             <Link href="/panel" className="rounded-xl bg-ink-900 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-ink-900/20 transition hover:-translate-y-px hover:bg-ink-800">{t("Çalışma alanım")}</Link>
@@ -52,7 +54,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
       {open && (
         <div className="glass mx-3 mt-2 animate-rise rounded-2xl p-3 md:hidden">
           {NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-ink-700">{t(n.label)}</Link>)}
-          <div className="px-3 py-2"><LanguageSwitch /></div>
+          <div className="flex items-center gap-2 px-3 py-2"><LanguageSwitch /><ThemeToggle label /></div>
           <Link href={signedIn ? "/panel" : "/kayit"} className="mt-2 block rounded-xl bg-brand-600 px-3 py-2.5 text-center font-medium text-white">{signedIn ? t("Çalışma alanım") : t("Ücretsiz başla")}</Link>
         </div>
       )}

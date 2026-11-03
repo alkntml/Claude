@@ -6,10 +6,51 @@
   --bg: 247 248 252;
   --surface: 255 255 255;
   --ring: 58 100 242;
+  --ink-50: 246 247 251; --ink-100: 236 238 246; --ink-200: 214 218 234; --ink-300: 176 183 211; --ink-400: 128 137 176;
+  --ink-500: 92 101 144; --ink-600: 69 77 116; --ink-700: 53 59 92; --ink-800: 35 39 64; --ink-900: 21 24 41; --ink-950: 11 13 24;
+  --grid-line: 21 24 41;
+  color-scheme: light;
 }
 
+/* ---- Gece modu (D61): ink ölçeği ters çevrilir, beyaz yüzeyler koyu yüzeye döner ---- */
+.dark {
+  --bg: 10 12 22;
+  --surface: 19 22 38;
+  --ink-50: 26 30 50; --ink-100: 34 39 62; --ink-200: 47 53 82; --ink-300: 74 81 117; --ink-400: 110 119 160;
+  --ink-500: 149 157 194; --ink-600: 179 185 216; --ink-700: 205 210 232; --ink-800: 224 227 241; --ink-900: 238 240 248; --ink-950: 247 248 252;
+  --grid-line: 255 255 255;
+  color-scheme: dark;
+}
+.dark .bg-white { background-color: rgb(var(--surface)); }
+.dark .bg-white\/95, .dark .bg-white\/90, .dark .bg-white\/85 { background-color: rgb(var(--surface) / 0.95); }
+.dark .bg-white\/80, .dark .bg-white\/70, .dark .bg-white\/60 { background-color: rgb(var(--surface) / 0.8); }
+.dark .hover\:bg-white:hover { background-color: rgb(var(--ink-100)); }
+.dark .border-white\/70, .dark .border-white\/60 { border-color: rgb(var(--ink-200)); }
+/* Koyu düğmeler (bg-ink-900 + beyaz yazı) gece modunda marka mavisi; koyu bantlar lacivert kalır */
+.dark .bg-ink-900, .dark .bg-ink-800 { background-color: rgb(39 71 220); }
+.dark .hover\:bg-ink-800:hover, .dark .hover\:bg-ink-700:hover { background-color: rgb(58 100 242); }
+.dark .bg-ink-950 { background-color: rgb(14 17 32); }
+.dark .from-ink-800 { --tw-gradient-from: rgb(39 71 220) var(--tw-gradient-from-position); --tw-gradient-to: rgb(39 71 220 / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.dark .to-ink-950 { --tw-gradient-to: rgb(32 56 178) var(--tw-gradient-to-position); }
+/* Açık renkli rozet ve uyarı kutuları */
+.dark .bg-brand-50, .dark .bg-brand-50\/60, .dark .bg-brand-50\/70, .dark .bg-brand-50\/40 { background-color: rgb(58 100 242 / 0.14); }
+.dark .bg-brand-100 { background-color: rgb(58 100 242 / 0.22); }
+.dark .border-brand-100, .dark .border-brand-200 { border-color: rgb(58 100 242 / 0.35); }
+.dark .text-brand-700, .dark .text-brand-800 { color: rgb(141 179 255); }
+.dark .bg-emerald-50 { background-color: rgb(16 185 129 / 0.14); }
+.dark .text-emerald-700, .dark .text-emerald-800, .dark .text-emerald-900 { color: rgb(110 231 183); }
+.dark .bg-amber-50 { background-color: rgb(245 158 11 / 0.14); }
+.dark .border-amber-200 { border-color: rgb(245 158 11 / 0.35); }
+.dark .text-amber-700, .dark .text-amber-800, .dark .text-amber-900 { color: rgb(252 211 77); }
+.dark .bg-rose-50 { background-color: rgb(244 63 94 / 0.14); }
+.dark .text-rose-700, .dark .text-rose-800 { color: rgb(253 164 175); }
+.dark .bg-violet-50 { background-color: rgb(139 92 246 / 0.16); }
+.dark .text-violet-700 { color: rgb(196 181 253); }
+.dark .hover\:bg-amber-100:hover { background-color: rgb(245 158 11 / 0.22); }
+.dark img[src*="academiana-logo"], .dark img[src*="academiana-emblem"] { filter: brightness(0) invert(1); }
+
 html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-body { background: rgb(var(--bg)); color: #151829; }
+body { background: rgb(var(--bg)); color: rgb(var(--ink-900)); }
 
 @layer base {
   ::selection { background: rgb(58 100 242 / 0.18); }
@@ -27,7 +68,7 @@ body { background: rgb(var(--bg)); color: #151829; }
   }
   .chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium; }
   .bg-grid {
-    background-image: linear-gradient(to right, rgb(21 24 41 / 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgb(21 24 41 / 0.04) 1px, transparent 1px);
+    background-image: linear-gradient(to right, rgb(var(--grid-line) / 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgb(var(--grid-line) / 0.04) 1px, transparent 1px);
     background-size: 44px 44px;
   }
   .text-gradient { @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-500 to-sky-500; }
@@ -35,7 +76,7 @@ body { background: rgb(var(--bg)); color: #151829; }
 }
 
 /* ---- Akademik editör ---- */
-.prose-academic { font-family: var(--font-serif), Georgia, serif; font-size: 17px; line-height: 1.85; color: #1d2135; }
+.prose-academic { font-family: var(--font-serif), Georgia, serif; font-size: 17px; line-height: 1.85; color: rgb(var(--ink-900)); }
 .prose-academic:focus { outline: none; }
 .prose-academic > * + * { margin-top: 0.9em; }
 .prose-academic h2 { font-family: var(--font-sans); font-weight: 650; font-size: 1.32em; letter-spacing: -0.01em; margin-top: 1.6em; }
@@ -43,19 +84,19 @@ body { background: rgb(var(--bg)); color: #151829; }
 .prose-academic h4 { font-family: var(--font-sans); font-weight: 600; font-size: 1em; margin-top: 1.1em; }
 .prose-academic.numbered { counter-reset: h2; }
 .prose-academic.numbered h2 { counter-increment: h2; counter-reset: h3; }
-.prose-academic.numbered h2::before { content: var(--chapter) "." counter(h2) "  "; color: #8089b0; font-weight: 500; }
+.prose-academic.numbered h2::before { content: var(--chapter) "." counter(h2) "  "; color: rgb(var(--ink-400)); font-weight: 500; }
 .prose-academic.numbered h3 { counter-increment: h3; }
-.prose-academic.numbered h3::before { content: var(--chapter) "." counter(h2) "." counter(h3) "  "; color: #8089b0; font-weight: 500; }
+.prose-academic.numbered h3::before { content: var(--chapter) "." counter(h2) "." counter(h3) "  "; color: rgb(var(--ink-400)); font-weight: 500; }
 .prose-academic p { text-align: left; hyphens: auto; }
 @media (min-width: 640px) { .prose-academic p { text-align: justify; } }
 .prose-academic ul { list-style: disc; padding-left: 1.4em; }
 .prose-academic ol { list-style: decimal; padding-left: 1.4em; }
-.prose-academic blockquote { border-left: 3px solid #bcd2ff; padding-left: 1em; color: #454d74; }
+.prose-academic blockquote { border-left: 3px solid #bcd2ff; padding-left: 1em; color: rgb(var(--ink-600)); }
 .prose-academic table { border-collapse: collapse; width: 100%; font-family: var(--font-sans); font-size: 14px; margin: 1em 0; }
-.prose-academic th, .prose-academic td { border-top: 1px solid #d6daea; border-bottom: 1px solid #d6daea; padding: 6px 10px; text-align: left; vertical-align: top; }
-.prose-academic th { background: #f6f7fb; font-weight: 600; }
+.prose-academic th, .prose-academic td { border-top: 1px solid rgb(var(--ink-200)); border-bottom: 1px solid rgb(var(--ink-200)); padding: 6px 10px; text-align: left; vertical-align: top; }
+.prose-academic th { background: rgb(var(--ink-50)); font-weight: 600; }
 .prose-academic .selectedCell { background: #eef4ff; }
-.prose-academic p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: #b0b7d3; float: left; height: 0; pointer-events: none; }
+.prose-academic p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: rgb(var(--ink-300)); float: left; height: 0; pointer-events: none; }
 .prose-academic .citation-node { font-family: var(--font-sans); font-size: 0.86em; background: #eef4ff; color: #2038b2; border-radius: 6px; padding: 1px 6px; margin: 0 1px; cursor: pointer; white-space: nowrap; display: inline-block; line-height: 1.5; text-align: left; border: 1px solid #dbe7ff; transition: all .15s ease; }
 .prose-academic .citation-node:hover { background: #dbe7ff; }
 .prose-academic .citation-node.missing { background: #fff1f0; color: #b42318; border-color: #fecdca; }
@@ -82,3 +123,11 @@ body { background: rgb(var(--bg)); color: #151829; }
 @media (prefers-reduced-motion: reduce) {
   .animate-rise, .animate-drift { animation: none !important; }
 }
+
+/* Editör öğeleri gece modunda */
+.dark .prose-academic .citation-node { background: rgb(58 100 242 / 0.18); color: rgb(141 179 255); border-color: rgb(58 100 242 / 0.35); }
+.dark .prose-academic .citation-node:hover { background: rgb(58 100 242 / 0.3); }
+.dark .prose-academic .citation-node.missing { background: rgb(244 63 94 / 0.15); color: rgb(253 164 175); border-color: rgb(244 63 94 / 0.35); }
+.dark .prose-academic mark.placeholder { background: rgb(245 158 11 / 0.18); color: rgb(252 211 77); }
+.dark .prose-academic .selectedCell { background: rgb(58 100 242 / 0.15); }
+.dark .prose-academic .footnote-node { color: rgb(141 179 255); }

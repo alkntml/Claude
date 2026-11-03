@@ -1,5 +1,5 @@
 "use client";
-import { AlertTriangle, BadgeCheck, BookMarked, Check, ExternalLink, FileText, Loader2, Quote, Search, ShieldCheck } from "lucide-react";
+import { AlertTriangle, BadgeCheck, BookMarked, Check, FileText, Loader2, Quote, Search, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
@@ -8,17 +8,29 @@ import { useT } from "@/i18n/client";
  * “Her iddianın izi sürülebilir” canlı demosu (D62): paragraftaki atıflar sırayla vurgulanır ve
  * sağdaki kaynak kartıyla eşleşir; kaynağı olmayan iddia [KAYNAK GEREKLİ] ile gösterilir.
  * Yalnızca ekranda görünürken döner (işlemciyi yormaz); kullanıcı tıklarsa durur.
- * Örnekteki kaynaklar gerçek yayınlardır. Doğrulama paneli (D64): atıfın/kaynağın üzerine gelince açılır,
- * DOI ve kayıt eşleşmesini adım adım gösterir; `excerpt` varsa kaynaktaki pasajı birebir, eşleşen
- * cümle vurgulu gösterir. Pasajlar yalnızca kaynağın gerçek metninden alınır (tahmin/uydurma yok).
+ * Doğrulama paneli (D64): atıfın/kaynağın üzerine gelince açılır, DOI ve kayıt eşleşmesini adım adım
+ * gösterir ve kaynaktaki pasajı birebir, eşleşen kısım vurgulu gösterir. Kaynaklar ve pasajlar ÖRNEKTİR
+ * (gerçek yazarlara söz yüklememek için kurgusal; ekranda “örnek” diye belirtilir).
  */
 type Excerpt = { before: string; match: string; after: string; where: string };
 type Item = { text: string; cite?: string; source?: { ref: string; meta: string; badge: string; doi?: string; registry: string; excerpt?: Excerpt } };
 const ITEMS: Item[] = [
-  { text: "Ebeveyn tutumları, bireyin yakın ilişkilerdeki bağlanma örüntülerini şekillendiren temel etkenler arasındadır", cite: "Bowlby, 1969", source: { ref: "Bowlby, J. (1969). Attachment and loss: Vol. 1. Attachment.", meta: "Basic Books", badge: "Kitap künyesi doğrulandı", registry: "Kütüphane kataloğu (OpenAlex)" } },
-  { text: "Yetişkinlerin romantik ilişkileri de benzer bir bağlanma süreciyle açıklanabilir", cite: "Hazan ve Shaver, 1987", source: { ref: "Hazan, C., & Shaver, P. (1987). Romantic love conceptualized as an attachment process.", meta: "Journal of Personality and Social Psychology, 52(3) · doi:10.1037/0022-3514.52.3.511", badge: "Crossref ile doğrulandı · Özet okundu", doi: "10.1037/0022-3514.52.3.511", registry: "Crossref" } },
-  { text: "İlişki odaklı obsesif belirtiler ise partnere yönelik yineleyici şüphelerle karakterizedir", cite: "Doron vd., 2014", source: { ref: "Doron, G., Derby, D. S., & Szepsenwol, O. (2014). Relationship obsessive compulsive disorder (ROCD): A conceptual framework.", meta: "Journal of Obsessive-Compulsive and Related Disorders, 3(2) · doi:10.1016/j.jocrd.2013.12.005", badge: "Crossref ile doğrulandı · Tam metin okundu", doi: "10.1016/j.jocrd.2013.12.005", registry: "Crossref" } },
-  { text: "Üniversite öğrencilerinde bu belirtilerin yaygınlığı yüksektir" },
+  {
+    text: "Uzaktan eğitimde öğrencilerin öz düzenleme becerileri, ders başarısının en güçlü yordayıcılarından biridir", cite: "Kaya, 2021",
+    source: { ref: "Kaya, E. (2021). Uzaktan eğitimde öz düzenleme ve akademik başarı.", meta: "Eğitim Araştırmaları Dergisi, 14(2), 201–219", badge: "Crossref ile doğrulandı · Tam metin okundu", doi: "10.xxxx/ornek.2021.014", registry: "Crossref",
+      excerpt: { before: "Regresyon analizi sonuçları, ", match: "öz düzenleme becerilerinin uzaktan eğitimde ders başarısını en güçlü biçimde yordayan değişken olduğunu", after: " göstermiştir.", where: "Bulgular · s. 211" } },
+  },
+  {
+    text: "Eş zamanlı canlı derslerin öğrencilerin derse bağlılığını artırdığı bildirilmektedir", cite: "Demir ve Aksoy, 2022",
+    source: { ref: "Demir, A., & Aksoy, M. (2022). Eş zamanlı derslerin öğrenci bağlılığına etkisi.", meta: "Öğretim Teknolojileri Dergisi, 8(3), 45–62", badge: "Crossref ile doğrulandı · Tam metin okundu", doi: "10.xxxx/ornek.2022.083", registry: "Crossref",
+      excerpt: { before: "", match: "Canlı derslere katılan öğrencilerin derse bağlılık puanları, yalnızca kayıtlı videolarla çalışan öğrencilere göre anlamlı düzeyde yüksektir", after: ".", where: "Bulgular · s. 53" } },
+  },
+  {
+    text: "Öğretmenden alınan zamanında geri bildirim ise bu ilişkide aracı bir rol üstlenmektedir", cite: "Lee vd., 2020",
+    source: { ref: "Lee, S., Park, J., & Chen, Y. (2020). Feedback timing and self-regulation in online learning.", meta: "Online Learning Review, 5(1), 1–15", badge: "Crossref ile doğrulandı · Özet okundu", doi: "10.xxxx/ornek.2020.051", registry: "Crossref",
+      excerpt: { before: "Çalışmada ", match: "zamanında verilen geri bildirimin, öz düzenleme ile başarı arasındaki ilişkide kısmi aracı rol üstlendiği", after: " belirlenmiştir.", where: "Özet" } },
+  },
+  { text: "Bu etkinin tüm yaş gruplarında aynı olduğu söylenebilir" },
 ];
 const STEP_OF = [0, 1, 1, 2];
 
@@ -68,7 +80,7 @@ export function TraceDemo() {
 
         <div ref={ref} className="mt-10 overflow-hidden rounded-3xl border border-ink-100 bg-ink-50/60 p-3 shadow-soft sm:p-4">
           <div className="flex items-center justify-between px-2 pb-3 pt-1">
-            <span className="flex items-center gap-2 text-sm font-medium text-ink-600"><FileText className="h-4 w-4" /> {t("Örnek çalışma · 2.3 Kavramsal çerçeve")}</span>
+            <span className="flex items-center gap-2 text-sm font-medium text-ink-600"><FileText className="h-4 w-4" /> {t("Örnek çalışma · 2.3 Kuramsal çerçeve")}</span>
             <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-medium text-ink-500 ring-1 ring-ink-100">{active + 1} / {ITEMS.length}</span>
           </div>
           <div className="grid gap-3 lg:grid-cols-[230px_1fr_300px]">
@@ -128,12 +140,12 @@ export function TraceDemo() {
                           {/* Kaynaktaki pasaj: birebir metin, eşleşen cümle vurgulu */}
                           {src.excerpt && phase >= 3 && (
                             <blockquote className="animate-rise rounded-lg border-l-2 border-emerald-400 bg-white/70 px-2.5 py-2 font-serif text-[12.5px] leading-relaxed text-ink-600">
-                              “{src.excerpt.before}<mark className="rounded bg-emerald-100 px-0.5 text-ink-900">{src.excerpt.match}</mark>{src.excerpt.after}”
+                              “{t(src.excerpt.before)}<mark className="rounded bg-emerald-100 px-0.5 text-ink-900">{t(src.excerpt.match)}</mark>{t(src.excerpt.after)}”
                               <span className="mt-1 block font-sans text-[10.5px] not-italic text-ink-400">{t(src.excerpt.where)}</span>
                             </blockquote>
                           )}
                           {phase >= (src.excerpt ? 3 : 2) && <p className="flex items-center gap-1 text-[11.5px] font-medium text-emerald-700"><BadgeCheck className="h-3.5 w-3.5" />{t(src.badge)}</p>}
-                          {src.doi && <a href={`https://doi.org/${src.doi}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11.5px] font-medium text-brand-700 hover:underline"><ExternalLink className="h-3 w-3" />{t("Kaynağı aç")} · doi.org</a>}
+                          {src.doi && <p className="text-[11px] text-ink-400">doi:{src.doi} · {t("örnek kaynak")}</p>}
                         </div>
                       )}
                     </div>
@@ -146,7 +158,7 @@ export function TraceDemo() {
               </div>
             </div>
           </div>
-          <p className="px-2 pt-3 text-[11.5px] text-ink-400">{t("Örnek gösterimdir; listelenen kaynaklar gerçek yayınlardır. Bir atıfın veya kaynağın üzerine gelerek doğrulamayı görün.")}</p>
+          <p className="px-2 pt-3 text-[11.5px] text-ink-400">{t("Örnek gösterimdir; kaynaklar ve pasajlar temsilidir. Kendi çalışmanızda pasajlar, eklediğiniz kaynakların kendi metninden gelir. Bir atıfın veya kaynağın üzerine gelerek doğrulamayı görün.")}</p>
         </div>
       </div>
     </section>

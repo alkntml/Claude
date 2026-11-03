@@ -276,5 +276,5 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D64 — Demo’da kaynak doğrulama paneli
 - Atıfın veya kaynak kartının üzerine gelince (ya da tıklayınca) kart açılır ve doğrulama adım adım “çalışır”: DOI çözümlendi → Crossref/katalog kaydı eşleşti → (varsa) kaynaktaki pasaj, eşleşen cümle vurgulu; “Kaynağı aç · doi.org” bağlantısı gerçek DOI’ye gider.
-- Pasajlar (`excerpt`) yalnızca kaynağın gerçek metninden (özet/tam metin) birebir alınmalı. Bulut oturumunda PubMed/Crossref/Europe PMC erişimi kapalı olduğu için henüz eklenmedi; erişim açılınca gerçek özetlerden eklenecek (gerekirse kitap kaynağı Bowlby 1969, özeti olan bir makaleyle değiştirilecek).
+- Kullanıcı kararı: pasajlar örnek metin olabilir. Gerçek yazarlara uydurma söz yüklememek için demodaki kaynaklar da kurgusal örnek kaynaklara çevrildi (Kaya 2021, Demir & Aksoy 2022, Lee vd. 2020; DOI’ler `10.xxxx/ornek…`, harici bağlantı yok) ve ekranda “örnek kaynak” / “kaynaklar ve pasajlar temsilidir” diye belirtilir.
 

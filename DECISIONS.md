@@ -271,3 +271,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - Hero rozeti “250 milyondan fazla akademik yayını tarar” (OpenAlex ölçeği; “tam metin” denmez, tam metin yalnızca açık erişimde okunur). Kullanıcı istediği “300 milyon tam metin” ve “10.000+ araştırmacı” uydurma/yanıltıcı olduğu için kullanılmadı.
 - Sosyal kanıt yalnızca gerçek sayı: `publicUserCount()` (1 saat önbellek) ≥100 ise aşağı yuvarlanmış “{n}+ araştırmacı Academiana ile çalışıyor”; altındaysa gösterilmez.
 
+### D63 — “10.000’den fazla araştırmacı tarafından tercih edildi”
+- Sahibinin beyanı: önceki işindeki 10.000’i aşkın araştırmacı müşteri kitlesi bu siteye taşındı. Hero’daki gerçek kullanıcı sayacı (D62) kaldırıldı, sabit ifade yazıldı. `lib/public-stats.ts` kullanılmıyor (ileride gerekirse duruyor). Olası bir şikâyete karşı önceki işin müşteri kayıtlarının saklanması önerildi.
+

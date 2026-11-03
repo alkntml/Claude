@@ -14,7 +14,6 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import { getUsdTry } from "@/lib/fx";
-import { publicUserCount, roundedUsers } from "@/lib/public-stats";
 import { CompareSection } from "@/components/landing/compare";
 import { TraceDemo } from "@/components/landing/trace-demo";
 import Link from "@/components/l-link";
@@ -28,7 +27,7 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const [session, plans, { t, locale }, usdTry, userCount] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getUsdTry(), publicUserCount()]);
+  const [session, plans, { t, locale }, usdTry] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getUsdTry()]);
   const signedIn = session;
   const all = FAQ.flatMap((g) => g.items);
   const faq = FAQ_HIGHLIGHTS.map((id) => all.find((i) => i.id === id)!).filter(Boolean);
@@ -37,7 +36,7 @@ export default async function Home() {
       <SiteHeader signedIn={signedIn} />
       <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] })]} />
       <main>
-        <Hero signedIn={signedIn} users={roundedUsers(userCount)} />
+        <Hero signedIn={signedIn} />
         <CompareSection />
         <TraceDemo />
         <section id="tur-sec" className="relative scroll-mt-24 py-16">

@@ -3,7 +3,7 @@ import { useT } from "@/i18n/client";
 import { ArrowRight, BadgeCheck, BookMarked, FileCheck2, Quote, Sparkles } from "lucide-react";
 import Link from "@/components/l-link";
 
-export function Hero({ signedIn, users = null }: { signedIn: boolean; users?: number | null }) {
+export function Hero({ signedIn }: { signedIn: boolean }) {
   const { t } = useT();
 
   return (
@@ -29,13 +29,11 @@ export function Hero({ signedIn, users = null }: { signedIn: boolean; users?: nu
             </Link>
             <Link href="#tur-sec" className="inline-flex h-12 items-center rounded-2xl border border-ink-200 bg-white/80 px-6 font-medium text-ink-700 transition hover:border-ink-300 hover:bg-white">{t("Çalışma türlerini gör")}</Link>
           </div>
-          {/* Sosyal kanıt: yalnızca gerçek kullanıcı sayısı (eşik altında gösterilmez; D62) */}
-          {users != null && (
-            <p className="mt-7 flex items-center gap-2 text-[15px] text-ink-600">
-              <span className="flex -space-x-1.5">{["bg-brand-500", "bg-sky-400", "bg-amber-400", "bg-emerald-400"].map((c) => <span key={c} className={`h-6 w-6 rounded-full border-2 border-white ${c}`} />)}</span>
-              {t("{n}+ araştırmacı Academiana ile çalışıyor", { n: users.toLocaleString("tr-TR") })}
-            </p>
-          )}
+          {/* Sosyal kanıt: sahibinin önceki işinden taşınan araştırmacı kitlesi (D63) */}
+          <p className="mt-7 flex items-center gap-2 text-[15px] text-ink-600">
+            <span className="flex -space-x-1.5">{["bg-brand-500", "bg-sky-400", "bg-amber-400", "bg-emerald-400"].map((c) => <span key={c} className={`h-6 w-6 rounded-full border-2 border-white ${c}`} />)}</span>
+            {t("10.000’den fazla araştırmacı tarafından tercih edildi")}
+          </p>
           <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("Uydurma kaynak yok")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("10 akademik veri tabanı")}</li>

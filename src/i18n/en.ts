@@ -2078,4 +2078,5 @@ export const EN: Record<string, string> = {
   "Bowlby, 1969": "Bowlby, 1969",
   "Kitap künyesi doğrulandı": "Book record verified",
   "Crossref ile doğrulandı · Tam metin okundu": "Verified via Crossref · Full text read",
+  "10.000’den fazla araştırmacı tarafından tercih edildi": "Trusted by more than 10,000 researchers",
 };

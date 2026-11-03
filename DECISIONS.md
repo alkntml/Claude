@@ -274,3 +274,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D63 — “10.000’den fazla araştırmacı tarafından tercih edildi”
 - Sahibinin beyanı: önceki işindeki 10.000’i aşkın araştırmacı müşteri kitlesi bu siteye taşındı. Hero’daki gerçek kullanıcı sayacı (D62) kaldırıldı, sabit ifade yazıldı. `lib/public-stats.ts` kullanılmıyor (ileride gerekirse duruyor). Olası bir şikâyete karşı önceki işin müşteri kayıtlarının saklanması önerildi.
 
+### D64 — Demo’da kaynak doğrulama paneli
+- Atıfın veya kaynak kartının üzerine gelince (ya da tıklayınca) kart açılır ve doğrulama adım adım “çalışır”: DOI çözümlendi → Crossref/katalog kaydı eşleşti → (varsa) kaynaktaki pasaj, eşleşen cümle vurgulu; “Kaynağı aç · doi.org” bağlantısı gerçek DOI’ye gider.
+- Pasajlar (`excerpt`) yalnızca kaynağın gerçek metninden (özet/tam metin) birebir alınmalı. Bulut oturumunda PubMed/Crossref/Europe PMC erişimi kapalı olduğu için henüz eklenmedi; erişim açılınca gerçek özetlerden eklenecek (gerekirse kitap kaynağı Bowlby 1969, özeti olan bir makaleyle değiştirilecek).
+

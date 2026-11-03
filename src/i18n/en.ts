@@ -2079,4 +2079,12 @@ export const EN: Record<string, string> = {
   "Kitap künyesi doğrulandı": "Book record verified",
   "Crossref ile doğrulandı · Tam metin okundu": "Verified via Crossref · Full text read",
   "10.000’den fazla araştırmacı tarafından tercih edildi": "Trusted by more than 10,000 researchers",
+  "DOI çözümlendi": "DOI resolved",
+  "Künye bulundu": "Record found",
+  "{r} kaydı eşleşti: yazar, yıl, başlık": "{r} record matched: authors, year, title",
+  "Kaynaktaki pasaj bulundu": "Passage found in the source",
+  "Kaynağı aç": "Open source",
+  "Kütüphane kataloğu (OpenAlex)": "Library catalogue (OpenAlex)",
+  "Crossref": "Crossref",
+  "Örnek gösterimdir; listelenen kaynaklar gerçek yayınlardır. Bir atıfın veya kaynağın üzerine gelerek doğrulamayı görün.": "Sample illustration; the listed sources are real publications. Hover over a citation or source to see the verification.",
 };

@@ -2,7 +2,7 @@
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, ClipboardList, Gift, Lock, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X } from "lucide-react";
+import { Building2, ClipboardList, Gift, Lock, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -38,7 +38,7 @@ export function AppShell({ children, user, locked, expiresAt }: Props) {
   const [msg, setMsg] = useState("");
   const [sending, setSending] = useState(false);
 
-  const nav = [...NAV, ...(user.isOrgAdmin ? [{ href: "/kurum", label: "Kurumum", icon: Building2 }] : []), ...(user.isAdmin ? [{ href: "/yonetim", label: "Yönetim", icon: ShieldCheck }] : [])];
+  const nav = [...NAV, ...(user.isOrgAdmin ? [{ href: "/kurum", label: "Kurumum", icon: Building2 }] : []), ...(user.isAdmin ? [{ href: "/yonetim", label: "Yönetim", icon: ShieldCheck }, { href: "/yonetim?sekme=otomatik", label: "Otomatik çalışma", icon: Rocket }] : [])];
 
   async function logout() {
     await createBrowser().auth.signOut();

@@ -34,7 +34,9 @@ function useRows(resource: string, q = "") {
 }
 
 export function AdminPanel({ selfId }: { selfId: string }) {
+  // ?sekme=otomatik ile doğrudan otomatik çalışma sekmesi açılır
   const [tab, setTab] = useState<Tab>("overview");
+  useEffect(() => { if (new URLSearchParams(window.location.search).get("sekme") === "otomatik") setTab("autopilot"); }, []);
   return (
     <div>
       <h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950">Yönetim paneli</h1>

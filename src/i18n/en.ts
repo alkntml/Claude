@@ -2400,4 +2400,5 @@ export const EN: Record<string, string> = {
   "Tam metin analizi tamamlandı": "Full-text analysis finished",
   "{n} kaynak kapalı erişimli veya okunamadı": "{n} sources are closed-access or could not be read",
   "{n} kaynağın tam metni okundu": "Full text read for {n} sources",
+  "Otomatik çalışma": "Auto-write",
 };

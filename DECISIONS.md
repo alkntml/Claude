@@ -313,3 +313,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D71 — Akademik Ekip paketlerin yanında ayrı kart
 - Fiyatlar sayfasında ve ana sayfadaki paket bölümünde Premium’un sağında “Akademik Ekip” kartı (`TeamCard`, components/landing/sections.tsx): %30 indirim, kişi başı aylık indirimli fiyatlar (Basic/Pro/Premium; paket fiyatlarından hesaplanır, İngilizcede dolar), en az 3 kişi / üst sınır yok, “Ekip teklifi al” → WhatsApp. Ödeme ve tanımlama süreci değişmedi (Yönetim → Kurumlar). Izgara xl’de 5 sütun; kapsayıcı max-w-7xl. Alttaki yinelenen “Akademik Ekip İndirimi” kutusu kaldırıldı.
+
+### D72 — Örnek çıktılar sayfası (/ornekler)
+- Herkese açık sayfa: 15 hizmetin her biri için örnek (kurgu, başlık, kaynak araştırması/doğrulama, bölüm taslağı, 9 atıf stili, literatür matrisi, anket, istatistik, grafik, kalite raporu, özet/abstract, hakem yanıtı, savunma provası, savunma sunumu, Word/PDF). Her örnekte hangi pakette olduğu yazar.
+- Dürüstlük: tümü tek bir KURGUSAL çalışma üzerinden; kaynaklar/yazarlar kurgusal ve DOI’siz (gerçek yayına işaret etmez), sayfanın başında açıkça belirtilir. İstatistik tabloları (Cronbach α, korelasyon, t testi), grafik ve atıf biçimleri elle yazılmaz: sabit tohumlu örnek veri setinden (N = 120) sitenin kendi motorlarıyla (`runAnalysis`, `buildChart` + `renderChartSvg`, `CitationEngine`) canlı üretilir; özet/abstract ve sunumdaki sayılar bu sonuçlardan gelir. Atıf örneğinde 9 stil arasında geçiş yapılabilir.
+- İçerik `src/lib/samples.ts` ({tr,en}), görünüm `components/samples/samples-view.tsx`. Menüde “Örnekler”, altbilgide “Örnek çıktılar”, ana sayfa ve fiyatlar altında bağlantı; site haritası ve SEO kayıtları eklendi.
+- Ayrıca düzeltildi: sistemde olmayan ISNAD stili, “desteklenen stiller” listelerinden (ana sayfa karşılaştırması, SSS, yapılandırılmış veri, blog) çıkarıldı.

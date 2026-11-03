@@ -6,7 +6,7 @@ import { absoluteUrl, localizedPath } from "@/lib/seo";
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date().toISOString().slice(0, 10);
   const pages: [string, number, "daily" | "weekly" | "monthly" | "yearly"][] = [
-    ["/", 1, "weekly"], ["/fiyatlar", 0.9, "weekly"], ["/blog", 0.9, "weekly"], ["/sss", 0.8, "monthly"], ["/kurumlar", 0.7, "monthly"],
+    ["/", 1, "weekly"], ["/fiyatlar", 0.9, "weekly"], ["/ornekler", 0.8, "monthly"], ["/blog", 0.9, "weekly"], ["/sss", 0.8, "monthly"], ["/kurumlar", 0.7, "monthly"],
     ["/uzman-destegi", 0.6, "monthly"], ["/akademik-durustluk", 0.6, "monthly"], ["/kayit", 0.6, "monthly"], ["/yardim", 0.5, "monthly"],
     ["/gizlilik", 0.3, "yearly"], ["/kosullar", 0.3, "yearly"],
   ];

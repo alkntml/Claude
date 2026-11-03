@@ -46,6 +46,8 @@
 .dark .text-rose-700, .dark .text-rose-800 { color: rgb(253 164 175); }
 .dark .bg-violet-50 { background-color: rgb(139 92 246 / 0.16); }
 .dark .text-violet-700 { color: rgb(196 181 253); }
+.dark .bg-sky-50 { background-color: rgb(14 165 233 / 0.14); }
+.dark .text-sky-700 { color: rgb(125 211 252); }
 .dark .hover\:bg-amber-100:hover { background-color: rgb(245 158 11 / 0.22); }
 .dark img[src*="academiana-logo"], .dark img[src*="academiana-emblem"] { filter: brightness(0) invert(1); }
 
@@ -131,3 +133,12 @@ body { background: rgb(var(--bg)); color: rgb(var(--ink-900)); }
 .dark .prose-academic mark.placeholder { background: rgb(245 158 11 / 0.18); color: rgb(252 211 77); }
 .dark .prose-academic .selectedCell { background: rgb(58 100 242 / 0.15); }
 .dark .prose-academic .footnote-node { color: rgb(141 179 255); }
+
+/* Örnek çıktılar sayfası (D72): APA tablosu, örnek atıf ve işaretler */
+table.apa { width: 100%; min-width: 420px; border-collapse: collapse; font-family: var(--font-serif), Georgia, serif; font-size: 14px; color: rgb(var(--ink-800)); }
+table.apa th { text-align: left; font-weight: 400; padding: 6px 10px 6px 0; border-top: 1.5px solid rgb(var(--ink-800)); border-bottom: 1px solid rgb(var(--ink-800)); }
+table.apa td { padding: 5px 10px 5px 0; }
+table.apa tbody tr:last-child td { border-bottom: 1.5px solid rgb(var(--ink-800)); }
+.sample-cite { border-radius: 6px; border: 1px solid rgb(var(--ink-200)); background: rgb(58 100 242 / 0.08); padding: 0 5px; font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.82em; color: rgb(32 56 178); white-space: nowrap; }
+.dark .sample-cite { color: rgb(141 179 255); }
+.sample-flag { border-radius: 6px; background: rgb(245 158 11 / 0.16); padding: 0 5px; font-family: var(--font-sans), system-ui, sans-serif; font-size: 0.8em; font-weight: 600; color: rgb(180 83 9); }

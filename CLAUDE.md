@@ -69,6 +69,7 @@ src/lib/
   seo-pages.ts           Herkese açık sayfaların TR/EN başlık, açıklama, anahtar kelimeleri
   seo-server.ts          buildMeta/pageMeta: canonical, hreflang, Open Graph, Twitter, robots
   structured-data.ts     JSON-LD: Organization, WebSite, SoftwareApplication, ItemList, BreadcrumbList, WebPage
+  samples.ts             Örnek çıktılar sayfası içeriği (D72; kurgusal çalışma, örnek veri seti); görünüm components/samples
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
   growth.ts pricing.ts expert.ts  Kurum lisansı, krediler, davet; WhatsApp yükseltme bağlantısı + Akademik Ekip İndirimi %30, en az 3 kişi, sınırsız üye (pricing.ts, D70); uzman desteği bağlantıları
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)

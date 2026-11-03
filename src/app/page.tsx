@@ -59,6 +59,7 @@ export default async function Home() {
               <p className="mt-3 text-ink-500">{t("İstediğiniz zaman yükseltin veya iptal edin.")}</p>
             </FadeIn>
             <PricingCards plans={plans} signedIn={signedIn} />
+            <p className="mt-8 text-center"><Link href="/ornekler" className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">{t("Her hizmetin örnek çıktısını görün →")}</Link></p>
           </div>
         </section>
         <section className="pb-20">

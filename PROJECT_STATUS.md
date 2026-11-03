@@ -92,6 +92,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Davet sayaçları + ücretsiz pakette tarama kilidi yok (D55)**
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
+- **Örnek çıktılar (D72):** /ornekler; 15 hizmetin örneği, kurgusal çalışma üzerinden; tablo/grafik/atıflar sitenin motorlarıyla canlı üretilir
 - **Akademik Ekip (D70):** %30 indirim, en az 3 kişi, kurum lisansında kişi sınırı yok (migration 18)
 - **Kurguda hedef uzunluk (D68, D69):** toplam kelime (sayfa yalnızca yaklaşık bilgi); bölümlere otomatik kelime dağıtımı (düzenlenebilir); asistan ve alt başlıklarla toplu yazım bu hedeflere göre yazar; sol menüde yazılan / hedef kelime
 - **Kurgu modülü (D67):** çalışmanın başında tek ekranda araştırma planı (problem, amaç, sorular, yöntem, örneklem, veri, analiz, katkı + bölüm bölüm plan); yapay zekâyla veya elle, farklı girişle yeniden kurgulama, alan bazında yeniden öneri; onaydan sonra başlık → bölümler; yazım bu plana göre

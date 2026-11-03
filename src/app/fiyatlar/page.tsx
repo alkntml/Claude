@@ -28,6 +28,7 @@ export default async function Pricing() {
           <p className="mt-4 text-ink-500">{t("Her paket, çalışmanızın aşamasına uygun araçlar içerir. Taahhüt yok; ücretsiz başlayıp istediğiniz zaman yükseltebilirsiniz.")}</p>
         </div>
         <PricingCards plans={plans} signedIn={s} />
+        <p className="mt-8 text-center"><Link href="/ornekler" className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">{t("Her hizmetin örnek çıktısını görün →")}</Link></p>
         <div className="mx-auto mt-12 grid max-w-4xl gap-4 md:grid-cols-2">
           <div className="card p-5">
             <p className="font-semibold text-ink-900">{t("Kurum lisansı")}</p>

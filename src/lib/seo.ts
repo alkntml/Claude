@@ -6,7 +6,7 @@
 import type { Locale } from "@/i18n";
 import { SITE_URL } from "./site";
 
-export const PUBLIC_PATHS = ["/", "/fiyatlar", "/sss", "/kurumlar", "/uzman-destegi", "/yardim", "/gizlilik", "/kosullar", "/akademik-durustluk", "/blog", "/kayit", "/giris"];
+export const PUBLIC_PATHS = ["/", "/fiyatlar", "/ornekler", "/sss", "/kurumlar", "/uzman-destegi", "/yardim", "/gizlilik", "/kosullar", "/akademik-durustluk", "/blog", "/kayit", "/giris"];
 
 export function isPublicPath(path: string): boolean {
   const p = path.split(/[?#]/)[0] || "/";

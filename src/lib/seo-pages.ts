@@ -36,6 +36,15 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     keywords: { tr: ["tez yazma programı fiyat", "akademik yazım aracı ücretsiz", "akademisyen indirimi", "Academiana fiyat"], en: ["academic writing tool pricing", "AI thesis writer free", "academic team discount", "Academiana pricing"] },
     tagline: { tr: "Ücretsiz başlayın, ihtiyacınız kadar yükseltin", en: "Start free, upgrade when you need" },
   },
+  "/ornekler": {
+    title: { tr: "Örnek Çıktılar — Tez, Kaynakça, İstatistik ve Daha Fazlası | Academiana", en: "Sample Outputs — Thesis, References, Statistics and More | Academiana" },
+    description: {
+      tr: "Academiana’nın her hizmetinden örnek: çalışma kurgusu, doğrulanmış kaynaklar, atıflı bölüm, 9 atıf stili, APA tabloları, grafik, anket, savunma provası ve Word çıktısı.",
+      en: "A sample of every Academiana service: study blueprint, verified sources, cited drafts, 9 citation styles, APA tables, charts, surveys, defence practice and Word export.",
+    },
+    keywords: { tr: ["tez örneği", "APA tablo örneği", "kaynakça örneği", "akademik yazım örneği", "Academiana örnek"], en: ["thesis example", "APA table example", "reference list example", "academic writing sample", "Academiana sample"] },
+    tagline: { tr: "Ne elde edeceğinizi görün", en: "See what you get" },
+  },
   "/sss": {
     title: { tr: "Sık Sorulan Sorular — Kaynaklar, Gizlilik, İntihal | Academiana", en: "FAQ — Sources, Privacy, Plagiarism & AI Detection | Academiana" },
     description: {

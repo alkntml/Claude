@@ -2313,4 +2313,5 @@ export const EN: Record<string, string> = {
   "yaklaşık {n} sayfa (12 punto, 1,5 satır aralığında; kesin değildir)": "about {n} pages (12 pt, 1.5 line spacing; approximate)",
   "Çalışmanın toplam kelime sayısı": "Total word count of the work",
   "Hedef uzunluk (toplam kelime)": "Target length (total words)",
+  "Kişi sınırı yok; istediğiniz kadar üye katılabilir.": "No member limit; as many people as you like can join.",
 };

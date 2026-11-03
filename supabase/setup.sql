@@ -1092,3 +1092,12 @@ update public.plans set price_monthly = 1349, price_yearly = 13490, updated_at =
 update public.plans set price_monthly = 2249, price_yearly = 22490, updated_at = now() where id = 'premium';
 
 select id, price_monthly, limits->>'ai_requests_month' as yz_istek from public.plans order by sort_order;
+
+-- ---------- 20261113000018_unlimited_seats.sql ----------
+-- Kurum lisansı / Akademik Ekip: kişi sayısı sınırsız (D70).
+-- seats boş (null) = sınırsız. Mevcut kurumların sınırı da kaldırılır.
+alter table public.organizations drop constraint if exists organizations_seats_check;
+alter table public.organizations alter column seats drop not null;
+alter table public.organizations alter column seats set default null;
+alter table public.organizations add constraint organizations_seats_check check (seats is null or seats > 0);
+update public.organizations set seats = null;

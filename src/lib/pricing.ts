@@ -35,7 +35,8 @@ export function emailMatchesDomain(email: string | null | undefined, domain: str
 export const WHATSAPP_NUMBER = "905425266650";
 
 /** Akademik Ekip İndirimi: akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler */
-export const TEAM_DISCOUNT = { percent: 20, minMembers: 3 } as const;
+/** En az 3 kişi; üst sınır yok (kurum lisansında kişi sayısı sınırsız, D70) */
+export const TEAM_DISCOUNT = { percent: 30, minMembers: 3 } as const;
 
 export function whatsappLink(text: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;

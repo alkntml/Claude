@@ -306,3 +306,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D69 — Uzunluk yalnızca kelimeyle (sayfa başına kelime kaldırıldı)
 - Kullanıcı geri bildirimi: sayfa başına sığabilecek kelime sınırlıdır; aşmak için punto küçültmek akademik yazım kurallarına aykırıdır. Bu yüzden “sayfa” ve “sayfa başına kelime” girişleri kaldırıldı. Hedef = çalışmanın toplam kelimesi + her bölümün kelime sayısı.
 - Sayfa yalnızca bilgi amaçlı, yaklaşık gösterilir (12 punto, 1,5 satır, ~275 kelime/sayfa; “kesin değildir”). Yapay zekâ bağlamına sayfa bilgisi verilmez. `wordsPerPage` alanı geriye dönük uyum için şemada kalır, arayüzde kullanılmaz.
+
+### D70 — Akademik Ekip: %30 indirim, en az 3 kişi, kişi sınırı yok
+- `TEAM_DISCOUNT = { percent: 30, minMembers: 3 }` (fiyatlar, kurumlar, SSS ve SEO metinleri buradan veya güncellenmiş metinlerden okunur).
+- Kurum lisansında `organizations.seats` artık boş bırakılabilir: boş = sınırsız (migration 18; mevcut kurumların sınırı kaldırıldı). Katılımda sınır yalnızca `seats` doluysa uygulanır. Yönetim → Kurumlar’da kişi sınırı alanı isteğe bağlı.

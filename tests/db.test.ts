@@ -340,4 +340,10 @@ describe("anketler", () => {
       expect((await db.query(`select id from public.${table} where project_id = $1`, [p.id])).rows).toHaveLength(0);
     }
   });
+  it("kurum lisansında kişi sayısı sınırsız olabilir (D70)", async () => {
+    const [o] = (await db.query<{ seats: number | null }>("insert into public.organizations (name) values ('Sınırsız Ekip') returning seats")).rows;
+    expect(o.seats).toBeNull();
+    await db.query("insert into public.organizations (name, seats) values ('Sınırlı', 5)");
+    await expectError(db.query("insert into public.organizations (name, seats) values ('Hatalı', 0)"), /check/);
+  });
 });

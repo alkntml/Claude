@@ -443,12 +443,12 @@ function GrowthSettings() {
 function OrgsTab() {
   const toast = useToast();
   const { rows, load } = useRows("organizations");
-  const [form, setForm] = useState({ name: "", plan_id: "pro", seats: 50, email_domain: "", expires_at: "" });
+  const [form, setForm] = useState({ name: "", plan_id: "pro", seats: "", email_domain: "", expires_at: "" });
   const [adminEmail, setAdminEmail] = useState<Record<string, string>>({});
   async function create() {
     try {
-      await api("/api/admin/organizations", { method: "POST", json: { name: form.name, plan_id: form.plan_id, seats: Number(form.seats) || 1, email_domain: form.email_domain.trim() || null, expires_at: form.expires_at ? new Date(`${form.expires_at}T23:59:59`).toISOString() : null } });
-      setForm({ name: "", plan_id: "pro", seats: 50, email_domain: "", expires_at: "" }); load();
+      await api("/api/admin/organizations", { method: "POST", json: { name: form.name, plan_id: form.plan_id, seats: Number(form.seats) > 0 ? Number(form.seats) : null, email_domain: form.email_domain.trim() || null, expires_at: form.expires_at ? new Date(`${form.expires_at}T23:59:59`).toISOString() : null } });
+      setForm({ name: "", plan_id: "pro", seats: "", email_domain: "", expires_at: "" }); load();
     } catch (e) { toast({ tone: "error", title: "Oluşturulamadı", detail: (e as Error).message }); }
   }
   async function setAdmin(orgId: string) {
@@ -463,7 +463,7 @@ function OrgsTab() {
         <input className="input" placeholder="Kurum adı (ör. Hacettepe Üniversitesi SBE)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <div className="grid grid-cols-2 gap-2">
           <select className="input" value={form.plan_id} onChange={(e) => setForm({ ...form, plan_id: e.target.value })}><option value="basic">Basic</option><option value="pro">Pro</option><option value="premium">Premium</option></select>
-          <input className="input" type="number" min={1} placeholder="Kullanıcı sayısı" value={form.seats} onChange={(e) => setForm({ ...form, seats: Number(e.target.value) })} />
+          <input className="input" type="number" min={1} placeholder="Kişi sınırı (boş = sınırsız)" title="Boş bırakılırsa sınırsız kişi katılabilir" value={form.seats} onChange={(e) => setForm({ ...form, seats: e.target.value })} />
         </div>
         <input className="input" placeholder="E-posta alan adı (isteğe bağlı, ör. hacettepe.edu.tr)" value={form.email_domain} onChange={(e) => setForm({ ...form, email_domain: e.target.value })} />
         <label className="block"><span className="label">Bitiş tarihi (isteğe bağlı)</span><input className="input" type="date" value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} /></label>
@@ -478,7 +478,7 @@ function OrgsTab() {
           <div key={o.id} className="card space-y-2 p-4">
             <div className="flex flex-wrap items-center gap-2">
               <p className="flex-1 font-medium">{o.name}</p>
-              <Badge tone="brand">{o.plan_id}</Badge><Badge>{o.seats} kullanıcı</Badge>
+              <Badge tone="brand">{o.plan_id}</Badge><Badge>{o.seats ? `${o.seats} kişi sınırı` : "Sınırsız kişi"}</Badge>
               <code className="rounded bg-ink-100 px-2 py-0.5 text-xs">{o.join_code}</code>
               <button onClick={async () => { await api("/api/admin/organizations", { method: "PATCH", json: { id: o.id, active: !o.active } }); load(); }}><Badge tone={o.active ? "green" : "ink"}>{o.active ? "Etkin" : "Pasif"}</Badge></button>
             </div>

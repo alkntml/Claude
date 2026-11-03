@@ -27,8 +27,8 @@ export function OrgAdminView() {
       <div className="grid gap-4 md:grid-cols-2">
         <section className="card p-5">
           <p className="text-sm font-medium text-ink-700">{t("Kullanıcı sayısı")}</p>
-          <p className="mt-1 text-2xl font-semibold">{members.length} / {org.seats}</p>
-          <div className="mt-2"><ProgressBar value={members.length} max={org.seats} /></div>
+          <p className="mt-1 text-2xl font-semibold">{org.seats ? `${members.length} / ${org.seats}` : members.length}</p>
+          {org.seats ? <div className="mt-2"><ProgressBar value={members.length} max={org.seats} /></div> : <p className="mt-1 text-xs text-ink-500">{t("Kişi sınırı yok; istediğiniz kadar üye katılabilir.")}</p>}
         </section>
         <section className="card p-5">
           <p className="text-sm font-medium text-ink-700">{t("Katılım kodu")}</p>

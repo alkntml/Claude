@@ -5,7 +5,7 @@ import { adminClient } from "@/lib/supabase/admin";
 
 /* Kurumsal lisans, kullanım kredileri ve davet ödülü (sunucu) */
 
-export interface OrgInfo { id: string; name: string; plan_id: string; role: "admin" | "member"; seats: number; active: boolean; expires_at: string | null }
+export interface OrgInfo { id: string; name: string; plan_id: string; role: "admin" | "member"; seats: number | null; active: boolean; expires_at: string | null }
 
 /** Kullanıcının etkin kurum üyeliği (kurum pasif veya süresi dolmuşsa null). Tablo yoksa (migration çalıştırılmadıysa) null. */
 export async function activeOrg(db: SupabaseClient, userId: string): Promise<OrgInfo | null> {

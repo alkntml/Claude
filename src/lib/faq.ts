@@ -286,8 +286,8 @@ export const FAQ: FaqGroup[] = [
         id: "ekip",
         q: { tr: "Akademisyen grupları veya araştırma ekipleri için indirim var mı?", en: "Is there a discount for academic teams or research groups?" },
         a: {
-          tr: "Evet. Akademik Ekip İndirimi ile akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler en az 3 kişilik ekiplerde tüm ücretli paketlerde %20 indirim alır. Fiyatlar sayfasındaki “WhatsApp’tan bilgi al” bağlantısıyla bize ulaşabilirsiniz.",
-          en: "Yes. With the Academic Team Discount, faculty groups, research teams, labs and departments get 20% off all paid plans for teams of at least 3 people. Contact us via the “Ask on WhatsApp” link on the Pricing page.",
+          tr: "Evet. Akademik Ekip İndirimi ile akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler en az 3 kişilik ekiplerde tüm ücretli paketlerde %30 indirim alır. Ekibe katılabilecek kişi sayısında üst sınır yoktur. Fiyatlar sayfasındaki “WhatsApp’tan bilgi al” bağlantısıyla bize ulaşabilirsiniz.",
+          en: "Yes. With the Academic Team Discount, faculty groups, research teams, labs and departments get 30% off all paid plans for teams of at least 3 people. There is no upper limit on team size. Contact us via the “Ask on WhatsApp” link on the Pricing page.",
         },
       },
       {

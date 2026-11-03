@@ -16,7 +16,7 @@ export const POST = route("org.join", async (req) => {
   const { data: mine } = await db.from("organization_members").select("org_id").eq("user_id", s.user.id).maybeSingle();
   if (mine) throw new ApiError(409, mine.org_id === org.id ? "Zaten bu kurumun üyesisiniz" : "Başka bir kurumun üyesisiniz; önce oradan ayrılın");
   const { count } = await db.from("organization_members").select("user_id", { count: "exact", head: true }).eq("org_id", org.id);
-  if ((count ?? 0) >= org.seats) throw new ApiError(409, "Kurum lisansındaki kullanıcı sayısı doldu; kurum yöneticinize başvurun");
+  if (org.seats != null && (count ?? 0) >= org.seats) throw new ApiError(409, "Kurum lisansındaki kullanıcı sayısı doldu; kurum yöneticinize başvurun");
   const { error } = await db.from("organization_members").insert({ org_id: org.id, user_id: s.user.id, role: "member" });
   if (error) throw new ApiError(409, "Kuruma katılınamadı");
   return json({ ok: true, org: { id: org.id, name: org.name } });

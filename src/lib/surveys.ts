@@ -156,3 +156,123 @@ export function codebook(qs: Question[]): string[][] {
 
 let seq = 0;
 export const newId = () => `q${Date.now().toString(36)}${(seq++).toString(36)}`;
+
+// ---------------------------------------------------------------------------
+// Yapay zekâ desteği için yardımcılar (D66): yapay zekânın düz biçimli çıktısını güvenli soru
+// modeline çevirme, kural tabanlı hızlı kontrol ve tahmini doldurma süresi.
+// ---------------------------------------------------------------------------
+
+/** Yapay zekânın döndürdüğü düz soru biçimi (her alan her türde bulunur; türe göre kullanılır) */
+export interface AiQuestion {
+  type: string; title: string; help?: string; code?: string; required?: boolean;
+  options?: string[]; items?: string[]; reverse?: number[]; points?: number; min?: string | number | null; max?: string | number | null; long?: boolean;
+}
+
+const TYPES_OK = new Set(["single", "multi", "likert", "number", "text", "info"]);
+const clean = (s: unknown, max: number) => String(s ?? "").replace(/\s+/g, " ").trim().slice(0, max);
+const cleanList = (l: unknown, max: number, limit: number) => (Array.isArray(l) ? l : []).map((x) => clean(x, max)).filter(Boolean).slice(0, limit);
+const toNum = (v: unknown) => { if (v === null || v === undefined || v === "") return null; const n = Number(String(v).replace(",", ".")); return Number.isFinite(n) ? n : null; };
+
+/** Değişken adı: izinli karakterler, en fazla 40; boşsa yedek ad */
+export function safeCode(raw: unknown, fallback: string): string {
+  const s = String(raw ?? "").normalize("NFC").replace(/[^\p{L}\p{N}_.-]/gu, "").slice(0, 40);
+  return s || fallback;
+}
+
+/**
+ * Yapay zekâ çıktısını doğrulanmış soru listesine çevirir: bilinmeyen türler atılır, seçenek/madde
+ * sayıları sınırlanır, Likert etiketleri hazır kalıptan gelir, değişken adları benzersizleştirilir.
+ * `keepIds` verilirse aynı sıradaki mevcut soruların kimlikleri korunur (düzenlemede veri bağı kopmasın).
+ */
+export function fromAiQuestions(raw: AiQuestion[], lang: "tr" | "en", keepIds: string[] = []): Question[] {
+  const out: Question[] = [];
+  const used = new Set<string>();
+  const reserve = (cols: string[]) => cols.forEach((c) => used.add(c.toLocaleLowerCase("tr")));
+  const free = (cols: string[]) => cols.every((c) => !used.has(c.toLocaleLowerCase("tr")));
+  for (const r of (Array.isArray(raw) ? raw : []).slice(0, 150)) {
+    if (!r || !TYPES_OK.has(r.type)) continue;
+    const n = out.length + 1;
+    const title = clean(r.title, 500);
+    if (!title) continue;
+    const id = keepIds[out.length] ?? newId();
+    const base = { id, title, help: clean(r.help, 1000), required: r.required !== false };
+    let q: Question | null = null;
+    if (r.type === "single" || r.type === "multi") {
+      const options = [...new Set(cleanList(r.options, 200, 30))];
+      if (options.length < 2) continue;
+      q = { ...base, type: r.type, code: "", options } as Question;
+    } else if (r.type === "likert") {
+      const items = cleanList(r.items, 500, 100).map((x) => x.replace(/^\d+[.)]\s*/, ""));
+      if (!items.length) continue;
+      const points = r.points === 7 ? 7 : 5;
+      const reverse = [...new Set((r.reverse ?? []).map(Number).filter((k) => Number.isInteger(k) && k >= 0 && k < items.length))].sort((a, b) => a - b);
+      q = { ...base, type: "likert", code: "", items, points, labels: [...LIKERT_PRESETS[lang][points]], reverse } as Question;
+    } else if (r.type === "number") {
+      const min = toNum(r.min), max = toNum(r.max);
+      q = { ...base, type: "number", code: "", min, max: min !== null && max !== null && max < min ? null : max } as Question;
+    } else if (r.type === "text") {
+      q = { ...base, type: "text", code: "", long: !!r.long } as Question;
+    } else {
+      q = { ...base, type: "info", code: "", required: false } as Question;
+    }
+    // Benzersiz değişken adı (Likert’te madde sütunları, çoklu seçimde seçenek sütunları dahil)
+    const fallback = q.type === "likert" ? `L${n}_` : q.type === "info" ? `B${n}` : `S${n}`;
+    let code = safeCode(r.code, fallback);
+    for (let k = 2; ; k++) {
+      const cols = surveyColumns([{ ...q, code } as Question]);
+      if (q.type === "info" ? !used.has(code.toLocaleLowerCase("tr")) : free(cols)) { reserve(q.type === "info" ? [code] : cols); break; }
+      code = `${safeCode(r.code, fallback).slice(0, 36)}${q.type === "likert" ? `_${k}_` : `_${k}`}`;
+    }
+    out.push({ ...q, code } as Question);
+  }
+  return out;
+}
+
+/** Tahmini doldurma süresi (dakika): Likert maddesi ~6 sn, seçim ~8 sn, sayı ~6 sn, açık uçlu ~40 sn */
+export function estimateMinutes(qs: Question[]): number {
+  let sec = 0;
+  for (const q of qs) {
+    if (q.type === "likert") sec += q.items.length * 6 + 5;
+    else if (q.type === "single" || q.type === "multi") sec += 8 + q.options.length;
+    else if (q.type === "number") sec += 6;
+    else if (q.type === "text") sec += q.long ? 60 : 25;
+    else sec += 8;
+  }
+  return Math.max(1, Math.round(sec / 60));
+}
+
+export interface LintIssue { level: "warning" | "tip"; question: number | null; message: string; params?: Record<string, string | number> }
+
+/**
+ * Kural tabanlı hızlı kontrol (yapay zekâ kullanmaz, hak harcamaz). Mesajlar Türkçe anahtardır;
+ * arayüz `t(message, params)` ile çevirir.
+ */
+export function surveyLint(qs: Question[], meta: { consent?: string; description?: string } = {}): LintIssue[] {
+  const out: LintIssue[] = [];
+  if (!qs.length) return out;
+  const consent = (meta.consent ?? "").trim();
+  if (!consent) out.push({ level: "warning", question: null, message: "Bilgilendirilmiş onam metni yok. Etik kurullar çoğunlukla ister (Ayarlar sekmesi)." });
+  else if (/\[[^\]]{2,40}\]/.test(consent)) out.push({ level: "warning", question: null, message: "Onam metninde doldurulmamış alanlar var (köşeli parantez içindekiler)." });
+  const answerable = qs.filter((q) => q.type !== "info");
+  if (answerable.length && !qs.some((q) => q.type === "single" || q.type === "number")) out.push({ level: "tip", question: null, message: "Demografik soru yok. Örneklemi betimlemek için yaş, cinsiyet gibi sorular eklemeyi düşünün." });
+  const mins = estimateMinutes(qs);
+  if (mins > 20) out.push({ level: "warning", question: null, message: "Anket yaklaşık {n} dakika sürüyor. 15–20 dakikayı aşan anketlerde yarıda bırakma artar.", params: { n: mins } });
+  const seen = new Map<string, number>();
+  qs.forEach((q, i) => {
+    const n = i + 1;
+    const texts = q.type === "likert" ? q.items : q.type === "info" ? [] : [q.title];
+    for (const x of texts) {
+      const key = x.toLocaleLowerCase("tr").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+      if (!key) continue;
+      if (seen.has(key)) out.push({ level: "warning", question: n, message: "{n}. soruda, {m}. sorudaki bir ifadenin aynısı var.", params: { n, m: seen.get(key)! } });
+      else seen.set(key, n);
+      if (/\s(ve|veya|ya da|and|or)\s/i.test(x) && x.length < 160 && q.type === "likert") out.push({ level: "tip", question: n, message: "{n}. sorudaki “{x}” maddesi iki şeyi birden soruyor olabilir; gerekirse iki maddeye ayırın.", params: { n, x: x.slice(0, 60) } });
+    }
+    if (q.type === "likert" && q.items.length >= 6 && !q.reverse.length) out.push({ level: "tip", question: n, message: "{n}. sorudaki ölçekte ters madde yok. Hep aynı yönde cevaplamayı fark etmek için 1–2 ters madde eklenebilir.", params: { n } });
+    if (q.type === "likert" && q.items.length > 40) out.push({ level: "tip", question: n, message: "{n}. sorudaki ölçek {k} maddeden oluşuyor; katılımcı yorulabilir, bölmeyi düşünün.", params: { n, k: q.items.length } });
+    if (q.type === "number" && q.min === null && q.max === null) out.push({ level: "tip", question: n, message: "{n}. soru (sayı) için alt/üst sınır yok; hatalı girişleri önlemek için aralık belirleyin.", params: { n } });
+    if (q.type === "multi" && !q.options.some((o) => /diğer|other/i.test(o))) out.push({ level: "tip", question: n, message: "{n}. soruda (çoklu seçim) “Diğer” seçeneği yok.", params: { n } });
+    if ((q.type === "single" || q.type === "multi") && q.options.length > 12) out.push({ level: "tip", question: n, message: "{n}. soruda {k} seçenek var; uzun listeler okunmayabilir.", params: { n, k: q.options.length } });
+  });
+  return out;
+}

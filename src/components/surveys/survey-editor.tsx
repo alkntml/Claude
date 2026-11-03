@@ -1,5 +1,5 @@
 "use client";
-import { ArrowDown, ArrowUp, Check, Copy, Download, ExternalLink, FileSpreadsheet, Plus, Save, Share2, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Copy, Download, ExternalLink, FileSpreadsheet, Loader2, Plus, Save, Share2, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -9,6 +9,7 @@ import { Badge, Tabs } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
+import { SurveyAiPanel } from "./survey-ai-panel";
 import { LIKERT_PRESETS, newId, QuestionsSchema, type Answers, type Question } from "@/lib/surveys";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -47,6 +48,20 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<"questions" | "settings" | "responses">("questions");
+  // Yapay zekâ soruları değiştirince kartlar (kontrolsüz metin alanları) yeniden çizilsin
+  const [rev, setRev] = useState(0);
+  const [improving, setImproving] = useState<string | null>(null);
+  const replaceAll = (next: Question[]) => { setQs(next); setDirty(true); setRev((r) => r + 1); };
+  async function improve(i: number) {
+    const q = qs[i];
+    if (!q.title.trim()) { toast({ tone: "warning", title: t("Önce soru metnini yazın"), detail: t("Likert ölçeğinde yönergeyi veya ölçmek istediğiniz kavramı yazmanız yeterli; maddeleri yapay zekâ önerir.") }); return; }
+    setImproving(q.id);
+    try {
+      const r = await api<{ question: Question; note: string }>(`/api/surveys/${s.id}/ai`, { method: "POST", json: { mode: "improve", question: q, lang } });
+      replaceAll(qs.map((x, k) => (k === i ? r.question : x)));
+      toast({ tone: "success", title: t("Soru iyileştirildi"), detail: r.note || undefined });
+    } catch (e) { toast({ tone: "error", title: t("İyileştirilemedi"), detail: (e as Error).message }); } finally { setImproving(null); }
+  }
   const locked = s.response_count > 0;
   const link = typeof window !== "undefined" ? `${window.location.origin}/a/${s.token}` : `/a/${s.token}`;
   const closed = !!s.closes_at && new Date(s.closes_at) < new Date();
@@ -141,8 +156,9 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
       {tab === "questions" && (
         <div className="space-y-4">
           {locked && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">{t("Bu anket cevap almaya başladı. Veri sütunları bozulmasın diye soru ekleyip çıkaramaz, seçenek sayısını değiştiremezsiniz; yalnızca yazım düzeltmesi yapabilirsiniz. Yeni sorular için anketin kopyasını oluşturun.")} <button onClick={duplicate} className="font-medium underline">{t("Kopya oluştur")}</button></p>}
-          {qs.length === 0 && <p className="card p-6 text-center text-sm text-ink-500">{t("Aşağıdaki düğmelerle soru ekleyin. Hazır bir ölçek kullanacaksanız maddelerini “Likert ölçeği” ile tek seferde yapıştırabilirsiniz.")}</p>}
-          {qs.map((q, i) => <QuestionCard key={q.id} q={q} i={i} n={qs.length} locked={locked} lang={lang} onChange={(p) => upd(i, p)} onMove={(d) => move(i, d)} onDelete={() => { setQs((l) => l.filter((_, k) => k !== i)); setDirty(true); }} />)}
+          <SurveyAiPanel surveyId={s.id} qs={qs} locked={locked} lang={lang} consent={s.consent ?? ""} description={s.description ?? ""} onReplace={replaceAll} />
+          {qs.length === 0 && <p className="card p-6 text-center text-sm text-ink-500">{t("Aşağıdaki düğmelerle soru ekleyin. Hazır bir ölçek kullanacaksanız maddelerini “Likert ölçeği” ile tek seferde yapıştırabilirsiniz. İpucu: Likert ölçeği ekleyip yalnızca ölçmek istediğiniz kavramı yazın, ✨ düğmesiyle maddeleri yapay zekâ önersin.")}</p>}
+          {qs.map((q, i) => <QuestionCard key={`${q.id}:${rev}`} q={q} i={i} n={qs.length} locked={locked} lang={lang} improving={improving === q.id} onImprove={() => improve(i)} onChange={(p) => upd(i, p)} onMove={(d) => move(i, d)} onDelete={() => { setQs((l) => l.filter((_, k) => k !== i)); setDirty(true); }} />)}
           {!locked && (
             <div className="flex flex-wrap gap-2">
               {TYPES.map((x) => <Button key={x.id} size="sm" variant="secondary" onClick={() => add(x.id)}><Plus className="h-3.5 w-3.5" /> {t(x.label)}</Button>)}
@@ -180,7 +196,7 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   );
 }
 
-function QuestionCard({ q, i, n, locked, lang, onChange, onMove, onDelete }: { q: Question; i: number; n: number; locked: boolean; lang: "tr" | "en"; onChange: (p: Partial<Question>) => void; onMove: (d: number) => void; onDelete: () => void }) {
+function QuestionCard({ q, i, n, locked, lang, improving, onImprove, onChange, onMove, onDelete }: { q: Question; i: number; n: number; locked: boolean; lang: "tr" | "en"; improving: boolean; onImprove: () => void; onChange: (p: Partial<Question>) => void; onMove: (d: number) => void; onDelete: () => void }) {
   const { t } = useT();
   const lines = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
   return (
@@ -190,6 +206,7 @@ function QuestionCard({ q, i, n, locked, lang, onChange, onMove, onDelete }: { q
         <Badge tone="brand">{t(TYPES.find((x) => x.id === q.type)!.label)}</Badge>
         <div className="ml-auto flex items-center gap-1">
           {!locked && <>
+            {q.type !== "info" && <button onClick={onImprove} disabled={improving} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[12px] font-medium text-brand-700 hover:bg-brand-50 disabled:opacity-60" title={t("Yapay zekâ ile iyileştir")}>{improving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}<span className="hidden sm:inline">{q.type === "likert" && q.items.length < 3 ? t("Madde öner") : t("İyileştir")}</span></button>}
             <button onClick={() => onMove(-1)} disabled={i === 0} className="rounded-lg p-1.5 text-ink-500 hover:bg-ink-100 disabled:opacity-30" aria-label={t("Yukarı taşı")}><ArrowUp className="h-4 w-4" /></button>
             <button onClick={() => onMove(1)} disabled={i === n - 1} className="rounded-lg p-1.5 text-ink-500 hover:bg-ink-100 disabled:opacity-30" aria-label={t("Aşağı taşı")}><ArrowDown className="h-4 w-4" /></button>
             <button onClick={onDelete} className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50" aria-label={t("Soruyu sil")}><Trash2 className="h-4 w-4" /></button>

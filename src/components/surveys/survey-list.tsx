@@ -1,10 +1,11 @@
 "use client";
-import { ClipboardList, Plus } from "lucide-react";
+import { ClipboardList, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/primitives";
+import { Badge, Tabs } from "@/components/ui/primitives";
+import { SurveyAiCreate } from "./survey-ai-create";
 import { useToast } from "@/components/ui/toast";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { useT } from "@/i18n/client";
@@ -20,6 +21,7 @@ export function SurveyList({ surveys: initial, projects, defaultProject }: { sur
   const [title, setTitle] = useState("");
   const [projectId, setProjectId] = useState<string>(defaultProject && projects.some((p) => p.id === defaultProject) ? defaultProject : "");
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"ai" | "manual">("ai");
   const pname = (id: string | null) => projects.find((p) => p.id === id)?.title;
 
   async function create() {
@@ -36,20 +38,32 @@ export function SurveyList({ surveys: initial, projects, defaultProject }: { sur
         <h1 className="font-serif text-3xl font-medium tracking-tight text-ink-950">{t("Anketlerim")}</h1>
         <p className="mt-1.5 text-ink-500">{t("Ölçek ve anketlerinizi hazırlayın, bağlantıyla katılımcılara gönderin; cevaplar tek tıkla istatistik analizine ve grafiklere aktarılır.")}</p>
       </div>
-      <section className="card p-5">
-        <h2 className="font-semibold">{t("Yeni anket")}</h2>
-        <div className="mt-3 grid gap-4 md:grid-cols-2">
-          <label className="block"><span className="label">{t("Anketin adı")}</span><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("ör. Üniversite öğrencilerinde dijital okuryazarlık anketi")} /></label>
-          <label className="block">
-            <span className="label">{t("Cevaplar hangi çalışmanızda kullanılacak? (isteğe bağlı)")}</span>
-            <select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}>
-              <option value="">{t("Şimdilik hiçbir çalışmaya bağlama")}</option>
-              {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-            </select>
-            <span className="mt-1 block text-xs text-ink-400">{t("Listede kendi tez ve makale çalışmalarınız görünür. Seçerseniz anket cevaplarını o çalışmaya tek tıkla aktarıp istatistik analizi ve grafik yapabilirsiniz. Daha sonra da değiştirebilirsiniz.")}</span>
-          </label>
+      <section className="card overflow-hidden">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 bg-brand-50/60 px-5 py-4">
+          <div>
+            <h2 className="flex items-center gap-2 font-semibold text-ink-900"><Sparkles className="h-4 w-4 text-brand-600" /> {t("Yeni anket")}</h2>
+            <p className="text-sm text-ink-500">{t("Amacınızı yazın, yapay zekâ uygulanmaya hazır bir taslak çıkarsın; sonra dilediğiniz gibi düzenleyin.")}</p>
+          </div>
+          <Tabs className="w-full max-w-xs" value={mode} onChange={setMode} tabs={[{ id: "ai", label: t("Yapay zekâ ile") }, { id: "manual", label: t("Boş anket") }]} />
         </div>
-        <Button className="mt-4" onClick={create} loading={busy} disabled={!title.trim()}><Plus className="h-4 w-4" /> {t("Anketi oluştur")}</Button>
+        <div className="p-5">
+          {mode === "ai" ? <SurveyAiCreate projects={projects} projectId={projectId} setProjectId={setProjectId} /> : (
+            <>
+              <div className="mt-3 grid gap-4 md:grid-cols-2">
+                <label className="block"><span className="label">{t("Anketin adı")}</span><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("ör. Üniversite öğrencilerinde dijital okuryazarlık anketi")} /></label>
+                <label className="block">
+                  <span className="label">{t("Cevaplar hangi çalışmanızda kullanılacak? (isteğe bağlı)")}</span>
+                  <select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}>
+                    <option value="">{t("Şimdilik hiçbir çalışmaya bağlama")}</option>
+                    {projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+                  </select>
+                  <span className="mt-1 block text-xs text-ink-400">{t("Listede kendi tez ve makale çalışmalarınız görünür. Seçerseniz anket cevaplarını o çalışmaya tek tıkla aktarıp istatistik analizi ve grafik yapabilirsiniz. Daha sonra da değiştirebilirsiniz.")}</span>
+                </label>
+              </div>
+              <Button className="mt-4" onClick={create} loading={busy} disabled={!title.trim()}><Plus className="h-4 w-4" /> {t("Anketi oluştur")}</Button>
+            </>
+          )}
+        </div>
       </section>
       {surveys.length === 0 ? (
         <div className="card flex flex-col items-center p-10 text-center text-ink-500"><ClipboardList className="mb-3 h-8 w-8 text-ink-300" />{t("Henüz anketiniz yok.")}</div>

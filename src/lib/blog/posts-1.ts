@@ -211,7 +211,7 @@ Yılmaz, A. (2022). *Tezin başlığı* [Yüksek lisans tezi, Üniversite Adı].
 
 ## Academiana ile otomatik APA 7
 
-Academiana’da atıflar metne düz yazı olarak değil, kaynağa bağlı bir işaret olarak eklenir. Kaynakça bu işaretlerden otomatik oluşur; metinden bir atıfı sildiğinizde kaynakçadan da kalkar. APA 7, MLA, Chicago, IEEE, Vancouver, Harvard ve ISNAD dahil 9 stil arasında tek tıkla geçiş yapabilirsiniz. Kalite kontrolü, eksik künye bilgilerini ve metin–kaynakça uyumsuzluklarını sizin yerinize bulur.`,
+Academiana’da atıflar metne düz yazı olarak değil, kaynağa bağlı bir işaret olarak eklenir. Kaynakça bu işaretlerden otomatik oluşur; metinden bir atıfı sildiğinizde kaynakçadan da kalkar. APA 7, MLA, Chicago, IEEE, Vancouver, Harvard ve AMA dahil 9 stil arasında tek tıkla geçiş yapabilirsiniz. Kalite kontrolü, eksik künye bilgilerini ve metin–kaynakça uyumsuzluklarını sizin yerinize bulur.`,
   },
   {
     slug: "kaynakca-nasil-hazirlanir",
@@ -250,7 +250,7 @@ Mühendislik (IEEE) ve tıp (Vancouver) alanlarında kullanılır. Atıflar kö�
 
 ### ISNAD
 
-Türkiye’de özellikle ilahiyat ve sosyal bilimlerin bazı alanlarında kullanılan bir atıf sistemidir. Dipnotlu ve metin içi olmak üzere iki biçimi vardır. Türkiye’deki pek çok dergi ISNAD’ı zorunlu tutar.
+Türkiye’de özellikle ilahiyat ve sosyal bilimlerin bazı alanlarında kullanılan bir atıf sistemidir. Dipnotlu ve metin içi olmak üzere iki biçimi vardır. Türkiye’deki pek çok dergi ISNAD’ı zorunlu tutar. (Academiana’da şu an ISNAD stili yoktur; bu dergilere gönderecekseniz kaynakçayı dergi kılavuzuna göre kontrol edin.)
 
 ## İyi bir kaynakça için kontrol listesi
 

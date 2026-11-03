@@ -193,8 +193,8 @@ export const FAQ: FaqGroup[] = [
         id: "dogrudan-alinti",
         q: { tr: "Doğrudan alıntılar nasıl gösteriliyor?", en: "How are direct quotations handled?" },
         a: {
-          tr: "Kaynaktan birebir aktarılan her ifade tırnak içinde, yazar ve yıl bilgisiyle verilir; kaynağın tam metni okunduysa sayfa numarası da eklenir; uzun alıntılar seçtiğiniz atıf stilinin (APA 7, ISNAD vb.) blok alıntı kuralına göre biçimlenir. Böylece benzerlik raporunda çıkan alıntılar usulüne uygun gösterilmiş olur.",
-          en: "Every phrase taken verbatim from a source is given in quotation marks with author and year, plus the page number when the full text was read; long quotations follow the block-quote rule of your chosen citation style (APA 7, ISNAD, etc.). Quotations that appear in a similarity report are therefore properly attributed.",
+          tr: "Kaynaktan birebir aktarılan her ifade tırnak içinde, yazar ve yıl bilgisiyle verilir; kaynağın tam metni okunduysa sayfa numarası da eklenir; uzun alıntılar seçtiğiniz atıf stilinin (APA 7, MLA vb.) blok alıntı kuralına göre biçimlenir. Böylece benzerlik raporunda çıkan alıntılar usulüne uygun gösterilmiş olur.",
+          en: "Every phrase taken verbatim from a source is given in quotation marks with author and year, plus the page number when the full text was read; long quotations follow the block-quote rule of your chosen citation style (APA 7, MLA, etc.). Quotations that appear in a similarity report are therefore properly attributed.",
         },
       },
     ],

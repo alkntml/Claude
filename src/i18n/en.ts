@@ -2046,7 +2046,7 @@ export const EN: Record<string, string> = {
   "Boşlukları ikna edici ama dayanaksız cümlelerle doldurabilir": "May fill gaps with convincing but unsupported sentences",
   "Tez ve makale bölüm bölüm, akademik iskelet ve bölüm kontrolüyle ilerler": "Theses and papers progress section by section, with an academic structure and section checks",
   "Genelde tek blok metin verir; bölüm yapısı ve ilerleme takibi yok": "Usually returns one block of text; no section structure or progress tracking",
-  "APA 7, ISNAD, MLA, IEEE dahil 9 atıf stili; kaynakça kendiliğinden oluşur": "9 citation styles including APA 7, ISNAD, MLA and IEEE; the bibliography builds itself",
+  "APA 7, MLA, Chicago, IEEE dahil 9 atıf stili; kaynakça kendiliğinden oluşur": "9 citation styles including APA 7, MLA, Chicago and IEEE; the bibliography builds itself",
   "Atıf biçimi tutarsız olabilir; kaynakçayı elle düzenlersin": "Citation formatting can be inconsistent; you fix the bibliography by hand",
   "OpenAlex, PubMed ve arXiv’den DergiPark’a 10 akademik veri tabanında doğrudan arar": "Searches 10 academic databases directly — from OpenAlex, PubMed and arXiv to DergiPark",
   "Akademik veri tabanlarına doğrudan bağlı değildir; kaynak bulma genel web aramasına dayanır": "Not directly connected to academic databases; finding sources relies on general web search",

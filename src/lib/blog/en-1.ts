@@ -204,7 +204,7 @@ Smith, A. (2022). *Title of the thesis* [Master’s thesis, University Name]. Da
 
 ## Automatic APA 7 with Academiana
 
-In Academiana, citations are not typed as plain text; they are linked to the source. The reference list is generated from these links automatically, so deleting a citation removes it from the list too. You can switch between 9 styles — APA 7, MLA, Chicago, IEEE, Vancouver, Harvard, ISNAD and more — with one click, and the quality check finds missing reference details and mismatches for you.`,
+In Academiana, citations are not typed as plain text; they are linked to the source. The reference list is generated from these links automatically, so deleting a citation removes it from the list too. You can switch between 9 styles — APA 7, MLA, Chicago, IEEE, Vancouver, Harvard, AMA and more — with one click, and the quality check finds missing reference details and mismatches for you.`,
   },
   "kaynakca-nasil-hazirlanir": {
     slug: "how-to-write-a-bibliography-citation-styles",
@@ -241,7 +241,7 @@ Used in engineering (IEEE) and medicine (Vancouver). Citations are numbered in s
 
 ### ISNAD
 
-A citation system developed in Türkiye and used especially in theology and parts of the social sciences, with footnote and in-text variants. Many Turkish journals require it.
+A citation system developed in Türkiye and used especially in theology and parts of the social sciences, with footnote and in-text variants. Many Turkish journals require it. (Academiana does not offer ISNAD yet; if you submit to such a journal, check your reference list against its guidelines.)
 
 ## Checklist for a good reference list
 

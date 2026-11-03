@@ -81,10 +81,10 @@ describe("migration'lar ve seed", () => {
     expect(by.basic.limits).toMatchObject({ projects: 3, ai_requests_month: 40, source_searches_month: 100 });
     expect(by.pro.limits.ai_requests_month).toBe(75);
     expect(by.premium.limits.ai_requests_month).toBe(125);
-    expect(Number(by.basic.price_monthly)).toBe(499);
+    expect(Number(by.basic.price_monthly)).toBe(749);
     expect(by.pro.limits.projects).toBe(10);
-    expect(Number(by.pro.price_monthly)).toBe(899);
-    expect(Number(by.premium.price_monthly)).toBe(1499);
+    expect(Number(by.pro.price_monthly)).toBe(1349);
+    expect(Number(by.premium.price_monthly)).toBe(2249);
     // Paket kartları özellik listesi gösterir, yapay zekâ isteği sayısı göstermez (D49)
     const f = await db.query<{ features: string[] }>("select features from public.plans");
     for (const r of f.rows) expect(r.features.join(" ")).not.toMatch(/yapay zekâ isteği/);

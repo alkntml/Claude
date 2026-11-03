@@ -84,6 +84,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Google / Apple ile giriş:** düğmeler yalnızca Supabase’de sağlayıcı etkinse görünür (`src/lib/auth-providers.ts`, 5 dk önbellek); davet kodu OAuth dönüşünde `attachReferral` ile bağlanır. Google girişi 2026-11-02’de açıldı ve çalışıyor (Google Cloud projesi “Academiana”, yayında); Apple ücretli geliştirici hesabı gerektirir
 - **Abonelik yönetimi:** Hesap sayfasında “Aboneliği yönet / iptal et” → Stripe müşteri portalı (`/api/billing/portal`)
 - **Paket süresi + yönetim paneli (D53):** bitiş tarihi, ek gün, ek hak, kullanıcı ayrıntısı, gelir/kâr özeti
+- **Fiyatlar (D60):** Basic 749 · Pro 1.349 · Premium 2.249 TL (haklar aynı)
 - **Dolar fiyatı (D59):** İngilizce sayfalarda fiyatlar kurdan otomatik dolar
 - **Hız 2 (D57):** ana sayfa animasyonları CSS, ilk yükleme JS %25–30 küçüldü, sayfa geçişlerinde anında yükleme göstergesi
 - **Üye numarası (D56):** her kullanıcıya AC001001… numarası; yönetimde aranabilir, WhatsApp mesajlarında yer alır

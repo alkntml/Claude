@@ -257,3 +257,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - `formatPrice` / `usdFromTry` (pricing.ts), `getUsdTry` (lib/fx.ts, 1 saat önbellek, `fx` etiketi; kur kaydedilince yenilenir), istemcide `PriceProvider` + `usePrice()` (kök düzen). Fiyat kartları, Hesap, yükseltme penceresi, kilit ekranı, WhatsApp mesajları ve JSON-LD (priceCurrency USD) dile göre.
 - Kâr hesabı (maliyet tavanı) TL fiyat üzerinden kalır.
 
+### D60 — Fiyatlar %50 artırıldı, haklar aynı
+- Basic 749 TL, Pro 1.349 TL, Premium 2.249 TL (yıllık = aylık × 10); istek/tarama/proje hakları değişmedi (migration 17). Dolar fiyatları kurdan otomatik ($15.99 / $28.99 / $46.99 @48). Ortalama kullanımda maliyet payı ≈ %22’ye düştü; maliyet tavanı (gelirin 1/3’ü) fiyattan hesaplandığı için kendiliğinden yükseldi. 100 TL indirme ücreti değişmedi.
+

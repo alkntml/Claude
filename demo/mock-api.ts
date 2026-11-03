@@ -116,9 +116,9 @@ const on = (method: string, pattern: string, fn: Handler) => routes.push([method
 on("GET", "/api/projects", () => ({ projects: db.projects }));
 on("GET", "/api/account/plans", () => ({ current: "free", email: "demo@akademi.ai", plans: [
   { id: "free", name: "Ücretsiz", price_monthly: 0, limits: { ai_requests_month: 10, source_searches_month: 7, projects: 1, storage_mb: 50 } },
-  { id: "basic", name: "Basic", price_monthly: 499, limits: { ai_requests_month: 40, source_searches_month: 100, projects: 3, storage_mb: 500 } },
-  { id: "pro", name: "Pro", price_monthly: 899, limits: { ai_requests_month: 75, source_searches_month: 2000, projects: 10, storage_mb: 3000 } },
-  { id: "premium", name: "Premium", price_monthly: 1499, limits: { ai_requests_month: 125, source_searches_month: 8000, projects: null, storage_mb: 15000 } },
+  { id: "basic", name: "Basic", price_monthly: 749, limits: { ai_requests_month: 40, source_searches_month: 100, projects: 3, storage_mb: 500 } },
+  { id: "pro", name: "Pro", price_monthly: 1349, limits: { ai_requests_month: 75, source_searches_month: 2000, projects: 10, storage_mb: 3000 } },
+  { id: "premium", name: "Premium", price_monthly: 2249, limits: { ai_requests_month: 125, source_searches_month: 8000, projects: null, storage_mb: 15000 } },
 ] }));
 on("POST", "/api/projects", (_m, b) => {
   const project = { id: uid(), user_id: "demo", title: b.title, work_type: b.workType, academic_level: b.level, discipline: b.discipline ?? "", language: b.language ?? "tr", citation_style: b.citationStyle ?? "apa7", status: "active", topic: b.topic ?? "", keywords: b.keywords ?? [], context: { methodology: b.methodology, university: b.university }, progress: 0, created_at: now(), updated_at: now(), last_opened_at: now() };
@@ -293,9 +293,9 @@ function adminRows(resource: string): any[] {
 
 export const DEMO_PLANS = [
   { id: "free", name: "Ücretsiz", description: "Platformu tanımak için sınırlı kullanım.", price_monthly: 0, price_yearly: 0, currency: "TRY", features: ["1 proje", "Aylık 7 kaynak taraması", "Bölüm bölüm yapay zekâ yazım asistanı", "Türk ve uluslararası veri tabanlarında gerçek kaynak arama", "9 atıf stili ve otomatik kaynakça", "Başlık önerisi ve bölüm kontrolü", "TXT / Markdown dışa aktarma"] },
-  { id: "basic", name: "Basic", description: "Bireysel öğrenciler için temel akademik çalışma.", price_monthly: 499, price_yearly: 4990, currency: "TRY", features: ["Ücretsiz paketteki her şey", "3 proje", "Aylık 100 kaynak taraması", "Word / PDF dışa aktarma", "Yapay zekâ destekli kalite raporu", "İstatistik analizleri ve grafikler", "Anket oluşturucu", "Tez konusu bulma", "Zotero / Mendeley / EndNote aktarımı"] },
-  { id: "pro", name: "Pro", description: "Gelişmiş araştırma, kaynak analizi ve yüksek limitler.", price_monthly: 899, price_yearly: 8990, currency: "TRY", features: ["Basic paketteki her şey", "10 proje", "Aylık 2.000 kaynak taraması", "Literatür matrisi", "Dergi önerisi ve dergi kılavuzu kontrolü", "Yazım kılavuzu yükleme", "Hakem yorumlarına cevap asistanı", "Savunma sunumu ve savunma provası"] },
-  { id: "premium", name: "Premium", description: "Yoğun çalışan lisansüstü öğrenciler ve araştırmacılar için.", price_monthly: 1499, price_yearly: 14990, currency: "TRY", features: ["Pro paketteki her şey", "Sınırsız proje", "Aylık 8.000 kaynak taraması", "En yüksek yapay zekâ kullanım hakkı", "15 GB depolama", "Öncelikli destek"] },
+  { id: "basic", name: "Basic", description: "Bireysel öğrenciler için temel akademik çalışma.", price_monthly: 749, price_yearly: 7490, currency: "TRY", features: ["Ücretsiz paketteki her şey", "3 proje", "Aylık 100 kaynak taraması", "Word / PDF dışa aktarma", "Yapay zekâ destekli kalite raporu", "İstatistik analizleri ve grafikler", "Anket oluşturucu", "Tez konusu bulma", "Zotero / Mendeley / EndNote aktarımı"] },
+  { id: "pro", name: "Pro", description: "Gelişmiş araştırma, kaynak analizi ve yüksek limitler.", price_monthly: 1349, price_yearly: 13490, currency: "TRY", features: ["Basic paketteki her şey", "10 proje", "Aylık 2.000 kaynak taraması", "Literatür matrisi", "Dergi önerisi ve dergi kılavuzu kontrolü", "Yazım kılavuzu yükleme", "Hakem yorumlarına cevap asistanı", "Savunma sunumu ve savunma provası"] },
+  { id: "premium", name: "Premium", description: "Yoğun çalışan lisansüstü öğrenciler ve araştırmacılar için.", price_monthly: 2249, price_yearly: 22490, currency: "TRY", features: ["Pro paketteki her şey", "Sınırsız proje", "Aylık 8.000 kaynak taraması", "En yüksek yapay zekâ kullanım hakkı", "15 GB depolama", "Öncelikli destek"] },
 ];
 
 export function installMockApi() {

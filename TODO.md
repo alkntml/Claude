@@ -11,6 +11,7 @@
 - [ ] Öneri: istem önbelleği (prompt caching) ile istek maliyetini düşürüp hakları artırmak
 - [ ] Supabase SQL Editor’de migration 15’i çalıştır (`20261110000015_plan_expiry.sql`: paket bitiş tarihi)
 - [ ] Supabase SQL Editor’de migration 16’yı çalıştır (`20261111000016_member_no.sql`: üye numarası)
+- [ ] Supabase SQL Editor’de migration 17’yi çalıştır (`20261112000017_price_increase.sql`: %50 fiyat artışı)
 - [ ] Ödeme gelince: Yönetim → Kullanıcılar’dan kullanıcının paketini elle değiştir
 - [ ] Alan adı: 2026-11-03’te hâlâ “Invalid Configuration” ise hosting.com.tr desteğine TRABIS iletimini sorun; gerekirse B planı (hosting.com.tr DNS + A @ 216.198.79.1, CNAME www → 4d8ff7a9ca75c5bb.vercel-dns-017.com)
 - [x] (2026-11-02, DNS yayılımı bekleniyor) Alan adı: hosting.com.tr’de nameserver → ns1.vercel-dns.com / ns2.vercel-dns.com (yapıldıysa Vercel’de “Valid Configuration” bekleniyor)

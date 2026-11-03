@@ -289,3 +289,10 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - **Düzenleyicide asistan** (`POST /api/surveys/[id]/ai`): `revise` serbest talimat + hazır komutlar (geri alınabilir, kaydedilene kadar taslak), `improve` tek soruyu iyileştirir / boş Likert bloğuna madde yazar, `review` hakem gözüyle sorun + önerilen ifade (tek tıkla uygulanır). Cevap almaya başlamış ankette yalnızca inceleme ve metin düzeltmesi (veri sütunları bozulmasın).
 - **Hızlı kontrol + tahmini süre** (`surveyLint`, `estimateMinutes`; lib/surveys.ts): kural tabanlı, hak harcamaz.
 - İlke: yapay zekâ çıktısı `fromAiQuestions` ile doğrulanır (tür, sınırlar, benzersiz değişken adları). Telifli/geçerlenmiş ölçek maddelerini birebir yazmaz, geçerlik iddia etmez, kimlik bilgisi sorusu üretmez, kaynak uydurmaz; arayüz “maddeler özgün taslaktır” uyarısı gösterir. Model: `balanced` (Sonnet). Paket kilidi `surveys` (Basic+), her çağrı 1 yapay zekâ isteği.
+
+### D67 — Kurgu modülü (çalışmanın başında)
+- Çalışmaya başlarken tek ekranda araştırmanın kurgusu: problem, amaç, araştırma soruları/hipotezler, yöntem ve desen, katılımcılar/kapsam, veri toplama, analiz/sentez, özgün katkı + **her aşama için bölüm planı**. Aşamalar değişmez; kurgu yalnızca her aşamada ne yazılacağını tutar (`alignChapters`, kaynakça hariç).
+- Öğrenci yapay zekâya kurgulatır (isteğe bağlı kendi fikriyle), “Kendim yazacağım” ile boş başlar, “Farklı bir giriş yap” ile yeniden kurgulatır, tek alanı “Yeniden öner” ile değiştirir (geri alınabilir). Onaydan sonra mevcut akış: başlık → bölümler.
+- Saklama: `projects.context.blueprint` (migration yok). Uçlar: `POST /api/projects/[id]/blueprint` (generate: `default`/Opus; field: `balanced`/Sonnet; 1 yapay zekâ isteği), `PUT` (kaydet/onayla).
+- Onaylanan (veya taslak) kurgu `buildContext`’e eklenir; üzerinde çalışılan bölümün planı ayrıca verilir. Başlık önerileri de kurguyu kullanır. Kurgu bir plandır: kaynak, bulgu, istatistik içermez; bilinmeyen somut bilgi uydurulmaz.
+- Otomatik açılış: henüz hiç yazı yazılmamış ve kurgusu onaylanmamış çalışmada ilk girişte açılır (kapatılırsa o cihazda tekrar açılmaz); sol menüde her zaman “Kurgu” düğmesi var.

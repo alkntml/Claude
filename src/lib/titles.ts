@@ -1,5 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
+import { readBlueprint } from "@/lib/blueprint";
 import { GRANT_PROGRAMS, LEVEL_LABELS, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -23,6 +24,7 @@ export async function suggestTitles(params: { planId: string; project: any; hint
     `Mevcut geçici başlık: ${p.title}`,
     p.topic && `Konu açıklaması: ${p.topic}`,
     p.keywords?.length && `Anahtar kelimeler: ${p.keywords.join(", ")}`,
+    ...(() => { const bp = readBlueprint(p.context?.blueprint); return bp ? [bp.aim && `Kurgudaki amaç: ${bp.aim}`, bp.method && `Kurgudaki yöntem: ${bp.method}`, bp.sample && `Kurgudaki katılımcılar/kapsam: ${bp.sample}`] : []; })(),
     params.hint && `Kullanıcının isteği: ${params.hint}`,
   ].filter(Boolean).join("\n");
   const model = await resolveModel(params.planId, "balanced");

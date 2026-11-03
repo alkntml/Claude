@@ -156,6 +156,8 @@ on("PATCH", "/api/projects/([^/]+)", (m, b) => {
   pr.updated_at = now();
   return { project: pr };
 });
+on("POST", "/api/projects/([^/]+)/blueprint", () => fail(503, DEMO_DISABLED.ai));
+on("PUT", "/api/projects/([^/]+)/blueprint", (m, b) => { const pr = proj(m[1]); pr.context = { ...pr.context, blueprint: { ...b.blueprint, approvedAt: b.approve ? now() : b.blueprint.approvedAt ?? null, updatedAt: now() } }; return { project: pr }; });
 on("DELETE", "/api/projects/([^/]+)", (m) => { db.projects = db.projects.filter((x) => x.id !== m[1]); db.stages = db.stages.filter((x) => x.project_id !== m[1]); return { ok: true }; });
 
 // --- Aşamalar

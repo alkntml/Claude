@@ -1,7 +1,7 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
-import {
+import { Compass,
   ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, GraduationCap, ExternalLink, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
 } from "lucide-react";
 import Link from "next/link";
@@ -52,6 +52,7 @@ const JournalModal = dynamic(() => import("./journal-modal").then((m) => m.Journ
 const ChartModal = dynamic(() => import("./chart-modal").then((m) => m.ChartModal), { ssr: false });
 const DefenseModal = dynamic(() => import("./defense-modal").then((m) => m.DefenseModal), { ssr: false });
 const ReviewerModal = dynamic(() => import("./reviewer-modal").then((m) => m.ReviewerModal), { ssr: false });
+const BlueprintScreen = dynamic(() => import("./blueprint").then((m) => m.BlueprintScreen), { ssr: false });
 const TitleChooser = dynamic(() => import("./title-chooser").then((m) => m.TitleChooser), { ssr: false });
 const StageReviewModal = dynamic(() => import("./stage-review").then((m) => m.StageReviewModal), { ssr: false });
 
@@ -262,12 +263,27 @@ export function Workspace(props: Props) {
   const [reviewerOpen, setReviewerOpen] = useState(false);
   // Adım 1: başlık seçimi (seçilmediyse ilk açılışta sorulur; "sonra" denirse bu cihazda tekrar açılmaz)
   const [titleOpen, setTitleOpen] = useState(false);
+  // Başlangıç: kurgu (D67). Henüz yazılmamış ve kurgusu onaylanmamış çalışmada önce kurgu açılır; sonra başlık, sonra bölümler.
+  const [bpOpen, setBpOpen] = useState(false);
+  const bpApproved = !!project.context?.blueprint?.approvedAt;
   useEffect(() => {
+    let laterBp = false, later = false;
+    try { laterBp = !!localStorage.getItem(`akademi:blueprint-later:${project.id}`); later = !!localStorage.getItem(`akademi:title-later:${project.id}`); } catch { /* yok */ }
+    const empty = !stages.some((x) => (x.word_count ?? 0) > 0);
+    if (!bpApproved && empty && !laterBp) { setBpOpen(true); return; }
     if (project.context?.titleChosen) return;
-    let later = false;
-    try { later = !!localStorage.getItem(`akademi:title-later:${project.id}`); } catch { /* yok */ }
     if (!later) setTitleOpen(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  function closeBlueprint() {
+    setBpOpen(false);
+    if (!project.context?.blueprint?.approvedAt) { try { localStorage.setItem(`akademi:blueprint-later:${project.id}`, "1"); } catch { /* yok */ } }
+  }
+  function blueprintApproved() {
+    setBpOpen(false);
+    // Onaydan sonra mevcut akış: başlık seçilmediyse başlık adımı, seçildiyse sıradaki bölüm
+    if (!project.context?.titleChosen) setTitleOpen(true);
+    else { const first = nextStage(stages); if (first && first.id !== activeId) selectStage(first.id); }
+  }
   async function chooseTitle(title: string) {
     const p = await patchProject({ title, context: { titleChosen: true } });
     if (p) {
@@ -348,7 +364,7 @@ export function Workspace(props: Props) {
   const nextFigureNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Şekil|Figure)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
   const nextTableNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Tablo|Table)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
   // Rehberli tur, başlık seçim penceresi kapandıktan sonra başlar (iki pencere üst üste açılmasın)
-  useEffect(() => { if (!titleOpen && shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 900); return () => clearTimeout(tm); } }, [titleOpen]);
+  useEffect(() => { if (!titleOpen && !bpOpen && shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 900); return () => clearTimeout(tm); } }, [titleOpen, bpOpen]);
 
   /** Editörde bir metni bulup seçer (danışman yorumunun alıntısı için). Bulursa seçili metni döndürür. */
   function selectQuote(quote: string): string | null {
@@ -511,6 +527,10 @@ export function Workspace(props: Props) {
       </div>
       <div data-tour="goal"><GoalWidget project={project} stages={stages} onOpen={() => setGoalOpen(true)} /></div>
       <div className="space-y-1.5 px-3 pt-2">
+        <button onClick={() => setBpOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", bpApproved ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
+          <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", bpApproved ? "bg-emerald-500 text-white" : "bg-brand-600 text-white")}>{bpApproved ? <Check className="h-3 w-3" /> : <Compass className="h-3 w-3" />}</span>
+          <span className="min-w-0 flex-1"><span className="block font-medium">{bpApproved ? t("Kurgu onaylandı") : project.context?.blueprint ? t("Kurgu taslağı: onayla") : t("Başlangıç: Kurguyu oluştur")}</span><span className="block truncate text-[11.5px] opacity-80">{t("Problem, amaç, yöntem ve bölüm planı")}</span></span>
+        </button>
         <button onClick={() => setTitleOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", project.context?.titleChosen ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
           <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", project.context?.titleChosen ? "bg-emerald-500 text-white" : "bg-brand-600 text-white")}>{project.context?.titleChosen ? <Check className="h-3 w-3" /> : <Wand2 className="h-3 w-3" />}</span>
           <span className="min-w-0 flex-1"><span className="block font-medium">{project.context?.titleChosen ? t("Başlık seçildi") : t("Adım 1: Başlık seç")}</span><span className="block truncate text-[11.5px] opacity-80">{project.title}</span></span>
@@ -673,6 +693,7 @@ export function Workspace(props: Props) {
       {defenseOpen && <DefenseModal open onClose={() => setDefenseOpen(false)} projectId={project.id} language={project.language} />}
       {reviewerOpen && <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />}
       {active && reviewOpen && <StageReviewModal open onClose={() => setReviewOpen(false)} stageId={active.id} stageTitle={active.title} onComplete={completeStage} onFix={fixWithAssistant} />}
+      {bpOpen && <BlueprintScreen open={bpOpen} onClose={closeBlueprint} project={project} stages={stages} onSaved={setProject} onApproved={blueprintApproved} />}
       {titleOpen && <TitleChooser open={titleOpen} onClose={closeTitle} projectId={project.id} currentTitle={project.title} onChoose={chooseTitle} />}
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}

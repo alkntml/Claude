@@ -4,6 +4,7 @@ import { scoreRecord } from "@/lib/sources/aggregate";
 import type { SourceRecord } from "@/lib/sources/types";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
+import { blueprintContext, readBlueprint } from "@/lib/blueprint";
 import { GRANT_PROGRAMS, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -48,6 +49,10 @@ export async function buildContext(params: {
   if (ctx.university) out.push(`Üniversite / kılavuz: ${ctx.university}`);
   if (ctx.targetJournal) out.push(`Hedef dergi: ${ctx.targetJournal}`);
   if (ctx.program) out.push(`Başvurulan program: ${GRANT_PROGRAMS.find((p) => p.id === ctx.program)?.label ?? ctx.program}. Başvuru formunun bölüm düzenine uy; programın üst sınırları, puanlama ölçütleri veya kuralları hakkında bilmediğin ayrıntıyı uydurma, kullanıcıya çağrı duyurusunu kontrol etmesini söyle.`);
+
+  // Öğrencinin kurgusu (D67): yazım bu plana göre ilerler
+  const plan = blueprintContext(readBlueprint(ctx.blueprint), stage);
+  if (plan) out.push(`\n${plan}`);
 
   if (memory.length) {
     out.push("\n## PROJE HAFIZASI (önceki kararlar ve bilgiler)");

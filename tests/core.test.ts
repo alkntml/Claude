@@ -65,3 +65,17 @@ describe("quality checks", () => {
     expect(report.plagiarism.available).toBe(false);
   });
 });
+
+describe("kalite puanı: cümle uzunluğu, noktalama ve boşluk (D80)", () => {
+  const stage = (text: string) => [{ key: "discussion", title: "Tartışma", text, citedIds: [] }];
+  it("uzun cümle ve noktalamadan önce boşluk puanı etkilemez; çift boşluk 1/7 ağırlıklı", () => {
+    const base = runQualityChecks(stage(`${"kelime ".repeat(80)}sonunda biter, ama boşluklu.`), []);
+    const long = runQualityChecks(stage(`${"kelime ".repeat(80)}sonunda biter , ama boşluklu .`), []);
+    expect(long.issues.filter((i) => i.category === "language")).toEqual([]);
+    expect(long.score).toBe(base.score);
+    const dbl = runQualityChecks(stage(`${"kelime ".repeat(80)}sonunda  biter, ama boşluklu.`), []);
+    const sp = dbl.issues.find((i) => i.title === "Çift boşluk");
+    expect(sp?.weight).toBeCloseTo(1 / 7);
+    expect(base.score - dbl.score).toBeLessThanOrEqual(1);
+  });
+});

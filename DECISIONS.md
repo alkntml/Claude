@@ -362,3 +362,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D79 — Word içindekiler dosyaya hazır yazılır
 - Eskiden DOCX’te yalnızca boş bir TOC alanı vardı; Word açılışta alanları güncellemezse (Mac Word’de “Hayır” denmesi, Pages, Google Dokümanlar, korumalı görünüm) içindekiler boş görünüyordu. Artık girişler (ilk üç düzey + Kaynakça) dosyaya doğrudan yazılır; her giriş başlıktaki yer imine (`_TocN`) bağlıdır ve sayfa numarası PAGEREF alanıyla gelir (Word/LibreOffice açılışta doldurur). Başlıklar sonradan Word’de elle değiştirilirse içindekiler kendiliğinden yenilenmez.
+
+### D80 — Kalite kontrolünde cümle uzunluğu, noktalama ve boşluk
+- Yönetici kararı: “Çok uzun cümle” ve noktalama (noktalama işaretinden önce boşluk) kontrolleri kaldırıldı; puanı etkilemez, rapora girmez, otomatik çalışmada düzeltme turu başlatmaz. Yapay zekâ jüri incelemesine de bu konuları bildirmemesi söylendi.
+- Çift boşluk yalnızca bilgi notu (“Çift boşluk”) olarak kalır ve puanı normal bir bilgi notunun 1/7’si kadar etkiler (`QualityIssue.weight`).

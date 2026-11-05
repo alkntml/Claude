@@ -18,6 +18,8 @@ export interface QualityIssue {
   detail: string;
   stageKey?: string;
   excerpt?: string;
+  /** Puan etkisi çarpanı (varsayılan 1); ör. boşluk notları 1/7 ağırlıkla sayılır */
+  weight?: number;
 }
 
 export interface StageInput {
@@ -46,10 +48,6 @@ export interface QualityReport {
 const INFORMAL_TR = ["bence", "sanırım", "galiba", "çok çok", "süper", "harika", "berbat", "kesinlikle herkes", "hiç kimse", "aslında", "yani", "falan", "filan", "baya", "bayağı", "şey"];
 const INFORMAL_EN = ["i think", "i believe", "a lot of", "lots of", "really", "very very", "stuff", "things like", "kind of", "sort of", "obviously", "everybody knows"];
 const OVERCLAIM = ["kanıtlamıştır", "kesin olarak", "şüphesiz", "tartışmasız", "proves that", "undoubtedly", "it is certain"];
-
-function sentences(text: string): string[] {
-  return text.split(/(?<=[.!?])\s+(?=[\p{Lu}"“(])/u).map((s) => s.trim()).filter(Boolean);
-}
 
 function ngrams(words: string[], n: number): string[] {
   const out: string[] = [];
@@ -84,12 +82,10 @@ export function runQualityChecks(stages: StageInput[], sources: SourceInput[], o
     for (const w of OVERCLAIM) {
       if (lower.includes(w)) issues.push({ id: nid("lang"), category: "language", severity: "warning", title: T("Aşırı kesin iddia"), detail: T("“{w}” ifadesi bilimsel temkin ilkesine aykırı olabilir; “göstermektedir”, “işaret etmektedir” gibi ifadeler tercih edin.", { w }), stageKey: s.key, excerpt: w });
     }
-    for (const sent of sentences(s.text)) {
-      const wc = wordCount(sent);
-      if (wc > 45) issues.push({ id: nid("lang"), category: "language", severity: "info", title: T("Çok uzun cümle"), detail: T("{n} kelimelik cümle okunabilirliği düşürür; bölmeyi düşünün.", { n: wc }), stageKey: s.key, excerpt: sent.slice(0, 160) + (sent.length > 160 ? "…" : "") });
-    }
-    if (/\s{2,}|\s[,.;:]/.test(s.text.replace(/\n/g, " "))) {
-      issues.push({ id: nid("lang"), category: "language", severity: "info", title: T("Boşluk / noktalama"), detail: T("Noktalama işaretlerinden önce boşluk veya çift boşluk bulundu."), stageKey: s.key });
+    // Cümle uzunluğu ve noktalama kalite kontrolünde dikkate alınmaz (yönetici kararı, D80).
+    // Çift boşluk yalnızca bilgi notu olarak gösterilir ve puanı normal bir notun 1/7’si kadar etkiler.
+    if (/[^\S\n]{2,}/.test(s.text)) {
+      issues.push({ id: nid("lang"), category: "language", severity: "info", title: T("Çift boşluk"), detail: T("Metinde art arda iki veya daha fazla boşluk bulundu."), stageKey: s.key, weight: 1 / 7 });
     }
   }
 
@@ -166,7 +162,7 @@ export function runQualityChecks(stages: StageInput[], sources: SourceInput[], o
 
   // --- Puan
   const weights: Record<Severity, number> = { error: 6, warning: 2.5, info: 0.6 };
-  const penalty = issues.reduce((acc, it) => acc + weights[it.severity], 0);
+  const penalty = issues.reduce((acc, it) => acc + weights[it.severity] * (it.weight ?? 1), 0);
   const score = Math.max(0, Math.min(100, Math.round(100 - penalty)));
 
   const words = writable.reduce((a, s) => a + wordCount(s.text), 0);

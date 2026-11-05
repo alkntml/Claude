@@ -66,7 +66,7 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
     else {
       const summary = stages.filter((x) => x.text).map((x) => `### ${x.key} — ${x.title}\n${x.text.slice(0, 6000)}`).join("\n\n");
       const res = await complete(model, {
-        system: `Deneyimli bir tez jürisi üyesi gibi akademik çalışmayı değerlendir. Yalnızca mantıksal bütünlük, bilimsel tutarlılık, bölümler arası uyum, araştırma soruları–yöntem uyumu ve hipotez–amaç ilişkisi sorunlarını bildir. Somut ve uygulanabilir ol; metinde olmayan şeyleri varsayma. ${uiLocale === "en" ? "İngilizce" : "Türkçe"} yaz. En fazla 15 sorun.`,
+        system: `Deneyimli bir tez jürisi üyesi gibi akademik çalışmayı değerlendir. Yalnızca mantıksal bütünlük, bilimsel tutarlılık, bölümler arası uyum, araştırma soruları–yöntem uyumu ve hipotez–amaç ilişkisi sorunlarını bildir. Somut ve uygulanabilir ol; metinde olmayan şeyleri varsayma. Cümle uzunluğu, noktalama ve boşluk konularını bildirme. ${uiLocale === "en" ? "İngilizce" : "Türkçe"} yaz. En fazla 15 sorun.`,
         messages: [{ role: "user", content: `Çalışma: ${bundle.project.title}\nTür: ${bundle.project.work_type}\n\n${summary}` }],
         maxTokens: 6000,
         effort: "medium",

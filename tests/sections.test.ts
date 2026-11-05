@@ -43,3 +43,13 @@ describe("bölüm içi alt başlıklar (D83)", () => {
     expect(sectionTree(removeSection(d, 1)).map((s) => s.text)).toEqual(["Model"]);
   });
 });
+
+import { academicOrder } from "@/lib/workflows/structure";
+describe("akademik bölüm sırası (D84)", () => {
+  const st = (keys: string[]) => keys.map((key) => ({ id: key, key }));
+  it("ayrı düşen yöntem aşamasını grubuna, kaynakça ve ekleri sona alır", () => {
+    expect(academicOrder(st(["topic", "problem", "literature", "method", "design_development", "conclusion", "references", "appendices", "testing"]))!.map((s) => s.key))
+      .toEqual(["topic", "problem", "literature", "method", "design_development", "testing", "conclusion", "references", "appendices"]);
+    expect(academicOrder(st(["topic", "problem", "method", "testing", "conclusion", "references", "appendices"]))).toBeNull();
+  });
+});

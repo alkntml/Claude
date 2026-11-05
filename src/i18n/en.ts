@@ -2430,4 +2430,7 @@ export const EN: Record<string, string> = {
   "Alt başlığı sil": "Delete subheading",
   "Yalnızca bu alt başlığın metni açık. Yazdıklarınız çalışmada bu başlığın altına kaydedilir; indirirken tüm çalışma tek belge olarak aktarılır.": "Only this subheading’s text is open. What you write is saved under this heading; when you download, the whole work is exported as a single document.",
   "Belgede {n}": "In document: {n}",
+  "Bölüm sırası akademik düzene göre ayarlandı": "Section order adjusted to academic structure",
+  "Aynı ana bölümün kısımları bir arada, kaynakça ve ekler en sonda kalır.": "Parts of the same chapter stay together; references and appendices stay at the end.",
+  "Bölüm sırası akademik düzene göre düzeltildi": "Section order corrected to academic structure",
 };

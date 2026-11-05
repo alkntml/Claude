@@ -26,7 +26,8 @@ export function useAcademicEditor(opts: { content: JSONNode | null; placeholder:
       StarterKit.configure({ heading: { levels: [2, 3, 4] } }),
       Underline,
       Link.configure({ openOnClick: false, autolink: true, protocols: ["https"], HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } }),
-      Placeholder.configure({ placeholder: opts.placeholder }),
+      // Yer tutucu her çizimde güncel bölüm adını okur (bölüm değişince eski bölümün adı kalmasın)
+      Placeholder.configure({ placeholder: () => cb.current.placeholder }),
       Table.configure({ resizable: false }),
       TableRow,
       TableHeader,

@@ -1,7 +1,7 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
-import { chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
+import { academicOrder, chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
 import { addSubheadings, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
 import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
@@ -527,8 +527,25 @@ export function Workspace(props: Props) {
   function reorder(next: any[]) {
     setStages(next.map((s, i) => ({ ...s, position: i })));
     if (orderTimer.current) clearTimeout(orderTimer.current);
-    orderTimer.current = setTimeout(() => api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: next.map((s) => s.id) } }).catch(() => toast({ tone: "error", title: t("Sıralama kaydedilemedi") })), 600);
+    orderTimer.current = setTimeout(() => {
+      // Sürükleme bitince akademik sıra korunur (D84): aynı ana bölümün kısımları bitişik, kaynakça ve ekler sonda
+      const fixed = academicOrder(next);
+      if (fixed) {
+        setStages(fixed.map((s, i) => ({ ...s, position: i })));
+        toast({ tone: "info", title: t("Bölüm sırası akademik düzene göre ayarlandı"), detail: t("Aynı ana bölümün kısımları bir arada, kaynakça ve ekler en sonda kalır.") });
+      }
+      api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: (fixed ?? next).map((s) => s.id) } }).catch(() => toast({ tone: "error", title: t("Sıralama kaydedilemedi") }));
+    }, 600);
   }
+  // Açılışta sıra bozuksa (ör. sonradan eklenen bir yöntem kısmı eklerin arkasında kaldıysa) düzeltilir (D84)
+  useEffect(() => {
+    const fixed = academicOrder(props.stages);
+    if (!fixed) return;
+    setStages(fixed.map((s, i) => ({ ...s, position: i })));
+    api(`/api/projects/${props.project.id}/stages`, { method: "PUT", json: { order: fixed.map((s) => s.id) } })
+      .then(() => toast({ tone: "info", title: t("Bölüm sırası akademik düzene göre düzeltildi"), detail: t("Aynı ana bölümün kısımları bir arada, kaynakça ve ekler en sonda kalır.") }))
+      .catch(() => {});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   async function removeStage(id: string) {
     const st = stages.find((s) => s.id === id);
     if (!st || !confirm(t("“{title}” bölümü ve içeriği silinsin mi? Bu işlem geri alınamaz.", { title: st.title }))) return;
@@ -631,7 +648,7 @@ export function Workspace(props: Props) {
         </button>
         <p className="px-1 text-[11.5px] text-ink-500">{t("{d}/{n} bölüm tamamlandı", { d: done.done, n: done.total })}</p>
       </div>
-      <Reorder.Group axis="y" values={stages} onReorder={reorder} className="flex-1 space-y-0.5 overflow-y-auto p-2">
+      <Reorder.Group axis="y" values={stages} onReorder={reorder} className="mt-2 flex-1 space-y-0.5 overflow-y-auto border-t border-ink-100 p-2">
         {stages.map((s, i) => {
           const st = STATUS.find((x) => x.id === s.status) ?? STATUS[0];
           const sel = s.id === activeId;
@@ -809,7 +826,7 @@ export function Workspace(props: Props) {
       </div>
 
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
-      <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { setStages((l) => { const n = [...l]; n.splice(activeIndex + 1, 0, st); return n.map((x, i) => ({ ...x, position: i })); }); setAddStage(false); }} />
+      <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { const n = [...stages]; n.splice(activeIndex + 1, 0, st); const fixed = academicOrder(n); setStages((fixed ?? n).map((x, i) => ({ ...x, position: i }))); if (fixed) api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: fixed.map((x) => x.id) } }).catch(() => {}); setAddStage(false); }} />
       {active && !isBibliography && subOpen && <SubheadingModal open={subOpen} onClose={() => setSubOpen(false)} projectId={project.id} stage={{ id: active.id, title: active.title }} parent={subParent} suggested={focused ? 3 : Math.max(2, subheadingBudget(active.key, targetOf(active.id)) || 3)} existing={subSiblings} onCreate={createSubheadings} />}
       <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />

@@ -136,3 +136,21 @@ export function stagePrefixes(stages: { id: string; key: string; title: string; 
   }
   return out;
 }
+
+/**
+ * Akademik sıra (D84): aynı ana bölüme ait aşamalar (ör. YÖNTEM’in alt kısımları) bitişik olmalı, kaynakça ve
+ * ekler en sonda yer almalı. Aksi hâlde belgede aynı ana bölüm iki kez açılır (“3 YÖNTEM … 5 YÖNTEM”).
+ * Kullanıcının diğer sıralaması korunur: ayrı düşmüş aşama, grubunun ilk aşamasının hemen arkasına alınır.
+ * Değişiklik yoksa null döner.
+ */
+export function academicOrder<T extends { id: string; key: string }>(stages: T[]): T[] | null {
+  const tail = (k: string) => (k === "references" ? 1 : k === "appendices" ? 2 : 0);
+  const firstOfGroup = new Map<string, number>();
+  stages.forEach((s, i) => { const g = chapterGroup(s.key); if (g && !firstOfGroup.has(g.id)) firstOfGroup.set(g.id, i); });
+  const keyed = stages.map((s, i) => {
+    const g = chapterGroup(s.key);
+    return { s, i, anchor: g ? firstOfGroup.get(g.id)! : i, tail: tail(s.key) };
+  });
+  const sorted = [...keyed].sort((a, b) => a.tail - b.tail || a.anchor - b.anchor || a.i - b.i).map((x) => x.s);
+  return sorted.every((s, i) => s.id === stages[i].id) ? null : sorted;
+}

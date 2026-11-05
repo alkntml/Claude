@@ -1,14 +1,16 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart3, ClipboardList, Gavel, LineChart, Lock, MessageSquareReply, Wrench } from "lucide-react";
+import { BarChart3, ClipboardList, FileUp, Gavel, LineChart, Lock, MessageSquareReply, Wrench } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/i18n/client";
 import { FEATURE_MIN_PLAN, PLAN_NAME, hasFeature, type FeatureId } from "@/lib/features";
 
-export type ToolId = "chart" | "analysis" | "survey" | "reviewer" | "defense";
-export const TOOL_FEATURE: Record<ToolId, FeatureId> = { chart: "stats", analysis: "stats", survey: "surveys", reviewer: "reviewer", defense: "defense" };
+export type ToolId = "import" | "chart" | "analysis" | "survey" | "reviewer" | "defense";
+/** Pakete bağlı araçlar; listede olmayan araç (Word’den içe aktar) her pakette açıktır */
+export const TOOL_FEATURE: Partial<Record<ToolId, FeatureId>> = { chart: "stats", analysis: "stats", survey: "surveys", reviewer: "reviewer", defense: "defense" };
 const TOOLS: { id: ToolId; label: string; hint: string; Icon: typeof Wrench; types?: string[] }[] = [
+  { id: "import", label: "Word’den içe aktar", hint: "Belgeyi kaynakları ve atıflarıyla bölüme aktarın", Icon: FileUp },
   { id: "chart", label: "Grafik oluştur", hint: "Verinizden APA biçiminde şekil", Icon: LineChart },
   { id: "analysis", label: "İstatistik analizi", hint: "t testi, ANOVA, korelasyon, regresyon…", Icon: BarChart3 },
   { id: "survey", label: "Anket oluştur", hint: "Bağlantıyla veri toplayın, analize aktarın", Icon: ClipboardList },
@@ -20,7 +22,7 @@ const TOOLS: { id: ToolId; label: string; hint: string; Icon: typeof Wrench; typ
 export function ToolsMenu({ onPick, workType, variant = "button", planId }: { onPick: (id: ToolId) => void; workType: string; variant?: "button" | "rows"; planId?: string }) {
   const { t } = useT();
   /** Kilitli araçta gerekli paketin adı (ör. “Pro”) */
-  const lockOf = (id: ToolId) => (hasFeature(planId, TOOL_FEATURE[id]) ? null : PLAN_NAME[FEATURE_MIN_PLAN[TOOL_FEATURE[id]]]);
+  const lockOf = (id: ToolId) => { const f = TOOL_FEATURE[id]; return !f || hasFeature(planId, f) ? null : PLAN_NAME[FEATURE_MIN_PLAN[f]]; };
   const badge = (id: ToolId) => { const p = lockOf(id); return p ? <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700"><Lock className="h-3 w-3" />{p}</span> : null; };
   const [open, setOpen] = useState(false);
   // Hakem cevabı her türde erişilebilir; makale türlerinde üstte gösterilir

@@ -2470,4 +2470,7 @@ export const EN: Record<string, string> = {
   "Kaynakçada karşılığı olmayan atıflar ({n})": "Citations with no match in the reference list ({n})",
   "Metinde olduğu gibi bırakıldı. Bunlar çoğunlukla “akt.” ile verilen ikincil kaynaklardır; değilse kaynağı ekleyip atfı elle bağlayın.": "Left as they are in the text. These are usually secondary sources cited via “cited in”; otherwise add the source and link the citation manually.",
   "Belgedeki {n} görsel aktarılmadı; gerekiyorsa Araçlar → Grafik ile ya da şekil olarak ekleyin.": "{n} images in the document were not imported; add them via Tools → Chart or as a figure if needed.",
+  "Belgeyi kaynakları ve atıflarıyla bölüme aktarın": "Import a document into a section with its sources and citations",
+  "Önce aktarılacak bölümü açın": "Open the section to import into first",
+  "Kaynakça dışındaki bir bölüme veya alt başlığa girin.": "Open any section or subheading other than the references.",
 };

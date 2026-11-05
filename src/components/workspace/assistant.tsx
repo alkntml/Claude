@@ -32,6 +32,8 @@ interface Props {
   onOpenOutline?: () => void;
   /** Editörde açık olan alt başlık (D83): yazım istekleri yalnızca bu alt başlık için yapılır */
   focus?: { number: string; title: string } | null;
+  /** Word’den içe aktar penceresi (D87) */
+  onOpenImport?: () => void;
   /** Projede kapsam için yeterli kaynak yok (literatür kısayolu her bölümde görünür) */
   lowSources?: boolean;
   /** Kurgudaki bölüm hedefi (kelime); uzun bölümlerde “Alt başlıklarla yaz” */
@@ -68,7 +70,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null }: Props) {
+export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -291,6 +293,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
             if (q === "interpret" && !def?.requiresUserData && !dataFiles.length) return null;
             return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-ink-900 bg-ink-900 text-white hover:bg-ink-800" : "border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
           })}
+          {onOpenImport && <button disabled={busy} onClick={onOpenImport} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}><FilePlus2 className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>}
           {input.trim().length > 20 && <button disabled={busy} onClick={() => send(input, "from_notes")} className={cn(chip, "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100")}>{t(ASSISTANT_ACTIONS.from_notes.label)}</button>}
         </div>
         <div className="flex items-end gap-1.5 rounded-2xl border border-ink-200 bg-white p-1.5 shadow-sm transition focus-within:border-brand-300 focus-within:ring-4 focus-within:ring-brand-100">

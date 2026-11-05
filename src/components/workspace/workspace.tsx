@@ -408,8 +408,12 @@ export function Workspace(props: Props) {
   function openTool(id: ToolId) {
     // Pakete bağlı araçlar (D49): paket yetmiyorsa yükseltme penceresi
     const feature = TOOL_FEATURE[id];
-    if (!hasFeature(props.planId, feature)) { openUpgrade({ code: "feature_locked", feature, plan: FEATURE_MIN_PLAN[feature] }); return; }
-    if (id === "chart") setChartOpen(true);
+    if (feature && !hasFeature(props.planId, feature)) { openUpgrade({ code: "feature_locked", feature, plan: FEATURE_MIN_PLAN[feature] }); return; }
+    if (id === "import") {
+      if (!active || isBibliography) { toast({ tone: "info", title: t("Önce aktarılacak bölümü açın"), detail: t("Kaynakça dışındaki bir bölüme veya alt başlığa girin.") }); return; }
+      flush(); setImportOpen(true);
+    }
+    else if (id === "chart") setChartOpen(true);
     else if (id === "analysis") setAnalysisOpen(true);
     else if (id === "reviewer") setReviewerOpen(true);
     else if (id === "defense") { flush(); setDefenseOpen(true); }
@@ -780,7 +784,7 @@ export function Workspace(props: Props) {
                           <button onClick={() => selectStage(active.id, null)} className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-xs font-medium text-ink-600 transition hover:border-ink-300 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" /> {chapterNumber ? `${chapterNumber} ` : ""}{active.title}</button>
                           <Badge tone="brand">{focused.number || t("Alt başlık")}</Badge>
                           <span className="text-xs text-ink-400">{t("{n} kelime", { n: focused.words })}</span>
-                          <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-500 transition hover:bg-brand-50 hover:text-brand-700"><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
+                          <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100"><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
                           <button onClick={removeFocused} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
                         </div>
                         <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Alt başlık")} />
@@ -793,7 +797,7 @@ export function Workspace(props: Props) {
                         {chapterNumber && <Badge>{t("Belgede {n}", { n: chapterNumber })}</Badge>}
                         <StatusPicker value={active.status} onChange={(v) => patchStage(active.id, { status: v })} />
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
-                        <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-500 transition hover:bg-brand-50 hover:text-brand-700" title={t("Word belgesini kaynakları ve atıflarıyla bu bölüme aktar")}><Upload className="h-3.5 w-3.5" /> {t("İçe aktar")}</button>
+                        <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100" title={t("Word belgesini kaynakları ve atıflarıyla bu bölüme aktar")}><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
                         <span>{active.status === "done"
                           ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")} · {t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                           : <Button size="sm" variant="secondary" onClick={startComplete} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
@@ -834,7 +838,7 @@ export function Workspace(props: Props) {
             <div className="min-h-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
+                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
                   {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={applyComment} />}

@@ -122,6 +122,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 2. `supabase/setup.sql`'i yeniden üret (tüm migration'ların birleşimi).
 3. `tests/db.test.ts` ile doğrula (PGlite).
 4. Canlı veritabanı otomatik güncellenmez: kullanıcıya yalnızca YENİ migration dosyasının içeriğini Supabase → SQL Editor'de çalıştırmasını adım adım anlat.
+5. `supabase/check_status.sql`’e yeni migration için bir kontrol satırı ekle (salt okunur durum sorgusu; kullanıcı hangi migration’ların canlıda yapıldığını buradan görür).
 
 ## Ortam değişkenleri (Vercel → Settings → Environment Variables)
 Zorunlu: `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (veya `..._PUBLISHABLE_KEY`), `SUPABASE_SERVICE_ROLE_KEY` (veya `SUPABASE_SECRET_KEY`). Supabase değişkenleri Vercel entegrasyonu tarafından otomatik eklendi.

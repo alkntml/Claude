@@ -372,3 +372,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 - `syncWorkLock` her zaman `locked: false` döner ve eski bayrağı temizler; `reasons` yalnızca uygulama genelindeki “hakkınız doldu, çalışmalarınıza erişiminiz sürüyor” şeridi için. `assertNotLocked`, `WORK_LOCKED_MESSAGE`, kilitli çalışma görünümü (`LockedProject`) ve 100 TL’lik indirme seçeneği kaldırıldı (`download_passes` tablosu ve yönetici Kilitler sekmesi geriye dönük duruyor; KVKK talepleri aynen).
 - Veritabanı: migration 20 eski bayrakları sıfırlar ve `work_locked()` her zaman false döner (kısıtlayıcı politikalar artık engellemez).
 - SSS ve Kullanım Koşulları güncellendi.
+
+### D82 — Yönetici için tüm sınırlar sınırsız görünür
+- `effectiveLimits` yönetici (`role = admin`) için tüm sınırları `null` (sınırsız) döner: “hakkınız bitmek üzere” uyarıları, panel/hesap sayaç çubukları, “hak doldu” şeridi ve kalan tarama hakkı hesabı yöneticiye çıkmaz. Paket süresi uyarısı da gösterilmez. Kullanım ve maliyet yine kaydedilir (D77).

@@ -43,7 +43,11 @@ export function costCapUsd(priceTry: number, m: { usd_try: number; vat_rate: num
 }
 
 /** Paket limitleri + süresi dolmamış krediler (davet ödülü vb.) */
+/** Yönetici (site sahibi) için sınır yoktur: uyarılar, sayaç çubukları ve tarama hakkı hesapları da sınırsız görünür (D82) */
+const UNLIMITED: PlanLimits = { ai_requests_month: null, tokens_month: null, source_searches_month: null, projects: null, storage_mb: null, export_formats: ["txt", "md", "docx", "pdf"], cost_usd_month: null };
+
 export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
+  if (await isAdminUser(userId).catch(() => false)) return { ...UNLIMITED };
   const [l, c, m] = await Promise.all([planLimits(planId), activeCredits(userId), getSetting("billing.margin")]);
   return {
     ...l,

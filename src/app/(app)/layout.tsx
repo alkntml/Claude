@@ -18,7 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // D81: hak dolunca çalışma kilitlenmez; yalnızca bilgilendirme şeridi gösterilir
   const { reasons } = await getWorkLock();
   return (
-    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null, memberNo: memberCode(s.profile.member_no) }} limitReached={reasons.length > 0} expiresAt={s.profile.plan_id !== "free" ? s.profile.plan_expires_at ?? null : null}>
+    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null, memberNo: memberCode(s.profile.member_no) }} limitReached={reasons.length > 0} expiresAt={s.profile.plan_id !== "free" && s.profile.role !== "admin" ? s.profile.plan_expires_at ?? null : null}>
       {children}
     </AppShell>
   );

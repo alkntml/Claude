@@ -6,8 +6,6 @@ import { toPdf } from "@/lib/export/render-pdf";
 import { toMarkdown, toText } from "@/lib/export/render-text";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
-import { getWorkLock } from "@/lib/lock";
-import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 60;
@@ -29,11 +27,9 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
   const url = new URL(req.url);
   const format = url.searchParams.get("format") as keyof typeof TYPES;
   if (!TYPES[format]) throw new ApiError(422, "Desteklenmeyen biçim");
-  // Kilitliyse yalnızca yöneticinin tanımladığı indirme hakkıyla (100 TL) izin verilir (D50)
+  // D81: kullanıcı kendi çalışmasını her zaman indirebilir (aylık hak dolsa bile); yalnızca paketin biçim izni kontrol edilir
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { format, projectId: id });
-  const { locked } = await getWorkLock();
-  // Kilitliyken içerik tablolarına kullanıcı istemcisiyle erişilemez; hak doğrulandığı için sunucu okur (açık user_id filtresiyle)
-  const bundle = await loadProjectBundle(locked ? adminClient() : s.supabase, id, s.user.id);
+  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
 
   const doc = buildExportDoc({

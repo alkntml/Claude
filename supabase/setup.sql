@@ -1109,3 +1109,14 @@ alter type public.citation_style add value if not exists 'isnad';
 -- Paket kartlarındaki özellik metni: 9 → 10 atıf stili
 update public.plans set features = array_replace(features, '9 atıf stili ve otomatik kaynakça', '10 atıf stili ve otomatik kaynakça'), updated_at = now()
 where '9 atıf stili ve otomatik kaynakça' = any(features);
+
+-- ---------- 20261115000020_no_work_lock.sql ----------
+-- D81: Çalışma kilidi kaldırıldı. Kullanıcı kendi çalışmasına erişimi hiçbir zaman kaybetmez;
+-- aylık hak dolunca yalnızca yapay zekâ ve kaynak tarama durur (sunucuda kontrol edilir).
+-- Eski bayraklar temizlenir ve içerik tablolarındaki kilit kuralı her zaman “kilitli değil” döner.
+update public.profiles set work_locked = false where work_locked;
+
+create or replace function public.work_locked() returns boolean
+language sql stable security definer set search_path = public as $$
+  select false
+$$;

@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de `20261115000020_no_work_lock.sql` (çalışma kilidini kaldırma, D81)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 9’u çalıştır (`20261106000009_plans_whatsapp.sql`: yeni fiyat/limitler, öğrenci indirimi ayarını siler)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 10’u çalıştır (`20261106000010_plan_features.sql`: paket kartlarında özellik listeleri)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 11’i çalıştır (`20261107000011_work_lock.sql`: çalışma kilidi)

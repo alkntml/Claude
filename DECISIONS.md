@@ -366,3 +366,9 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D80 — Kalite kontrolünde cümle uzunluğu, noktalama ve boşluk
 - Yönetici kararı: “Çok uzun cümle” ve noktalama (noktalama işaretinden önce boşluk) kontrolleri kaldırıldı; puanı etkilemez, rapora girmez, otomatik çalışmada düzeltme turu başlatmaz. Yapay zekâ jüri incelemesine de bu konuları bildirmemesi söylendi.
 - Çift boşluk yalnızca bilgi notu (“Çift boşluk”) olarak kalır ve puanı normal bir bilgi notunun 1/7’si kadar etkiler (`QualityIssue.weight`).
+
+### D81 — Çalışma kilidi kaldırıldı: kullanıcı kendi çalışmasına erişimi kaybetmez
+- Yönetici kararı (D50’nin yerine geçer): aylık hak (yapay zekâ isteği, token, maliyet tavanı, kaynak tarama) dolunca çalışma kilitlenmez, içerik buğulanmaz. Yalnızca ilgili işlem durur (402 `limit_ai` / `limit_tokens` / `limit_search` → yükseltme penceresi). Görüntüleme, elle düzenleme, kaynaklar, kalite sayfası, danışman paylaşımı, BibTeX/RIS ve çalışma indirme her zaman açık; indirmede yalnızca paketin biçim izni geçerli (ücretsiz: TXT/Markdown).
+- `syncWorkLock` her zaman `locked: false` döner ve eski bayrağı temizler; `reasons` yalnızca uygulama genelindeki “hakkınız doldu, çalışmalarınıza erişiminiz sürüyor” şeridi için. `assertNotLocked`, `WORK_LOCKED_MESSAGE`, kilitli çalışma görünümü (`LockedProject`) ve 100 TL’lik indirme seçeneği kaldırıldı (`download_passes` tablosu ve yönetici Kilitler sekmesi geriye dönük duruyor; KVKK talepleri aynen).
+- Veritabanı: migration 20 eski bayrakları sıfırlar ve `work_locked()` her zaman false döner (kısıtlayıcı politikalar artık engellemez).
+- SSS ve Kullanım Koşulları güncellendi.

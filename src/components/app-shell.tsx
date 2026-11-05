@@ -17,7 +17,7 @@ import { expertUrl } from "@/lib/expert";
 import { GiftBox } from "@/components/gift-box";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; locked?: boolean; expiresAt?: string | null }
+interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; limitReached?: boolean; expiresAt?: string | null }
 
 const NAV = [
   { href: "/panel", label: "Kontrol paneli", icon: Home },
@@ -28,7 +28,7 @@ const NAV = [
   { href: "/hesap", label: "Hesap ve abonelik", icon: UserRound },
 ];
 
-export function AppShell({ children, user, locked, expiresAt }: Props) {
+export function AppShell({ children, user, limitReached, expiresAt }: Props) {
   const { t } = useT();
   const path = usePathname();
   const router = useRouter();
@@ -122,7 +122,7 @@ export function AppShell({ children, user, locked, expiresAt }: Props) {
       <GiftBox />
       <main className="lg:pl-64">
         <motion.div key={path} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-10">
-          {!locked && expiresAt && (() => {
+          {!limitReached && expiresAt && (() => {
             // Paket süresi (D53): son 3 gün uyarısı
             const left = Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400_000);
             if (left > 3 || left < 0) return null;
@@ -132,11 +132,11 @@ export function AppShell({ children, user, locked, expiresAt }: Props) {
               </Link>
             );
           })()}
-          {locked && (
-            // Çalışma kilidi (D50): aylık hak dolunca uygulama genelinde uyarı ve seçenekler
+          {limitReached && (
+            // D81: aylık hak dolunca çalışma kilitlenmez; yalnızca yapay zekâ ve kaynak tarama durur
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              <span className="flex items-center gap-2"><Lock className="h-4 w-4" /> {t("Bu ayki kullanım hakkınız doldu; çalışmalarınız ve kaynaklarınız kilitlendi.")}</span>
-              <button type="button" onClick={() => openUpgrade({ code: "work_locked" })} className="rounded-xl bg-ink-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-ink-800">{t("Seçenekleri gör")}</button>
+              <span className="flex items-center gap-2"><Lock className="h-4 w-4" /> {t("Bu ayki yapay zekâ hakkınız doldu. Çalışmalarınızı görüntülemeye, düzenlemeye ve indirmeye devam edebilirsiniz.")}</span>
+              <button type="button" onClick={() => openUpgrade({ code: "limit_ai" })} className="rounded-xl bg-ink-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-ink-800">{t("Seçenekleri gör")}</button>
             </div>
           )}
           {children}

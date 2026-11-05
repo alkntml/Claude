@@ -1,12 +1,12 @@
 "use client";
-import { CheckCircle2, FileText, Lock, MessageCircle, Sparkles } from "lucide-react";
+import { CheckCircle2, Lock, MessageCircle, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Modal } from "@/components/ui/primitives";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
-import { UPGRADE_EVENT, getCurrentProject, type UpgradeRequest } from "@/lib/client";
+import { UPGRADE_EVENT, type UpgradeRequest } from "@/lib/client";
 import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
-import { DOWNLOAD_PRICE_TL, PLAN_RANK, whatsappLink } from "@/lib/pricing";
+import { PLAN_RANK, whatsappLink } from "@/lib/pricing";
 import { usePrice } from "@/components/price-context";
 
 interface PlanRow { id: string; name: string; price_monthly: number; limits: { ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
@@ -52,10 +52,7 @@ export function UpgradeDialogHost() {
 
   if (!req) return null;
   const workLocked = req.code === "work_locked";
-  // Çalışma sırasında kilit devreye girdiyse sayfa yenilenir ve kilitli görünüme geçilir (D50)
-  const close = () => { setReq(null); if (workLocked && !req.projectId && typeof window !== "undefined" && /^\/proje\//.test(window.location.pathname)) window.location.reload(); };
-  const proj = req.projectId ? { id: req.projectId, title: req.projectTitle ?? "" } : getCurrentProject();
-  const downloadHref = whatsappLink(t("Merhaba, Academiana’da mevcut çalışmamı indirmek istiyorum ({price}).\nÇalışma: {title}\nÇalışma kodu: {id}\nÜye no: {no}\nHesap e-postam: {email}", { price: price(DOWNLOAD_PRICE_TL), title: proj?.title ?? "", id: proj?.id ?? "", email: data?.email ?? "", no: data?.memberNo ?? "" }));
+  const close = () => setReq(null);
   const currentRank = PLAN_RANK[data?.current ?? "free"] ?? 0;
   const minRank = req.plan ? PLAN_RANK[req.plan] ?? 0 : 0;
   const options = (data?.plans ?? []).filter((p) => (PLAN_RANK[p.id] ?? 0) > currentRank && (PLAN_RANK[p.id] ?? 0) >= minRank && p.price_monthly > 0);
@@ -82,13 +79,7 @@ export function UpgradeDialogHost() {
         {feature && <p className="flex items-center gap-2 text-[15px] text-ink-700"><Lock className="h-4 w-4 text-ink-400" /> {t("“{feature}” {plan} ve üzeri paketlerde kullanılabilir.", { feature, plan: t(data?.plans.find((p) => p.id === req.plan)?.name ?? req.plan ?? "") })}</p>}
         {!feature && req.message && !req.target && <p className="text-[15px] text-ink-700">{req.message}</p>}
         {monthly && <p className="text-sm text-ink-500">{t("Hakkınız her ayın başında yenilenir. Beklemek istemiyorsanız paketinizi yükseltebilirsiniz.")}</p>}
-        {workLocked && (
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-ink-100 p-4">
-            <div><p className="flex items-center gap-2 font-semibold text-ink-900"><FileText className="h-4 w-4 text-brand-600" /> {t("Mevcut çalışmayı indir — {price}", { price: price(DOWNLOAD_PRICE_TL) })}</p><p className="mt-0.5 text-sm text-ink-500">{t("Abone olmadan yalnızca bu çalışmayı tek seferlik indirmek için.")}</p></div>
-            <a href={downloadHref} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-900 hover:bg-ink-50"><MessageCircle className="h-4 w-4" /> WhatsApp</a>
-          </div>
-        )}
-        {workLocked && <p className="text-sm font-medium text-ink-700">{t("Ya da abone olun, kaldığınız yerden devam edin:")}</p>}
+        {monthly && <p className="text-sm text-ink-500">{t("Çalışmalarınız kilitlenmez: görüntülemeye, elle düzenlemeye ve indirmeye her zaman devam edebilirsiniz.")}</p>}
         {failed && <p className="text-sm text-ink-500">{t("Paket bilgileri yüklenemedi. Hesap ve abonelik sayfasından tekrar deneyin.")}</p>}
         {!data && !failed && <p className="text-sm text-ink-400">{t("Paketler yükleniyor…")}</p>}
         {data && options.length === 0 && (

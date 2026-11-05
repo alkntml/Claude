@@ -4,8 +4,6 @@ import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { toBibTeX, toRIS } from "@/lib/sources/bib";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { assertFeature, assertWithinLimits } from "@/lib/usage";
-import { getWorkLock } from "@/lib/lock";
-import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -19,7 +17,7 @@ export const GET = route<Ctx>("project.sources.export", async (req, { params }) 
   const format = url.searchParams.get("format");
   if (format !== "bib" && format !== "ris") throw new ApiError(422, "Desteklenmeyen biçim");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { projectId: id });
-  const db = (await getWorkLock()).locked ? adminClient() : s.supabase;
+  const db = s.supabase;
   const { data: sources } = await db.from("sources").select("*").eq("project_id", id).eq("user_id", s.user.id).order("created_at");
   let rows = sources ?? [];
   if (url.searchParams.get("scope") === "cited") {

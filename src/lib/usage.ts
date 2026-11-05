@@ -156,14 +156,16 @@ export async function setWorkLock(userId: string, locked: boolean) {
   await adminClient().from("profiles").update({ work_locked: locked }).eq("id", userId).neq("work_locked", locked);
 }
 
-/** Güncel kilit durumunu hesaplar ve bayrağı eşitler (sayfa yüklemelerinde çağrılır). */
+/**
+ * Aylık hak durumu (sayfa yüklemelerinde çağrılır). D81: kullanıcı kendi çalışmasına erişimi hiçbir zaman
+ * kaybetmez; hak dolunca yalnızca yapay zekâ ve kaynak tarama durur. Bu yüzden `locked` her zaman false’tur ve
+ * eskiden kalmış kilit bayrağı temizlenir; `reasons` yalnızca “hakkınız doldu” uyarısı için döner.
+ */
 export async function syncWorkLock(userId: string, planId: string, opts: { isAdmin?: boolean; stored?: boolean } = {}): Promise<{ locked: boolean; reasons: LockReason[] }> {
+  if (opts.stored) await setWorkLock(userId, false).catch(() => {});
   if (opts.isAdmin) return { locked: false, reasons: [] };
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
-  const reasons = lockReasons(limits, usage, planId);
-  const locked = reasons.length > 0;
-  if (opts.stored !== locked) await setWorkLock(userId, locked).catch(() => {});
-  return { locked, reasons };
+  return { locked: false, reasons: lockReasons(limits, usage, planId) };
 }
 
 /** Yöneticinin tanımladığı “mevcut çalışmayı indir” hakkı (100 TL) geçerli mi? */
@@ -173,13 +175,6 @@ export async function hasDownloadPass(userId: string, projectId: string): Promis
   return (count ?? 0) > 0;
 }
 
-/** Kilitliyse 402 work_locked fırlatır (limit sayacı olmayan işlemler için). */
-export async function assertNotLocked(userId: string, planId: string) {
-  const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
-  if (lockReasons(limits, usage, planId).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
-}
-
-export const WORK_LOCKED_MESSAGE = "Bu ayki kullanım hakkınız doldu; çalışmalarınız kilitlendi.";
 
 /** Pakete bağlı özellik kontrolü (D49): paket yetmiyorsa 402 + yükseltme penceresi için ayrıntı döner. */
 export function assertFeature(planId: string, feature: FeatureId) {
@@ -203,16 +198,13 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
   await rateLimit(userId, kind);
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   const over = (used: number, lim: number | null | undefined) => lim !== null && lim !== undefined && used >= lim;
-  // Aylık limitlerden biri dolduysa tüm çalışma kilitlenir (indirme hakkı tanımlanmış dışa aktarma hariç)
-  const reasons = lockReasons(limits, usage, planId);
-  if (reasons.length) {
-    await setWorkLock(userId, true).catch(() => {});
-    const passOk = kind === "export" && extra.projectId ? await hasDownloadPass(userId, extra.projectId) : false;
-    if (!passOk) throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked", { reasons });
-  }
+  // D81: hak dolunca çalışma kilitlenmez; yalnızca ilgili işlem (yapay zekâ / kaynak tarama) durur.
+  // Görüntüleme, elle düzenleme ve indirme her zaman açıktır.
   if (kind === "ai_request") {
     if (over(usage.ai_requests, limits.ai_requests_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
     if (over(usage.tokens, limits.tokens_month)) throw new ApiError(402, "Bu ayki token limitinize ulaştınız.", "limit_tokens");
+    // Maliyet tavanı (D52) kullanıcıya “yapay zekâ hakkı” olarak görünür
+    if (over(usage.cost_usd ?? 0, limits.cost_usd_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
   }
   if (kind === "source_search" && over(usage.source_searches, limits.source_searches_month)) throw new ApiError(402, "Bu ayki kaynak tarama limitinize ulaştınız.", "limit_search");
   if (kind === "upload" && limits.storage_mb != null && usage.storage_mb + (extra.bytes ?? 0) / 1048576 > limits.storage_mb) throw new ApiError(402, "Depolama kotanız doldu.", "limit_storage");
@@ -221,8 +213,7 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
 
 export async function assertProjectQuota(userId: string, planId: string) {
   if (await isAdminUser(userId).catch(() => false)) return;
-  const [limits, usage, eff] = await Promise.all([planLimits(planId), usageSummary(userId), effectiveLimits(userId, planId)]);
-  if (lockReasons(eff, usage, planId).length) { await setWorkLock(userId, true).catch(() => {}); throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked"); }
+  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
   if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");
 }
 

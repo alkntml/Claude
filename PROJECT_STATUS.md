@@ -93,6 +93,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
 - **Otomatik çalışma (D77, yalnızca yönetici):** kurgu + belgeler → tüm aşamalar otomatik yazılır → kalite kontrolü ve düzeltme turları → puan ≥ 85 ile teslim; kaldığı yerden sürdürülebilir; düzeltilemeyen/süren bulgularda durup yöneticiye “düzelt / olduğu gibi kalsın” seçtirir (D78)
+- **Çalışma kilidi yok (D81):** hak dolunca yalnızca yapay zekâ/tarama durur; çalışma görüntüleme, düzenleme ve indirme her zaman açık (migration 20 çalıştırılmalı)
 - **API maliyeti (D78):** bağlamın sabit kısmı önbellekte (~%90 ucuz okuma), sohbet geçmişinde eski taslaklar özetlenir, basit eylemler düşük düşünme seviyesinde, maliyet kaydı önbelleği doğru fiyatlar
 - **Akademik usul (D75–D76):** kaynak taraması yalnızca gerektiğinde; aşamaya özel kısayollar; tek özet bildirim; belge GİRİŞ/KURAM/YÖNTEM… ana bölümlerinde, akademik başlıklar, yinelenen başlık ve hatalı numara yok, alt başlık bütçesi
 - **Şifremi unuttum (D74):** /sifremi-unuttum, /sifre-yenile, Hesap → Şifremi değiştir; farklı cihaz için /api/auth/confirm

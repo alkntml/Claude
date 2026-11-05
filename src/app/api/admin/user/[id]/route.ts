@@ -74,10 +74,8 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
     const { error } = await db.from("profiles").update(update).eq("id", id);
     if (error) throw error;
   }
-  // Paket/hak değişince kilit hemen yeniden değerlendirilir
-  const planId = (update.plan_id as string) ?? profile.plan_id;
-  const [limits, usage] = await Promise.all([effectiveLimits(id, planId), usageSummary(id)]);
-  await setWorkLock(id, profile.role !== "admin" && lockReasons(limits, usage, planId).length > 0);
+  // D81: çalışma kilidi kaldırıldı; eskiden kalmış bayrak varsa temizlenir
+  await setWorkLock(id, false);
   const { data: after } = await db.from("profiles").select("id, plan_id, plan_expires_at, work_locked").eq("id", id).single();
   return json({ ok: true, profile: after });
 });

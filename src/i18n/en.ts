@@ -2399,4 +2399,6 @@ export const EN: Record<string, string> = {
   "{n} kaynak kapalı erişimli veya okunamadı": "{n} sources are closed-access or could not be read",
   "{n} kaynağın tam metni okundu": "Full text read for {n} sources",
   "Otomatik çalışma": "Auto-write",
+  "Bu ayki yapay zekâ hakkınız doldu. Çalışmalarınızı görüntülemeye, düzenlemeye ve indirmeye devam edebilirsiniz.": "You have used this month’s AI allowance. You can keep viewing, editing and downloading your work.",
+  "Çalışmalarınız kilitlenmez: görüntülemeye, elle düzenlemeye ve indirmeye her zaman devam edebilirsiniz.": "Your work is never locked: you can always keep viewing, editing by hand and downloading it.",
 };

@@ -3,15 +3,12 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
 import { adminClient } from "@/lib/supabase/admin";
-import { WORK_LOCKED_MESSAGE, effectiveLimits, forClient, usageSummary } from "@/lib/usage";
-import { getWorkLock } from "@/lib/lock";
+import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 import { buildUserExport } from "@/lib/data-export";
 
 export const GET = route("account.get", async (req) => {
   const s = await requireUser();
   if (new URL(req.url).searchParams.get("export") === "1") {
-    // Kilitliyken anında indirme kapalı; KVKK talebi /api/account/data-request ile alınır ve yasal sürede yanıtlanır (D50)
-    if ((await getWorkLock()).locked) throw new ApiError(402, WORK_LOCKED_MESSAGE, "work_locked");
     const out = await buildUserExport(s.supabase, s.user.id, s.profile);
     await s.supabase.from("data_requests").insert({ user_id: s.user.id, kind: "export", status: "completed", completed_at: new Date().toISOString() });
     return new Response(JSON.stringify(out, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="academiana-verilerim.json"` } });

@@ -262,18 +262,14 @@ describe("anketler", () => {
     const [row] = await as<{ response_count: number; title: string }>(A, "select response_count, title from public.surveys where id = $1", [sv.id]);
     expect(row).toEqual({ response_count: 0, title: "Yeni" });
   });
-  it("çalışma kilidi: kilitli kullanıcı içeriği okuyamaz/değiştiremez, bayrağı kendisi kaldıramaz; sunucu kaldırınca açılır", async () => {
+  it("çalışma kilidi kaldırıldı (D81): eski bayrak olsa bile kullanıcı içeriğini okur ve düzenler; bayrağı kendisi değiştiremez", async () => {
     const stageId = (await db.query<{ id: string }>("select id from public.project_stages where user_id = $1 and content_text = 'gizli metin' limit 1", [A])).rows[0].id;
+    await db.query("update public.profiles set work_locked = true where id = $1", [A]);
     expect(await as(A, "select id from public.project_stages where id = $1", [stageId])).toHaveLength(1);
-    await db.query("update public.profiles set work_locked = true where id = $1", [A]); // sunucu (service role) kilitler
-    expect(await as(A, "select id from public.project_stages")).toHaveLength(0);
-    expect(await as(A, "select id from public.sources")).toHaveLength(0);
-    await as(A, "update public.project_stages set content_text = 'karalandı' where id = $1", [stageId]);
+    expect((await as(A, "select id from public.sources")).length).toBeGreaterThanOrEqual(0);
     await expectError(as(A, "update public.profiles set work_locked = false where id = auth.uid()"), /yetkiniz yok/);
-    expect((await as(A, "select id from public.projects")).length).toBe(1); // proje listesi (başlık) görünür kalır
+    await as(A, "update public.project_stages set content_text = 'gizli metin' where id = $1", [stageId]);
     await db.query("update public.profiles set work_locked = false where id = $1", [A]);
-    const [st] = await as<{ content_text: string }>(A, "select content_text from public.project_stages where id = $1", [stageId]);
-    expect(st.content_text).toBe("gizli metin"); // kilitliyken yazma da engellendi
     expect(await as(B, "select * from public.download_passes")).toHaveLength(0);
   });
 

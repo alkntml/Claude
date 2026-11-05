@@ -1,7 +1,9 @@
 "use client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
-import { sameHeading, stagePrefixes } from "@/lib/workflows/structure";
+import { chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
+import { addSubheadings, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
+import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
   ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, GraduationCap, ExternalLink, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
@@ -20,7 +22,7 @@ import { CitationEngine, STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
 import { api, handlePlanError, openUpgrade, setCurrentProject } from "@/lib/client";
 import { FEATURE_MIN_PLAN, hasFeature } from "@/lib/features";
-import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, headings, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
+import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 import { AssistantPanel } from "./assistant";
@@ -46,7 +48,6 @@ import { TOOL_FEATURE, ToolsMenu, type ToolId } from "./tools-menu";
 import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
 
 // Açılır pencereler yalnızca gerektiğinde yüklenir (çalışma alanının ilk açılışı hızlansın)
-const OutlineWriter = dynamic(() => import("./outline-writer").then((m) => m.OutlineWriter), { ssr: false });
 const FixClaimsModal = dynamic(() => import("./fix-claims").then((m) => m.FixClaimsModal), { ssr: false });
 const FormatModal = dynamic(() => import("./format-modal").then((m) => m.FormatModal), { ssr: false });
 const AnalysisModal = dynamic(() => import("./analysis-modal").then((m) => m.AnalysisModal), { ssr: false });
@@ -98,6 +99,13 @@ export function Workspace(props: Props) {
   const [histVer, setHistVer] = useState(0);
   const [progress, setProgress] = useState<number>(props.project.progress);
 
+  /** Editörde açık olan alt başlık (D83): başlık düğümünün belgedeki sırası; null ise bölümün tamamı */
+  const [focus, setFocus] = useState<number | null>(null);
+  const focusRef = useRef<number | null>(null);
+  focusRef.current = focus;
+  /** Odak varken bölümün tam belgesi (editördeki alt başlık metni buna geri yazılır) */
+  const baseRef = useRef<JSONNode | null>(null);
+
   const active = stages.find((s) => s.id === activeId) ?? null;
   const activeIndex = stages.findIndex((s) => s.id === activeId);
   const def = active ? stageDef(active.key) ?? customStageDef(active.key, active.title, active.description) : undefined;
@@ -122,7 +130,7 @@ export function Workspace(props: Props) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     const p = pending.current;
     if (!p && !snapshot) return;
-    const target = p ?? { id: activeId, doc: (editorRef.current?.getJSON() as JSONNode | undefined) ?? stages.find((s) => s.id === activeId)?.content };
+    const target = p ?? { id: activeId, doc: (editorRef.current ? fullDocRef.current() : undefined) ?? stages.find((s) => s.id === activeId)?.content };
     pending.current = null;
     setSave("saving");
     try {
@@ -150,8 +158,9 @@ export function Workspace(props: Props) {
     content: active?.content ?? null,
     placeholder: def ? t("{title} bölümünü yazmaya başlayın veya asistandan yardım isteyin…", { title: active?.title ?? t(def.title) }) : t("Yazmaya başlayın…"),
     onSelection: setSelection,
-    onUpdate: (doc) => {
+    onUpdate: (edited) => {
       if (!activeId) return;
+      const doc = mergeFocus(edited);
       pending.current = { id: activeId, doc };
       setSave("dirty");
       if (stateTimer.current) clearTimeout(stateTimer.current);
@@ -166,6 +175,35 @@ export function Workspace(props: Props) {
   });
 
   editorRef.current = editor;
+
+  /** Odak varsa editördeki alt başlık metnini bölümün tam belgesine geri yazar (D83) */
+  function mergeFocus(edited: JSONNode): JSONNode {
+    const f = focusRef.current;
+    if (f == null || !baseRef.current) return edited;
+    const merged = replaceSectionBody(baseRef.current, f, edited.content ?? []);
+    baseRef.current = merged;
+    return merged;
+  }
+  /** Etkin bölümün güncel tam belgesi */
+  const fullDoc = (): JSONNode => {
+    const ed = editorRef.current;
+    if (!ed) return (stagesRef.current.find((x: any) => x.id === activeId)?.content as JSONNode) ?? { type: "doc", content: [] };
+    return mergeFocus(ed.getJSON() as JSONNode);
+  };
+  const fullDocRef = useRef(fullDoc);
+  fullDocRef.current = fullDoc;
+  /** Etkin bölümün tam belgesini değiştirir, editörü (odak varsa yalnızca alt başlığı) yeniler ve kaydeder */
+  async function setFullDoc(next: JSONNode, note: string, nextFocus: number | null = focusRef.current) {
+    if (!editor) return;
+    baseRef.current = next;
+    setFocus(nextFocus);
+    focusRef.current = nextFocus;
+    editor.commands.setContent((nextFocus != null ? sectionDoc(next, nextFocus) : next) as object, false);
+    const text = docToPlain(next);
+    setStages((l) => l.map((x) => (x.id === activeId ? { ...x, content: next, content_text: text, word_count: wordCount(text) } : x)));
+    pending.current = { id: activeId, doc: next };
+    await flush({ note, author: "user" });
+  }
 
   // Bağlantı geri gelince ve hata sonrası düzenli aralıklarla yeniden kaydet
   // Kilit penceresindeki “mevcut çalışmayı indir” mesajı hangi çalışma olduğunu bilsin (D50)
@@ -216,19 +254,28 @@ export function Workspace(props: Props) {
     return () => window.removeEventListener("beforeunload", fn);
   }, []);
 
-  async function selectStage(id: string) {
-    if (id === activeId) return;
+  /** Bölüme veya bölümün bir alt başlığına geçer (section: başlık düğümünün sırası; D83) */
+  async function selectStage(id: string, section: number | null = null) {
+    if (id === activeId && section === focusRef.current) return;
     if (stateTimer.current) clearTimeout(stateTimer.current);
-    if (pending.current && editor) {
-      const doc = editor.getJSON() as JSONNode;
-      const text = docToPlain(doc);
-      setStages((l) => l.map((s) => (s.id === activeId ? { ...s, content: doc, content_text: text, word_count: wordCount(text) } : s)));
+    let current: JSONNode | null = null;
+    if (editor) {
+      current = fullDoc();
+      if (pending.current) {
+        const text = docToPlain(current);
+        const cur = current;
+        setStages((l) => l.map((s) => (s.id === activeId ? { ...s, content: cur, content_text: text, word_count: wordCount(text) } : s)));
+      }
     }
     await flush();
-    const next = stages.find((s) => s.id === id);
+    const nextDoc = (id === activeId ? current : (stages.find((s) => s.id === id)?.content as JSONNode | null)) ?? { type: "doc", content: [{ type: "paragraph" }] };
+    const valid = section != null && nextDoc.content?.[section]?.type === "heading" ? section : null;
+    baseRef.current = nextDoc;
+    focusRef.current = valid;
+    setFocus(valid);
     setActiveId(id);
     setSelection("");
-    editor?.commands.setContent((next?.content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, false);
+    editor?.commands.setContent((valid != null ? sectionDoc(nextDoc, valid) : nextDoc) as object, false);
     setMobilePane("editor");
     router.replace(`/proje/${project.id}?bolum=${id}`, { scroll: false });
   }
@@ -245,11 +292,13 @@ export function Workspace(props: Props) {
     const first = doc.content?.[0];
     const stageNow = stagesRef.current.find((x: { id: string }) => x.id === activeId) as { title: string } | undefined;
     if (first?.type === "heading" && stageNow && sameHeading((first.content ?? []).map((c) => c.text ?? "").join(""), stageNow.title)) doc.content = doc.content!.slice(1);
+    // Alt başlığa odaklanılmışken eklenen metindeki başlıklar atılır (metin bu alt başlığa aittir; D83)
+    if (focusRef.current != null) doc.content = (doc.content ?? []).filter((n) => n.type !== "heading");
     const { from, to } = editor.state.selection;
     if (mode === "replace" && from !== to) editor.chain().focus().insertContentAt({ from, to }, doc.content ?? []).run();
     else if (mode === "replace") { toast({ tone: "info", title: t("Önce editörde değiştirilecek metni seçin") }); return; }
     else editor.chain().focus("end").insertContent(doc.content ?? []).run();
-    pending.current = { id: activeId, doc: editor.getJSON() as JSONNode };
+    pending.current = { id: activeId, doc: fullDocRef.current() };
     flush({ note: mode === "replace" ? t("AI: seçili metin değiştirildi") : t("AI: taslak eklendi"), author: "ai" });
     if (opts.silent) return;
     toast({ tone: "success", title: t("Belgeye eklendi"), detail: t("Önceki hâl sürüm geçmişinde saklandı.") });
@@ -259,7 +308,6 @@ export function Workspace(props: Props) {
   insertRef.current = insertMarkdown;
   const assistantSend = useRef<((text: string, action?: any, selection?: string) => void) | null>(null);
   const registerSend = useCallback((fn: (text: string, action?: any, selection?: string) => void) => { assistantSend.current = fn; }, []);
-  const [outline, setOutline] = useState(false);
   const [fixOpen, setFixOpen] = useState(false);
   const [formatOpen, setFormatOpen] = useState(false);
   const [goalOpen, setGoalOpen] = useState(false);
@@ -419,9 +467,10 @@ export function Workspace(props: Props) {
   const applyBlock = async (stageId: string, plain: string, nodes: JSONNode[]): Promise<boolean> => {
     const note = t("AI: kaynakla düzeltildi");
     if (stageId === activeId && editor) {
-      const next = replaceBlockByText(editor.getJSON() as JSONNode, plain, nodes);
+      const next = replaceBlockByText(fullDocRef.current(), plain, nodes);
       if (!next) return false;
-      editor.commands.setContent(next as object, false);
+      baseRef.current = next;
+      editor.commands.setContent((focusRef.current != null ? sectionDoc(next, focusRef.current) : next) as object, false);
       pending.current = { id: activeId, doc: next };
       await flush({ note, author: "ai" });
       return true;
@@ -487,7 +536,7 @@ export function Workspace(props: Props) {
     catch (e) { toast({ tone: "error", title: t("Silinemedi"), detail: (e as Error).message }); return; }
     const rest = stages.filter((s) => s.id !== id);
     setStages(rest);
-    if (id === activeId && rest[0]) { setActiveId(rest[0].id); editor?.commands.setContent((rest[0].content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }
+    if (id === activeId && rest[0]) { setActiveId(rest[0].id); focusRef.current = null; setFocus(null); baseRef.current = rest[0].content; editor?.commands.setContent((rest[0].content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }
   }
 
   async function exportAs(format: string) {
@@ -527,6 +576,39 @@ export function Workspace(props: Props) {
   // Belgedeki akademik yapıya göre numara öneki (GİRİŞ > Problem Durumu → 1.1; D76)
   const prefixes = useMemo(() => stagePrefixes(stages, Object.fromEntries(stages.map((s) => [s.key, stageDef(s.key)?.title]))), [stages]);
   const chapterNumber = active ? prefixes[active.id] ?? "" : "";
+  // Alt başlıklar (D83): her aşamanın alt başlık ağacı, belgedeki numaralarıyla
+  const trees = useMemo<Record<string, SectionInfo[]>>(() => Object.fromEntries(stages.map((s) => [s.id, sectionTree(s.content as JSONNode, prefixes[s.id] ?? "")])), [stages, prefixes]);
+  const activeTree: SectionInfo[] = active ? trees[active.id] ?? [] : [];
+  const focused = focus != null ? activeTree.find((x) => x.index === focus) ?? null : null;
+  const maxLevel = active ? maxSectionLevel(!!chapterGroup(active.key) && !!prefixes[active.id]?.includes(".")) : 4;
+  const [subOpen, setSubOpen] = useState(false);
+  const subParent: SubheadingParent | null = focused ? { index: focused.index, title: focused.text, number: focused.number, level: focused.level } : null;
+  // Giriş’in başlıksız açılış metni (konu) alt başlık almaz: numaralandırma bir sonraki kısımla çakışır (D76)
+  const untitledOpening = !!active && !!chapterGroup(active.key) && !!chapterNumber && !chapterNumber.includes(".");
+  const canSubdivide = !isBibliography && !untitledOpening && (!focused || focused.level < maxLevel);
+  const subSiblings = focused
+    ? activeTree.filter((x) => x.index > focused.index && x.index < focused.end && x.level === focused.level + 1).map((x) => x.text)
+    : activeTree.filter((x) => x.level === 2).map((x) => x.text);
+  /** Onaylanan alt başlıkları belgeye ekler; odak korunur (eklenenler odaktan sonra geldiği için sıra kaymaz) */
+  async function createSubheadings(titles: string[]) {
+    if (!active) return;
+    const base = fullDoc();
+    const { doc: next, added } = addSubheadings(base, titles, focused ? focused.index : null, { maxLevel, same: sameHeading });
+    if (!added.length) { toast({ tone: "info", title: t("Eklenecek yeni alt başlık yok"), detail: t("Aynı adlı alt başlıklar zaten var.") }); return; }
+    const f = focusRef.current;
+    const keep = f != null && f >= added[0] ? f + added.length : f;
+    await setFullDoc(next, t("{n} alt başlık oluşturuldu", { n: added.length }), keep);
+    toast({ tone: "success", title: t("{n} alt başlık oluşturuldu", { n: added.length }), detail: t("Soldaki listeden her birine ayrı ayrı girip yazabilirsiniz.") });
+  }
+  async function renameFocused(title: string) {
+    if (focus == null || !title.trim()) return;
+    await setFullDoc(renameSection(fullDoc(), focus, title), t("Alt başlık yeniden adlandırıldı"), focus);
+  }
+  async function removeFocused() {
+    if (!focused) return;
+    if (!confirm(t("“{title}” alt başlığı, metni ve altındaki başlıklarla birlikte silinsin mi? Önceki hâl sürüm geçmişinde saklanır.", { title: focused.text }))) return;
+    await setFullDoc(removeSection(fullDoc(), focused.index), t("Alt başlık silindi"), null);
+  }
 
   const done = completion(stages);
   const nextId = nextStage(stages)?.id;
@@ -554,14 +636,35 @@ export function Workspace(props: Props) {
           const st = STATUS.find((x) => x.id === s.status) ?? STATUS[0];
           const sel = s.id === activeId;
           return (
-            <Reorder.Item key={s.id} value={s} data-tour={s.key === "references" ? "stage-references" : undefined} className={cn("group relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-2.5 transition-colors lg:py-2", sel ? "bg-white shadow-sm ring-1 ring-ink-100" : "hover:bg-white/70")} onClick={() => selectStage(s.id)} whileDrag={{ scale: 1.02, boxShadow: "0 12px 30px -10px rgb(21 24 41 / 0.25)" }}>
+            <Reorder.Item key={s.id} value={s} data-tour={s.key === "references" ? "stage-references" : undefined} className="group/item relative" whileDrag={{ scale: 1.02, boxShadow: "0 12px 30px -10px rgb(21 24 41 / 0.25)" }}>
+              {/* Ana bölüm başlığı (ör. “1 GİRİŞ”): gruptaki ilk aşamanın üstünde */}
+              {(() => { const g = chapterGroup(s.key); const prev = stages[i - 1]; if (!g || (prev && chapterGroup(prev.key)?.id === g.id)) return null; const major = (prefixes[s.id] ?? "").split(".")[0]; return <p className="px-2 pb-0.5 pt-2 text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">{major ? `${major} ` : ""}{g.title[project.language === "en" ? "en" : "tr"]}</p>; })()}
+              <div className={cn("group relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-2.5 transition-colors lg:py-2", sel && focus == null ? "bg-white shadow-sm ring-1 ring-ink-100" : sel ? "bg-white/70" : "hover:bg-white/70")} onClick={() => selectStage(s.id)}>
               <GripVertical className="hidden h-3.5 w-3.5 shrink-0 cursor-grab text-ink-200 opacity-0 transition group-hover:opacity-100 lg:block" />
-              <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
+              <span title={t("Adım {n}", { n: i + 1 })} className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
-                <span className={cn("block truncate text-[14px] leading-tight lg:text-[13px]", sel ? "font-semibold text-ink-900" : "text-ink-700")}>{s.title}</span>
+                <span className={cn("block truncate text-[14px] leading-tight lg:text-[13px]", sel ? "font-semibold text-ink-900" : "text-ink-700")}>{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
                 <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
               </span>
               <button onClick={(e) => { e.stopPropagation(); removeStage(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-rose-50 hover:text-rose-500 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölümü sil")}><Trash2 className="h-3.5 w-3.5" /></button>
+              </div>
+              {/* Alt başlıklar (D83): her birine ayrı ayrı girilir */}
+              {(trees[s.id] ?? []).length > 0 && (
+                <ul className="mb-1 ml-[22px] border-l border-ink-100 pl-1.5 lg:ml-[30px]">
+                  {(trees[s.id] ?? []).map((sec: SectionInfo) => {
+                    const on = sel && focus === sec.index;
+                    return (
+                      <li key={sec.index}>
+                        <button onClick={() => selectStage(s.id, sec.index)} style={{ paddingLeft: `${(sec.level - 2) * 12 + 8}px` }} className={cn("flex w-full items-baseline gap-1.5 rounded-lg py-1.5 pr-2 text-left text-[12.5px] transition", on ? "bg-white font-semibold text-ink-900 shadow-sm ring-1 ring-ink-100" : "text-ink-600 hover:bg-white/70")}>
+                          {sec.number && <span className="shrink-0 font-mono text-[11px] text-ink-400">{sec.number}</span>}
+                          <span className="min-w-0 flex-1 truncate">{sec.text || t("(adsız alt başlık)")}</span>
+                          <span className="shrink-0 text-[10.5px] text-ink-300">{sec.words ? sec.words.toLocaleString(dl) : "—"}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </Reorder.Item>
           );
         })}
@@ -624,9 +727,22 @@ export function Workspace(props: Props) {
                         <Button size="sm" onClick={() => selectStage(waitFor.id)}>{t("Sıradakine git: {s}", { s: waitFor.title })}</Button>
                       </div>
                     )}
+                    {focused ? (
+                      <div className="mb-3 sm:mb-5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button onClick={() => selectStage(active.id, null)} className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-xs font-medium text-ink-600 transition hover:border-ink-300 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" /> {chapterNumber ? `${chapterNumber} ` : ""}{active.title}</button>
+                          <Badge tone="brand">{focused.number || t("Alt başlık")}</Badge>
+                          <span className="text-xs text-ink-400">{t("{n} kelime", { n: focused.words })}</span>
+                          <button onClick={removeFocused} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
+                        </div>
+                        <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Alt başlık")} />
+                        <p className="mt-1 text-[13px] text-ink-500">{t("Yalnızca bu alt başlığın metni açık. Yazdıklarınız çalışmada bu başlığın altına kaydedilir; indirirken tüm çalışma tek belge olarak aktarılır.")}</p>
+                      </div>
+                    ) : (
                     <div className="mb-3 sm:mb-5">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge tone="brand">{t("Bölüm {n}", { n: activeIndex + 1 })}</Badge>
+                        <Badge tone="brand">{t("Adım {n}", { n: activeIndex + 1 })}</Badge>
+                        {chapterNumber && <Badge>{t("Belgede {n}", { n: chapterNumber })}</Badge>}
                         <StatusPicker value={active.status} onChange={(v) => patchStage(active.id, { status: v })} />
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                         <span className="ml-auto">{active.status === "done"
@@ -636,6 +752,7 @@ export function Workspace(props: Props) {
                       <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[32px]" aria-label={t("Bölüm başlığı")} />
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
+                    )}
                     <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
                       <Toolbar editor={editor} onFootnote={() => setFootnote("")} />
                     </div>
@@ -668,11 +785,11 @@ export function Workspace(props: Props) {
             <div className="min-h-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={isBibliography ? undefined : () => setOutline(true)} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
-                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: editor.getJSON() as JSONNode }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
+                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
+                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={applyComment} />}
-                  {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }} />}
+                  {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }} />}
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -693,7 +810,7 @@ export function Workspace(props: Props) {
 
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { setStages((l) => { const n = [...l]; n.splice(activeIndex + 1, 0, st); return n.map((x, i) => ({ ...x, position: i })); }); setAddStage(false); }} />
-      <OutlineWriter open={outline} onClose={() => setOutline(false)} projectId={project.id} stage={active && !isBibliography ? { id: active.id, title: active.title, key: active.key } : null} targetWords={active ? targetOf(active.id) : 0} existingHeadings={active ? headings(active.content as JSONNode).filter((h) => h.level === 2).map((h) => h.text) : []} onInsert={(md, map) => insertRef.current(md, map, "append", { silent: true })} onSourcesAdded={addSources} />
+      {active && !isBibliography && subOpen && <SubheadingModal open={subOpen} onClose={() => setSubOpen(false)} projectId={project.id} stage={{ id: active.id, title: active.title }} parent={subParent} suggested={focused ? 3 : Math.max(2, subheadingBudget(active.key, targetOf(active.id)) || 3)} existing={subSiblings} onCreate={createSubheadings} />}
       <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       {journalOpen && <JournalModal open onClose={() => setJournalOpen(false)} projectId={project.id} hasGuideline={!!project.guideline_file_id}

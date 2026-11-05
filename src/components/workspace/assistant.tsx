@@ -28,7 +28,10 @@ interface Props {
   onOpenResearch: (prefill: string) => void;
   onMemoryChanged: () => void;
   onSourcesAdded: (rows: any[]) => void;
+  /** Alt başlık oluştur penceresi (D83); verilmezse (ör. en derin düzeyde) düğme görünmez */
   onOpenOutline?: () => void;
+  /** Editörde açık olan alt başlık (D83): yazım istekleri yalnızca bu alt başlık için yapılır */
+  focus?: { number: string; title: string } | null;
   /** Projede kapsam için yeterli kaynak yok (literatür kısayolu her bölümde görünür) */
   lowSources?: boolean;
   /** Kurgudaki bölüm hedefi (kelime); uzun bölümlerde “Alt başlıklarla yaz” */
@@ -65,7 +68,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0 }: Props) {
+export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -126,7 +129,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     const patch = (fn: (x: Msg) => Msg) => setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? fn(x) : x)));
     try {
       await streamChat(
-        { projectId, stageId: stage?.id ?? null, conversationId, message: extra ? `${text}\n\n${extra}` : text, action, selection: useSel ? sel : undefined },
+        { projectId, stageId: stage?.id ?? null, conversationId, message: [text, extra, focusNote(action, useSel)].filter(Boolean).join("\n\n"), action, selection: useSel ? sel : undefined },
         abort.current.signal,
         (event, data) => {
           // Yanıt başladıktan sonra gelen durum mesajları (eksik konu araması) yanıtın altında gösterilir
@@ -163,7 +166,14 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
       setBusy(false);
       abort.current = null;
     }
-  }, [busy, conversationId, onMemoryChanged, onSourcesAdded, projectId, selection, stage, t, toast]);
+  }, [busy, conversationId, onMemoryChanged, onSourcesAdded, projectId, selection, stage, t, toast, focus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /** Alt başlığa odaklanıldığında yazım isteği yalnızca o alt başlık için yapılır (D83) */
+  function focusNote(action: AssistantAction, withSelection: boolean): string {
+    if (!focus || withSelection || action === "outline" || action === "abstract") return "";
+    const name = `${focus.number ? `${focus.number} ` : ""}${focus.title}`;
+    return t("ODAK: Şu anda yalnızca “{name}” alt başlığı üzerinde çalışılıyor. Taslak verirsen yalnızca bu alt başlığın metnini yaz; başlığı tekrar yazma, yeni alt başlık açma ve diğer alt başlıkların konusuna girme. Uzunluğu bölüm hedefi içinde bu alt başlığa düşen paya göre ayarla.", { name });
+  }
 
   useEffect(() => { registerSend?.((text, action = "chat", sel) => send(text, action, undefined, sel)); }, [registerSend, send]);
 
@@ -271,8 +281,10 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
         )}
         <div className="no-scrollbar -mx-2.5 mb-2 flex gap-1.5 overflow-x-auto px-2.5 sm:-mx-3 sm:px-3">
           {/* Aşamaya özel kısayollar (D75) */}
+          {/* Alt başlık oluştur (D83): her bölümde ve alt başlıkta; sayı sorulur, sonra her birine ayrı girilir */}
+          {onOpenOutline && <button disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {focus ? t("Alt-alt başlık oluştur") : t("Alt başlık oluştur")}</button>}
           {quickActions(stage?.key, { lowSources, hasData: dataFiles.length > 0, longSection: targetWords >= 1500 || LONG_STAGES.has(stage?.key ?? "") }).map((q) => {
-            if (q === "outline") return onOpenOutline ? <button key={q} disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {t("Alt başlıklarla yaz")}</button> : null;
+            if (q === "outline") return null;
             if (q === "analysis") return onOpenAnalysis ? <button key={q} disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button> : null;
             if (q === "research") return <button key={q} onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-300 bg-white text-ink-800 hover:border-ink-400")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>;
             // Bulgu yorumlama yalnızca kullanıcı verisi gereken bölümde veya veri dosyası varken
@@ -295,7 +307,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
           <button type="button" onClick={toggleDictation} className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition", listening ? "animate-pulse bg-rose-500 text-white" : "text-ink-500 hover:bg-ink-100", !speechSupported && "opacity-50")} aria-label={listening ? t("Dinlemeyi durdur") : t("Sesle yaz")} title={listening ? t("Dinlemeyi durdur") : t("Sesle yaz")}>{listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}</button>
           <textarea ref={ta} rows={1} value={input} onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && window.matchMedia("(min-width: 1024px)").matches) { e.preventDefault(); send(input); } }}
-            placeholder={listening ? t("Dinleniyor… konuşun") : stage ? t("“{title}” hakkında yazın…", { title: stage.title }) : t("Mesajınızı yazın…")}
+            placeholder={listening ? t("Dinleniyor… konuşun") : stage ? t("“{title}” hakkında yazın…", { title: focus ? `${focus.number ? `${focus.number} ` : ""}${focus.title}` : stage.title }) : t("Mesajınızı yazın…")}
             aria-label={t("Asistana mesaj")}
             className="max-h-40 min-h-[36px] flex-1 resize-none bg-transparent px-2 py-2 text-[16px] leading-snug text-ink-900 outline-none placeholder:text-ink-400 sm:text-[14px]" />
           {busy

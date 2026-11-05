@@ -93,6 +93,8 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - **Hediye kutusu (D54):** bildirimli “Arkadaşını davet et” kutusu
 - **Kârlılık (D52):** istek hakları 10 / 40 / 75 / 125; görünmez aylık maliyet tavanı = KDV hariç gelirin 1/3’ü (kur yönetimden)
 - **Otomatik çalışma (D77, yalnızca yönetici):** kurgu + belgeler → tüm aşamalar otomatik yazılır → kalite kontrolü ve düzeltme turları → puan ≥ 85 ile teslim; kaldığı yerden sürdürülebilir; düzeltilemeyen/süren bulgularda durup yöneticiye “düzelt / olduğu gibi kalsın” seçtirir (D78)
+- **Word’den içe aktar (D87):** belge metni yeniden yazılmadan bölüme/alt başlığa; kaynakça doğrulanıp kaynaklara eklenir, metin içi atıflar bağlanır
+- **Hafızaya belgeden öğren (D88):** hafıza panelinden belge yükle → önemli bilgiler hafızaya
 - **Alt başlıklar (D83):** “Alt başlık oluştur” (sayı sorulur, öneri + düzenleme), alt-alt başlık; her alt başlığa sol listeden ayrı girilir; sol listede adım no + belge no + alt başlık ağacı; dışa aktarma tek belge
 - **Çalışma kilidi yok (D81):** hak dolunca yalnızca yapay zekâ/tarama durur; çalışma görüntüleme, düzenleme ve indirme her zaman açık (migration 20 çalıştırılmalı)
 - **API maliyeti (D78):** bağlamın sabit kısmı önbellekte (~%90 ucuz okuma), sohbet geçmişinde eski taslaklar özetlenir, basit eylemler düşük düşünme seviyesinde, maliyet kaydı önbelleği doğru fiyatlar
@@ -114,7 +116,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 241 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 248 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 ## Commit geçmişi (özet)

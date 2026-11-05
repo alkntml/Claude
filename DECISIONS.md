@@ -391,3 +391,12 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D86 — Sol listede “+” ile aynı düzeyde alt başlık
 - Sol listedeki her alt başlığın yanında “+” düğmesi: o alt başlığın arkasına (kendi alt başlıklarından sonra) aynı düzeyde yeni bir alt başlık ekler (`addSiblingAfter`). Önce o alt başlığa girilir, ad küçük bir pencerede sorulur; ekledikten sonra yeni başlık açılır, numaralar kendiliğinden kayar. Alt başlıktayken editörün yer tutucusu alt başlığın adını gösterir.
+
+### D87 — Word’den içe aktar (kaynaklar ve atıflarla)
+- Bölüm veya alt başlık başlığındaki “İçe aktar” düğmesi: .docx yüklenir; metin yeniden yazılmadan (yapay zekâ kullanılmaz) mammoth HTML → TipTap düğümlerine çevrilir (`lib/import/html-doc.ts`; başlık, paragraf, kalın/italik, liste, tablo; görseller ve dipnot bağlantıları atlanıp raporlanır).
+- Kaynakça (“Kaynakça/Kaynaklar/References” başlığından sonrası) ayrılır, her satır ayrıştırılır (`parseReference`: yazarlar, yıl, başlık, DOI). Projede aynı DOI/başlık varsa o kaynak kullanılır; DOI varsa künye kayıt otoritesinden alınır, yoksa satırdaki bilgilerle “doğrulanmadı” olarak eklenir (uydurma yok) — `lib/import/server.ts`, uç `POST /api/projects/[id]/import-doc`.
+- Metin içi atıflar (`linkCitations`): “Yazar (Yıl)” → anlatı atfı; “Yazar’ın (Yıl)” → yazar metinde kalır + yalnızca yıl (`suppressAuthor`); “(Yazar, Yıl; Yazar vd., Yıl, s. 12)” → parantez atfı; “(akt. Yazar, Yıl; α = 0,79)” → ön ek/son ek korunur (`prefix`/`suffix`, atıf motoruna eklendi). Soyadı + yıl kaynakçadaki tek bir kayda uymuyorsa metin değişmez ve “kaynakçada karşılığı yok” olarak raporlanır (çoğunlukla “akt.” ile verilen ikincil kaynaklar).
+- Başlıklar (`fitHeadings`): elle yazılmış numaralar silinir, yinelenen başlık tekilleşir, düzeyler hedefin altına kaydırılır (en derin düzey kurala göre); hedefin adıyla aynı ilk başlık atılır. Yerleştirme istemcide (`insertImported`): bölümün sonuna (boşsa yerine) ya da alt başlığın içine; sonuç raporu gösterilir.
+
+### D88 — Hafızaya belgeden öğren
+- Hafıza panelinde “Belgeden öğren”: PDF/Word/metin yüklenir, metin (ilk ~60 bin karakter) Sonnet’e düşük düşünme seviyesiyle verilir; çalışma için kalıcı bilgiler (karar, kavram, değişken, soru, hipotez, kaynaklı olgu) en fazla 20 kısa kayıt olarak `project_memory`’ye eklenir (source = ai). Yalnızca belgede açıkça yazanlar; sayı ve adlar belgedeki gibi; mevcut kayıtların tekrarı atılır. `lib/memory-learn.ts`, uç `POST /api/projects/[id]/memory/learn`. Dosya saklanmaz.

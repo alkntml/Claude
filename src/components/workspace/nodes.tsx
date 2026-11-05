@@ -30,7 +30,7 @@ function CitationView({ node, updateAttributes, deleteNode, selected, editor, ge
   const [shift, setShift] = useState(0);
   const ids: string[] = node.attrs.ids ?? [];
   const missing = !ctx || ids.some((id) => !ctx.sources[id]);
-  const label = ctx && !missing ? richToPlain(ctx.engine.cite(ids, { locator: node.attrs.locator, narrative: node.attrs.narrative })) : t("[kaynak bulunamadı]");
+  const label = ctx && !missing ? richToPlain(ctx.engine.cite(ids, { locator: node.attrs.locator, narrative: node.attrs.narrative, suppressAuthor: node.attrs.suppressAuthor, prefix: node.attrs.prefix, suffix: node.attrs.suffix })) : t("[kaynak bulunamadı]");
   const sup = ctx?.engine.style === "ama";
   return (
     <NodeViewWrapper as="span" className="relative">
@@ -79,6 +79,10 @@ export const Citation = Node.create({
       ids: { default: [], parseHTML: (el) => (el.getAttribute("data-ids") ?? "").split(",").filter(Boolean), renderHTML: (a) => ({ "data-ids": (a.ids ?? []).join(",") }) },
       locator: { default: null, parseHTML: (el) => el.getAttribute("data-locator"), renderHTML: (a) => (a.locator ? { "data-locator": a.locator } : {}) },
       narrative: { default: false, parseHTML: (el) => el.getAttribute("data-narrative") === "true", renderHTML: (a) => ({ "data-narrative": String(!!a.narrative) }) },
+      // İçe aktarılan atıflar (D87): yalnızca yıl ve parantez içi ön/son ek
+      suppressAuthor: { default: false, parseHTML: (el) => el.getAttribute("data-suppress-author") === "true", renderHTML: (a) => (a.suppressAuthor ? { "data-suppress-author": "true" } : {}) },
+      prefix: { default: null, parseHTML: (el) => el.getAttribute("data-prefix"), renderHTML: (a) => (a.prefix ? { "data-prefix": a.prefix } : {}) },
+      suffix: { default: null, parseHTML: (el) => el.getAttribute("data-suffix"), renderHTML: (a) => (a.suffix ? { "data-suffix": a.suffix } : {}) },
     };
   },
   parseHTML() { return [{ tag: "span[data-citation]" }]; },

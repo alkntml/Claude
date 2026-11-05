@@ -149,3 +149,25 @@ export function addSiblingAfter(doc: JSONNode, index: number, title: string): { 
   nodes.splice(s.end, 0, headingNode(s.level, title.trim()));
   return { doc: { ...doc, content: nodes }, index: s.end };
 }
+
+/**
+ * İçe aktarılan belgeyi yerleştirir (D87). `parentIndex` yoksa bölümün sonuna (bölüm boşsa yerine); verilirse
+ * baştaki başlıksız metin o alt başlığın kendi metninin sonuna, başlıklı kısımlar alt başlıklarından sonra gelir.
+ */
+export function insertImported(doc: JSONNode | null | undefined, nodes: JSONNode[], parentIndex: number | null): JSONNode {
+  const base: JSONNode = doc?.type === "doc" ? doc : { type: "doc", content: [] };
+  const list = [...nodesOf(base)];
+  const isEmpty = list.every((n) => n.type === "paragraph" && !(n.content ?? []).length);
+  if (parentIndex == null || !isHeading(list[parentIndex])) {
+    return { ...base, content: isEmpty ? [...nodes] : [...list, ...nodes] };
+  }
+  const s = sectionTree(base).find((x) => x.index === parentIndex);
+  if (!s) return base;
+  const firstH = nodes.findIndex((n) => isHeading(n));
+  const lead = firstH < 0 ? nodes : nodes.slice(0, firstH);
+  const rest = firstH < 0 ? [] : nodes.slice(firstH);
+  let ownEnd = parentIndex + 1;
+  while (ownEnd < list.length && !isHeading(list[ownEnd])) ownEnd++;
+  const out = [...list.slice(0, ownEnd), ...lead, ...list.slice(ownEnd, s.end), ...rest, ...list.slice(s.end)];
+  return { ...base, content: out };
+}

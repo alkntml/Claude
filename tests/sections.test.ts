@@ -68,3 +68,16 @@ describe("aynı düzeyde alt başlık ekleme (D86)", () => {
     expect(addSiblingAfter(d, 1, "X").index).toBe(-1);
   });
 });
+
+import { insertImported } from "@/lib/editor/sections";
+describe("içe aktarılan belgeyi yerleştirme (D87)", () => {
+  const h = (level: number, text: string) => ({ type: "heading", attrs: { level }, content: [{ type: "text", text }] });
+  const p = (text: string) => ({ type: "paragraph", content: [{ type: "text", text }] });
+  it("bölüm boşsa yerine, değilse sonuna; alt başlıkta giriş metni kendi metnine, başlıklılar alt başlıklarından sonra", () => {
+    expect(insertImported({ type: "doc", content: [{ type: "paragraph" }] }, [p("x")], null).content).toEqual([p("x")]);
+    const d = { type: "doc", content: [h(2, "A"), p("a"), h(3, "A1"), p("a1"), h(2, "B")] };
+    const r = insertImported(d, [p("yeni giriş"), h(3, "A2"), p("a2")], 0);
+    expect(sectionTree(r, "3").map((s) => `${s.number} ${s.text}`)).toEqual(["3.1 A", "3.1.1 A1", "3.1.2 A2", "3.2 B"]);
+    expect(r.content![2]).toEqual(p("yeni giriş"));
+  });
+});

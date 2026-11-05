@@ -16,6 +16,11 @@ export interface CitationAttrs {
   ids: string[];
   locator: string | null;
   narrative: boolean;
+  /** Yalnızca yıl: “Kaya’nın (2021)” gibi iyelik ekli anlatı atıflarında yazar metinde kalır */
+  suppressAuthor?: boolean;
+  /** Parantez içi ön/son ek: (akt. Kaya, 2021; α = 0,79) */
+  prefix?: string | null;
+  suffix?: string | null;
 }
 
 export const EMPTY_DOC: JSONNode = { type: "doc", content: [{ type: "paragraph" }] };
@@ -29,7 +34,7 @@ export function walk(node: JSONNode | null | undefined, fn: (n: JSONNode, parent
 export function citationAttrs(n: JSONNode): CitationAttrs {
   const a = n.attrs ?? {};
   const ids = Array.isArray(a.ids) ? (a.ids as unknown[]).map(String).filter(Boolean) : [];
-  return { ids, locator: (a.locator as string) || null, narrative: !!a.narrative };
+  return { ids, locator: (a.locator as string) || null, narrative: !!a.narrative, suppressAuthor: !!a.suppressAuthor, prefix: (a.prefix as string) || null, suffix: (a.suffix as string) || null };
 }
 
 /** Metindeki atıf düğümlerini ilk geçiş sırasıyla döndürür. */

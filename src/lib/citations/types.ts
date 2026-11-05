@@ -52,6 +52,9 @@ export interface InTextOptions {
   locator?: string | null;     // sayfa: "12" veya "12-14"
   narrative?: boolean;         // Yılmaz (2020) ... biçimi
   suppressAuthor?: boolean;    // (2020)
+  /** Parantez içi ön ek ve son ek (yazar–tarih stilleri): (akt. Kaya, 2021; α = 0,79) */
+  prefix?: string | null;
+  suffix?: string | null;
 }
 
 export interface StyleMeta {

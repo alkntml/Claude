@@ -311,11 +311,13 @@ export class CitationEngine {
       const it = sorted[0];
       return [t(`${authorPart(it, true)} (${this.yearText(it)}${loc ? `, ${loc}` : ""})`)];
     }
+    const pre = opts.prefix?.trim() ? `${opts.prefix.trim()} ` : "";
+    const post = opts.suffix?.trim() ? `; ${opts.suffix.trim()}` : "";
     if (opts.suppressAuthor) {
-      return [t(`(${sorted.map((it) => this.yearText(it)).join(", ")}${loc ? `, ${loc}` : ""})`)];
+      return [t(`(${pre}${sorted.map((it) => this.yearText(it)).join(", ")}${loc ? `, ${loc}` : ""}${post})`)];
     }
     const chunks = sorted.map((it) => `${authorPart(it, false)}${sep}${this.yearText(it)}`);
-    return [t(`(${chunks.join("; ")}${loc ? `, ${loc}` : ""})`)];
+    return [t(`(${pre}${chunks.join("; ")}${loc ? `, ${loc}` : ""}${post})`)];
   }
 
   private citeNumeric(items: CitationItem[], opts: InTextOptions): Rich {

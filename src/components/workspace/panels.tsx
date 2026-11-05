@@ -1,8 +1,8 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
-import { Wand2, AlertTriangle, ArrowRight, Brain, Check, ChevronDown, History, MessageSquare, Plus, RotateCcw, Save } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Wand2, AlertTriangle, ArrowRight, Brain, Check, ChevronDown, FileUp, History, Loader2, MessageSquare, Plus, RotateCcw, Save } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge, Empty } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
@@ -10,7 +10,7 @@ import { DeleteButton } from "@/components/ui/delete-button";
 import { findDuplicates, missingFields, FIELD_LABELS } from "@/lib/citations/checks";
 import type { CitationEngine } from "@/lib/citations/styles";
 import { richToHtml } from "@/lib/citations/util";
-import { api } from "@/lib/client";
+import { api, handlePlanError } from "@/lib/client";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { citationUsages, type JSONNode } from "@/lib/editor/doc";
 import { cn } from "@/components/ui/cn";
@@ -33,11 +33,35 @@ export function MemoryPanel({ projectId, memory, setMemory }: { projectId: strin
       setText("");
     } catch (e) { toast({ tone: "error", title: t("Eklenemedi"), detail: (e as Error).message }); } finally { setBusy(false); }
   }
+  // Belgeden öğren (D88): belge okunur, önemli bilgiler hafızaya eklenir
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [learning, setLearning] = useState<string | null>(null);
+  async function learn(file: File) {
+    setLearning(file.name);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`/api/projects/${projectId}/memory/learn`, { method: "POST", body: fd });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) { handlePlanError(res.status, j); throw new Error(j.error ?? t("Belge okunamadı")); }
+      const items = (j.items ?? []) as any[];
+      setMemory((m) => [...m, ...items]);
+      toast(items.length
+        ? { tone: "success", title: t("{n} bilgi hafızaya eklendi", { n: items.length }), detail: j.truncated ? t("Belge uzun olduğu için ilk bölümü okundu.") : t("Asistan bundan sonraki isteklerde bu bilgileri kullanacak.") }
+        : { tone: "info", title: t("Belgede hafızaya eklenecek yeni bilgi bulunamadı") });
+    } catch (e) { toast({ tone: "error", title: t("Belgeden öğrenilemedi"), detail: (e as Error).message }); }
+    finally { setLearning(null); if (fileRef.current) fileRef.current.value = ""; }
+  }
   const grouped = Object.entries(KIND_LABEL).map(([k, l]) => ({ k, l, items: memory.filter((m) => m.kind === k) })).filter((g) => g.items.length);
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
         <p className="rounded-xl bg-violet-50 p-3 text-[12.5px] text-violet-800"><Brain className="mr-1 inline h-3.5 w-3.5" /> {t("Proje hafızası her asistan isteğine eklenir. Bölümler arasında geçseniz de kararlarınız, kavram tanımlarınız ve hipotezleriniz korunur.")}</p>
+        <input ref={fileRef} type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) learn(f); }} />
+        <button type="button" disabled={!!learning} onClick={() => fileRef.current?.click()} className="flex w-full items-center gap-3 rounded-xl border border-dashed border-violet-200 bg-white px-3 py-2.5 text-left text-[13px] transition hover:border-violet-400 hover:bg-violet-50/50 disabled:opacity-70">
+          {learning ? <Loader2 className="h-4 w-4 shrink-0 animate-spin text-violet-600" /> : <FileUp className="h-4 w-4 shrink-0 text-violet-600" />}
+          <span className="min-w-0 flex-1"><span className="block font-medium text-ink-800">{learning ? t("“{n}” okunuyor…", { n: learning }) : t("Belgeden öğren")}</span><span className="block text-[11.5px] text-ink-500">{t("PDF, Word veya metin yükleyin; asistan okuyup önemli bilgileri hafızaya kaydeder.")}</span></span>
+        </button>
         {grouped.length === 0 && <Empty icon={<Brain className="h-5 w-5" />} title={t("Hafıza boş")}>{t("Asistanla çalıştıkça onayladığınız kararlar buraya eklenir. Ayrıca elle de ekleyebilirsiniz.")}</Empty>}
         {grouped.map((g) => (
           <div key={g.k}>

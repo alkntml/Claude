@@ -2,8 +2,9 @@
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
 import { academicOrder, chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
-import { addSiblingAfter, addSubheadings, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
+import { addSiblingAfter, addSubheadings, insertImported, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
 import { SubheadingModal, type SubheadingParent } from "./subheadings";
+import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
   ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, GraduationCap, ExternalLink, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
@@ -57,6 +58,7 @@ const DefenseModal = dynamic(() => import("./defense-modal").then((m) => m.Defen
 const ReviewerModal = dynamic(() => import("./reviewer-modal").then((m) => m.ReviewerModal), { ssr: false });
 const BlueprintScreen = dynamic(() => import("./blueprint").then((m) => m.BlueprintScreen), { ssr: false });
 const TitleChooser = dynamic(() => import("./title-chooser").then((m) => m.TitleChooser), { ssr: false });
+const ImportDocModal = dynamic(() => import("./import-doc").then((m) => m.ImportDocModal), { ssr: false });
 const StageReviewModal = dynamic(() => import("./stage-review").then((m) => m.StageReviewModal), { ssr: false });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -637,6 +639,13 @@ export function Workspace(props: Props) {
     if (r.index < 0) { toast({ tone: "error", title: t("Alt başlık eklenemedi") }); return; }
     await setFullDoc(r.doc, t("Alt başlık eklendi"), r.index);
   }
+  /** Word’den içe aktar (D87): açık bölüme ya da alt başlığa yerleştirir; kaynaklar ve atıflar sunucuda hazırlanır */
+  const [importOpen, setImportOpen] = useState(false);
+  async function applyImport(r: ImportResult) {
+    if (r.sources.length) addSources(r.sources);
+    const next = insertImported(fullDoc(), r.nodes, focused ? focused.index : null);
+    await setFullDoc(next, t("Word belgesinden içe aktarıldı"), focusRef.current);
+  }
   async function renameFocused(title: string) {
     if (focus == null || !title.trim()) return;
     await setFullDoc(renameSection(fullDoc(), focus, title), t("Alt başlık yeniden adlandırıldı"), focus);
@@ -771,7 +780,8 @@ export function Workspace(props: Props) {
                           <button onClick={() => selectStage(active.id, null)} className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-xs font-medium text-ink-600 transition hover:border-ink-300 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" /> {chapterNumber ? `${chapterNumber} ` : ""}{active.title}</button>
                           <Badge tone="brand">{focused.number || t("Alt başlık")}</Badge>
                           <span className="text-xs text-ink-400">{t("{n} kelime", { n: focused.words })}</span>
-                          <button onClick={removeFocused} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
+                          <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-500 transition hover:bg-brand-50 hover:text-brand-700"><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
+                          <button onClick={removeFocused} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
                         </div>
                         <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Alt başlık")} />
                         <p className="mt-1 text-[13px] text-ink-500">{t("Yalnızca bu alt başlığın metni açık. Yazdıklarınız çalışmada bu başlığın altına kaydedilir; indirirken tüm çalışma tek belge olarak aktarılır.")}</p>
@@ -783,7 +793,8 @@ export function Workspace(props: Props) {
                         {chapterNumber && <Badge>{t("Belgede {n}", { n: chapterNumber })}</Badge>}
                         <StatusPicker value={active.status} onChange={(v) => patchStage(active.id, { status: v })} />
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
-                        <span className="ml-auto">{active.status === "done"
+                        <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-500 transition hover:bg-brand-50 hover:text-brand-700" title={t("Word belgesini kaynakları ve atıflarıyla bu bölüme aktar")}><Upload className="h-3.5 w-3.5" /> {t("İçe aktar")}</button>
+                        <span>{active.status === "done"
                           ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")} · {t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                           : <Button size="sm" variant="secondary" onClick={startComplete} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
                       </div>
@@ -848,6 +859,7 @@ export function Workspace(props: Props) {
 
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { const n = [...stages]; n.splice(activeIndex + 1, 0, st); const fixed = academicOrder(n); setStages((fixed ?? n).map((x, i) => ({ ...x, position: i }))); if (fixed) api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: fixed.map((x) => x.id) } }).catch(() => {}); setAddStage(false); }} />
+      {active && !isBibliography && importOpen && <ImportDocModal open={importOpen} onClose={() => setImportOpen(false)} projectId={project.id} target={focused ? `${focused.number ? `${focused.number} ` : ""}${focused.text}` : `${chapterNumber ? `${chapterNumber} ` : ""}${active.title}`} base={focused ? Math.min(maxLevel, focused.level + 1) : 2} max={maxLevel} dropTitle={focused ? focused.text : active.title} onImported={applyImport} />}
       {active && !isBibliography && subOpen && <SubheadingModal open={subOpen} onClose={() => setSubOpen(false)} projectId={project.id} stage={{ id: active.id, title: active.title }} parent={subParent} suggested={focused ? 3 : Math.max(2, subheadingBudget(active.key, targetOf(active.id)) || 3)} existing={subSiblings} onCreate={createSubheadings} />}
       <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />

@@ -100,7 +100,7 @@ export function buildExportDoc(params: {
         const a = citationAttrs(n);
         const first = a.ids.some((id) => !firstSeen.has(id));
         a.ids.forEach((id) => firstSeen.add(id));
-        out.push(...richToRuns(engine.cite(a.ids, { locator: a.locator, narrative: a.narrative }, first)));
+        out.push(...richToRuns(engine.cite(a.ids, { locator: a.locator, narrative: a.narrative, suppressAuthor: a.suppressAuthor, prefix: a.prefix, suffix: a.suffix }, first)));
       } else if (n.type === "footnote") {
         out.push({ text: "", footnote: String(n.attrs?.text ?? "") });
       } else if (n.type === "hardBreak") {

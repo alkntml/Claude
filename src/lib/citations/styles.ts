@@ -142,8 +142,16 @@ const SMALL_WORDS = new Set(["ve", "ile", "veya", "ya", "da", "de", "ki", "mi", 
  * ISNAD başlık yazımı: her kelimenin ilk harfi büyük, bağlaçlar ve edatlar küçük (başta ve iki noktadan sonra büyük).
  * Kısaltmalar (COVID-19, ABD) korunur; tamamı büyük harfle gelen başlıklar önce küçültülür.
  */
+/** Başlığın dili (büyük harf kuralı için): Türkçe harf veya sık Türkçe kelime varsa Türkçe (D90) */
+export function titleLang(title: string, fallback: "tr" | "en" = "tr"): "tr" | "en" {
+  if (/[çğışöüÇĞİŞÖÜ]/.test(title) || /(^|\s)(ve|bir|ile|için|bu|da|de|olarak|üzerine)(\s|$)/i.test(title)) return "tr";
+  if (/(^|\s)(the|of|and|in|on|for|with|to|an|from|among|toward|towards)(\s|$)/i.test(title)) return "en";
+  return fallback;
+}
+
 export function isnadTitleCase(title: string, locale: CiteLocale = "tr"): string {
-  const loc = locale === "tr" ? "tr" : "en";
+  // Büyük harf dönüşümü başlığın diline göre: İngilizce başlıkta “i” → “I” (İ değil); belirsizse kaynakça dili
+  const loc = titleLang(title, locale === "tr" ? "tr" : "en");
   let s = clean(title);
   const letters = s.replace(/[^\p{L}]/gu, "");
   // Tamamı büyük harfli başlık: kelimeler küçültülür; rakam içeren kısaltmalar (COVID-19) korunur

@@ -9,6 +9,8 @@
   --ink-50: 246 247 251; --ink-100: 236 238 246; --ink-200: 214 218 234; --ink-300: 176 183 211; --ink-400: 128 137 176;
   --ink-500: 92 101 144; --ink-600: 69 77 116; --ink-700: 53 59 92; --ink-800: 35 39 64; --ink-900: 21 24 41; --ink-950: 11 13 24;
   --grid-line: 21 24 41;
+  /* Grafik renkleri (D90): sabit sırada kategorik palet; açık ve koyu yüzey için ayrı ayrı doğrulandı */
+  --viz-1: 42 120 214; --viz-2: 235 104 52; --viz-3: 27 175 122; --viz-4: 237 161 0; --viz-5: 232 123 164;
   color-scheme: light;
 }
 
@@ -19,6 +21,7 @@
   --ink-50: 26 30 50; --ink-100: 34 39 62; --ink-200: 47 53 82; --ink-300: 74 81 117; --ink-400: 110 119 160;
   --ink-500: 149 157 194; --ink-600: 179 185 216; --ink-700: 205 210 232; --ink-800: 224 227 241; --ink-900: 238 240 248; --ink-950: 247 248 252;
   --grid-line: 255 255 255;
+  --viz-1: 57 135 229; --viz-2: 217 89 38; --viz-3: 25 158 112; --viz-4: 201 133 0; --viz-5: 213 81 129;
   color-scheme: dark;
 }
 .dark .bg-white { background-color: rgb(var(--surface)); }

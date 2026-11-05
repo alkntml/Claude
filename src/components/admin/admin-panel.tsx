@@ -1,7 +1,7 @@
 "use client";
 import { AutopilotTab } from "./autopilot";
 import { motion } from "framer-motion";
-import { Activity, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket } from "lucide-react";
+import { Activity, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -10,13 +10,14 @@ import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
 import { PROVIDER_LABELS } from "@/lib/sources/labels";
 import { STAGE_LIBRARY } from "@/lib/workflows";
-import { DailyBars } from "./chart";
+import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
+import { CostBreakdown, TrafficTab } from "./insights";
 import { memberCode } from "@/lib/member";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "autopilot" | "overview" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
+type Tab = "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
+  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
   { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift },
 ];
@@ -51,6 +52,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
       </div>
       <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
         {tab === "overview" && <Overview />}
+        {tab === "traffic" && <TrafficTab />}
         {tab === "autopilot" && <AutopilotTab />}
         {tab === "users" && <UsersTab selfId={selfId} />}
         {tab === "plans" && <PlansTab />}
@@ -74,11 +76,22 @@ function Overview() {
   useEffect(() => { setD(null); api(`/api/admin/stats?days=${days}`).then(setD).catch(() => setD({ error: true })); }, [days]);
   if (!d) return <div className="grid gap-4 sm:grid-cols-4">{[0, 1, 2, 3].map((i) => <div key={i} className="skeleton h-28" />)}</div>;
   if (d.error) return <p className="text-rose-600">İstatistikler yüklenemedi (SUPABASE_SERVICE_ROLE_KEY tanımlı mı?).</p>;
-  const tiles = [["Kullanıcı", d.users, `+${d.newUsers} yeni`], ["Proje", d.projects, ""], ["AI isteği", d.totals.ai, `${(d.totals.tokens / 1000).toFixed(0)}K token`], ["Tahmini API maliyeti", `$${d.totals.cost}`, `${days} gün`], ["Kaynak taraması", d.totals.search, ""], ["Dışa aktarma", d.totals.exports, ""], ["Hata", d.errors, `${days} gün`], ["Açık geri bildirim", d.openFeedback, ""]];
+  const fmtN = (v: number) => Math.round(v).toLocaleString("tr-TR");
+  const usd = (v: number) => (v < 10 ? `$${v.toFixed(2)}` : `$${v.toFixed(0)}`);
+  const spark = (k: string) => d.byDay.map((x: any) => Number(x[k]) || 0);
   return (
     <div className="space-y-6">
-      <div className="flex justify-end gap-1">{[7, 30, 90].map((n) => <button key={n} onClick={() => setDays(n)} className={cn("rounded-lg px-3 py-1 text-sm", days === n ? "bg-ink-900 text-white" : "bg-white text-ink-600 ring-1 ring-ink-100")}>{n} gün</button>)}</div>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{tiles.map(([l, v, sub]) => <div key={l as string} className="card p-4"><p className="text-[13px] text-ink-500">{l}</p><p className="mt-1 text-2xl font-semibold text-ink-900">{v}</p>{sub && <p className="text-xs text-ink-400">{sub}</p>}</div>)}</div>
+      <div className="flex justify-end"><RangePicker value={days} onChange={setDays} /></div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile label="Kullanıcı" value={fmtN(d.users)} sub={`+${fmtN(d.newUsers)} yeni · ${days} gün`} />
+        <StatTile label="Proje" value={fmtN(d.projects)} />
+        <StatTile label="Yapay zekâ isteği" value={fmtN(d.totals.ai)} sub={`${(d.totals.tokens / 1000).toFixed(0)}K token`} spark={spark("ai")} />
+        <StatTile label="Tahmini API maliyeti" value={usd(d.totals.cost)} sub={`${days} gün`} spark={spark("cost")} />
+        <StatTile label="Kaynak taraması" value={fmtN(d.totals.search)} spark={spark("search")} />
+        <StatTile label="Dışa aktarma" value={fmtN(d.totals.exports)} />
+        <StatTile label="Hata" value={fmtN(d.errors)} sub={`${days} gün`} tone={d.errors > 0 ? "bad" : undefined} />
+        <StatTile label="Açık geri bildirim" value={fmtN(d.openFeedback)} />
+      </div>
       {d.money && (
         <div className="card p-5">
           <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Bu ay gelir ve kâr</h3><span className="text-xs text-ink-400">Kur: {d.money.usdTry} TL · gelir KDV hariç, süresi geçerli ücretli kullanıcılardan tahmini</span></div>
@@ -93,28 +106,24 @@ function Overview() {
               {d.expiring.length === 0 && <p className="mt-1 text-sm text-ink-400">Yok.</p>}
               {d.expiring.map((u: any) => <p key={u.id} className="flex justify-between border-t border-ink-50 py-1 text-[13px]"><span className="truncate">{u.full_name || u.email} <span className="text-ink-400">· {u.plan_id}</span></span><span className="shrink-0 text-amber-700">{new Date(u.plan_expires_at).toLocaleDateString("tr-TR")}</span></p>)}
             </div>
-            <div>
-              <p className="text-sm font-medium">Kilitli kullanıcı</p>
-              <p className="mt-1 text-2xl font-semibold">{d.locked}</p>
-              <p className="text-xs text-ink-400">Aylık hakkı dolanlar; yükseltme veya 100 TL indirme için potansiyel müşteri. Ayrıntı: Kullanıcılar → “Kilitli” filtresi.</p>
-            </div>
           </div>
         </div>
       )}
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="card p-5"><DailyBars data={d.byDay} valueKey="ai" label="Günlük yapay zekâ istekleri" /></div>
-        <div className="card p-5"><DailyBars data={d.byDay} valueKey="cost" label="Günlük tahmini API maliyeti (USD)" format={(v) => `$${v >= 10 ? v.toFixed(0) : v.toFixed(2)}`} /></div>
+        <div className="card p-5"><TimeSeries data={d.byDay} series={[{ key: "ai", label: "Yapay zekâ isteği" }]} title="Günlük yapay zekâ istekleri" format={fmtN} /></div>
+        <div className="card p-5"><TimeSeries data={d.byDay} series={[{ key: "search", label: "Kaynak taraması" }]} title="Günlük kaynak taramaları" format={fmtN} /></div>
+      </div>
+      <div>
+        <h3 className="mb-3 flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> API maliyeti sayacı: hangi özellik ve araç ne kadar harcıyor?</h3>
+        <CostBreakdown days={days} />
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="card p-5">
-          <h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Modele göre kullanım</h3>
-          <table className="mt-3 w-full text-sm"><thead className="text-left text-xs text-ink-400"><tr><th>Model</th><th>İstek</th><th>Token</th><th>Maliyet</th></tr></thead>
-            <tbody>{Object.entries(d.byModel).map(([m, v]: any) => <tr key={m} className="border-t border-ink-100"><td className="py-1.5 font-mono text-[12px]">{m}</td><td>{v.requests}</td><td>{(v.tokens / 1000).toFixed(1)}K</td><td>${v.cost.toFixed(2)}</td></tr>)}</tbody></table>
-          {Object.keys(d.byModel).length === 0 && <p className="mt-2 text-sm text-ink-400">Veri yok.</p>}
+          <Donut title="Modele göre API maliyeti" parts={Object.entries(d.byModel).map(([m, v]: any) => ({ label: m.replace(/^claude-/, ""), value: Math.round(v.cost * 100) / 100 }))} format={usd} centerLabel={`${days} gün`} />
+          <div className="mt-4 space-y-1 text-xs text-ink-500">{Object.entries(d.byModel).map(([m, v]: any) => <p key={m} className="flex justify-between"><span className="font-mono">{m}</span><span>{fmtN(v.requests)} istek · {(v.tokens / 1000).toFixed(0)}K token</span></p>)}</div>
         </div>
         <div className="card p-5">
-          <h3 className="font-semibold">Veri kaynağı sağlığı</h3>
-          <div className="mt-3 space-y-1.5 text-sm">{Object.entries(d.providerHealth).map(([p, v]: any) => { const rate = Math.round((v.ok / (v.ok + v.fail)) * 100); return <div key={p} className="flex items-center justify-between"><span>{PROVIDER_LABELS[p as keyof typeof PROVIDER_LABELS] ?? p}</span><span className="flex items-center gap-1.5">{rate >= 90 ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <AlertOctagon className="h-3.5 w-3.5 text-amber-500" />}%{rate} başarı · {v.ok + v.fail} çağrı</span></div>; })}{Object.keys(d.providerHealth).length === 0 && <p className="text-ink-400">Henüz tarama yok.</p>}</div>
+          <BarList title="Veri kaynağı sağlığı" subtitle="Başarılı çağrı oranı (%)" color={2} format={(v) => `%${Math.round(v)}`} items={Object.entries(d.providerHealth).map(([p, v]: any) => ({ label: PROVIDER_LABELS[p as keyof typeof PROVIDER_LABELS] ?? p, value: Math.round((v.ok / (v.ok + v.fail)) * 100), sub: `${v.ok + v.fail} çağrı${v.ok / (v.ok + v.fail) < 0.9 ? " · dikkat" : ""}` }))} empty="Henüz tarama yok." />
         </div>
         <div className="card p-5">
           <h3 className="font-semibold">Sistem entegrasyonları</h3>
@@ -122,8 +131,7 @@ function Overview() {
             {Object.entries(d.integrations).map(([k, v]) => <p key={k} className="flex items-center gap-2">{v ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <CircleDashed className="h-4 w-4 text-ink-300" />}<span className={v ? "" : "text-ink-400"}>{k}</span></p>)}
             {d.payments.map((p: any) => <p key={p.id} className="flex items-center gap-2">{p.usable ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <CircleDashed className="h-4 w-4 text-ink-300" />}<span className={p.usable ? "" : "text-ink-400"}>{p.label}{!p.implemented && " (uygulanmadı)"}</span></p>)}
           </div>
-          <h3 className="mt-5 font-semibold">Paket dağılımı</h3>
-          <div className="mt-2 flex flex-wrap gap-1.5">{Object.entries(d.planDist).map(([k, v]) => <Badge key={k}>{k}: {v as number}</Badge>)}</div>
+          <div className="mt-5"><Donut title="Paket dağılımı" parts={Object.entries(d.planDist).map(([k, v]) => ({ label: k, value: v as number }))} format={fmtN} centerLabel="kullanıcı" /></div>
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { I18nProvider } from "@/i18n/client";
 import { getLocale } from "@/i18n/server";
 import { EN } from "@/i18n/en";
 import { PwaRegister } from "@/components/pwa";
+import { Analytics } from "@/components/analytics";
 import { UpgradeDialogHost } from "@/components/upgrade-dialog";
 import { PriceProvider } from "@/components/price-context";
 import { getUsdTry } from "@/lib/fx";
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <I18nProvider locale={locale} dict={locale === "en" ? EN : null}>
           <PriceProvider usdTry={usdTry}><ToastProvider>{children}</ToastProvider>
           <PwaRegister />
+          <Analytics />
           <UpgradeDialogHost /></PriceProvider>
           <JsonLd data={[organizationLd(), websiteLd(locale)]} />
         </I18nProvider>

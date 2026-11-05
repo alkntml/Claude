@@ -19,6 +19,7 @@ import { TraceDemo } from "@/components/landing/trace-demo";
 import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
+import { ToolCards } from "@/components/tools/tool-cards";
 
 const GUIDES = ["tez-nasil-yazilir", "apa-7-atif-kurallari", "intihal-nasil-onlenir", "literatur-taramasi-nasil-yapilir", "hangi-istatistik-analizi-secilmeli", "yapay-zeka-ile-tez-yazmak-etik-mi"];
 
@@ -39,6 +40,19 @@ export default async function Home() {
         <Hero signedIn={signedIn} />
         <CompareSection />
         <TraceDemo />
+        <section id="ucretsiz-araclar" className="scroll-mt-24 py-16">
+          <div className="mx-auto max-w-6xl px-6">
+            <FadeIn className="mb-10 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">{t("Ücretsiz · üyelik gerekmez")}</span>
+                <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Ücretsiz akademik araçlar")}</h2>
+                <p className="mt-3 max-w-2xl text-ink-500">{t("Giriş yapmadan kullanın: kaynakça hazırlayın, atıf stilini dönüştürün, örneklem ve güvenirlik hesaplayın, kaynaklarınızın gerçekten var olup olmadığını kontrol edin.")}</p>
+              </div>
+              <Link href="/araclar" className="text-sm font-medium text-brand-700 hover:underline">{t("Tüm araçlar")} →</Link>
+            </FadeIn>
+            <ToolCards />
+          </div>
+        </section>
         <section id="tur-sec" className="relative scroll-mt-24 py-16">
           <div className="mx-auto max-w-6xl px-6">
             <FadeIn className="mx-auto mb-12 max-w-2xl text-center">

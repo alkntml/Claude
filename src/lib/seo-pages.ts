@@ -12,6 +12,48 @@ export interface PageSeo {
 }
 
 export const PAGE_SEO: Record<string, PageSeo> = {
+  "/araclar": {
+    title: { tr: "Ücretsiz Akademik Araçlar: Kaynakça, Atıf, Örneklem | Academiana", en: "Free Academic Tools: References, Citations, Sample Size | Academiana" },
+    description: { tr: "Üyeliksiz ücretsiz araçlar: kaynakça oluşturucu, atıf stili dönüştürücü, örneklem büyüklüğü, Cronbach alfa, anket oluşturucu ve uydurma kaynak kontrolü.", en: "Free tools, no sign-up: reference generator, citation style converter, sample size, Cronbach's alpha, survey builder and fake reference checker." },
+    keywords: { tr: ["ücretsiz akademik araçlar", "kaynakça oluşturma", "atıf dönüştürücü", "örneklem hesaplama", "cronbach alfa hesaplama"], en: ["free academic tools", "reference generator", "citation converter", "sample size calculator", "cronbach alpha calculator"] },
+    tagline: { tr: "Üyelik gerekmez", en: "No sign-up needed" },
+  },
+  "/araclar/uydurma-kaynak-kontrolu": {
+    title: { tr: "Uydurma Kaynak Kontrolü: Kaynakça Gerçek mi? | Academiana", en: "Fake Reference Checker: Are Your Sources Real? | Academiana" },
+    description: { tr: "Kaynakçanızı yapıştırın; her kaynak Crossref, DataCite ve OpenAlex’te aranır. ChatGPT’nin uydurduğu kaynakları ve yanlış DOI’leri ücretsiz bulun.", en: "Paste your reference list; each source is checked in Crossref, DataCite and OpenAlex. Find fabricated references and wrong DOIs for free." },
+    keywords: { tr: ["uydurma kaynak kontrolü", "kaynak doğrulama", "chatgpt uydurma kaynak", "doi kontrol", "kaynakça kontrol"], en: ["fake reference checker", "verify references", "chatgpt fake citations", "doi checker", "reference list checker"] },
+    tagline: { tr: "Kaynaklarınız gerçek mi?", en: "Are your sources real?" },
+  },
+  "/araclar/kaynakca-olusturucu": {
+    title: { tr: "Ücretsiz Kaynakça Oluşturucu: APA 7, ISNAD, MLA | Academiana", en: "Free Reference Generator: APA 7, ISNAD, MLA | Academiana" },
+    description: { tr: "DOI veya başlıkla APA 7, ISNAD 2, MLA, Chicago, Harvard, IEEE ve Vancouver kaynakça oluşturun. Künyeler resmî kayıtlardan alınır, üyelik gerekmez.", en: "Create references in APA 7, ISNAD 2, MLA, Chicago, Harvard, IEEE and Vancouver from a DOI or title. Metadata from official registries, no sign-up." },
+    keywords: { tr: ["kaynakça oluşturma", "apa kaynakça oluşturucu", "isnad kaynakça", "doi ile kaynakça", "kaynak gösterme"], en: ["reference generator", "apa citation generator", "isnad citation", "doi to citation", "bibliography maker"] },
+    tagline: { tr: "DOI’den kaynakçaya", en: "From DOI to reference" },
+  },
+  "/araclar/atif-donusturucu": {
+    title: { tr: "Atıf Stili Dönüştürücü: APA, ISNAD, MLA Arası | Academiana", en: "Citation Style Converter: APA, ISNAD, MLA | Academiana" },
+    description: { tr: "Kaynakçanızı tek tıkla başka stile çevirin: APA’dan ISNAD’a, MLA’dan APA’ya. BibTeX ve RIS desteklenir; eksik bilgiler resmî kayıttan tamamlanır.", en: "Convert your reference list to another style in one click: APA to ISNAD, MLA to APA. BibTeX and RIS supported; missing data completed from registries." },
+    keywords: { tr: ["atıf stili dönüştürme", "apa isnad dönüştürme", "kaynakça dönüştürücü", "bibtex apa"], en: ["citation style converter", "apa to mla", "convert references", "bibtex to apa"] },
+    tagline: { tr: "Bir stilden ötekine", en: "From one style to another" },
+  },
+  "/araclar/orneklem-hesaplayici": {
+    title: { tr: "Örneklem Büyüklüğü Hesaplama (Cochran, Yamane) | Academiana", en: "Sample Size Calculator (Cochran, Yamane) | Academiana" },
+    description: { tr: "Evren, güven düzeyi ve hata payına göre örneklem büyüklüğünü hesaplayın. Cochran, Yamane ve ortalama formülleri; yöntem bölümü için hazır cümle.", en: "Calculate sample size from population, confidence level and margin of error. Cochran, Yamane and mean formulas, with a ready sentence for your method section." },
+    keywords: { tr: ["örneklem hesaplama", "örneklem büyüklüğü", "yamane formülü", "cochran formülü", "anket örneklem sayısı"], en: ["sample size calculator", "cochran formula", "yamane formula", "survey sample size"] },
+    tagline: { tr: "Kaç kişiye ulaşmalı?", en: "How many respondents?" },
+  },
+  "/araclar/cronbach-alfa": {
+    title: { tr: "Cronbach Alfa Hesaplama: Ücretsiz Güvenirlik Analizi | Academiana", en: "Cronbach's Alpha Calculator: Free Reliability Analysis | Academiana" },
+    description: { tr: "Ölçek verilerinizi yapıştırın; Cronbach alfa, madde-toplam korelasyonu ve madde silinirse alfa anında hesaplansın. Veriler tarayıcınızdan çıkmaz.", en: "Paste your scale data; Cronbach's alpha, item-total correlations and alpha if item deleted are calculated instantly. Your data never leaves your browser." },
+    keywords: { tr: ["cronbach alfa hesaplama", "güvenirlik analizi", "iç tutarlılık", "madde toplam korelasyonu"], en: ["cronbach alpha calculator", "reliability analysis", "internal consistency", "item total correlation"] },
+    tagline: { tr: "Ölçeğiniz güvenilir mi?", en: "Is your scale reliable?" },
+  },
+  "/araclar/anket-olusturucu": {
+    title: { tr: "Ücretsiz Anket Oluşturucu: Likert, Çoktan Seçmeli | Academiana", en: "Free Survey Builder: Likert, Multiple Choice | Academiana" },
+    description: { tr: "Akademik anketinizi hazırlayın: Likert, çoktan seçmeli ve açık uçlu sorular, hızlı kontrol, yazdırma. Ücretsiz hesapla çevrim içi yayınlayıp cevap toplayın.", en: "Build your academic survey: Likert, multiple choice and open questions, quick check and printing. Publish online and collect responses with a free account." },
+    keywords: { tr: ["anket oluşturma", "likert anket hazırlama", "ücretsiz anket", "akademik anket"], en: ["survey builder", "likert survey", "free survey maker", "academic survey"] },
+    tagline: { tr: "Anketinizi hazırlayın", en: "Build your survey" },
+  },
   "/": {
     title: {
       tr: "Academiana — Yapay Zekâ Destekli Tez ve Makale Yazım Platformu",

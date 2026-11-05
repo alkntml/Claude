@@ -11,6 +11,7 @@ const NAV: { href: string; label: string; wide?: 1 | 2 }[] = [
   { href: "/#ozellikler", label: "Özellikler" },
   { href: "/#nasil", label: "Nasıl çalışır", wide: 2 },
   { href: "/#kaynaklar", label: "Veri kaynakları", wide: 2 },
+  { href: "/araclar", label: "Ücretsiz araçlar" },
   { href: "/ornekler", label: "Örnekler" },
   { href: "/fiyatlar", label: "Fiyatlar" },
   { href: "/kurumlar", label: "Kurumlar", wide: 1 },

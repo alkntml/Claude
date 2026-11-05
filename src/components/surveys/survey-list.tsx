@@ -2,7 +2,9 @@
 import { ClipboardList, Plus, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Download } from "lucide-react";
+import type { Question } from "@/lib/surveys";
 import { Button } from "@/components/ui/button";
 import { Badge, Tabs } from "@/components/ui/primitives";
 import { SurveyAiCreate } from "./survey-ai-create";
@@ -23,6 +25,19 @@ export function SurveyList({ surveys: initial, projects, defaultProject }: { sur
   const [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<"ai" | "manual">("ai");
   const pname = (id: string | null) => projects.find((p) => p.id === id)?.title;
+  // Ücretsiz anket oluşturucuda (D90) hazırlanan taslak varsa hesaba aktarmayı öner
+  const [draft, setDraft] = useState<{ title: string; description: string; questions: Question[] } | null>(null);
+  useEffect(() => { try { const v = localStorage.getItem("academiana:tool-survey"); if (v) { const d = JSON.parse(v); if (d?.questions?.length) setDraft(d); } } catch { /* yok */ } }, []);
+  async function importDraft() {
+    if (!draft) return;
+    setBusy(true);
+    try {
+      const questions = draft.questions.filter((q) => q.title?.trim() && ((q.type !== "single" && q.type !== "multi") || q.options.length >= 2) && (q.type !== "likert" || q.items.length >= 1));
+      const r = await api<{ survey: { id: string } }>("/api/surveys", { method: "POST", json: { title: draft.title.trim() || t("Adsız anket"), projectId: projectId || null, draft: { description: draft.description ?? "", consent: "", questions } } });
+      try { localStorage.removeItem("academiana:tool-survey"); } catch { /* yok */ }
+      router.push(`/anketler/${r.survey.id}`);
+    } catch (e) { toast({ tone: "error", title: t("Anket aktarılamadı"), detail: (e as Error).message }); setBusy(false); }
+  }
 
   async function create() {
     setBusy(true);
@@ -38,6 +53,14 @@ export function SurveyList({ surveys: initial, projects, defaultProject }: { sur
         <h1 className="font-serif text-3xl font-medium tracking-tight text-ink-950">{t("Anketlerim")}</h1>
         <p className="mt-1.5 text-ink-500">{t("Ölçek ve anketlerinizi hazırlayın, bağlantıyla katılımcılara gönderin; cevaplar tek tıkla istatistik analizine ve grafiklere aktarılır.")}</p>
       </div>
+      {draft && (
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-brand-200 bg-brand-50 p-4 text-sm text-ink-800">
+          <Download className="h-5 w-5 shrink-0 text-brand-600" />
+          <span className="min-w-0 flex-1">{t("Ücretsiz anket oluşturucuda hazırladığınız “{title}” anketi ({n} soru) bu tarayıcıda duruyor.", { title: draft.title || t("Adsız anket"), n: draft.questions.length })}</span>
+          <Button size="sm" onClick={importDraft} loading={busy}>{t("Hesabıma aktar")}</Button>
+          <button type="button" className="text-xs text-ink-500 hover:text-ink-800" onClick={() => { try { localStorage.removeItem("academiana:tool-survey"); } catch { /* yok */ } setDraft(null); }}>{t("Vazgeç")}</button>
+        </div>
+      )}
       <section className="card overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 bg-brand-50/60 px-5 py-4">
           <div>

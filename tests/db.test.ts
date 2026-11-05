@@ -346,4 +346,13 @@ describe("anketler", () => {
     await db.query("insert into public.projects (user_id, title, work_type, citation_style) values ($1, 'ISNAD çalışma', 'thesis', 'isnad')", [A]);
     expect(await as(A, "select id from public.projects where citation_style = 'isnad'")).toHaveLength(1);
   });
+
+  it("araç kullanımı ve ölçüm tablolarına kullanıcılar ve ziyaretçiler erişemez; sunucu yazar (D90)", async () => {
+    await db.query("insert into public.tool_usage (tool, cost_usd) values ('fake_check', 0.0012)");
+    await db.query("insert into public.analytics_events (kind, path, visitor, device) values ('pageview', '/', 'abc', 'mobile')");
+    expect(await as(A, "select * from public.tool_usage")).toHaveLength(0);
+    expect(await as(null, "select * from public.analytics_events")).toHaveLength(0);
+    await expectError(as(null, "insert into public.analytics_events (kind, path) values ('pageview', '/x')"));
+    await expectError(db.query("insert into public.analytics_events (kind, path) values ('click', '/x')"));
+  });
 });

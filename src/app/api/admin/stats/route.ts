@@ -5,6 +5,7 @@ import { availableProviders } from "@/lib/payments";
 import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
 import { monthStart } from "@/lib/usage";
+import { lastDays } from "@/lib/insights";
 
 /** API satır sınırına (1000) takılmadan tüm satırları sayfalı okur */
 async function allRows<T>(fetchPage: (from: number, to: number) => PromiseLike<{ data: T[] | null }>, max = 200000): Promise<T[]> {
@@ -83,7 +84,8 @@ export const GET = route("admin.stats", async (req) => {
     errors: errors.count ?? 0,
     openFeedback: openFeedback.count ?? 0,
     totals: { ...totals, cost: Math.round(totals.cost * 100) / 100 },
-    byDay: Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b)).map(([day, v]) => ({ day, ...v, cost: Math.round(v.cost * 1000) / 1000 })),
+    // Boş günler de sıfırla gösterilir (grafikte boşluk sıkışmasın)
+    byDay: lastDays(days).map((day) => { const v = byDay[day] ?? { ai: 0, search: 0, cost: 0, tokens: 0 }; return { day, ...v, cost: Math.round(v.cost * 1000) / 1000 }; }),
     byModel,
     providerHealth,
     planDist,

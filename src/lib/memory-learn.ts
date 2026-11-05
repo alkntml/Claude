@@ -5,6 +5,7 @@ import "server-only";
  * dönüştürülür. Yalnızca belgede açıkça yazanlar alınır; sayı ve adlar belgedeki gibi aktarılır, yorum eklenmez.
  */
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { fold } from "@/lib/import/references";
 
 const KINDS = ["fact", "decision", "concept", "variable", "question", "hypothesis", "note"] as const;
@@ -41,7 +42,7 @@ KURALLAR:
   const user = `BELGE: ${params.fileName}\n${params.existing.length ? `HAFIZADA ZATEN OLANLAR:\n${params.existing.slice(-60).map((x) => `- ${x}`).join("\n")}\n\n` : ""}BELGE METNİ:\n"""\n${params.text}\n"""`;
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens: 4000, effort: "low", jsonSchema: SCHEMA });
   let items: { kind: MemoryKind; content: string }[] = [];
-  try { items = (JSON.parse(res.text) as { items: { kind: MemoryKind; content: string }[] }).items ?? []; } catch { throw new Error("Yapay zekâ yanıtı okunamadı, lütfen tekrar deneyin"); }
+  try { items = (JSON.parse(res.text) as { items: { kind: MemoryKind; content: string }[] }).items ?? []; } catch { throw await spentError("Yapay zekâ yanıtı okunamadı, lütfen tekrar deneyin", res, model.provider, "memory_learn"); }
   const seen = new Set(params.existing.map(fold));
   const clean = items
     .filter((x) => KINDS.includes(x.kind) && typeof x.content === "string" && x.content.trim().length > 3)

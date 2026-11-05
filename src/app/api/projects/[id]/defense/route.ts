@@ -26,7 +26,7 @@ export const POST = route<Ctx>("project.defense", async (req, { params }) => {
     const out = b.mode === "questions"
       ? await defenseQuestions({ planId: s.profile.plan_id, project: bundle.project, stages: bundle.stages, count: b.count, focus: b.focus, level: b.level })
       : await defenseFeedback({ planId: s.profile.plan_id, project: bundle.project, stages: bundle.stages, question: b.question, answer: b.answer });
-    await recordUsage(s.user.id, "ai_request", { tokensIn: out.usage.input, tokensOut: out.usage.output, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: `defense_${b.mode}`, projectId: id } });
+    await recordUsage(s.user.id, "ai_request", { usage: out.usage, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: `defense_${b.mode}`, projectId: id } });
     return json("questions" in out ? { questions: out.questions } : { feedback: out.feedback });
   } catch (e) {
     if (e instanceof ApiError) throw e;

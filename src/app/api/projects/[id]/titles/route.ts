@@ -16,7 +16,7 @@ export const POST = route<Ctx>("project.titles", async (req, { params }) => {
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   try {
     const out = await suggestTitles({ planId: s.profile.plan_id, project, hint: b.hint });
-    await recordUsage(s.user.id, "ai_request", { tokensIn: out.usage.input, tokensOut: out.usage.output, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "titles", projectId: id } });
+    await recordUsage(s.user.id, "ai_request", { usage: out.usage, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "titles", projectId: id } });
     return json({ titles: out.titles });
   } catch (e) {
     throw new ApiError(422, e instanceof Error ? e.message : "Başlık önerileri oluşturulamadı");

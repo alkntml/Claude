@@ -1,5 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { providerConfig } from "@/lib/env";
 import { getJson } from "@/lib/sources/http";
 import { mergeSubtopics, parseGroupTopics, parseGroupYears, parseWorks, trendOf, type TopicExploration } from "./topics";
@@ -75,7 +76,7 @@ KURALLAR:
     jsonSchema: SCHEMA,
   });
   let ideas: TopicIdea[] = [];
-  try { ideas = (JSON.parse(res.text).ideas ?? []).slice(0, 6); } catch { throw new Error("Öneriler oluşturulamadı, lütfen tekrar deneyin"); }
+  try { ideas = (JSON.parse(res.text).ideas ?? []).slice(0, 6); } catch { throw await spentError("Öneriler oluşturulamadı, lütfen tekrar deneyin", res, model.provider, "topic_ideas"); }
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { ideas, usage: res.usage, model: res.model, provider: model.provider, cost };
 }

@@ -221,10 +221,16 @@ export async function assertProjectQuota(userId: string, planId: string) {
   if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");
 }
 
-export async function recordUsage(userId: string, kind: UsageKind, data: { quantity?: number; tokensIn?: number; tokensOut?: number; costUsd?: number; provider?: string; model?: string; meta?: Record<string, unknown> } = {}) {
+/**
+ * Kullanım kaydı. `usage` verilirse token sayıları ondan alınır ve önbellek okuma/yazma tokenları meta.cache’e
+ * yazılır (yönetimde önbellek isabeti ve tasarrufu, D94).
+ */
+export async function recordUsage(userId: string, kind: UsageKind, data: { quantity?: number; tokensIn?: number; tokensOut?: number; usage?: { input: number; output: number; cacheRead?: number; cacheWrite?: number }; costUsd?: number; provider?: string; model?: string; meta?: Record<string, unknown> } = {}) {
+  const u = data.usage;
+  const cache = u && (u.cacheRead || u.cacheWrite) ? { r: u.cacheRead ?? 0, w: u.cacheWrite ?? 0 } : null;
   await adminClient().from("usage_events").insert({
-    user_id: userId, kind, quantity: data.quantity ?? 1, tokens_in: data.tokensIn ?? 0, tokens_out: data.tokensOut ?? 0,
-    cost_usd: data.costUsd ?? 0, provider: data.provider ?? null, model: data.model ?? null, meta: data.meta ?? {},
+    user_id: userId, kind, quantity: data.quantity ?? 1, tokens_in: u?.input ?? data.tokensIn ?? 0, tokens_out: u?.output ?? data.tokensOut ?? 0,
+    cost_usd: Math.max(0, data.costUsd ?? 0), provider: data.provider ?? null, model: data.model ?? null, meta: { ...(data.meta ?? {}), ...(cache ? { cache } : {}) },
   });
 }
 

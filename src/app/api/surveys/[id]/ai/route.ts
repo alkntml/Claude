@@ -35,7 +35,7 @@ export const POST = route<Ctx>("surveys.ai", async (req, { params }) => {
 
   const planId = s.profile.plan_id;
   const record = (o: { usage: { input: number; output: number }; cost: number; provider: string; model: string }) =>
-    recordUsage(s.user.id, "ai_request", { tokensIn: o.usage.input, tokensOut: o.usage.output, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action: `survey_${b.mode}`, surveyId: id } });
+    recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action: `survey_${b.mode}`, surveyId: id } });
   try {
     if (b.mode === "revise") {
       const out = await reviseSurvey(planId, { questions: b.questions, instruction: b.instruction, lang: b.lang, title: survey.title });

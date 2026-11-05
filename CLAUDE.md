@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 335 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 342 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -114,7 +114,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()` — istemci bileşeninde `@/i18n` içe aktarma, sözlük pakete girer; sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e eklenir; `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
 - Renkleri `ink-*` / marka sınıflarıyla ver, sabit hex kullanma: gece modu (D61) CSS değişkenleriyle çalışır.
 - Atıflar editörde `citation` düğümüdür; asla düz metin "(Yazar, Yıl)" üretme.
-- API maliyeti (D78): sabit bağlamı `context`, değişkeni `contextTail` ile ver (önbellek); maliyet `estimateCost(model, in, out, usage)`; sohbet geçmişini `compactHistory` ile gönder.
+- API maliyeti (D78, D94): sabit bağlamı `context`, değişkeni `contextTail` ile ver (önbellek); maliyet `estimateCost(model, in, out, usage)` (fiyatlar `ai/cost.ts` KNOWN_PRICES); kayıt `recordUsage(..., { usage, costUsd })` (önbellek tokenları da yazılır); yanıt okunamazsa `throw await spentError(...)` (maliyet kaybolmaz); sohbet geçmişini `compactHistory` ile gönder.
 - Model pakete göre değil işe göre seçilir (D47): basit → `fast` (Haiku), orta → `balanced` (Sonnet), karmaşık → `default` (Opus); asistan eylemleri `ACTION_TIER`’da.
 - Yeni AI özelliği: model katmanı `resolveModel(planId, tier)`, kullanım `recordUsage`, limit `assertWithinLimits`.
 - Claude modelleri: `claude-opus-5-5` (default/premium), `claude-sonnet-5-5` (balanced), `claude-haiku-5-5` (fast). Sampling parametresi (temperature) gönderme; `output_config.effort` kullan. Opus/Sonnet'te `fallbacks: "default"` açık.

@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Ay sonunda Yönetim → Maliyet sağlığı’ndaki “bu ay harcanan” ile Anthropic Console → Usage’daki gerçek faturayı karşılaştır (D94)
+- [ ] Maliyet sağlığı “ortalama istek maliyeti” uyarı verirse Ayarlar → Kârlılık’taki varsayımı güncelle
 - [ ] Asistana “Nereden grafik oluşturabilirim?” gibi bir soru sorup cevabı dene (D93)
 - [ ] Canlıda ERIC, DBLP, DataCite aramalarını dene; Yönetim → Veri kaynağı sağlığı’ndan sonuçları kontrol et (D92)
 - [ ] Supabase SQL Editor’de `20261116000021_tools_analytics.sql` (ücretsiz araç sayacı + ziyaretçi ölçümü, D90)

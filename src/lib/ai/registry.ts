@@ -4,7 +4,7 @@ import { getSetting, type ModelRef } from "@/lib/settings";
 import { anthropicProvider } from "./anthropic";
 import { openaiProvider } from "./openai";
 import type { AiProvider, GenerateParams, StreamEvent, Usage } from "./types";
-import { costFor } from "./cost";
+import { costFor, resolvePrice } from "./cost";
 export { costFor };
 
 const PROVIDERS: Record<ModelRef["provider"], { provider: AiProvider; configured: () => boolean }> = {
@@ -35,7 +35,7 @@ export function isProviderConfigured(p: ModelRef["provider"]) {
  */
 export async function estimateCost(model: string, input: number, output: number, cache?: Pick<Usage, "cacheRead" | "cacheWrite">) {
   const cfg = await getSetting("ai.models");
-  return costFor(cfg.pricing_per_mtok[model], input, output, cache);
+  return costFor(resolvePrice(model, cfg.pricing_per_mtok).price, input, output, cache);
 }
 
 

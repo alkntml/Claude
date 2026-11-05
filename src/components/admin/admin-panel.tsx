@@ -86,7 +86,7 @@ function Overview() {
         <StatTile label="Kullanıcı" value={fmtN(d.users)} sub={`+${fmtN(d.newUsers)} yeni · ${days} gün`} />
         <StatTile label="Proje" value={fmtN(d.projects)} />
         <StatTile label="Yapay zekâ isteği" value={fmtN(d.totals.ai)} sub={`${(d.totals.tokens / 1000).toFixed(0)}K token`} spark={spark("ai")} />
-        <StatTile label="Tahmini API maliyeti" value={usd(d.totals.cost)} sub={`${days} gün`} spark={spark("cost")} />
+        <StatTile label="Tahmini API maliyeti" value={usd(d.totals.cost)} sub={`${days} gün · ücretsiz araçlar dahil`} spark={spark("cost")} />
         <StatTile label="Kaynak taraması" value={fmtN(d.totals.search)} spark={spark("search")} />
         <StatTile label="Dışa aktarma" value={fmtN(d.totals.exports)} />
         <StatTile label="Hata" value={fmtN(d.errors)} sub={`${days} gün`} tone={d.errors > 0 ? "bad" : undefined} />
@@ -113,6 +113,7 @@ function Overview() {
         <div className="card p-5"><TimeSeries data={d.byDay} series={[{ key: "ai", label: "Yapay zekâ isteği" }]} title="Günlük yapay zekâ istekleri" format={fmtN} /></div>
         <div className="card p-5"><TimeSeries data={d.byDay} series={[{ key: "search", label: "Kaynak taraması" }]} title="Günlük kaynak taramaları" format={fmtN} /></div>
       </div>
+      {d.costHealth && <CostHealth h={d.costHealth} days={days} usdTry={d.money?.usdTry} />}
       <div>
         <h3 className="mb-3 flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> API maliyeti sayacı: hangi özellik ve araç ne kadar harcıyor?</h3>
         <CostBreakdown days={days} />
@@ -133,6 +134,38 @@ function Overview() {
           </div>
           <div className="mt-5"><Donut title="Paket dağılımı" parts={Object.entries(d.planDist).map(([k, v]) => ({ label: k, value: v as number }))} format={fmtN} centerLabel="kullanıcı" /></div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** Maliyet sağlığı (D94): ay sonu tahmini, ortalama istek maliyeti, önbellek tasarrufu, kaçak maliyetler, en çok harcayanlar */
+function CostHealth({ h, days, usdTry }: { h: any; days: number; usdTry?: number }) {
+  const usd = (v: number | null | undefined) => (v == null ? "—" : v < 0.1 ? `$${v.toFixed(4)}` : v < 10 ? `$${v.toFixed(2)}` : `$${v.toFixed(0)}`);
+  const tl = (v: number | null | undefined) => (v == null || !usdTry ? "" : `≈ ${Math.round(v * usdTry).toLocaleString("tr-TR")} TL`);
+  const avgOver = h.avgRequestUsd != null && h.assumedAvgRequestUsd && h.avgRequestUsd > h.assumedAvgRequestUsd * 1.15;
+  return (
+    <div className="card p-5">
+      <h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Maliyet sağlığı</h3>
+      <p className="mt-0.5 text-xs text-ink-400">Fiyatlar model bazında hesaplanır (Opus önbellek okuma %5, diğerleri %10; Haiku’da 100 bin token üstü istem daha pahalı). Kesilen, iptal edilen ve yanıtı okunamayan çağrılar da maliyete dahildir.</p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile label="Bu ay harcanan" value={usd(h.monthUsd)} sub={tl(h.monthUsd)} />
+        <StatTile label="Ay sonu tahmini" value={usd(h.monthProjectionUsd)} sub={h.monthProjectionUsd != null ? tl(h.monthProjectionUsd) : "ayın ilk saatleri"} />
+        <StatTile label="Ortalama istek maliyeti" value={usd(h.avgRequestUsd)} sub={`limit hesabındaki varsayım: ${usd(h.assumedAvgRequestUsd)}`} tone={avgOver ? "bad" : undefined} />
+        <StatTile label="Önbellek tasarrufu" value={usd(h.cache.savingsUsd)} sub={`girdinin %${h.cache.hitRate}’i önbellekten · ${days} gün`} />
+      </div>
+      {avgOver && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-[13px] text-amber-900">Gerçek ortalama istek maliyeti, paket sınırlarının hesaplandığı varsayımdan %15’ten fazla yüksek. Ayarlar → Kârlılık’taki “ortalama istek maliyeti”ni güncellemeyi veya paket sınırlarını gözden geçirmeyi düşünün.</p>}
+      {h.unpriced?.length > 0 && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-[13px] text-amber-900">Fiyat tablosunda birebir karşılığı olmayan model(ler): <span className="font-mono">{h.unpriced.join(", ")}</span>. Maliyetleri aynı ailenin fiyatından (ör. Opus) veya en yüksek fiyattan tahmin edildi; Ayarlar’daki fiyat tablosuna ekleyin.</p>}
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="space-y-1.5 text-[13px]">
+          <p className="font-medium text-ink-800">Son {days} günün dökümü</p>
+          <p className="flex justify-between gap-3"><span className="text-ink-500">Uygulama özellikleri (yapay zekâ)</span><span>{usd(h.aiCost)} · {h.requests.toLocaleString("tr-TR")} istek</span></p>
+          <p className="flex justify-between gap-3"><span className="text-ink-500">Ücretsiz araçlar</span><span>{usd(h.toolCost)}</span></p>
+          <p className="flex justify-between gap-3"><span className="text-ink-500">Yarıda kesilen / iptal edilen yanıtlar</span><span>{usd(h.partialUsd)}</span></p>
+          <p className="flex justify-between gap-3"><span className="text-ink-500">Yanıtı okunamayan çağrılar (hak düşülmedi)</span><span>{usd(h.failedUsd)}</span></p>
+          <p className="flex justify-between gap-3"><span className="text-ink-500">Önbellek: okunan / yazılan token</span><span>{(h.cache.readTokens / 1000).toFixed(0)}K / {(h.cache.writeTokens / 1000).toFixed(0)}K</span></p>
+        </div>
+        <BarList title="Bu ay en çok maliyet oluşturan kullanıcılar" subtitle="Kötüye kullanım veya paket uyumsuzluğu kontrolü için" color={1} format={(v) => usd(v)} limit={10} empty="Bu ay henüz maliyet yok." items={h.topUsers.map((u: any) => ({ label: `${u.name} · ${u.plan}`, value: u.cost }))} />
       </div>
     </div>
   );

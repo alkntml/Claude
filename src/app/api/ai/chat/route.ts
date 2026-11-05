@@ -1,7 +1,7 @@
 import { makeT } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
 import { z } from "zod";
-import { ApiError, assertDeleted, json, logError, parseBody, route } from "@/lib/api";
+import { AiSpentError, ApiError, assertDeleted, json, logError, parseBody, recordAiSpent, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
@@ -93,11 +93,16 @@ export const POST = route("ai.chat", async (req) => {
             await Promise.all([
               s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { model: servedModel, usage, action: "help" } }),
               s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
-              recordUsage(s.user.id, "ai_request", { tokensIn: usage.input, tokensOut: usage.output, costUsd: cost, provider: helpModel.provider, model: servedModel, meta: { action: "help", projectId: b.projectId } }),
+              recordUsage(s.user.id, "ai_request", { usage, costUsd: cost, provider: helpModel.provider, model: servedModel, meta: { action: "help", projectId: b.projectId } }),
             ]);
             controller.enqueue(sse("done", { usage, stopReason: null, memoryAdded: 0, gapAdded: 0, warnings: [] }));
           } catch (e) {
             await logError("ai.chat.help", e, s.user.id);
+            if (answer) {
+              const tin = usage.input || Math.ceil((HELP_SYSTEM.length + b.message.length) / 3), out = usage.output || Math.ceil(answer.length / 3);
+              const costUsd = await estimateCost(servedModel, tin, out, usage).catch(() => 0);
+              await recordUsage(s.user.id, "ai_request", { tokensIn: tin, tokensOut: out, costUsd, provider: helpModel.provider, model: servedModel, meta: { action: "help", projectId: b.projectId, partial: true } }).catch(() => {});
+            }
             controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));
           } finally {
             controller.close();
@@ -183,6 +188,7 @@ export const POST = route("ai.chat", async (req) => {
           searchedQueries = queries;
           await recordResearchUsage(s.user.id, planned, queries, { countAsRequest: false, providers: searchProviders });
         } catch (e) {
+          if (e instanceof AiSpentError) await recordAiSpent(e, s.user.id);
           await logError("ai.chat.research", e, s.user.id);
         }
       }
@@ -217,6 +223,8 @@ export const POST = route("ai.chat", async (req) => {
       let usage: Usage = { input: 0, output: 0 };
       let stopReason: string | null = null;
       let servedModel = model.model;
+      /** İstek modele gönderildiyse yarıda kesilse de girdi faturalanır (D94) */
+      let promptChars = 0;
       try {
         controller.enqueue(sse("phase", { phase: "write" }));
         const wholeWork = b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist" || b.action === "reviewer_response";
@@ -233,6 +241,7 @@ export const POST = route("ai.chat", async (req) => {
         }
         controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
         const effort = ACTION_EFFORT[b.action] ?? models.effort;
+        promptChars = system.length + ctx.head.length + ctx.tail.length + messages.reduce((a, m) => a + m.content.length, 0);
         for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages, maxTokens: models.max_output_tokens, effort }, req.signal)) {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
           else { usage = ev.usage; stopReason = ev.stopReason; servedModel = ev.model; }
@@ -247,7 +256,7 @@ export const POST = route("ai.chat", async (req) => {
         await Promise.all([
           s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action, ...(searchedQueries.length ? { research: { focusKey, queries: searchedQueries } } : {}) } }),
           s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
-          recordUsage(s.user.id, "ai_request", { tokensIn: usage.input, tokensOut: usage.output, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
+          recordUsage(s.user.id, "ai_request", { usage, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
         ]);
         // 3) Eksik konular: asistanın :::eksik bloğundaki sorgularla ek kaynak araması (mesaj başına bir kez)
         let gapAdded = 0;
@@ -278,10 +287,13 @@ export const POST = route("ai.chat", async (req) => {
         controller.enqueue(sse("done", { usage, stopReason, memoryAdded: memory.length, gapAdded, warnings }));
       } catch (e) {
         await logError("ai.chat.stream", e, s.user.id);
-        if (!usageRecorded && answer) {
-          // Akış başladıysa model çalışmıştır: kesin token bilinmiyorsa metin uzunluğundan tahmin edilir
-          const out = usage.output || Math.ceil(answer.length / 3.5);
-          await recordUsage(s.user.id, "ai_request", { tokensIn: usage.input || Math.ceil(system.length / 3.5), tokensOut: out, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, partial: true } }).catch(() => {});
+        if (!usageRecorded && (answer || (promptChars && req.signal.aborted))) {
+          // İstek modele ulaştıysa (yanıt yarıda kesilse veya iptal edilse de) maliyet kaydedilir; kesin token
+          // bilinmiyorsa metin uzunluğundan tahmin edilir (Türkçe metinde ~3 karakter/token)
+          const tin = usage.input || Math.ceil(promptChars / 3);
+          const out = usage.output || Math.ceil(answer.length / 3);
+          const costUsd = await estimateCost(servedModel, tin, out, usage).catch(() => 0);
+          await recordUsage(s.user.id, "ai_request", { quantity: answer ? 1 : 0, tokensIn: tin, tokensOut: out, costUsd, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, partial: true, estimated: !usage.input } }).catch(() => {});
         }
         controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));
       } finally {

@@ -2284,6 +2284,7 @@ export const EN: Record<string, string> = {
   "Kurguya uygun başlığı seçin": "Choose a title that fits the blueprint",
   "Çalışma adım adım ilerler": "Your work proceeds step by step",
   "Kurgu oluşturulamadı, lütfen tekrar deneyin": "Could not create the blueprint, please try again",
+  "Öneri okunamadı, lütfen tekrar deneyin": "Could not read the suggestion, please try again",
   "Kurgu çok uzun; bazı alanları kısaltın": "The blueprint is too long; shorten some fields",
   // Kurgu: hedef uzunluk (D68)
   "A4, 12 punto, 1,5 satır aralığında ortalama ~275 kelime": "About 275 words on average on A4, 12 pt, 1.5 line spacing",

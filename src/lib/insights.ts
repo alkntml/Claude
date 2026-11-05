@@ -2,8 +2,10 @@
  * Yönetim ekranı için maliyet ve ölçüm özetleri (D90). Saf fonksiyonlar (test edilir); veri sunucuda okunur.
  */
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
+import { cacheSavings, resolvePrice } from "@/lib/ai/cost";
 
 const FEATURE_LABEL: Record<string, string> = {
+  survey_ai: "Anket: yapay zekâ",
   help: "Asistan: kullanım sorusu",
   quality_review: "Kalite kontrol (yapay zekâ jürisi)",
   stage_review: "Bölüm tamamlama kontrolü",
@@ -90,4 +92,49 @@ export function trafficSummary(rows: PageRow[], days: string[]) {
 /** Bugünden geriye `n` günün tarihleri (YYYY-AA-GG) */
 export function lastDays(n: number, now = new Date()): string[] {
   return Array.from({ length: n }, (_, i) => new Date(now.getTime() - (n - 1 - i) * 86400_000).toISOString().slice(0, 10));
+}
+
+export interface CostEvent { kind: string; quantity: number; tokens_in: number; tokens_out: number; cost_usd: number | string; model: string | null; meta?: { cache?: { r?: number; w?: number }; failed?: boolean; partial?: boolean } | Record<string, unknown> | null }
+
+/**
+ * Maliyet sağlığı (D94): ortalama istek maliyeti, önbellek isabeti ve tasarrufu, yarım kalan/başarısız çağrıların
+ * maliyeti ve fiyatı tanımlı olmayan modeller. `pricing` yönetici ayarındaki fiyat tablosudur.
+ */
+export function costHealth(events: CostEvent[], pricing: Record<string, { in: number; out: number }>) {
+  let aiCost = 0, requests = 0, inputTokens = 0, readTokens = 0, writeTokens = 0, savings = 0, failed = 0, partial = 0;
+  const unpriced = new Set<string>();
+  for (const e of events) {
+    const cost = Number(e.cost_usd) || 0;
+    if (!e.model || !(cost > 0 || e.tokens_in + e.tokens_out > 0)) continue;
+    aiCost += cost;
+    if (e.kind === "ai_request") requests += e.quantity;
+    const { price, match } = resolvePrice(e.model, pricing);
+    if (match !== "exact" && match !== "alias") unpriced.add(e.model);
+    inputTokens += e.tokens_in;
+    const c = e.meta?.cache as { r?: number; w?: number } | undefined;
+    if (c) {
+      readTokens += c.r ?? 0; writeTokens += c.w ?? 0;
+      savings += cacheSavings(price, e.tokens_in, e.tokens_out, { cacheRead: c.r ?? 0, cacheWrite: c.w ?? 0 });
+    }
+    if (e.meta?.failed) failed += cost;
+    if (e.meta?.partial) partial += cost;
+  }
+  const r4 = (v: number) => Math.round(v * 10000) / 10000;
+  return {
+    aiCost: r4(aiCost),
+    requests,
+    avgRequestUsd: requests ? r4(aiCost / requests) : null,
+    cache: { inputTokens, readTokens, writeTokens, hitRate: inputTokens ? Math.round((readTokens / inputTokens) * 1000) / 10 : 0, savingsUsd: r4(savings) },
+    failedUsd: r4(failed),
+    partialUsd: r4(partial),
+    unpriced: [...unpriced],
+  };
+}
+
+/** Ay sonu maliyet tahmini: bu ayki harcama, geçen gün sayısına göre ayın tamamına yayılır (Türkiye saati) */
+export function monthProjection(spent: number, now = new Date()) {
+  const tr = new Date(now.getTime() + 3 * 3600_000);
+  const day = tr.getUTCDate() - 1 + (tr.getUTCHours() * 60 + tr.getUTCMinutes()) / 1440;
+  const days = new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth() + 1, 0)).getUTCDate();
+  return day > 0.25 ? Math.round((spent / day) * days * 100) / 100 : null;
 }

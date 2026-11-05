@@ -1,5 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 
 /* Savunma provası: çalışmanın kendi metnine dayanan jüri soruları ve cevap değerlendirmesi */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -37,7 +38,7 @@ async function run(planId: string, system: string, user: string, schema: Record<
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: "medium", jsonSchema: schema });
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   let data: any;
-  try { data = JSON.parse(res.text); } catch { throw new Error("Yanıt işlenemedi, lütfen tekrar deneyin"); }
+  try { data = JSON.parse(res.text); } catch { throw await spentError("Yanıt işlenemedi, lütfen tekrar deneyin", res, model.provider, "defense"); }
   return { data, usage: res.usage, model: res.model, provider: model.provider, cost };
 }
 

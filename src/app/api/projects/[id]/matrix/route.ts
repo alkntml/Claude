@@ -53,13 +53,14 @@ purpose: çalışmanın amacı · method: desen/yöntem/analiz · sample: örnek
       messages: [{ role: "user", content: `KAYNAK: ${src.title} (${src.year ?? "t.y."})\nERİŞİM: ${src.access_level}\n\n${material}` }],
       maxTokens: 900, effort: "low", jsonSchema: SCHEMA,
     });
+    // Maliyet, sonraki adımlar hata verse de kaybolmasın diye hemen kaydedilir (D94)
+    await recordUsage(s.user.id, "ai_request", { usage: res.usage, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "literature_matrix", sourceId: src.id } });
     let parsed: Record<string, string> = {};
     try { parsed = JSON.parse(res.text); } catch { /* boş bırak */ }
     const summary = { ...parsed, basedOn: src.access_level, generatedAt: new Date().toISOString() };
     const { data, error } = await s.supabase.from("sources").update({ summary }).eq("id", src.id).select().single();
     if (error) throw migrationError(error);
     out.push(data);
-    await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "literature_matrix", sourceId: src.id } });
   }
   return json({ sources: out });
 });

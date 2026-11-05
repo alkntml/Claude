@@ -1,5 +1,6 @@
 import "server-only";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItem } from "@/lib/projects";
 import { runQualityChecks, type QualityIssue } from "@/lib/quality/checks";
@@ -64,7 +65,7 @@ KURALLAR:
     jsonSchema: SCHEMA,
   });
   let parsed: any;
-  try { parsed = JSON.parse(res.text); } catch { return null; }
+  try { parsed = JSON.parse(res.text); } catch { throw await spentError("Yapay zekâ incelemesi şu anda yapılamadı", res, model.provider, "stage_review"); }
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return {
     verdict: (["ok", "minor", "major"].includes(parsed.verdict) ? parsed.verdict : "minor") as StageReview["verdict"],

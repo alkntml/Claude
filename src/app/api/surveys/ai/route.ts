@@ -33,7 +33,7 @@ export const POST = route("surveys.ai.generate", async (req) => {
   let out;
   try { out = await generateSurvey(s.profile.plan_id, { ...b, project }); }
   catch (e) { throw new ApiError(422, e instanceof Error ? e.message : "Anket oluşturulamadı"); }
-  await recordUsage(s.user.id, "ai_request", { tokensIn: out.usage.input, tokensOut: out.usage.output, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "survey_generate" } });
+  await recordUsage(s.user.id, "ai_request", { usage: out.usage, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "survey_generate" } });
   const { data, error } = await s.supabase.from("surveys").insert({
     user_id: s.user.id, project_id: b.projectId ?? null, title: out.survey.title || b.purpose.slice(0, 80),
     description: out.survey.description, consent: out.survey.consent, questions: out.survey.questions,

@@ -3,6 +3,7 @@ import PptxGenJS from "pptxgenjs";
 import { CitationEngine, type CitationItem, type CitationStyleId } from "@/lib/citations";
 import { richToPlain } from "@/lib/citations/util";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { resolveFormat } from "./format";
 
@@ -56,7 +57,7 @@ KURALLAR:
     jsonSchema: SCHEMA,
   });
   let deck: Deck;
-  try { deck = JSON.parse(res.text); } catch { throw new Error("Sunum taslağı oluşturulamadı"); }
+  try { deck = JSON.parse(res.text); } catch { throw await spentError("Sunum taslağı oluşturulamadı", res, model.provider, "presentation"); }
   deck.slides = (deck.slides ?? []).filter((s) => s.title?.trim()).slice(0, 18).map((s) => ({ title: s.title.trim(), bullets: (s.bullets ?? []).slice(0, 6), notes: s.notes ?? "" }));
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { deck, sourceMap, usage: res.usage, model: res.model, provider: model.provider, cost };

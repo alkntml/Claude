@@ -117,10 +117,11 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 335 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 342 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D94: maliyet denetimi (Opus önbellek %5, Haiku uzun istem, bilinmeyen model, kesilen/okunamayan çağrılar, araç maliyeti toplamlara) + Yönetim → Maliyet sağlığı kartı
 - D93: Semantic Scholar kaldırıldı (toplam 12 veri tabanı); asistan kullanım sorularını rehbere göre yanıtlar (Haiku, bağlamsız)
 
 ## Commit geçmişi (özet)

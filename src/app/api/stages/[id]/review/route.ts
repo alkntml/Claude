@@ -1,4 +1,4 @@
-import { ApiError, json, route } from "@/lib/api";
+import { AiSpentError, ApiError, json, recordAiSpent, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { makeT } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
@@ -38,8 +38,9 @@ export const POST = route<Ctx>("stage.review", async (req, { params }) => {
       await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
     }
     ai = await aiStageReview({ planId: s.profile.plan_id, bundle, stage, uiLocale, tier: "fast" });
-    if (ai) await recordUsage(s.user.id, exempt ? "quality_check" : "ai_request", { tokensIn: ai.usage.input, tokensOut: ai.usage.output, costUsd: ai.cost, provider: ai.provider, model: ai.model, meta: { action: "stage_review", projectId: st.project_id } });
+    if (ai) await recordUsage(s.user.id, exempt ? "quality_check" : "ai_request", { usage: ai.usage, costUsd: ai.cost, provider: ai.provider, model: ai.model, meta: { action: "stage_review", projectId: st.project_id } });
   } catch (e) {
+    if (e instanceof AiSpentError) await recordAiSpent(e, s.user.id);
     aiError = e instanceof ApiError ? e.message : "Yapay zekâ incelemesi şu anda yapılamadı";
   }
   const T = makeT(uiLocale);

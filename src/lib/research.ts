@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { after } from "next/server";
 import { z } from "zod";
 import { complete, estimateCost, resolveModel, isProviderConfigured } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { normalizeDoi } from "@/lib/citations";
 import { providerConfig } from "@/lib/env";
 import { enabledProviders } from "@/lib/settings";
@@ -156,7 +157,7 @@ export async function planResearch(params: { planId: string; project: any; stage
   try {
     plan = JSON.parse(res.text);
   } catch {
-    throw new Error("Araştırma planı oluşturulamadı");
+    throw await spentError("Araştırma planı oluşturulamadı", res, model.provider, "research_plan");
   }
   if (params.force) plan.needsSearch = true;
   plan.queries = (plan.queries ?? []).filter((q) => q.query?.trim()).slice(0, 4);
@@ -197,7 +198,7 @@ export function providerHealthMeta(providers: { provider: string; ok: boolean; c
 export async function recordResearchUsage(userId: string, info: { usage: { input: number; output: number }; model: string; provider: string; cost: number }, queries: string[], opts: { countAsRequest?: boolean; providers?: { provider: string; ok: boolean; count: number; error?: string }[] } = {}) {
   await Promise.all([
     // Sohbet içi otomatik karar adımı ayrı bir AI isteği sayılmaz (token ve maliyet yine kaydedilir)
-    recordUsage(userId, "ai_request", { quantity: opts.countAsRequest === false ? 0 : 1, tokensIn: info.usage.input, tokensOut: info.usage.output, costUsd: info.cost, provider: info.provider, model: info.model, meta: { action: "research_plan" } }),
+    recordUsage(userId, "ai_request", { quantity: opts.countAsRequest === false ? 0 : 1, usage: info.usage, costUsd: info.cost, provider: info.provider, model: info.model, meta: { action: "research_plan" } }),
     queries.length ? recordUsage(userId, "source_search", { quantity: queries.length, meta: { queries, ...(opts.providers?.length ? { providers: providerHealthMeta(opts.providers) } : {}) } }) : Promise.resolve(),
   ]);
 }

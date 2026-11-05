@@ -1,5 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { fromAiQuestions, type AiQuestion, type Question } from "@/lib/surveys";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -46,7 +47,7 @@ async function run(planId: string, system: string, user: string, schema: Record<
   const model = await resolveModel(planId, "balanced");
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: "medium", jsonSchema: schema });
   let data: any;
-  try { data = JSON.parse(res.text); } catch { throw new Error("Yapay zekâ yanıtı okunamadı, lütfen tekrar deneyin"); }
+  try { data = JSON.parse(res.text); } catch { throw await spentError("Yapay zekâ yanıtı okunamadı, lütfen tekrar deneyin", res, model.provider, "survey_ai"); }
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { data, usage: res.usage, model: res.model, provider: model.provider, cost };
 }

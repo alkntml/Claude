@@ -1,5 +1,6 @@
 import "server-only";
 import { complete, estimateCost, resolveModel, type Tier } from "@/lib/ai/registry";
+import { spentError } from "@/lib/ai/spent";
 import { BLUEPRINT_FIELDS, BlueprintSchema, countsForLength, distributeWords, WORDS_PER_PAGE, type Blueprint, type BlueprintFieldKey } from "@/lib/blueprint";
 import { GRANT_PROGRAMS, LEVEL_LABELS, METHODOLOGY_LABELS, stageDef, WORK_TYPES, type AcademicLevel, type Methodology } from "@/lib/workflows";
 
@@ -97,7 +98,7 @@ async function run(planId: string, tier: Tier, system: string, user: string, sch
   const model = await resolveModel(planId, tier);
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens, effort: tier === "default" ? "medium" : "low", jsonSchema: schema });
   let data: any;
-  try { data = JSON.parse(res.text); } catch { throw new Error("Kurgu oluşturulamadı, lütfen tekrar deneyin"); }
+  try { data = JSON.parse(res.text); } catch { throw await spentError("Kurgu oluşturulamadı, lütfen tekrar deneyin", res, model.provider, "blueprint"); }
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { data, meta: { usage: res.usage, model: res.model, provider: model.provider, cost } };
 }

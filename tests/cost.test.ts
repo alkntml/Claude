@@ -93,3 +93,63 @@ describe("otomatik çalışmada döngü önleme (D78)", () => {
     expect(decideNext(90, [lang], newState()).kind).toBe("done");
   });
 });
+
+import { KNOWN_PRICES, cacheSavings, resolvePrice } from "@/lib/ai/cost";
+import { costHealth, monthProjection } from "@/lib/insights";
+
+describe("model fiyatları (D94)", () => {
+  it("Opus 5.5 önbellek okuması girdi fiyatının %5’i ($0.20/MTok)", () => {
+    expect(costFor(KNOWN_PRICES["claude-opus-5-5"], 1_000_000, 0, { cacheRead: 1_000_000 })).toBeCloseTo(0.2);
+    expect(costFor(KNOWN_PRICES["claude-sonnet-5-5"], 1_000_000, 0, { cacheRead: 1_000_000 })).toBeCloseTo(0.2);
+  });
+  it("Haiku 5.5: 100 bin token üstü istemde uzun istem fiyatı", () => {
+    const h = KNOWN_PRICES["claude-haiku-5-5"];
+    expect(costFor(h, 100_000, 1_000_000)).toBeCloseTo(0.01 + 0.5);
+    expect(costFor(h, 200_000, 1_000_000)).toBeCloseTo(0.1 + 2.5);
+  });
+  it("tarih ekli, aile ve bilinmeyen model adları sıfır maliyete düşmez", () => {
+    expect(resolvePrice("claude-sonnet-5-5", {}).match).toBe("exact");
+    expect(resolvePrice("claude-sonnet-5-5-20261001", {}).match).toBe("alias");
+    const fam = resolvePrice("claude-opus-6", {});
+    expect(fam.match).toBe("family");
+    expect(fam.price?.in).toBe(4);
+    const unk = resolvePrice("mystery-model", {});
+    expect(unk.match).toBe("unknown");
+    expect(unk.price?.out).toBe(50); // en pahalı bilinen fiyat (eksik değil fazla tahmin)
+  });
+  it("yönetici fiyat tablosu girdi/çıktıyı değiştirir, önbellek kuralı korunur", () => {
+    const { price } = resolvePrice("claude-opus-5-5", { "claude-opus-5-5": { in: 5, out: 25 } });
+    expect(price).toMatchObject({ in: 5, out: 25, cacheRead: 0.05 });
+  });
+  it("önbellek tasarrufu", () => {
+    const p = KNOWN_PRICES["claude-sonnet-5-5"];
+    expect(cacheSavings(p, 1_000_000, 0, { cacheRead: 1_000_000 })).toBeCloseTo(1.8);
+    expect(cacheSavings(p, 1_000_000, 0, { cacheWrite: 1_000_000 })).toBeCloseTo(-0.5);
+  });
+});
+
+describe("maliyet sağlığı (D94)", () => {
+  it("ortalama istek, önbellek isabeti, yarım/başarısız maliyet ve fiyatı tanımsız model", () => {
+    const h = costHealth([
+      { kind: "ai_request", quantity: 1, tokens_in: 100_000, tokens_out: 1000, cost_usd: 0.05, model: "claude-sonnet-5-5", meta: { cache: { r: 80_000, w: 0 } } },
+      { kind: "ai_request", quantity: 1, tokens_in: 10_000, tokens_out: 500, cost_usd: 0.03, model: "claude-sonnet-5-5", meta: { partial: true } },
+      { kind: "ai_request", quantity: 0, tokens_in: 5_000, tokens_out: 500, cost_usd: 0.02, model: "claude-opus-9", meta: { failed: true } },
+      { kind: "quality_check", quantity: 1, tokens_in: 1000, tokens_out: 100, cost_usd: 0.001, model: "claude-haiku-5-5", meta: {} },
+      { kind: "source_search", quantity: 3, tokens_in: 0, tokens_out: 0, cost_usd: 0, model: null, meta: {} },
+    ], {});
+    expect(h.requests).toBe(2);
+    expect(h.aiCost).toBeCloseTo(0.101);
+    expect(h.avgRequestUsd).toBeCloseTo(0.0505);
+    expect(h.cache.readTokens).toBe(80_000);
+    expect(h.cache.hitRate).toBeCloseTo(68.7, 0);
+    expect(h.cache.savingsUsd).toBeCloseTo(80_000 * 0.9 * 2 / 1e6);
+    expect(h.partialUsd).toBeCloseTo(0.03);
+    expect(h.failedUsd).toBeCloseTo(0.02);
+    expect(h.unpriced).toEqual(["claude-opus-9"]);
+  });
+  it("ay sonu tahmini", () => {
+    // 10 Kasım 12:00 TR → 9,5 gün geçti, 30 günlük ay
+    expect(monthProjection(19, new Date("2026-11-10T09:00:00Z"))).toBeCloseTo(60);
+    expect(monthProjection(5, new Date("2026-11-01T00:30:00Z"))).toBeNull();
+  });
+});

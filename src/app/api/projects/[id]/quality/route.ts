@@ -79,7 +79,7 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
       } catch {
         aiReview = { ran: false, error: "Yapay zekâ değerlendirmesi okunamadı" };
       }
-      await recordUsage(s.user.id, "ai_request", { tokensIn: res.usage.input, tokensOut: res.usage.output, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "quality_review" } });
+      await recordUsage(s.user.id, "ai_request", { usage: res.usage, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "quality_review" } });
     }
   }
   await recordUsage(s.user.id, "quality_check");

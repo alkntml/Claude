@@ -28,7 +28,7 @@ export const POST = route<Ctx>("project.presentation", async (_req, { params }) 
   }
   const buf = await renderPptx({ deck: gen.deck, sourceMap: gen.sourceMap, project: bundle.project, items: bundle.sources.map(sourceRowToItem), authorName: s.profile.full_name || "" });
   await Promise.all([
-    recordUsage(s.user.id, "ai_request", { tokensIn: gen.usage.input, tokensOut: gen.usage.output, costUsd: gen.cost, provider: gen.provider, model: gen.model, meta: { action: "presentation", projectId: id } }),
+    recordUsage(s.user.id, "ai_request", { usage: gen.usage, costUsd: gen.cost, provider: gen.provider, model: gen.model, meta: { action: "presentation", projectId: id } }),
     recordUsage(s.user.id, "export", { meta: { format: "pptx", projectId: id } }),
   ]);
   return new Response(new Uint8Array(buf), {

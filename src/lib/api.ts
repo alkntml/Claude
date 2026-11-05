@@ -1,9 +1,33 @@
 import "server-only";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { makeT } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
 import { NextResponse } from "next/server";
 import { ZodError, type ZodTypeAny, type output } from "zod";
 import { adminClient } from "@/lib/supabase/admin";
+
+/** İstek kapsamı: oturum açan kullanıcı (requireUser yazar); hata hâlinde harcanan yapay zekâ maliyetini kaydetmek için (D94) */
+export const requestCtx = new AsyncLocalStorage<{ userId?: string }>();
+
+/**
+ * Yapay zekâ çağrısı faturalandı ama yanıt kullanılamadı (ör. JSON bozuk). `route()` bu hatayı yakalayınca maliyeti
+ * kullanıcının hakkından düşmeden (quantity 0) kaydeder ve kullanıcıya hata mesajını gösterir.
+ */
+export class AiSpentError extends Error {
+  constructor(message: string, public spent: { tokensIn: number; tokensOut: number; costUsd: number; model: string; provider: string; action: string; cache?: { r: number; w: number } }) {
+    super(message);
+  }
+}
+
+/** Kullanılamayan ama faturalanan yapay zekâ çağrısının maliyetini kaydeder (kullanıcı hakkından düşmez) */
+export async function recordAiSpent(e: AiSpentError, userId: string | null) {
+  if (!userId) return;
+  const sp = e.spent;
+  await adminClient().from("usage_events").insert({
+    user_id: userId, kind: "ai_request", quantity: 0, tokens_in: sp.tokensIn, tokens_out: sp.tokensOut, cost_usd: sp.costUsd, provider: sp.provider, model: sp.model,
+    meta: { action: sp.action, failed: true, ...(sp.cache ? { cache: sp.cache } : {}) },
+  }).then(() => undefined, () => undefined);
+}
 
 export class ApiError extends Error {
   constructor(public status: number, message: string, public code?: string, public extra?: Record<string, unknown>) {
@@ -62,7 +86,7 @@ type Handler<C> = (req: Request, ctx: C) => Promise<Response>;
 
 /** Ortak hata yakalama + CSRF kontrolü. */
 export function route<C>(name: string, fn: Handler<C>): Handler<C> {
-  return async (req, ctx) => {
+  return (req, ctx) => requestCtx.run({}, async () => {
     try {
       assertSameOrigin(req);
       return await fn(req, ctx);
@@ -70,9 +94,15 @@ export function route<C>(name: string, fn: Handler<C>): Handler<C> {
       // Hata mesajları kullanıcının arayüz diline çevrilir (sözlükte yoksa Türkçe kalır)
       const T = makeT(localeFromRequest(req));
       if (e instanceof ApiError) return json({ error: T(e.message), code: e.code, ...e.extra }, e.status);
+      if (e instanceof AiSpentError) {
+        const userId = requestCtx.getStore()?.userId ?? null;
+        await recordAiSpent(e, userId);
+        await logError(name, e, userId, { action: e.spent.action, costUsd: e.spent.costUsd });
+        return json({ error: T(e.message) }, 502);
+      }
       if (e instanceof ZodError) return json({ error: T("Geçersiz istek") }, 422);
       await logError(name, e);
       return json({ error: T("Beklenmeyen bir hata oluştu") }, 500);
     }
-  };
+  });
 }

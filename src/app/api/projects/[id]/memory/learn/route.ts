@@ -36,7 +36,7 @@ export const POST = route<Ctx>("memory.learn", async (req, { params }) => {
 
   const { data: mem } = await s.supabase.from("project_memory").select("content").eq("project_id", id);
   const r = await learnFromDocument({ planId: s.profile.plan_id, fileName: file.name, text: clean.slice(0, MAX_CHARS), project, existing: (mem ?? []).map((m) => m.content as string) });
-  await recordUsage(s.user.id, "ai_request", { tokensIn: r.usage.input, tokensOut: r.usage.output, costUsd: r.cost, provider: r.provider, model: r.model, meta: { action: "memory_learn", projectId: id } });
+  await recordUsage(s.user.id, "ai_request", { usage: r.usage, costUsd: r.cost, provider: r.provider, model: r.model, meta: { action: "memory_learn", projectId: id } });
   if (!r.items.length) return json({ items: [], truncated: clean.length > MAX_CHARS });
   const { data, error } = await s.supabase.from("project_memory").insert(r.items.map((x) => ({ project_id: id, user_id: s.user.id, kind: x.kind, content: x.content, source: "ai" }))).select();
   if (error) throw error;

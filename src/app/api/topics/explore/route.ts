@@ -19,7 +19,7 @@ export const POST = route("topics.explore", async (req) => {
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   try {
     const out = await suggestTopics({ planId: s.profile.plan_id, data, level: b.level, discipline: b.discipline, language: b.language });
-    await recordUsage(s.user.id, "ai_request", { tokensIn: out.usage.input, tokensOut: out.usage.output, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "topic_ideas" } });
+    await recordUsage(s.user.id, "ai_request", { usage: out.usage, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "topic_ideas" } });
     return json({ data, ideas: out.ideas });
   } catch {
     return json({ data, ideas: [], ideasError: true });

@@ -2,7 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { ApiError } from "@/lib/api";
+import { ApiError, requestCtx } from "@/lib/api";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { activeOrg, type OrgInfo } from "@/lib/growth";
@@ -85,6 +85,8 @@ export async function requireUser(): Promise<Session> {
   const s = await getSession();
   if (!s) throw new ApiError(401, "Oturum açmanız gerekiyor", "unauthenticated");
   if (s.profile.is_suspended) throw new ApiError(403, "Hesabınız askıya alınmış", "suspended");
+  const ctx = requestCtx.getStore();
+  if (ctx) ctx.userId = s.user.id;
   return s;
 }
 

@@ -21,7 +21,7 @@ export const POST = route<Ctx>("project.blueprint.ai", async (req, { params }) =
   const project = await requireProject(s, id);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   const record = (o: { usage: { input: number; output: number }; cost: number; provider: string; model: string }, action: string) =>
-    recordUsage(s.user.id, "ai_request", { tokensIn: o.usage.input, tokensOut: o.usage.output, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action, projectId: id } });
+    recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action, projectId: id } });
   try {
     if (b.mode === "generate") {
       const { data: stages } = await s.supabase.from("project_stages").select("id, key, title, description").eq("project_id", id).eq("user_id", s.user.id).order("position");

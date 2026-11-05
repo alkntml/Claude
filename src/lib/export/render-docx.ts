@@ -1,7 +1,8 @@
 import "server-only";
 import {
   AlignmentType, Document, Footer, FootnoteReferenceRun, HeadingLevel, LevelFormat, Packer, PageBreak, PageNumber, Paragraph,
-  Table, TableCell, TableOfContents, TableRow, TextRun, WidthType, BorderStyle, ImageRun,
+  Table, TableCell, TableRow, TextRun, WidthType, BorderStyle, ImageRun,
+  Bookmark, InternalHyperlink, LeaderType, PageReference, TabStopType,
 } from "docx";
 import { figurePng, type ExportDoc, type Run } from "./model";
 import { CM, coverLines, resolveFormat, type DocFormat } from "./format";
@@ -28,7 +29,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       return new TextRun({ text: r.text, bold: r.bold, italics: r.italic, underline: r.underline ? {} : undefined, superScript: r.sup, font, size });
     });
 
-  const body: (Paragraph | Table | TableOfContents)[] = [];
+  const body: (Paragraph | Table)[] = [];
 
   // Kapak (şablondaki kurum bilgileriyle)
   const cv = coverLines(f, d);
@@ -44,10 +45,20 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
   center(cv.bottom, { before: 2400 });
   body.push(new Paragraph({ children: [new PageBreak()] }));
 
-  // İçindekiler (Word açılışta alanları günceller)
-  body.push(new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun({ text: d.language === "tr" ? "İçindekiler" : "Contents", font, bold: true, size: 28 })] }));
-  body.push(new TableOfContents(d.language === "tr" ? "İçindekiler" : "Contents", { hyperlink: true, headingStyleRange: "1-3" }));
+  // İçindekiler: girişler dosyaya hazır yazılır (Word alan güncellemesi yapmasa, Mac Word / Pages / Google Dokümanlar’da da
+  // görünür). Her giriş başlığa bağlantılıdır; sayfa numaraları PAGEREF alanıyla Word açılışta güncellenir.
+  body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: d.language === "tr" ? "İÇİNDEKİLER" : "CONTENTS", font, bold: true, size: 28 })] }));
+  const textWidth = Math.round((21 - f.margins.left - f.margins.right) * CM);
+  const tocEntry = (anchor: string, text: string, level: number) => new Paragraph({
+    tabStops: [{ type: TabStopType.RIGHT, position: textWidth, leader: LeaderType.DOT }],
+    indent: { left: (level - 1) * 400 },
+    spacing: { line: 300, after: 60 },
+    children: [new InternalHyperlink({ anchor, children: [new TextRun({ text, font, size, bold: level === 1 }), new TextRun({ text: "\t", font, size })] }), new PageReference(anchor, { hyperlink: true })],
+  });
+  d.toc.forEach((t, k) => body.push(tocEntry(`_Toc${k + 1}`, `${t.number ? `${t.number} ` : ""}${t.level === 1 && f.chapterTitleUppercase ? t.text.toLocaleUpperCase(d.language === "tr" ? "tr" : "en") : t.text}`, t.level)));
+  if (d.bibliography.length) body.push(tocEntry("_TocBib", d.bibliographyTitle, 1));
   body.push(new Paragraph({ children: [new PageBreak()] }));
+  let tocIdx = 0;
 
   let firstChapter = true;
   for (const b of d.blocks) {
@@ -56,7 +67,10 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       if (b.level === 1) firstChapter = false;
       const htext = b.runs.map((r) => r.text).join("");
       const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language === "tr" ? "tr" : "en") : htext;
-      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [new TextRun({ text: `${b.number ? `${b.number} ` : ""}${shown}`, bold: true, font, size: b.level === 1 ? Math.max(size, 28) : size, color: "000000" })] }));
+      const hrun = new TextRun({ text: `${b.number ? `${b.number} ` : ""}${shown}`, bold: true, font, size: b.level === 1 ? Math.max(size, 28) : size, color: "000000" });
+      // İçindekiler girişleri (model.toc) ilk üç düzeydeki başlıklarla birebir aynı sırada
+      const anchor = b.level <= 3 ? `_Toc${++tocIdx}` : null;
+      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [anchor ? new Bookmark({ id: anchor, children: [hrun] }) : hrun] }));
     } else if (b.kind === "paragraph") {
       body.push(new Paragraph({ alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {
@@ -86,7 +100,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
 
   if (d.bibliography.length) {
     body.push(new Paragraph({ children: [new PageBreak()] }));
-    body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun({ text: d.bibliographyTitle, bold: true, font, size: 28 })] }));
+    body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new Bookmark({ id: "_TocBib", children: [new TextRun({ text: d.bibliographyTitle, bold: true, font, size: 28 })] })] }));
     for (const e of d.bibliography) {
       const children = [
         ...(d.numericBibliography ? [new TextRun({ text: `[${e.number}]\t`, font, size })] : []),

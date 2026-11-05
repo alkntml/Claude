@@ -86,6 +86,27 @@ describe("export", () => {
   });
 });
 
+describe("Word içindekiler", () => {
+  it("girişler dosyaya hazır yazılır ve başlıklara bağlanır (Word alan güncellemesi gerekmeden görünür)", async () => {
+    const JSZip = (await import("jszip")).default;
+    const p = (txt: string) => ({ type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: txt }] }] });
+    const st = [
+      { id: "t", key: "topic", title: "Araştırma konusunun belirlenmesi", position: 0, content_text: "a", content: p("Havacılık sektörü stratejiktir.") },
+      { id: "p", key: "problem", title: "Araştırma probleminin tanımlanması", position: 1, content_text: "b", content: p("Problem metni.") },
+      { id: "u", key: "purpose", title: "Araştırmanın amacı ve önemi", position: 2, content_text: "c", content: p("Amaç metni.") },
+    ];
+    const d = buildExportDoc({ project: { ...project, language: "tr" }, stages: st, sources: [], engineItems: [], authorName: "" });
+    expect(d.toc.map((x) => x.text)).toEqual(expect.arrayContaining(["GİRİŞ", "Problem Durumu", "Araştırmanın Amacı ve Önemi"]));
+    const zip = await JSZip.loadAsync(await toDocx(d));
+    const xml = await zip.file("word/document.xml")!.async("string");
+    const tocPart = xml.slice(xml.indexOf("İÇİNDEKİLER"), xml.indexOf("Havacılık"));
+    expect(tocPart).toContain("1.1 Problem Durumu");
+    expect(tocPart).toContain("1.2 Araştırmanın Amacı ve Önemi");
+    expect(tocPart).toContain("PAGEREF _Toc2");
+    expect(xml).toMatch(/w:bookmarkStart[^>]*w:name="_Toc2"/);
+  });
+});
+
 describe("misc server utils", () => {
   it("verifies Stripe webhook signatures", () => {
     const payload = '{"id":"evt_1"}';

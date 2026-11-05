@@ -64,8 +64,12 @@ const fold = (s: string) => s.toLocaleLowerCase("tr").replace(/\s+/g, " ").trim(
 const WHERE = /(nereden|nerden|nerede|nereye|hangi (menü|sekme|düğme|buton|tuş|ekran|sayfa)|where (can|do|is|are)|which (menu|button|tab|page))/;
 const HOW = /(nasıl|how (do|can|to)|how i)/;
 const VERB = /(indir|dışa aktar|içe aktar|aktar(ı|a)?r|yükle|ekle|oluştur|sil(e|i)|paylaş|değiştir|kullan|kaydet|geri al|ayarla|açabil|açarım|açılır|bulabil|bulurum|ulaş|export|download|import|upload|create|add|share|change|delete|remove|use|save|open|find)/;
-const FEATURE = /(grafik|tablo|şekil|anket|kaynak|atıf|kaynakça|pdf|word|docx|dosya|hafıza|kalite|danışman|sunum|alt başlık|bölüm|stil|apa|isnad|şablon|kapak|içindekiler|istatistik|analiz|hesap|paket|şifre|gece modu|tema|dil |proje|çalışma|matris|dipnot|zotero|mendeley|endnote|bibtex|kurgu|sürüm|yorum|chart|graph|table|figure|survey|source|citation|reference|bibliography|export|template|account|plan|password|memory|footnote)/;
+const FEATURE = /(grafi[kğ]|tablo|şekil|anket|kayna[kğ]|atıf|kaynakça|pdf|word|docx|dosya|hafıza|kalite|danışman|sunum|alt başlık|bölüm|stil|apa|isnad|şablon|kapak|içindekiler|istatistik|analiz|hesap|paket|şifre|gece modu|tema|dil |proje|çalışma|matris|dipnot|zotero|mendeley|endnote|bibtex|kurgu|sürüm|yorum|chart|graph|table|figure|survey|source|citation|reference|bibliography|export|template|account|plan|password|memory|footnote)/;
 const UI = /(düğme|buton|tuş|menü|sekme|ekran|araçlar|ayarlar|sistem|site|platform|uygulama|academiana|button|menu|tab|settings)/;
+/** Yalnızca platformdaki bir araçla yapılabilen işler (asistan sohbette grafik çizemez, dosya indiremez) */
+const TOOL = /(grafi[kğ]|şekil oluştur|anket|istatistik|analiz yap|dışa aktar|indir|pdf|word|docx|içe aktar|şablon|kapak|içindekiler|atıf stil|paylaş|matris|sunum|zotero|mendeley|endnote|chart|graph|survey|export|download)/;
+const MAKE = /(yap|çiz|hazırla|çıkar|koy|oluştur|ekle|indir|aktar|paylaş|make|draw|build|create|add|get)/;
+const ASKY = /(\?|istiyorum|isterim|lazım|gerek|\bm[iı]\b|\bm[iı]s[iı]n|\bm[iı]y[iı]m|nasıl|want|need|can i|how)/;
 /** Metindeki içerikle ilgili sorular (ör. “bu bilgiyi nereden aldın?”, “nerede eksik var?”) kullanım sorusu değildir */
 const NOT_HELP = /(nereden (aldın|buldun|geliyor|çıkardın)|kaynağı ne|eksik|hata(lı)?|yanlış|tutarsız|zayıf|yaz(ar mısın|abilir misin|ar mısın)|düzelt)/;
 
@@ -74,5 +78,7 @@ export function isHelpQuestion(message: string): boolean {
   const m = fold(message);
   if (m.length > 300 || NOT_HELP.test(m)) return false;
   const asks = WHERE.test(m) || (HOW.test(m) && VERB.test(m));
-  return asks && (FEATURE.test(m) || UI.test(m));
+  if (asks && (FEATURE.test(m) || UI.test(m))) return true;
+  // “Grafik oluşturmak istiyorum”, “grafik çizebilir misin?” gibi araç gerektiren istekler
+  return TOOL.test(m) && MAKE.test(m) && ASKY.test(m);
 }

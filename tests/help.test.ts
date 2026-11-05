@@ -13,6 +13,13 @@ describe("isHelpQuestion (D93)", () => {
     "Where can I create a chart?",
     "How do I export my thesis to PDF?",
     "Hangi menüden istatistik analizi yapılıyor?",
+    "Grafik oluşturmak istiyorum",
+    "grafik oluşturabilir misin?",
+    "Bu çalışma için grafik çizmek istiyorum, nasıl yapacağım?",
+    "Grafiği nasıl yapabilirim",
+    "grafik nerede",
+    "Bulgular için anket hazırlamak istiyorum",
+    "pdf olarak indirmek istiyorum",
   ])("kullanım sorusu: %s", (m) => expect(isHelpQuestion(m)).toBe(true));
 
   it.each([
@@ -23,6 +30,8 @@ describe("isHelpQuestion (D93)", () => {
     "Öz yeterlik kavramını tanımla",
     "Bu paragrafı akademik dile çevir",
     "Araştırmanın amacı nasıl olmalı?",
+    "Bulguları tablodaki değerlere göre yorumla",
+    "Grafikteki sonuçları akademik dille açıkla",
   ])("kullanım sorusu değil: %s", (m) => expect(isHelpQuestion(m)).toBe(false));
 
   it("rehber temel menüleri içerir ve uydurmayı yasaklar", () => {

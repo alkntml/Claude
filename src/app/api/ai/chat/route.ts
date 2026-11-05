@@ -129,7 +129,7 @@ export const POST = route("ai.chat", async (req) => {
 
   const stagePrompt = stage ? stagePrompts[stage.key] : undefined;
   // Sistem talimatı her istekte aynıdır (önbellek, D78); bölüme özel talimat değişken bağlama girer
-  const system = [sysSetting.text, OUTPUT_PROTOCOL, `KULLANIM SORULARI: Kullanıcı platformun nasıl kullanılacağını sorarsa (ör. “grafiği nereden oluştururum?”) yalnızca aşağıdaki rehbere göre kısa ve adım adım cevap ver; rehberde olmayan menü veya düğme adı uydurma.\n\n${APP_GUIDE}`].filter(Boolean).join("\n\n");
+  const system = [sysSetting.text, OUTPUT_PROTOCOL, `KULLANIM SORULARI (önemli): Kullanıcı bir işi nasıl veya nerede yapacağını sorarsa ya da grafik, şekil, istatistik analizi, anket, dışa aktarma, içe aktarma, paylaşma gibi platformdaki bir araçla yapılan bir iş isterse ÖNCE bunun Academiana içinde nasıl yapılacağını aşağıdaki rehberden adım adım, düğme adlarıyla anlat (ör. “Üstte Araçlar → Grafik oluştur → …”). SPSS, Excel, jamovi, R, Canva gibi dış programları kullanıcı açıkça istemedikçe ÖNERME. Rehberde olmayan menü veya düğme adı uydurma.\n\n${APP_GUIDE}`].filter(Boolean).join("\n\n");
   // Geçmişteki eski taslaklar kısa notla özetlenir; bölümün güncel metni zaten bağlamda (D78)
   const messages = [...compactHistory((history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: userContent }];
 

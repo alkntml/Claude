@@ -11,7 +11,7 @@ import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/
 import { loadProjectBundle } from "@/lib/projects";
 import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
-import { addSourcesToProject, executeSearch, focusOf, ingestWithBudget, minSourcesFor, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput, researchGate } from "@/lib/research";
+import { addSourcesToProject, executeSearch, providerHealthMeta, focusOf, ingestWithBudget, minSourcesFor, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput, researchGate } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
 import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining } from "@/lib/usage";
 
@@ -77,6 +77,7 @@ export const POST = route("ai.chat", async (req) => {
   const recentlySearchedFocus = (history ?? []).some((m) => m.role === "assistant" && (m.meta as { research?: { focusKey?: string } } | null)?.research?.focusKey === focusKey && Date.now() - new Date(m.created_at as string).getTime() < RESEARCH_COOLDOWN_MS);
   const gate = researchGate({ action: b.action, message: b.message, recentlySearchedFocus });
   let searchedQueries: string[] = [];
+  let searchProviders: Awaited<ReturnType<typeof executeSearch>>["providers"] = [];
 
   const [sysSetting, stagePrompts, models] = await Promise.all([getSetting("ai.system_prompt"), getSetting("ai.stage_prompts"), getSetting("ai.models")]);
 
@@ -122,7 +123,8 @@ export const POST = route("ai.chat", async (req) => {
               queries = planned.plan.queries.map((q) => q.query);
               controller.enqueue(sse("phase", { phase: "search" }));
               controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
-              const { results } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
+              const { results, providers } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
+              searchProviders = providers;
               const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
               const picks = pickForAutoAdd(results, existing, Math.min(8, MAX_PROJECT_SOURCES - bundle.sources.length));
               if (picks.length) {
@@ -140,7 +142,7 @@ export const POST = route("ai.chat", async (req) => {
             }
           }
           searchedQueries = queries;
-          await recordResearchUsage(s.user.id, planned, queries, { countAsRequest: false });
+          await recordResearchUsage(s.user.id, planned, queries, { countAsRequest: false, providers: searchProviders });
         } catch (e) {
           await logError("ai.chat.research", e, s.user.id);
         }
@@ -219,7 +221,7 @@ export const POST = route("ai.chat", async (req) => {
             if (leftGap != null) gaps = gaps.slice(0, Math.max(1, leftGap));
             controller.enqueue(sse("phase", { phase: "gaps" }));
             controller.enqueue(sse("status", { text: T("Taslakta kaynağı eksik kalan konular aranıyor: {q}", { q: gaps.join(" · ") }) }));
-            const { results } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8 });
+            const { results, providers: gapProviders } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8 });
             const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
             const picks = pickForAutoAdd(results, existing, 6);
             if (picks.length) {
@@ -228,7 +230,7 @@ export const POST = route("ai.chat", async (req) => {
               if (gapAdded) controller.enqueue(sse("gap_sources", { sources: added.sources, queries: gaps }));
             }
             if (!gapAdded) controller.enqueue(sse("status", { text: T("Eksik konular için veri tabanlarında uygun yeni kaynak bulunamadı. Bu konular taslağa kesin iddia olarak eklenmedi.") }));
-            await recordUsage(s.user.id, "source_search", { quantity: gaps.length, meta: { queries: gaps, kind: "gap" } });
+            await recordUsage(s.user.id, "source_search", { quantity: gaps.length, meta: { queries: gaps, kind: "gap", providers: providerHealthMeta(gapProviders) } });
           } catch (e) {
             controller.enqueue(sse("status", { text: e instanceof ApiError ? T(e.message) : T("Eksik konular için kaynak araması yapılamadı.") }));
           }

@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Semantic Scholar ücretsiz API anahtarı al (semanticscholar.org/product/api) → Vercel env `SEMANTIC_SCHOLAR_API_KEY` + Redeploy (anahtarsız sık hız sınırı, D92). Anahtar sohbette paylaşılmaz.
+- [ ] Canlıda ERIC, DBLP, DataCite aramalarını dene; Yönetim → Veri kaynağı sağlığı’ndan sonuçları kontrol et (D92)
 - [ ] Supabase SQL Editor’de `20261116000021_tools_analytics.sql` (ücretsiz araç sayacı + ziyaretçi ölçümü, D90)
 - [ ] Supabase SQL Editor’de `supabase/check_status.sql` çalıştır (salt okunur): EKSİK görünen migration’ları sırayla çalıştır. 17 (fiyat artışı) EKSİK görünürse önce Claude’a sor: fiyatlar yönetim panelinden elle değiştirildiyse yanlış EKSİK görünebilir.
 - [ ] Supabase SQL Editor’de `20261115000020_no_work_lock.sql` (çalışma kilidini kaldırma, D81)

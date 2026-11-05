@@ -11,8 +11,36 @@ export async function getJson<T>(url: string, init: RequestInit & { signal: Abor
     ...init,
     headers: { Accept: "application/json", "User-Agent": UA, ...(init.headers ?? {}) },
   });
-  if (!res.ok) throw new HttpError(res.status, `${new URL(url).hostname} ${res.status}`);
+  if (!res.ok) {
+    const err = new HttpError(res.status, `${new URL(url).hostname} ${res.status}`) as HttpError & { retryAfter?: number };
+    const ra = res.headers.get("retry-after");
+    if (ra) err.retryAfter = Number(ra);
+    throw err;
+  }
   return (await res.json()) as T;
+}
+
+/**
+ * Geçici hatalarda (429 hız sınırı, 5xx) kısa bekleyip yeniden dener (D92). Retry-After başlığına uyar (en fazla 3 sn);
+ * iptal sinyali gelince bekleme kesilir.
+ */
+export async function getJsonRetry<T>(url: string, init: RequestInit & { signal: AbortSignal }, opts: { retries?: number; baseDelayMs?: number } = {}): Promise<T> {
+  const retries = opts.retries ?? 2;
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await getJson<T>(url, init);
+    } catch (e) {
+      const status = e instanceof HttpError ? e.status : 0;
+      const transient = status === 429 || status >= 500;
+      if (!transient || attempt >= retries || init.signal.aborted) throw e;
+      const ra = Number((e as HttpError & { retryAfter?: number }).retryAfter);
+      const wait = Math.min(3000, Number.isFinite(ra) && ra > 0 ? ra * 1000 : (opts.baseDelayMs ?? 700) * 2 ** attempt);
+      await new Promise<void>((r, j) => {
+        const t = setTimeout(r, wait);
+        init.signal.addEventListener("abort", () => { clearTimeout(t); j(new DOMException("aborted", "AbortError")); }, { once: true });
+      });
+    }
+  }
 }
 
 export async function getText(url: string, init: RequestInit & { signal: AbortSignal }): Promise<string> {

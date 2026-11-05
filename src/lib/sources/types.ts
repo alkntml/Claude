@@ -2,7 +2,8 @@ import type { ItemType, Person } from "@/lib/citations/types";
 
 export type SourceProviderId =
   | "openalex" | "crossref" | "semantic_scholar" | "europepmc" | "arxiv"
-  | "doaj" | "core" | "openaire" | "google_books" | "unpaywall" | "turkiye";
+  | "doaj" | "core" | "openaire" | "google_books" | "unpaywall" | "turkiye"
+  | "eric" | "dblp" | "datacite";
 
 export type AccessLevel = "metadata" | "abstract" | "full_text";
 

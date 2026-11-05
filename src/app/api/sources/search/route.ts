@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { providerHealthMeta } from "@/lib/research";
 import { json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { providerConfig } from "@/lib/env";
@@ -23,6 +24,6 @@ export const POST = route("sources.search", async (req) => {
   await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
   const enabled = await enabledProviders();
   const res = await searchAll(q as Parameters<typeof searchAll>[0], enabled, providerConfig());
-  await recordUsage(s.user.id, "source_search", { meta: { query: q.query, providers: res.providers.map((p) => ({ p: p.provider, ok: p.ok, n: p.count })) } });
+  await recordUsage(s.user.id, "source_search", { meta: { query: q.query, providers: providerHealthMeta(res.providers) } });
   return json(res);
 });

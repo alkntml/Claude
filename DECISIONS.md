@@ -414,3 +414,7 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D91 — Seçili bölümleri dışa aktarma
 - Dışa aktar menüsünde “Tüm çalışma / Seçili bölümler”; seçimde başlık numaraları tüm çalışmadaki yerlerini korur, ana bölüm başlığı ilk seçilen kısmın önüne eklenir, kaynakça yalnızca seçilen bölümlerde atıf yapılan kaynakları içerir (`buildExportDoc` `onlyStageIds`, uç `?stages=`).
+
+### D92 — Semantic Scholar sağlığı ve üç yeni veri tabanı
+- Semantic Scholar “sağlık verisi yok” görünüyordu: sağlık yalnızca elle aramada kaydediliyordu ve anahtarsız S2 sık sık 429 (hız sınırı) veriyor. Artık otomatik araştırma ve boşluk aramaları da sağlık kaydeder (`providerHealthMeta`, son hata dahil; yönetimde başarı %90’ın altındaysa “son hata” görünür). `getJsonRetry`: 429/5xx’te üstel bekleme ile yeniden dener (Retry-After’a uyar, en fazla 3 sn). Anahtarsız S2 429 alırsa 30 sn bekleme süresine girer ve açık bir hata (“SEMANTIC_SCHOLAR_API_KEY önerilir”) verir; kalıcı çözüm Vercel’e ücretsiz `SEMANTIC_SCHOLAR_API_KEY` eklemek.
+- Yeni anahtarsız kaynaklar: ERIC (eğitim; açık erişim PDF bağlantısı), DBLP (bilgisayar bilimleri; yazar ayırt etme numaraları atılır), DataCite (tez, veri seti, rapor, ön baskı DOI’leri; yazılım/görsel hariç). Varsayılan açık; Yönetim → Ayarlar → Veri kaynaklarından kapatılabilir. Ayrıştırıcılar fixture testli (`tests/providers-extra.test.ts`); canlı yanıt biçimi kullanıcının ekran görüntüleriyle doğrulanacak.

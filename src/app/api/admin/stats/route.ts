@@ -44,7 +44,7 @@ export const GET = route("admin.stats", async (req) => {
 
   const byDay: Record<string, { ai: number; search: number; cost: number; tokens: number }> = {};
   const byModel: Record<string, { requests: number; tokens: number; cost: number }> = {};
-  const providerHealth: Record<string, { ok: number; fail: number }> = {};
+  const providerHealth: Record<string, { ok: number; fail: number; lastError?: string }> = {};
   const totals = { ai: 0, search: 0, exports: 0, uploads: 0, tokens: 0, cost: 0 };
   for (const e of events) {
     const day = e.created_at.slice(0, 10);
@@ -60,9 +60,9 @@ export const GET = route("admin.stats", async (req) => {
     }
     if (e.kind === "source_search") {
       totals.search += e.quantity; byDay[day].search += e.quantity;
-      for (const p of ((e.meta as { providers?: { p: string; ok: boolean }[] })?.providers ?? [])) {
+      for (const p of ((e.meta as { providers?: { p: string; ok: boolean; e?: string }[] })?.providers ?? [])) {
         providerHealth[p.p] ??= { ok: 0, fail: 0 };
-        if (p.ok) providerHealth[p.p].ok++; else providerHealth[p.p].fail++;
+        if (p.ok) providerHealth[p.p].ok++; else { providerHealth[p.p].fail++; if (p.e) providerHealth[p.p].lastError = p.e; }
       }
     }
     if (e.kind === "export") totals.exports += e.quantity;

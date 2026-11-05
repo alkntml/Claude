@@ -189,11 +189,16 @@ export function pickForAutoAdd(results: (SourceRecord & { foundBy?: string })[],
   return usable.sort((a, b) => quality(b) - quality(a)).slice(0, max);
 }
 
-export async function recordResearchUsage(userId: string, info: { usage: { input: number; output: number }; model: string; provider: string; cost: number }, queries: string[], opts: { countAsRequest?: boolean } = {}) {
+/** Veri tabanı sağlığı için kayıt biçimi (yönetim → veri kaynağı sağlığı, D92) */
+export function providerHealthMeta(providers: { provider: string; ok: boolean; count: number; error?: string }[]) {
+  return providers.map((p) => ({ p: p.provider, ok: p.ok, n: p.count, ...(p.ok ? {} : { e: String(p.error ?? "").slice(0, 80) }) }));
+}
+
+export async function recordResearchUsage(userId: string, info: { usage: { input: number; output: number }; model: string; provider: string; cost: number }, queries: string[], opts: { countAsRequest?: boolean; providers?: { provider: string; ok: boolean; count: number; error?: string }[] } = {}) {
   await Promise.all([
     // Sohbet içi otomatik karar adımı ayrı bir AI isteği sayılmaz (token ve maliyet yine kaydedilir)
     recordUsage(userId, "ai_request", { quantity: opts.countAsRequest === false ? 0 : 1, tokensIn: info.usage.input, tokensOut: info.usage.output, costUsd: info.cost, provider: info.provider, model: info.model, meta: { action: "research_plan" } }),
-    queries.length ? recordUsage(userId, "source_search", { quantity: queries.length, meta: { queries } }) : Promise.resolve(),
+    queries.length ? recordUsage(userId, "source_search", { quantity: queries.length, meta: { queries, ...(opts.providers?.length ? { providers: providerHealthMeta(opts.providers) } : {}) } }) : Promise.resolve(),
   ]);
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

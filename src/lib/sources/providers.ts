@@ -12,7 +12,7 @@
  */
 import type { ItemType, Person } from "@/lib/citations/types";
 import { normalizeDoi } from "@/lib/citations/util";
-import { getJson, getText, stripTags } from "./http";
+import { getJson, getJsonRetry, getText, HttpError, stripTags } from "./http";
 import type { ProviderConfig, SearchQuery, SourceProvider, SourceProviderId, SourceRecord } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -225,6 +225,9 @@ export function parseSemanticScholar(json: any): SourceRecord[] {
   });
 }
 
+/** Anahtarsız Semantic Scholar hız sınırına takılınca kısa bekleme (sunucu örneği başına) */
+let s2CooldownUntil = 0;
+
 const semanticScholar: SourceProvider = {
   id: "semantic_scholar",
   label: "Semantic Scholar",
@@ -237,7 +240,18 @@ const semanticScholar: SourceProvider = {
     if (q.yearFrom || q.yearTo) p.set("year", `${q.yearFrom ?? ""}-${q.yearTo ?? ""}`);
     if (q.openAccessOnly) p.set("openAccessPdf", "");
     const headers: Record<string, string> = cfg.semanticScholarKey ? { "x-api-key": cfg.semanticScholarKey } : {};
-    return parseSemanticScholar(await getJson(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`, { signal, headers }));
+    // Anahtarsız kullanımda paylaşılan hız sınırı sık dolar: önceki sınırdan sonra kısa süre hiç denenmez,
+    // dolduğunda kısa beklemeyle yeniden denenir (D92)
+    if (!cfg.semanticScholarKey && Date.now() < s2CooldownUntil) throw new Error("hız sınırı (SEMANTIC_SCHOLAR_API_KEY önerilir)");
+    try {
+      return parseSemanticScholar(await getJsonRetry(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`, { signal, headers }, { retries: 2, baseDelayMs: 900 }));
+    } catch (e) {
+      if (e instanceof HttpError && e.status === 429) {
+        if (!cfg.semanticScholarKey) s2CooldownUntil = Date.now() + 30_000;
+        throw new Error(cfg.semanticScholarKey ? "hız sınırı" : "hız sınırı (SEMANTIC_SCHOLAR_API_KEY önerilir)");
+      }
+      throw e;
+    }
   },
 };
 
@@ -531,10 +545,128 @@ const unpaywall: SourceProvider = {
   unavailableReason: (cfg) => (cfg.contactEmail ? null : "ACADEMIC_CONTACT_EMAIL tanımlı değil"),
 };
 
+
+// ---------------------------------------------------------------------------
+// ERIC — ABD Eğitim Bakanlığı eğitim araştırmaları dizini (D92; anahtar gerekmez)
+// ---------------------------------------------------------------------------
+
+export function parseEric(json: any): SourceRecord[] {
+  return (json?.response?.docs ?? []).map((d: any) => {
+    const doi = typeof d.url === "string" ? d.url.match(/10\.\d{4,9}\/\S+/)?.[0] ?? null : null;
+    const types: string[] = Array.isArray(d.publicationtype) ? d.publicationtype : [];
+    const isBook = types.some((t) => /book/i.test(t));
+    const isThesis = types.some((t) => /dissertation|thesis/i.test(t));
+    const full = d.e_fulltextauth === 1 || d.e_fulltextauth === "1" || d.e_fulltextauth === true;
+    return finalize({
+      type: isThesis ? "thesis" : isBook ? "book" : "article-journal",
+      title: d.title ?? "",
+      authors: (Array.isArray(d.author) ? d.author : d.author ? [d.author] : []).map((a: string) => splitName(a)),
+      year: d.publicationdateyear ? Number(d.publicationdateyear) : null,
+      containerTitle: typeof d.source === "string" ? d.source.replace(/,?\s*v\d+.*$/i, "").trim() || null : null,
+      publisher: d.publisher ?? null,
+      doi,
+      url: `https://eric.ed.gov/?id=${d.id}`,
+      oaUrl: full ? `https://files.eric.ed.gov/fulltext/${d.id}.pdf` : null,
+      abstract: d.description ?? null,
+      language: Array.isArray(d.language) ? (d.language[0] ?? null) : d.language ?? null,
+      origins: ["eric"],
+    });
+  });
+}
+
+const eric: SourceProvider = {
+  id: "eric",
+  label: "ERIC",
+  async search(q, _cfg, signal) {
+    let search = q.query;
+    if (q.yearFrom || q.yearTo) search += ` publicationdateyear:[${q.yearFrom ?? 1900} TO ${q.yearTo ?? 2100}]`;
+    if (q.openAccessOnly) search += " e_fulltextauth:1";
+    const p = new URLSearchParams({ search, format: "json", rows: String(Math.min(q.limit ?? 20, 50)), fields: "id,title,author,publicationdateyear,description,source,publisher,url,e_fulltextauth,publicationtype,language" });
+    return parseEric(await getJsonRetry(`https://api.ies.ed.gov/eric/?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// ---------------------------------------------------------------------------
+// DBLP — bilgisayar bilimleri bibliyografyası (D92; anahtar gerekmez)
+// ---------------------------------------------------------------------------
+
+export function parseDblp(json: any): SourceRecord[] {
+  const hits = json?.result?.hits?.hit ?? [];
+  return (Array.isArray(hits) ? hits : [hits]).map((h: any) => {
+    const i = h.info ?? {};
+    const raw = i.authors?.author ?? [];
+    const list = Array.isArray(raw) ? raw : [raw];
+    const type = String(i.type ?? "");
+    return finalize({
+      type: /conference|workshop/i.test(type) ? "paper-conference" : /book|monograph/i.test(type) ? "book" : /informal|preprint/i.test(type) ? "preprint" : "article-journal",
+      title: String(i.title ?? ""),
+      // DBLP aynı adlı yazarları “Ad Soyad 0001” biçiminde ayırır; numara atılır
+      authors: list.map((a: any) => splitName(String(typeof a === "string" ? a : a?.text ?? "").replace(/\s+\d{4}$/, ""))),
+      year: i.year ? Number(i.year) : null,
+      containerTitle: i.venue ? (Array.isArray(i.venue) ? i.venue[0] : i.venue) : null,
+      volume: i.volume ?? null,
+      issue: i.number ?? null,
+      pages: i.pages ?? null,
+      doi: i.doi ?? null,
+      url: i.ee ? (Array.isArray(i.ee) ? i.ee[0] : i.ee) : i.url ?? null,
+      oaUrl: i.access === "open" && i.ee ? (Array.isArray(i.ee) ? i.ee[0] : i.ee) : null,
+      origins: ["dblp"],
+    });
+  });
+}
+
+const dblp: SourceProvider = {
+  id: "dblp",
+  label: "DBLP",
+  async search(q, _cfg, signal) {
+    const p = new URLSearchParams({ q: q.query, format: "json", h: String(Math.min(q.limit ?? 20, 50)) });
+    return parseDblp(await getJsonRetry(`https://dblp.org/search/publ/api?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// ---------------------------------------------------------------------------
+// DataCite — tez, veri seti, rapor, ön baskı DOI’leri (D92; anahtar gerekmez)
+// ---------------------------------------------------------------------------
+
+const DC_TYPE: Record<string, SourceRecord["type"]> = { Dissertation: "thesis", Dataset: "dataset", Preprint: "preprint", Report: "report", Book: "book", BookChapter: "chapter", ConferencePaper: "paper-conference", JournalArticle: "article-journal", Text: "article-journal" };
+
+export function parseDatacite(json: any): SourceRecord[] {
+  return (json?.data ?? []).map((d: any) => {
+    const a = d.attributes ?? {};
+    const rt = a.types?.resourceTypeGeneral ?? "Text";
+    return finalize({
+      type: DC_TYPE[rt] ?? "other",
+      title: a.titles?.[0]?.title ?? "",
+      authors: (a.creators ?? []).map((c: any) => (c.familyName ? { family: c.familyName, given: c.givenName ?? undefined } : c.nameType === "Organizational" ? { literal: c.name } : splitName(c.name ?? ""))),
+      year: a.publicationYear ? Number(a.publicationYear) : null,
+      containerTitle: a.container?.title ?? null,
+      publisher: typeof a.publisher === "string" ? a.publisher : a.publisher?.name ?? null,
+      doi: a.doi ?? d.id ?? null,
+      url: a.url ?? null,
+      abstract: a.descriptions?.find((x: any) => x.descriptionType === "Abstract")?.description ?? null,
+      license: a.rightsList?.[0]?.rights ?? null,
+      language: a.language ?? null,
+      origins: ["datacite"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const datacite: SourceProvider = {
+  id: "datacite",
+  label: "DataCite",
+  async search(q, _cfg, signal) {
+    const parts = [q.query];
+    if (q.yearFrom || q.yearTo) parts.push(`publicationYear:[${q.yearFrom ?? 1900} TO ${q.yearTo ?? 2100}]`);
+    // Yazılım ve görsel gibi akademik kaynak olmayan türler dışarıda bırakılır
+    const p = new URLSearchParams({ query: parts.join(" AND "), "page[size]": String(Math.min(q.limit ?? 20, 50)), "resource-type-id": "text,dataset,dissertation,preprint,report,book,book-chapter,journal-article,conference-paper" });
+    return parseDatacite(await getJsonRetry(`https://api.datacite.org/dois?${p}`, { signal }, { retries: 1 }));
+  },
+};
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export const PROVIDERS: Record<SourceProviderId, SourceProvider> = {
   openalex, crossref, semantic_scholar: semanticScholar, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall, turkiye,
+  eric, dblp, datacite,
 };
 
 export const PROVIDER_LABELS: Record<SourceProviderId, string> = Object.fromEntries(

@@ -123,7 +123,7 @@ function Overview() {
           <div className="mt-4 space-y-1 text-xs text-ink-500">{Object.entries(d.byModel).map(([m, v]: any) => <p key={m} className="flex justify-between"><span className="font-mono">{m}</span><span>{fmtN(v.requests)} istek · {(v.tokens / 1000).toFixed(0)}K token</span></p>)}</div>
         </div>
         <div className="card p-5">
-          <BarList title="Veri kaynağı sağlığı" subtitle="Başarılı çağrı oranı (%)" color={2} format={(v) => `%${Math.round(v)}`} items={Object.entries(d.providerHealth).map(([p, v]: any) => ({ label: PROVIDER_LABELS[p as keyof typeof PROVIDER_LABELS] ?? p, value: Math.round((v.ok / (v.ok + v.fail)) * 100), sub: `${v.ok + v.fail} çağrı${v.ok / (v.ok + v.fail) < 0.9 ? " · dikkat" : ""}` }))} empty="Henüz tarama yok." />
+          <BarList title="Veri kaynağı sağlığı" subtitle="Başarılı çağrı oranı (%)" color={2} format={(v) => `%${Math.round(v)}`} items={Object.entries(d.providerHealth).map(([p, v]: any) => ({ label: PROVIDER_LABELS[p as keyof typeof PROVIDER_LABELS] ?? p, value: Math.round((v.ok / (v.ok + v.fail)) * 100), sub: `${v.ok + v.fail} çağrı${v.ok / (v.ok + v.fail) < 0.9 && v.lastError ? ` · son hata: ${v.lastError}` : ""}` }))} empty="Henüz tarama yok." />
         </div>
         <div className="card p-5">
           <h3 className="font-semibold">Sistem entegrasyonları</h3>

@@ -81,3 +81,22 @@ describe("içe aktarılan belgeyi yerleştirme (D87)", () => {
     expect(r.content![2]).toEqual(p("yeni giriş"));
   });
 });
+
+import { stagePrefixes } from "@/lib/workflows/structure";
+import { buildExportDoc } from "@/lib/export/model";
+describe("Giriş açılış metnindeki alt başlıklar (D89)", () => {
+  it("sonraki kısımların numarası kayar; sol liste ve indirilen belge aynı numarayı verir", () => {
+    const h = (level: number, text: string) => ({ type: "heading", attrs: { level }, content: [{ type: "text", text }] });
+    const p = (text: string) => ({ type: "paragraph", content: [{ type: "text", text }] });
+    const stages = [
+      { id: "t", key: "topic", title: "Araştırma konusunun belirlenmesi", position: 0, content_text: "x", content: { type: "doc", content: [p("Açılış."), h(2, "Değişkenlerin Ölçülmesi"), p("a"), h(3, "ISO 14001"), p("b")] } },
+      { id: "p", key: "problem", title: "Araştırma probleminin tanımlanması", position: 1, content_text: "y", content: { type: "doc", content: [p("Problem.")] } },
+      { id: "u", key: "purpose", title: "Araştırmanın amacı ve önemi", position: 2, content_text: "z", content: { type: "doc", content: [p("Amaç.")] } },
+    ];
+    const pre = stagePrefixes(stages, { problem: "Araştırma probleminin tanımlanması", purpose: "Araştırmanın amacı ve önemi" });
+    expect(pre).toEqual({ t: "1", p: "1.2", u: "1.3" });
+    expect(sectionTree(stages[0].content as any, pre.t).map((s) => s.number)).toEqual(["1.1", "1.1.1"]);
+    const d = buildExportDoc({ project: { title: "X", language: "tr", citation_style: "apa7", work_type: "capstone", academic_level: "bachelor" }, stages, sources: [], engineItems: [], authorName: "" });
+    expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["1 GİRİŞ", "1.1 Değişkenlerin Ölçülmesi", "1.1.1 ISO 14001", "1.2 Problem Durumu", "1.3 Araştırmanın Amacı ve Önemi"]);
+  });
+});

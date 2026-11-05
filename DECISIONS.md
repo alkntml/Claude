@@ -400,3 +400,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D88 — Hafızaya belgeden öğren
 - Hafıza panelinde “Belgeden öğren”: PDF/Word/metin yüklenir, metin (ilk ~60 bin karakter) Sonnet’e düşük düşünme seviyesiyle verilir; çalışma için kalıcı bilgiler (karar, kavram, değişken, soru, hipotez, kaynaklı olgu) en fazla 20 kısa kayıt olarak `project_memory`’ye eklenir (source = ai). Yalnızca belgede açıkça yazanlar; sayı ve adlar belgedeki gibi; mevcut kayıtların tekrarı atılır. `lib/memory-learn.ts`, uç `POST /api/projects/[id]/memory/learn`. Dosya saklanmaz.
+
+### D89 — Giriş’in başlıksız açılış metninde alt başlık
+- Açılış metnine (konu aşaması) alt başlık eklenirse (ör. Word’den içe aktarma) bunlar ana bölümün 2. düzeyinde numaralanır (1.1, 1.1.1) ve sonraki kısımlar kayar (Problem Durumu 1.2…). `stagePrefixes` artık başlıksız gruplu aşamadaki üst düzey başlıkları sayar; dışa aktarma zaten böyle numaralıyordu, sol liste ve editör artık aynı numarayı gösterir (önceden iki “1.1” görünüyordu). Açılış metnindeki “alt başlık oluşturma” kısıtı kaldırıldı.

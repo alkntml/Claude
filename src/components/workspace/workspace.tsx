@@ -610,9 +610,8 @@ export function Workspace(props: Props) {
   const maxLevel = active ? maxSectionLevel(!!chapterGroup(active.key) && !!prefixes[active.id]?.includes(".")) : 4;
   const [subOpen, setSubOpen] = useState(false);
   const subParent: SubheadingParent | null = focused ? { index: focused.index, title: focused.text, number: focused.number, level: focused.level } : null;
-  // Giriş’in başlıksız açılış metni (konu) alt başlık almaz: numaralandırma bir sonraki kısımla çakışır (D76)
-  const untitledOpening = !!active && !!chapterGroup(active.key) && !!chapterNumber && !chapterNumber.includes(".");
-  const canSubdivide = !isBibliography && !untitledOpening && (!focused || focused.level < maxLevel);
+  // Başlıksız açılış metnindeki alt başlıklar da numaralanır, sonraki kısımlar kayar (D89)
+  const canSubdivide = !isBibliography && (!focused || focused.level < maxLevel);
   const subSiblings = focused
     ? activeTree.filter((x) => x.index > focused.index && x.index < focused.end && x.level === focused.level + 1).map((x) => x.text)
     : activeTree.filter((x) => x.level === 2).map((x) => x.text);

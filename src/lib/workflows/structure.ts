@@ -116,7 +116,24 @@ export function structureRule(stageKey: string, stageTitle: string, targetWords 
  * Her aşamanın belgedeki numara öneki (editördeki başlık numaraları belgeyle aynı olsun):
  * gruplu aşamada “bölüm.kısım” (ör. 1.2), tek başına bölümde “bölüm” (ör. 3); numarasız kısımda boş.
  */
-export function stagePrefixes(stages: { id: string; key: string; title: string; position?: number }[], defaults: Record<string, string | undefined> = {}): Record<string, string> {
+/**
+ * Başlıksız açılış metninin (Giriş’in ilk kısmı) içindeki alt başlıklar belgede ana bölümün 2. düzeyine
+ * numaralanır (1.1, 1.2…); sonraki kısımların numarası bunlardan sonra gelir (D89). Düzey atlama kuralı
+ * dışa aktarmayla aynı: ilk başlık en fazla 2. düzeydir.
+ */
+function topLevelHeadings(content: unknown): number {
+  const nodes = ((content as { content?: { type?: string; attrs?: { level?: number } }[] } | null)?.content ?? []);
+  let last = 1, n = 0;
+  for (const node of nodes) {
+    if (node?.type !== "heading") continue;
+    const lvl = Math.min(Math.max(Number(node.attrs?.level ?? 2), 2), 4, last + 1);
+    last = lvl;
+    if (lvl === 2) n++;
+  }
+  return n;
+}
+
+export function stagePrefixes(stages: { id: string; key: string; title: string; position?: number; content?: unknown }[], defaults: Record<string, string | undefined> = {}): Record<string, string> {
   const out: Record<string, string> = {};
   let chapter = 0, section = 0;
   let current: string | null = null;
@@ -126,7 +143,8 @@ export function stagePrefixes(stages: { id: string; key: string; title: string; 
     if (group) {
       if (current !== group.id) { chapter++; section = 0; current = group.id; }
       const titled = !!sectionTitle(st.key, st.title, defaults[st.key], "tr");
-      if (titled) { section++; out[st.id] = `${chapter}.${section}`; } else out[st.id] = String(chapter);
+      if (titled) { section++; out[st.id] = `${chapter}.${section}`; }
+      else { out[st.id] = String(chapter); section += topLevelHeadings(st.content); }
     } else {
       current = null;
       if (UNNUMBERED.has(st.key)) { out[st.id] = ""; continue; }

@@ -385,3 +385,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 ### D84 — Bölüm sırası akademik düzende tutulur; editör yer tutucusu
 - `academicOrder` (workflows/structure.ts): aynı ana bölüme ait aşamalar bitişik (ayrı düşen kısım grubunun arkasına alınır), kaynakça ve ekler en sonda; kullanıcının diğer sıralaması korunur. Çalışma açılışında, sürükleyip bırakmadan sonra ve “Bölüm ekle” ile yeni aşama eklenince uygulanıp kaydedilir. Böylece “3 YÖNTEM … 5 YÖNTEM” gibi ikinci kez açılan ana bölüm oluşmaz.
 - Editörün boş bölüm yer tutucusu her çizimde güncel bölüm adını okur (önceden ilk açılan bölümün adı kalıyordu). Sol listede bölüm listesi üst kısımdan çizgiyle ayrıldı.
+
+### D85 — İçindekiler tüm başlık düzeylerini içerir
+- Yönetici kararı (D76’daki “içindekiler en fazla 3 düzey” kuralının yerine geçer): 4. düzey alt başlıklar (ör. 2.1.4.1) da Word, PDF ve metin dışa aktarmalarındaki içindekilere girer; Word’de her giriş başlığa yer imiyle bağlıdır. Bu, PDF’de 4. düzey başlık varken içindekiler sayfa numaralarının kaymasına yol açan eşleşme hatasını da giderdi (her başlık bir giriş).

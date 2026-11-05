@@ -107,6 +107,21 @@ describe("Word içindekiler", () => {
   });
 });
 
+describe("içindekiler düzeyleri (D85)", () => {
+  it("4. düzey alt başlıklar (ör. 1.2.1.1) da içindekilere girer ve Word’de başlığa bağlanır", async () => {
+    const JSZip = (await import("jszip")).default;
+    const h = (level: number, text: string) => ({ type: "heading", attrs: { level }, content: [{ type: "text", text }] });
+    const p = (text: string) => ({ type: "paragraph", content: [{ type: "text", text }] });
+    const st = [{ id: "c", key: "concepts", title: "Kavramsal çerçeve", position: 0, content_text: "x", content: { type: "doc", content: [h(2, "Teknoloji Kabulü"), p("Metin."), h(3, "Çalışan Tutumları"), p("Metin 2.")] } }];
+    const d = buildExportDoc({ project: { ...project, language: "tr" }, stages: st, sources: [], engineItems: [], authorName: "" });
+    expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["1 KURAMSAL ÇERÇEVE VE İLGİLİ ARAŞTIRMALAR", "1.1 Temel Kavramlar", "1.1.1 Teknoloji Kabulü", "1.1.1.1 Çalışan Tutumları"]);
+    const xml = await (await JSZip.loadAsync(await toDocx(d))).file("word/document.xml")!.async("string");
+    expect(xml).toContain("1.1.1.1 Çalışan Tutumları");
+    expect(xml).toContain("PAGEREF _Toc4");
+    expect(xml).toMatch(/w:bookmarkStart[^>]*w:name="_Toc4"/);
+  });
+});
+
 describe("misc server utils", () => {
   it("verifies Stripe webhook signatures", () => {
     const payload = '{"id":"evt_1"}';

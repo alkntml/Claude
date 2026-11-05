@@ -68,9 +68,9 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       const htext = b.runs.map((r) => r.text).join("");
       const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language === "tr" ? "tr" : "en") : htext;
       const hrun = new TextRun({ text: `${b.number ? `${b.number} ` : ""}${shown}`, bold: true, font, size: b.level === 1 ? Math.max(size, 28) : size, color: "000000" });
-      // İçindekiler girişleri (model.toc) ilk üç düzeydeki başlıklarla birebir aynı sırada
-      const anchor = b.level <= 3 ? `_Toc${++tocIdx}` : null;
-      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [anchor ? new Bookmark({ id: anchor, children: [hrun] }) : hrun] }));
+      // İçindekiler girişleri (model.toc) başlıklarla birebir aynı sırada
+      const anchor = `_Toc${++tocIdx}`;
+      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [new Bookmark({ id: anchor, children: [hrun] })] }));
     } else if (b.kind === "paragraph") {
       body.push(new Paragraph({ alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {

@@ -126,8 +126,8 @@ export function buildExportDoc(params: {
       number = counters.slice(0, lvl).join(".");
     }
     blocks.push({ kind: "heading", level: lvl, number, runs });
-    // İçindekiler en fazla üç düzey (akademik usul)
-    if (lvl <= 3) toc.push({ level: lvl, number, text: runs.map((r) => r.text).join("") });
+    // İçindekiler tüm başlık düzeylerini içerir (D85; 4. düzey ör. 2.1.4.1 dahil). Sıra blok başlıklarıyla birebir aynıdır.
+    toc.push({ level: lvl, number, text: runs.map((r) => r.text).join("") });
   };
   const startChapter = (runs: Run[], isNumbered: boolean) => {
     numbered = isNumbered;

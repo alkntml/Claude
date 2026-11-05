@@ -20,6 +20,11 @@ describe("isHelpQuestion (D93)", () => {
     "grafik nerede",
     "Bulgular için anket hazırlamak istiyorum",
     "pdf olarak indirmek istiyorum",
+    "Şifremi nereden değiştirebilirim?",
+    "Dipnot nasıl eklerim?",
+    "Danışmanıma nasıl gönderirim, paylaş düğmesi nerede?",
+    "Eski sürüme nasıl geri dönerim?",
+    "Hesabımı nasıl silerim?",
   ])("kullanım sorusu: %s", (m) => expect(isHelpQuestion(m)).toBe(true));
 
   it.each([
@@ -37,5 +42,20 @@ describe("isHelpQuestion (D93)", () => {
   it("rehber temel menüleri içerir ve uydurmayı yasaklar", () => {
     for (const k of ["Grafik oluştur", "Dışa aktar", "Literatür matrisi", "Belgeden öğren", "Word’den içe aktar", "Danışmanla paylaş"]) expect(APP_GUIDE).toContain(k);
     expect(HELP_SYSTEM).toContain("UYDURMA");
+  });
+});
+
+describe("rehber kapsamı (D93)", () => {
+  it.each([
+    "Yeni çalışma", "Kontrol paneli", "Kaynak araştırması", "Dosyalarım", "Anketlerim", "Konu bulma", "Hesap ve abonelik",
+    "Şifremi değiştir", "Şifremi unuttum", "Verilerimi indir", "Hesabımı sil", "Davet et, kazan", "Kurum kodu",
+    "Kurguyu onayla ve başla", "Haftalık hedef ve teslim tarihi belirle", "Bölüm ekle", "Dipnot ekle", "Tablo ekle",
+    "Kaynakta doğrula", "Kaynak bul ve düzelt", "Bölümü tamamladım", "Seçili bölümler", "Biçim ve kapak ayarları",
+    "Savunma sunumu (.pptx)", "Savunma provası", "Hakem yorumlarına cevap", "Dergi önerisi ve ön yazı", "Kılavuz yükle",
+    "Rehberli tur", "Projeyi sil", "Geri yükle", "Ücretsiz araçlar", "Yayına al", "Ham veri (CSV)", "Bu konuyla tez başlat",
+  ])("“%s” rehberde", (k) => expect(APP_GUIDE).toContain(k));
+  it("yönetim paneli anlatılmaz", () => {
+    expect(APP_GUIDE).not.toMatch(/Yönetim|yonetim|Otomatik çalışma/);
+    expect(HELP_SYSTEM).toContain("yöneticiye özel");
   });
 });

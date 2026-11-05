@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   invertedIndexToText, parseArxiv, parseCrossref, parseDoaj, parseEuropePmc, parseGoogleBooks, parseOpenAlex,
-  parseSemanticScholar, parseUnpaywall, splitName,
+  parseUnpaywall, splitName,
 } from "@/lib/sources/providers";
 import { dedupe, scoreRecord } from "@/lib/sources/aggregate";
 import { isSafePublicUrl } from "@/lib/sources/http";
@@ -70,13 +70,6 @@ describe("provider parsers", () => {
     expect(r.year).toBe(2014);
     expect(r.month).toBe(4);
     expect(r.accessLevel).toBe("metadata");
-  });
-
-  it("parses Semantic Scholar", () => {
-    const [r] = parseSemanticScholar({
-      data: [{ paperId: "x", title: "Parenting and OCD", year: 2020, authors: [{ name: "Jane Roe" }], abstract: "A".repeat(100), externalIds: { DOI: "10.1000/abc", PubMed: "999" }, journal: { name: "J Anx", volume: "5", pages: " 1 - 10" }, openAccessPdf: { url: "https://x.org/a.pdf" }, publicationTypes: ["JournalArticle"] }],
-    });
-    expect(r).toMatchObject({ doi: "10.1000/abc", pmid: "999", pages: "1-10", oaUrl: "https://x.org/a.pdf", accessLevel: "abstract" });
   });
 
   it("parses Europe PMC", () => {

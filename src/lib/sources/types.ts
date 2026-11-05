@@ -1,7 +1,7 @@
 import type { ItemType, Person } from "@/lib/citations/types";
 
 export type SourceProviderId =
-  | "openalex" | "crossref" | "semantic_scholar" | "europepmc" | "arxiv"
+  | "openalex" | "crossref" | "europepmc" | "arxiv"
   | "doaj" | "core" | "openaire" | "google_books" | "unpaywall" | "turkiye"
   | "eric" | "dblp" | "datacite";
 
@@ -68,7 +68,6 @@ export interface SearchResponse {
 
 export interface ProviderConfig {
   contactEmail?: string;
-  semanticScholarKey?: string;
   coreKey?: string;
   openalexKey?: string;
   googleBooksKey?: string;

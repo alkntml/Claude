@@ -4,6 +4,7 @@
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
 
 const FEATURE_LABEL: Record<string, string> = {
+  help: "Asistan: kullanım sorusu",
   quality_review: "Kalite kontrol (yapay zekâ jürisi)",
   stage_review: "Bölüm tamamlama kontrolü",
   research_plan: "Kaynak taraması kararı",

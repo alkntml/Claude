@@ -32,7 +32,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 268 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 285 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -50,7 +50,7 @@ src/app/                 Sayfalar + API rotaları
 src/components/          landing, dashboard, workspace, admin, share, ui
 src/lib/
   citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık)
-  sources/               providers.ts (13 veri tabanı: +ERIC, DBLP, DataCite — D92), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
+  sources/               providers.ts (12 veri tabanı: +ERIC, DBLP, DataCite — D92; Semantic Scholar kaldırıldı — D93), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
   research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme; researchGate: tarama yalnızca gerektiğinde (D75)
   ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza; head önbellekte, tail değişken — D78), history (geçmiş kısaltma), cost (önbellekli maliyet), prompts (ACTION_TIER, ACTION_EFFORT)
   workflows/             Çalışma türleri + aşama şablonları (stages.ts); order.ts önerilen yazım sırası (özet en son); structure.ts akademik bölüm yapısı/başlık disiplini (D76); quick-actions.ts aşamaya özel kısayollar (D75)
@@ -60,6 +60,7 @@ src/lib/
   editor/sections.ts     Bölüm içi alt başlıklar (D83): sectionTree (numaralı ağaç), sectionDoc/replaceSectionBody (alt başlığa odaklanma), addSubheadings; arayüz components/workspace/subheadings.tsx
   import/                Word’den içe aktarma (D87): html-doc.ts (mammoth HTML → düğüm), references.ts (kaynakça ayrıştırma, atıf bağlama, başlık oturtma), server.ts
   memory-learn.ts        Hafızaya belgeden öğren (D88)
+  ai/help.ts             Asistanın kullanım rehberi + kullanım sorusu tanıma (D93); menü/özellik değişince güncelle
   tools/                 Ücretsiz araçlar (D90): index (liste), sample-size, table-parse, server (künye bulma, uydurma kaynak kontrolü); arayüz components/tools, sayfalar app/araclar
   analytics.ts insights.ts  Çerezsiz ölçüm + araç kullanım kaydı; yönetim maliyet/ziyaret özetleri (D90); grafikler components/ui/charts.tsx
   quality/checks.ts      Kural tabanlı kalite kontrol
@@ -128,7 +129,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 
 ## Ortam değişkenleri (Vercel → Settings → Environment Variables)
 Zorunlu: `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (veya `..._PUBLISHABLE_KEY`), `SUPABASE_SERVICE_ROLE_KEY` (veya `SUPABASE_SECRET_KEY`). Supabase değişkenleri Vercel entegrasyonu tarafından otomatik eklendi.
-Önerilen: `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`. İsteğe bağlı: `OPENAI_API_KEY`, `SEMANTIC_SCHOLAR_API_KEY`, `CORE_API_KEY`, `STRIPE_*`, `IYZICO_*` (ödeme şimdilik kapalı). Değişiklikten sonra Vercel'de Redeploy gerekir.
+Önerilen: `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`. İsteğe bağlı: `OPENAI_API_KEY`, `CORE_API_KEY`, `STRIPE_*`, `IYZICO_*` (ödeme şimdilik kapalı). Değişiklikten sonra Vercel'de Redeploy gerekir.
 
 ## Geliştirme ortamı notu
 Claude'un bulut oturumunda akademik API'lere (OpenAlex, Crossref vb.) ağ erişimi yok; adaptörler fixture testleriyle doğrulanır, canlı davranış kullanıcının ekran görüntüleriyle kontrol edilir. Anthropic API ve npm erişilebilir. Dışarıya tünel açmak yasak/engelli.

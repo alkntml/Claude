@@ -5,14 +5,13 @@
  *
  * Kullanım koşulları:
  *  - OpenAlex / Crossref: "polite pool" için `mailto` parametresi gönderilir.
- *  - Semantic Scholar: anahtarsız kullanım düşük limitlidir; SEMANTIC_SCHOLAR_API_KEY önerilir.
  *  - CORE: API anahtarı zorunludur.
  *  - Google Books: yalnızca kitap künyesi için; açıklama metni akademik özet olarak KULLANILMAZ.
  *  - Unpaywall: yalnızca DOI bazlı açık erişim zenginleştirmesi, e-posta zorunlu.
  */
 import type { ItemType, Person } from "@/lib/citations/types";
 import { normalizeDoi } from "@/lib/citations/util";
-import { getJson, getJsonRetry, getText, HttpError, stripTags } from "./http";
+import { getJson, getJsonRetry, getText, stripTags } from "./http";
 import type { ProviderConfig, SearchQuery, SourceProvider, SourceProviderId, SourceRecord } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -195,63 +194,6 @@ const crossref: SourceProvider = {
     if (q.author) p.set("query.author", q.author);
     if (cfg.contactEmail) p.set("mailto", cfg.contactEmail);
     return parseCrossref(await getJson(`https://api.crossref.org/works?${p}`, { signal }));
-  },
-};
-
-// ---------------------------------------------------------------------------
-// Semantic Scholar
-// ---------------------------------------------------------------------------
-
-export function parseSemanticScholar(json: any): SourceRecord[] {
-  return (json?.data ?? []).map((p: any) => {
-    const types: string[] = p.publicationTypes ?? [];
-    return finalize({
-      type: types.includes("Book") ? "book" : types.includes("Conference") ? "paper-conference" : "article-journal",
-      title: p.title ?? "",
-      authors: (p.authors ?? []).map((a: any) => splitName(a.name ?? "")),
-      year: p.year ?? null,
-      containerTitle: p.journal?.name ?? p.venue ?? null,
-      volume: p.journal?.volume ?? null,
-      pages: p.journal?.pages?.replace(/\s/g, "") ?? null,
-      doi: p.externalIds?.DOI ?? null,
-      pmid: p.externalIds?.PubMed ?? null,
-      arxivId: p.externalIds?.ArXiv ?? null,
-      url: p.url ?? null,
-      oaUrl: p.openAccessPdf?.url || null,
-      abstract: p.abstract ?? null,
-      citedByCount: p.citationCount ?? null,
-      origins: ["semantic_scholar"],
-    });
-  });
-}
-
-/** Anahtarsız Semantic Scholar hız sınırına takılınca kısa bekleme (sunucu örneği başına) */
-let s2CooldownUntil = 0;
-
-const semanticScholar: SourceProvider = {
-  id: "semantic_scholar",
-  label: "Semantic Scholar",
-  async search(q, cfg, signal) {
-    const p = new URLSearchParams({
-      query: q.query,
-      limit: String(Math.min(q.limit ?? 20, 100)),
-      fields: "title,abstract,year,authors,venue,journal,externalIds,openAccessPdf,publicationTypes,citationCount,url",
-    });
-    if (q.yearFrom || q.yearTo) p.set("year", `${q.yearFrom ?? ""}-${q.yearTo ?? ""}`);
-    if (q.openAccessOnly) p.set("openAccessPdf", "");
-    const headers: Record<string, string> = cfg.semanticScholarKey ? { "x-api-key": cfg.semanticScholarKey } : {};
-    // Anahtarsız kullanımda paylaşılan hız sınırı sık dolar: önceki sınırdan sonra kısa süre hiç denenmez,
-    // dolduğunda kısa beklemeyle yeniden denenir (D92)
-    if (!cfg.semanticScholarKey && Date.now() < s2CooldownUntil) throw new Error("hız sınırı (SEMANTIC_SCHOLAR_API_KEY önerilir)");
-    try {
-      return parseSemanticScholar(await getJsonRetry(`https://api.semanticscholar.org/graph/v1/paper/search?${p}`, { signal, headers }, { retries: 2, baseDelayMs: 900 }));
-    } catch (e) {
-      if (e instanceof HttpError && e.status === 429) {
-        if (!cfg.semanticScholarKey) s2CooldownUntil = Date.now() + 30_000;
-        throw new Error(cfg.semanticScholarKey ? "hız sınırı" : "hız sınırı (SEMANTIC_SCHOLAR_API_KEY önerilir)");
-      }
-      throw e;
-    }
   },
 };
 
@@ -665,7 +607,7 @@ const datacite: SourceProvider = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export const PROVIDERS: Record<SourceProviderId, SourceProvider> = {
-  openalex, crossref, semantic_scholar: semanticScholar, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall, turkiye,
+  openalex, crossref, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall, turkiye,
   eric, dblp, datacite,
 };
 

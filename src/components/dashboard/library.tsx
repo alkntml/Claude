@@ -19,7 +19,7 @@ export function LibraryView({ projects, sources: initial }: { projects: any[]; s
   return (
     <div>
       <h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Kaynak araştırması")}</h1>
-      <p className="mt-1 max-w-2xl text-ink-500">{t("OpenAlex, Crossref, Semantic Scholar, PubMed/Europe PMC, arXiv, DOAJ ve OpenAIRE’de eşzamanlı arama. Sonuçlar birleştirilir, yinelenen kayıtlar ayıklanır ve her kaynağın erişim seviyesi gösterilir.")}</p>
+      <p className="mt-1 max-w-2xl text-ink-500">{t("OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, OpenAIRE, ERIC, DBLP ve DataCite’ta eşzamanlı arama. Sonuçlar birleştirilir, yinelenen kayıtlar ayıklanır ve her kaynağın erişim seviyesi gösterilir.")}</p>
       <Tabs className="mt-6 max-w-sm" value={tab} onChange={setTab} tabs={[{ id: "search", label: t("Veri tabanında ara") }, { id: "saved", label: t("Kayıtlı kaynaklarım"), count: sources.length }]} />
       <div className="mt-6">
         {tab === "search" && (

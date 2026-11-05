@@ -11,7 +11,7 @@ export function Pillars() {
   const { t } = useT();
   const items = [
     { icon: Map, title: "Akademik süreç yönetimi", text: "Çalışma türünüze, seviyenize ve yönteminize göre oluşan yol haritası. Her aşamanın kendine özel bir asistanı ve kuralları var. Bölümler arasında geçerken proje hafızası korunur.", points: ["Dinamik aşama yapısı", "Üniversite kılavuzundan bölüm önerisi", "İlerleme takibi"] },
-    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, Semantic Scholar, PubMed, arXiv, DOAJ ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["Erişim seviyesi şeffaflığı", "Açık erişimli tam metin analizi", "Yinelenen kayıt birleştirme"] },
+    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, PubMed, arXiv, DOAJ, ERIC ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["Erişim seviyesi şeffaflığı", "Açık erişimli tam metin analizi", "Yinelenen kayıt birleştirme"] },
     { icon: BookCheck, title: "Akademik yazım otomasyonu", text: "Atıflar metne yazı olarak değil, kaynağa bağlı canlı öğeler olarak eklenir. Stili değiştirdiğinizde bütün metin ve kaynakça yeni stile dönüşür.", points: ["APA, MLA, Chicago, IEEE ve 5 stil daha", "Eksik künye ve tutarlılık uyarısı", "DOCX ve PDF çıktı"] },
   ];
   return (
@@ -79,7 +79,7 @@ export function HowItWorks() {
 
 export function SourcesStrip() {
   const { t } = useT();
-  const sources = ["OpenAlex", "DergiPark", "Crossref", "Semantic Scholar", "PubMed", "Europe PMC", "arXiv", "DOAJ", "CORE", "OpenAIRE", "Unpaywall", "DataCite", "Google Books"];
+  const sources = ["OpenAlex", "DergiPark", "Crossref", "PubMed", "Europe PMC", "arXiv", "DOAJ", "CORE", "OpenAIRE", "Unpaywall", "DataCite", "ERIC", "DBLP", "Google Books"];
   return (
     <section id="kaynaklar" className="py-20">
       <div className="mx-auto max-w-6xl px-6">

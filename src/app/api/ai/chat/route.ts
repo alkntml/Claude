@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { compactHistory, HISTORY_LIMIT } from "@/lib/ai/history";
+import { APP_GUIDE, HELP_SYSTEM, isHelpQuestion } from "@/lib/ai/help";
 import type { Usage } from "@/lib/ai/types";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
@@ -69,6 +70,44 @@ export const POST = route("ai.chat", async (req) => {
   }
   const { data: history } = await s.supabase.from("ai_messages").select("role, content, meta, created_at").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(HISTORY_LIMIT);
 
+  // Kullanım sorusu (D93): “Nereden grafik oluşturabilirim?” gibi sorular küçük modelle, yalnızca kullanım
+  // rehberine göre yanıtlanır; proje bağlamı gönderilmez, literatür taraması yapılmaz.
+  if (b.action === "chat" && !b.selection && isHelpQuestion(b.message)) {
+    const helpModel = await resolveModel(s.profile.plan_id, "fast");
+    if (isProviderConfigured(helpModel.provider)) {
+      await s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "user", content: b.message, meta: { action: "help" } });
+      const helpMessages = [...compactHistory((history ?? []).slice(0, 4).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: b.message }];
+      const helpStream = new ReadableStream({
+        async start(controller) {
+          let answer = "";
+          let usage: Usage = { input: 0, output: 0 };
+          let servedModel = helpModel.model;
+          try {
+            controller.enqueue(sse("meta", { conversationId, sourceMap: {}, model: helpModel.model, usedChunks: [] }));
+            controller.enqueue(sse("phase", { phase: "write" }));
+            for await (const ev of streamWith(helpModel, { system: HELP_SYSTEM, messages: helpMessages, maxTokens: 800, effort: "low" }, req.signal)) {
+              if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
+              else { usage = ev.usage; servedModel = ev.model; }
+            }
+            const cost = await estimateCost(servedModel, usage.input, usage.output, usage);
+            await Promise.all([
+              s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { model: servedModel, usage, action: "help" } }),
+              s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
+              recordUsage(s.user.id, "ai_request", { tokensIn: usage.input, tokensOut: usage.output, costUsd: cost, provider: helpModel.provider, model: servedModel, meta: { action: "help", projectId: b.projectId } }),
+            ]);
+            controller.enqueue(sse("done", { usage, stopReason: null, memoryAdded: 0, gapAdded: 0, warnings: [] }));
+          } catch (e) {
+            await logError("ai.chat.help", e, s.user.id);
+            controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));
+          } finally {
+            controller.close();
+          }
+        },
+      });
+      return new Response(helpStream, { headers: { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache, no-transform", Connection: "keep-alive" } });
+    }
+  }
+
   // Otomatik kaynak taraması kararı (D75): soru/plan/düzeltmede tarama yok; yazımda yalnızca odak konu
   // mevcut kaynaklarla karşılanmıyorsa veya kapsam için kaynak azsa; aynı odakta kısa sürede tekrar yok.
   const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text).filter(Boolean).slice(0, 20) : [];
@@ -90,7 +129,7 @@ export const POST = route("ai.chat", async (req) => {
 
   const stagePrompt = stage ? stagePrompts[stage.key] : undefined;
   // Sistem talimatı her istekte aynıdır (önbellek, D78); bölüme özel talimat değişken bağlama girer
-  const system = [sysSetting.text, OUTPUT_PROTOCOL].filter(Boolean).join("\n\n");
+  const system = [sysSetting.text, OUTPUT_PROTOCOL, `KULLANIM SORULARI: Kullanıcı platformun nasıl kullanılacağını sorarsa (ör. “grafiği nereden oluştururum?”) yalnızca aşağıdaki rehbere göre kısa ve adım adım cevap ver; rehberde olmayan menü veya düğme adı uydurma.\n\n${APP_GUIDE}`].filter(Boolean).join("\n\n");
   // Geçmişteki eski taslaklar kısa notla özetlenir; bölümün güncel metni zaten bağlamda (D78)
   const messages = [...compactHistory((history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: userContent }];
 

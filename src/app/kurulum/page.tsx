@@ -19,7 +19,6 @@ export default async function Setup() {
     [t("Anthropic Claude (yapay zekâ)"), s.anthropic, "ANTHROPIC_API_KEY", true],
     [t("OpenAI (isteğe bağlı ikinci sağlayıcı)"), s.openai, "OPENAI_API_KEY", false],
     [t("Akademik API iletişim e-postası (OpenAlex/Crossref/Unpaywall)"), s.contactEmail, "ACADEMIC_CONTACT_EMAIL", true],
-    [t("Semantic Scholar API anahtarı"), s.semanticScholarKey, "SEMANTIC_SCHOLAR_API_KEY", false],
     [t("CORE API anahtarı"), s.coreKey, "CORE_API_KEY", false],
     [t("Stripe ödemeleri"), s.stripe, "STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET", false],
   ];

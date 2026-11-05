@@ -57,7 +57,7 @@ export interface SampleSection { id: string; icon: string; title: L2; what: L2; 
 export const SECTIONS: SampleSection[] = [
   { id: "kurgu", icon: "Compass", plan: "free", title: { tr: "Çalışmanın kurgusu", en: "Study blueprint" }, what: { tr: "Yazmaya başlamadan önce problem, amaç, sorular, yöntem ve her bölümün planı ile kelime hedefi tek ekranda.", en: "Before you write: problem, aim, questions, method and every section’s plan and word target on one screen." } },
   { id: "baslik", icon: "Type", plan: "free", title: { tr: "Başlık önerileri", en: "Title suggestions" }, what: { tr: "Değişkenleri, örneklemi ve yöntemi yansıtan, birbirinden farklı akademik başlıklar.", en: "Distinct academic titles that reflect variables, sample and method." } },
-  { id: "kaynak", icon: "Search", plan: "free", title: { tr: "Kaynak araştırması ve doğrulama", en: "Source search and verification" }, what: { tr: "13 akademik veri tabanında arama; her kaynağın erişim seviyesi ve doğrulama durumu açıkça gösterilir.", en: "Search across 13 academic databases; each source’s access level and verification status are shown." } },
+  { id: "kaynak", icon: "Search", plan: "free", title: { tr: "Kaynak araştırması ve doğrulama", en: "Source search and verification" }, what: { tr: "12 akademik veri tabanında arama; her kaynağın erişim seviyesi ve doğrulama durumu açıkça gösterilir.", en: "Search across 12 academic databases; each source’s access level and verification status are shown." } },
   { id: "yazim", icon: "PenLine", plan: "free", title: { tr: "Bölüm taslağı", en: "Section draft" }, what: { tr: "Yalnızca projeye eklenen kaynaklara atıf yapan akademik metin; kaynağı olmayan iddia işaretlenir.", en: "Academic text that cites only sources in your project; unsupported claims are flagged." } },
   { id: "atif", icon: "Quote", plan: "free", title: { tr: "Atıf stilleri ve kaynakça", en: "Citation styles and reference list" }, what: { tr: "10 stil arasında tek tıkla geçiş; metin içi atıflar ve kaynakça kendiliğinden yeniden biçimlenir.", en: "Switch between 10 styles in one click; in-text citations and the reference list reformat themselves." } },
   { id: "matris", icon: "Table2", plan: "pro", title: { tr: "Literatür matrisi", en: "Literature matrix" }, what: { tr: "Kaynakları amaç, örneklem, yöntem ve bulgu bakımından yan yana karşılaştıran tablo.", en: "A table comparing sources side by side by aim, sample, method and findings." } },
@@ -109,7 +109,7 @@ export const TITLES: { t: L2; n: L2 }[] = [
 export const SEARCH_RESULTS = [
   { id: "s1", access: "full_text", verified: true, db: "DergiPark · OpenAlex", cites: 38 },
   { id: "s2", access: "abstract", verified: true, db: "TR Dizin · Crossref", cites: 21 },
-  { id: "s3", access: "abstract", verified: true, db: "PubMed · Semantic Scholar", cites: 64 },
+  { id: "s3", access: "abstract", verified: true, db: "PubMed · OpenAlex", cites: 64 },
   { id: "s4", access: "metadata", verified: false, db: "Elle eklendi", cites: 0 },
 ] as const;
 

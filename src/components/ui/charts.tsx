@@ -4,7 +4,7 @@
  * Kurallar: tek eksen; kategorik renkler sabit sırada (--viz-1…5); 2px çizgi, ~%10 alan dolgusu; ince yatay
  * kılavuz çizgileri; ≥2 seride gösterge; değerler her zaman yazıyla da görünür; üzerine gelince ayrıntı.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "./cn";
 
 export const VIZ = ["rgb(var(--viz-1))", "rgb(var(--viz-2))", "rgb(var(--viz-3))", "rgb(var(--viz-4))", "rgb(var(--viz-5))"];
@@ -26,6 +26,20 @@ function dayLabel(day: string) {
 
 export interface Series { key: string; label: string }
 
+/** Kapsayıcı genişliği (px): grafik yazıları her ekran genişliğinde aynı boyutta kalsın */
+function useWidth<T extends HTMLElement>(fallback = 640) {
+  const ref = useRef<T>(null);
+  const [w, setW] = useState(fallback);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([e]) => setW(Math.max(260, Math.round(e.contentRect.width))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, w] as const;
+}
+
 /** Günlük zaman serisi: tek seride alan, birden çok seride çizgiler; artı imleçli ipucu */
 export function TimeSeries({ data, series, title, subtitle, format = fmtDefault, height = 200, empty = "Bu dönemde veri yok." }: {
   data: { day: string; [k: string]: number | string }[];
@@ -37,14 +51,15 @@ export function TimeSeries({ data, series, title, subtitle, format = fmtDefault,
   empty?: string;
 }) {
   const [hover, setHover] = useState<number | null>(null);
-  const W = 640, H = height, P = { l: 44, r: 12, t: 12, b: 24 };
+  const [box, W] = useWidth<HTMLDivElement>();
+  const H = height, P = { l: 48, r: 12, t: 12, b: 24 };
   const iw = W - P.l - P.r, ih = H - P.t - P.b;
   const vals = (k: string) => data.map((d) => Number(d[k]) || 0);
   const max = niceMax(Math.max(0, ...series.flatMap((s) => vals(s.key))));
   const x = (i: number) => P.l + (data.length <= 1 ? iw / 2 : (i / (data.length - 1)) * iw);
   const y = (v: number) => P.t + ih - (v / max) * ih;
   const single = series.length === 1;
-  const step = Math.max(1, Math.ceil(data.length / 6));
+  const step = Math.max(1, Math.ceil(data.length / Math.max(2, Math.floor(W / 90))));
   const totals = series.map((s) => vals(s.key).reduce((a, b) => a + b, 0));
   return (
     <figure className="relative">
@@ -59,8 +74,9 @@ export function TimeSeries({ data, series, title, subtitle, format = fmtDefault,
           </span>
         )}
       </figcaption>
+      <div ref={box} className="relative">
       {data.length === 0 ? <p className="py-12 text-center text-sm text-ink-400">{empty}</p> : (
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full overflow-visible" role="img" aria-label={title}
+        <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} className="block w-full overflow-visible" role="img" aria-label={title}
           onMouseLeave={() => setHover(null)}
           onMouseMove={(e) => {
             const r = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
@@ -97,7 +113,8 @@ export function TimeSeries({ data, series, title, subtitle, format = fmtDefault,
         </svg>
       )}
       {hover !== null && data[hover] && (
-        <div className="pointer-events-none absolute right-0 top-0 z-10 min-w-[140px] rounded-xl border border-ink-100 bg-white px-3 py-2 text-xs shadow-lg">
+        // İpucu imlecin yanında; sağ yarıda imlecin soluna geçer (gösterge ve kenarla çakışmaz)
+        <div className="pointer-events-none absolute top-2 z-10 min-w-[150px] rounded-xl border border-ink-100 bg-white px-3 py-2 text-xs shadow-lg" style={x(hover) > W / 2 ? { right: W - x(hover) + 12 } : { left: x(hover) + 12 }}>
           <p className="mb-1 font-medium text-ink-500">{new Date(`${data[hover].day}T00:00:00`).toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" })}</p>
           {series.map((s, k) => (
             <p key={s.key} className="flex items-center justify-between gap-4">
@@ -107,6 +124,7 @@ export function TimeSeries({ data, series, title, subtitle, format = fmtDefault,
           ))}
         </div>
       )}
+      </div>
     </figure>
   );
 }
@@ -236,6 +254,32 @@ export function RangePicker({ value, onChange, options = [7, 30, 90] }: { value:
       {options.map((n) => (
         <button key={n} role="tab" aria-selected={value === n} onClick={() => onChange(n)} className={cn("rounded-[10px] px-3 py-1 text-[13px] font-medium transition", value === n ? "bg-white text-ink-900 shadow-sm" : "text-ink-500 hover:text-ink-800")}>{n} gün</button>
       ))}
+    </div>
+  );
+}
+
+/** Kullanım halkası: değer / sınır; %80 üstünde uyarı rengi ve yazılı durum (renk tek başına anlam taşımaz) */
+export function UsageMeter({ label, value, max, unit, warnText = "Doluyor", fullText = "Doldu", unlimitedText = "Sınırsız", locale = "tr-TR" }: {
+  label: string; value: number; max: number | null | undefined; unit?: string; warnText?: string; fullText?: string; unlimitedText?: string; locale?: string;
+}) {
+  const unlimited = max == null;
+  const pct = unlimited || !max ? 0 : Math.min(1, value / max);
+  const R = 30, C = 2 * Math.PI * R;
+  const state = unlimited ? "ok" : pct >= 1 ? "full" : pct >= 0.8 ? "warn" : "ok";
+  const color = state === "full" ? "rgb(225 29 72)" : state === "warn" ? "rgb(217 119 6)" : VIZ[0];
+  const fmt = (n: number) => n.toLocaleString(locale, { maximumFractionDigits: 1 });
+  return (
+    <div className="flex items-center gap-3">
+      <svg viewBox="0 0 76 76" className="h-[68px] w-[68px] shrink-0 -rotate-90" aria-hidden="true">
+        <circle cx="38" cy="38" r={R} fill="none" stroke="rgb(var(--ink-100))" strokeWidth="7" />
+        {!unlimited && <circle cx="38" cy="38" r={R} fill="none" stroke={color} strokeWidth="7" strokeLinecap="round" strokeDasharray={`${Math.max(0.001, pct) * C} ${C}`} style={{ transition: "stroke-dasharray .9s cubic-bezier(.22,1,.36,1)" }} />}
+        <text x="38" y="42" textAnchor="middle" fontSize="15" fontWeight="600" fill="rgb(var(--ink-900))" transform="rotate(90 38 38)">{unlimited ? "∞" : `%${Math.round(pct * 100)}`}</text>
+      </svg>
+      <div className="min-w-0">
+        <p className="truncate text-[13px] text-ink-600">{label}</p>
+        <p className="text-[15px] font-semibold text-ink-900">{fmt(value)}{unit ? ` ${unit}` : ""}<span className="font-normal text-ink-400"> / {unlimited ? unlimitedText : `${fmt(max!)}${unit ? ` ${unit}` : ""}`}</span></p>
+        {state !== "ok" && <p className={cn("text-[11.5px] font-medium", state === "full" ? "text-rose-600" : "text-amber-700")}>{state === "full" ? fullText : warnText}</p>}
+      </div>
     </div>
   );
 }

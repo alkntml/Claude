@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
-import { Badge, Modal, ProgressBar } from "@/components/ui/primitives";
+import { Badge, Modal } from "@/components/ui/primitives";
+import { UsageMeter } from "@/components/ui/charts";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, openUpgrade } from "@/lib/client";
@@ -75,7 +76,9 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
             );
           })()}
           <div className="mt-5 space-y-4">
-            {rows.map(([l, v, m]) => <div key={l}><div className="mb-1.5 flex justify-between text-sm"><span className="text-ink-600">{l}</span><span className="font-medium">{v.toLocaleString(dl)} / {m == null ? "∞" : m.toLocaleString(dl)}</span></div><ProgressBar value={v} max={m ?? null} /></div>)}
+            <div className="grid gap-5 sm:grid-cols-2">
+              {rows.map(([l, v, m]) => <UsageMeter key={l} label={l} value={v} max={m ?? null} locale={dl} warnText={t("Doluyor")} fullText={t("Doldu")} unlimitedText={t("Sınırsız")} />)}
+            </div>
             <p className="text-xs text-ink-400">Dışa aktarma biçimleri: {(limits?.export_formats ?? []).join(", ").toUpperCase() || "—"}</p>
           </div>
         </section>

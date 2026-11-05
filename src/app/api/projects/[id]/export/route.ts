@@ -38,7 +38,8 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
     sources: bundle.sources,
     engineItems: bundle.sources.map(sourceRowToItem),
     authorName: s.profile.full_name || s.profile.email || "",
-    options: { numberHeadings: url.searchParams.get("numbering") !== "0" },
+    // ?stages=id1,id2 → yalnızca seçilen bölümler (D91)
+    options: { numberHeadings: url.searchParams.get("numbering") !== "0", onlyStageIds: (url.searchParams.get("stages") ?? "").split(",").filter((x) => /^[0-9a-f-]{36}$/i.test(x)) },
   });
 
   let body: Buffer | string;

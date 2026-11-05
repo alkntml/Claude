@@ -17,6 +17,8 @@ export default async function Page() {
         <p>Providing the service, enforcing usage limits, ensuring security and meeting legal obligations.</p>
         <h2>Transfer to AI providers</h2>
         <p>When you use AI features, the relevant section text, project context and selected source abstracts are sent to the configured AI provider (e.g. Anthropic) solely to answer your request.</p>
+        <h2>Visit statistics</h2>
+        <p>To measure how many people visit the site, page views are counted without cookies. IP addresses and browser details are not stored; only an anonymous code that changes every day is kept, so a visitor cannot be identified or followed across days. Nothing is counted if your browser sends a “Do Not Track” or Global Privacy Control signal.</p>
         <h2>Your rights</h2>
         <p>From your account page you can download all your data in a portable format (JSON) and permanently delete your account with all its data. For other requests, contact the data controller.</p>
         <h2>Security</h2>
@@ -33,6 +35,8 @@ export default async function Page() {
       <p>Hizmetin sunulması, kullanım limitlerinin uygulanması, güvenliğin sağlanması ve yasal yükümlülüklerin yerine getirilmesi.</p>
       <h2>Yapay zekâ sağlayıcılarına aktarım</h2>
       <p>Yapay zekâ özellikleri kullanıldığında ilgili bölüm metni, proje bağlamı ve seçili kaynak özetleri yapılandırılmış yapay zekâ sağlayıcısına (ör. Anthropic) iletilir. Bu aktarım yalnızca isteğinizi yanıtlamak için yapılır.</p>
+      <h2>Ziyaret istatistikleri</h2>
+      <p>Sitenin kaç kişi tarafından ziyaret edildiğini ölçmek için sayfa görüntülemeleri çerez kullanılmadan sayılır. IP adresi ve tarayıcı bilgisi saklanmaz; yalnızca her gün değişen anonim bir kod tutulur, bu nedenle ziyaretçi kimliği belirlenemez ve günler arasında izlenemez. Tarayıcınız “izleme yapma” (Do Not Track / Global Privacy Control) sinyali gönderiyorsa hiçbir sayım yapılmaz.</p>
       <h2>Haklarınız</h2>
       <p>Hesap sayfanızdan tüm verilerinizi taşınabilir biçimde (JSON) indirebilir ve hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz. KVKK md. 11 kapsamındaki diğer talepleriniz için veri sorumlusuna başvurabilirsiniz.</p>
       <h2>Güvenlik</h2>

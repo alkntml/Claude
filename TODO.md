@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de `20261116000021_tools_analytics.sql` (ücretsiz araç sayacı + ziyaretçi ölçümü, D90)
 - [ ] Supabase SQL Editor’de `supabase/check_status.sql` çalıştır (salt okunur): EKSİK görünen migration’ları sırayla çalıştır. 17 (fiyat artışı) EKSİK görünürse önce Claude’a sor: fiyatlar yönetim panelinden elle değiştirildiyse yanlış EKSİK görünebilir.
 - [ ] Supabase SQL Editor’de `20261115000020_no_work_lock.sql` (çalışma kilidini kaldırma, D81)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 9’u çalıştır (`20261106000009_plans_whatsapp.sql`: yeni fiyat/limitler, öğrenci indirimi ayarını siler)
@@ -41,6 +42,7 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] DOCX ve PDF dışa aktarma (PDF fontları Vercel'de bulunuyor mu?)
 - [ ] Dosya yükleme (Supabase Storage `user-files` bucket) ve PDF metin çıkarma
 - [ ] Kalite kontrol (AI incelemesi dahil)
+- [ ] D90 canlı deneme: /araclar araçları (özellikle uydurma kaynak kontrolü ve DOI ile kaynakça), Yönetim → Ziyaretçiler ve maliyet sayacı, ücretsiz pakette anket alt bilgisi
 - [ ] D87/D88 canlı deneme: “Değişkenlerin Ölçülmesi” belgesini Araştırmanın yöntemi bölümüne “İçe aktar” ile aktar (kaynak doğrulama Crossref/DataCite canlı); hafıza panelinden aynı belgeyle “Belgeden öğren”
 - [ ] D83 alt başlıklar: canlıda “Alt başlık oluştur” → alt başlığa gir → yaz → alt-alt başlık → Word indir (numara ve sayfa düzeni)
 - [ ] D78 maliyet düşüşü: aynı boyutta bir otomatik çalışmayı yeniden dene, Yönetim → gelir-maliyet ekranında harcamayı önceki ($1,5 / 2000 kelime) ile karşılaştır; “Onayınız bekleniyor” ekranını dene

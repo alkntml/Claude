@@ -11,7 +11,8 @@ import { useState } from "react";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { api } from "@/lib/client";
 import { WORK_ICONS } from "@/components/icons";
-import { Badge, Empty, ProgressBar, ProgressRing } from "@/components/ui/primitives";
+import { Badge, Empty, ProgressRing } from "@/components/ui/primitives";
+import { UsageMeter } from "@/components/ui/charts";
 import { STYLES } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
 import { LEVEL_LABELS, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
@@ -157,10 +158,7 @@ export function Dashboard(p: Props) {
             <div className="flex items-center justify-between"><h2 className="font-semibold text-ink-900">{t("Kullanım durumu")}</h2><Link href="/hesap" className="text-xs font-medium text-brand-600">{t("Paketi yönet")}</Link></div>
             <div className="mt-4 space-y-4">
               {[["Kaynak taramaları", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["Projeler", p.usage?.projects ?? 0, p.limits?.projects], ["Depolama (MB)", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]].map(([l, v, m]) => (
-                <div key={l as string}>
-                  <div className="mb-1.5 flex justify-between text-[13px]"><span className="text-ink-600">{t(l as string)}</span><span className="font-medium text-ink-800">{v as number}{m != null ? ` / ${m}` : " / ∞"}</span></div>
-                  <ProgressBar value={v as number} max={m as number | null} />
-                </div>
+                <UsageMeter key={l as string} label={t(l as string)} value={v as number} max={m as number | null} warnText={t("Doluyor")} fullText={t("Doldu")} unlimitedText={t("Sınırsız")} />
               ))}
             </div>
           </div>

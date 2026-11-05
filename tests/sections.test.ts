@@ -100,3 +100,21 @@ describe("Giriş açılış metnindeki alt başlıklar (D89)", () => {
     expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["1 GİRİŞ", "1.1 Değişkenlerin Ölçülmesi", "1.1.1 ISO 14001", "1.2 Problem Durumu", "1.3 Araştırmanın Amacı ve Önemi"]);
   });
 });
+
+describe("seçimli dışa aktarma (D91)", () => {
+  it("yalnızca seçilen bölümler aktarılır; numaralar ve ana bölüm başlığı korunur, kaynakça seçilenlere göre", () => {
+    const h = (level: number, text: string) => ({ type: "heading", attrs: { level }, content: [{ type: "text", text }] });
+    const p = (text: string) => ({ type: "paragraph", content: [{ type: "text", text }] });
+    const cite = (id: string) => ({ type: "paragraph", content: [{ type: "text", text: "İddia " }, { type: "citation", attrs: { ids: [id], locator: null, narrative: false } }] });
+    const stages = [
+      { id: "11111111-1111-1111-1111-111111111111", key: "problem", title: "Araştırma probleminin tanımlanması", position: 0, content_text: "x", content: { type: "doc", content: [cite("a")] } },
+      { id: "22222222-2222-2222-2222-222222222222", key: "method", title: "Araştırmanın yöntemi", position: 1, content_text: "y", content: { type: "doc", content: [p("Yöntem.")] } },
+      { id: "33333333-3333-3333-3333-333333333333", key: "sample", title: "Evren ve örneklem", position: 2, content_text: "z", content: { type: "doc", content: [h(2, "Örneklem seçimi"), cite("b")] } },
+    ];
+    const items = [{ id: "a", type: "book", title: "A kitabı", authors: [{ family: "Ak" }], year: 2020 }, { id: "b", type: "book", title: "B kitabı", authors: [{ family: "Bek" }], year: 2021 }] as any;
+    const d = buildExportDoc({ project: { title: "X", language: "tr", citation_style: "apa7" }, stages, sources: [], engineItems: items, authorName: "", options: { onlyStageIds: [stages[2].id] } });
+    expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["2 YÖNTEM", "2.2 Evren ve Örneklem", "2.2.1 Örneklem seçimi"]);
+    expect(d.bibliography.map((b) => b.rich.map((r) => r.text).join(""))).toEqual([expect.stringContaining("Bek")]);
+    expect(JSON.stringify(d.blocks)).not.toContain("Yöntem.");
+  });
+});

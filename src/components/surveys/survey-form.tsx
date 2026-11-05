@@ -8,7 +8,7 @@ import { LanguageSwitch, useT } from "@/i18n/client";
 import { validateAnswers, type Question } from "@/lib/surveys";
 
 /** Katılımcı formu: kimlik bilgisi istenmez; onam (varsa) → sorular → teşekkür */
-export function SurveyForm({ token, title, description, consent, questions, accepting, preview }: { token: string; title: string; description: string; consent: string; questions: Question[]; accepting: boolean; preview: boolean }) {
+export function SurveyForm({ token, title, description, consent, questions, accepting, preview, branded = true }: { token: string; title: string; description: string; consent: string; questions: Question[]; accepting: boolean; preview: boolean; branded?: boolean }) {
   const { t } = useT();
   const [step, setStep] = useState<"consent" | "form" | "done">(consent.trim() ? "consent" : "form");
   const [agree, setAgree] = useState(false);
@@ -36,10 +36,19 @@ export function SurveyForm({ token, title, description, consent, questions, acce
   const shell = (children: React.ReactNode) => (
     <div className="min-h-screen bg-[rgb(var(--bg))] px-4 py-8">
       <div className="mx-auto max-w-2xl">
-        <div className="mb-6 flex items-center justify-between"><Logo /><LanguageSwitch /></div>
+        <div className={cn("mb-6 flex items-center", branded ? "justify-between" : "justify-end")}>{branded && <Logo />}<LanguageSwitch /></div>
         {preview && <p className="mb-4 rounded-xl bg-amber-50 px-4 py-2 text-sm text-amber-800">{t("Önizleme: cevaplar kaydedilmez.")}</p>}
         <div className="card p-6 sm:p-8">{children}</div>
-        <p className="mt-6 text-center text-xs text-ink-400">{t("Bu form Academiana ile hazırlandı. Kimlik bilgisi (ad, e-posta, IP adresi) toplanmaz.")}</p>
+        {branded ? (
+          // Ücretsiz paketteki anketlerin alt bilgisi (D90): ücretli pakette görünmez
+          <a href="https://www.academiana.com.tr/araclar/anket-olusturucu?utm_source=anket&amp;utm_medium=form&amp;utm_campaign=alt-bilgi" target="_blank" rel="noopener" className="mx-auto mt-8 flex w-fit flex-col items-center gap-1.5 rounded-2xl px-4 py-3 text-center transition hover:bg-white/70">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-ink-400">{t("Academiana ile oluşturuldu")}</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/academiana-logo-transparent.png" alt="Academiana" width={960} height={245} className="h-9 w-auto" />
+            <span className="text-xs text-ink-400">{t("Kendi akademik anketinizi ücretsiz oluşturun")}</span>
+          </a>
+        ) : null}
+        <p className="mt-4 text-center text-xs text-ink-400">{t("Kimlik bilgisi (ad, e-posta, IP adresi) toplanmaz.")}</p>
       </div>
     </div>
   );

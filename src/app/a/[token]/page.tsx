@@ -8,8 +8,11 @@ export const dynamic = "force-dynamic";
 async function load(token: string) {
   if (!/^[a-f0-9]{24,128}$/.test(token) || !isSupabaseConfigured()) return null;
   // Herkese açık form: yalnızca katılımcının görmesi gereken alanlar okunur
-  const { data } = await adminClient().from("surveys").select("title, description, consent, questions, is_open, closes_at, max_responses, response_count").eq("token", token).maybeSingle();
-  return data;
+  const { data } = await adminClient().from("surveys").select("title, description, consent, questions, is_open, closes_at, max_responses, response_count, user_id").eq("token", token).maybeSingle();
+  if (!data) return null;
+  // Ücretsiz paketteki anketlerde “Academiana ile oluşturuldu” alt bilgisi gösterilir; ücretli pakette gösterilmez (D90)
+  const { data: owner } = await adminClient().from("profiles").select("plan_id, role").eq("id", data.user_id).maybeSingle();
+  return { ...data, branded: !owner || (owner.plan_id === "free" && owner.role !== "admin") };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ token: string }> }) {
@@ -24,5 +27,5 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const s = await load(token);
   if (!s) notFound();
   const accepting = s.is_open && !(s.closes_at && new Date(s.closes_at) < new Date()) && !(s.max_responses && s.response_count >= s.max_responses);
-  return <SurveyForm token={token} title={s.title} description={s.description} consent={s.consent} questions={s.questions ?? []} accepting={accepting} preview={onizleme === "1"} />;
+  return <SurveyForm token={token} title={s.title} description={s.description} consent={s.consent} questions={s.questions ?? []} accepting={accepting} preview={onizleme === "1"} branded={s.branded} />;
 }

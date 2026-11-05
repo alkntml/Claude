@@ -566,10 +566,10 @@ export function Workspace(props: Props) {
     if (id === activeId && rest[0]) { setActiveId(rest[0].id); focusRef.current = null; setFocus(null); baseRef.current = rest[0].content; editor?.commands.setContent((rest[0].content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }
   }
 
-  async function exportAs(format: string) {
+  async function exportAs(format: string, stageIds?: string[]) {
     await flush();
     try {
-      const res = await fetch(`/api/projects/${project.id}/export?format=${format}`);
+      const res = await fetch(`/api/projects/${project.id}/export?format=${format}${stageIds?.length ? `&stages=${stageIds.join(",")}` : ""}`);
       if (!res.ok) { const j = await res.json().catch(() => ({})); handlePlanError(res.status, j); throw new Error(j.error ?? t("Dışa aktarılamadı")); }
       const blob = await res.blob();
       const a = document.createElement("a");
@@ -749,7 +749,7 @@ export function Workspace(props: Props) {
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           <ShareButton projectId={project.id} />
           <ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} />
-          <span data-tour="export"><ExportMenu onExport={exportAs} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
+          <span data-tour="export"><ExportMenu onExport={exportAs} stages={stages.filter((x) => x.key !== "references").map((x) => ({ id: x.id, title: x.title, prefix: prefixes[x.id] ?? "", words: x.word_count ?? 0 }))} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
           <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
           <button onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
@@ -950,10 +950,16 @@ function StatusPicker({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
-function ExportMenu({ onExport, onFormat, onPresentation, onJournals, presenting }: { onExport: (f: string) => Promise<void>; onFormat: () => void; onPresentation: () => void; onJournals: () => void; presenting: boolean }) {
-  const { t } = useT();
+function ExportMenu({ onExport, stages, onFormat, onPresentation, onJournals, presenting }: { onExport: (f: string, stageIds?: string[]) => Promise<void>; stages: { id: string; title: string; prefix: string; words: number }[]; onFormat: () => void; onPresentation: () => void; onJournals: () => void; presenting: boolean }) {
+  const { t, dl } = useT();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
+  // Tüm çalışma ya da seçilen bölümler (D91); seçimde numaralar tüm çalışmadaki yerlerini korur
+  const [scope, setScope] = useState<"all" | "some">("all");
+  const [picked, setPicked] = useState<Set<string>>(new Set());
+  const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const chosen = scope === "some" ? stages.filter((x) => picked.has(x.id)).map((x) => x.id) : undefined;
+  const blocked = scope === "some" && !chosen?.length;
   const items = [["docx", "Microsoft Word (.docx)"], ["pdf", "PDF"], ["md", "Markdown"], ["txt", t("Düz metin (.txt)")]];
   return (
     <div className="relative">
@@ -962,8 +968,26 @@ function ExportMenu({ onExport, onFormat, onPresentation, onJournals, presenting
         {open && (
           <>
             <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
-            <motion.div initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} className="absolute right-0 top-11 z-40 w-60 rounded-2xl border border-ink-100 bg-white p-1.5 shadow-2xl">
-              {items.map(([f, l]) => <button key={f} onClick={async () => { setBusy(f); await onExport(f); setBusy(null); setOpen(false); }} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50">{l}{busy === f && <Loader2 className="h-4 w-4 animate-spin" />}</button>)}
+            <motion.div initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} className="absolute right-0 top-11 z-40 w-72 rounded-2xl border border-ink-100 bg-white p-1.5 shadow-2xl">
+              <div className="mb-1 grid grid-cols-2 gap-1 rounded-xl bg-ink-100 p-0.5 text-[12.5px] font-medium">
+                <button type="button" onClick={() => setScope("all")} className={cn("rounded-lg px-2 py-1.5", scope === "all" ? "bg-white text-ink-900 shadow-sm" : "text-ink-500")}>{t("Tüm çalışma")}</button>
+                <button type="button" onClick={() => setScope("some")} className={cn("rounded-lg px-2 py-1.5", scope === "some" ? "bg-white text-ink-900 shadow-sm" : "text-ink-500")}>{t("Seçili bölümler")}</button>
+              </div>
+              {scope === "some" && (
+                <div className="mb-1 max-h-56 overflow-y-auto rounded-xl border border-ink-100 p-1">
+                  <div className="flex justify-between px-2 py-1 text-[11.5px]"><button type="button" className="text-brand-700 hover:underline" onClick={() => setPicked(new Set(stages.map((x) => x.id)))}>{t("Tümünü seç")}</button><button type="button" className="text-ink-500 hover:underline" onClick={() => setPicked(new Set())}>{t("Temizle")}</button></div>
+                  {stages.map((x) => (
+                    <label key={x.id} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] text-ink-700 hover:bg-ink-50">
+                      <input type="checkbox" checked={picked.has(x.id)} onChange={() => toggle(x.id)} />
+                      <span className="min-w-0 flex-1 truncate">{x.prefix && <span className="mr-1 font-mono text-[11px] text-ink-400">{x.prefix}</span>}{x.title}</span>
+                      <span className="shrink-0 text-[11px] text-ink-400">{x.words ? x.words.toLocaleString(dl) : "—"}</span>
+                    </label>
+                  ))}
+                  <p className="px-2 pb-1 pt-1.5 text-[11px] text-ink-400">{t("Numaralar tüm çalışmadaki yerlerini korur; kaynakçada yalnızca seçilen bölümlerde atıf yapılan kaynaklar yer alır.")}</p>
+                </div>
+              )}
+              {items.map(([f, l]) => <button key={f} disabled={blocked} onClick={async () => { setBusy(f); await onExport(f, chosen); setBusy(null); setOpen(false); }} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50 disabled:opacity-40">{l}{busy === f && <Loader2 className="h-4 w-4 animate-spin" />}</button>)}
+              {blocked && <p className="px-3 pb-1 text-[11.5px] text-amber-700">{t("Aktarılacak en az bir bölüm seçin.")}</p>}
               <button onClick={() => { setOpen(false); onPresentation(); }} disabled={presenting} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50 disabled:opacity-50">{t("Savunma sunumu (.pptx)")}{presenting && <Loader2 className="h-4 w-4 animate-spin" />}</button>
               <button onClick={() => { setOpen(false); onJournals(); }} className="flex w-full items-center rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50">{t("Dergi önerisi ve ön yazı")}</button>
               <a href={expertUrl("bicim", "export-menu")} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50">{t("Uzman desteği (redaksiyon, çeviri, biçim)")}<ExternalLink className="h-3.5 w-3.5 text-ink-400" /></a>

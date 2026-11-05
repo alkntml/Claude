@@ -74,12 +74,15 @@ export function buildExportDoc(params: {
   sources: any[];
   engineItems: CitationItem[];
   authorName: string;
-  options?: { numberHeadings?: boolean };
+  /** onlyStageIds: yalnızca seçilen bölümler aktarılır; numaralar tüm çalışmadaki yerlerini korur (D91) */
+  options?: { numberHeadings?: boolean; onlyStageIds?: string[] };
 }): ExportDoc {
   const { project, stages } = params;
   const locale: CiteLocale = project.language === "en" ? "en" : "tr";
   const ordered = [...stages].sort((a, b) => a.position - b.position);
-  const order = citedIdsInOrder(ordered.map((s) => s.content as JSONNode));
+  const only = params.options?.onlyStageIds?.length ? new Set(params.options.onlyStageIds) : null;
+  // Kaynakça yalnızca aktarılan bölümlerde atıf yapılan kaynakları içerir
+  const order = citedIdsInOrder(ordered.filter((s) => !only || only.has(s.id)).map((s) => s.content as JSONNode));
   const engine = new CitationEngine(project.citation_style as CitationStyleId, params.engineItems, { locale, citedOrder: order });
   const doNumber = params.options?.numberHeadings ?? true;
   const firstSeen = new Set<string>();
@@ -129,12 +132,16 @@ export function buildExportDoc(params: {
     // İçindekiler tüm başlık düzeylerini içerir (D85; 4. düzey ör. 2.1.4.1 dahil). Sıra blok başlıklarıyla birebir aynıdır.
     toc.push({ level: lvl, number, text: runs.map((r) => r.text).join("") });
   };
+  /** Seçimli aktarımda ana bölüm başlığı, o ana bölümden ilk seçilen kısmın önüne eklenir */
+  const ch: { head: { block: Block; toc: ExportDoc["toc"][number]; shown: boolean } | null; startedHere: boolean } = { head: null, startedHere: false };
   const startChapter = (runs: Run[], isNumbered: boolean) => {
     numbered = isNumbered;
     if (isNumbered) { chapter++; counters[0] = chapter - 1; }
     counters[1] = counters[2] = counters[3] = 0;
     lastLevel = 0;
     emit(1, runs);
+    ch.head = { block: blocks[blocks.length - 1], toc: toc[toc.length - 1], shown: true };
+    ch.startedHere = true;
   };
   /** Aşama içi başlıklar: ilk başlık aşama adının tekrarıysa atlanır; düzey, bölüm içindeki konuma göre kaydırılır */
   let headingCtx = { shift: 0, skipTitle: "", seen: 0 };
@@ -189,6 +196,8 @@ export function buildExportDoc(params: {
     const title = sectionTitle(st.key, st.title, def?.title, locale);
     const group = chapterGroup(st.key);
     const skipTitle = [st.title, def?.title ?? "", title].find((x) => x) ?? "";
+    const b0 = blocks.length, t0 = toc.length;
+    ch.startedHere = false;
     if (group) {
       if (currentGroup !== group.id) { startChapter([{ text: group.title[locale] }], true); currentGroup = group.id; }
       if (title) { emit(2, [{ text: title }]); headingCtx = { shift: 1, skipTitle, seen: 0 }; }
@@ -199,6 +208,14 @@ export function buildExportDoc(params: {
       headingCtx = { shift: 0, skipTitle, seen: 0 };
     }
     if (doc) visit(doc);
+    // Seçilmeyen bölüm: numaralandırma sürer ama içerik belgeye girmez
+    if (only && !only.has(st.id)) {
+      blocks.splice(b0); toc.splice(t0);
+      if (ch.startedHere && ch.head) ch.head.shown = false;
+    } else if (only && ch.head && !ch.head.shown) {
+      blocks.splice(b0, 0, ch.head.block); toc.splice(t0, 0, ch.head.toc);
+      ch.head.shown = true;
+    }
   }
 
   const bib = engine.bibliography(order);

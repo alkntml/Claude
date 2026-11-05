@@ -2,7 +2,7 @@
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
 import { academicOrder, chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
-import { addSubheadings, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
+import { addSiblingAfter, addSubheadings, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
 import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
@@ -156,7 +156,9 @@ export function Workspace(props: Props) {
 
   const editor = useAcademicEditor({
     content: active?.content ?? null,
-    placeholder: def ? t("{title} bölümünü yazmaya başlayın veya asistandan yardım isteyin…", { title: active?.title ?? t(def.title) }) : t("Yazmaya başlayın…"),
+    placeholder: focus != null && active?.content?.content?.[focus]?.type === "heading"
+      ? t("“{title}” alt başlığını yazmaya başlayın veya asistandan yardım isteyin…", { title: docToPlain({ type: "doc", content: active.content.content[focus].content }).trim() })
+      : def ? t("{title} bölümünü yazmaya başlayın veya asistandan yardım isteyin…", { title: active?.title ?? t(def.title) }) : t("Yazmaya başlayın…"),
     onSelection: setSelection,
     onUpdate: (edited) => {
       if (!activeId) return;
@@ -175,6 +177,8 @@ export function Workspace(props: Props) {
   });
 
   editorRef.current = editor;
+  // Bölüm/alt başlık değişince yer tutucu yazı hemen güncellensin (boş işlem görünümü yeniden çizer; metin değişmez)
+  useEffect(() => { if (editor && !editor.isDestroyed) editor.view.dispatch(editor.state.tr.setMeta("addToHistory", false)); }, [editor, focus, activeId]);
 
   /** Odak varsa editördeki alt başlık metnini bölümün tam belgesine geri yazar (D83) */
   function mergeFocus(edited: JSONNode): JSONNode {
@@ -617,6 +621,22 @@ export function Workspace(props: Props) {
     await setFullDoc(next, t("{n} alt başlık oluşturuldu", { n: added.length }), keep);
     toast({ tone: "success", title: t("{n} alt başlık oluşturuldu", { n: added.length }), detail: t("Soldaki listeden her birine ayrı ayrı girip yazabilirsiniz.") });
   }
+  /** Sol listedeki “+”: alt başlığın arkasına aynı düzeyde yeni alt başlık (D86) */
+  const [sibling, setSibling] = useState<{ index: number; level: number; number: string; title: string } | null>(null);
+  const [siblingName, setSiblingName] = useState("");
+  async function openSibling(stageId: string, sec: SectionInfo) {
+    // Önce o alt başlığa girilir (kaydedilmemiş değişiklikler kaydedilir), sonra yeni başlığın adı sorulur
+    if (stageId !== activeId || focusRef.current !== sec.index) await selectStage(stageId, sec.index);
+    setSiblingName("");
+    setSibling({ index: sec.index, level: sec.level, number: sec.number, title: sec.text });
+  }
+  async function addSibling() {
+    if (!sibling || !siblingName.trim()) return;
+    const r = addSiblingAfter(fullDoc(), sibling.index, siblingName);
+    setSibling(null);
+    if (r.index < 0) { toast({ tone: "error", title: t("Alt başlık eklenemedi") }); return; }
+    await setFullDoc(r.doc, t("Alt başlık eklendi"), r.index);
+  }
   async function renameFocused(title: string) {
     if (focus == null || !title.trim()) return;
     await setFullDoc(renameSection(fullDoc(), focus, title), t("Alt başlık yeniden adlandırıldı"), focus);
@@ -671,12 +691,13 @@ export function Workspace(props: Props) {
                   {(trees[s.id] ?? []).map((sec: SectionInfo) => {
                     const on = sel && focus === sec.index;
                     return (
-                      <li key={sec.index}>
-                        <button onClick={() => selectStage(s.id, sec.index)} style={{ paddingLeft: `${(sec.level - 2) * 12 + 8}px` }} className={cn("flex w-full items-baseline gap-1.5 rounded-lg py-1.5 pr-2 text-left text-[12.5px] transition", on ? "bg-white font-semibold text-ink-900 shadow-sm ring-1 ring-ink-100" : "text-ink-600 hover:bg-white/70")}>
+                      <li key={sec.index} className="group/sec relative">
+                        <button onClick={() => selectStage(s.id, sec.index)} style={{ paddingLeft: `${(sec.level - 2) * 12 + 8}px` }} className={cn("flex w-full items-baseline gap-1.5 rounded-lg py-1.5 pr-8 text-left text-[12.5px] transition", on ? "bg-white font-semibold text-ink-900 shadow-sm ring-1 ring-ink-100" : "text-ink-600 hover:bg-white/70")}>
                           {sec.number && <span className="shrink-0 font-mono text-[11px] text-ink-400">{sec.number}</span>}
                           <span className="min-w-0 flex-1 truncate">{sec.text || t("(adsız alt başlık)")}</span>
                           <span className="shrink-0 text-[10.5px] text-ink-300">{sec.words ? sec.words.toLocaleString(dl) : "—"}</span>
                         </button>
+                        <button onClick={(e) => { e.stopPropagation(); openSibling(s.id, sec); }} title={t("Bunun arkasına aynı düzeyde alt başlık ekle")} aria-label={t("Bunun arkasına aynı düzeyde alt başlık ekle")} className="absolute right-1 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-ink-400 transition hover:bg-brand-50 hover:text-brand-700 lg:opacity-0 lg:group-hover/sec:opacity-100 lg:focus:opacity-100"><Plus className="h-3.5 w-3.5" /></button>
                       </li>
                     );
                   })}
@@ -844,6 +865,10 @@ export function Workspace(props: Props) {
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}
       <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} />
+      <Modal open={!!sibling} onClose={() => setSibling(null)} title={t("Alt başlık ekle")} footer={<><Button variant="ghost" onClick={() => setSibling(null)}>{t("Vazgeç")}</Button><Button disabled={!siblingName.trim()} onClick={addSibling}><Plus className="h-4 w-4" /> {t("Ekle")}</Button></>}>
+        <p className="mb-3 text-[13.5px] text-ink-600">{t("“{p}” başlığından sonra aynı düzeyde yeni bir alt başlık eklenecek. Numaralar kendiliğinden güncellenir.", { p: sibling ? `${sibling.number ? `${sibling.number} ` : ""}${sibling.title}` : "" })}</p>
+        <input autoFocus className="input" value={siblingName} onChange={(e) => setSiblingName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) addSibling(); }} placeholder={t("Alt başlığın adı")} aria-label={t("Alt başlığın adı")} />
+      </Modal>
       <Modal open={footnote !== null} onClose={() => setFootnote(null)} title={t("Dipnot ekle")} footer={<><Button variant="ghost" onClick={() => setFootnote(null)}>{t("Vazgeç")}</Button><Button disabled={!footnote?.trim()} onClick={() => { editor?.chain().focus().insertContent({ type: "footnote", attrs: { text: footnote } }).run(); setFootnote(null); }}>{t("Ekle")}</Button></>}>
         <textarea autoFocus className="input min-h-[120px]" placeholder={t("Dipnot metni…")} value={footnote ?? ""} onChange={(e) => setFootnote(e.target.value)} />
       </Modal>

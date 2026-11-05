@@ -2433,4 +2433,11 @@ export const EN: Record<string, string> = {
   "Bölüm sırası akademik düzene göre ayarlandı": "Section order adjusted to academic structure",
   "Aynı ana bölümün kısımları bir arada, kaynakça ve ekler en sonda kalır.": "Parts of the same chapter stay together; references and appendices stay at the end.",
   "Bölüm sırası akademik düzene göre düzeltildi": "Section order corrected to academic structure",
+  "Alt başlık eklenemedi": "The subheading could not be added",
+  "Alt başlık eklendi": "Subheading added",
+  "Bunun arkasına aynı düzeyde alt başlık ekle": "Add a subheading at the same level after this one",
+  "Alt başlık ekle": "Add subheading",
+  "“{p}” başlığından sonra aynı düzeyde yeni bir alt başlık eklenecek. Numaralar kendiliğinden güncellenir.": "A new subheading will be added at the same level after “{p}”. Numbers update automatically.",
+  "Alt başlığın adı": "Subheading name",
+  "“{title}” alt başlığını yazmaya başlayın veya asistandan yardım isteyin…": "Start writing the subheading “{title}” or ask the assistant for help…",
 };

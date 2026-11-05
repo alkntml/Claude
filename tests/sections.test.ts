@@ -53,3 +53,18 @@ describe("akademik bölüm sırası (D84)", () => {
     expect(academicOrder(st(["topic", "problem", "method", "testing", "conclusion", "references", "appendices"]))).toBeNull();
   });
 });
+
+import { addSiblingAfter } from "@/lib/editor/sections";
+describe("aynı düzeyde alt başlık ekleme (D86)", () => {
+  const h = (level: number, text: string) => ({ type: "heading", attrs: { level }, content: [{ type: "text", text }] });
+  const p = (text: string) => ({ type: "paragraph", content: [{ type: "text", text }] });
+  it("başlığın alt başlıklarından sonra aynı düzeyde ekler", () => {
+    const d = { type: "doc", content: [h(2, "A"), p("a"), h(3, "A1"), p("a1"), h(2, "B")] };
+    const r = addSiblingAfter(d, 0, "Yeni");
+    expect(r.index).toBe(4);
+    expect(sectionTree(r.doc, "3").map((s) => `${s.number} ${s.text}`)).toEqual(["3.1 A", "3.1.1 A1", "3.2 Yeni", "3.3 B"]);
+    const r2 = addSiblingAfter(d, 2, "A2");
+    expect(sectionTree(r2.doc, "3").map((s) => `${s.number} ${s.text}`)).toEqual(["3.1 A", "3.1.1 A1", "3.1.2 A2", "3.2 B"]);
+    expect(addSiblingAfter(d, 1, "X").index).toBe(-1);
+  });
+});

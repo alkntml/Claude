@@ -388,3 +388,6 @@ Savunma sunumu: model yalnızca çalışma metninden JSON slayt planı üretir, 
 
 ### D85 — İçindekiler tüm başlık düzeylerini içerir
 - Yönetici kararı (D76’daki “içindekiler en fazla 3 düzey” kuralının yerine geçer): 4. düzey alt başlıklar (ör. 2.1.4.1) da Word, PDF ve metin dışa aktarmalarındaki içindekilere girer; Word’de her giriş başlığa yer imiyle bağlıdır. Bu, PDF’de 4. düzey başlık varken içindekiler sayfa numaralarının kaymasına yol açan eşleşme hatasını da giderdi (her başlık bir giriş).
+
+### D86 — Sol listede “+” ile aynı düzeyde alt başlık
+- Sol listedeki her alt başlığın yanında “+” düğmesi: o alt başlığın arkasına (kendi alt başlıklarından sonra) aynı düzeyde yeni bir alt başlık ekler (`addSiblingAfter`). Önce o alt başlığa girilir, ad küçük bir pencerede sorulur; ekledikten sonra yeni başlık açılır, numaralar kendiliğinden kayar. Alt başlıktayken editörün yer tutucusu alt başlığın adını gösterir.

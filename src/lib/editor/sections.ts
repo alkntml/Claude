@@ -137,3 +137,15 @@ export const maxSectionLevel = (grouped: boolean) => (grouped ? 3 : 4);
 export function sectionPlain(doc: JSONNode | null | undefined, index: number): string {
   return docToPlain({ type: "doc", content: sectionBody(doc, index) });
 }
+
+/**
+ * Bir alt başlığın hemen arkasına (kendi alt başlıklarından sonra) aynı düzeyde yeni bir alt başlık ekler (D86).
+ * Yeni başlığın belgedeki sırası döner; başlık bulunamazsa veya ad boşsa belge değişmez (index -1).
+ */
+export function addSiblingAfter(doc: JSONNode, index: number, title: string): { doc: JSONNode; index: number } {
+  const s = sectionTree(doc).find((x) => x.index === index);
+  if (!s || !title.trim()) return { doc, index: -1 };
+  const nodes = [...nodesOf(doc)];
+  nodes.splice(s.end, 0, headingNode(s.level, title.trim()));
+  return { doc: { ...doc, content: nodes }, index: s.end };
+}

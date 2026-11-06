@@ -48,9 +48,12 @@ const UNLIMITED: PlanLimits = { ai_requests_month: null, tokens_month: null, sou
 
 export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
   if (await isAdminUser(userId).catch(() => false)) return { ...UNLIMITED };
-  const [l, c, m] = await Promise.all([planLimits(planId), activeCredits(userId), getSetting("billing.margin")]);
+  const [l, m] = await Promise.all([planLimits(planId), getSetting("billing.margin")]);
+  const c = await activeCredits(userId, { ai: l.ai_requests_month, search: l.source_searches_month });
   return {
     ...l,
+    // D98: krediyle gelen istekler token sınırına da eklenir (istek başı ~50 bin token; ücretsiz pakette ödül kullanılabilsin)
+    tokens_month: l.tokens_month == null ? l.tokens_month : l.tokens_month + c.ai_requests * 50_000,
     // Davet ödülü istekleri maliyet tavanına ortalama istek maliyetiyle eklenir
     cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : l.cost_usd_month + c.ai_requests * m.avg_request_usd,
     ai_requests_month: l.ai_requests_month == null ? l.ai_requests_month : l.ai_requests_month + c.ai_requests,

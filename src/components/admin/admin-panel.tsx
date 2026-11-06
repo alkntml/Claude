@@ -467,11 +467,10 @@ function GrowthSettings() {
       <h3 className="font-semibold">Davet ve iletişim</h3>
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={ref.enabled} onChange={(e) => setRef({ ...ref, enabled: e.target.checked })} /> Davet programı etkin</label>
       <div className="grid grid-cols-2 gap-2 text-xs text-ink-500">
-        <label>AI isteği ödülü{n(ref.ai_requests, (x) => setRef({ ...ref, ai_requests: x }))}</label>
-        <label>Tarama ödülü{n(ref.source_searches, (x) => setRef({ ...ref, source_searches: x }))}</label>
         <label>Geçerlilik (gün){n(ref.valid_days, (x) => setRef({ ...ref, valid_days: x }))}</label>
         <label>Aylık ödül sınırı (davet eden){n(ref.monthly_cap, (x) => setRef({ ...ref, monthly_cap: x }))}</label>
       </div>
+      <p className="text-xs text-ink-500">Ödül, her iki tarafa Ücretsiz paketin aylık hakları kadardır (yapay zekâ isteği ve kaynak taraması; Paketler → Ücretsiz’den değişir). Tek seferliktir: kullanıldıkça azalır, her ay yenilenmez.</p>
       <div className="rounded-xl bg-ink-50 p-3">
         <p className="text-sm font-medium">Kârlılık (maliyet tavanı)</p>
         <p className="mt-0.5 text-xs text-ink-500">Her paketin aylık API maliyeti, KDV hariç gelirinin bu payını aşamaz (aşınca kullanıcının yapay zekâ hakkı dolmuş sayılır). Dolar kurunu ayda bir güncelleyin.</p>

@@ -20,19 +20,78 @@ export async function activeOrg(db: SupabaseClient, userId: string): Promise<Org
   }
 }
 
-/** Süresi dolmamış kredilerin toplamı (aylık limite eklenir) */
-export async function activeCredits(userId: string): Promise<{ ai_requests: number; source_searches: number }> {
-  const out = { ai_requests: 0, source_searches: 0 };
+/** Davet ödülü (D98): Ücretsiz paketin aylık haklarına eşittir; paket değişirse ödül de değişir */
+export async function referralReward(): Promise<{ ai_requests: number; source_searches: number; pages: number | null }> {
   try {
-    const { data } = await adminClient().from("usage_credits").select("kind, amount, expires_at").eq("user_id", userId);
-    const now = Date.now();
-    for (const c of data ?? []) {
-      if (c.expires_at && new Date(c.expires_at).getTime() < now) continue;
-      if (c.kind === "ai_requests") out.ai_requests += c.amount;
-      if (c.kind === "source_searches") out.source_searches += c.amount;
+    const { data } = await adminClient().from("plans").select("limits").eq("id", "free").maybeSingle();
+    const l = (data?.limits ?? {}) as { ai_requests_month?: number | null; source_searches_month?: number | null; pages_month?: number | null };
+    return { ai_requests: Number(l.ai_requests_month) || 10, source_searches: Number(l.source_searches_month) || 7, pages: l.pages_month ?? null };
+  } catch {
+    return { ai_requests: 10, source_searches: 7, pages: 5 };
+  }
+}
+
+export interface CreditRow { kind: string; amount: number; created_at: string; expires_at: string | null }
+/** Türkiye saatine göre ay anahtarı (sayaçlarla aynı dönem) */
+export const trMonth = (d: Date | string) => { const x = new Date(new Date(d).getTime() + 3 * 3600_000); return `${x.getUTCFullYear()}-${String(x.getUTCMonth() + 1).padStart(2, "0")}`; };
+
+/**
+ * Kredi bakiyesi (D98): krediler tek seferliktir. Her ay, paketin aylık hakkını aşan kullanım krediden düşer;
+ * kalan bakiye bu ayki sınıra eklenir (önceden 60 gün geçerli kredi aktif olduğu her ay yeniden sayılıyordu).
+ * Saf fonksiyon (test edilir). `base` null ise sınırsızdır, kredi gerekmez.
+ */
+export function creditPool(credits: CreditRow[], usageByMonth: Record<string, { ai: number; search: number }>, base: { ai: number | null | undefined; search: number | null | undefined }, now = new Date()): { ai_requests: number; source_searches: number } {
+  const nowMs = now.getTime();
+  const current = trMonth(now);
+  const calc = (kind: "ai_requests" | "source_searches", key: "ai" | "search", lim: number | null | undefined) => {
+    const rows = credits.filter((c) => c.kind === kind && c.amount > 0);
+    if (!rows.length || lim == null) return 0;
+    const months = [...new Set(rows.map((c) => trMonth(c.created_at)))].sort();
+    let pool = 0;
+    // Geçmiş aylar: o aya kadar verilen krediler, aylık hakkı aşan kullanımla tükenir
+    for (let m = months[0]; m < current; m = nextMonth(m)) {
+      pool += rows.filter((c) => trMonth(c.created_at) === m).reduce((a, c) => a + c.amount, 0);
+      pool -= Math.min(pool, Math.max(0, (usageByMonth[m]?.[key] ?? 0) - lim));
     }
-  } catch { /* tablo yoksa kredi yok */ }
-  return out;
+    pool += rows.filter((c) => trMonth(c.created_at) === current).reduce((a, c) => a + c.amount, 0);
+    // Süresi dolan kredinin kalanı kullanılamaz
+    const live = rows.filter((c) => !c.expires_at || new Date(c.expires_at).getTime() >= nowMs).reduce((a, c) => a + c.amount, 0);
+    return Math.max(0, Math.min(pool, live));
+  };
+  return { ai_requests: calc("ai_requests", "ai", base.ai), source_searches: calc("source_searches", "search", base.search) };
+}
+
+function nextMonth(m: string) {
+  const [y, mo] = m.split("-").map(Number);
+  return mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, "0")}`;
+}
+
+/** Bu ay kullanılabilecek kredi (aylık sınıra eklenir). `base`: paketin aylık hakları */
+export async function activeCredits(userId: string, base: { ai: number | null | undefined; search: number | null | undefined } = { ai: 0, search: 0 }): Promise<{ ai_requests: number; source_searches: number }> {
+  try {
+    const db = adminClient();
+    const { data } = await db.from("usage_credits").select("kind, amount, created_at, expires_at").eq("user_id", userId);
+    const now = Date.now();
+    const rows = ((data ?? []) as CreditRow[]).filter((c) => !c.expires_at || new Date(c.expires_at).getTime() >= now - 100 * 86_400_000);
+    if (!rows.some((c) => !c.expires_at || new Date(c.expires_at).getTime() >= now)) return { ai_requests: 0, source_searches: 0 };
+    // Krediler verildiği aydan bu yana aylık kullanım
+    const first = rows.map((c) => c.created_at).sort()[0];
+    const [y, m] = trMonth(first).split("-").map(Number);
+    const since = new Date(Date.UTC(y, m - 1, 1) - 3 * 3600_000).toISOString();
+    const usage: Record<string, { ai: number; search: number }> = {};
+    for (let from = 0; from < 50000; from += 1000) {
+      const { data: ev } = await db.from("usage_events").select("kind, quantity, created_at").eq("user_id", userId).in("kind", ["ai_request", "source_search"]).gte("created_at", since).order("id").range(from, from + 999);
+      for (const e of ev ?? []) {
+        const k = trMonth(e.created_at as string);
+        usage[k] ??= { ai: 0, search: 0 };
+        if (e.kind === "ai_request") usage[k].ai += Number(e.quantity) || 0; else usage[k].search += Number(e.quantity) || 0;
+      }
+      if (!ev || ev.length < 1000) break;
+    }
+    return creditPool(rows, usage, base);
+  } catch {
+    return { ai_requests: 0, source_searches: 0 };
+  }
 }
 
 /**
@@ -57,6 +116,7 @@ export async function grantReferralReward(userId: string, emailConfirmed: boolea
   if (!emailConfirmed) return false;
   const cfg = await getSetting("referral");
   if (!cfg.enabled) return false;
+  const reward = await referralReward();
   const db = adminClient();
   try {
     const { data: p } = await db.from("profiles").select("id, referred_by, referral_rewarded_at").eq("id", userId).maybeSingle();
@@ -70,13 +130,13 @@ export async function grantReferralReward(userId: string, emailConfirmed: boolea
     const { count } = await db.from("usage_credits").select("id", { count: "exact", head: true }).eq("user_id", p.referred_by).eq("reason", "referral_inviter").gte("created_at", monthStart);
     const expires = new Date(Date.now() + cfg.valid_days * 86_400_000).toISOString();
     const rows: { user_id: string; kind: string; amount: number; reason: string; expires_at: string }[] = [
-      { user_id: userId, kind: "ai_requests", amount: cfg.ai_requests, reason: "referral_invitee", expires_at: expires },
-      { user_id: userId, kind: "source_searches", amount: cfg.source_searches, reason: "referral_invitee", expires_at: expires },
+      { user_id: userId, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_invitee", expires_at: expires },
+      { user_id: userId, kind: "source_searches", amount: reward.source_searches, reason: "referral_invitee", expires_at: expires },
     ];
     if ((count ?? 0) < cfg.monthly_cap * 2) {
       rows.push(
-        { user_id: p.referred_by, kind: "ai_requests", amount: cfg.ai_requests, reason: "referral_inviter", expires_at: expires },
-        { user_id: p.referred_by, kind: "source_searches", amount: cfg.source_searches, reason: "referral_inviter", expires_at: expires },
+        { user_id: p.referred_by, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_inviter", expires_at: expires },
+        { user_id: p.referred_by, kind: "source_searches", amount: reward.source_searches, reason: "referral_inviter", expires_at: expires },
       );
     }
     await db.from("usage_credits").insert(rows);

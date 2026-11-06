@@ -10,6 +10,7 @@ import { hasAuthCookie } from "@/lib/auth";
 import { publicPlans } from "@/lib/plans";
 import { getSetting } from "@/lib/settings";
 import { getUsdTry } from "@/lib/fx";
+import { referralReward } from "@/lib/growth";
 import Link from "@/components/l-link";
 
 export async function generateMetadata() {
@@ -18,6 +19,7 @@ export async function generateMetadata() {
 
 export default async function Pricing() {
   const [s, plans, { t, locale }, referral, usdTry] = await Promise.all([hasAuthCookie(), publicPlans(), getT(), getSetting("referral"), getUsdTry()]);
+  const reward = await referralReward();
   return (
     <>
       <SiteHeader signedIn={s} />
@@ -38,7 +40,7 @@ export default async function Pricing() {
           {referral.enabled && (
             <div className="card p-5">
               <p className="font-semibold text-ink-900">{t("Arkadaşını davet et")}</p>
-              <p className="mt-1 text-sm text-ink-500">{t("Davet ettiğiniz her arkadaşınız e-postasını doğruladığında ikinize de {a} yapay zekâ isteği ve {s} kaynak tarama hakkı ({d} gün geçerli).", { a: referral.ai_requests, s: referral.source_searches, d: referral.valid_days })}</p>
+              <p className="mt-1 text-sm text-ink-500">{t("Davet ettiğiniz her arkadaşınız e-postasını doğruladığında ikinize de {a} yapay zekâ isteği ve {s} kaynak tarama hakkı ({d} gün geçerli).", { a: reward.ai_requests, s: reward.source_searches, d: referral.valid_days })}</p>
             </div>
           )}
         </div>

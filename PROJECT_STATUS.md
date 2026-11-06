@@ -117,10 +117,11 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 352 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 356 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D98: davet ödülü = Ücretsiz paket hakları (10 istek + 7 tarama), krediler tek seferlik bakiye, token sınırı krediyle artar
 - D97: kurgudaki hedef uzunluğa uyum (kesin kelime hedefi, alt başlığa eşit pay, kısa kalan taslak otomatik tamamlanır)
 - D96: paket kartlarında aylık sayfa vaadi, sınırsız tarama (adil kullanım), matris haktan düşmez, avg_request_usd 0,09, kısa rehber, kur hatırlatıcısı (migration 22)
 - D95: paket maliyet analizi (44 tam metin; docs/cost-analysis) — paket vaatleri için kalıcı referans

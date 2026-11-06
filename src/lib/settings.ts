@@ -34,7 +34,7 @@ export const DEFAULTS = {
   /** Davet programı: davet edilen e-postasını doğrulayınca her iki tarafa kredi */
   /** Kârlılık (D52): API maliyeti KDV hariç gelirin en fazla cost_share’i; dolar kuru güncel tutulmalı */
   "billing.margin": { usd_try: 48, vat_rate: 0.2, cost_share: 0.3333, avg_request_usd: 0.09 },
-  "referral": { enabled: true, ai_requests: 50, source_searches: 50, valid_days: 60, monthly_cap: 20 },
+  "referral": { enabled: true, ai_requests: 10, source_searches: 7, valid_days: 60, monthly_cap: 20 },
   /** Site iletişim ve dış hizmetler */
   "site.contact": { email: "" },
 };

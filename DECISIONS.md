@@ -457,3 +457,9 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Çıktı sınırı hedefe göre büyütülür (Türkçe ~3,3 token/kelime + düşünme; en fazla 32 bin).
 - Denetim: taslak hedefin %85’inin altında kalırsa sunucu kaldığı yerden devam ettirir (en fazla 2 kez); devam metni taslak bloğunun içine eklenir, istemciye `replace` olayıyla birleşik metin gider; kullanıcıya “Taslak X kelime (hedef Y)” bilgisi gösterilir. Devam çağrıları aynı istek sayılır (hak düşmez), maliyeti aynı kayda eklenir.
 - İstemci odaklanılan alt başlığın sırasını (`focusIndex`) gönderir; otomatik çalışma modülü de `replace` olayını işler.
+
+### D98 — Davet ödülü = Ücretsiz paket hakları; krediler tek seferlik
+- Kullanıcı kararı: “Davet et, kazan” ödülü Ücretsiz paketle aynı. `referralReward()` ödülü her seferinde Ücretsiz paketin `limits`’inden okur (şu an 10 yapay zekâ isteği + 7 kaynak taraması, ≈5 sayfa); yönetimdeki ödül miktarı alanları kaldırıldı (geçerlilik günü ve aylık sınır kaldı).
+- Hata düzeltmesi: 60 gün geçerli kredi, aktif olduğu her takvim ayında aylık sınıra yeniden ekleniyordu (50 istek → 100–150). `creditPool`: kredi tek seferlik bakiye; her ay paketin aylık hakkını aşan kullanım krediden düşer, kalan bu ayki sınıra eklenir; süresi dolanın kalanı silinir.
+- Hata düzeltmesi: token sınırı kredilerle artmıyordu (ücretsiz davetli ~18–20 istekte “token limiti”). Artık kredi isteği başına 50 bin token sınıra eklenir.
+- Maliyet (D95 modeli, temel): taraf başı ~$0,86 ≈ 41 TL, davet başı ~$1,71 ≈ 82 TL (önce amaçlanan 411 TL, hatalarla 820 TL’ye kadar). En kötü kötüye kullanım (ayda 20 ödül): ~$17/ay ≈ 820 TL.

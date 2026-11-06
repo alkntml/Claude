@@ -12,6 +12,8 @@ export interface ChatRequest {
   message: string;
   action: string;
   selection?: string;
+  /** Odaklanılan alt başlığın belgedeki sırası (D97: hedef uzunluk alt başlığa bölünür) */
+  focusIndex?: number | null;
 }
 
 export async function* readSSE(res: Response): AsyncGenerator<{ event: string; data: any }> {

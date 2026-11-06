@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 346 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 352 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -54,6 +54,7 @@ src/lib/
   sources/               providers.ts (12 veri tabanı: +ERIC, DBLP, DataCite — D92; Semantic Scholar kaldırıldı — D93), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
   research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme; researchGate: tarama yalnızca gerektiğinde (D75)
   ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza; head önbellekte, tail değişken — D78), history (geçmiş kısaltma), cost (önbellekli maliyet), prompts (ACTION_TIER, ACTION_EFFORT)
+  workflows/length.ts    Kurgudaki hedef uzunluk (D97): draftTarget (alt başlığa eşit pay), lengthInstruction, taslak %85’in altındaysa devam (appendToDraft)
   workflows/             Çalışma türleri + aşama şablonları (stages.ts); order.ts önerilen yazım sırası (özet en son); structure.ts akademik bölüm yapısı/başlık disiplini (D76); quick-actions.ts aşamaya özel kısayollar (D75)
   blueprint.ts + blueprint-ai.ts  Kurgu modülü (D67): çalışma başında problem/amaç/yöntem/bölüm planı; context.blueprint, yapay zekâ bağlamına girer
   titles.ts              Başlık önerileri (çalışmanın ilk adımı)

@@ -6,6 +6,8 @@ import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { compactHistory, HISTORY_LIMIT } from "@/lib/ai/history";
+import { readBlueprint } from "@/lib/blueprint";
+import { appendToDraft, continuationPrompt, draftTarget, draftWords, LENGTH_ACTIONS, lengthInstruction, MAX_CONTINUATIONS, MIN_RATIO } from "@/lib/workflows/length";
 import { APP_GUIDE_SHORT, HELP_SYSTEM, isHelpQuestion } from "@/lib/ai/help";
 import type { Usage } from "@/lib/ai/types";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
@@ -25,6 +27,8 @@ const Schema = z.object({
   message: z.string().trim().min(1).max(20000),
   action: z.enum(Object.keys(ASSISTANT_ACTIONS) as [AssistantAction, ...AssistantAction[]]).default("chat"),
   selection: z.string().max(30000).optional(),
+  /** Odaklanılan alt başlığın belgedeki sırası (hedef uzunluğu alt başlığa bölmek için, D97) */
+  focusIndex: z.number().int().min(0).max(5000).nullable().optional(),
 });
 
 /** Yazımdan önce açık erişimli tam metin okumanın yapıldığı eylemler (soru/cevapta beklenmez) */
@@ -239,12 +243,42 @@ export const POST = route("ai.chat", async (req) => {
             : { data: null };
           ctx.tail += g?.extracted_text ? `\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ (${g.name})\n${String(g.extracted_text).slice(0, 20000)}` : "\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ\n(Kılavuz yüklenmemiş.)";
         }
+        // Kurgudaki hedef uzunluk (D97): bölüm metni üreten eylemlerde kesin kelime hedefi verilir
+        const chapterWords = stage ? Number(readBlueprint(bundle.project.context?.blueprint)?.chapters.find((c) => c.stageId === stage.id)?.words) || 0 : 0;
+        const target = stage && !b.selection && LENGTH_ACTIONS.has(b.action)
+          ? draftTarget({ chapterWords, doc: stage.content as JSONNode, focusIndex: b.focusIndex ?? null, currentWords: Number(stage.word_count) || 0 })
+          : null;
+        if (target) ctx.tail += `\n\n${lengthInstruction(target)}`;
         controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
         const effort = ACTION_EFFORT[b.action] ?? models.effort;
+        // Türkçe ~2,7 token/kelime + düşünme payı; hedef uzunsa çıktı sınırı büyütülür
+        const maxTokens = target ? Math.max(models.max_output_tokens, Math.min(32000, Math.ceil(target.words * 3.3) + 4000)) : models.max_output_tokens;
         promptChars = system.length + ctx.head.length + ctx.tail.length + messages.reduce((a, m) => a + m.content.length, 0);
-        for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages, maxTokens: models.max_output_tokens, effort }, req.signal)) {
+        for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages, maxTokens, effort }, req.signal)) {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
           else { usage = ev.usage; stopReason = ev.stopReason; servedModel = ev.model; }
+        }
+        // Taslak hedefin %85’inin altında kaldıysa kaldığı yerden devam ettirilir (en fazla 2 kez; aynı istek sayılır)
+        if (target && stopReason !== "refusal" && !req.signal.aborted) {
+          for (let k = 0; k < MAX_CONTINUATIONS; k++) {
+            const written = draftWords(answer);
+            if (!written || written >= target.words * MIN_RATIO) break;
+            controller.enqueue(sse("status", { text: T("Taslak {w} kelimede kaldı; kurgudaki hedefe ({t} kelime) tamamlanıyor…", { w: written, t: target.words }) }));
+            let more = "";
+            const contMessages = [...messages, { role: "assistant" as const, content: answer }, { role: "user" as const, content: continuationPrompt(written, target) }];
+            for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages: contMessages, maxTokens, effort }, req.signal)) {
+              if (ev.type === "text") more += ev.text;
+              else {
+                usage = { input: usage.input + ev.usage.input, output: usage.output + ev.usage.output, cacheRead: (usage.cacheRead ?? 0) + (ev.usage.cacheRead ?? 0), cacheWrite: (usage.cacheWrite ?? 0) + (ev.usage.cacheWrite ?? 0) };
+                servedModel = ev.model;
+              }
+            }
+            if (!more.trim()) break;
+            answer = appendToDraft(answer, more);
+            controller.enqueue(sse("replace", { text: answer }));
+          }
+          const final = draftWords(answer);
+          if (final) controller.enqueue(sse("status", { text: T("Taslak {w} kelime (kurgudaki hedef {t} kelime).", { w: final, t: target.words }) }));
         }
         if (stopReason === "refusal" && !answer) answer = T("Bu istek güvenlik nedeniyle yanıtlanamadı. Lütfen isteğinizi farklı ifade edin.");
         const memory = extractMemory(answer);

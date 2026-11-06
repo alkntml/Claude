@@ -64,6 +64,8 @@ export class Autopilot {
     let map: Record<string, string> = {};
     await streamChat({ projectId: this.projectId, stageId, conversationId: null, action, message, selection }, this.abort.signal, (ev, data) => {
       if (ev === "text") answer += data.text;
+      // D97: hedef uzunluğa tamamlanan taslak birleşik olarak gelir
+      else if (ev === "replace") answer = data.text;
       else if (ev === "meta") map = data.sourceMap ?? {};
       else if (ev === "status") this.setLive({ status: data.text });
       else if (ev === "sources_added" || ev === "gap_sources") this.setLive({ sourcesAdded: this.live.sourcesAdded + (data.sources?.length ?? 0) });

@@ -31,7 +31,7 @@ interface Props {
   /** Alt başlık oluştur penceresi (D83); verilmezse (ör. en derin düzeyde) düğme görünmez */
   onOpenOutline?: () => void;
   /** Editörde açık olan alt başlık (D83): yazım istekleri yalnızca bu alt başlık için yapılır */
-  focus?: { number: string; title: string } | null;
+  focus?: { number: string; title: string; index?: number } | null;
   /** Word’den içe aktar penceresi (D87) */
   onOpenImport?: () => void;
   /** Projede kapsam için yeterli kaynak yok (literatür kısayolu her bölümde görünür) */
@@ -131,7 +131,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     const patch = (fn: (x: Msg) => Msg) => setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? fn(x) : x)));
     try {
       await streamChat(
-        { projectId, stageId: stage?.id ?? null, conversationId, message: [text, extra, focusNote(action, useSel)].filter(Boolean).join("\n\n"), action, selection: useSel ? sel : undefined },
+        { projectId, stageId: stage?.id ?? null, conversationId, message: [text, extra, focusNote(action, useSel)].filter(Boolean).join("\n\n"), action, selection: useSel ? sel : undefined, focusIndex: focus && !useSel ? focus.index ?? null : null },
         abort.current.signal,
         (event, data) => {
           // Yanıt başladıktan sonra gelen durum mesajları (eksik konu araması) yanıtın altında gösterilir
@@ -148,6 +148,8 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
           }
           else if (event === "meta") { setConversationId(data.conversationId); patch((x) => ({ ...x, sourceMap: data.sourceMap })); }
           else if (event === "text") patch((x) => ({ ...x, content: x.content + data.text }));
+          // Taslak hedef uzunluğa tamamlanınca (D97) birleşik metin gelir
+          else if (event === "replace") patch((x) => ({ ...x, content: data.text }));
           else if (event === "done") {
             patch((x) => ({ ...x, phase: undefined }));
             if (data.memoryAdded) { onMemoryChanged(); patch((x) => ({ ...x, memoryAdded: data.memoryAdded })); }

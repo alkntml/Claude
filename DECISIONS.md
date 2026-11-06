@@ -450,3 +450,10 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kur hatırlatıcısı: Yönetim → Maliyet sağlığı, `billing.margin` 30 günden uzun süredir güncellenmediyse uyarır.
 - İstek sınırları (40/75/125) değişmedi: analizde kötümser senaryoda bile 1/3 bütçeyle uyumlu bulundu.
 - (D96 düzeltme) Migration 22 elle yapılmış kart düzenlemelerini ezmeyecek biçimde yeniden yazıldı (canlıda Ücretsiz kartta yönetimden girilmiş “TXT / PDF / Markdown” vardı): satırlar yalnızca eklenir/değiştirilir, tekrar çalıştırmak güvenli (PGlite testiyle doğrulandı).
+
+### D97 — Kurgudaki hedef uzunluğa uyum
+- Kullanıcı kararı: bölüm/alt başlık, kurguda belirlenen kelime sayısı kadar yazılmalı. Önceden hedef yalnızca “±%15” ricasıydı; alt başlıkta pay modele bırakılıyordu ve denetim yoktu.
+- Artık (draft, discussion, methodology, synthesize, interpret; seçili metin yokken): `draftTarget` kesin hedefi hesaplar: alt başlığa odaklanıldıysa bölüm hedefi metin taşıyan (yaprak) alt başlıklara eşit bölünür; boş bölümde hedefin tamamı; dolu bölümde kalan kısım. Talimat kesin sayı ve alt/üst sınır verir (en az %90, en fazla %115); uzatma yalnızca kaynaklı derinleştirmeyle (uydurma yok).
+- Çıktı sınırı hedefe göre büyütülür (Türkçe ~3,3 token/kelime + düşünme; en fazla 32 bin).
+- Denetim: taslak hedefin %85’inin altında kalırsa sunucu kaldığı yerden devam ettirir (en fazla 2 kez); devam metni taslak bloğunun içine eklenir, istemciye `replace` olayıyla birleşik metin gider; kullanıcıya “Taslak X kelime (hedef Y)” bilgisi gösterilir. Devam çağrıları aynı istek sayılır (hak düşmez), maliyeti aynı kayda eklenir.
+- İstemci odaklanılan alt başlığın sırasını (`focusIndex`) gönderir; otomatik çalışma modülü de `replace` olayını işler.

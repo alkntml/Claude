@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Canlıda dene: kurgusu onaylı bir çalışmada alt başlığa girip “Bölümü yaz”; yanıtın altındaki “Taslak X kelime (hedef Y)” satırını kontrol et (D97)
 - [ ] Supabase SQL Editor’de `20261117000022_package_promises.sql` (paket kartlarında aylık sayfa vaadi, D96)
 - [ ] Yönetim → Ayarlar → Kârlılık’ta dolar kurunu güncelle (Maliyet sağlığı 30 günü geçince uyarır)
 - [ ] Ay sonunda Yönetim → Maliyet sağlığı’ndaki “bu ay harcanan” ile Anthropic Console → Usage’daki gerçek faturayı karşılaştır (D94)

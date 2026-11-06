@@ -140,8 +140,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   "/hakkimizda": {
     title: { tr: "Hakkımızda — Misyonumuz ve Vizyonumuz | Academiana", en: "About Academiana — Our Mission and Vision" },
     description: {
-      tr: "Academiana neden kuruldu? Gerçek kaynaklarla, akademik kurallara uygun ve dürüst yapay zekâ kullanımı için misyonumuz, vizyonumuz, değerlerimiz ve kurucumuz.",
-      en: "Why Academiana exists: our mission, vision and values for honest, transparent AI use in academic writing with real sources, and our founder.",
+      tr: "Academiana’nın hikâyesi: yapay zekâya eğitimde doğru bir rol kazandırmak, araştırmacılara zaman kazandırmak. Misyonumuz, vizyonumuz ve kurucumuz.",
+      en: "Academiana’s story: giving AI a proper role in education and saving researchers time. Our mission, vision, values and founder.",
     },
     keywords: { tr: ["Academiana hakkında", "Academiana kurucusu", "akademik yazım platformu misyon"], en: ["about Academiana", "Academiana founder", "academic writing platform mission"] },
     tagline: { tr: "Misyonumuz ve vizyonumuz", en: "Our mission and vision" },

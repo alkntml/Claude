@@ -20,15 +20,15 @@ export default async function AboutPage() {
   const email = env.contactEmail;
   if (en) {
     return (
-      <StaticPage path="/hakkimizda" pageType="AboutPage" title="About Academiana" lead="Academiana exists so that students and researchers can write with real sources, follow their own academic rules and stay honest about how they use AI.">
+      <StaticPage path="/hakkimizda" pageType="AboutPage" title="About Academiana" lead="Academiana was founded to give AI a proper, productive role in education: helping students and researchers save time, work better and contribute more.">
         <JsonLd data={[founderLd("en")]} />
-        <h2>Why we exist</h2>
-        <p>General-purpose AI tools can produce references that look convincing but do not exist. International writing tools do not know Turkish academic conventions such as ISNAD citations, graduate school formatting guides or TÜBİTAK application formats. Under time pressure, some students turn to paid thesis-writing services, which puts both their degree and their learning at risk.</p>
-        <p>Academiana was built to fill this gap honestly: a writing partner that works only with real sources, shows clearly how much of each source it has read and leaves authorship with you.</p>
+        <h2>Our story</h2>
+        <p>AI is changing the way we learn, research and write. We believe its place in education is beside the student and the researcher: a partner that takes over the time-consuming parts of the work and leaves more room for thinking, interpreting and producing.</p>
+        <p>Much of the time spent on a thesis or paper goes into searching for sources, formatting references, structuring chapters, running analyses and following writing guides. Academiana brings these steps together in one workspace, so that the researcher’s time goes to the work itself. It does this with real academic sources, in line with academic conventions such as ISNAD and graduate school guides, and in a way that keeps the researcher as the author.</p>
         <h2>Our mission</h2>
-        <p>To help graduate students and researchers produce their own work, step by step, with real and verifiable academic sources, in line with the academic rules they are expected to follow and with responsible use of AI.</p>
+        <p>To make AI a reliable and productive part of academic work: saving students and researchers time, helping them produce their own work step by step with real sources and in line with academic conventions, and adding value to their learning.</p>
         <h2>Our vision</h2>
-        <p>To become the reference platform for trustworthy, transparent and honest use of AI in academic writing, first in Turkey and then for researchers everywhere, so that AI makes academic work faster without making it less reliable.</p>
+        <p>To be the leading platform where AI and education work together, first in Turkey and then worldwide, and to help build an academic culture in which AI speeds up research while strengthening its quality and integrity.</p>
         <h2>Our values</h2>
         <ul>
           <li><strong>No fabrication.</strong> The AI never invents sources, authors, DOIs, data or findings. Where a source is missing it writes [SOURCE NEEDED].</li>
@@ -45,15 +45,15 @@ export default async function AboutPage() {
     );
   }
   return (
-    <StaticPage path="/hakkimizda" pageType="AboutPage" title="Hakkımızda" lead="Academiana, öğrencilerin ve araştırmacıların gerçek kaynaklarla, kendi akademik kurallarına uygun ve yapay zekâyı dürüstçe kullanarak yazabilmesi için kuruldu.">
+    <StaticPage path="/hakkimizda" pageType="AboutPage" title="Hakkımızda" lead="Academiana, yapay zekâya eğitimde doğru ve verimli bir rol kazandırmak; öğrencilere ve araştırmacılara zaman kazandırmak, daha iyi çalışmalarına ve daha fazla katkı sunmalarına yardım etmek için kuruldu.">
       <JsonLd data={[founderLd("tr")]} />
-      <h2>Neden varız?</h2>
-      <p>Genel amaçlı yapay zekâ araçları, gerçekte var olmayan ama inandırıcı görünen kaynaklar üretebiliyor. Uluslararası yazım araçları ise ISNAD atıf sistemini, enstitü yazım kılavuzlarını veya TÜBİTAK başvuru biçimlerini tanımıyor. Zaman baskısı altındaki bazı öğrenciler de ücret karşılığı tez yazdırma hizmetlerine yöneliyor; bu hem diplomalarını hem de öğrenmelerini riske atıyor.</p>
-      <p>Academiana bu boşluğu dürüst bir yolla doldurmak için geliştirildi: yalnızca gerçek kaynaklarla çalışan, her kaynağın ne kadarının okunduğunu açıkça gösteren ve yazarlığı size bırakan bir yazım yardımcısı.</p>
+      <h2>Hikâyemiz</h2>
+      <p>Yapay zekâ öğrenme, araştırma ve yazma biçimimizi değiştiriyor. Biz yapay zekânın eğitimdeki yerinin öğrencinin ve araştırmacının yanında olduğuna inanıyoruz: işin zaman alan kısımlarını üstlenen, düşünmeye, yorumlamaya ve üretmeye daha fazla alan açan bir çalışma arkadaşı.</p>
+      <p>Bir tez ya da makalede harcanan zamanın büyük kısmı kaynak aramaya, kaynakçayı biçimlendirmeye, bölümleri kurgulamaya, analiz yapmaya ve yazım kılavuzlarına uymaya gidiyor. Academiana bu adımları tek bir çalışma alanında bir araya getirir; böylece araştırmacının zamanı işin özüne kalır. Bunu gerçek akademik kaynaklarla, ISNAD ve enstitü kılavuzları gibi akademik kurallara uygun biçimde ve yazarlığı araştırmacıda bırakarak yapar.</p>
       <h2>Misyonumuz</h2>
-      <p>Lisansüstü öğrencilerin ve araştırmacıların kendi çalışmalarını; gerçek ve doğrulanabilir akademik kaynaklarla, uymaları gereken akademik kurallara uygun biçimde ve yapay zekâyı sorumlu kullanarak adım adım ortaya koymalarına yardım etmek.</p>
+      <p>Yapay zekâyı akademik çalışmanın güvenilir ve verimli bir parçası hâline getirmek: öğrencilere ve araştırmacılara zaman kazandırmak, kendi çalışmalarını gerçek kaynaklarla ve akademik kurallara uygun biçimde adım adım ortaya koymalarına yardım etmek ve öğrenmelerine katkı sağlamak.</p>
       <h2>Vizyonumuz</h2>
-      <p>Akademik yazımda yapay zekânın güvenilir, şeffaf ve dürüst kullanımının önce Türkiye’de, ardından dünyada başvurulan platformu olmak; yapay zekânın akademik çalışmayı hızlandırırken güvenilirliğinden ödün verdirmediği bir yazım kültürüne katkı sağlamak.</p>
+      <p>Yapay zekâ ile eğitimin birlikte çalıştığı alanda önce Türkiye’de, ardından dünyada öncü platform olmak; yapay zekânın araştırmayı hızlandırırken niteliğini ve güvenilirliğini de güçlendirdiği bir akademik kültürün oluşmasına katkı sağlamak.</p>
       <h2>Değerlerimiz</h2>
       <ul>
         <li><strong>Uydurma yok.</strong> Yapay zekâ kaynak, yazar, DOI, veri veya bulgu uydurmaz. Kaynak yoksa [KAYNAK GEREKLİ] yazar.</li>

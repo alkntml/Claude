@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { assertProjectQuota } from "@/lib/usage";
+import { assertCanCreateProject } from "@/lib/single-project";
 import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram } from "@/lib/workflows";
 import { STYLE_IDS } from "@/lib/citations";
 import { translate } from "@/i18n";
@@ -43,6 +44,8 @@ export const POST = route("projects.create", async (req) => {
   const s = await requireUser();
   const body = await parseBody(req, CreateSchema);
   const uiLocale = localeFromRequest(req);
+  // Tek Proje paketi (D103): ikinci çalışma engellenir ve yöneticiye bildirilir
+  await assertCanCreateProject(s);
   await assertProjectQuota(s.user.id, s.profile.plan_id);
 
   // Proje yalnızca sunucuda, kota kontrolünden sonra oluşturulur (kullanıcının doğrudan ekleme yetkisi yok; D51)

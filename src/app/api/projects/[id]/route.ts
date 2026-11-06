@@ -3,6 +3,7 @@ import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { STYLE_IDS } from "@/lib/citations";
 import { assertProjectQuota } from "@/lib/usage";
+import { assertSingleProjectChange } from "@/lib/single-project";
 import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -62,7 +63,9 @@ export const PATCH = route<Ctx>("projects.update", async (req, { params }) => {
 export const DELETE = route<Ctx>("projects.delete", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  await requireProject(s, id);
+  const project = await requireProject(s, id);
+  // Tek Proje paketi (D103): pakete bağlı çalışma silinemez; deneme yöneticiye bildirilir
+  await assertSingleProjectChange(s, id, "delete", (project as { title?: string }).title ?? null);
   assertDeleted(await s.supabase.from("projects").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Proje bulunamadı");
   return json({ ok: true });
 });

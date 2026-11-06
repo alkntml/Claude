@@ -275,6 +275,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "tek-proje",
+        q: { tr: "Tek Proje paketi nedir?", en: "What is the Single Project plan?" },
+        a: {
+          tr: "**Tek seferlik 3.999 TL** ödemeyle tek bir çalışmanızı (tez, makale, proje önerisi…) süre sınırı olmadan, tüm özelliklerle ve sınırsız yapay zekâ kullanımıyla yazarsınız. Paket yalnızca bir çalışma içindir: pakete bağlı çalışma silinemez, türü değiştirilemez ve ikinci bir çalışma açılamaz. Çalışmayı bitirip içeriğini silerek başka bir çalışma yazmak paket kurallarına aykırıdır; bu tür kullanım sistem tarafından tespit edilir.",
+          en: "With a **one-time payment of 3,999 TL** you write a single work (thesis, article, proposal…) with no time limit, all features and unlimited AI use. The plan covers one work only: the linked work cannot be deleted or change type, and a second work cannot be created. Finishing a work and deleting its content to write another one breaks the plan rules and is detected by the system.",
+        },
+      },
+      {
         id: "silme-hak",
         q: { tr: "Yazdırdığım metni silersem hakkım geri gelir mi?", en: "If I delete generated text, is my allowance restored?" },
         a: {

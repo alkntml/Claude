@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
@@ -61,6 +62,7 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
   if (withAi) {
     assertFeature(s.profile.plan_id, "quality_ai");
     await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+    await assertSingleProject(s, id);
     const model = await resolveModel(s.profile.plan_id, "default"); // karmaşık: bütün çalışmanın değerlendirmesi
     if (!isProviderConfigured(model.provider)) aiReview = { ran: false, error: "Yapay zekâ sağlayıcısı yapılandırılmamış" };
     else {

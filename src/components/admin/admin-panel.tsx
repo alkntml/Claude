@@ -285,7 +285,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               <div className="mt-1 flex gap-2">
                 <select id="plan-pick" className="input !py-2" defaultValue={d.profile.plan_id}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
                 <input className="input !w-24 !py-2" type="number" min={1} value={days} onChange={(e) => setDays(Number(e.target.value) || 30)} />
-                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" ? null : days }, "Paket atandı"); }}>Ata</Button>
+                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" || v === "single" ? null : days }, v === "single" ? "Tek Proje atandı (süresiz)" : "Paket atandı"); }}>Ata</Button>
               </div>
               <p className="mt-3 text-xs text-ink-500">Ek gün ver (bitiş tarihinden, süresi geçtiyse bugünden itibaren)</p>
               <div className="mt-1 flex flex-wrap gap-1.5">

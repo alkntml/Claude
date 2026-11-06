@@ -1,4 +1,5 @@
 import { ApiError, route } from "@/lib/api";
+import { assertSingleProject } from "@/lib/single-project";
 import { requireUser } from "@/lib/auth";
 import { generateDeck, renderPptx } from "@/lib/export/presentation";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
@@ -18,6 +19,7 @@ export const POST = route<Ctx>("project.presentation", async (_req, { params }) 
   const { id } = await params;
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { format: "docx" });
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  await assertSingleProject(s, id);
   const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
   let gen;

@@ -10,7 +10,7 @@ import { UsageMeter } from "@/components/ui/charts";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, openUpgrade } from "@/lib/client";
-import { TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
+import { TEAM_DISCOUNT, whatsappLink, isOneTimePlan } from "@/lib/pricing";
 import { memberCode } from "@/lib/member";
 import { usePrice } from "@/components/price-context";
 import { GrowthSection } from "./growth";
@@ -95,7 +95,7 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
             return (
               <div key={p.id} className={cn("card flex flex-col p-5 transition", current && "ring-2 ring-brand-400", params.get("paket") === p.id && !current && "ring-2 ring-amber-300")}>
                 <div className="flex items-center justify-between"><h3 className="font-semibold">{t(p.name)}</h3>{current && <Badge tone="green"><CheckCircle2 className="h-3 w-3" /> {t("Mevcut")}</Badge>}</div>
-                <p className="mt-2 text-2xl font-semibold">{price(Number(p.price_monthly))}<span className="text-sm font-normal text-ink-400">/{t("ay")}</span></p>
+                <p className="mt-2 text-2xl font-semibold">{price(Number(p.price_monthly))}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme")}` : `/${t("ay")}`}</span></p>
                 <ul className="mt-3 flex-1 space-y-1 text-[13px] text-ink-600">{p.features.map((f: string) => <li key={f}>• {t(f)}</li>)}</ul>
                 {!current && Number(p.price_monthly) > 0 && (
                   <button type="button" onClick={() => openUpgrade({ target: p.id })} className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">

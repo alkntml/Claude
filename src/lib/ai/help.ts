@@ -80,6 +80,7 @@ D) ADIM ADIM SIK İŞLER
 - Hak/kota: Kontrol paneli → “Kullanım durumu” veya Hesap ve abonelik → “Bu ayki kullanım”; haklar her ayın başında yenilenir; üretilen metni sonradan silmek kullanılan hakkı geri vermez; hak dolsa da çalışmalar açılır, düzenlenir ve indirilir.
 - Paket başına aylık yazım (yaklaşık, Türk tez biçiminde ana metin sayfası): Ücretsiz 5 sayfa deneme, Basic 25, Pro 50, Premium 85 sayfa. Literatür matrisi istek hakkından düşmez.
 - Paket yükseltme: Hesap ve abonelik → “Paketler” → “Yükselt” → “WhatsApp ile yükselt”.
+- “Tek Proje” paketi: tek ödeme (3.999 TL), süresiz; tek bir çalışmada tüm özellikler ve sınırsız yapay zekâ. Pakete bağlı çalışma silinemez, türü değiştirilemez, ikinci çalışma açılamaz.
 - Dil ve görünüm: sol menünün altındaki dil seçici ve ay/güneş simgesi.
 - Hesabı silme: Hesap ve abonelik → “Hesabımı sil”.
 - Sorun bildirme veya öneri: sol menüde “Geri bildirim”.`;

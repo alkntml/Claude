@@ -1,4 +1,5 @@
 import { ApiError, json, route } from "@/lib/api";
+import { assertSingleProject } from "@/lib/single-project";
 import { requireUser } from "@/lib/auth";
 import { isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { checkMagic, extract, kindOf } from "@/lib/files/extract";
@@ -19,6 +20,7 @@ export const POST = route<Ctx>("memory.learn", async (req, { params }) => {
   const { data: project } = await s.supabase.from("projects").select("id, title, topic, language").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!project) throw new ApiError(404, "Proje bulunamadı");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  await assertSingleProject(s, id);
   const model = await resolveModel(s.profile.plan_id, "balanced");
   if (!isProviderConfigured(model.provider)) throw new ApiError(503, "Yapay zekâ sağlayıcısı yapılandırılmamış", "ai_not_configured");
 

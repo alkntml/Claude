@@ -58,7 +58,7 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
   if (b.action === "set_plan") {
     const { data: plan } = await db.from("plans").select("id").eq("id", b.planId).maybeSingle();
     if (!plan) throw new ApiError(404, "Paket bulunamadı");
-    update = { plan_id: b.planId, plan_expires_at: b.planId === "free" || b.days == null ? null : addDays(null, b.days) };
+    update = { plan_id: b.planId, plan_expires_at: b.planId === "free" || b.planId === "single" || b.days == null ? null : addDays(null, b.days) };
   }
   if (b.action === "grant_credits") {
     const expires = new Date(Date.now() + b.days * 86400_000).toISOString();

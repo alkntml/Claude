@@ -1,4 +1,5 @@
 import { ApiError, json, route } from "@/lib/api";
+import { assertSingleProject } from "@/lib/single-project";
 import { requireProject, requireUser } from "@/lib/auth";
 import { providerConfig } from "@/lib/env";
 import { getJson } from "@/lib/sources/http";
@@ -19,6 +20,7 @@ export const GET = route<Ctx>("project.journals", async (req, { params }) => {
   const q = (url.searchParams.get("q") || journalQuery(project)).slice(0, 200);
   if (q.trim().length < 3) throw new ApiError(422, "Dergi önerisi için projeye anahtar kelime veya konu ekleyin");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+  await assertSingleProject(s, id);
   const cfg = providerConfig();
   const sig = AbortSignal.timeout(20_000);
   const since = new Date().getFullYear() - 6;

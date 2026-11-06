@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { alignChapters, BLUEPRINT_FIELDS, BlueprintSchema, readBlueprint } from "@/lib/blueprint";
@@ -20,6 +21,7 @@ export const POST = route<Ctx>("project.blueprint.ai", async (req, { params }) =
   ]));
   const project = await requireProject(s, id);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  await assertSingleProject(s, id);
   const record = (o: { usage: { input: number; output: number }; cost: number; provider: string; model: string }, action: string) =>
     recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action, projectId: id } });
   try {

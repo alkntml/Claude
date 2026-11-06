@@ -1,6 +1,9 @@
 /** Fiyatlandırma ve paket yardımcıları (istemci ve sunucu ortak, saf fonksiyonlar). */
 
-export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3 };
+export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 3 };
+/** Tek ödemeli (süresiz) paketler (D103): fiyat aylık değil tek seferliktir */
+export const ONE_TIME_PLANS = new Set(["single"]);
+export const isOneTimePlan = (id: string | null | undefined) => !!id && ONE_TIME_PLANS.has(id);
 
 /** Kurum paketi kişisel paketten yüksekse kurum paketi geçerlidir */
 export function higherPlan(personal: string, org: string | null | undefined): string {

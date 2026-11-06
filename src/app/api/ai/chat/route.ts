@@ -1,4 +1,5 @@
 import { makeT } from "@/i18n";
+import { assertSingleProject } from "@/lib/single-project";
 import { localeFromRequest } from "@/i18n/server";
 import { z } from "zod";
 import { AiSpentError, ApiError, assertDeleted, json, logError, parseBody, recordAiSpent, route } from "@/lib/api";
@@ -52,6 +53,7 @@ export const POST = route("ai.chat", async (req) => {
   if (b.action === "reviewer_response") assertFeature(s.profile.plan_id, "reviewer");
   if (b.action === "journal_checklist") assertFeature(s.profile.plan_id, "journals");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  await assertSingleProject(s, b.projectId);
 
   const bundle = await loadProjectBundle(s.supabase, b.projectId, s.user.id);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");

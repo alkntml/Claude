@@ -71,6 +71,48 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("Tek Proje paketi (migration 27): tek çalışma, silme/tür değiştirme engeli, kötüye kullanım uyarıları", async () => {
+    const U = "00000000-0000-4000-8000-0000000000f1";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${U}', 'tek@ornek.com', '{}')`);
+    // Kullanıcının paket öncesi bir çalışması var; yönetici paketi atayınca o çalışma pakete bağlanır
+    // Çalışmaları sunucu oluşturur (kullanıcının doğrudan ekleme yetkisi yok, D51)
+    const [p1] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${U}', 'Öğretmen öz yeterliği ve tükenmişlik', 'thesis', 'master') returning id`)).rows;
+    await db.exec(`update public.profiles set plan_id = 'single' where id = '${U}'`);
+    const bound = (await db.query<{ s: string }>(`select single_project_id as s from public.profiles where id = '${U}'`)).rows[0].s;
+    expect(bound).toBe(p1.id);
+    const plan = (await db.query<{ limits: { ai_requests_month: null; projects: number; cost_usd_month: null; one_time: boolean } }>("select limits from public.plans where id = 'single'")).rows[0];
+    expect(plan.limits).toMatchObject({ ai_requests_month: null, projects: 1, cost_usd_month: null, one_time: true });
+    // Engeller (kullanıcı kendisi)
+    await expectError(as(U, "insert into public.projects (user_id, title, work_type, academic_level) values (auth.uid(), 'İkinci', 'research_article', 'master')"), /row-level security|yalnızca bir çalışma/);
+    await expectError(as(U, `delete from public.projects where id = '${p1.id}'`), /silinemez/);
+    await expectError(as(U, `update public.projects set work_type = 'research_article' where id = '${p1.id}'`), /türü değiştirilemez/);
+    await expectError(as(U, `update public.profiles set single_project_id = null where id = auth.uid()`), /yetkiniz yok/);
+    // Uyarı: konu tamamen değişir (3.000+ kelime varken) → yöneticiye bildirim
+    await db.query(`insert into public.project_stages (project_id, user_id, key, title, word_count, position) values ('${p1.id}', '${U}', 'introduction', 'Giriş', 5000, 0)`);
+    await as(U, `update public.projects set title = 'Yapay zekâ destekli kanser tanısı' where id = '${p1.id}'`);
+    // Uyarı: indirdikten sonra büyük silme
+    await db.query(`insert into public.usage_events (user_id, kind, meta) values ('${U}', 'export', '{"projectId":"${p1.id}","format":"docx"}')`);
+    await db.query(`update public.project_stages set word_count = 1000 where project_id = '${p1.id}'`);
+    const rules = (await db.query<{ action: string }>(`select action from public.activity_log where user_id = '${U}' and kind = 'abuse_alert' order by id`)).rows.map((r) => r.action);
+    expect(rules).toEqual(["topic_change", "delete_after_export"]);
+    const admin = (await db.query<{ data: { rule: string; email: string } }>(`select data from public.notifications where user_id = '${ADMIN}' and kind = 'abuse_alert' order by id`)).rows.map((r) => [r.data.rule, r.data.email]);
+    expect(admin).toEqual([["topic_change", "tek@ornek.com"], ["delete_after_export", "tek@ornek.com"]]);
+    // Aynı kural 24 saatte bir kez
+    await db.query(`update public.project_stages set word_count = 6000 where project_id = '${p1.id}'`);
+    await db.query(`update public.project_stages set word_count = 100 where project_id = '${p1.id}'`);
+    expect((await db.query(`select 1 from public.activity_log where user_id = '${U}' and action = 'delete_after_export'`)).rows).toHaveLength(1);
+    // Paket atandığında çalışması olmayan kullanıcı: ilk açtığı çalışma pakete bağlanır
+    const V = "00000000-0000-4000-8000-0000000000f2";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${V}', 'yeni-tek@ornek.com', '{}'); update public.profiles set plan_id = 'single' where id = '${V}';`);
+    const [v1] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${V}', 'İlk', 'research_article', 'master') returning id`)).rows;
+    expect((await db.query<{ s: string }>(`select single_project_id as s from public.profiles where id = '${V}'`)).rows[0].s).toBe(v1.id);
+    await db.exec(`delete from public.profiles where id = '${V}'; delete from auth.users where id = '${V}';`);
+    // Hesap silme (çalışmaları ve kanıt kaydıyla birlikte) hata vermeden çalışır
+    await db.exec(`delete from auth.users where id = '${U}'`);
+    expect((await db.query(`select 1 from public.profiles where id = '${U}'`)).rows).toHaveLength(0);
+    // Yönetici silebilir; temizlik
+    await db.exec(`delete from public.notifications where user_id = '${ADMIN}'; delete from public.profiles where id = '${U}'; delete from auth.users where id = '${U}';`);
+  });
   it("kullanım kanıt kaydı (migration 26): metin/bölüm/çalışma silmeleri kaydedilir, kullanıcı göremez", async () => {
     const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Kanıt Tezi', 'thesis', 'master') returning id`)).rows;
     const [s1] = (await db.query<{ id: string }>(`insert into public.project_stages (project_id, user_id, key, title, word_count, position) values ('${p.id}', '${A}', 'introduction', 'Giriş', 2000, 0) returning id`)).rows;
@@ -148,7 +190,7 @@ describe("migration'lar ve seed", () => {
   });
   it("paketleri ve ayarları oluşturur", async () => {
     const plans = await db.query<{ id: string }>("select id from public.plans order by sort_order");
-    expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium"]);
+    expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium", "single"]);
     const p = await db.query<{ id: string; price_monthly: string; limits: Record<string, number | null> }>("select id, price_monthly, limits from public.plans order by sort_order");
     const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
     expect(by.free.limits.ai_requests_month).toBe(10); // D52: gelirin 1/3’ü maliyet
@@ -247,7 +289,7 @@ describe("ayrıcalık ve yönetici politikaları", () => {
   it("sistem promptları normal kullanıcıya kapalıdır; paketler herkese açıktır", async () => {
     expect(await as(A, "select * from public.app_settings")).toHaveLength(0);
     expect((await as(ADMIN, "select * from public.app_settings")).length).toBeGreaterThan(0);
-    expect((await as(null, "select id from public.plans")).length).toBe(4);
+    expect((await as(null, "select id from public.plans")).length).toBe(5);
     await expectError(as(A, "update public.plans set price_monthly = 0 where id = 'pro' returning id").then((r) => { if (!r.length) throw new Error("row-level security: güncellenmedi"); }), /row-level security/);
   });
 

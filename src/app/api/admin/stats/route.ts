@@ -101,7 +101,8 @@ export const GET = route("admin.stats", async (req) => {
   // Aylık gelir (KDV hariç, TL) ve bu ayki API maliyeti → kâr
   const price = Object.fromEntries((priceRows.data ?? []).map((p) => [p.id, Number(p.price_monthly)]));
   const activePaid = paid.filter((p) => !p.plan_expires_at || p.plan_expires_at > now);
-  const revenueTry = Math.round(activePaid.reduce((a, p) => a + (price[p.plan_id] ?? 0), 0) / (1 + margin.vat_rate));
+  // Tek ödemeli paket (D103) aylık gelire eklenmez; ödeme alındığı ay elle değerlendirilir
+  const revenueTry = Math.round(activePaid.reduce((a, p) => a + (p.plan_id === "single" ? 0 : price[p.plan_id] ?? 0), 0) / (1 + margin.vat_rate));
   const costTry = Math.round(monthUsd * margin.usd_try);
 
   return json({

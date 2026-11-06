@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { isProviderConfigured, resolveModel } from "@/lib/ai/registry";
@@ -24,6 +25,7 @@ export const POST = route("ai.research", async (req) => {
   const s = await requireUser();
   const b = await parseBody(req, Schema);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  await assertSingleProject(s, b.projectId);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
   const bundle = await loadProjectBundle(s.supabase, b.projectId, s.user.id);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");

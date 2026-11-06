@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de `20261122000027_single_project_plan.sql` (Tek Proje paketi + hesap silme hatası düzeltmesi, D103) — ACİL: çalıştırılana kadar hesap silme hata verir
 - [x] (2026-11-06) Migration 22–26 canlıda doğrulandı (check_status: hepsi YAPILMIŞ); 23/24 yeniden çalıştırılmamalı (25’teki cihaz önlemini geri alır)
 - [x] (2026-11-06) Migration 24 (bildirim kutusu) ve Ücretsiz kart PDF metni geri yüklendi
 - [x] (2026-11-06) Migration 22 (paket vaatleri) ve 23 (davet ödülü) çalıştırıldı

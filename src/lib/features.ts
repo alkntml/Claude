@@ -4,7 +4,7 @@
  */
 import { PLAN_RANK } from "./pricing";
 
-export type PlanId = "free" | "basic" | "pro" | "premium";
+export type PlanId = "free" | "basic" | "pro" | "premium" | "single";
 
 export type FeatureId =
   | "quality_ai" // yapay zekâ destekli kalite raporu
@@ -45,7 +45,7 @@ export const FEATURE_LABEL: Record<FeatureId, string> = {
   defense: "Savunma sunumu ve savunma provası",
 };
 
-export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium" };
+export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium", single: "Tek Proje" };
 
 export function hasFeature(planId: string | null | undefined, feature: FeatureId): boolean {
   return (PLAN_RANK[planId ?? "free"] ?? 0) >= PLAN_RANK[FEATURE_MIN_PLAN[feature]];

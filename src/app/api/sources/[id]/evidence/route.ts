@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { checkEvidence } from "@/lib/ai/evidence";
@@ -15,9 +16,10 @@ export const POST = route<Ctx>("source.evidence", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const b = await parseBody(req, Body);
-  const { data: src } = await s.supabase.from("sources").select("id, title, abstract, access_level").eq("id", id).eq("user_id", s.user.id).maybeSingle();
+  const { data: src } = await s.supabase.from("sources").select("id, title, abstract, access_level, project_id").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!src) throw new ApiError(404, "Kaynak bulunamadı");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  await assertSingleProject(s, src.project_id as string);
   const { data: chunks } = src.access_level === "full_text"
     ? await s.supabase.from("source_chunks").select("content, page_hint").eq("source_id", id).eq("user_id", s.user.id).order("chunk_index").limit(1500)
     : { data: [] };

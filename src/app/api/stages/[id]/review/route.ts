@@ -1,4 +1,5 @@
 import { AiSpentError, ApiError, json, recordAiSpent, route } from "@/lib/api";
+import { assertSingleProject } from "@/lib/single-project";
 import { requireUser } from "@/lib/auth";
 import { makeT } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
@@ -19,6 +20,7 @@ export const POST = route<Ctx>("stage.review", async (req, { params }) => {
   const { data: st } = await s.supabase.from("project_stages").select("id, project_id").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!st) throw new ApiError(404, "Bölüm bulunamadı");
   const bundle = await loadProjectBundle(s.supabase, st.project_id, s.user.id);
+  await assertSingleProject(s, st.project_id);
   const stage = bundle?.stages.find((x) => x.id === id);
   if (!bundle || !stage) throw new ApiError(404, "Bölüm bulunamadı");
   const uiLocale = localeFromRequest(req);

@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 360 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 361 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -92,6 +92,7 @@ src/lib/
   lock.ts                 getWorkLock: aylık hak durumu (D81: çalışma artık kilitlenmez, yalnızca “hak doldu” şeridi); scramble.ts eski, kullanılmıyor
   autopilot.ts           Yönetici “Otomatik çalışma” modülü kuralları (D77); motor components/admin/autopilot-engine.ts
   devices.ts + device-client.ts  Cihaz kimliği (D101): tarayıcıda rastgele kimlik (localStorage + çerez acd_did), sunucuya yalnızca SHA-256 özeti; user_devices; davet edenin cihazından kayıtta ödül yok
+  single-project.ts      Tek Proje paketi (D103): assertSingleProject (yapay zekâ yalnızca bağlı çalışmada), assertCanCreateProject, assertSingleProjectChange; uyarılar raise_abuse_alert (DB); pricing.ts isOneTimePlan
   activity.ts + activity-summary.ts  Kullanım kanıt kaydı (D102): logAiOutput (her yapay zekâ çıktısı), DB tetikleyicileri silmeleri yazar; yönetim → kullanıcı → Kullanım geçmişi (components/admin/activity.tsx)
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                core.ts (sözlüksüz çekirdek; istemci bunu kullanır), index.ts (core + EN, sunucu), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)

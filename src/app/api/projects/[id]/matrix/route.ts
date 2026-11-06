@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
@@ -38,6 +39,7 @@ export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
       continue;
     }
     await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request", { costOnly: true });
+    await assertSingleProject(s, id);
     let material = src.access_level !== "metadata" && src.abstract ? `ÖZET:\n${String(src.abstract).slice(0, 3000)}` : "";
     if (src.access_level === "full_text") {
       const { data: chunks } = await s.supabase.from("source_chunks").select("content, page_hint, chunk_index").eq("source_id", src.id).order("chunk_index").limit(1500);

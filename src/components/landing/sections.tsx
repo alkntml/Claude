@@ -5,7 +5,7 @@ import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 import { usePrice } from "@/components/price-context";
-import { discounted, TEAM_DISCOUNT, whatsappLink } from "@/lib/pricing";
+import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan } from "@/lib/pricing";
 
 export function Pillars() {
   const { t } = useT();
@@ -152,7 +152,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
               <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{t(p.description)}</p>
               <div className="mt-5 flex items-baseline gap-1">
                 <span className="text-4xl font-semibold tracking-tight">{price(Number(p.price_monthly))}</span>
-                <span className={featured ? "text-white/50" : "text-ink-400"}>{t("/ay")}</span>
+                <span className={featured ? "text-white/50" : "text-ink-400"}>{isOneTimePlan(p.id) ? t("tek ödeme") : t("/ay")}</span>
               </div>
               <ul className="mt-6 flex-1 space-y-2.5">
                 {p.features.map((f) => <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-sky-300" : "text-brand-500"}`} />{t(f)}</li>)}
@@ -176,7 +176,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
 function TeamCard({ plans }: { plans: PlanLike[] }) {
   const { t } = useT();
   const price = usePrice();
-  const paid = plans.filter((p) => Number(p.price_monthly) > 0);
+  const paid = plans.filter((p) => Number(p.price_monthly) > 0 && !isOneTimePlan(p.id));
   const href = whatsappLink(t("Merhaba, Academiana Akademik Ekip paketi (%{p} indirim) için teklif almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket (Basic / Pro / Premium): ", { p: TEAM_DISCOUNT.percent }));
   const features = [
     t("En az {n} kişi; kişi sayısında üst sınır yok", { n: TEAM_DISCOUNT.minMembers }),

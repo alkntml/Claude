@@ -9,6 +9,7 @@ const KIND: Record<string, { label: string; tone: string }> = {
   project_deleted: { label: "Çalışma silindi", tone: "bg-rose-50 text-rose-700" },
   stage_deleted: { label: "Bölüm silindi", tone: "bg-rose-50 text-rose-700" },
   text_removed: { label: "Metin silindi", tone: "bg-amber-50 text-amber-800" },
+  abuse_alert: { label: "Kötüye kullanım uyarısı", tone: "bg-rose-100 text-rose-800" },
 };
 const n = (v: number) => Number(v || 0).toLocaleString("tr-TR");
 const when = (iso: string) => new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -37,7 +38,7 @@ export function UserActivity({ userId }: { userId: string }) {
   return (
     <div className="space-y-3">
       <div className="grid gap-2 sm:grid-cols-4">
-        {[["Toplam çıktı", `${n(s.outputs)} istek`], ["Üretilen metin", `${n(s.words)} kelime · ~${n(s.pages)} sayfa`], ["Bu ay", `${n(s.monthOutputs)} istek · ${n(s.monthWords)} kelime`], ["Silinen", `${n(s.deletedWords)} kelime · ${n(s.projectsDeleted)} çalışma`]].map(([l, v]) => (
+        {[["Toplam çıktı", `${n(s.outputs)} istek`], ["Üretilen metin", `${n(s.words)} kelime · ~${n(s.pages)} sayfa`], ["Bu ay", `${n(s.monthOutputs)} istek · ${n(s.monthWords)} kelime`], ["Silinen", `${n(s.deletedWords)} kelime · ${n(s.projectsDeleted)} çalışma`], ...(s.alerts ? [["Kötüye kullanım uyarısı", `${n(s.alerts)} uyarı`]] : [])].map(([l, v]) => (
           <div key={l} className="rounded-xl bg-ink-50 p-2.5"><p className="text-[11.5px] text-ink-500">{l}</p><p className="text-[13.5px] font-semibold text-ink-900">{v}</p></div>
         ))}
       </div>

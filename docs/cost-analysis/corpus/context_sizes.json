@@ -1,0 +1,62 @@
+[
+ {
+  "label": "makale-başı",
+  "sources": 10,
+  "memory": 5,
+  "stages": 7,
+  "currentChars": 0,
+  "chunks": 0,
+  "systemChars": 16451,
+  "headChars": 17253,
+  "tailChars": 4413,
+  "usedChunks": 0
+ },
+ {
+  "label": "makale-orta",
+  "sources": 25,
+  "memory": 15,
+  "stages": 7,
+  "currentChars": 6000,
+  "chunks": 4,
+  "systemChars": 16451,
+  "headChars": 39687,
+  "tailChars": 16580,
+  "usedChunks": 4
+ },
+ {
+  "label": "tez-başı",
+  "sources": 15,
+  "memory": 8,
+  "stages": 14,
+  "currentChars": 0,
+  "chunks": 0,
+  "systemChars": 16451,
+  "headChars": 24850,
+  "tailChars": 7430,
+  "usedChunks": 0
+ },
+ {
+  "label": "tez-orta",
+  "sources": 40,
+  "memory": 25,
+  "stages": 14,
+  "currentChars": 6000,
+  "chunks": 8,
+  "systemChars": 16451,
+  "headChars": 62293,
+  "tailChars": 25664,
+  "usedChunks": 8
+ },
+ {
+  "label": "tez-son",
+  "sources": 60,
+  "memory": 45,
+  "stages": 14,
+  "currentChars": 12000,
+  "chunks": 14,
+  "systemChars": 16451,
+  "headChars": 65775,
+  "tailChars": 57348,
+  "usedChunks": 14
+ }
+]

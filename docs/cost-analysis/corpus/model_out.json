@@ -1,0 +1,7758 @@
+{
+ "docs": [
+  {
+   "src": "DergiPark (TR)",
+   "title": "Mafya Devlette Hukuk",
+   "kind": "makale",
+   "pages": 12,
+   "words": 4857,
+   "body": 4857,
+   "refs": 0,
+   "wpp": 405,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/pid/article/1358636",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.2887,
+     "tin": 488756.9606,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.0517,
+     "tin": 823259.0312,
+     "tout": 139910.1176,
+     "requests": 47,
+     "calls": 70,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.6091,
+     "tin": 553924.5553,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.548,
+     "tin": 933026.902,
+     "tout": 163840.6,
+     "requests": 47,
+     "calls": 70,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.0303,
+     "tin": 639143.7177,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.2008,
+     "tin": 1076569.5023,
+     "tout": 195541.0,
+     "requests": 47,
+     "calls": 70,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.9499,
+     "tin": 256364.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1209,
+     "tin": 44460.66666666667,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0063,
+     "tin": 57798.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.156,
+     "tin": 64091.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0103,
+     "tin": 35163.882000000005,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1575,
+     "tin": 14382.473333333335,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.069,
+     "tin": 27530.333333333336,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 14
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Blockchain Technology and Smart Contracts: Fundamental Structure, Features and Data Security Perspective",
+   "kind": "makale",
+   "pages": 44,
+   "words": 17308,
+   "body": 15170,
+   "refs": 97,
+   "wpp": 393,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/pid/article/1402270",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 2.3905,
+     "tin": 1309883.9588,
+     "tout": 141254.7647,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "iyimser|yoğun": {
+     "cost": 3.8581,
+     "tin": 2295468.6059,
+     "tout": 244741.9412,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    },
+    "temel|verimli": {
+     "cost": 3.1748,
+     "tin": 1484535.1533,
+     "tout": 167100.4,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "temel|yoğun": {
+     "cost": 5.1061,
+     "tin": 2601531.0867,
+     "tout": 285819.3333,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    },
+    "kötümser|verimli": {
+     "cost": 4.2042,
+     "tin": 1712925.1769,
+     "tout": 201322.0,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "kötümser|yoğun": {
+     "cost": 6.7441,
+     "tin": 3001766.6385,
+     "tout": 340218.0,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 21,
+     "model": "sonnet",
+     "cost": 2.0705,
+     "tin": 751037.0,
+     "tout": 93562.00000000001,
+     "requests": 21
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 21,
+     "model": "haiku",
+     "cost": 0.0164,
+     "tin": 81900.0,
+     "tout": 16380.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 4,
+     "model": "sonnet",
+     "cost": 0.3196,
+     "tin": 146521.3333333333,
+     "tout": 9648.0,
+     "requests": 4
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 4,
+     "model": "haiku",
+     "cost": 0.0177,
+     "tin": 190477.73333333334,
+     "tout": 6449.7333333333345,
+     "requests": 4
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 5,
+     "model": "sonnet",
+     "cost": 0.3572,
+     "tin": 178818.3333333333,
+     "tout": 8701.666666666668,
+     "requests": 5
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0139,
+     "tin": 71183.75333333334,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 44
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "The Issue of the Victim of Abortion Crime in the Light of the Historical Development of Turkish Criminal Law and Turkish Civil Law",
+   "kind": "makale",
+   "pages": 23,
+   "words": 9036,
+   "body": 7434,
+   "refs": 73,
+   "wpp": 393,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/pid/article/1402959",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4979,
+     "tin": 759278.8388,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3947,
+     "tin": 1361529.4859,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9662,
+     "tin": 860516.0173,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.117,
+     "tin": 1543066.7507,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.581,
+     "tin": 992903.0969,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0653,
+     "tin": 1780461.6354,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0112,
+     "tin": 44164.48400000001,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 22
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Evaluation of Situations Where Altruism Occurs",
+   "kind": "derleme",
+   "pages": 10,
+   "words": 4012,
+   "body": 3593,
+   "refs": 19,
+   "wpp": 401,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1470289",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3468,
+     "tin": 571838.7159,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.1295,
+     "tin": 991809.7041,
+     "tout": 149491.1176,
+     "requests": 58,
+     "calls": 81,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.7162,
+     "tin": 648083.878,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.6982,
+     "tin": 1124050.998,
+     "tout": 173850.6,
+     "requests": 58,
+     "calls": 81,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.2016,
+     "tin": 747789.09,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.4455,
+     "tin": 1296981.9208,
+     "tout": 206123.0,
+     "requests": 58,
+     "calls": 81,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0301,
+     "tin": 315764.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1343,
+     "tin": 54360.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0072,
+     "tin": 70668.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1761,
+     "tin": 78941.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0099,
+     "tin": 30749.15133333334,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1439,
+     "tin": 10986.526666666667,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0757,
+     "tin": 32480.333333333332,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 10
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Google Çeviri Programı Üzerine Bir İnceleme: Sıfat Yantümcelerinin Çevirisindeki Hatalar",
+   "kind": "derleme",
+   "pages": 18,
+   "words": 7424,
+   "body": 6459,
+   "refs": 36,
+   "wpp": 412,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1474149",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.472,
+     "tin": 723556.4712,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3529,
+     "tin": 1292548.2947,
+     "tout": 164298.1176,
+     "requests": 75,
+     "calls": 98,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9218,
+     "tin": 820030.6673,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.0471,
+     "tin": 1464888.0673,
+     "tout": 189320.6,
+     "requests": 75,
+     "calls": 98,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5124,
+     "tin": 946189.2315,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.9586,
+     "tin": 1690255.4623,
+     "tout": 222477.0,
+     "requests": 75,
+     "calls": 98,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.154,
+     "tin": 407564.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1549,
+     "tin": 69660.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0085,
+     "tin": 90558.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.207,
+     "tin": 101891.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0109,
+     "tin": 40759.134,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.086,
+     "tin": 40130.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 19
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "The Use of Artificial Intelligence in Fashion Design",
+   "kind": "makale",
+   "pages": 18,
+   "words": 6966,
+   "body": 5222,
+   "refs": 53,
+   "wpp": 387,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1477707",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4972,
+     "tin": 752461.9753,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3941,
+     "tin": 1354712.6224,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9654,
+     "tin": 852790.2387,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.1162,
+     "tin": 1535340.972,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5801,
+     "tin": 983988.7369,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0644,
+     "tin": 1771547.2754,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0105,
+     "tin": 36438.70533333334,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 15
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Hekime Güven ile Hasta Memnuniyeti Üzerine Kesitsel Bir Araştırma (Kahramanmaraş İli Örneği)",
+   "kind": "makale",
+   "pages": 44,
+   "words": 16576,
+   "body": 15355,
+   "refs": 71,
+   "wpp": 377,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1479933",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 2.3906,
+     "tin": 1310454.0853,
+     "tout": 141254.7647,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "iyimser|yoğun": {
+     "cost": 3.8581,
+     "tin": 2296038.7324,
+     "tout": 244741.9412,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    },
+    "temel|verimli": {
+     "cost": 3.1749,
+     "tin": 1485181.2967,
+     "tout": 167100.4,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "temel|yoğun": {
+     "cost": 5.1062,
+     "tin": 2602177.23,
+     "tout": 285819.3333,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    },
+    "kötümser|verimli": {
+     "cost": 4.2042,
+     "tin": 1713670.7269,
+     "tout": 201322.0,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "kötümser|yoğun": {
+     "cost": 6.7441,
+     "tin": 3002512.1885,
+     "tout": 340218.0,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 21,
+     "model": "sonnet",
+     "cost": 2.0705,
+     "tin": 751037.0,
+     "tout": 93562.00000000001,
+     "requests": 21
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 21,
+     "model": "haiku",
+     "cost": 0.0164,
+     "tin": 81900.0,
+     "tout": 16380.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 4,
+     "model": "sonnet",
+     "cost": 0.3196,
+     "tin": 146521.3333333333,
+     "tout": 9648.0,
+     "requests": 4
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 4,
+     "model": "haiku",
+     "cost": 0.0177,
+     "tin": 190477.73333333334,
+     "tout": 6449.7333333333345,
+     "requests": 4
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 5,
+     "model": "sonnet",
+     "cost": 0.3572,
+     "tin": 178818.3333333333,
+     "tout": 8701.666666666668,
+     "requests": 5
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.014,
+     "tin": 71829.89666666667,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 45
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Literature Review and Content Analysis of Research Conducted Between 2011-2024 on Continuous Audit",
+   "kind": "derleme",
+   "pages": 19,
+   "words": 7288,
+   "body": 5879,
+   "refs": 28,
+   "wpp": 384,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1481506",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4205,
+     "tin": 656333.7535,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.2697,
+     "tin": 1158807.93,
+     "tout": 157330.1176,
+     "requests": 67,
+     "calls": 90,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.8335,
+     "tin": 743844.9207,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.9077,
+     "tin": 1313315.654,
+     "tout": 182040.6,
+     "requests": 67,
+     "calls": 90,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.3759,
+     "tin": 858282.6008,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.7458,
+     "tin": 1515364.2162,
+     "tout": 214781.0,
+     "requests": 67,
+     "calls": 90,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0957,
+     "tin": 364364.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1452,
+     "tin": 62460.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0079,
+     "tin": 81198.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1925,
+     "tin": 91091.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0107,
+     "tin": 38733.38733333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0812,
+     "tin": 36530.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 17
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Analysis of Teacher Views on the Advantages and Disadvantages (Frankenstein Syndrome) of Using Humanoid Robots in Education",
+   "kind": "makale",
+   "pages": 22,
+   "words": 10786,
+   "body": 8543,
+   "refs": 79,
+   "wpp": 490,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1483914",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4982,
+     "tin": 762696.5159,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3951,
+     "tin": 1364947.1629,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9666,
+     "tin": 864389.3847,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.1174,
+     "tin": 1546940.118,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5814,
+     "tin": 997372.3669,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0657,
+     "tin": 1784930.9054,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0116,
+     "tin": 48037.85133333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 25
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Yerel Halkın Bakış Açısıyla Coğrafi İşaretli Ürünlerin Değerlendirilmesi: Rize Örneği",
+   "kind": "makale",
+   "pages": 14,
+   "words": 6188,
+   "body": 5003,
+   "refs": 33,
+   "wpp": 442,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1485304",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4503,
+     "tin": 694038.2982,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3154,
+     "tin": 1237100.2276,
+     "tout": 161685.1176,
+     "requests": 72,
+     "calls": 95,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.886,
+     "tin": 786576.738,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.9877,
+     "tin": 1402046.9247,
+     "tout": 186590.6,
+     "requests": 72,
+     "calls": 95,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.4582,
+     "tin": 907588.5438,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.8706,
+     "tin": 1617746.4515,
+     "tout": 219591.0,
+     "requests": 72,
+     "calls": 95,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1321,
+     "tin": 391364.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1513,
+     "tin": 66960.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0083,
+     "tin": 87048.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2016,
+     "tin": 97841.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0104,
+     "tin": 35673.81133333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1591,
+     "tin": 14774.726666666667,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0842,
+     "tin": 38780.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 15
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Examination of Reading Profiles of Primary School Students in Terms of Various Variables",
+   "kind": "makale",
+   "pages": 19,
+   "words": 13062,
+   "body": 13062,
+   "refs": 0,
+   "wpp": 687,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1486727",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.762,
+     "tin": 738094.9518,
+     "tout": 124803.7647,
+     "requests": 34,
+     "calls": 59,
+     "drafts": 14
+    },
+    "iyimser|yoğun": {
+     "cost": 2.8946,
+     "tin": 1243579.5106,
+     "tout": 193317.9706,
+     "requests": 65,
+     "calls": 97,
+     "drafts": 14
+    },
+    "temel|verimli": {
+     "cost": 2.2141,
+     "tin": 836507.612,
+     "tout": 147242.0667,
+     "requests": 34,
+     "calls": 59,
+     "drafts": 14
+    },
+    "temel|yoğun": {
+     "cost": 3.6286,
+     "tin": 1409390.112,
+     "tout": 228252.9,
+     "requests": 65,
+     "calls": 97,
+     "drafts": 14
+    },
+    "kötümser|verimli": {
+     "cost": 2.8086,
+     "tin": 965201.0908,
+     "tout": 176955.0,
+     "requests": 34,
+     "calls": 59,
+     "drafts": 14
+    },
+    "kötümser|yoğun": {
+     "cost": 4.5935,
+     "tin": 1626219.36,
+     "tout": 274511.5,
+     "requests": 65,
+     "calls": 97,
+     "drafts": 14
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 18,
+     "model": "sonnet",
+     "cost": 1.4248,
+     "tin": 384546.0,
+     "tout": 80196.00000000001,
+     "requests": 18
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 18,
+     "model": "haiku",
+     "cost": 0.014,
+     "tin": 70200.0,
+     "tout": 14040.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1814,
+     "tin": 66691.0,
+     "tout": 7236.0,
+     "requests": 3
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 4,
+     "model": "haiku",
+     "cost": 0.0127,
+     "tin": 115597.73333333334,
+     "tout": 6449.7333333333345,
+     "requests": 4
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 4,
+     "model": "sonnet",
+     "cost": 0.208,
+     "tin": 85454.66666666667,
+     "tout": 6961.333333333334,
+     "requests": 4
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0132,
+     "tin": 63821.21200000001,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.069,
+     "tin": 27530.333333333336,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 38
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "An Analysis of The Baroque Era and Rembrandt's Works in Terms of Style and Expression",
+   "kind": "derleme",
+   "pages": 15,
+   "words": 4941,
+   "body": 4487,
+   "refs": 17,
+   "wpp": 329,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1489111",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3428,
+     "tin": 560354.2959,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.1345,
+     "tin": 967934.4841,
+     "tout": 147749.1176,
+     "requests": 56,
+     "calls": 79,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.7041,
+     "tin": 635068.202,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.6925,
+     "tin": 1096992.4153,
+     "tout": 172030.6,
+     "requests": 56,
+     "calls": 79,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.1789,
+     "tin": 732771.0023,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.426,
+     "tin": 1265760.4792,
+     "tout": 204199.0,
+     "requests": 56,
+     "calls": 79,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0155,
+     "tin": 304964.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1318,
+     "tin": 52560.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.007,
+     "tin": 68328.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1724,
+     "tin": 76241.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0102,
+     "tin": 33871.59533333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1536,
+     "tin": 13388.406666666668,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0745,
+     "tin": 31580.333333333332,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 13
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Enthusiasm for Complete Domination: Parliamentary Adoption of the Montreux Straits Convention",
+   "kind": "makale",
+   "pages": 19,
+   "words": 8286,
+   "body": 7803,
+   "refs": 21,
+   "wpp": 436,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1489314",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3763,
+     "tin": 605007.1865,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.1976,
+     "tin": 1049278.4218,
+     "tout": 151233.1176,
+     "requests": 60,
+     "calls": 83,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.7571,
+     "tin": 685674.8113,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.7866,
+     "tin": 1189182.2113,
+     "tout": 175670.6,
+     "requests": 60,
+     "calls": 83,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.2574,
+     "tin": 791163.2438,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.5606,
+     "tin": 1372133.3208,
+     "tout": 208047.0,
+     "requests": 60,
+     "calls": 83,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0446,
+     "tin": 326564.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1367,
+     "tin": 56160.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0074,
+     "tin": 73008.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1797,
+     "tin": 81641.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0114,
+     "tin": 45453.278000000006,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0769,
+     "tin": 33380.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 23
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Examining the Ramadan Anomaly in Borsa Istanbul: A Research on The Participation Index",
+   "kind": "makale",
+   "pages": 12,
+   "words": 5957,
+   "body": 5356,
+   "refs": 24,
+   "wpp": 496,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1491110",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3947,
+     "tin": 622004.3435,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.228,
+     "tin": 1091219.6965,
+     "tout": 153846.1176,
+     "requests": 63,
+     "calls": 86,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.7893,
+     "tin": 704938.256,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.8379,
+     "tin": 1236715.656,
+     "tout": 178400.6,
+     "requests": 63,
+     "calls": 86,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.3075,
+     "tin": 813390.2954,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.6393,
+     "tin": 1426979.6031,
+     "tout": 210933.0,
+     "requests": 63,
+     "calls": 86,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0665,
+     "tin": 342764.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1404,
+     "tin": 58860.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0076,
+     "tin": 76518.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1852,
+     "tin": 85691.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0105,
+     "tin": 36906.72266666667,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0787,
+     "tin": 34730.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 16
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Francis Fukuyama's Self-Denial: from “the Last Man” to the End of “Human”",
+   "kind": "makale",
+   "pages": 4,
+   "words": 1359,
+   "body": 1295,
+   "refs": 3,
+   "wpp": 340,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1491527",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.2539,
+     "tin": 469335.6794,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 1.9492,
+     "tin": 786949.6794,
+     "tout": 139910.1176,
+     "requests": 47,
+     "calls": 70,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.5695,
+     "tin": 531913.77,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.4319,
+     "tin": 891876.3033,
+     "tout": 163840.6,
+     "requests": 47,
+     "calls": 70,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 1.9847,
+     "tin": 613746.6577,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.0668,
+     "tin": 1029088.0423,
+     "tout": 195541.0,
+     "requests": 47,
+     "calls": 70,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.9499,
+     "tin": 256364.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1209,
+     "tin": 44460.66666666667,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0063,
+     "tin": 57798.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.156,
+     "tin": 64091.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0091,
+     "tin": 22723.003333333334,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1193,
+     "tin": 4812.566666666667,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.069,
+     "tin": 27530.333333333336,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 4
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Teachers’ Opinions on The Education Problems of Migrant Children (Case Of Diyarbakir)",
+   "kind": "makale",
+   "pages": 22,
+   "words": 8854,
+   "body": 8183,
+   "refs": 21,
+   "wpp": 402,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1492714",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3764,
+     "tin": 606178.2571,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.1977,
+     "tin": 1050449.4924,
+     "tout": 151233.1176,
+     "requests": 60,
+     "calls": 83,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.7572,
+     "tin": 687002.0247,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.7867,
+     "tin": 1190509.4247,
+     "tout": 175670.6,
+     "requests": 60,
+     "calls": 83,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.2576,
+     "tin": 792694.6438,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.5607,
+     "tin": 1373664.7208,
+     "tout": 208047.0,
+     "requests": 60,
+     "calls": 83,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0446,
+     "tin": 326564.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1367,
+     "tin": 56160.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0074,
+     "tin": 73008.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1797,
+     "tin": 81641.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0115,
+     "tin": 46780.491333333346,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0769,
+     "tin": 33380.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 24
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Sigara Kullanan ve Kullanmayan Ergen Bireylerde Psikolojik Belirti Şiddetlerinin Karşılaştırılması",
+   "kind": "makale",
+   "pages": 8,
+   "words": 3538,
+   "body": 2882,
+   "refs": 30,
+   "wpp": 442,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1495241",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4103,
+     "tin": 657935.6224,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.2233,
+     "tin": 1165997.3988,
+     "tout": 159072.1176,
+     "requests": 69,
+     "calls": 92,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.8294,
+     "tin": 745660.372,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.8664,
+     "tin": 1321463.7187,
+     "tout": 183860.6,
+     "requests": 69,
+     "calls": 92,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.3799,
+     "tin": 860377.3523,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.7111,
+     "tin": 1524765.8292,
+     "tout": 216705.0,
+     "requests": 69,
+     "calls": 92,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1102,
+     "tin": 375164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1476,
+     "tin": 64260.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0081,
+     "tin": 83538.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1961,
+     "tin": 93791.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0097,
+     "tin": 28265.865333333335,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1363,
+     "tin": 9076.306666666667,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0824,
+     "tin": 37430.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 8
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Amin Al-Husseini and the Holocaust: An Evaluation",
+   "kind": "derleme",
+   "pages": 15,
+   "words": 7130,
+   "body": 6042,
+   "refs": 47,
+   "wpp": 475,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1497887",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4975,
+     "tin": 754989.0224,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3943,
+     "tin": 1357239.6694,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9657,
+     "tin": 855654.2253,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.1165,
+     "tin": 1538204.9587,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5804,
+     "tin": 987293.3369,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0647,
+     "tin": 1774851.8754,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0108,
+     "tin": 39302.692,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 18
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "The Relationship Between Collectivist Society and Culture in Political Discourse Studies",
+   "kind": "makale",
+   "pages": 16,
+   "words": 7043,
+   "body": 6143,
+   "refs": 58,
+   "wpp": 440,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1498634",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4975,
+     "tin": 755300.2806,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3943,
+     "tin": 1357550.9276,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9658,
+     "tin": 856006.9847,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.1166,
+     "tin": 1538557.718,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5805,
+     "tin": 987700.3669,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0648,
+     "tin": 1775258.9054,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0108,
+     "tin": 39655.45133333334,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 18
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Student Opinions on The Use of Artificial Intelligence Support in Graphic Design",
+   "kind": "makale",
+   "pages": 13,
+   "words": 3775,
+   "body": 3478,
+   "refs": 13,
+   "wpp": 290,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1499011",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3073,
+     "tin": 522135.2247,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.0639,
+     "tin": 891672.7424,
+     "tout": 144265.1176,
+     "requests": 52,
+     "calls": 75,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.6488,
+     "tin": 591753.2547,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.59,
+     "tin": 1010562.4413,
+     "tout": 168390.6,
+     "requests": 52,
+     "calls": 75,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.0979,
+     "tin": 682792.2169,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.2818,
+     "tin": 1166033.5862,
+     "tout": 200351.0,
+     "requests": 52,
+     "calls": 75,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.9863,
+     "tin": 283364.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.127,
+     "tin": 48960.66666666667,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0067,
+     "tin": 63648.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1651,
+     "tin": 70841.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0099,
+     "tin": 30347.494666666662,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1427,
+     "tin": 10677.56,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0721,
+     "tin": 29780.333333333336,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 10
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "1930'larda Bilecik'te Görülen Şehitlik ve Gazilik Tespiti Davaları",
+   "kind": "makale",
+   "pages": 16,
+   "words": 7803,
+   "body": 6813,
+   "refs": 22,
+   "wpp": 488,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1504225",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.3824,
+     "tin": 610135.6512,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.2077,
+     "tin": 1062721.5924,
+     "tout": 152104.1176,
+     "requests": 61,
+     "calls": 84,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.7677,
+     "tin": 691487.0713,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.8036,
+     "tin": 1204417.8047,
+     "tout": 176580.6,
+     "requests": 61,
+     "calls": 84,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.274,
+     "tin": 797869.6977,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.5867,
+     "tin": 1389712.8515,
+     "tout": 209009.0,
+     "requests": 61,
+     "calls": 84,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.0519,
+     "tin": 331964.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1379,
+     "tin": 57060.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0074,
+     "tin": 74178.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1815,
+     "tin": 82991.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.011,
+     "tin": 41995.538,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0775,
+     "tin": 33830.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 20
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Türk Hukukunda Kayyımlık, Kayyımlığa İlişkin Özel Düzenlemeler ve Uygulamadaki Çeşitli Sorunlar",
+   "kind": "makale",
+   "pages": 8,
+   "words": 3293,
+   "body": 2999,
+   "refs": 12,
+   "wpp": 412,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1512925",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.2962,
+     "tin": 511344.1359,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.0398,
+     "tin": 870295.9241,
+     "tout": 143394.1176,
+     "requests": 51,
+     "calls": 74,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.6325,
+     "tin": 579523.354,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 2.557,
+     "tin": 986335.3807,
+     "tout": 167480.6,
+     "requests": 51,
+     "calls": 74,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.0747,
+     "tin": 668680.7931,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.2372,
+     "tin": 1138079.2854,
+     "tout": 199389.0,
+     "requests": 51,
+     "calls": 74,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.979,
+     "tin": 277964.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1258,
+     "tin": 48060.66666666667,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0067,
+     "tin": 62478.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.1633,
+     "tin": 69491.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0097,
+     "tin": 28674.50733333334,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1376,
+     "tin": 9390.646666666667,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0715,
+     "tin": 29330.333333333336,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 9
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Power and Power Relationships in The Public Policy Making Process",
+   "kind": "makale",
+   "pages": 12,
+   "words": 5616,
+   "body": 4937,
+   "refs": 37,
+   "wpp": 468,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/esosder/article/1514232",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4753,
+     "tin": 726396.09,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.355,
+     "tin": 1302403.9253,
+     "tout": 165169.1176,
+     "requests": 76,
+     "calls": 99,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9293,
+     "tin": 823248.902,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.0551,
+     "tin": 1476057.782,
+     "tout": 190230.6,
+     "requests": 76,
+     "calls": 99,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5255,
+     "tin": 949902.5792,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 3.9744,
+     "tin": 1703143.5946,
+     "tout": 223439.0,
+     "requests": 76,
+     "calls": 99,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1613,
+     "tin": 412964.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1561,
+     "tin": 70560.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0086,
+     "tin": 91728.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2089,
+     "tin": 103241.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0104,
+     "tin": 35443.295333333335,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1584,
+     "tin": 14597.406666666668,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0866,
+     "tin": 40580.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 14
+  },
+  {
+   "src": "DergiPark (TR)",
+   "title": "Teknoloji Kabul Modeli Bağlamında Sosyal Etkinin Metaverse Teknolojilerini Kullanma Niyetine Etkisi",
+   "kind": "makale",
+   "pages": 21,
+   "words": 11594,
+   "body": 6966,
+   "refs": 109,
+   "wpp": 552,
+   "sections": 9,
+   "url": "https://dergipark.org.tr/en/pub/gumus/article/1351190",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4977,
+     "tin": 757836.5729,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3946,
+     "tin": 1360087.22,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.966,
+     "tin": 858881.4493,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.1168,
+     "tin": 1541432.1827,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5808,
+     "tin": 991017.0569,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0651,
+     "tin": 1778575.5954,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0111,
+     "tin": 42529.916000000005,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 20
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Effectiveness of a Strength-Based Intervention into Nursing Education in South Korea.",
+   "kind": "makale",
+   "pages": null,
+   "words": 4635,
+   "body": 4440,
+   "refs": 30,
+   "wpp": null,
+   "sections": 23,
+   "url": "https://europepmc.org/article/PMC/PMC10443687",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 3.1133,
+     "tin": 1596077.2118,
+     "tout": 189938.9412,
+     "requests": 54,
+     "calls": 91,
+     "drafts": 23
+    },
+    "iyimser|yoğun": {
+     "cost": 4.9696,
+     "tin": 2755814.0353,
+     "tout": 309224.7647,
+     "requests": 120,
+     "calls": 168,
+     "drafts": 23
+    },
+    "temel|verimli": {
+     "cost": 4.0991,
+     "tin": 1808887.5067,
+     "tout": 225747.9333,
+     "requests": 54,
+     "calls": 91,
+     "drafts": 23
+    },
+    "temel|yoğun": {
+     "cost": 6.5347,
+     "tin": 3123255.9067,
+     "tout": 365014.4,
+     "requests": 120,
+     "calls": 168,
+     "drafts": 23
+    },
+    "kötümser|verimli": {
+     "cost": 5.3931,
+     "tin": 2087177.8923,
+     "tout": 273151.0,
+     "requests": 54,
+     "calls": 91,
+     "drafts": 23
+    },
+    "kötümser|yoğun": {
+     "cost": 8.5891,
+     "tin": 3603756.8154,
+     "tout": 438872.0,
+     "requests": 120,
+     "calls": 168,
+     "drafts": 23
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 30,
+     "model": "sonnet",
+     "cost": 2.7756,
+     "tin": 937909.9999999999,
+     "tout": 133660.00000000003,
+     "requests": 30
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 30,
+     "model": "haiku",
+     "cost": 0.0234,
+     "tin": 117000.0,
+     "tout": 23400.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 6,
+     "model": "sonnet",
+     "cost": 0.4429,
+     "tin": 192782.0,
+     "tout": 14472.0,
+     "requests": 6
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 6,
+     "model": "haiku",
+     "cost": 0.0242,
+     "tin": 250616.6,
+     "tout": 9674.600000000002,
+     "requests": 6
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.4576,
+     "tin": 218845.66666666666,
+     "tout": 12182.333333333334,
+     "requests": 7
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0102,
+     "tin": 33707.44,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.153,
+     "tin": 13262.133333333333,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0824,
+     "tin": 37430.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 13
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "The work experience of male nursing teachers in Chinese universities: a phenomenological study.",
+   "kind": "makale",
+   "pages": null,
+   "words": 8390,
+   "body": 8099,
+   "refs": 37,
+   "wpp": null,
+   "sections": 30,
+   "url": "https://europepmc.org/article/PMC/PMC10701903",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 4.0508,
+     "tin": 2230206.9771,
+     "tout": 236640.7647,
+     "requests": 68,
+     "calls": 114,
+     "drafts": 30
+    },
+    "iyimser|yoğun": {
+     "cost": 6.5607,
+     "tin": 3883785.8006,
+     "tout": 390891.8824,
+     "requests": 152,
+     "calls": 213,
+     "drafts": 30
+    },
+    "temel|verimli": {
+     "cost": 5.4013,
+     "tin": 2527567.9073,
+     "tout": 281983.4667,
+     "requests": 68,
+     "calls": 114,
+     "drafts": 30
+    },
+    "temel|yoğun": {
+     "cost": 8.7439,
+     "tin": 4401623.9073,
+     "tout": 462502.8,
+     "requests": 152,
+     "calls": 213,
+     "drafts": 30
+    },
+    "kötümser|verimli": {
+     "cost": 7.1736,
+     "tin": 2916424.5085,
+     "tout": 342000.0,
+     "requests": 68,
+     "calls": 114,
+     "drafts": 30
+    },
+    "kötümser|yoğun": {
+     "cost": 11.6086,
+     "tin": 5078796.8162,
+     "tout": 557294.0,
+     "requests": 152,
+     "calls": 213,
+     "drafts": 30
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 39,
+     "model": "sonnet",
+     "cost": 3.7741,
+     "tin": 1342133.0,
+     "tout": 173758.00000000003,
+     "requests": 39
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 39,
+     "model": "haiku",
+     "cost": 0.0304,
+     "tin": 152100.0,
+     "tout": 30420.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.5465,
+     "tin": 246962.3333333333,
+     "tout": 16884.0,
+     "requests": 7
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 8,
+     "model": "haiku",
+     "cost": 0.0345,
+     "tin": 366915.4666666667,
+     "tout": 12899.466666666669,
+     "requests": 8
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 9,
+     "model": "sonnet",
+     "cost": 0.6266,
+     "tin": 309723.0,
+     "tout": 15663.000000000002,
+     "requests": 9
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0115,
+     "tin": 46487.10733333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0866,
+     "tin": 40580.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 24
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Application of case-based learning in psychology teaching: a meta-analysis.",
+   "kind": "derleme",
+   "pages": null,
+   "words": 6259,
+   "body": 5930,
+   "refs": 39,
+   "wpp": null,
+   "sections": 33,
+   "url": "https://europepmc.org/article/PMC/PMC10463867",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 4.4928,
+     "tin": 2477736.1588,
+     "tout": 257451.4118,
+     "requests": 74,
+     "calls": 124,
+     "drafts": 33
+    },
+    "iyimser|yoğun": {
+     "cost": 7.2174,
+     "tin": 4355470.7471,
+     "tout": 423879.4706,
+     "requests": 165,
+     "calls": 231,
+     "drafts": 33
+    },
+    "temel|verimli": {
+     "cost": 6.0144,
+     "tin": 2808100.98,
+     "tout": 307077.1333,
+     "requests": 74,
+     "calls": 124,
+     "drafts": 33
+    },
+    "temel|yoğun": {
+     "cost": 9.6595,
+     "tin": 4936200.18,
+     "tout": 502029.0,
+     "requests": 165,
+     "calls": 231,
+     "drafts": 33
+    },
+    "kötümser|verimli": {
+     "cost": 8.011,
+     "tin": 3240116.5154,
+     "tout": 372761.0,
+     "requests": 74,
+     "calls": 124,
+     "drafts": 33
+    },
+    "kötümser|yoğun": {
+     "cost": 12.8636,
+     "tin": 5695615.5923,
+     "tout": 605471.0,
+     "requests": 165,
+     "calls": 231,
+     "drafts": 33
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 43,
+     "model": "sonnet",
+     "cost": 4.2135,
+     "tin": 1518487.6666666665,
+     "tout": 191579.33333333337,
+     "requests": 43
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 43,
+     "model": "haiku",
+     "cost": 0.0335,
+     "tin": 167700.0,
+     "tout": 33540.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 8,
+     "model": "sonnet",
+     "cost": 0.6343,
+     "tin": 289442.6666666666,
+     "tout": 19296.0,
+     "requests": 8
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 8,
+     "model": "haiku",
+     "cost": 0.0351,
+     "tin": 376275.4666666667,
+     "tout": 12899.466666666669,
+     "requests": 8
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 10,
+     "model": "sonnet",
+     "cost": 0.7084,
+     "tin": 353136.6666666666,
+     "tout": 17403.333333333336,
+     "requests": 10
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0107,
+     "tin": 38911.513333333336,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0879,
+     "tin": 41480.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 17
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Development and validation of Adaptability to Return-to-Work Scale (ARTWS) for cancer patients.",
+   "kind": "makale",
+   "pages": null,
+   "words": 3759,
+   "body": 3533,
+   "refs": 31,
+   "wpp": null,
+   "sections": 29,
+   "url": "https://europepmc.org/article/PMC/PMC11090167",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 3.8398,
+     "tin": 1985174.3688,
+     "tout": 230929.5,
+     "requests": 66,
+     "calls": 111,
+     "drafts": 29
+    },
+    "iyimser|yoğun": {
+     "cost": 6.0678,
+     "tin": 3449603.8571,
+     "tout": 373574.5294,
+     "requests": 142,
+     "calls": 201,
+     "drafts": 29
+    },
+    "temel|verimli": {
+     "cost": 5.0777,
+     "tin": 2249864.2847,
+     "tout": 275135.7,
+     "requests": 66,
+     "calls": 111,
+     "drafts": 29
+    },
+    "temel|yoğun": {
+     "cost": 8.0194,
+     "tin": 3909551.038,
+     "tout": 442419.8,
+     "requests": 142,
+     "calls": 201,
+     "drafts": 29
+    },
+    "kötümser|verimli": {
+     "cost": 6.7026,
+     "tin": 2595997.2515,
+     "tout": 333649.5,
+     "requests": 66,
+     "calls": 111,
+     "drafts": 29
+    },
+    "kötümser|yoğun": {
+     "cost": 10.5811,
+     "tin": 4511020.4285,
+     "tout": 533549.0,
+     "requests": 142,
+     "calls": 201,
+     "drafts": 29
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 38,
+     "model": "sonnet",
+     "cost": 3.5389,
+     "tin": 1205119.3333333333,
+     "tout": 169302.6666666667,
+     "requests": 38
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 38,
+     "model": "haiku",
+     "cost": 0.0296,
+     "tin": 148200.0,
+     "tout": 29640.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.521,
+     "tin": 228062.3333333333,
+     "tout": 16884.0,
+     "requests": 7
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0285,
+     "tin": 296481.0333333333,
+     "tout": 11287.033333333335,
+     "requests": 7
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 9,
+     "model": "sonnet",
+     "cost": 0.5938,
+     "tin": 285423.0,
+     "tout": 15663.000000000002,
+     "requests": 9
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0099,
+     "tin": 30539.59133333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1433,
+     "tin": 10825.326666666668,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.083,
+     "tin": 37880.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 10
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "A study on the impact of life meaning on occupational identity of nursing students in China:a cross-sectional study.",
+   "kind": "makale",
+   "pages": null,
+   "words": 5389,
+   "body": 5122,
+   "refs": 46,
+   "wpp": null,
+   "sections": 29,
+   "url": "https://europepmc.org/article/PMC/PMC10726611",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 4.0317,
+     "tin": 2222901.3929,
+     "tout": 230929.5,
+     "requests": 66,
+     "calls": 111,
+     "drafts": 29
+    },
+    "iyimser|yoğun": {
+     "cost": 6.4002,
+     "tin": 3884407.2576,
+     "tout": 381413.5294,
+     "requests": 151,
+     "calls": 210,
+     "drafts": 29
+    },
+    "temel|verimli": {
+     "cost": 5.3985,
+     "tin": 2519288.2453,
+     "tout": 275135.7,
+     "requests": 66,
+     "calls": 111,
+     "drafts": 29
+    },
+    "temel|yoğun": {
+     "cost": 8.5601,
+     "tin": 4402328.2253,
+     "tout": 450609.8,
+     "requests": 151,
+     "calls": 210,
+     "drafts": 29
+    },
+    "kötümser|verimli": {
+     "cost": 7.192,
+     "tin": 2906871.0523,
+     "tout": 333649.5,
+     "requests": 66,
+     "calls": 111,
+     "drafts": 29
+    },
+    "kötümser|yoğun": {
+     "cost": 11.3941,
+     "tin": 5079609.4908,
+     "tout": 542207.0,
+     "requests": 151,
+     "calls": 210,
+     "drafts": 29
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 38,
+     "model": "sonnet",
+     "cost": 3.7466,
+     "tin": 1359019.3333333333,
+     "tout": 169302.6666666667,
+     "requests": 38
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 38,
+     "model": "haiku",
+     "cost": 0.0296,
+     "tin": 148200.0,
+     "tout": 29640.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.5593,
+     "tin": 256412.3333333333,
+     "tout": 16884.0,
+     "requests": 7
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.031,
+     "tin": 333336.0333333333,
+     "tout": 11287.033333333335,
+     "requests": 7
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 9,
+     "model": "sonnet",
+     "cost": 0.643,
+     "tin": 321873.0,
+     "tout": 15663.000000000002,
+     "requests": 9
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0104,
+     "tin": 36089.43866666667,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1604,
+     "tin": 15094.44,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 15
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "A systematic review of peer support interventions for student mental health and well-being in higher education.",
+   "kind": "derleme",
+   "pages": null,
+   "words": 8351,
+   "body": 8113,
+   "refs": 139,
+   "wpp": null,
+   "sections": 36,
+   "url": "https://europepmc.org/article/PMC/PMC10755562",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 4.9237,
+     "tin": 2759094.3276,
+     "tout": 279613.6765,
+     "requests": 81,
+     "calls": 135,
+     "drafts": 36
+    },
+    "iyimser|yoğun": {
+     "cost": 7.8646,
+     "tin": 4804355.7688,
+     "tout": 458373.3529,
+     "requests": 177,
+     "calls": 249,
+     "drafts": 36
+    },
+    "temel|verimli": {
+     "cost": 6.6064,
+     "tin": 3126973.5713,
+     "tout": 333783.2333,
+     "requests": 81,
+     "calls": 135,
+     "drafts": 36
+    },
+    "temel|yoğun": {
+     "cost": 10.5504,
+     "tin": 5444936.538,
+     "tout": 543468.5333,
+     "requests": 177,
+     "calls": 249,
+     "drafts": 36
+    },
+    "kötümser|verimli": {
+     "cost": 8.8143,
+     "tin": 3608046.4285,
+     "tout": 405478.5,
+     "requests": 81,
+     "calls": 135,
+     "drafts": 36
+    },
+    "kötümser|yoğun": {
+     "cost": 14.0743,
+     "tin": 6282619.0823,
+     "tout": 656100.0,
+     "requests": 177,
+     "calls": 249,
+     "drafts": 36
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 47,
+     "model": "sonnet",
+     "cost": 4.634,
+     "tin": 1680892.3333333333,
+     "tout": 209400.6666666667,
+     "requests": 47
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 47,
+     "model": "haiku",
+     "cost": 0.0367,
+     "tin": 183300.0,
+     "tout": 36660.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 9,
+     "model": "sonnet",
+     "cost": 0.7191,
+     "tin": 329672.99999999994,
+     "tout": 21708.0,
+     "requests": 9
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 9,
+     "model": "haiku",
+     "cost": 0.0399,
+     "tin": 428574.9,
+     "tout": 14511.900000000003,
+     "requests": 9
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 11,
+     "model": "sonnet",
+     "cost": 0.7859,
+     "tin": 393400.3333333333,
+     "tout": 19143.666666666668,
+     "requests": 11
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0115,
+     "tin": 46536.004666666675,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 24
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "The relationship between perceived stress and emotional intelligence in Moroccan nursing students.",
+   "kind": "makale",
+   "pages": null,
+   "words": 5229,
+   "body": 4915,
+   "refs": 47,
+   "wpp": null,
+   "sections": 16,
+   "url": "https://europepmc.org/article/PMC/PMC10506750",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 2.3845,
+     "tin": 1277578.9618,
+     "tout": 141254.7647,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "iyimser|yoğun": {
+     "cost": 3.8465,
+     "tin": 2261760.6088,
+     "tout": 244741.9412,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    },
+    "temel|verimli": {
+     "cost": 3.1681,
+     "tin": 1447922.8233,
+     "tout": 167100.4,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "temel|yoğun": {
+     "cost": 5.093,
+     "tin": 2563328.69,
+     "tout": 285819.3333,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    },
+    "kötümser|verimli": {
+     "cost": 4.1964,
+     "tin": 1670680.1808,
+     "tout": 201322.0,
+     "requests": 39,
+     "calls": 67,
+     "drafts": 16
+    },
+    "kötümser|yoğun": {
+     "cost": 6.7289,
+     "tin": 2957686.95,
+     "tout": 340218.0,
+     "requests": 105,
+     "calls": 141,
+     "drafts": 16
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 21,
+     "model": "sonnet",
+     "cost": 2.0705,
+     "tin": 751037.0,
+     "tout": 93562.00000000001,
+     "requests": 21
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 21,
+     "model": "haiku",
+     "cost": 0.0164,
+     "tin": 81900.0,
+     "tout": 16380.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 4,
+     "model": "sonnet",
+     "cost": 0.3196,
+     "tin": 146521.3333333333,
+     "tout": 9648.0,
+     "requests": 4
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 4,
+     "model": "haiku",
+     "cost": 0.0177,
+     "tin": 190477.73333333334,
+     "tout": 6449.7333333333345,
+     "requests": 4
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 5,
+     "model": "sonnet",
+     "cost": 0.3572,
+     "tin": 178818.3333333333,
+     "tout": 8701.666666666668,
+     "requests": 5
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0104,
+     "tin": 35366.456666666665,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1582,
+     "tin": 14538.300000000001,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 14
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Systems that evaluate international equivalency in health-related professions: a scoping review with a focus on Canada.",
+   "kind": "derleme",
+   "pages": null,
+   "words": 3774,
+   "body": 3497,
+   "refs": 31,
+   "wpp": null,
+   "sections": 28,
+   "url": "https://europepmc.org/article/PMC/PMC10559399",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 3.6502,
+     "tin": 1894147.79,
+     "tout": 220820.5,
+     "requests": 63,
+     "calls": 106,
+     "drafts": 28
+    },
+    "iyimser|yoğun": {
+     "cost": 5.9221,
+     "tin": 3349017.6841,
+     "tout": 363503.6176,
+     "requests": 139,
+     "calls": 196,
+     "drafts": 28
+    },
+    "temel|verimli": {
+     "cost": 4.8235,
+     "tin": 2146700.8287,
+     "tout": 262924.7,
+     "requests": 63,
+     "calls": 106,
+     "drafts": 28
+    },
+    "temel|yoğun": {
+     "cost": 7.8264,
+     "tin": 3795553.3753,
+     "tout": 430336.7,
+     "requests": 139,
+     "calls": 196,
+     "drafts": 28
+    },
+    "kötümser|verimli": {
+     "cost": 6.3635,
+     "tin": 2476962.4946,
+     "tout": 318656.5,
+     "requests": 63,
+     "calls": 106,
+     "drafts": 28
+    },
+    "kötümser|yoğun": {
+     "cost": 10.3259,
+     "tin": 4379484.6638,
+     "tout": 518804.5,
+     "requests": 139,
+     "calls": 196,
+     "drafts": 28
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 36,
+     "model": "sonnet",
+     "cost": 3.3526,
+     "tin": 1141692.0,
+     "tout": 160392.00000000003,
+     "requests": 36
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 36,
+     "model": "haiku",
+     "cost": 0.0281,
+     "tin": 140400.0,
+     "tout": 28080.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.521,
+     "tin": 228062.3333333333,
+     "tout": 16884.0,
+     "requests": 7
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0285,
+     "tin": 296481.0333333333,
+     "tout": 11287.033333333335,
+     "requests": 7
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 8,
+     "model": "sonnet",
+     "cost": 0.5278,
+     "tin": 253709.3333333333,
+     "tout": 13922.666666666668,
+     "requests": 8
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0099,
+     "tin": 30413.855333333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1429,
+     "tin": 10728.606666666668,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.083,
+     "tin": 37880.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 10
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Psychological resilience and work engagement of Chinese nurses: a chain mediating model of career identity and quality of work life.",
+   "kind": "makale",
+   "pages": null,
+   "words": 7278,
+   "body": 6972,
+   "refs": 52,
+   "wpp": null,
+   "sections": 33,
+   "url": "https://europepmc.org/article/PMC/PMC10687206",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 4.5153,
+     "tin": 2509694.4165,
+     "tout": 257451.4118,
+     "requests": 74,
+     "calls": 124,
+     "drafts": 33
+    },
+    "iyimser|yoğun": {
+     "cost": 7.2542,
+     "tin": 4411387.8282,
+     "tout": 424750.4706,
+     "requests": 166,
+     "calls": 232,
+     "drafts": 33
+    },
+    "temel|verimli": {
+     "cost": 6.0528,
+     "tin": 2844320.3387,
+     "tout": 307077.1333,
+     "requests": 74,
+     "calls": 124,
+     "drafts": 33
+    },
+    "temel|yoğun": {
+     "cost": 9.7221,
+     "tin": 4999572.872,
+     "tout": 502939.0,
+     "requests": 166,
+     "calls": 232,
+     "drafts": 33
+    },
+    "kötümser|verimli": {
+     "cost": 8.0701,
+     "tin": 3281908.0831,
+     "tout": 372761.0,
+     "requests": 74,
+     "calls": 124,
+     "drafts": 33
+    },
+    "kötümser|yoğun": {
+     "cost": 12.9601,
+     "tin": 5768737.9292,
+     "tout": 606433.0,
+     "requests": 166,
+     "calls": 232,
+     "drafts": 33
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 43,
+     "model": "sonnet",
+     "cost": 4.2396,
+     "tin": 1537837.6666666665,
+     "tout": 191579.33333333337,
+     "requests": 43
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 43,
+     "model": "haiku",
+     "cost": 0.0335,
+     "tin": 167700.0,
+     "tout": 33540.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 8,
+     "model": "sonnet",
+     "cost": 0.6392,
+     "tin": 293042.6666666666,
+     "tout": 19296.0,
+     "requests": 8
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 8,
+     "model": "haiku",
+     "cost": 0.0355,
+     "tin": 380955.4666666667,
+     "tout": 12899.466666666669,
+     "requests": 8
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 10,
+     "model": "sonnet",
+     "cost": 0.7145,
+     "tin": 357636.6666666666,
+     "tout": 17403.333333333336,
+     "requests": 10
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0111,
+     "tin": 42550.872,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 20
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Advances in Psychological and Social Aetiology of Patients with Diabetes.",
+   "kind": "derleme",
+   "pages": null,
+   "words": 5830,
+   "body": 5573,
+   "refs": 55,
+   "wpp": null,
+   "sections": 19,
+   "url": "https://europepmc.org/article/PMC/PMC10752028",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 2.7956,
+     "tin": 1526191.8806,
+     "tout": 163417.0294,
+     "requests": 46,
+     "calls": 78,
+     "drafts": 19
+    },
+    "iyimser|yoğun": {
+     "cost": 4.3985,
+     "tin": 2621111.91,
+     "tout": 274597.8235,
+     "requests": 115,
+     "calls": 156,
+     "drafts": 19
+    },
+    "temel|verimli": {
+     "cost": 3.7248,
+     "tin": 1729684.1313,
+     "tout": 193806.5,
+     "requests": 46,
+     "calls": 78,
+     "drafts": 19
+    },
+    "temel|yoğun": {
+     "cost": 5.8398,
+     "tin": 2970593.498,
+     "tout": 321785.2,
+     "requests": 115,
+     "calls": 156,
+     "drafts": 19
+    },
+    "kötümser|verimli": {
+     "cost": 4.944,
+     "tin": 1995789.3823,
+     "tout": 234039.5,
+     "requests": 46,
+     "calls": 78,
+     "drafts": 19
+    },
+    "kötümser|yoğun": {
+     "cost": 7.7311,
+     "tin": 3427607.8823,
+     "tout": 384266.0,
+     "requests": 115,
+     "calls": 156,
+     "drafts": 19
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 25,
+     "model": "sonnet",
+     "cost": 2.4649,
+     "tin": 894091.6666666666,
+     "tout": 111383.33333333334,
+     "requests": 25
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 25,
+     "model": "haiku",
+     "cost": 0.0195,
+     "tin": 97500.0,
+     "tout": 19500.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 5,
+     "model": "sonnet",
+     "cost": 0.3995,
+     "tin": 183151.66666666663,
+     "tout": 12060.0,
+     "requests": 5
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 5,
+     "model": "haiku",
+     "cost": 0.0222,
+     "tin": 238097.1666666667,
+     "tout": 8062.166666666668,
+     "requests": 5
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 6,
+     "model": "sonnet",
+     "cost": 0.4287,
+     "tin": 214582.0,
+     "tout": 10442.0,
+     "requests": 6
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0106,
+     "tin": 37664.63133333333,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 16
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "Experience of providing care to a family member with Crohn's disease and a temporary stoma: A qualitative study.",
+   "kind": "makale",
+   "pages": null,
+   "words": 7289,
+   "body": 7039,
+   "refs": 48,
+   "wpp": null,
+   "sections": 23,
+   "url": "https://europepmc.org/article/PMC/PMC10597855",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 3.2782,
+     "tin": 1811590.7182,
+     "tout": 189938.9412,
+     "requests": 54,
+     "calls": 91,
+     "drafts": 23
+    },
+    "iyimser|yoğun": {
+     "cost": 5.2499,
+     "tin": 3146276.7182,
+     "tout": 317934.7647,
+     "requests": 130,
+     "calls": 178,
+     "drafts": 23
+    },
+    "temel|verimli": {
+     "cost": 4.3779,
+     "tin": 2053136.1473,
+     "tout": 225747.9333,
+     "requests": 54,
+     "calls": 91,
+     "drafts": 23
+    },
+    "temel|yoğun": {
+     "cost": 6.9988,
+     "tin": 3565780.2807,
+     "tout": 374114.4,
+     "requests": 130,
+     "calls": 178,
+     "drafts": 23
+    },
+    "kötümser|verimli": {
+     "cost": 5.8209,
+     "tin": 2369003.2469,
+     "tout": 273151.0,
+     "requests": 54,
+     "calls": 91,
+     "drafts": 23
+    },
+    "kötümser|yoğun": {
+     "cost": 9.2936,
+     "tin": 4114361.8623,
+     "tout": 448492.0,
+     "requests": 130,
+     "calls": 178,
+     "drafts": 23
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 30,
+     "model": "sonnet",
+     "cost": 2.9579,
+     "tin": 1072910.0,
+     "tout": 133660.00000000003,
+     "requests": 30
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 30,
+     "model": "haiku",
+     "cost": 0.0234,
+     "tin": 117000.0,
+     "tout": 23400.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 6,
+     "model": "sonnet",
+     "cost": 0.4794,
+     "tin": 219781.99999999997,
+     "tout": 14472.0,
+     "requests": 6
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 6,
+     "model": "haiku",
+     "cost": 0.0266,
+     "tin": 285716.6,
+     "tout": 9674.600000000002,
+     "requests": 6
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.5001,
+     "tin": 250345.66666666666,
+     "tout": 12182.333333333334,
+     "requests": 7
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0111,
+     "tin": 42784.88066666667,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 20
+  },
+  {
+   "src": "Europe PMC (EN)",
+   "title": "The effect of objective structured clinical examinations for nursing students.",
+   "kind": "makale",
+   "pages": null,
+   "words": 4887,
+   "body": 4698,
+   "refs": 34,
+   "wpp": null,
+   "sections": 30,
+   "url": "https://europepmc.org/article/PMC/PMC10256199",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 3.9849,
+     "tin": 2139415.86,
+     "tout": 236640.7647,
+     "requests": 68,
+     "calls": 114,
+     "drafts": 30
+    },
+    "iyimser|yoğun": {
+     "cost": 6.4452,
+     "tin": 3725356.9659,
+     "tout": 388278.8824,
+     "requests": 149,
+     "calls": 210,
+     "drafts": 30
+    },
+    "temel|verimli": {
+     "cost": 5.2916,
+     "tin": 2424671.308,
+     "tout": 281983.4667,
+     "requests": 68,
+     "calls": 114,
+     "drafts": 30
+    },
+    "temel|yoğun": {
+     "cost": 8.5559,
+     "tin": 4222071.228,
+     "tout": 459772.8,
+     "requests": 149,
+     "calls": 210,
+     "drafts": 30
+    },
+    "kötümser|verimli": {
+     "cost": 7.0065,
+     "tin": 2797697.6631,
+     "tout": 342000.0,
+     "requests": 68,
+     "calls": 114,
+     "drafts": 30
+    },
+    "kötümser|yoğun": {
+     "cost": 11.3258,
+     "tin": 4871620.6477,
+     "tout": 554408.0,
+     "requests": 149,
+     "calls": 210,
+     "drafts": 30
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 39,
+     "model": "sonnet",
+     "cost": 3.7031,
+     "tin": 1289483.0,
+     "tout": 173758.00000000003,
+     "requests": 39
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 39,
+     "model": "haiku",
+     "cost": 0.0304,
+     "tin": 152100.0,
+     "tout": 30420.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 7,
+     "model": "sonnet",
+     "cost": 0.5338,
+     "tin": 237512.3333333333,
+     "tout": 16884.0,
+     "requests": 7
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 8,
+     "model": "haiku",
+     "cost": 0.0336,
+     "tin": 352875.4666666667,
+     "tout": 12899.466666666669,
+     "requests": 8
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 9,
+     "model": "sonnet",
+     "cost": 0.6102,
+     "tin": 297573.0,
+     "tout": 15663.000000000002,
+     "requests": 9
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0103,
+     "tin": 34608.547999999995,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1558,
+     "tin": 13955.293333333335,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0848,
+     "tin": 39230.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 14
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Accessibility Literacy: Increasing accessibility awareness among young people",
+   "kind": "YL",
+   "pages": 58,
+   "words": 14959,
+   "body": 12322,
+   "refs": 120,
+   "wpp": 258,
+   "sections": 40,
+   "url": "https://arxiv.org/abs/2508.06512v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 5.727,
+     "tin": 3173717.0341,
+     "tout": 318966.5882,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "iyimser|yoğun": {
+     "cost": 9.1756,
+     "tin": 5514017.0929,
+     "tout": 513151.5882,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "temel|verimli": {
+     "cost": 7.6195,
+     "tin": 3596879.3053,
+     "tout": 379374.6667,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "temel|yoğun": {
+     "cost": 12.2128,
+     "tin": 6249219.372,
+     "tout": 607707.4,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "kötümser|verimli": {
+     "cost": 10.1026,
+     "tin": 4150245.3523,
+     "tout": 459332.0,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "kötümser|yoğun": {
+     "cost": 16.1974,
+     "tin": 7210637.7369,
+     "tout": 732863.0,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 52,
+     "model": "sonnet",
+     "cost": 5.241,
+     "tin": 1916737.333333333,
+     "tout": 231677.33333333337,
+     "requests": 52
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 52,
+     "model": "haiku",
+     "cost": 0.0406,
+     "tin": 202800.0,
+     "tout": 40560.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 10,
+     "model": "sonnet",
+     "cost": 0.8209,
+     "tin": 377270.0,
+     "tout": 24120.0,
+     "requests": 10
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 10,
+     "model": "haiku",
+     "cost": 0.0457,
+     "tin": 490451.0,
+     "tout": 16124.333333333336,
+     "requests": 10
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.8837,
+     "tin": 442323.99999999994,
+     "tout": 20884.0,
+     "requests": 12
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0216,
+     "tin": 79436.63866666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 36
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Visualising Multilevel Regression and Poststratification",
+   "kind": "YL",
+   "pages": 65,
+   "words": 15205,
+   "body": 13501,
+   "refs": 59,
+   "wpp": 234,
+   "sections": 40,
+   "url": "https://arxiv.org/abs/2205.12478v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 5.7273,
+     "tin": 3177350.4347,
+     "tout": 318966.5882,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "iyimser|yoğun": {
+     "cost": 9.176,
+     "tin": 5517650.4935,
+     "tout": 513151.5882,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "temel|verimli": {
+     "cost": 7.6199,
+     "tin": 3600997.1593,
+     "tout": 379374.6667,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "temel|yoğun": {
+     "cost": 12.2132,
+     "tin": 6253337.226,
+     "tout": 607707.4,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "kötümser|verimli": {
+     "cost": 10.1031,
+     "tin": 4154996.7223,
+     "tout": 459332.0,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "kötümser|yoğun": {
+     "cost": 16.1978,
+     "tin": 7215389.1069,
+     "tout": 732863.0,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 52,
+     "model": "sonnet",
+     "cost": 5.241,
+     "tin": 1916737.333333333,
+     "tout": 231677.33333333337,
+     "requests": 52
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 52,
+     "model": "haiku",
+     "cost": 0.0406,
+     "tin": 202800.0,
+     "tout": 40560.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 10,
+     "model": "sonnet",
+     "cost": 0.8209,
+     "tin": 377270.0,
+     "tout": 24120.0,
+     "requests": 10
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 10,
+     "model": "haiku",
+     "cost": 0.0457,
+     "tin": 490451.0,
+     "tout": 16124.333333333336,
+     "requests": 10
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.8837,
+     "tin": 442323.99999999994,
+     "tout": 20884.0,
+     "requests": 12
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.022,
+     "tin": 83554.49266666669,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 39
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Social Influence and Radicalization: A Social Data Analytics Study",
+   "kind": "YL",
+   "pages": 86,
+   "words": 20749,
+   "body": 16748,
+   "refs": 182,
+   "wpp": 241,
+   "sections": 40,
+   "url": "https://arxiv.org/abs/1910.01212v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 5.7283,
+     "tin": 3187356.9247,
+     "tout": 318966.5882,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "iyimser|yoğun": {
+     "cost": 9.177,
+     "tin": 5527656.9835,
+     "tout": 513151.5882,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "temel|verimli": {
+     "cost": 7.621,
+     "tin": 3612337.848,
+     "tout": 379374.6667,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "temel|yoğun": {
+     "cost": 12.2143,
+     "tin": 6264677.9147,
+     "tout": 607707.4,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "kötümser|verimli": {
+     "cost": 10.1044,
+     "tin": 4168082.1323,
+     "tout": 459332.0,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "kötümser|yoğun": {
+     "cost": 16.1992,
+     "tin": 7228474.5169,
+     "tout": 732863.0,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 52,
+     "model": "sonnet",
+     "cost": 5.241,
+     "tin": 1916737.333333333,
+     "tout": 231677.33333333337,
+     "requests": 52
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 52,
+     "model": "haiku",
+     "cost": 0.0406,
+     "tin": 202800.0,
+     "tout": 40560.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 10,
+     "model": "sonnet",
+     "cost": 0.8209,
+     "tin": 377270.0,
+     "tout": 24120.0,
+     "requests": 10
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 10,
+     "model": "haiku",
+     "cost": 0.0457,
+     "tin": 490451.0,
+     "tout": 16124.333333333336,
+     "requests": 10
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.8837,
+     "tin": 442323.99999999994,
+     "tout": 20884.0,
+     "requests": 12
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0231,
+     "tin": 94895.18133333334,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 49
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Dual-Fit Imperative in Security Leadership: A Grounded Theory Investigation",
+   "kind": "DR",
+   "pages": 337,
+   "words": 114918,
+   "body": 80130,
+   "refs": 662,
+   "wpp": 341,
+   "sections": 90,
+   "url": "https://arxiv.org/abs/2609.35887v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 12.2276,
+     "tin": 7061427.4412,
+     "tout": 664548.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "iyimser|yoğun": {
+     "cost": 19.5015,
+     "tin": 12123579.8824,
+     "tout": 1047230.1176,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "temel|verimli": {
+     "cost": 16.3819,
+     "tin": 8002951.1,
+     "tout": 795681.9667,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "temel|yoğun": {
+     "cost": 26.1744,
+     "tin": 13740057.2,
+     "tout": 1251830.4,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "kötümser|verimli": {
+     "cost": 21.832,
+     "tin": 9234174.3462,
+     "tout": 969211.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "kötümser|yoğun": {
+     "cost": 34.9276,
+     "tin": 15853912.1538,
+     "tout": 1522568.0,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 117,
+     "model": "sonnet",
+     "cost": 11.7923,
+     "tin": 4312658.999999999,
+     "tout": 521274.00000000006,
+     "requests": 117
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 117,
+     "model": "haiku",
+     "cost": 0.0913,
+     "tin": 456300.0,
+     "tout": 91260.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 22,
+     "model": "sonnet",
+     "cost": 1.806,
+     "tin": 829994.0,
+     "tout": 53064.0,
+     "requests": 22
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 23,
+     "model": "haiku",
+     "cost": 0.1052,
+     "tin": 1128037.3,
+     "tout": 37085.966666666674,
+     "requests": 23
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 27,
+     "model": "sonnet",
+     "cost": 1.9882,
+     "tin": 995228.9999999999,
+     "tout": 46989.00000000001,
+     "requests": 27
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0329,
+     "tin": 192871.46666666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 233
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Beyond the Algorithm: Professional Experiences and Perceptions of AI",
+   "kind": "DR",
+   "pages": 234,
+   "words": 55343,
+   "body": 46201,
+   "refs": 95,
+   "wpp": 237,
+   "sections": 90,
+   "url": "https://arxiv.org/abs/2606.18289v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 12.2276,
+     "tin": 7061427.4412,
+     "tout": 664548.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "iyimser|yoğun": {
+     "cost": 19.5015,
+     "tin": 12123579.8824,
+     "tout": 1047230.1176,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "temel|verimli": {
+     "cost": 16.3819,
+     "tin": 8002951.1,
+     "tout": 795681.9667,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "temel|yoğun": {
+     "cost": 26.1744,
+     "tin": 13740057.2,
+     "tout": 1251830.4,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "kötümser|verimli": {
+     "cost": 21.832,
+     "tin": 9234174.3462,
+     "tout": 969211.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "kötümser|yoğun": {
+     "cost": 34.9276,
+     "tin": 15853912.1538,
+     "tout": 1522568.0,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 117,
+     "model": "sonnet",
+     "cost": 11.7923,
+     "tin": 4312658.999999999,
+     "tout": 521274.00000000006,
+     "requests": 117
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 117,
+     "model": "haiku",
+     "cost": 0.0913,
+     "tin": 456300.0,
+     "tout": 91260.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 22,
+     "model": "sonnet",
+     "cost": 1.806,
+     "tin": 829994.0,
+     "tout": 53064.0,
+     "requests": 22
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 23,
+     "model": "haiku",
+     "cost": 0.1052,
+     "tin": 1128037.3,
+     "tout": 37085.966666666674,
+     "requests": 23
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 27,
+     "model": "sonnet",
+     "cost": 1.9882,
+     "tin": 995228.9999999999,
+     "tout": 46989.00000000001,
+     "requests": 27
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0329,
+     "tin": 192871.46666666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 134
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Large Language Models and Augmented Democracy",
+   "kind": "DR",
+   "pages": 149,
+   "words": 50110,
+   "body": 45187,
+   "refs": 224,
+   "wpp": 336,
+   "sections": 90,
+   "url": "https://arxiv.org/abs/2610.04412v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 12.2276,
+     "tin": 7061427.4412,
+     "tout": 664548.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "iyimser|yoğun": {
+     "cost": 19.5015,
+     "tin": 12123579.8824,
+     "tout": 1047230.1176,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "temel|verimli": {
+     "cost": 16.3819,
+     "tin": 8002951.1,
+     "tout": 795681.9667,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "temel|yoğun": {
+     "cost": 26.1744,
+     "tin": 13740057.2,
+     "tout": 1251830.4,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "kötümser|verimli": {
+     "cost": 21.832,
+     "tin": 9234174.3462,
+     "tout": 969211.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "kötümser|yoğun": {
+     "cost": 34.9276,
+     "tin": 15853912.1538,
+     "tout": 1522568.0,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 117,
+     "model": "sonnet",
+     "cost": 11.7923,
+     "tin": 4312658.999999999,
+     "tout": 521274.00000000006,
+     "requests": 117
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 117,
+     "model": "haiku",
+     "cost": 0.0913,
+     "tin": 456300.0,
+     "tout": 91260.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 22,
+     "model": "sonnet",
+     "cost": 1.806,
+     "tin": 829994.0,
+     "tout": 53064.0,
+     "requests": 22
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 23,
+     "model": "haiku",
+     "cost": 0.1052,
+     "tin": 1128037.3,
+     "tout": 37085.966666666674,
+     "requests": 23
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 27,
+     "model": "sonnet",
+     "cost": 1.9882,
+     "tin": 995228.9999999999,
+     "tout": 46989.00000000001,
+     "requests": 27
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0329,
+     "tin": 192871.46666666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 131
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "A Human-Centric Approach to Explainable AI for Personalized Education",
+   "kind": "DR",
+   "pages": 301,
+   "words": 111538,
+   "body": 100880,
+   "refs": 484,
+   "wpp": 371,
+   "sections": 90,
+   "url": "https://arxiv.org/abs/2505.22541v1",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 13.6358,
+     "tin": 7848924.6765,
+     "tout": 738402.9706,
+     "requests": 216,
+     "calls": 361,
+     "drafts": 101
+    },
+    "iyimser|yoğun": {
+     "cost": 21.7725,
+     "tin": 13573203.4412,
+     "tout": 1165506.4412,
+     "requests": 411,
+     "calls": 607,
+     "drafts": 101
+    },
+    "temel|verimli": {
+     "cost": 18.2802,
+     "tin": 8895447.9667,
+     "tout": 884658.5,
+     "requests": 216,
+     "calls": 361,
+     "drafts": 101
+    },
+    "temel|yoğun": {
+     "cost": 29.2458,
+     "tin": 15382963.9,
+     "tout": 1394478.4333,
+     "requests": 411,
+     "calls": 607,
+     "drafts": 101
+    },
+    "kötümser|verimli": {
+     "cost": 24.3732,
+     "tin": 10263978.4231,
+     "tout": 1078195.5,
+     "requests": 216,
+     "calls": 361,
+     "drafts": 101
+    },
+    "kötümser|yoğun": {
+     "cost": 39.0488,
+     "tin": 17749573.7308,
+     "tout": 1697458.5,
+     "requests": 411,
+     "calls": 607,
+     "drafts": 101
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 131,
+     "model": "sonnet",
+     "cost": 13.2033,
+     "tin": 4828703.666666666,
+     "tout": 583648.6666666667,
+     "requests": 131
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 131,
+     "model": "haiku",
+     "cost": 0.1022,
+     "tin": 510900.0,
+     "tout": 102180.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 25,
+     "model": "sonnet",
+     "cost": 2.0522,
+     "tin": 943175.0,
+     "tout": 60300.0,
+     "requests": 25
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 25,
+     "model": "haiku",
+     "cost": 0.1144,
+     "tin": 1226127.5,
+     "tout": 40310.83333333334,
+     "requests": 25
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 30,
+     "model": "sonnet",
+     "cost": 2.2092,
+     "tin": 1105809.9999999998,
+     "tout": 52210.00000000001,
+     "requests": 30
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0329,
+     "tin": 192871.46666666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 293
+  },
+  {
+   "src": "arXiv tez (EN)",
+   "title": "Toward Responsible and Beneficial AI: Comparing Regulatory and Guidance",
+   "kind": "DR",
+   "pages": 281,
+   "words": 50103,
+   "body": 41539,
+   "refs": 162,
+   "wpp": 178,
+   "sections": 90,
+   "url": "https://arxiv.org/abs/2508.00868v3",
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 12.2266,
+     "tin": 7051377.8065,
+     "tout": 664548.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "iyimser|yoğun": {
+     "cost": 19.5005,
+     "tin": 12113530.2476,
+     "tout": 1047230.1176,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "temel|verimli": {
+     "cost": 16.3807,
+     "tin": 7991561.514,
+     "tout": 795681.9667,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "temel|yoğun": {
+     "cost": 26.1732,
+     "tin": 13728667.614,
+     "tout": 1251830.4,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    },
+    "kötümser|verimli": {
+     "cost": 21.8307,
+     "tin": 9221032.5162,
+     "tout": 969211.5,
+     "requests": 194,
+     "calls": 325,
+     "drafts": 90
+    },
+    "kötümser|yoğun": {
+     "cost": 34.9263,
+     "tin": 15840770.3238,
+     "tout": 1522568.0,
+     "requests": 371,
+     "calls": 547,
+     "drafts": 90
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 117,
+     "model": "sonnet",
+     "cost": 11.7923,
+     "tin": 4312658.999999999,
+     "tout": 521274.00000000006,
+     "requests": 117
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 117,
+     "model": "haiku",
+     "cost": 0.0913,
+     "tin": 456300.0,
+     "tout": 91260.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 22,
+     "model": "sonnet",
+     "cost": 1.806,
+     "tin": 829994.0,
+     "tout": 53064.0,
+     "requests": 22
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 23,
+     "model": "haiku",
+     "cost": 0.1052,
+     "tin": 1128037.3,
+     "tout": 37085.966666666674,
+     "requests": 23
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 27,
+     "model": "sonnet",
+     "cost": 1.9882,
+     "tin": 995228.9999999999,
+     "tout": 46989.00000000001,
+     "requests": 27
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0318,
+     "tin": 181481.88066666666,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ],
+   "pages_in_tr_thesis_format": 121
+  }
+ ],
+ "excluded": [
+  {
+   "id": "2305.03062v1",
+   "title": "A Serious Game for Simulating Cyberattacks to Teach Cybersecurity",
+   "pages": 11
+  },
+  {
+   "id": "2009.09080v1",
+   "title": "Modelling risk-taking behaviour of avalanche accident victims",
+   "pages": 15
+  }
+ ],
+ "standard": {
+  "Lisans bitirme / dönem ödevi": {
+   "body": 9000,
+   "refs": 25,
+   "pages_tr_format": 26,
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4738,
+     "tin": 704729.6765,
+     "tout": 98281.8529,
+     "requests": 26,
+     "calls": 46,
+     "drafts": 10
+    },
+    "iyimser|yoğun": {
+     "cost": 2.4751,
+     "tin": 1228992.0,
+     "tout": 166808.4706,
+     "requests": 68,
+     "calls": 93,
+     "drafts": 10
+    },
+    "temel|verimli": {
+     "cost": 1.8956,
+     "tin": 798693.6333,
+     "tout": 115300.6333,
+     "requests": 26,
+     "calls": 46,
+     "drafts": 10
+    },
+    "temel|yoğun": {
+     "cost": 3.1702,
+     "tin": 1392857.6,
+     "tout": 193933.6,
+     "requests": 68,
+     "calls": 93,
+     "drafts": 10
+    },
+    "kötümser|verimli": {
+     "cost": 2.4497,
+     "tin": 921569.5769,
+     "tout": 137843.5,
+     "requests": 26,
+     "calls": 46,
+     "drafts": 10
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0833,
+     "tin": 1607143.3846,
+     "tout": 229868.0,
+     "requests": 68,
+     "calls": 93,
+     "drafts": 10
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 13,
+     "model": "sonnet",
+     "cost": 1.1633,
+     "tin": 377177.6666666666,
+     "tout": 57919.33333333334,
+     "requests": 13
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 13,
+     "model": "haiku",
+     "cost": 0.0101,
+     "tin": 50700.0,
+     "tout": 10140.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1416,
+     "tin": 59760.666666666664,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 3,
+     "model": "haiku",
+     "cost": 0.0115,
+     "tin": 116533.3,
+     "tout": 4837.300000000001,
+     "requests": 3
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.187,
+     "tin": 87041.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0118,
+     "tin": 49634.00000000001,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0794,
+     "tin": 35180.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ]
+  },
+  "Araştırma makalesi": {
+   "body": 6500,
+   "refs": 45,
+   "pages_tr_format": 19,
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.5748,
+     "tin": 833414.9706,
+     "tout": 98281.8529,
+     "requests": 26,
+     "calls": 46,
+     "drafts": 10
+    },
+    "iyimser|yoğun": {
+     "cost": 2.6513,
+     "tin": 1492522.8824,
+     "tout": 179873.4706,
+     "requests": 83,
+     "calls": 108,
+     "drafts": 10
+    },
+    "temel|verimli": {
+     "cost": 2.0697,
+     "tin": 944536.9667,
+     "tout": 115300.6333,
+     "requests": 26,
+     "calls": 46,
+     "drafts": 10
+    },
+    "temel|yoğun": {
+     "cost": 3.4668,
+     "tin": 1691525.9333,
+     "tout": 207583.6,
+     "requests": 83,
+     "calls": 108,
+     "drafts": 10
+    },
+    "kötümser|verimli": {
+     "cost": 2.7193,
+     "tin": 1089850.3462,
+     "tout": 137843.5,
+     "requests": 26,
+     "calls": 46,
+     "drafts": 10
+    },
+    "kötümser|yoğun": {
+     "cost": 4.5373,
+     "tin": 1951760.6923,
+     "tout": 244298.0,
+     "requests": 83,
+     "calls": 108,
+     "drafts": 10
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 13,
+     "model": "sonnet",
+     "cost": 1.2817,
+     "tin": 464927.6666666666,
+     "tout": 57919.33333333334,
+     "requests": 13
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 13,
+     "model": "haiku",
+     "cost": 0.0101,
+     "tin": 50700.0,
+     "tout": 10140.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 3,
+     "model": "haiku",
+     "cost": 0.0133,
+     "tin": 142858.3,
+     "tout": 4837.300000000001,
+     "requests": 3
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0109,
+     "tin": 40902.333333333336,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ]
+  },
+  "Derleme / sistematik derleme": {
+   "body": 7000,
+   "refs": 70,
+   "pages_tr_format": 20,
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.4978,
+     "tin": 757941.3529,
+     "tout": 92570.5882,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "iyimser|yoğun": {
+     "cost": 2.3946,
+     "tin": 1360192.0,
+     "tout": 167782.1176,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "temel|verimli": {
+     "cost": 1.9661,
+     "tin": 859000.2,
+     "tout": 108452.8667,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "temel|yoğun": {
+     "cost": 3.1169,
+     "tin": 1541550.9333,
+     "tout": 192960.6,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    },
+    "kötümser|verimli": {
+     "cost": 2.5808,
+     "tin": 991154.0769,
+     "tout": 129493.0,
+     "requests": 24,
+     "calls": 43,
+     "drafts": 9
+    },
+    "kötümser|yoğun": {
+     "cost": 4.0651,
+     "tin": 1778712.6154,
+     "tout": 226325.0,
+     "requests": 79,
+     "calls": 102,
+     "drafts": 9
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 1.1831,
+     "tin": 429164.0,
+     "tout": 53464.00000000001,
+     "requests": 12
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 12,
+     "model": "haiku",
+     "cost": 0.0094,
+     "tin": 46800.0,
+     "tout": 9360.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.1598,
+     "tin": 73260.66666666666,
+     "tout": 4824.0,
+     "requests": 2
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 2,
+     "model": "haiku",
+     "cost": 0.0089,
+     "tin": 95238.86666666667,
+     "tout": 3224.8666666666672,
+     "requests": 2
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2143,
+     "tin": 107291.0,
+     "tout": 5221.0,
+     "requests": 3
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0111,
+     "tin": 42648.66666666667,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1613,
+     "tin": 15333.333333333334,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0885,
+     "tin": 41930.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ]
+  },
+  "Araştırma önerisi / TÜBİTAK": {
+   "body": 5000,
+   "refs": 35,
+   "pages_tr_format": 15,
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 1.8605,
+     "tin": 941771.7353,
+     "tout": 114732.8529,
+     "requests": 31,
+     "calls": 54,
+     "drafts": 12
+    },
+    "iyimser|yoğun": {
+     "cost": 2.9833,
+     "tin": 1627379.4412,
+     "tout": 197680.7353,
+     "requests": 85,
+     "calls": 114,
+     "drafts": 12
+    },
+    "temel|verimli": {
+     "cost": 2.4429,
+     "tin": 1067341.3,
+     "tout": 135158.9667,
+     "requests": 31,
+     "calls": 54,
+     "drafts": 12
+    },
+    "temel|yoğun": {
+     "cost": 3.8952,
+     "tin": 1844363.3667,
+     "tout": 229739.7,
+     "requests": 85,
+     "calls": 114,
+     "drafts": 12
+    },
+    "kötümser|verimli": {
+     "cost": 3.2074,
+     "tin": 1231547.6538,
+     "tout": 162210.5,
+     "requests": 31,
+     "calls": 54,
+     "drafts": 12
+    },
+    "kötümser|yoğun": {
+     "cost": 5.0924,
+     "tin": 2128111.5769,
+     "tout": 272205.5,
+     "requests": 85,
+     "calls": 114,
+     "drafts": 12
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 16,
+     "model": "sonnet",
+     "cost": 1.5289,
+     "tin": 536218.6666666666,
+     "tout": 71285.33333333334,
+     "requests": 16
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 16,
+     "model": "haiku",
+     "cost": 0.0125,
+     "tin": 62400.0,
+     "tout": 12480.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 3,
+     "model": "sonnet",
+     "cost": 0.2306,
+     "tin": 103140.99999999999,
+     "tout": 7236.0,
+     "requests": 3
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 3,
+     "model": "haiku",
+     "cost": 0.0127,
+     "tin": 134083.3,
+     "tout": 4837.300000000001,
+     "requests": 3
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 4,
+     "model": "sonnet",
+     "cost": 0.2736,
+     "tin": 134054.66666666666,
+     "tout": 6961.333333333334,
+     "requests": 4
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "sonnet",
+     "cost": 0.112,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 7,
+     "model": "haiku",
+     "cost": 0.0104,
+     "tin": 35663.333333333336,
+     "tout": 13650.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.1591,
+     "tin": 14766.666666666666,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0854,
+     "tin": 39680.33333333333,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ]
+  },
+  "Yüksek lisans tezi": {
+   "body": 28000,
+   "refs": 120,
+   "pages_tr_format": 81,
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 5.7318,
+     "tin": 3222032.9412,
+     "tout": 318966.5882,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "iyimser|yoğun": {
+     "cost": 9.1804,
+     "tin": 5562333.0,
+     "tout": 513151.5882,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "temel|verimli": {
+     "cost": 7.6249,
+     "tin": 3651637.3333,
+     "tout": 379374.6667,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "temel|yoğun": {
+     "cost": 12.2183,
+     "tin": 6303977.4,
+     "tout": 607707.4,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    },
+    "kötümser|verimli": {
+     "cost": 10.1089,
+     "tin": 4213427.6923,
+     "tout": 459332.0,
+     "requests": 89,
+     "calls": 155,
+     "drafts": 40
+    },
+    "kötümser|yoğun": {
+     "cost": 16.2037,
+     "tin": 7273820.0769,
+     "tout": 732863.0,
+     "requests": 191,
+     "calls": 277,
+     "drafts": 40
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 52,
+     "model": "sonnet",
+     "cost": 5.241,
+     "tin": 1916737.333333333,
+     "tout": 231677.33333333337,
+     "requests": 52
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 52,
+     "model": "haiku",
+     "cost": 0.0406,
+     "tin": 202800.0,
+     "tout": 40560.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 10,
+     "model": "sonnet",
+     "cost": 0.8209,
+     "tin": 377270.0,
+     "tout": 24120.0,
+     "requests": 10
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 10,
+     "model": "haiku",
+     "cost": 0.0457,
+     "tin": 490451.0,
+     "tout": 16124.333333333336,
+     "requests": 10
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 12,
+     "model": "sonnet",
+     "cost": 0.8837,
+     "tin": 442323.99999999994,
+     "tout": 20884.0,
+     "requests": 12
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0271,
+     "tin": 134194.6666666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ]
+  },
+  "Doktora tezi": {
+   "body": 55000,
+   "refs": 220,
+   "pages_tr_format": 160,
+   "sim": {
+    "iyimser|verimli": {
+     "cost": 10.9522,
+     "tin": 6299908.6471,
+     "tout": 595684.4118,
+     "requests": 173,
+     "calls": 291,
+     "drafts": 80
+    },
+    "iyimser|yoğun": {
+     "cost": 17.4383,
+     "tin": 10821685.2353,
+     "tout": 940414.4118,
+     "requests": 335,
+     "calls": 493,
+     "drafts": 80
+    },
+    "temel|verimli": {
+     "cost": 14.6627,
+     "tin": 7139896.4667,
+     "tout": 712740.3333,
+     "requests": 173,
+     "calls": 291,
+     "drafts": 80
+    },
+    "temel|yoğun": {
+     "cost": 23.3843,
+     "tin": 12264576.6,
+     "tout": 1123005.8,
+     "requests": 335,
+     "calls": 493,
+     "drafts": 80
+    },
+    "kötümser|verimli": {
+     "cost": 19.5306,
+     "tin": 8238342.0769,
+     "tout": 867645.0,
+     "requests": 173,
+     "calls": 291,
+     "drafts": 80
+    },
+    "kötümser|yoğun": {
+     "cost": 31.1842,
+     "tin": 14151434.5385,
+     "tout": 1364627.0,
+     "requests": 335,
+     "calls": 493,
+     "drafts": 80
+    }
+   },
+   "breakdown": [
+    {
+     "name": "Bölüm/alt başlık taslağı (Sonnet)",
+     "n": 104,
+     "model": "sonnet",
+     "cost": 10.482,
+     "tin": 3833474.666666666,
+     "tout": 463354.66666666674,
+     "requests": 104
+    },
+    {
+     "name": "Kaynak taraması kararı (Haiku)",
+     "n": 104,
+     "model": "haiku",
+     "cost": 0.0811,
+     "tin": 405600.0,
+     "tout": 81120.0,
+     "requests": 0
+    },
+    {
+     "name": "Düzeltme: genişlet/yeniden yapılandır (Sonnet)",
+     "n": 20,
+     "model": "sonnet",
+     "cost": 1.6418,
+     "tin": 754540.0,
+     "tout": 48240.0,
+     "requests": 20
+    },
+    {
+     "name": "Düzeltme: kısalt/akademik dil/tekrar (Haiku)",
+     "n": 20,
+     "model": "haiku",
+     "cost": 0.0915,
+     "tin": 980902.0,
+     "tout": 32248.66666666667,
+     "requests": 20
+    },
+    {
+     "name": "Soru, plan, alt başlık önerisi (Sonnet)",
+     "n": 24,
+     "model": "sonnet",
+     "cost": 1.7673,
+     "tin": 884647.9999999999,
+     "tout": 41768.0,
+     "requests": 24
+    },
+    {
+     "name": "Başlık önerileri (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.0177,
+     "tin": 1333.3333333333333,
+     "tout": 1500.0,
+     "requests": 1
+    },
+    {
+     "name": "Kurgu (blueprint)",
+     "n": 2,
+     "model": "opus",
+     "cost": 0.224,
+     "tin": 6000.0,
+     "tout": 10000.0,
+     "requests": 2
+    },
+    {
+     "name": "Bölüm tamamlama kontrolü (Haiku)",
+     "n": 14,
+     "model": "haiku",
+     "cost": 0.0329,
+     "tin": 192871.46666666667,
+     "tout": 27300.0,
+     "requests": 0
+    },
+    {
+     "name": "Kalite kontrol jürisi (Opus)",
+     "n": 1,
+     "model": "opus",
+     "cost": 0.2173,
+     "tin": 29333.333333333332,
+     "tout": 5000.0,
+     "requests": 1
+    },
+    {
+     "name": "Özet / Abstract (Sonnet)",
+     "n": 1,
+     "model": "sonnet",
+     "cost": 0.107,
+     "tin": 51193.666666666664,
+     "tout": 2209.0,
+     "requests": 1
+    }
+   ]
+  }
+ },
+ "constants": {
+  "chars_per_word": 8.06,
+  "sys_chars": 16451,
+  "scenarios": {
+   "iyimser": {
+    "cpt": 3.4,
+    "hit": 0.7,
+    "think": 0.7
+   },
+   "temel": {
+    "cpt": 3.0,
+    "hit": 0.5,
+    "think": 1.0
+   },
+   "kötümser": {
+    "cpt": 2.6,
+    "hit": 0.3,
+    "think": 1.4
+   }
+  },
+  "profiles": {
+   "verimli": {
+    "rewrite": 0.3,
+    "edit": 0.5,
+    "chat": 0.3,
+    "quality": 1,
+    "matrix_share": 0.0
+   },
+   "yoğun": {
+    "rewrite": 0.8,
+    "edit": 1.2,
+    "chat": 0.6,
+    "quality": 3,
+    "matrix_share": 1.0
+   }
+  },
+  "words_per_draft": 1000
+ }
+}

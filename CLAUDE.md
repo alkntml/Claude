@@ -5,6 +5,7 @@ Bu dosya her yeni Claude oturumunun ilk okuması gereken proje kılavuzudur. Ayr
 - `TODO.md`: kalan işler ve öncelikler
 - `DECISIONS.md`: alınan teknik kararlar ve gerekçeleri
 - `docs/ARCHITECTURE.md`: ayrıntılı mimari
+- `docs/cost-analysis/README.md`: **paket maliyet analizi (D95)** — 44 tam metinden ölçülen sayfa/kelime, istek/token/maliyet modeli, paket başına 1/3 maliyetle vaat edilebilecek sayfa. Paket, limit, fiyat veya yapay zekâ maliyetiyle ilgili her kararda önce bunu oku.
 
 ## Oturum sürekliliği
 Bağlam sıfırlanınca önce bu dosyayı, sonra `PROJECT_STATUS.md` (canlı durum + çalışma şekli), `TODO.md` ve `DECISIONS.md`’yi oku. Her büyük değişiklik commit’inde ve kullanıcı “yedekle” dediğinde bu dört dosyayı güncelle.

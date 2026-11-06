@@ -1,0 +1,122 @@
+[
+ {
+  "id": "2508.06512v1",
+  "level": "YL",
+  "title": "Accessibility Literacy: Increasing accessibility awareness among young people",
+  "pages": 58,
+  "words": 14959,
+  "ref_words": 2637,
+  "body_words": 12322,
+  "n_refs": 2,
+  "median_words_per_page": 392,
+  "page_w_pt": 612.0
+ },
+ {
+  "id": "2305.03062v1",
+  "level": "YL",
+  "title": "A Serious Game for Simulating Cyberattacks to Teach Cybersecurity",
+  "pages": 11,
+  "words": 5840,
+  "ref_words": 544,
+  "body_words": 5296,
+  "n_refs": 0,
+  "median_words_per_page": 758,
+  "page_w_pt": 612.0
+ },
+ {
+  "id": "2205.12478v1",
+  "level": "YL",
+  "title": "Visualising Multilevel Regression and Poststratification",
+  "pages": 65,
+  "words": 15205,
+  "ref_words": 1704,
+  "body_words": 13501,
+  "n_refs": 59,
+  "median_words_per_page": 253,
+  "page_w_pt": 595.276
+ },
+ {
+  "id": "2009.09080v1",
+  "level": "YL",
+  "title": "Modelling risk-taking behaviour of avalanche accident victims",
+  "pages": 15,
+  "words": 8896,
+  "ref_words": 802,
+  "body_words": 8094,
+  "n_refs": 0,
+  "median_words_per_page": 623,
+  "page_w_pt": 612.0
+ },
+ {
+  "id": "1910.01212v1",
+  "level": "YL",
+  "title": "Social Influence and Radicalization: A Social Data Analytics Study",
+  "pages": 86,
+  "words": 20749,
+  "ref_words": 4001,
+  "body_words": 16748,
+  "n_refs": 7,
+  "median_words_per_page": 321,
+  "page_w_pt": 595.276
+ },
+ {
+  "id": "2609.35887v1",
+  "level": "DR",
+  "title": "Dual-Fit Imperative in Security Leadership: A Grounded Theory Investigation",
+  "pages": 337,
+  "words": 114918,
+  "ref_words": 34788,
+  "body_words": 80130,
+  "n_refs": 662,
+  "median_words_per_page": 322,
+  "page_w_pt": 595.32
+ },
+ {
+  "id": "2606.18289v1",
+  "level": "DR",
+  "title": "Beyond the Algorithm: Professional Experiences and Perceptions of AI",
+  "pages": 234,
+  "words": 55343,
+  "ref_words": 9142,
+  "body_words": 46201,
+  "n_refs": 95,
+  "median_words_per_page": 256,
+  "page_w_pt": 612.0
+ },
+ {
+  "id": "2610.04412v1",
+  "level": "DR",
+  "title": "Large Language Models and Augmented Democracy",
+  "pages": 149,
+  "words": 50110,
+  "ref_words": 4923,
+  "body_words": 45187,
+  "n_refs": 16,
+  "median_words_per_page": 391,
+  "page_w_pt": 595.276
+ },
+ {
+  "id": "2505.22541v1",
+  "level": "DR",
+  "title": "A Human-Centric Approach to Explainable AI for Personalized Education",
+  "pages": 301,
+  "words": 111538,
+  "ref_words": 10658,
+  "body_words": 100880,
+  "n_refs": 13,
+  "median_words_per_page": 398,
+  "page_w_pt": 595.276
+ },
+ {
+  "id": "2508.00868v3",
+  "level": "DR",
+  "title": "Toward Responsible and Beneficial AI: Comparing Regulatory and Guidance",
+  "pages": 281,
+  "words": 50103,
+  "ref_words": 8564,
+  "body_words": 41539,
+  "n_refs": 162,
+  "median_words_per_page": 204,
+  "page_w_pt": 612.0
+ }
+]

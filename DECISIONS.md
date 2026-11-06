@@ -435,3 +435,8 @@ Denetimde bulunan ve düzeltilen sorunlar:
 - **Önbellek verisi:** `recordUsage({ usage })` önbellek okuma/yazma tokenlarını meta.cache’e yazar.
 Yeni “Maliyet sağlığı” kartı (Yönetim → Genel bakış): bu ay harcanan ve ay sonu tahmini (USD + TL), gerçek ortalama istek maliyeti ve paket sınırlarındaki varsayımla karşılaştırma (%15 fazlaysa uyarı), önbellek isabet oranı ve tasarrufu, yarım kalan ve okunamayan çağrıların maliyeti, bu ay en çok maliyet oluşturan 10 kullanıcı.
 Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük) Anthropic ücret almaz; kayıt da yapılmaz. Gerçek fatura ile karşılaştırma için Anthropic Console → Usage kullanılmalı (kur ve vergiler hariç birkaç % fark beklenir).
+
+### D95 — Paket maliyet analizi (kalıcı referans)
+- 44 gerçek tam metin (24 DergiPark, 12 Europe PMC, 8 arXiv tezi) ölçüldü; sistemin bağlam boyutu gerçek kodla, sayfa yoğunluğu sistemin Word çıktısıyla ölçüldü (Türk tez biçimi 344 kelime/sayfa). Veriler, betikler ve rapor `docs/cost-analysis/` (özet README.md).
+- Temel sonuç: tez biçiminde sayfa başı $0,094–0,15; YL tezi $7,6–12,2, doktora $14,7–23,4; ortalama yazım isteği ~$0,086. 1/3 bütçeyle önerilen vaat: Basic ~25, Pro ~50, Premium ~85 sayfa/ay; mevcut istek sınırları (40/75/125) kötümser senaryoda bile bütçeyle uyumlu.
+- Bulunan 7 tutarsızlık (matrisin kaynak başına istek sayması, kartlarda yazım miktarı olmaması, anlamsız tarama sayıları, belirsiz Premium ifadesi, düşük avg_request_usd, APP_GUIDE’ın her istekte gitmesi, kur bağımlılığı) README’de; paket değişiklikleri kullanıcı kararıyla yapılacak.

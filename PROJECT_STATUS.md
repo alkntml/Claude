@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D95: paket maliyet analizi (44 tam metin; docs/cost-analysis) — paket vaatleri için kalıcı referans
 - D94: maliyet denetimi (Opus önbellek %5, Haiku uzun istem, bilinmeyen model, kesilen/okunamayan çağrılar, araç maliyeti toplamlara) + Yönetim → Maliyet sağlığı kartı
 - D93: Semantic Scholar kaldırıldı (toplam 12 veri tabanı); asistan kullanım sorularını rehbere göre yanıtlar (Haiku, bağlamsız)
 

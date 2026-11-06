@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Paket değişiklikleri kararı (D95, docs/cost-analysis/README.md “Bulunan tutarsızlıklar”): sayfa vaadi satırları, matris hakkı, tarama ifadesi, avg_request_usd 0,09, APP_GUIDE’ı yalnız kullanım sorusunda göndermek
 - [ ] Ay sonunda Yönetim → Maliyet sağlığı’ndaki “bu ay harcanan” ile Anthropic Console → Usage’daki gerçek faturayı karşılaştır (D94)
 - [ ] Maliyet sağlığı “ortalama istek maliyeti” uyarı verirse Ayarlar → Kârlılık’taki varsayımı güncelle
 - [ ] Asistana “Nereden grafik oluşturabilirim?” gibi bir soru sorup cevabı dene (D93)

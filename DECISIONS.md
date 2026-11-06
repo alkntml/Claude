@@ -513,3 +513,12 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - **Bağımlılıklar:** zod 3 → 4.6.7 (bellek tüketme açığı); `overrides`: postcss ^8.5.32, sharp ^0.35.5, image-size ^2.1.0. Yüksek seviyeli açık kalmadı; orta seviyedekiler (TipTap 2 zinciri) TipTap 3’e geçişi gerektirir.
 - **SSRF:** `safeFetch` yönlendirmeleri elle izler; her adımda adres biçimi (port, kullanıcı bilgisi, tamsayı/onaltılık IP) ve DNS çözümlemesi (tüm adresler herkese açık olmalı; IPv4/IPv6 özel aralıklar) denetlenir. Tam metin indirme bunu kullanır.
 - **CSP:** default-src self; betik/stil self + inline (Next.js gereği); bağlantı yalnızca self + Supabase; çerçeve, object yok; form-action self. Üretim derlemesinde 11 sayfa tarayıcıda ihlalsiz doğrulandı.
+
+### D107 — SEO ve meta etiketleri iyileştirmesi
+- Denetim (106 adres, Googlebot gibi tarandı): 49 başlık >62, 18 açıklama >160 karakter, araç sayfalarında 200–290 kelime, site haritasında her gün “bugün” lastmod, oturumlu sayfalarda noindex yoktu.
+- Başlık: `fitTitle` (seo.ts) — sığarsa marka eklenir, uzun başlık ayırıcıya (?, :, —) kadar kısaltılır; paylaşım kartlarında tam başlık kalır. İki başlık için elle `seoTitle`. Ana sayfa başlıkları kısaltıldı.
+- 24 meta açıklama elle yeniden yazıldı (≤155). Testler sınırları denetler.
+- Araç sayfaları: nasıl çalışır, sonuç nasıl yorumlanır, sık sorulanlar (TR/EN; yalnızca aracın gerçekten yaptığı işler, kodla karşılaştırıldı). WebApplication (ücretsiz teklif) + FAQPage şeması. Araçlar sayfasında ItemList.
+- Blog RSS beslemesi (iki dil) ve sayfa başında RSS bağlantısı. Site haritası lastmod sabit tarih (SITE_CONTENT_UPDATED), blogda yazı tarihi.
+- Oturumlu uygulama, proje, davet, şifre ve kurulum sayfaları noindex. Organization şemasına herkese açık WhatsApp destek hattı (contactPoint).
+- Sıralama Google’ın kararıdır; Search Console’a site haritası gönderilmesi ve düzenli içerik en etkili adımlardır.

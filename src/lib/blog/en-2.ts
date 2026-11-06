@@ -330,7 +330,7 @@ Academiana’s survey builder supports single and multiple choice, 5- and 7-poin
   "hangi-istatistik-analizi-secilmeli": {
     slug: "which-statistical-test-to-use",
     title: "Which Statistical Test Should I Use? t-Test, ANOVA, Correlation and More",
-    description: "Choose the right statistical analysis for your research question: when to use a t-test, ANOVA, Mann-Whitney, Kruskal-Wallis, correlation, regression or chi-square.",
+    description: "Which statistical test should you use? When to choose a t-test, ANOVA, Mann-Whitney, Kruskal-Wallis, correlation, regression or chi-square.",
     keywords: ["which statistical test to use", "when to use t test", "ANOVA vs t test", "statistics for thesis", "normality test"],
     cta: { text: "No SPSS needed: upload your data, choose the analysis and get an APA table with an interpretation sentence.", label: "Run my analysis" },
     body: `Statistics is where many students struggle most. Yet choosing the right analysis comes down to a few questions: **What are you asking, what type are your variables and how many groups do you have?**

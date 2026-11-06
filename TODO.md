@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Google Search Console: alan adını doğrula (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) → Site haritaları → sitemap.xml gönder; Bing Webmaster Tools için de aynısı (D107)
 - [ ] Supabase SQL Editor’de migration 29 ve 30’u çalıştır (D106), sonra check_status.sql ile YAPILMIŞ olduğunu doğrula
 - [ ] Supabase → Authentication → Sign In / Providers → Email → “Confirm email” AÇIK olmalı (davet ödülü e-posta doğrulamasına bağlı; kapalıysa doğrulama anında sayılır)
 - [ ] Denetim raporundaki kalan maddeler: “10.000’den fazla araştırmacı” iddiası, hukuki metinler/satıcı bilgisi, DergiPark “doğrudan arama” ifadesi, Tek Proje süre uzatma hatası, adil kullanım maddesi, 15 GB depolama (Supabase planı)

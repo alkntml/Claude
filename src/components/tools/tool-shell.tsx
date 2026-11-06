@@ -8,15 +8,32 @@ import { localizedPath } from "@/lib/seo";
 import { breadcrumbLd } from "@/lib/structured-data";
 import { toolByPath } from "@/lib/tools";
 import { ToolCards } from "./tool-cards";
+import { Inline } from "@/components/blog/rich";
+import { TOOL_GUIDES } from "@/lib/tools/guides";
+import { PAGE_SEO } from "@/lib/seo-pages";
+import { absoluteUrl } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 /** Ücretsiz araç sayfası iskeleti: başlık, açıklama, araç, diğer araçlar (D90) */
 export async function ToolShell({ path, intro, children, faq }: { path: string; intro: string; children: React.ReactNode; faq?: { q: string; a: string }[] }) {
   const [signedIn, { t, locale }] = await Promise.all([hasAuthCookie(), getT()]);
   const tool = toolByPath(path)!;
+  // D107: aracın nasıl kullanılacağı ve sık sorulanlar (arama motorları için içerik + FAQPage/WebApplication şeması)
+  const guide = TOOL_GUIDES[path]?.[locale === "en" ? "en" : "tr"];
+  const seo = PAGE_SEO[path];
+  const url = absoluteUrl(localizedPath(path, locale));
+  const plain = (x: string) => x.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+  const appLd = {
+    "@context": "https://schema.org", "@type": "WebApplication", "@id": `${url}#app`, name: t(tool.title), url,
+    description: seo?.description[locale === "en" ? "en" : "tr"] ?? t(tool.short), applicationCategory: "EducationalApplication",
+    operatingSystem: "Web", browserRequirements: "JavaScript", isAccessibleForFree: true, inLanguage: locale === "en" ? "en" : "tr-TR",
+    offers: { "@type": "Offer", price: 0, priceCurrency: locale === "en" ? "USD" : "TRY" }, publisher: { "@id": `${SITE_URL}/#organization` },
+  };
+  const faqLd = guide?.faq.length ? { "@context": "https://schema.org", "@type": "FAQPage", "@id": `${url}#faq`, mainEntity: guide.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: plain(f.a) } })) } : null;
   return (
     <>
       <SiteHeader signedIn={signedIn} />
-      <JsonLd data={[breadcrumbLd(locale, [{ name: t("Ücretsiz araçlar"), path: localizedPath("/araclar", locale) }, { name: t(tool.title), path: localizedPath(path, locale) }])]} />
+      <JsonLd data={[appLd, ...(faqLd ? [faqLd] : []), breadcrumbLd(locale, [{ name: t("Ücretsiz araçlar"), path: localizedPath("/araclar", locale) }, { name: t(tool.title), path: localizedPath(path, locale) }])]} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-32">
         <nav className="mb-4 text-sm text-ink-500"><Link href="/araclar" className="hover:text-ink-800">{t("Ücretsiz araçlar")}</Link> / <span className="text-ink-800">{t(tool.title)}</span></nav>
         <header className="mb-8 max-w-3xl">
@@ -28,7 +45,22 @@ export async function ToolShell({ path, intro, children, faq }: { path: string; 
           </p>
         </header>
         {children}
-        {faq && faq.length > 0 && (
+        {guide && (
+          <article className="mt-14 max-w-3xl space-y-8">
+            {guide.sections.map((sec) => (
+              <section key={sec.h}>
+                <h2 className="mb-3 font-serif text-2xl font-medium text-ink-950">{sec.h}</h2>
+                {sec.p.map((x, i) => <p key={i} className="mt-2 text-[15.5px] leading-relaxed text-ink-700"><Inline text={x} /></p>)}
+                {sec.list && <ul className="mt-3 list-disc space-y-1.5 pl-5 text-[15.5px] leading-relaxed text-ink-700">{sec.list.map((x, i) => <li key={i}><Inline text={x} /></li>)}</ul>}
+              </section>
+            ))}
+            <section>
+              <h2 className="mb-4 font-serif text-2xl font-medium text-ink-950">{t("Sık sorulanlar")}</h2>
+              <div className="space-y-4">{guide.faq.map((f) => <div key={f.q}><h3 className="font-semibold text-ink-900">{f.q}</h3><p className="mt-1 text-[15px] leading-relaxed text-ink-600"><Inline text={f.a} /></p></div>)}</div>
+            </section>
+          </article>
+        )}
+        {!guide && faq && faq.length > 0 && (
           <section className="mt-14 max-w-3xl">
             <h2 className="mb-4 font-serif text-2xl font-medium text-ink-950">{t("Sık sorulanlar")}</h2>
             <div className="space-y-4">{faq.map((f) => <div key={f.q}><p className="font-semibold text-ink-900">{t(f.q)}</p><p className="mt-1 text-[15px] leading-relaxed text-ink-600">{t(f.a)}</p></div>)}</div>

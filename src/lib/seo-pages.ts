@@ -38,7 +38,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "/araclar/orneklem-hesaplayici": {
     title: { tr: "Örneklem Büyüklüğü Hesaplama (Cochran, Yamane) | Academiana", en: "Sample Size Calculator (Cochran, Yamane) | Academiana" },
-    description: { tr: "Evren, güven düzeyi ve hata payına göre örneklem büyüklüğünü hesaplayın. Cochran, Yamane ve ortalama formülleri; yöntem bölümü için hazır cümle.", en: "Calculate sample size from population, confidence level and margin of error. Cochran, Yamane and mean formulas, with a ready sentence for your method section." },
+    description: { tr: "Evren, güven düzeyi ve hata payına göre örneklem büyüklüğünü hesaplayın. Cochran, Yamane ve ortalama formülleri; yöntem bölümü için hazır cümle.", en: "Free sample size calculator: Cochran, Yamane and mean formulas from population, confidence level and margin of error, with a methods sentence." },
     keywords: { tr: ["örneklem hesaplama", "örneklem büyüklüğü", "yamane formülü", "cochran formülü", "anket örneklem sayısı"], en: ["sample size calculator", "cochran formula", "yamane formula", "survey sample size"] },
     tagline: { tr: "Kaç kişiye ulaşmalı?", en: "How many respondents?" },
   },
@@ -50,18 +50,18 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "/araclar/anket-olusturucu": {
     title: { tr: "Ücretsiz Anket Oluşturucu: Likert, Çoktan Seçmeli | Academiana", en: "Free Survey Builder: Likert, Multiple Choice | Academiana" },
-    description: { tr: "Akademik anketinizi hazırlayın: Likert, çoktan seçmeli ve açık uçlu sorular, hızlı kontrol, yazdırma. Ücretsiz hesapla çevrim içi yayınlayıp cevap toplayın.", en: "Build your academic survey: Likert, multiple choice and open questions, quick check and printing. Publish online and collect responses with a free account." },
+    description: { tr: "Ücretsiz anket oluşturucu: Likert, çoktan seçmeli ve açık uçlu sorular, hızlı kontrol ve yazdırma; çevrim içi yayınlayıp cevap toplayın.", en: "Build your academic survey: Likert, multiple choice and open questions, quick check and printing. Publish online and collect responses with a free account." },
     keywords: { tr: ["anket oluşturma", "likert anket hazırlama", "ücretsiz anket", "akademik anket"], en: ["survey builder", "likert survey", "free survey maker", "academic survey"] },
     tagline: { tr: "Anketinizi hazırlayın", en: "Build your survey" },
   },
   "/": {
     title: {
-      tr: "Academiana — Yapay Zekâ Destekli Tez ve Makale Yazım Platformu",
-      en: "Academiana — AI Thesis & Academic Writing Assistant with Real Sources",
+      tr: "Academiana — Yapay Zekâ ile Tez ve Makale Yazımı",
+      en: "Academiana — AI Thesis & Academic Writing Assistant",
     },
     description: {
       tr: "Tez, makale, literatür taraması ve TÜBİTAK önerinizi gerçek akademik kaynaklarla adım adım yazın. APA 7 atıf, istatistik analizi, anket ve Word çıktısı.",
-      en: "Write your thesis, research paper or literature review step by step with verified academic sources. Automatic APA 7 citations, statistics, surveys and Word export.",
+      en: "Write your thesis, paper or literature review with verified academic sources: automatic APA 7 citations, statistics, surveys and Word export.",
     },
     keywords: {
       tr: ["tez yazma", "yapay zeka tez yazma", "akademik yazım asistanı", "makale yazma", "literatür taraması", "APA 7 kaynak gösterme", "kaynakça oluşturma", "TÜBİTAK 2209-A", "tez önerisi", "istatistik analizi", "anket hazırlama", "Academiana"],
@@ -81,8 +81,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   "/ornekler": {
     title: { tr: "Örnek Çıktılar — Tez, Kaynakça, İstatistik ve Daha Fazlası | Academiana", en: "Sample Outputs — Thesis, References, Statistics and More | Academiana" },
     description: {
-      tr: "Academiana’nın her hizmetinden örnek: çalışma kurgusu, doğrulanmış kaynaklar, atıflı bölüm, 10 atıf stili, APA tabloları, grafik, anket, savunma provası ve Word çıktısı.",
-      en: "A sample of every Academiana service: study blueprint, verified sources, cited drafts, 10 citation styles, APA tables, charts, surveys, defence practice and Word export.",
+      tr: "Academiana örnek çıktıları: çalışma kurgusu, doğrulanmış kaynaklar, atıflı bölüm, 10 atıf stili, APA tabloları, grafik, anket ve Word çıktısı.",
+      en: "Academiana sample outputs: study blueprint, verified sources, cited drafts, 10 citation styles, APA tables, charts, surveys and Word export.",
     },
     keywords: { tr: ["tez örneği", "APA tablo örneği", "kaynakça örneği", "akademik yazım örneği", "Academiana örnek"], en: ["thesis example", "APA table example", "reference list example", "academic writing sample", "Academiana sample"] },
     tagline: { tr: "Ne elde edeceğinizi görün", en: "See what you get" },

@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 381 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 386 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -63,7 +63,7 @@ src/lib/
   import/                Word’den içe aktarma (D87): html-doc.ts (mammoth HTML → düğüm), references.ts (kaynakça ayrıştırma, atıf bağlama, başlık oturtma), server.ts
   memory-learn.ts        Hafızaya belgeden öğren (D88)
   ai/help.ts             Asistanın kullanım rehberi (APP_GUIDE yalnız kullanım sorusu yolunda; ana asistana APP_GUIDE_SHORT, D96) + kullanım sorusu tanıma (D93); menü/özellik değişince güncelle
-  tools/                 Ücretsiz araçlar (D90): index (liste), sample-size, table-parse, server (künye bulma, uydurma kaynak kontrolü); arayüz components/tools, sayfalar app/araclar
+  tools/                 Ücretsiz araçlar (D90): index (liste), guides.ts (sayfa rehberi + SSS, TR/EN, D107), sample-size, table-parse, server (künye bulma, uydurma kaynak kontrolü); arayüz components/tools, sayfalar app/araclar
   analytics.ts insights.ts  Çerezsiz ölçüm + araç kullanım kaydı; yönetim maliyet/ziyaret özetleri (D90); grafikler components/ui/charts.tsx
   quality/checks.ts      Kural tabanlı kalite kontrol
   export/                model.ts + render-docx/pdf/text
@@ -112,6 +112,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Herkese açık sayfa bağlantıları `@/components/l-link` ile verilir (dile göre /en ekler). Yeni herkese açık sayfa: `PUBLIC_PATHS` (seo.ts) + `PAGE_SEO` (seo-pages.ts) + `generateMetadata() { return pageMeta("/yol") }` + gerekirse JSON-LD + sitemap.
 - Blog yazılarının İngilizcesi `blog/en-*.ts` (ayrı İngilizce adres); `postPath(post, locale)`. Paylaşım görseli `/api/og?t=&s=&l=`.
 - Sahte puan/yorum (aggregateRating/review) yapılandırılmış veriye eklenmez.
+- D107: `<title>` `fitTitle` ile ≤60 karakter (sığarsa “| Academiana” eklenir; gerekirse blogda `seoTitle`); meta açıklama ≤160 (tests/seo-quality.test.ts denetler). Araç sayfalarında rehber + SSS (`lib/tools/guides.ts`, WebApplication + FAQPage şeması). Blog RSS: `/blog/rss.xml`, `/en/blog/rss.xml`. Site haritası lastmod: `SITE_CONTENT_UPDATED` (seo.ts) — herkese açık sayfa metinleri değişince güncelle. Oturumlu ve teknik sayfalar noindex.
 
 ## Güvenlik başlıkları
 - `next.config.ts`: CSP (yalnızca kendi alan adı + Supabase; çerçeve yok), HSTS, X-Frame-Options, COOP. Tarayıcıdan yeni bir dış adrese bağlanan özellik eklenirse CSP’ye eklenmeli (D106).

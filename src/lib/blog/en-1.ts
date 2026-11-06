@@ -209,7 +209,7 @@ In Academiana, citations are not typed as plain text; they are linked to the sou
   "kaynakca-nasil-hazirlanir": {
     slug: "how-to-write-a-bibliography-citation-styles",
     title: "How to Write a Reference List: APA vs MLA vs Chicago vs IEEE",
-    description: "Which citation style should you use? Differences between APA, MLA, Chicago, IEEE, Vancouver and ISNAD, with examples and a checklist for an error-free reference list.",
+    description: "Which citation style should you use? APA, MLA, Chicago, IEEE, Vancouver and ISNAD compared, with examples and a reference list checklist.",
     keywords: ["how to write a bibliography", "citation styles comparison", "MLA vs APA", "Chicago style citation", "reference list"],
     cta: { text: "Import your library from Zotero, Mendeley or EndNote and generate the reference list in any style automatically.", label: "Build my reference list" },
     body: `A reference list includes every source you cite in your work. It lets readers trace any piece of information back to its source and is a cornerstone of academic integrity. Which style you use is usually decided by your university or the journal, not by you.
@@ -264,7 +264,7 @@ In Academiana you never type the reference list by hand: it is built from the ci
   "intihal-nasil-onlenir": {
     slug: "how-to-avoid-plagiarism",
     title: "How to Avoid Plagiarism: Quoting, Paraphrasing and Citing Correctly",
-    description: "Practical techniques to avoid plagiarism in theses and papers: correct quoting, real paraphrasing and citation. How to read a similarity report and what self-plagiarism is.",
+    description: "How to avoid plagiarism in theses and papers: correct quoting, real paraphrasing, citation, reading a similarity report and self-plagiarism.",
     keywords: ["how to avoid plagiarism", "reduce similarity score", "paraphrasing", "similarity report", "self-plagiarism"],
     cta: { text: "Work with an assistant that links every claim to a source, quotes with page numbers and never writes unsupported claims.", label: "Write with proper citations" },
     body: `"How do I lower my plagiarism score?" is one of the most searched questions by students. But the real goal is not to lower a software score; it is **not to plagiarise**. Once you build the habit of correct citation and paraphrasing, the similarity report stops being a problem by itself.
@@ -308,7 +308,7 @@ Academiana does not display a plagiarism percentage, because a reliable score ca
   "yapay-zeka-ile-tez-yazmak-etik-mi": {
     slug: "is-it-ethical-to-use-ai-for-thesis-writing",
     title: "Is It Ethical to Use AI to Write a Thesis? Right and Wrong Uses",
-    description: "When is using AI in a thesis or paper legitimate, and when is it misconduct? How universities approach it, disclosure requirements and principles for responsible use.",
+    description: "Is using AI for a thesis ethical? When it is legitimate, when it is misconduct, disclosure requirements and principles for responsible use.",
     keywords: ["is using AI for thesis ethical", "can I use ChatGPT for my thesis", "AI academic integrity", "AI disclosure statement"],
     cta: { text: "Work with an assistant that never fabricates sources, links every claim to a real reference and keeps you as the author.", label: "Our academic integrity principles" },
     body: `AI tools are spreading quickly in academic work, and students are asking: "Will I get into trouble if I use them?" The short answer: **it depends on how you use them.** AI can be legitimate as an assistant; replacing the author is a serious ethical problem.

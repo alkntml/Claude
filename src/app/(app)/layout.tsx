@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { getSession } from "@/lib/auth";
@@ -8,6 +9,9 @@ import { grantReferralReward } from "@/lib/growth";
 import { deviceFromCookie, recordDevice } from "@/lib/devices";
 
 export const dynamic = "force-dynamic";
+
+/** Oturum gerektiren uygulama sayfaları arama motorlarında listelenmez (D107) */
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   if (!isSupabaseConfigured()) redirect("/kurulum");

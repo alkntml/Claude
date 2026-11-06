@@ -114,7 +114,7 @@ In APA 7, tables and figures follow the same layout: bold number, italic title, 
   "tez-giris-bolumu-nasil-yazilir": {
     slug: "how-to-write-a-thesis-introduction",
     title: "How to Write a Thesis Introduction: Problem Statement, Purpose and Significance",
-    description: "Learn how to write each part of a thesis introduction with examples: problem statement, purpose, significance, research questions, assumptions, limitations and definitions.",
+    description: "How to write a thesis introduction: problem statement, purpose, significance, research questions, assumptions, limitations and definitions.",
     keywords: ["thesis introduction", "how to write a problem statement", "significance of the study", "limitations", "how to write a thesis purpose"],
     cta: { text: "Build your problem, purpose and method plan with the blueprint module, then write your introduction from that plan and the real sources you added to your project.", label: "Start for free" },
     body: `The introduction is the committee's first serious contact with your thesis. Here you tell the reader what you studied, why and how. A strong introduction makes the rest of the thesis worth reading; a scattered one can overshadow even the best findings. This guide covers the introduction structure common in theses in Turkey, the purpose of each subsection and frequent mistakes.
@@ -214,7 +214,7 @@ The introduction draws a path from broad context to the research gap and then to
   "kuramsal-cerceve-kavramsal-cerceve-farki": {
     slug: "theoretical-vs-conceptual-framework",
     title: "Theoretical vs Conceptual Framework: Differences and How to Write Them",
-    description: "Learn the difference between a theoretical and a conceptual framework, how to choose a theory, draw a research model and keep this chapter from becoming a literature summary.",
+    description: "Theoretical vs conceptual framework: the difference, how to choose a theory, draw a research model and avoid a mere literature summary.",
     keywords: ["theoretical framework", "conceptual framework", "how to write a theoretical framework", "research model", "choosing a theory"],
     cta: { text: "Add your sources to the project and compare concepts and findings in the literature matrix; the assistant helps you build your framework using only those sources.", label: "Start for free" },
     body: `"What is your theoretical framework?" is one of the questions that troubles students most at thesis defences. In many theses the chapter titled "Theoretical Framework" is really a collection of definitions and study summaries; it contains no theory or model that guides the research. This guide explains what theoretical and conceptual frameworks are, how they differ and how to write this chapter.
@@ -305,7 +305,7 @@ A theoretical framework grounds your research in an existing theory; a conceptua
   "sistematik-derleme-meta-analiz-prisma": {
     slug: "systematic-review-meta-analysis-prisma-2020",
     title: "How to Conduct a Systematic Review and Meta-Analysis: A PRISMA 2020 Guide",
-    description: "Learn the steps of a systematic review and meta-analysis: framing the question with PICO, protocol registration, search strategy, the PRISMA flow diagram, risk of bias and heterogeneity.",
+    description: "Systematic review and meta-analysis step by step: PICO, protocol registration, search strategy, PRISMA 2020 flow diagram, bias and heterogeneity.",
     keywords: ["systematic review", "how to do a meta-analysis", "prisma 2020", "pico", "prisma flow diagram"],
     cta: { text: "Search several academic databases at once, remove duplicates, add the results to your project and compare them in the literature matrix.", label: "Start for free" },
     body: `Systematic reviews gather and appraise all the evidence on a question using a predefined, transparent method. Because they sit near the top of the evidence hierarchy, journals value them, and when done properly they are a strong option for master's and doctoral theses. But a systematic review is not simply "a thorough literature review". This guide explains the steps of a systematic review and meta-analysis following the PRISMA 2020 statement.
@@ -415,7 +415,7 @@ A systematic review consists of a clear PICO question, a pre-registered protocol
   "yagmaci-dergiler-nasil-anlasilir": {
     slug: "how-to-spot-predatory-journals",
     title: "How to Spot Predatory Journals: A Checklist Before You Submit",
-    description: "Learn how to recognise predatory and fake journals: peer review, indexing claims, fees, hijacked journals and a checklist to use before submitting your paper.",
+    description: "How to spot predatory journals: fake peer review, false indexing claims, fees, hijacked journals and a checklist before you submit.",
     keywords: ["predatory journals", "how to identify a fake journal", "hijacked journals", "think check submit", "choosing a trustworthy journal"],
     cta: { text: "Get journal suggestions based on your paper's topic and references, then verify the indexing and publication details of each suggested journal yourself.", label: "Start for free" },
     body: `Have you ever received an email saying "Dear Professor, we greatly enjoyed your recent article and would like to publish your work; peer review takes 7 days"? Many such invitations come from **predatory journals** whose only purpose is to collect publication fees. An article published in one can cause problems in promotion applications, reduce the visibility of your research and waste your work. This guide explains how to recognise predatory journals and what to check before you submit.

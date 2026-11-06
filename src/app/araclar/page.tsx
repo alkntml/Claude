@@ -5,7 +5,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ToolCards } from "@/components/tools/tool-cards";
 import { hasAuthCookie } from "@/lib/auth";
-import { localizedPath } from "@/lib/seo";
+import { absoluteUrl, localizedPath } from "@/lib/seo";
+import { TOOLS } from "@/lib/tools";
 import { breadcrumbLd } from "@/lib/structured-data";
 
 export async function generateMetadata() {
@@ -18,7 +19,11 @@ export default async function Tools() {
   return (
     <>
       <SiteHeader signedIn={signedIn} />
-      <JsonLd data={[breadcrumbLd(locale, [{ name: t("Ücretsiz araçlar"), path: localizedPath("/araclar", locale) }])]} />
+      <JsonLd data={[
+        breadcrumbLd(locale, [{ name: t("Ücretsiz araçlar"), path: localizedPath("/araclar", locale) }]),
+        // D107: araç listesi (arama motorları her aracı ayrı sayfa olarak tanısın)
+        { "@context": "https://schema.org", "@type": "ItemList", name: t("Ücretsiz akademik araçlar"), itemListElement: TOOLS.map((x, i) => ({ "@type": "ListItem", position: i + 1, name: t(x.title), url: absoluteUrl(localizedPath(x.path, locale)) })) },
+      ]} />
       <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Ücretsiz akademik araçlar")}</h1>

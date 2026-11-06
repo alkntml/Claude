@@ -344,7 +344,7 @@ Academiana’nın anket oluşturucusunda tek ve çoklu seçim, 5’li ve 7’li 
   {
     slug: "hangi-istatistik-analizi-secilmeli",
     title: "Hangi İstatistik Analizini Seçmeliyim? t Testi, ANOVA, Korelasyon",
-    description: "Araştırma sorunuza uygun istatistiksel analizi seçme rehberi: t testi, ANOVA, Mann-Whitney, Kruskal-Wallis, korelasyon, regresyon ve ki-kare ne zaman kullanılır?",
+    description: "Hangi istatistik analizi seçilmeli? t testi, ANOVA, Mann-Whitney, Kruskal-Wallis, korelasyon, regresyon ve ki-kare ne zaman kullanılır?",
     category: "Araştırma ve yöntem",
     keywords: ["hangi istatistik analizi", "t testi ne zaman kullanılır", "ANOVA nedir", "SPSS analiz seçimi", "normallik testi"],
     date: "2026-11-02",

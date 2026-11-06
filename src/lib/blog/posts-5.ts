@@ -4,7 +4,7 @@ export const POSTS_5: BlogPost[] = [
   {
     slug: "tez-tablo-ve-sekil-apa-7",
     title: "Tezde Tablo ve Şekil Nasıl Hazırlanır? APA 7 Kuralları ve Örnekler",
-    description: "APA 7’ye göre tablo ve şekil numarası, başlığı, notları, çizgi kullanımı ve metin içinde atıf kurallarını örneklerle öğrenin; tezde en sık yapılan hataları önleyin.",
+    description: "APA 7’ye göre tablo ve şekil numarası, başlığı, notları ve çizgi kullanımı örneklerle; tezlerde en sık yapılan tablo hataları ve çözümleri.",
     category: "Tez yazımı",
     keywords: ["apa 7 tablo", "apa şekil formatı", "tezde tablo nasıl yapılır", "tablo notu", "apa tablo başlığı"],
     date: "2026-11-06",
@@ -115,7 +115,7 @@ APA 7'de tablo ve şekiller aynı düzeni izler: kalın numara, italik başlık,
   {
     slug: "tez-giris-bolumu-nasil-yazilir",
     title: "Tezin Giriş Bölümü Nasıl Yazılır? Problem Durumu, Amaç ve Önem",
-    description: "Tez giriş bölümünün problem durumu, amaç, önem, araştırma soruları, varsayımlar, sınırlılıklar ve tanımlar alt başlıklarını örneklerle nasıl yazacağınızı öğrenin.",
+    description: "Tez giriş bölümü nasıl yazılır? Problem durumu, amaç, önem, araştırma soruları, varsayımlar, sınırlılıklar ve tanımlar örneklerle.",
     category: "Tez yazımı",
     keywords: ["tez giriş bölümü", "problem durumu nasıl yazılır", "araştırmanın önemi", "sınırlılıklar", "tez amacı nasıl yazılır"],
     date: "2026-11-06",
@@ -217,7 +217,7 @@ Giriş bölümü; geniş bağlamdan başlayıp araştırma boşluğuna, oradan d
   {
     slug: "kuramsal-cerceve-kavramsal-cerceve-farki",
     title: "Kuramsal Çerçeve ve Kavramsal Çerçeve Nedir? Farkları ve Yazım Rehberi",
-    description: "Kuramsal çerçeve ile kavramsal çerçeve arasındaki farkı, doğru kuramı seçmeyi, araştırma modelini çizmeyi ve bu bölümü literatür özetinden ayırmayı öğrenin.",
+    description: "Kuramsal ve kavramsal çerçeve farkı nedir? Doğru kuramı seçme, araştırma modelini çizme ve bu bölümü literatür özetinden ayırma.",
     category: "Araştırma ve yöntem",
     keywords: ["kuramsal çerçeve", "kavramsal çerçeve", "teorik çerçeve nasıl yazılır", "araştırma modeli", "kuram seçimi"],
     date: "2026-11-06",
@@ -310,7 +310,7 @@ Kuramsal çerçeve araştırmanızı var olan bir kurama dayandırır; kavramsal
   {
     slug: "sistematik-derleme-meta-analiz-prisma",
     title: "Sistematik Derleme ve Meta-Analiz Nasıl Yapılır? PRISMA 2020 Rehberi",
-    description: "Sistematik derleme ve meta-analizin adımlarını öğrenin: PICO ile soru, protokol kaydı, arama stratejisi, PRISMA akış şeması, yanlılık riski ve heterojenlik.",
+    description: "Sistematik derleme ve meta-analiz adım adım: PICO, protokol kaydı, arama stratejisi, PRISMA 2020 akış şeması, yanlılık riski ve heterojenlik.",
     category: "Araştırma ve yöntem",
     keywords: ["sistematik derleme", "meta analiz nasıl yapılır", "prisma 2020", "pico", "prisma akış şeması"],
     date: "2026-11-06",
@@ -422,7 +422,7 @@ Sistematik derleme; net bir PICO sorusu, önceden kaydedilmiş bir protokol, bir
   {
     slug: "yagmaci-dergiler-nasil-anlasilir",
     title: "Yağmacı (Predatory) Dergiler Nasıl Anlaşılır? Makale Göndermeden Önce Kontrol Listesi",
-    description: "Yağmacı ve sahte dergileri tanımanın yollarını öğrenin: hakem süreci, dizin iddiaları, ücretler, ele geçirilmiş dergiler ve makale göndermeden önce kontrol listesi.",
+    description: "Yağmacı (sahte) dergiler nasıl anlaşılır? Hakem süreci, dizin iddiaları, ücretler, ele geçirilmiş dergiler ve göndermeden önce kontrol listesi.",
     category: "Makale ve yayın",
     keywords: ["yağmacı dergi", "predatory journal", "sahte dergi nasıl anlaşılır", "think check submit", "güvenilir dergi seçimi"],
     date: "2026-11-06",

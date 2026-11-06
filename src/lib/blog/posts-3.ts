@@ -180,6 +180,7 @@ Academiana’da "TÜBİTAK / BAP proje önerisi" çalışma türünü seçip pro
   {
     slug: "dergipark-tr-dizin-yok-tez-kaynak-arama",
     title: "DergiPark, TR Dizin ve YÖK Tez Merkezi’nde Kaynak Nasıl Aranır?",
+    seoTitle: "DergiPark, TR Dizin ve YÖK Tez’de Kaynak Arama Rehberi",
     description: "Türkçe akademik kaynaklara ulaşma rehberi: DergiPark, TR Dizin ve YÖK Ulusal Tez Merkezi’nde etkili arama, erişim kısıtları ve doğru atıf.",
     category: "Kaynak ve atıf",
     keywords: ["DergiPark makale arama", "TR Dizin nedir", "YÖK Tez Merkezi arama", "Türkçe kaynak bulma"],

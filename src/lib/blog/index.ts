@@ -33,7 +33,7 @@ export function findPost(slug: string): { post: BlogPost; lang: Locale } | null 
 export function localizePost(p: BlogPost, locale: Locale): BlogPost & { lang: Locale } {
   const e = locale === "en" ? EN_POSTS[p.slug] : undefined;
   if (!e) return { ...p, lang: "tr" };
-  return { ...p, slug: e.slug, title: e.title, description: e.description, keywords: e.keywords, body: e.body, cta: { ...p.cta, text: e.cta.text, label: e.cta.label }, lang: "en" };
+  return { ...p, slug: e.slug, title: e.title, seoTitle: e.seoTitle, description: e.description, keywords: e.keywords, body: e.body, cta: { ...p.cta, text: e.cta.text, label: e.cta.label }, lang: "en" };
 }
 
 /** Yazının dildeki tam yolu: /blog/<tr> veya /en/blog/<en> */

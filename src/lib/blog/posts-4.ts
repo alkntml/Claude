@@ -116,7 +116,7 @@ Oran tahmin eden tarama çalışmalarında Cochran veya Yamane, grup karşılaş
   {
     slug: "cronbach-alfa-nedir-nasil-yorumlanir",
     title: "Cronbach Alfa Nedir, Nasıl Hesaplanır ve Yorumlanır?",
-    description: "Cronbach alfa güvenirlik katsayısının ne anlama geldiğini, kabul edilebilir değerleri, madde-toplam korelasyonunu ve düşük alfa çıktığında ne yapılacağını öğrenin.",
+    description: "Cronbach alfa ne anlama gelir, kaç olmalı? Kabul edilebilir değerler, madde-toplam korelasyonu ve düşük alfa çıktığında yapılacaklar.",
     category: "Araştırma ve yöntem",
     keywords: ["cronbach alfa", "güvenirlik katsayısı", "iç tutarlılık", "madde toplam korelasyonu", "ölçek güvenirliği"],
     date: "2026-11-06",

@@ -5,7 +5,7 @@ export const EN_4: Record<string, BlogPostEn> = {
   "orneklem-buyuklugu-nasil-hesaplanir": {
     slug: "how-to-calculate-sample-size",
     title: "How to Calculate Sample Size: Cochran, Yamane and Power Analysis",
-    description: "Calculate sample size for your thesis or paper step by step: Cochran and Yamane formulas, finite population correction, power analysis and response-rate margins.",
+    description: "How to calculate sample size step by step: Cochran and Yamane formulas, finite population correction, power analysis and response rate.",
     keywords: ["sample size calculation", "cochran formula", "yamane formula", "power analysis", "how to determine sample size"],
     cta: { text: "Enter your population size and margin of error to get the sample size and a ready-to-use sentence for your methods section. No sign-up needed.", label: "Open the sample size calculator" },
     body: `One of the questions examiners ask most often about the methods section is: "Why did you reach this many participants?" Answers such as "my supervisor said 300 would be enough" or "that is how many surveys came back" do not satisfy it. Sample size is not a guess; it is a calculation you can justify in writing. This guide explains the three approaches most often used in quantitative research, with worked examples and wording for your methods section.
@@ -115,6 +115,7 @@ Use Cochran or Yamane for surveys that estimate proportions, and power analysis 
   "cronbach-alfa-nedir-nasil-yorumlanir": {
     slug: "cronbach-alpha-explained",
     title: "Cronbach's Alpha: What It Is, How to Calculate and Interpret It",
+    seoTitle: "Cronbach's Alpha: How to Calculate and Interpret It",
     description: "Learn what Cronbach's alpha means, which values are acceptable, how to read item-total correlations and what to do when your alpha comes out low.",
     keywords: ["cronbach's alpha", "reliability coefficient", "internal consistency", "item-total correlation", "scale reliability"],
     cta: { text: "Paste your data to compute Cronbach's alpha, item-total correlations and alpha-if-item-deleted in your browser. No sign-up; your data never leaves your device.", label: "Calculate Cronbach's alpha" },
@@ -199,7 +200,7 @@ Cronbach's alpha shows whether items are answered consistently; 0.70 and above i
   "olcek-gecerlik-guvenirlik-calismasi": {
     slug: "scale-adaptation-validity-reliability",
     title: "How to Run a Scale Validity and Reliability Study: An Adaptation Guide",
-    description: "Learn the steps of scale development and adaptation in plain language: content validity, exploratory and confirmatory factor analysis, fit indices and reliability.",
+    description: "Scale adaptation step by step: translation, content validity, exploratory and confirmatory factor analysis, fit indices and reliability.",
     keywords: ["scale adaptation", "validity and reliability study", "exploratory factor analysis", "confirmatory factor analysis", "fit indices"],
     cta: { text: "Build your scale with Academiana's survey builder, collect data via a link and send the responses to analysis in one click.", label: "Start for free" },
     body: `Adapting a scale developed abroad into another language, or developing a new scale from scratch, is one of the most common kinds of master's and doctoral work. The process is much more than translating items. You must show with evidence that the scale measures the same construct, consistently, in the new language and culture. This guide walks through the steps of a validity and reliability study in order.

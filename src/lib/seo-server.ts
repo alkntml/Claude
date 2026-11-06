@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getLocale } from "@/i18n/server";
 import type { Locale } from "@/i18n";
 import { PAGE_SEO } from "./seo-pages";
-import { absoluteUrl, localizedPath } from "./seo";
+import { absoluteUrl, fitTitle, localizedPath } from "./seo";
 import { SITE_NAME } from "./site";
 
 export interface MetaInput {
@@ -32,10 +32,15 @@ export function buildMeta(m: MetaInput, locale: Locale): Metadata {
   const description = m.description[locale];
   const img = ogImage(title.replace(/\s*\|\s*Academiana$/, ""), (m.tagline ?? { tr: "academiana.com.tr", en: "academiana.com.tr" })[locale], locale);
   return {
-    title: { absolute: title },
+    // <title> arama sonucunda kesilmeyecek uzunlukta; paylaşım kartlarında (OG/Twitter) tam başlık
+    title: { absolute: fitTitle(title) },
     description,
     keywords: m.keywords?.[locale],
-    alternates: { canonical: self, languages: { tr: trPath, en: enPath, "x-default": trPath } },
+    alternates: {
+      canonical: self, languages: { tr: trPath, en: enPath, "x-default": trPath },
+      // Blog sayfalarında RSS beslemesi (D107)
+      ...(trPath.startsWith("/blog") ? { types: { "application/rss+xml": [{ url: locale === "en" ? "/en/blog/rss.xml" : "/blog/rss.xml", title: `${SITE_NAME} Blog` }] } } : {}),
+    },
     robots: m.noindex ? { index: false, follow: true } : { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
     openGraph: {
       type: m.type ?? "website",

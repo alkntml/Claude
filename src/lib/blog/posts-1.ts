@@ -144,7 +144,7 @@ Academiana, yazdığınız konu için arama stratejisini planlar ve 10’dan faz
   {
     slug: "apa-7-atif-kurallari",
     title: "APA 7 Atıf Kuralları: Metin İçi Atıf ve Kaynakça Örnekleri",
-    description: "APA 7. baskıya göre metin içi atıf, doğrudan alıntı, çok yazarlı kaynaklar, kitap, makale ve web sayfası kaynakça örnekleri. Türkçe çalışmalar için pratik rehber.",
+    description: "APA 7’ye göre metin içi atıf, doğrudan alıntı, çok yazarlı kaynaklar ve kitap, makale, web sayfası kaynakça örnekleri: Türkçe çalışmalar için rehber.",
     category: "Kaynak ve atıf",
     keywords: ["APA 7 kuralları", "APA kaynak gösterme", "APA 7 kaynakça örnekleri", "metin içi atıf"],
     date: "2026-11-02",

@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return buildMeta({
     path: postPath(tr, "tr"),
     paths: { tr: postPath(tr, "tr"), en: postPath(tr, "en") },
-    title: { tr: tr.title, en: en.title },
+    title: { tr: tr.seoTitle ?? tr.title, en: en.seoTitle ?? en.title },
     description: { tr: tr.description, en: en.description },
     keywords: { tr: tr.keywords, en: en.keywords },
     tagline: { tr: `Blog · ${tr.category}`, en: "Academiana Blog" },

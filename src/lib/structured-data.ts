@@ -5,7 +5,7 @@
 import type { Locale } from "@/i18n";
 import { absoluteUrl, localizedPath } from "./seo";
 import { SITE_NAME, SITE_URL } from "./site";
-import { priceNumber } from "@/lib/pricing";
+import { priceNumber, WHATSAPP_NUMBER } from "@/lib/pricing";
 
 const ORG_ID = `${SITE_URL}/#organization`;
 const SITE_ID = `${SITE_URL}/#website`;
@@ -23,6 +23,8 @@ export function organizationLd() {
     slogan: "Akademik destek ve danışmanlık",
     description: "Yapay zekâ destekli, gerçek akademik kaynaklarla çalışan tez, makale ve araştırma yazım platformu. / AI-assisted academic writing platform that works with real, verified sources.",
     areaServed: ["TR", "Worldwide"],
+    // Sitede herkese açık olarak verilen WhatsApp destek hattı (pricing.ts WHATSAPP_NUMBER)
+    contactPoint: { "@type": "ContactPoint", contactType: "customer support", telephone: `+${WHATSAPP_NUMBER}`, availableLanguage: ["Turkish", "English"] },
     knowsLanguage: ["tr", "en"],
   };
 }

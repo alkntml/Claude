@@ -174,7 +174,7 @@ Choose the "TÜBİTAK / BAP proposal" work type in Academiana and select your pr
   "dergipark-tr-dizin-yok-tez-kaynak-arama": {
     slug: "how-to-search-dergipark-tr-dizin-yok-thesis-center",
     title: "How to Find Turkish Academic Sources: DergiPark, TR Dizin and the YÖK Thesis Center",
-    description: "A guide to Turkish academic databases: searching DergiPark, TR Dizin and the YÖK National Thesis Center effectively, access restrictions and correct citation.",
+    description: "How to search Turkish academic databases: DergiPark, TR Dizin and the YÖK National Thesis Center, access restrictions and correct citation.",
     keywords: ["DergiPark search", "TR Dizin", "YÖK thesis center", "Turkish academic journals", "Turkish theses database"],
     cta: { text: "Search Turkish-language and Türkiye-affiliated publications together with international databases in one search.", label: "Search Turkish sources" },
     body: `If your research is about Türkiye or you study at a Turkish university, showing the Turkish literature strengthens your context and answers the committee’s frequent question: "What has been done on this in Türkiye?" Three sources are essential.

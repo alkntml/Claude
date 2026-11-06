@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D107: SEO — başlık ≤60 (fitTitle), açıklama ≤160, araç sayfalarına rehber + SSS + şema, blog RSS, sabit lastmod, oturumlu sayfalar noindex
 - D106: güvenlik ve tutarlılık düzeltmeleri — davet ödülü e-posta doğrulamasına bağlı + geçici e-posta engeli (migration 29); tablo/şekil başlıkları 10 atıf stiline göre; ücretsiz pakette PDF, Premium’da öncelikli destek yok (migration 30); yüksek seviyeli bağımlılık açıkları kapatıldı (zod 4, overrides); SSRF: yönlendirme + DNS denetimi; CSP başlığı. Canlı veritabanında migration 29–30 çalıştırılmalı
 - D104: Tek Proje maliyet uyarısı (%40, kısıtlamasız; migration 28)
 - D103: Tek Proje paketi (3.999 TL tek ödeme, süresiz, sınırsız, tek çalışma; engelleme + kötüye kullanım uyarıları; migration 27, hesap silme hatası düzeltmesi dahil)

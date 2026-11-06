@@ -499,3 +499,9 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kullanıcı kararı: Tek Proje paketinde maliyet paket gelirinin %40’ını geçince yönetici uyarılsın; kullanım kısıtlanmasın. Yalnızca Tek Proje.
 - Migration 28: `profiles.single_started_at` (paket atanınca; kullanıcı değiştiremez). `single_cost_status(user)`: paket başından beri usage_events maliyeti, bütçe = fiyat / (1+KDV) / kur × 0,40 (3.999 TL, %20, 48 TL → ≈ 27,8 $). `usage_events` AFTER INSERT tetikleyicisi sınır geçilince `raise_abuse_alert('cost_40')` — paket dönemi başına bir kez; yöneticilere “Tek Proje maliyet uyarısı” bildirimi. Sınırlar null kalır (kısıtlama yok).
 - Yönetim → kullanıcı ayrıntısı: Tek Proje kullanıcısında paket başından beri maliyet, gelirin yüzdesi ve %40 sınırı.
+
+### D105 — 10 uzun rehber blog yazısı
+- Kullanıcı isteği: “kaliteli, işe yarar, kısa bilgi gibi olmasın.” Her yazı ≈1.200–1.600 kelime; hesaplı örnekler, yöntem bölümüne yazılabilecek örnek paragraflar, sık yapılan hatalar ve iç bağlantılar içerir.
+- Dosyalar: `blog/posts-4.ts`, `posts-5.ts` (Türkçe), `en-4.ts`, `en-5.ts` (İngilizce, ayrı adresler). Konular: örneklem büyüklüğü, Cronbach alfa, ölçek geçerlik-güvenirlik, nitel görüşme/tematik analiz, uydurma kaynak tespiti, APA 7 tablo-şekil, giriş bölümü, kuramsal/kavramsal çerçeve, sistematik derleme/PRISMA 2020, yağmacı dergiler.
+- Araç sayfalarına yönlendirme (örneklem hesaplayıcı, Cronbach alfa, uydurma kaynak kontrolü). Doğrulanamayan güncel kurallar (ör. doçentlik ölçütleri) yazılmadı; okuyucu resmî kaynağa yönlendirildi.
+- `tests/blog-links.test.ts`: yazılardaki her bağlantı var olan bir yazıya (TR/EN) veya herkese açık sayfaya gitmeli.

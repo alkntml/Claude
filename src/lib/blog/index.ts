@@ -1,19 +1,23 @@
 import { POSTS_1 } from "./posts-1";
 import { POSTS_2 } from "./posts-2";
 import { POSTS_3 } from "./posts-3";
+import { POSTS_4 } from "./posts-4";
+import { POSTS_5 } from "./posts-5";
 import { EN_1 } from "./en-1";
 import { EN_2 } from "./en-2";
 import { EN_3 } from "./en-3";
+import { EN_4 } from "./en-4";
+import { EN_5 } from "./en-5";
 import type { BlogPost, BlogPostEn } from "./types";
 import type { Locale } from "@/i18n";
 
 export type { BlogPost, BlogPostEn } from "./types";
 
-export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3];
+export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5];
 export const CATEGORIES = [...new Set(POSTS.map((p) => p.category))];
 
 /** İngilizce sürümler (anahtar: Türkçe adres) */
-export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3 };
+export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5 };
 
 export const getPost = (slug: string) => POSTS.find((p) => p.slug === slug);
 

@@ -275,6 +275,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "silme-hak",
+        q: { tr: "Yazdırdığım metni silersem hakkım geri gelir mi?", en: "If I delete generated text, is my allowance restored?" },
+        a: {
+          tr: "Hayır. Paket hakkı, yapay zekâ metni ürettiği anda kullanılmış olur; metni, bölümü veya çalışmayı sonradan silmek kullanılan hakkı geri vermez. Anlaşmazlıkların çözümü için aldığınız çıktıların ve silmelerin kaydı **12 ay** saklanır (yalnızca yetkili yöneticiler görür, hesabınızla birlikte silinir).",
+          en: "No. Your allowance is used when the AI generates the text; deleting the text, a section or the whole work later does not restore it. To resolve disputes, a record of your outputs and deletions is kept for **12 months** (visible only to authorised administrators, deleted with your account).",
+        },
+      },
+      {
         id: "yukseltme",
         q: { tr: "Paketimi nasıl yükseltirim? Ödemeyi nasıl yaparım?", en: "How do I upgrade and pay?" },
         a: {

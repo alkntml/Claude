@@ -9,6 +9,7 @@ import { Badge, Empty, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
 import { PROVIDER_LABELS } from "@/lib/sources/labels";
+import { UserActivity } from "./activity";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
 import { CostBreakdown, TrafficTab } from "./insights";
@@ -253,6 +254,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
   return (
     <Modal open onClose={onClose} title={d ? `${d.profile.full_name || d.profile.email}` : "Kullanıcı"} wide>
       {!d ? <p className="text-sm text-ink-400">Yükleniyor…</p> : (
+        <>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-4">
             <div className="rounded-2xl border border-ink-100 p-4">
@@ -311,6 +313,12 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
             </div>
           </div>
         </div>
+        <div className="mt-4 rounded-2xl border border-ink-100 p-4">
+          <p className="font-semibold">Kullanım geçmişi (kanıt kaydı)</p>
+          <p className="mb-3 mt-0.5 text-xs text-ink-500">Kullanıcının aldığı tüm yapay zekâ çıktıları ve sildikleri. Çalışma veya metin silinse de kayıt kalır (12 ay). “Paketimi kullanmadım” itirazlarında buradan kontrol edin.</p>
+          <UserActivity userId={id} />
+        </div>
+        </>
       )}
     </Modal>
   );

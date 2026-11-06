@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de `20261121000026_activity_log.sql` (kullanım kanıt kaydı, D102)
 - [x] (2026-11-06) Migration 24 (bildirim kutusu) ve Ücretsiz kart PDF metni geri yüklendi
 - [ ] Supabase SQL Editor’de `20261120000025_referral_device_guard.sql` (davette aynı cihaz önlemi, D101)
 - [x] (2026-11-06) Migration 22 (paket vaatleri) ve 23 (davet ödülü) çalıştırıldı

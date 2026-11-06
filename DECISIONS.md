@@ -480,3 +480,9 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kayıt: davet koduyla kayıtta özet auth meta verisine (`did`) eklenir; `handle_new_user` bunu `profiles.signup_device`’a ve `user_devices`’a yazar. Oturum açan her kullanıcının cihazı günde bir `/api/account/device` ile kaydedilir (davet edenin cihazları bilinsin).
 - Karar: `grant_referral_on_signup` davet edenin cihazlarında bu özet varsa ödül vermez, davet edene `referral_same_device` bildirimi bırakır. Cihaz bilgisi gelmezse (ör. sosyal giriş, betik engeli) karar ilk girişe kalır: sunucu çerezdeki cihazı kaydeder, `sharesDevice` ile aynı kuralı uygular.
 - Sınırlar: gizli pencere veya başka tarayıcı yeni cihaz sayılır; bu yüzden aylık ödül sınırı (20) ikinci savunma olarak kalır. Gizlilik metnine eklendi.
+
+### D102 — Kullanım kanıt kaydı
+- Kullanıcı kararı: kullanıcı paket hakkını kullanıp yazdıklarını silerek “paketimi kullanmadım” diyememeli; yönetici veri geçmişini görebilmeli.
+- Migration 26 `activity_log` (RLS açık, politika yok: kullanıcı göremez; yazma sunucu/tetikleyici). `logAiOutput` her sohbet/yazım yanıtını (tarih, eylem, çalışma ve bölüm adı, taslak kelimesi, model, çıktı metni ≤200 bin karakter) yazar; yarıda kesilen yanıtlar da (`eylem:yarım`). Tetikleyiciler: çalışma silme (toplam kelime), bölüm silme (çalışma silinirken ayrıca yazılmaz), bölümden ≥300 kelime silme (önceki/sonraki).
+- Yönetim → Kullanıcılar → kullanıcı → “Kullanım geçmişi (kanıt kaydı)”: toplam çıktı, üretilen kelime ve tez biçiminde sayfa, bu ay, silinen, ay dökümü, kayıt listesi ve tam metin.
+- Saklama 12 ay (okunurken eskiler silinir); hesap silinince silinir. Kullanım koşulları, gizlilik ve SSS’ye eklendi: üretilen metni silmek kullanılan hakkı geri vermez. Kayıt migration 26’dan sonraki kullanımla başlar.

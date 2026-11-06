@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 358 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 360 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -92,6 +92,7 @@ src/lib/
   lock.ts                 getWorkLock: aylık hak durumu (D81: çalışma artık kilitlenmez, yalnızca “hak doldu” şeridi); scramble.ts eski, kullanılmıyor
   autopilot.ts           Yönetici “Otomatik çalışma” modülü kuralları (D77); motor components/admin/autopilot-engine.ts
   devices.ts + device-client.ts  Cihaz kimliği (D101): tarayıcıda rastgele kimlik (localStorage + çerez acd_did), sunucuya yalnızca SHA-256 özeti; user_devices; davet edenin cihazından kayıtta ödül yok
+  activity.ts + activity-summary.ts  Kullanım kanıt kaydı (D102): logAiOutput (her yapay zekâ çıktısı), DB tetikleyicileri silmeleri yazar; yönetim → kullanıcı → Kullanım geçmişi (components/admin/activity.tsx)
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                core.ts (sözlüksüz çekirdek; istemci bunu kullanır), index.ts (core + EN, sunucu), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
 supabase/migrations/     Sıralı SQL migration'ları
@@ -101,7 +102,7 @@ demo/                    Sunucusuz tarayıcı demosu (mock API + Next shim'leri)
 tests/                   Vitest
 ```
 
-API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/*` (kaldırıldı; ödeme WhatsApp üzerinden, D48), `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `auth/confirm` (token_hash; şifre yenileme D74), `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `ai`, `[id]`, `[id]/ai`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`, `projects/[id]/blueprint` (POST yapay zekâ, PUT kaydet/onayla), `stages/[id]/review`, `account/plans` (yükseltme penceresi için sınırlar), `account/data-request` (KVKK talebi), `admin/locks`, `admin/user-export`, `admin/users-list`, `admin/user/[id]`, `admin/referrals`, `projects/[id]/import-doc` (Word içe aktarma), `projects/[id]/memory/learn` (belgeden hafıza), `public/track` (ölçüm), `public/tools/lookup|fake-check|use` (ücretsiz araçlar), `admin/insights` (maliyet ve ziyaret), `notifications` (bildirim kutusu: GET liste, POST okundu — D100), `account/device` (cihaz özeti kaydı, D101).
+API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `sources`, `memory`, `quality`, `export`, `shares`), `stages/[id]` (+ `revisions`, `comments`), `sources/search|lookup|[id]|[id]/verify|[id]/fulltext`, `ai/chat` (SSE), `ai/research`, `files` (+ `[id]`, `stats`, `to-source`), `account`, `feedback`, `announcements`, `billing/*` (kaldırıldı; ödeme WhatsApp üzerinden, D48), `admin/[resource]`, `admin/stats`, `share/[token]/comments`, `auth/callback`, `auth/confirm` (token_hash; şifre yenileme D74), `projects/[id]/sources/import|export`, `projects/[id]/matrix|journals|presentation`, `files/[id]/analyze`, `sources/[id]/evidence|attach-file`, `org/join|leave|members`, `account/growth`, `admin/org-member`, `projects/[id]/defense`, `files/[id]/chart`, `surveys` (+ `ai`, `[id]`, `[id]/ai`, `[id]/responses`, `[id]/to-project`), `public/survey/[token]`, `topics/explore`, `projects/[id]/titles`, `projects/[id]/blueprint` (POST yapay zekâ, PUT kaydet/onayla), `stages/[id]/review`, `account/plans` (yükseltme penceresi için sınırlar), `account/data-request` (KVKK talebi), `admin/locks`, `admin/user-export`, `admin/users-list`, `admin/user/[id]`, `admin/referrals`, `projects/[id]/import-doc` (Word içe aktarma), `projects/[id]/memory/learn` (belgeden hafıza), `public/track` (ölçüm), `public/tools/lookup|fake-check|use` (ücretsiz araçlar), `admin/insights` (maliyet ve ziyaret), `notifications` (bildirim kutusu: GET liste, POST okundu — D100), `account/device` (cihaz özeti kaydı, D101), `admin/user/[id]/activity` (kullanım kanıt kaydı, D102).
 
 ## Arama motoru (SEO) altyapısı
 - Herkese açık sayfalar iki adreste: Türkçe öneksiz (`/fiyatlar`), İngilizce `/en` önekli (`/en/fiyatlar`). Ara katman `/en/*` isteğini öneksiz sayfaya yeniden yazar ve `x-locale` başlığını koyar; `getLocale()` önce bu başlığa bakar. Uygulama sayfaları (panel, proje…) çerezdeki dili kullanır, önek almaz.

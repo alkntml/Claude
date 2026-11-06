@@ -7,6 +7,7 @@ import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { compactHistory, HISTORY_LIMIT } from "@/lib/ai/history";
 import { readBlueprint } from "@/lib/blueprint";
+import { logAiOutput } from "@/lib/activity";
 import { appendToDraft, continuationPrompt, draftTarget, draftWords, LENGTH_ACTIONS, lengthInstruction, MAX_CONTINUATIONS, MIN_RATIO } from "@/lib/workflows/length";
 import { APP_GUIDE_SHORT, HELP_SYSTEM, isHelpQuestion } from "@/lib/ai/help";
 import type { Usage } from "@/lib/ai/types";
@@ -291,6 +292,8 @@ export const POST = route("ai.chat", async (req) => {
           s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action, ...(searchedQueries.length ? { research: { focusKey, queries: searchedQueries } } : {}) } }),
           s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
           recordUsage(s.user.id, "ai_request", { usage, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
+          // Kullanım kanıt kaydı (D102): kullanıcı metni sonradan silse de yönetici görebilir
+          logAiOutput({ userId: s.user.id, action: b.action, projectId: b.projectId, projectTitle: bundle.project.title, stageTitle: stage?.title ?? null, model: servedModel, output: answer }),
         ]);
         // 3) Eksik konular: asistanın :::eksik bloğundaki sorgularla ek kaynak araması (mesaj başına bir kez)
         let gapAdded = 0;
@@ -328,6 +331,7 @@ export const POST = route("ai.chat", async (req) => {
           const out = usage.output || Math.ceil(answer.length / 3);
           const costUsd = await estimateCost(servedModel, tin, out, usage).catch(() => 0);
           await recordUsage(s.user.id, "ai_request", { quantity: answer ? 1 : 0, tokensIn: tin, tokensOut: out, costUsd, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, partial: true, estimated: !usage.input } }).catch(() => {});
+          if (answer) await logAiOutput({ userId: s.user.id, action: `${b.action}:yarım`, projectId: b.projectId, projectTitle: bundle.project.title, stageTitle: stage?.title ?? null, model: servedModel, output: answer });
         }
         controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));
       } finally {

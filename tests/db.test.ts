@@ -71,6 +71,23 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("kullanım kanıt kaydı (migration 26): metin/bölüm/çalışma silmeleri kaydedilir, kullanıcı göremez", async () => {
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Kanıt Tezi', 'thesis', 'master') returning id`)).rows;
+    const [s1] = (await db.query<{ id: string }>(`insert into public.project_stages (project_id, user_id, key, title, word_count, position) values ('${p.id}', '${A}', 'introduction', 'Giriş', 2000, 0) returning id`)).rows;
+    await db.query(`insert into public.project_stages (project_id, user_id, key, title, word_count, position) values ('${p.id}', '${A}', 'method', 'Yöntem', 1500, 1)`);
+    await db.exec(`update public.project_stages set word_count = 1800 where id = '${s1.id}'`); // 200 kelime: kaydedilmez
+    await db.exec(`update public.project_stages set word_count = 400 where id = '${s1.id}'`); // 1400 kelime silindi
+    await db.exec(`delete from public.project_stages where id = '${s1.id}'`);
+    await db.exec(`delete from public.projects where id = '${p.id}'`);
+    const rows = (await db.query<{ kind: string; words: number; stage_title: string | null; project_title: string }>(`select kind, words, stage_title, project_title from public.activity_log where user_id = '${A}' order by id`)).rows;
+    expect(rows).toEqual([
+      { kind: "text_removed", words: 1400, stage_title: "Giriş", project_title: "Kanıt Tezi" },
+      { kind: "stage_deleted", words: 400, stage_title: "Giriş", project_title: "Kanıt Tezi" },
+      { kind: "project_deleted", words: 1500, stage_title: null, project_title: "Kanıt Tezi" },
+    ]);
+    expect(await as(A, "select * from public.activity_log")).toHaveLength(0);
+    await db.exec(`delete from public.activity_log where user_id = '${A}'`);
+  });
   it("davet ödülü aynı cihaz önlemi (migration 25)", async () => {
     const code = (await db.query<{ referral_code: string }>(`select referral_code from public.profiles where id = '${A}'`)).rows[0].referral_code;
     const dev = "a".repeat(64), other = "b".repeat(64);

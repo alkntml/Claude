@@ -27,4 +27,6 @@ union all select '23 Davet ödülü yalnız davet edene, kayıtta',
 union all select '24 Bildirim kutusu',
   case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'notifications') then 'YAPILMIŞ' else 'EKSİK' end
 union all select '25 Davet: aynı cihaz önlemi',
-  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'user_devices') then 'YAPILMIŞ' else 'EKSİK' end;
+  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'user_devices') then 'YAPILMIŞ' else 'EKSİK' end
+union all select '26 Kullanım kanıt kaydı',
+  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'activity_log') then 'YAPILMIŞ' else 'EKSİK' end;

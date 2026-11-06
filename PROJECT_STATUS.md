@@ -123,7 +123,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
 - D104: Tek Proje maliyet uyarısı (%40, kısıtlamasız; migration 28)
 - D103: Tek Proje paketi (3.999 TL tek ödeme, süresiz, sınırsız, tek çalışma; engelleme + kötüye kullanım uyarıları; migration 27, hesap silme hatası düzeltmesi dahil)
-- Canlı veritabanı: migration 22–26 çalıştırıldı ve doğrulandı (2026-11-06)
+- Canlı veritabanı: migration 22–28 çalıştırıldı (2026-11-06); Tek Proje kartı canlıda doğrulandı
 - D102: kullanım kanıt kaydı (yapay zekâ çıktıları + silmeler, yönetimde kullanıcı geçmişi; migration 26)
 - D101: davet ödülünde aynı cihaz önlemi (cihaz kimliği özeti, migration 25)
 - D100: bildirim kutusu (zil simgesi); davet ödülü bildirimi (migration 24)

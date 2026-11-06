@@ -24,6 +24,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold text-ink-800">{t("Platform")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-ink-500">
+            <li><Link href="/hakkimizda" className="hover:text-ink-900">{t("Hakkımızda")}</Link></li>
             <li><Link href="/#ozellikler" className="hover:text-ink-900">{t("Özellikler")}</Link></li>
             <li><Link href="/araclar" className="hover:text-ink-900">{t("Ücretsiz araçlar")}</Link></li>
             <li><Link href="/ornekler" className="hover:text-ink-900">{t("Örnek çıktılar")}</Link></li>

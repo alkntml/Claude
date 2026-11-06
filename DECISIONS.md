@@ -522,3 +522,7 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Blog RSS beslemesi (iki dil) ve sayfa başında RSS bağlantısı. Site haritası lastmod sabit tarih (SITE_CONTENT_UPDATED), blogda yazı tarihi.
 - Oturumlu uygulama, proje, davet, şifre ve kurulum sayfaları noindex. Organization şemasına herkese açık WhatsApp destek hattı (contactPoint).
 - Sıralama Google’ın kararıdır; Search Console’a site haritası gönderilmesi ve düzenli içerik en etkili adımlardır.
+
+### D108 — Hakkımızda sayfası
+- `/hakkimizda` (TR/EN): neden kurulduk, misyon, vizyon, değerler, kurucu (Alkın Mert Temel, Kurucu ve CEO), iletişim (herkese açık WhatsApp hattı; ACADEMIC_CONTACT_EMAIL tanımlıysa e-posta). Sayı veya kullanıcı iddiası yok; kurucu hakkında doğrulanmamış biyografi yazılmadı.
+- Şema: AboutPage + Person (kurucu); Organization’a `founder`. Alt bilgide “Hakkımızda” bağlantısı, site haritası, PAGE_SEO.

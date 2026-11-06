@@ -137,6 +137,15 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     },
     keywords: { tr: ["kullanım koşulları"], en: ["terms of use"] },
   },
+  "/hakkimizda": {
+    title: { tr: "Hakkımızda — Misyonumuz ve Vizyonumuz | Academiana", en: "About Academiana — Our Mission and Vision" },
+    description: {
+      tr: "Academiana neden kuruldu? Gerçek kaynaklarla, akademik kurallara uygun ve dürüst yapay zekâ kullanımı için misyonumuz, vizyonumuz, değerlerimiz ve kurucumuz.",
+      en: "Why Academiana exists: our mission, vision and values for honest, transparent AI use in academic writing with real sources, and our founder.",
+    },
+    keywords: { tr: ["Academiana hakkında", "Academiana kurucusu", "akademik yazım platformu misyon"], en: ["about Academiana", "Academiana founder", "academic writing platform mission"] },
+    tagline: { tr: "Misyonumuz ve vizyonumuz", en: "Our mission and vision" },
+  },
   "/akademik-durustluk": {
     title: { tr: "Akademik Dürüstlük İlkeleri — Yapay Zekâyı Sorumlu Kullanım | Academiana", en: "Academic Integrity — Responsible AI Use | Academiana" },
     description: {

@@ -8,6 +8,14 @@ import { SITE_NAME, SITE_URL } from "./site";
 import { priceNumber, WHATSAPP_NUMBER } from "@/lib/pricing";
 
 const ORG_ID = `${SITE_URL}/#organization`;
+const FOUNDER_ID = `${SITE_URL}/hakkimizda#founder`;
+
+/** Kurucu (D108): Hakkımızda sayfası ve Organization şeması */
+export const FOUNDER = { name: "Alkın Mert Temel", title: { tr: "Kurucu ve CEO", en: "Founder and CEO" } };
+
+export function founderLd(locale: Locale) {
+  return { "@context": "https://schema.org", "@type": "Person", "@id": FOUNDER_ID, name: FOUNDER.name, jobTitle: FOUNDER.title[locale], worksFor: { "@id": ORG_ID } };
+}
 const SITE_ID = `${SITE_URL}/#website`;
 
 export function organizationLd() {
@@ -22,6 +30,7 @@ export function organizationLd() {
     image: `${SITE_URL}/brand/academiana-logo.png`,
     slogan: "Akademik destek ve danışmanlık",
     description: "Yapay zekâ destekli, gerçek akademik kaynaklarla çalışan tez, makale ve araştırma yazım platformu. / AI-assisted academic writing platform that works with real, verified sources.",
+    founder: { "@type": "Person", "@id": FOUNDER_ID, name: FOUNDER.name, jobTitle: "Kurucu ve CEO / Founder and CEO" },
     areaServed: ["TR", "Worldwide"],
     // Sitede herkese açık olarak verilen WhatsApp destek hattı (pricing.ts WHATSAPP_NUMBER)
     contactPoint: { "@type": "ContactPoint", contactType: "customer support", telephone: `+${WHATSAPP_NUMBER}`, availableLanguage: ["Turkish", "English"] },

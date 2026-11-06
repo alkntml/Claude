@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 363 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 381 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -50,8 +50,8 @@ src/app/                 Sayfalar + API rotaları
   api/                   REST uçları (aşağıda)
 src/components/          landing, dashboard, workspace, admin, share, ui
 src/lib/
-  citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık)
-  sources/               providers.ts (12 veri tabanı: +ERIC, DBLP, DataCite — D92; Semantic Scholar kaldırıldı — D93), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
+  citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık), captions.ts (tablo/şekil başlığı her stile göre: konum, etiket, kalın/italik; dışa aktarmada güncel stile çevrilir — D106)
+  sources/               http.ts (safeFetch: dış bağlantıda her yönlendirme + DNS denetimi, SSRF — D106), providers.ts (12 veri tabanı: +ERIC, DBLP, DataCite — D92; Semantic Scholar kaldırıldı — D93), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
   research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme; researchGate: tarama yalnızca gerektiğinde (D75)
   ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza; head önbellekte, tail değişken — D78), history (geçmiş kısaltma), cost (önbellekli maliyet), prompts (ACTION_TIER, ACTION_EFFORT)
   workflows/length.ts    Kurgudaki hedef uzunluk (D97): draftTarget (alt başlığa eşit pay), lengthInstruction, taslak %85’in altındaysa devam (appendToDraft)
@@ -91,6 +91,7 @@ src/lib/
   features.ts            Pakete göre özellik kilitleri (FEATURE_MIN_PLAN, hasFeature); sunucu: usage.ts assertFeature; istemci: openUpgrade() → components/upgrade-dialog.tsx
   lock.ts                 getWorkLock: aylık hak durumu (D81: çalışma artık kilitlenmez, yalnızca “hak doldu” şeridi); scramble.ts eski, kullanılmıyor
   autopilot.ts           Yönetici “Otomatik çalışma” modülü kuralları (D77); motor components/admin/autopilot-engine.ts
+  disposable-email.ts    Geçici e-posta alanları (D106; aynı liste migration 29’da). Davet ödülü yalnızca e-posta doğrulanınca ve gerçek adresle
   devices.ts + device-client.ts  Cihaz kimliği (D101): tarayıcıda rastgele kimlik (localStorage + çerez acd_did), sunucuya yalnızca SHA-256 özeti; user_devices; davet edenin cihazından kayıtta ödül yok
   single-project.ts      Tek Proje paketi (D103): assertSingleProject (yapay zekâ yalnızca bağlı çalışmada), assertCanCreateProject, assertSingleProjectChange; uyarılar raise_abuse_alert (DB); maliyet %40 uyarısı single_cost_status/single_cost_watch (D104, kısıtlama yok); pricing.ts isOneTimePlan
   activity.ts + activity-summary.ts  Kullanım kanıt kaydı (D102): logAiOutput (her yapay zekâ çıktısı), DB tetikleyicileri silmeleri yazar; yönetim → kullanıcı → Kullanım geçmişi (components/admin/activity.tsx)
@@ -111,6 +112,10 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Herkese açık sayfa bağlantıları `@/components/l-link` ile verilir (dile göre /en ekler). Yeni herkese açık sayfa: `PUBLIC_PATHS` (seo.ts) + `PAGE_SEO` (seo-pages.ts) + `generateMetadata() { return pageMeta("/yol") }` + gerekirse JSON-LD + sitemap.
 - Blog yazılarının İngilizcesi `blog/en-*.ts` (ayrı İngilizce adres); `postPath(post, locale)`. Paylaşım görseli `/api/og?t=&s=&l=`.
 - Sahte puan/yorum (aggregateRating/review) yapılandırılmış veriye eklenmez.
+
+## Güvenlik başlıkları
+- `next.config.ts`: CSP (yalnızca kendi alan adı + Supabase; çerçeve yok), HSTS, X-Frame-Options, COOP. Tarayıcıdan yeni bir dış adrese bağlanan özellik eklenirse CSP’ye eklenmeli (D106).
+- Bağımlılık açıkları `package.json` → `overrides` ile kapatıldı (postcss, sharp, image-size); zod 4.
 
 ## Kodlama kuralları
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.

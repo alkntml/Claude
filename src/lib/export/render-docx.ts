@@ -74,7 +74,8 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
     } else if (b.kind === "paragraph") {
       body.push(new Paragraph({ alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {
-      body.push(new Paragraph({ spacing: { before: 120, after: 60 }, children: runs(b.runs.map((r) => ({ ...r, italic: true }))) }));
+      // D106: satırlar ve biçim (kalın/italik/ortalı) atıf stiline göre modelde hazırlanır
+      b.lines.forEach((l, k) => body.push(new Paragraph({ alignment: b.align === "center" ? AlignmentType.CENTER : AlignmentType.LEFT, keepNext: true, spacing: { before: k === 0 ? 120 : 0, after: k === b.lines.length - 1 ? 60 : 0 }, children: runs(l) })));
     } else if (b.kind === "image") {
       // Metin genişliği ~15 cm (≈ 567 px @96dpi); şekil oranı korunur
       const w = Math.min(560, b.width), h = Math.round((w * b.height) / b.width);

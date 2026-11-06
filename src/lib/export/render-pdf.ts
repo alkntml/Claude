@@ -75,7 +75,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       writeRuns(b.runs, { size: base, align: f.justify ? "justify" : "left", lineGap: gap, indent: b.quote ? 0 : pt(f.firstLineIndentCm), ...(b.quote ? { width: doc.page.width - M.left - M.right - 60 } : {}) });
       doc.moveDown(0.5);
     } else if (b.kind === "caption") {
-      writeRuns(b.runs.map((r) => ({ ...r, italic: true })), { size: 10.5 });
+      b.lines.forEach((l) => writeRuns(l, { size: 10.5, align: b.align }));
       doc.moveDown(0.3);
     } else if (b.kind === "image") {
       if (!started) { doc.addPage(); started = true; }

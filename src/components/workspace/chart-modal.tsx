@@ -1,4 +1,6 @@
 "use client";
+import { CaptionPreview } from "./caption-preview";
+import { formatCaption, noteLabel } from "@/lib/citations/captions";
 import { FilePlus2, LineChart, Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -36,9 +38,9 @@ async function svgToPng(svg: string, w = 900, h = 560, scale = 2): Promise<strin
   } finally { URL.revokeObjectURL(url); }
 }
 
-export function ChartModal({ open, onClose, files, language, figureNo, onInsert }: {
-  open: boolean; onClose: () => void; files: any[]; language: string; figureNo: number;
-  onInsert?: (nodes: { caption: string; src: string; alt: string; note: string }) => void;
+export function ChartModal({ open, onClose, files, language, figureNo, style, onInsert }: {
+  open: boolean; onClose: () => void; files: any[]; language: string; figureNo: number; style: string;
+  onInsert?: (nodes: { title: string; src: string; alt: string; note: string }) => void;
 }) {
   const { t } = useT();
   const toast = useToast();
@@ -101,7 +103,7 @@ export function ChartModal({ open, onClose, files, language, figureNo, onInsert 
     setInserting(true);
     try {
       const src = await svgToPng(svg);
-      onInsert({ caption: `${lang === "tr" ? "Şekil" : "Figure"} ${figureNo}. ${title.trim() || chart.title}`, src, alt: title.trim() || chart.title, note: chart.note });
+      onInsert({ title: title.trim() || chart.title, src, alt: title.trim() || chart.title, note: chart.note });
       onClose();
     } catch { toast({ tone: "error", title: t("Grafik belgeye eklenemedi") }); } finally { setInserting(false); }
   }
@@ -116,13 +118,13 @@ export function ChartModal({ open, onClose, files, language, figureNo, onInsert 
       ) : chart ? (
         <div className="space-y-3">
           <label className="block"><span className="label">{t("Şekil başlığı")}</span><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-          <p className="text-[13px] italic text-ink-600">{lang === "tr" ? "Şekil" : "Figure"} {figureNo}. {title}</p>
+          <CaptionPreview fmt={formatCaption(style, "figure", figureNo, title, lang === "en" ? "en" : "tr")} />
           <div className="overflow-hidden rounded-xl border border-ink-100 bg-white" dangerouslySetInnerHTML={{ __html: svg.replace(/width="900" height="560"/, 'width="100%" style="height:auto;display:block"') }} />
-          <p className="text-[12.5px] text-ink-500"><i>{t("Not.")}</i> {chart.note}</p>
+          <p className="text-[12.5px] text-ink-500">{(() => { const nl = noteLabel(style, lang === "en" ? "en" : "tr"); return nl.italic ? <i>{nl.text}</i> : nl.text; })()} {chart.note}</p>
         </div>
       ) : (
         <div className="space-y-4">
-          <p className="text-[13px] text-ink-500">{t("Grafik, verinizden gerçek hesaplamayla ve APA 7 şekil kurallarına uygun (siyah-beyaz, eksen başlıklı, numaralı) çizilir. Word ve PDF çıktısına görsel olarak eklenir.")}</p>
+          <p className="text-[13px] text-ink-500">{t("Grafik, verinizden gerçek hesaplamayla, siyah-beyaz ve eksen başlıklı çizilir; şekil numarası, başlığı ve yeri çalışmanızın atıf stiline göre yazılır. Word ve PDF çıktısına görsel olarak eklenir.")}</p>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="block"><span className="label">{t("Veri dosyası")}</span><select className="input" value={fileId} onChange={(e) => setFileId(e.target.value)}>{dataFiles.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}</select></label>
             <label className="block"><span className="label">{t("Grafik türü")}</span><select className="input" value={kind} onChange={(e) => setKind(e.target.value as Kind)}>{KINDS.map((k) => <option key={k.id} value={k.id}>{t(k.label)}</option>)}</select></label>

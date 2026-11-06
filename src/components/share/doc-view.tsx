@@ -31,7 +31,7 @@ export function DocView({ doc, stageIds }: { doc: ExportDoc; stageIds: Record<st
           return <Tag key={i} id={b.level === 1 ? stageIds[text] : undefined} className={b.level === 1 ? "!mt-14 !text-[1.6em] font-serif" : ""}>{b.number && <span className="mr-2 text-ink-400">{b.number}</span>}{text}</Tag>;
         }
         if (b.kind === "paragraph") return b.quote ? <blockquote key={i}><p><Runs runs={b.runs} notes={notes} /></p></blockquote> : <p key={i}><Runs runs={b.runs} notes={notes} /></p>;
-        if (b.kind === "caption") return <p key={i} className="!text-left text-[15px] italic text-ink-600"><Runs runs={b.runs} notes={notes} /></p>;
+        if (b.kind === "caption") return <div key={i} className={`text-[15px] text-ink-700 ${b.align === "center" ? "text-center" : "text-left"}`}>{b.lines.map((l, k) => <p key={k} className={`!my-0 ${b.align === "center" ? "!text-center" : "!text-left"}`}><Runs runs={l} notes={notes} /></p>)}</div>;
         // eslint-disable-next-line @next/next/no-img-element
         if (b.kind === "image") return <figure key={i} className="my-6 text-center"><img src={b.src} alt={b.alt} className="mx-auto h-auto max-w-full" style={{ width: Math.min(b.width, 640) }} /></figure>;
         if (b.kind === "list") { const L = b.ordered ? "ol" : "ul"; return <L key={i}>{b.items.map((it, k) => <li key={k}><Runs runs={it} notes={notes} /></li>)}</L>; }

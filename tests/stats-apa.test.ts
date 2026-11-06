@@ -49,7 +49,9 @@ describe("APA biçimlendirme", () => {
     ] as const) {
       const r = runAnalysis(rows, spec as never, "tr");
       const md = reportToMarkdown(r, 3, "tr");
-      expect(md).toContain("Tablo 3.");
+      expect(md).toContain("**Tablo 3**");
+      expect(reportToMarkdown(r, 3, "tr", "chicago")).toContain("Tablo 3.");
+      expect(reportToMarkdown(r, 3, "tr", "ieee")).toContain("TABLO III");
       const doc = markdownToDoc(md, () => null);
       expect(JSON.stringify(doc)).toContain('"type":"table"');
     }

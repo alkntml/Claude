@@ -33,4 +33,8 @@ union all select '26 Kullanım kanıt kaydı',
 union all select '27 Tek Proje paketi',
   case when exists (select 1 from public.plans where id = 'single') and exists (select 1 from pg_trigger where tgname = 'projects_single_guard_del') then 'YAPILMIŞ' else 'EKSİK' end
 union all select '28 Tek Proje maliyet uyarısı (%40)',
-  case when exists (select 1 from pg_trigger where tgname = 'usage_single_cost_watch') then 'YAPILMIŞ' else 'EKSİK' end;
+  case when exists (select 1 from pg_trigger where tgname = 'usage_single_cost_watch') then 'YAPILMIŞ' else 'EKSİK' end
+union all select '29 Davet ödülü: e-posta doğrulaması + geçici e-posta engeli',
+  case when exists (select 1 from pg_trigger where tgname = 'on_auth_user_email_confirmed') and to_regclass('public.disposable_email_domains') is not null then 'YAPILMIŞ' else 'EKSİK' end
+union all select '30 Ücretsizde PDF, Premium’da öncelikli destek yok',
+  case when exists (select 1 from public.plans where id = 'free' and limits->'export_formats' ? 'pdf') and not exists (select 1 from public.plans where 'Öncelikli destek' = any(features)) then 'YAPILMIŞ' else 'EKSİK' end;

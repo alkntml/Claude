@@ -2683,4 +2683,7 @@ export const EN: Record<string, string> = {
   "Doluyor": "Almost full",
   "Doldu": "Full",
   "Sınırsız": "Unlimited",
+  "Davet bağlantınızla açılan hesap geçici (tek kullanımlık) bir e-posta adresiyle kaydolduğu için ödül tanımlanmadı. Davet ödülü yalnızca gerçek e-posta adresiyle kaydolup adresini doğrulayan kişiler için verilir.": "No reward was given because the account created with your invite link signed up with a temporary (disposable) email address. Referral rewards are only given for people who sign up with a real email address and verify it.",
+  "Grafik, verinizden gerçek hesaplamayla, siyah-beyaz ve eksen başlıklı çizilir; şekil numarası, başlığı ve yeri çalışmanızın atıf stiline göre yazılır. Word ve PDF çıktısına görsel olarak eklenir.": "The chart is drawn from real calculations on your data, in black and white with axis titles; the figure number, title and position follow your work's citation style. It is embedded as an image in Word and PDF exports.",
+  "Word dışa aktarma": "Word export",
 };

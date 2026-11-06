@@ -1,5 +1,5 @@
 import { richToMarkdown, richToPlain } from "@/lib/citations";
-import { runsToPlain, type ExportDoc, type Run } from "./model";
+import type { ExportDoc, Run } from "./model";
 
 function mdRuns(runs: Run[], notes: string[]): string {
   return runs
@@ -26,7 +26,7 @@ export function toMarkdown(d: ExportDoc): string {
   for (const b of d.blocks) {
     if (b.kind === "heading") out.push(`${"#".repeat(Math.min(b.level + 1, 6))} ${b.number ? `${b.number} ` : ""}${mdRuns(b.runs, notes)}`, "");
     else if (b.kind === "paragraph") out.push(`${b.quote ? "> " : ""}${mdRuns(b.runs, notes)}`, "");
-    else if (b.kind === "caption") out.push(`*${runsToPlain(b.runs)}*`, "");
+    else if (b.kind === "caption") out.push(b.lines.map((l) => mdRuns(l, notes)).join("  \n"), "");
     else if (b.kind === "image") out.push(`[${b.alt || "Şekil"}]`, "");
     else if (b.kind === "list") { b.items.forEach((it, k) => out.push(`${b.ordered ? `${k + 1}.` : "-"} ${mdRuns(it, notes)}`)); out.push(""); }
     else if (b.kind === "table") {
@@ -51,7 +51,8 @@ export function toText(d: ExportDoc): string {
   const out: string[] = [d.title.toLocaleUpperCase(d.language), [d.author, d.institution, d.date].filter(Boolean).join(" - "), ""];
   for (const b of d.blocks) {
     if (b.kind === "heading") out.push("", `${b.number ? `${b.number} ` : ""}${plain(b.runs)}${b.level === 1 ? "\n" + "=".repeat(40) : ""}`);
-    else if (b.kind === "paragraph" || b.kind === "caption") out.push(`${b.kind === "paragraph" && b.quote ? "    " : ""}${plain(b.runs)}`, "");
+    else if (b.kind === "paragraph") out.push(`${b.quote ? "    " : ""}${plain(b.runs)}`, "");
+    else if (b.kind === "caption") out.push(b.lines.map((l) => plain(l)).join("\n"), "");
     else if (b.kind === "image") out.push(`[${b.alt || "Şekil"}]`, "");
     else if (b.kind === "list") { b.items.forEach((it, k) => out.push(`${b.ordered ? `${k + 1}.` : "•"} ${plain(it)}`)); out.push(""); }
     else if (b.kind === "table") { b.rows.forEach((r) => out.push(r.map(plain).join("\t"))); out.push(""); }

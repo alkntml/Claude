@@ -2,7 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { chunkText } from "@/lib/files/chunk";
 import { extract } from "@/lib/files/extract";
-import { isSafePublicUrl, stripTags } from "./http";
+import { safeFetch, stripTags } from "./http";
 import { pdfPageLabels } from "./pages";
 import { unpaywallLookup } from "./providers";
 import type { ProviderConfig } from "./types";
@@ -17,10 +17,9 @@ export interface IngestResult {
 }
 
 async function fetchPdf(url: string, signal: AbortSignal): Promise<Buffer> {
-  if (!isSafePublicUrl(url)) throw new Error("Güvenli olmayan URL");
-  const res = await fetch(url, { signal, redirect: "follow", headers: { Accept: "application/pdf", "User-Agent": "Academiana/1.0 (+https://www.academiana.com.tr)" } });
+  // Yönlendirmelerin her adımı ve DNS çözümlemesi denetlenir (iç ağa erişim engeli)
+  const res = await safeFetch(url, { signal, headers: { Accept: "application/pdf", "User-Agent": "Academiana/1.0 (+https://www.academiana.com.tr)" } });
   if (!res.ok) throw new Error(`İndirme hatası ${res.status}`);
-  if (res.url && !isSafePublicUrl(res.url)) throw new Error("Yönlendirme güvenli değil");
   const len = Number(res.headers.get("content-length") ?? 0);
   if (len > MAX_BYTES) throw new Error("Dosya çok büyük");
   const buf = Buffer.from(await res.arrayBuffer());

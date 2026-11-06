@@ -2,6 +2,7 @@
  * Analiz çalıştırma ve APA 7 raporlama: veri tablosundan (CSV/XLSX satırları) seçilen değişkenlerle
  * testi hesaplar, APA biçiminde tablo (Markdown) ve sonuç cümlesi üretir. Tüm sayılar hesaplamadan gelir.
  */
+import { captionMarkdown, captionRef, formatCaption, noteLabel } from "@/lib/citations/captions";
 import { toNum } from "@/lib/files/stats";
 import {
   bonferroniPosthoc, chiSquareIndependence, cronbachAlpha, describe, independentT, kruskalWallis, linearRegression,
@@ -292,9 +293,13 @@ export function runAnalysis(rows: string[][], spec: AnalysisSpec, l: L = "tr"): 
   }
 }
 
-/** Belgeye eklenecek Markdown: tablo başlığı + tablo + not + sonuç paragrafı */
-export function reportToMarkdown(r: AnalysisReport, tableNo: number, l: L = "tr"): string {
-  const caption = `*${l === "tr" ? "Tablo" : "Table"} ${tableNo}. ${r.title}*`;
-  const note = r.notes.length ? `\n\n*${l === "tr" ? "Not" : "Note"}.* ${r.notes.join(" ")}` : "";
-  return `${caption}\n\n${r.table}${note}\n\n${r.text.replace(/Tablo 1|Table 1/g, `${l === "tr" ? "Tablo" : "Table"} ${tableNo}`)}`;
+/**
+ * Belgeye eklenecek Markdown: tablo başlığı + tablo + not + sonuç paragrafı. Başlık, not etiketi ve metindeki tablo
+ * göndermesi çalışmanın atıf stiline göre yazılır (D106; APA 7’de “**Tablo 1**” + italik başlık, IEEE’de “TABLO I” …).
+ */
+export function reportToMarkdown(r: AnalysisReport, tableNo: number, l: L = "tr", style = "apa7"): string {
+  const caption = captionMarkdown(formatCaption(style, "table", tableNo, r.title, l));
+  const nl = noteLabel(style, l);
+  const note = r.notes.length ? `\n\n${nl.italic ? `*${nl.text}*` : nl.text} ${r.notes.join(" ")}` : "";
+  return `${caption}\n\n${r.table}${note}\n\n${r.text.replace(/Tablo 1|Table 1/g, captionRef(style, "table", tableNo, l))}`;
 }

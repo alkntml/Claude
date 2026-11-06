@@ -1,4 +1,5 @@
 "use client";
+import { captionNodes, formatCaption, maxCaptionNo, noteLabel } from "@/lib/citations/captions";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
 import { academicOrder, chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
@@ -419,18 +420,21 @@ export function Workspace(props: Props) {
     else if (id === "defense") { flush(); setDefenseOpen(true); }
     else if (id === "survey") router.push(`/anketler?proje=${project.id}`);
   }
-  // Şekil: başlık (italik) + görsel + not; imlecin bulunduğu yere eklenir
-  function insertFigure(f: { caption: string; src: string; alt: string; note: string }) {
+  // Şekil (D106): başlık atıf stiline göre (APA 7’de üstte, çoğu stilde altta) + görsel + not; imlecin bulunduğu yere eklenir.
+  // Dışa aktarmada başlık güncel stile göre yeniden biçimlenir.
+  function insertFigure(f: { title: string; src: string; alt: string; note: string }) {
     if (!editor || isBibliography) return;
-    editor.chain().focus().insertContent([
-      { type: "paragraph", content: [{ type: "text", text: f.caption, marks: [{ type: "italic" }] }] },
-      { type: "figure", attrs: { src: f.src, alt: f.alt } },
-      ...(f.note ? [{ type: "paragraph", content: [{ type: "text", text: project.language === "en" ? "Note." : "Not.", marks: [{ type: "italic" }] }, { type: "text", text: ` ${f.note}` }] }] : []),
-    ]).run();
+    const lang = project.language === "en" ? "en" : "tr";
+    const fmt = formatCaption(project.citation_style, "figure", nextFigureNo, f.title, lang);
+    const cap = captionNodes(fmt);
+    const fig = { type: "figure", attrs: { src: f.src, alt: f.alt } };
+    const nl = noteLabel(project.citation_style, lang);
+    const note = f.note ? [{ type: "paragraph", content: [{ type: "text", text: nl.text, ...(nl.italic ? { marks: [{ type: "italic" }] } : {}) }, { type: "text", text: ` ${f.note}` }] }] : [];
+    editor.chain().focus().insertContent(fmt.position === "above" ? [...cap, fig, ...note] : [fig, ...cap, ...note]).run();
   }
-  // Sonraki tablo numarası: tüm bölümlerdeki "Tablo N." / "Table N." başlıklarının en büyüğü + 1
-  const nextFigureNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Şekil|Figure)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
-  const nextTableNo = useMemo(() => 1 + Math.max(0, ...stages.flatMap((st) => [...String(st.content_text ?? "").matchAll(/(?:Tablo|Table)\s+(\d+)\./g)].map((m) => Number(m[1])))), [stages]);
+  // Sonraki numara: tüm bölümlerdeki tablo/şekil başlıklarının (hangi stilde yazılmış olursa olsun) en büyüğü + 1
+  const nextFigureNo = useMemo(() => 1 + Math.max(0, ...stages.map((st) => maxCaptionNo(String(st.content_text ?? ""), "figure"))), [stages]);
+  const nextTableNo = useMemo(() => 1 + Math.max(0, ...stages.map((st) => maxCaptionNo(String(st.content_text ?? ""), "table"))), [stages]);
   // Rehberli tur, başlık seçim penceresi kapandıktan sonra başlar (iki pencere üst üste açılmasın)
   useEffect(() => { if (!titleOpen && !bpOpen && shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 900); return () => clearTimeout(tm); } }, [titleOpen, bpOpen]);
 
@@ -870,8 +874,8 @@ export function Workspace(props: Props) {
         onCoverLetter={(j) => { setJournalOpen(false); askAssistant(t("Dergi: {name}{issn}. Bu dergiye gönderilecek makale için editöre ön yazı (cover letter) hazırla.", { name: j.name, issn: j.issn ? ` (ISSN ${j.issn})` : "" }), "cover_letter"); }}
         onChecklist={() => { setJournalOpen(false); askAssistant(t("Yüklediğim dergi yazar kılavuzuna göre çalışmamın gönderim öncesi kontrol listesini çıkar."), "journal_checklist"); }}
         onUploadGuideline={() => { setJournalOpen(false); setSettings(true); }} />}
-      {analysisOpen && <AnalysisModal open onClose={() => setAnalysisOpen(false)} files={files} language={project.language} tableNo={nextTableNo} onInsert={!isBibliography && editor ? (md) => insertRef.current(md, {}, "append") : undefined} />}
-      {chartOpen && <ChartModal open onClose={() => setChartOpen(false)} files={files} language={project.language} figureNo={nextFigureNo} onInsert={!isBibliography && editor ? insertFigure : undefined} />}
+      {analysisOpen && <AnalysisModal open onClose={() => setAnalysisOpen(false)} files={files} language={project.language} tableNo={nextTableNo} style={project.citation_style} onInsert={!isBibliography && editor ? (md) => insertRef.current(md, {}, "append") : undefined} />}
+      {chartOpen && <ChartModal open onClose={() => setChartOpen(false)} files={files} language={project.language} figureNo={nextFigureNo} style={project.citation_style} onInsert={!isBibliography && editor ? insertFigure : undefined} />}
       {defenseOpen && <DefenseModal open onClose={() => setDefenseOpen(false)} projectId={project.id} language={project.language} />}
       {reviewerOpen && <ReviewerModal open={reviewerOpen} onClose={() => setReviewerOpen(false)} onSubmit={(c) => askAssistant(t("Hakem yorumlarına cevap mektubu hazırla"), "reviewer_response", c)} />}
       {active && reviewOpen && <StageReviewModal open onClose={() => setReviewOpen(false)} stageId={active.id} stageTitle={active.title} onComplete={completeStage} onFix={fixWithAssistant} />}

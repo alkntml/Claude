@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
-import type { AnalysisReport } from "@/lib/stats/apa";
+import { reportToMarkdown, type AnalysisReport } from "@/lib/stats/apa";
 import { Markdown } from "./markdown";
 import { expertUrl } from "@/lib/expert";
 
@@ -26,7 +26,7 @@ const KINDS: { id: Kind; label: string; hint: string }[] = [
   { id: "alpha", label: "Güvenirlik (Cronbach alfa)", hint: "Ölçek maddelerinin iç tutarlılığı" },
 ];
 
-export function AnalysisModal({ open, onClose, files, language, tableNo, onInsert }: { open: boolean; onClose: () => void; files: any[]; language: string; tableNo: number; onInsert?: (md: string) => void }) {
+export function AnalysisModal({ open, onClose, files, language, tableNo, style, onInsert }: { open: boolean; onClose: () => void; files: any[]; language: string; tableNo: number; style: string; onInsert?: (md: string) => void }) {
   const { t } = useT();
   const toast = useToast();
   const dataFiles = useMemo(() => files.filter((f) => /csv|sheet/.test(f.mime_type ?? "") || /\.(csv|xlsx)$/i.test(f.name)), [files]);
@@ -85,7 +85,8 @@ export function AnalysisModal({ open, onClose, files, language, tableNo, onInser
     catch (e) { toast({ tone: "error", title: t("Analiz yapılamadı"), detail: (e as Error).message }); }
     finally { setBusy(false); }
   }
-  const md = report ? `*${lang === "tr" ? "Tablo" : "Table"} ${tableNo}. ${report.title}*\n\n${report.table}${report.notes.length ? `\n\n*${lang === "tr" ? "Not" : "Note"}.* ${report.notes.join(" ")}` : ""}\n\n${report.text.replace(/Tablo 1|Table 1/g, `${lang === "tr" ? "Tablo" : "Table"} ${tableNo}`)}` : "";
+  // D106: tablo başlığı, not etiketi ve tablo göndermesi çalışmanın atıf stiline göre (tablo başlığı her stilde üstte)
+  const md = report ? reportToMarkdown(report, tableNo, lang === "en" ? "en" : "tr", style) : "";
 
   return (
     <Modal open={open} onClose={onClose} title={t("İstatistik analizi")} wide footer={report ? <>

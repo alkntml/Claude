@@ -16,7 +16,7 @@ const ADMIN = "33333333-3333-3333-3333-333333333333";
 const SUPABASE_STUBS = `
 create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;
 create schema auth; create schema storage;
-create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}'::jsonb);
+create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}'::jsonb, email_confirmed_at timestamptz default now());
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 create function auth.role() returns text language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claim.role', true), ''), 'anon') $$;
 create table storage.buckets (id text primary key, name text, public boolean, file_size_limit bigint);
@@ -112,7 +112,7 @@ describe("migration'lar ve seed", () => {
     await db.query(`insert into public.project_stages (project_id, user_id, key, title, word_count, position) values ('${p1.id}', '${U}', 'introduction', 'Giriş', 5000, 0)`);
     await as(U, `update public.projects set title = 'Yapay zekâ destekli kanser tanısı' where id = '${p1.id}'`);
     // Uyarı: indirdikten sonra büyük silme
-    await db.query(`insert into public.usage_events (user_id, kind, meta) values ('${U}', 'export', '{"projectId":"${p1.id}","format":"docx"}')`);
+    await db.query(`insert into public.usage_events (user_id, kind, meta, created_at) values ('${U}', 'export', '{"projectId":"${p1.id}","format":"docx"}', now() - interval '1 second')`);
     await db.query(`update public.project_stages set word_count = 1000 where project_id = '${p1.id}'`);
     const rules = (await db.query<{ action: string }>(`select action from public.activity_log where user_id = '${U}' and kind = 'abuse_alert' order by id`)).rows.map((r) => r.action);
     expect(rules).toEqual(["topic_change", "delete_after_export"]);
@@ -172,6 +172,45 @@ describe("migration'lar ve seed", () => {
     // Geçersiz cihaz değeri yok sayılır
     await db.exec(`delete from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'; delete from public.notifications where user_id = '${A}'; delete from public.user_devices where user_id = '${A}';`);
     await db.exec(`delete from public.profiles where id in ('${S}','${D}','${U}'); delete from auth.users where id in ('${S}','${D}','${U}');`);
+  });
+  it("paket özellikleri (migration 30): ücretsizde PDF, Premium’da öncelikli destek yok, tekrar çalıştırmak güvenli", async () => {
+    const q = async () => (await db.query<{ id: string; ef: string[]; features: string[] }>("select id, limits->'export_formats' as ef, features from public.plans where id in ('free','basic','premium') order by sort_order")).rows;
+    const [free, basic, premium] = await q();
+    expect(free.ef).toContain("pdf");
+    expect(free.features).toContain("TXT / PDF / Markdown dışa aktarma");
+    expect(basic.features).not.toContain("Word / PDF dışa aktarma");
+    expect(premium.features).not.toContain("Öncelikli destek");
+    const f = fs.readdirSync(path.resolve(__dirname, "../supabase/migrations")).find((x) => x.includes("free_pdf_no_priority"))!;
+    await db.exec(fs.readFileSync(path.resolve(__dirname, "../supabase/migrations", f), "utf8"));
+    const again = await q();
+    expect(again[0].ef.filter((x) => x === "pdf")).toHaveLength(1);
+  });
+  it("durum sorgusu (check_status.sql) tüm migration'ları YAPILMIŞ gösterir", async () => {
+    const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/check_status.sql"), "utf8");
+    const res = await db.exec(sql);
+    const rows = res[res.length - 1].rows as Record<string, string>[];
+    expect(rows.length).toBeGreaterThanOrEqual(10);
+    const bad = rows.filter((r) => !Object.values(r).includes("YAPILMIŞ"));
+    expect(bad).toEqual([]);
+  });
+  it("davet ödülü e-posta doğrulaması ve geçici e-posta (migration 29)", async () => {
+    const code = (await db.query<{ referral_code: string }>(`select referral_code from public.profiles where id = '${A}'`)).rows[0].referral_code;
+    const [P, T] = ["00000000-0000-4000-8000-00000000e9a1", "00000000-0000-4000-8000-00000000e9a2"];
+    const credits = async () => (await db.query<{ n: number }>(`select count(*)::int as n from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows[0].n;
+    // Doğrulanmamış e-posta → ödül bekler
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data, email_confirmed_at) values ('${P}', 'p@ornek.com', '{"ref":"${code}","did":"${"1".repeat(64)}"}', null)`);
+    expect(await credits()).toBe(0);
+    expect((await db.query(`select 1 from public.profiles where id = '${P}' and referral_rewarded_at is null`)).rows).toHaveLength(1);
+    // Doğrulanınca verilir
+    await db.exec(`update auth.users set email_confirmed_at = now() where id = '${P}'`);
+    expect(await credits()).toBe(2);
+    // Geçici e-posta (alt alan adı dahil) → ödül yok, bilgi bildirimi
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${T}', 'x@mail.yopmail.com', '{"ref":"${code}","did":"${"2".repeat(64)}"}')`);
+    expect(await credits()).toBe(2);
+    const kinds = (await db.query<{ kind: string }>(`select kind from public.notifications where user_id = '${A}' order by id`)).rows.map((r) => r.kind);
+    expect(kinds).toEqual(["referral_reward", "referral_disposable_email"]);
+    expect((await db.query(`select 1 from public.profiles where id = '${T}' and referral_rewarded_at is not null`)).rows).toHaveLength(1);
+    await db.exec(`delete from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'; delete from public.notifications where user_id = '${A}'; delete from public.profiles where id in ('${P}','${T}'); delete from auth.users where id in ('${P}','${T}');`);
   });
   it("davet ödülü (migration 23): kayıt anında yalnızca davet edene, Ücretsiz paket kadar, bir kez", async () => {
     const code = (await db.query<{ referral_code: string }>(`select referral_code from public.profiles where id = '${A}'`)).rows[0].referral_code;

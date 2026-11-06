@@ -1,6 +1,39 @@
 import type { NextConfig } from "next";
 
+/**
+ * İçerik Güvenlik Politikası (CSP, D106): betik, stil, bağlantı ve çerçeve kaynakları kendi alan adımızla sınırlı.
+ * Tarayıcıdan dışarıya giden tek bağlantı Supabase (giriş/oturum). Yazı tipleri next/font ile kendi alan adımızdan gelir.
+ * Next.js’in sayfa içi başlatma betikleri için 'unsafe-inline' gerekir; geliştirmede hızlı yenileme için 'unsafe-eval'.
+ */
+function contentSecurityPolicy(): string {
+  let supabase = "https://*.supabase.co";
+  try {
+    const u = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
+    supabase = `${u.origin} wss://${u.host}`;
+  } catch { /* yapılandırılmamış: genel Supabase alan adı */ }
+  const dev = process.env.NODE_ENV !== "production";
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    `connect-src 'self' ${supabase} https://*.supabase.co wss://*.supabase.co${dev ? " ws:" : ""}`,
+    "media-src 'self' blob:",
+    "worker-src 'self' blob:",
+    "manifest-src 'self'",
+    "frame-src 'none'",
+    "frame-ancestors 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    ...(dev ? [] : ["upgrade-insecure-requests"]),
+  ].join("; ");
+}
+
 const securityHeaders = [
+  { key: "Content-Security-Policy", value: contentSecurityPolicy() },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

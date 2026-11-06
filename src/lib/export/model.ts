@@ -3,6 +3,7 @@
  * biçimden bağımsız bloklar. DOCX, PDF, Markdown ve TXT işleyicileri bu modeli kullanır.
  */
 import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocale, type Rich } from "@/lib/citations";
+import { formatCaption, noteLabel, parseCaption, parseNote, type ParsedCaption } from "@/lib/citations/captions";
 import { citedIdsInOrder, citationAttrs, type JSONNode } from "@/lib/editor/doc";
 import { stageDef } from "@/lib/workflows";
 import { chapterGroup, sameHeading, sectionTitle, UNNUMBERED } from "@/lib/workflows/structure";
@@ -22,7 +23,8 @@ export type Block =
   | { kind: "paragraph"; runs: Run[]; quote?: boolean }
   | { kind: "list"; ordered: boolean; items: Run[][] }
   | { kind: "table"; rows: Run[][][]; header: boolean }
-  | { kind: "caption"; runs: Run[] }
+  /** Tablo/şekil başlığı: satırlar ve hizalama projenin atıf stiline göre (D106, citations/captions.ts) */
+  | { kind: "caption"; lines: Run[][]; align: "left" | "center" }
   | { kind: "image"; src: string; width: number; height: number; alt: string };
 
 /** base64 → bayt (sunucuda Buffer, tarayıcıda atob) */
@@ -88,6 +90,8 @@ export function buildExportDoc(params: {
   const firstSeen = new Set<string>();
 
   const blocks: Block[] = [];
+  /** Tablo/şekil başlığı olabilecek paragraflar (komşu tablo/şekle göre sonradan karar verilir) */
+  const capOf = new Map<Block, ParsedCaption>();
   const toc: ExportDoc["toc"] = [];
   let chapter = 0;
 
@@ -158,8 +162,12 @@ export function buildExportDoc(params: {
       }
       case "paragraph": {
         const runs = inlineRuns(n.content);
-        const isCaption = /^(Tablo|Şekil|Table|Figure)\s+\d+/.test(runs.map((r) => r.text).join(""));
-        if (runs.some((r) => r.text.trim() || r.footnote)) blocks.push(isCaption ? { kind: "caption", runs } : { kind: "paragraph", runs });
+        if (runs.some((r) => r.text.trim() || r.footnote)) {
+          const blk: Block = { kind: "paragraph", runs };
+          const cap = runs.some((r) => r.footnote) ? null : parseCaption(runsToPlain(runs));
+          if (cap) capOf.set(blk, cap);
+          blocks.push(blk);
+        }
         break;
       }
       case "blockquote":
@@ -218,6 +226,7 @@ export function buildExportDoc(params: {
     }
   }
 
+  const arranged = arrangeCaptions(blocks, capOf, String(project.citation_style ?? "apa7"), locale);
   const bib = engine.bibliography(order);
   const meta = engine.meta;
   return {
@@ -230,7 +239,7 @@ export function buildExportDoc(params: {
     styleLabel: meta.label,
     numberHeadings: doNumber,
     toc,
-    blocks,
+    blocks: arranged,
     bibliographyTitle: meta.bibliographyTitle[locale],
     bibliography: bib.map((b) => ({ number: b.number, rich: b.rich })),
     numericBibliography: meta.family === "numeric",
@@ -240,4 +249,66 @@ export function buildExportDoc(params: {
 
 export function runsToPlain(runs: Run[]): string {
   return runs.map((r) => (r.footnote ? "" : r.text)).join("");
+}
+
+const isTarget = (b: Block | undefined): b is Extract<Block, { kind: "table" | "image" }> => !!b && (b.kind === "table" || b.kind === "image");
+
+/**
+ * Tablo ve şekil başlıklarını atıf stiline göre biçimlendirir ve konumlandırır (D106). Bir paragraf ancak bir tablo
+ * veya şeklin hemen önünde/arkasında duruyorsa başlık sayılır; başlık kalıbı (Tablo 1. …, APA 7’nin iki satırlı
+ * biçimi, IEEE’nin TABLO I biçimi…) hangi stilde yazılmış olursa olsun güncel stile çevrilir. Hemen ardından gelen
+ * “Not.”/“Not:” paragrafının etiketi de stile uyarlanır.
+ */
+export function arrangeCaptions(blocks: Block[], capOf: Map<Block, ParsedCaption>, style: string, lang: CiteLocale): Block[] {
+  const out: Block[] = [];
+  const plain = (b: Block) => (b.kind === "paragraph" ? runsToPlain(b.runs) : "");
+  const make = (kind: "table" | "figure", no: number, title: string) => {
+    const f = formatCaption(style, kind, no, title, lang);
+    return { pos: f.position, block: { kind: "caption", lines: f.lines.map((l) => l.map((r) => ({ text: r.text, bold: r.bold, italic: r.italic }))), align: f.align } as Block };
+  };
+  const pushNotes = (from: number): number => {
+    let i = from;
+    while (i < blocks.length && blocks[i].kind === "paragraph" && parseNote(plain(blocks[i])) !== null && !capOf.has(blocks[i])) {
+      const rest = parseNote(plain(blocks[i]))!;
+      const lbl = noteLabel(style, lang);
+      out.push({ kind: "paragraph", runs: [{ text: lbl.text, italic: lbl.italic }, { text: rest ? ` ${rest}` : "" }] });
+      i++;
+    }
+    return i;
+  };
+  const place = (pos: "above" | "below", cap: Block, target: Block) => { if (pos === "above") out.push(cap, target); else out.push(target, cap); };
+  let i = 0;
+  while (i < blocks.length) {
+    const b = blocks[i];
+    const cap = capOf.get(b);
+    if (cap) {
+      // Başlık hedefin üstünde (APA 7’de iki satır olabilir: “Tablo 1” + başlık paragrafı)
+      let j = i + 1, title = cap.title;
+      if (cap.labelOnly && blocks[j]?.kind === "paragraph" && !capOf.has(blocks[j]) && isTarget(blocks[j + 1])) { title = plain(blocks[j]).trim(); j++; }
+      const target = blocks[j];
+      if (isTarget(target)) {
+        const c = make(target.kind === "image" ? "figure" : "table", cap.no, title);
+        place(c.pos, c.block, target);
+        i = pushNotes(j + 1);
+        continue;
+      }
+    }
+    if (isTarget(b)) {
+      // Başlık hedefin altında (şekil altı yazılmış başlık)
+      const next = blocks[i + 1];
+      const nc = next ? capOf.get(next) : undefined;
+      const afterIsTarget = isTarget(blocks[i + 2]) || (nc?.labelOnly && isTarget(blocks[i + 3]));
+      if (nc && !afterIsTarget) {
+        let j = i + 2, title = nc.title;
+        if (nc.labelOnly && blocks[j]?.kind === "paragraph" && !capOf.has(blocks[j])) { title = plain(blocks[j]).trim(); j++; }
+        const c = make(b.kind === "image" ? "figure" : "table", nc.no, title);
+        place(c.pos, c.block, b);
+        i = pushNotes(j);
+        continue;
+      }
+    }
+    out.push(b);
+    i++;
+  }
+  return out;
 }

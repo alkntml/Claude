@@ -1,5 +1,6 @@
 import "server-only";
 import { sharesDevice } from "@/lib/devices";
+import { isDisposableEmail } from "@/lib/disposable-email";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSetting } from "@/lib/settings";
 import { adminClient } from "@/lib/supabase/admin";
@@ -110,9 +111,10 @@ export async function attachReferral(userId: string, code: string, createdAt: st
 }
 
 /**
- * Davet ödülü (D99): yalnızca davet edene, davet edilen kaydolduğunda (e-posta doğrulaması beklenmez) bir kez verilir.
- * Asıl iş veritabanı tetikleyicisinde (migration 23, kayıt anında); bu fonksiyon tetikleyici kurulmamışsa ilk girişte
- * aynı kuralla yedek olarak çalışır. Aynı davet için çift ödül olmaz (referral_rewarded_at önce işaretlenir).
+ * Davet ödülü (D99, D106): yalnızca davet edene, davet edilen kişi e-postasını doğruladığında bir kez verilir;
+ * tek kullanımlık e-posta adresleri ve davet edenin cihazından açılan hesaplar ödül kazandırmaz.
+ * Asıl iş veritabanı tetikleyicisinde (migration 29); bu fonksiyon cihaz bilgisi kayıtta olmayan hesaplar (sosyal giriş)
+ * için ilk girişte aynı kuralla çalışır. Aynı davet için çift ödül olmaz (referral_rewarded_at önce işaretlenir).
  */
 export async function grantReferralReward(userId: string, device?: string | null): Promise<boolean> {
   const cfg = await getSetting("referral");
@@ -121,8 +123,15 @@ export async function grantReferralReward(userId: string, device?: string | null
   try {
     const { data: p } = await db.from("profiles").select("id, referred_by, referral_rewarded_at").eq("id", userId).maybeSingle();
     if (!p?.referred_by || p.referral_rewarded_at || p.referred_by === userId) return false;
+    // D106: e-posta doğrulanmadan karar verilmez (sonraki girişte veya doğrulama tetikleyicisinde yeniden denenir)
+    const { data: au } = await db.auth.admin.getUserById(userId);
+    if (!au?.user?.email_confirmed_at) return false;
     const { data: claimed } = await db.from("profiles").update({ referral_rewarded_at: new Date().toISOString() }).eq("id", userId).is("referral_rewarded_at", null).select("id");
     if (!claimed?.length) return false;
+    if (isDisposableEmail(au.user.email)) {
+      await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_disposable_email", data: {} }).then(() => undefined, () => undefined);
+      return true;
+    }
     // D101: davet edenin kullandığı bir cihazdan açılan hesap için ödül verilmez
     if (await sharesDevice(p.referred_by, userId, device).catch(() => false)) {
       await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_same_device", data: {} }).then(() => undefined, () => undefined);

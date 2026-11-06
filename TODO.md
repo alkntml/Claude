@@ -1,7 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] Supabase SQL Editor’de `20261121000026_activity_log.sql` (kullanım kanıt kaydı, D102)
+- [x] (2026-11-06) Migration 22–26 canlıda doğrulandı (check_status: hepsi YAPILMIŞ); 23/24 yeniden çalıştırılmamalı (25’teki cihaz önlemini geri alır)
 - [x] (2026-11-06) Migration 24 (bildirim kutusu) ve Ücretsiz kart PDF metni geri yüklendi
-- [ ] Supabase SQL Editor’de `20261120000025_referral_device_guard.sql` (davette aynı cihaz önlemi, D101)
 - [x] (2026-11-06) Migration 22 (paket vaatleri) ve 23 (davet ödülü) çalıştırıldı
 - [ ] Canlıda dene: kurgusu onaylı bir çalışmada alt başlığa girip “Bölümü yaz”; yanıtın altındaki “Taslak X kelime (hedef Y)” satırını kontrol et (D97)
 - [ ] Yönetim → Ayarlar → Kârlılık’ta dolar kurunu güncelle (Maliyet sağlığı 30 günü geçince uyarır)

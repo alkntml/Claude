@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- Canlı veritabanı: migration 22–26 çalıştırıldı ve doğrulandı (2026-11-06)
 - D102: kullanım kanıt kaydı (yapay zekâ çıktıları + silmeler, yönetimde kullanıcı geçmişi; migration 26)
 - D101: davet ödülünde aynı cihaz önlemi (cihaz kimliği özeti, migration 25)
 - D100: bildirim kutusu (zil simgesi); davet ödülü bildirimi (migration 24)

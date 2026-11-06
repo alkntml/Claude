@@ -59,3 +59,23 @@ describe("rehber kapsamı (D93)", () => {
     expect(HELP_SYSTEM).toContain("yöneticiye özel");
   });
 });
+
+import { APP_GUIDE_SHORT } from "@/lib/ai/help";
+import { FALLBACK_PLANS } from "@/lib/plans-fallback";
+
+describe("paket vaatleri ve kısa rehber (D96)", () => {
+  it("ana asistana giden kısa rehber tam rehberin küçük bir kısmı ve temel menüleri içerir", () => {
+    expect(APP_GUIDE_SHORT.length).toBeLessThan(APP_GUIDE.length / 5);
+    for (const k of ["Grafik oluştur", "Dışa aktar", "Dosyalarım", "Kaynak ara"]) expect(APP_GUIDE_SHORT).toContain(k);
+  });
+  it("paket kartları aylık sayfa vaadini içerir; belirsiz ve sayısal tarama ifadeleri yok", () => {
+    const f = Object.fromEntries(FALLBACK_PLANS.map((p) => [p.id, p.features.join(" | ")]));
+    expect(f.free).toContain("5 sayfa");
+    expect(f.basic).toContain("25 sayfa");
+    expect(f.pro).toContain("50 sayfa");
+    expect(f.premium).toContain("85 sayfa");
+    expect(f.pro + f.premium).not.toMatch(/2\.000|8\.000|En yüksek yapay zekâ/);
+    expect(f.pro).toContain("Sınırsız kaynak taraması (adil kullanım)");
+  });
+  it("rehber paket başına sayfa bilgisini verir", () => expect(APP_GUIDE).toContain("Premium 85 sayfa"));
+});

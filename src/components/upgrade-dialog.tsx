@@ -9,7 +9,7 @@ import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
 import { PLAN_RANK, whatsappLink } from "@/lib/pricing";
 import { usePrice } from "@/components/price-context";
 
-interface PlanRow { id: string; name: string; price_monthly: number; limits: { ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
+interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
 interface PlansData { current: string; email: string; memberNo?: string; plans: PlanRow[] }
 
 const TITLES: Record<string, string> = {
@@ -63,9 +63,11 @@ export function UpgradeDialogHost() {
 
   const num = (n: number | null) => (n == null ? null : n.toLocaleString(dl));
   const storage = (mb: number | null) => (mb == null ? t("Sınırsız depolama") : mb >= 1000 ? t("{n} GB depolama", { n: Math.round(mb / 1000) }) : t("{n} MB depolama", { n: mb }));
+  // D96: önce müşterinin anladığı birim (sayfa); tarama sınırı 1.000’in üstündeyse adil kullanımla sınırsız
   const lines = (p: PlanRow) => [
+    ...(p.limits.pages_month ? [t("Ayda yaklaşık {n} sayfa akademik metin", { n: num(p.limits.pages_month) })] : []),
     p.limits.ai_requests_month == null ? t("Sınırsız yapay zekâ isteği") : t("Aylık {n} yapay zekâ isteği", { n: num(p.limits.ai_requests_month) }),
-    p.limits.source_searches_month == null ? t("Sınırsız kaynak taraması") : t("Aylık {n} kaynak taraması", { n: num(p.limits.source_searches_month) }),
+    p.limits.source_searches_month == null ? t("Sınırsız kaynak taraması") : p.limits.source_searches_month >= 1000 ? t("Sınırsız kaynak taraması (adil kullanım)") : t("Aylık {n} kaynak taraması", { n: num(p.limits.source_searches_month) }),
     p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: p.limits.projects }),
     storage(p.limits.storage_mb),
   ];

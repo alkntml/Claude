@@ -140,6 +140,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
   const { t } = useT();
   const price = usePrice();
   return (
+    <>
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {plans.map((p, i) => {
         const featured = p.id === "pro";
@@ -165,6 +166,9 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
       })}
       <FadeIn delay={plans.length * 0.06}><TeamCard plans={plans} /></FadeIn>
     </div>
+    {/* D96: sayfa vaadinin tanımı (analiz D95) */}
+    <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-relaxed text-ink-400">{t("“Sayfa”: Türk tez biçiminde (Times New Roman 12 punto, 1,5 satır aralığı) yapay zekâ desteğiyle yazılan ana metin sayfası; kapak, içindekiler, kaynakça ve ekler sayılmaz. Değerler yaklaşıktır: taslakları sık yeniden yazdırmak daha az, verimli kullanım daha fazla sayfa sağlar.")}</p>
+    </>
   );
 }
 

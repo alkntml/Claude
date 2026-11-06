@@ -259,6 +259,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "ne-kadar-yazabilirim",
+        q: { tr: "Bir pakette ayda ne kadar yazabilirim?", en: "How much can I write per month on a plan?" },
+        a: {
+          tr: "Yaklaşık olarak Ücretsiz pakette 5 sayfalık deneme taslağı, **Basic’te ayda 25**, **Pro’da ayda 50**, **Premium’da ayda 85 sayfa** yapay zekâ destekli akademik metin yazabilirsiniz. Sayfa, Türk tez biçiminde (12 punto, 1,5 satır aralığı) ana metin sayfasıdır; kapak, içindekiler, kaynakça ve ekler sayılmaz. Taslakları sık yeniden yazdırırsanız daha az, verimli kullanırsanız daha fazla sayfa çıkar. Örneğin bir yüksek lisans tezinin ana metni (yaklaşık 80 sayfa) Pro pakette 1–2 ayda yazılabilir.",
+          en: "Roughly: a 5-page trial draft on Free, **25 pages a month on Basic**, **50 on Pro** and **85 on Premium** of AI-assisted academic text. A page is a main-text page in Turkish thesis format (12 pt, 1.5 line spacing); cover, table of contents, references and appendices are not counted. Frequent regeneration of drafts gives fewer pages, efficient use gives more. For example, the main text of a master’s thesis (about 80 pages) can be written in 1–2 months on Pro.",
+        },
+      },
+      {
         id: "limit",
         q: { tr: "Aylık limitim dolarsa ne olur? Çalışmalarım silinir mi?", en: "What happens if I hit my monthly limit? Is my work deleted?" },
         a: {

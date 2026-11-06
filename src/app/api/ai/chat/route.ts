@@ -6,7 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
 import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { compactHistory, HISTORY_LIMIT } from "@/lib/ai/history";
-import { APP_GUIDE, HELP_SYSTEM, isHelpQuestion } from "@/lib/ai/help";
+import { APP_GUIDE_SHORT, HELP_SYSTEM, isHelpQuestion } from "@/lib/ai/help";
 import type { Usage } from "@/lib/ai/types";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
@@ -134,7 +134,7 @@ export const POST = route("ai.chat", async (req) => {
 
   const stagePrompt = stage ? stagePrompts[stage.key] : undefined;
   // Sistem talimatı her istekte aynıdır (önbellek, D78); bölüme özel talimat değişken bağlama girer
-  const system = [sysSetting.text, OUTPUT_PROTOCOL, `KULLANIM SORULARI (önemli): Kullanıcı bir işi nasıl veya nerede yapacağını sorarsa ya da grafik, şekil, istatistik analizi, anket, dışa aktarma, içe aktarma, paylaşma gibi platformdaki bir araçla yapılan bir iş isterse ÖNCE bunun Academiana içinde nasıl yapılacağını aşağıdaki rehberden adım adım, düğme adlarıyla anlat (ör. “Üstte Araçlar → Grafik oluştur → …”). SPSS, Excel, jamovi, R, Canva gibi dış programları kullanıcı açıkça istemedikçe ÖNERME. Rehberde olmayan menü veya düğme adı uydurma.\n\n${APP_GUIDE}`].filter(Boolean).join("\n\n");
+  const system = [sysSetting.text, OUTPUT_PROTOCOL, `KULLANIM SORULARI (önemli): Kullanıcı bir işi nasıl veya nerede yapacağını sorarsa ya da grafik, şekil, istatistik analizi, anket, dışa aktarma, içe aktarma, paylaşma gibi platformdaki bir araçla yapılan bir iş isterse ÖNCE bunun Academiana içinde nasıl yapılacağını aşağıdaki rehberden adım adım, düğme adlarıyla anlat (ör. “Üstte Araçlar → Grafik oluştur → …”). SPSS, Excel, jamovi, R, Canva gibi dış programları kullanıcı açıkça istemedikçe ÖNERME. Rehberde olmayan menü veya düğme adı uydurma.\n\n${APP_GUIDE_SHORT}`].filter(Boolean).join("\n\n");
   // Geçmişteki eski taslaklar kısa notla özetlenir; bölümün güncel metni zaten bağlamda (D78)
   const messages = [...compactHistory((history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: userContent }];
 

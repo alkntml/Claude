@@ -440,3 +440,12 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - 44 gerçek tam metin (24 DergiPark, 12 Europe PMC, 8 arXiv tezi) ölçüldü; sistemin bağlam boyutu gerçek kodla, sayfa yoğunluğu sistemin Word çıktısıyla ölçüldü (Türk tez biçimi 344 kelime/sayfa). Veriler, betikler ve rapor `docs/cost-analysis/` (özet README.md).
 - Temel sonuç: tez biçiminde sayfa başı $0,094–0,15; YL tezi $7,6–12,2, doktora $14,7–23,4; ortalama yazım isteği ~$0,086. 1/3 bütçeyle önerilen vaat: Basic ~25, Pro ~50, Premium ~85 sayfa/ay; mevcut istek sınırları (40/75/125) kötümser senaryoda bile bütçeyle uyumlu.
 - Bulunan 7 tutarsızlık (matrisin kaynak başına istek sayması, kartlarda yazım miktarı olmaması, anlamsız tarama sayıları, belirsiz Premium ifadesi, düşük avg_request_usd, APP_GUIDE’ın her istekte gitmesi, kur bağımlılığı) README’de; paket değişiklikleri kullanıcı kararıyla yapılacak.
+
+### D96 — Paket vaatleri ve analizdeki önerilerin uygulanması (D95)
+- Paket kartları (migration 22 + `plans-fallback.ts`): aylık yazım miktarı Türk tez biçiminde sayfa olarak: Ücretsiz ~5 sayfa deneme, Basic ~25, Pro ~50, Premium ~85 sayfa/ay (yoğun kullanım profiline göre aşağı yuvarlanmış; 1/3 bütçeyi aşmaz). `limits.pages_month` bilgi amaçlı (yükseltme penceresi gösterir; yönetimden düzenlenebilir). Fiyat kartlarının altında “sayfa” tanımı; SSS’ye “Bir pakette ayda ne kadar yazabilirim?”.
+- Pro/Premium: “Sınırsız kaynak taraması (adil kullanım)”; 2.000/8.000 sınırı adil kullanım koruması olarak veritabanında kalır. Premium’daki “En yüksek yapay zekâ kullanım hakkı” kaldırıldı.
+- Literatür matrisi istek hakkından düşmez (quantity 0); yalnızca maliyet ve token tavanına bakılır (`assertWithinLimits(..., { costOnly: true })`). Maliyet yine kaydedilir.
+- `billing.margin.avg_request_usd` 0,07 → 0,09 (ölçülen ortalama). Migration kur ayarının `updated_at` değerine dokunmaz.
+- Ana asistana tam kullanım rehberi (~12 bin karakter) yerine kısa rehber (`APP_GUIDE_SHORT`, ~1,2 bin) gider; tam rehber yalnızca kullanım sorusu yolunda (Haiku). Yazım isteği başına ~%5–8 tasarruf.
+- Kur hatırlatıcısı: Yönetim → Maliyet sağlığı, `billing.margin` 30 günden uzun süredir güncellenmediyse uyarır.
+- İstek sınırları (40/75/125) değişmedi: analizde kötümser senaryoda bile 1/3 bütçeyle uyumlu bulundu.

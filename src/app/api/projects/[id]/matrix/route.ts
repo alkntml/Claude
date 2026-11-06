@@ -37,7 +37,7 @@ export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
       out.push(data);
       continue;
     }
-    await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+    await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request", { costOnly: true });
     let material = src.access_level !== "metadata" && src.abstract ? `ÖZET:\n${String(src.abstract).slice(0, 3000)}` : "";
     if (src.access_level === "full_text") {
       const { data: chunks } = await s.supabase.from("source_chunks").select("content, page_hint, chunk_index").eq("source_id", src.id).order("chunk_index").limit(1500);
@@ -54,7 +54,7 @@ purpose: çalışmanın amacı · method: desen/yöntem/analiz · sample: örnek
       maxTokens: 900, effort: "low", jsonSchema: SCHEMA,
     });
     // Maliyet, sonraki adımlar hata verse de kaybolmasın diye hemen kaydedilir (D94)
-    await recordUsage(s.user.id, "ai_request", { usage: res.usage, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "literature_matrix", sourceId: src.id } });
+    await recordUsage(s.user.id, "ai_request", { quantity: 0, usage: res.usage, costUsd: await estimateCost(res.model, res.usage.input, res.usage.output, res.usage), provider: model.provider, model: res.model, meta: { action: "literature_matrix", sourceId: src.id } });
     let parsed: Record<string, string> = {};
     try { parsed = JSON.parse(res.text); } catch { /* boş bırak */ }
     const summary = { ...parsed, basedOn: src.access_level, generatedAt: new Date().toISOString() };

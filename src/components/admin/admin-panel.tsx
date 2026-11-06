@@ -155,6 +155,7 @@ function CostHealth({ h, days, usdTry }: { h: any; days: number; usdTry?: number
         <StatTile label="Önbellek tasarrufu" value={usd(h.cache.savingsUsd)} sub={`girdinin %${h.cache.hitRate}’i önbellekten · ${days} gün`} />
       </div>
       {avgOver && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-[13px] text-amber-900">Gerçek ortalama istek maliyeti, paket sınırlarının hesaplandığı varsayımdan %15’ten fazla yüksek. Ayarlar → Kârlılık’taki “ortalama istek maliyeti”ni güncellemeyi veya paket sınırlarını gözden geçirmeyi düşünün.</p>}
+      {h.fx?.stale && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-[13px] text-amber-900">Dolar kuru ayarı ({h.fx.usdTry} TL) {h.fx.ageDays != null ? `${h.fx.ageDays} gündür` : "uzun süredir"} güncellenmedi. Paket bütçeleri ve sayfa vaatleri bu kura göre hesaplanıyor; kur yükseldiyse gerçek maliyet payı 1/3’ü aşar. Ayarlar → Kârlılık’tan güncel kuru girin (kur her %10 arttığında vaat edilebilecek sayfa ~%9 düşer).</p>}
       {h.unpriced?.length > 0 && <p className="mt-3 rounded-xl bg-amber-50 p-3 text-[13px] text-amber-900">Fiyat tablosunda birebir karşılığı olmayan model(ler): <span className="font-mono">{h.unpriced.join(", ")}</span>. Maliyetleri aynı ailenin fiyatından (ör. Opus) veya en yüksek fiyattan tahmin edildi; Ayarlar’daki fiyat tablosuna ekleyin.</p>}
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <div className="space-y-1.5 text-[13px]">

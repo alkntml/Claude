@@ -197,7 +197,7 @@ export async function isAdminUser(userId: string): Promise<boolean> {
   return v;
 }
 
-export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string; projectId?: string } = {}) {
+export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string; projectId?: string; costOnly?: boolean } = {}) {
   if (await isAdminUser(userId).catch(() => false)) return;
   await rateLimit(userId, kind);
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
@@ -205,7 +205,8 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
   // D81: hak dolunca çalışma kilitlenmez; yalnızca ilgili işlem (yapay zekâ / kaynak tarama) durur.
   // Görüntüleme, elle düzenleme ve indirme her zaman açıktır.
   if (kind === "ai_request") {
-    if (over(usage.ai_requests, limits.ai_requests_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
+    // costOnly: haktan düşmeyen ucuz işlemler (ör. literatür matrisi, D96) yalnızca maliyet ve token tavanına bakar
+    if (!extra.costOnly && over(usage.ai_requests, limits.ai_requests_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
     if (over(usage.tokens, limits.tokens_month)) throw new ApiError(402, "Bu ayki token limitinize ulaştınız.", "limit_tokens");
     // Maliyet tavanı (D52) kullanıcıya “yapay zekâ hakkı” olarak görünür
     if (over(usage.cost_usd ?? 0, limits.cost_usd_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");

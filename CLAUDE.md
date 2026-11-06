@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 342 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 345 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -61,7 +61,7 @@ src/lib/
   editor/sections.ts     Bölüm içi alt başlıklar (D83): sectionTree (numaralı ağaç), sectionDoc/replaceSectionBody (alt başlığa odaklanma), addSubheadings; arayüz components/workspace/subheadings.tsx
   import/                Word’den içe aktarma (D87): html-doc.ts (mammoth HTML → düğüm), references.ts (kaynakça ayrıştırma, atıf bağlama, başlık oturtma), server.ts
   memory-learn.ts        Hafızaya belgeden öğren (D88)
-  ai/help.ts             Asistanın kullanım rehberi + kullanım sorusu tanıma (D93); menü/özellik değişince güncelle
+  ai/help.ts             Asistanın kullanım rehberi (APP_GUIDE yalnız kullanım sorusu yolunda; ana asistana APP_GUIDE_SHORT, D96) + kullanım sorusu tanıma (D93); menü/özellik değişince güncelle
   tools/                 Ücretsiz araçlar (D90): index (liste), sample-size, table-parse, server (künye bulma, uydurma kaynak kontrolü); arayüz components/tools, sayfalar app/araclar
   analytics.ts insights.ts  Çerezsiz ölçüm + araç kullanım kaydı; yönetim maliyet/ziyaret özetleri (D90); grafikler components/ui/charts.tsx
   quality/checks.ts      Kural tabanlı kalite kontrol

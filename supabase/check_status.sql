@@ -19,4 +19,6 @@ union all select '19 ISNAD atıf stili',
 union all select '20 Çalışma kilidini kaldırma',
   case when exists (select 1 from pg_proc where proname = 'work_locked' and prosrc ilike '%select false%') then 'YAPILMIŞ' else 'EKSİK' end
 union all select '21 Ücretsiz araçlar ve ölçüm',
-  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'analytics_events') then 'YAPILMIŞ' else 'EKSİK' end;
+  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'analytics_events') then 'YAPILMIŞ' else 'EKSİK' end
+union all select '22 Paket vaatleri (sayfa/ay)',
+  case when exists (select 1 from public.plans where id = 'pro' and limits ? 'pages_month') then 'YAPILMIŞ' else 'EKSİK' end;

@@ -13,7 +13,7 @@ export const GET = route("account.plans", async () => {
     const l = (p.limits ?? {}) as Record<string, unknown>;
     return {
       id: p.id as string, name: p.name as string, price_monthly: Number(p.price_monthly),
-      limits: { ai_requests_month: l.ai_requests_month ?? null, source_searches_month: l.source_searches_month ?? null, projects: l.projects ?? null, storage_mb: l.storage_mb ?? null, export_formats: l.export_formats ?? null },
+      limits: { pages_month: l.pages_month ?? null, ai_requests_month: l.ai_requests_month ?? null, source_searches_month: l.source_searches_month ?? null, projects: l.projects ?? null, storage_mb: l.storage_mb ?? null, export_formats: l.export_formats ?? null },
     };
   });
   return json({ current: s.profile.plan_id, email: s.profile.email ?? s.user.email ?? "", memberNo: memberCode(s.profile.member_no), plans });

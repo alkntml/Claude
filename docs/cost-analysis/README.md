@@ -52,7 +52,7 @@ Amaç: abonelik paketlerinde müşteriye 1/3 maliyet payıyla (API maliyeti ≤ 
 
 Vaatler yoğun profile göre 5’e aşağı yuvarlandı (sık yeniden yazdıran kullanıcıda bile bütçe aşılmaz). Sayfa = Türk tez biçiminde ana metin; kapak, içindekiler, kaynakça, ekler yapay zekâ maliyeti doğurmaz.
 
-## Bulunan tutarsızlıklar (karar bekliyor)
+## Bulunan tutarsızlıklar (D96’da hepsi uygulandı, Kasım 2026)
 1. Literatür matrisi kaynak başına 1 istek sayıyor: 40 kaynak = Pro hakkının %53’ü, gerçek maliyet < $0,05.
 2. Paket kartlarında yazım miktarı yok (D49’dan beri istek sayısı da gösterilmiyor).
 3. “Aylık 2.000 / 8.000 kaynak taraması” hiç dolmaz, Pro–Premium farkı yaratmaz (tarama ücretsiz veri tabanları; maliyeti ~0).

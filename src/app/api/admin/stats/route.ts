@@ -43,11 +43,15 @@ export const GET = route("admin.stats", async (req) => {
   ]);
   // Ücretsiz araçların yapay zekâ maliyeti (D90) de gerçek harcamadır: toplamlara ve kâr hesabına katılır (D94).
   // Tablo henüz kurulmadıysa (migration 21) boş kabul edilir.
-  const [toolRows, toolMonth, models] = await Promise.all([
+  const [toolRows, toolMonth, models, fxRow] = await Promise.all([
     allRows<{ cost_usd: number; tokens_in: number; tokens_out: number; model: string | null; created_at: string }>((a, b) => db.from("tool_usage").select("cost_usd, tokens_in, tokens_out, model, created_at").gte("created_at", since).gt("cost_usd", 0).order("id").range(a, b)),
     allRows<{ cost_usd: number }>((a, b) => db.from("tool_usage").select("cost_usd").gte("created_at", monthStart()).gt("cost_usd", 0).order("id").range(a, b)),
     getSetting("ai.models"),
+    // Kur hatırlatıcısı (D96): bütçe ve sayfa vaadi kura bağlı; ayar 30 günden eskiyse uyarı
+    db.from("app_settings").select("updated_at").eq("key", "billing.margin").maybeSingle(),
   ]);
+  const fxUpdatedAt = (fxRow.data?.updated_at as string | undefined) ?? null;
+  const fxAgeDays = fxUpdatedAt ? Math.floor((Date.now() - new Date(fxUpdatedAt).getTime()) / 86400_000) : null;
 
   const byDay: Record<string, { ai: number; search: number; cost: number; tokens: number }> = {};
   const byModel: Record<string, { requests: number; tokens: number; cost: number }> = {};
@@ -115,6 +119,7 @@ export const GET = route("admin.stats", async (req) => {
       ...health,
       toolCost: Math.round(toolRows.reduce((a, t) => a + Number(t.cost_usd), 0) * 10000) / 10000,
       assumedAvgRequestUsd: margin.avg_request_usd,
+      fx: { usdTry: margin.usd_try, updatedAt: fxUpdatedAt, ageDays: fxAgeDays, stale: fxAgeDays == null || fxAgeDays > 30 },
       monthUsd: Math.round(monthUsd * 100) / 100,
       monthProjectionUsd: monthProjection(monthUsd),
       topUsers: top.map(([id, cost]) => ({ id, cost: Math.round(cost * 1000) / 1000, name: prof.get(id)?.full_name || prof.get(id)?.email || id.slice(0, 8), plan: prof.get(id)?.plan_id ?? "?" })),

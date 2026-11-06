@@ -77,10 +77,22 @@ D) ADIM ADIM SIK İŞLER
 - Eski sürüme dönmek: sağdaki Geçmiş sekmesi → sürüm → “Geri yükle”.
 - Kaynak doğrulamak: atfa tıklayıp “Kaynakta doğrula” ya da Kaynaklar’da “Doğrula”.
 - Hak/kota: Kontrol paneli → “Kullanım durumu” veya Hesap ve abonelik → “Bu ayki kullanım”; haklar her ayın başında yenilenir; hak dolsa da çalışmalar açılır, düzenlenir ve indirilir.
+- Paket başına aylık yazım (yaklaşık, Türk tez biçiminde ana metin sayfası): Ücretsiz 5 sayfa deneme, Basic 25, Pro 50, Premium 85 sayfa. Literatür matrisi istek hakkından düşmez.
 - Paket yükseltme: Hesap ve abonelik → “Paketler” → “Yükselt” → “WhatsApp ile yükselt”.
 - Dil ve görünüm: sol menünün altındaki dil seçici ve ay/güneş simgesi.
 - Hesabı silme: Hesap ve abonelik → “Hesabımı sil”.
 - Sorun bildirme veya öneri: sol menüde “Geri bildirim”.`;
+
+/**
+ * Ana asistana giden kısa rehber (D96): tam rehber (~12 bin karakter) yalnızca kullanım sorusu yolunda gider; yazım
+ * isteklerinde bu özet yeterlidir ve maliyeti düşürür. Özet, en sık sorulan yerleri arayüzdeki adlarıyla verir.
+ */
+export const APP_GUIDE_SHORT = `ACADEMIANA KISA REHBER (adlar arayüzdekiyle aynı):
+- Üst çubuk: atıf stili seçimi, “Kalite kontrol”, “Paylaş” → “Danışmanla paylaş”, “Araçlar” (“Word’den içe aktar”, “Grafik oluştur”, “İstatistik analizi”, “Anket oluştur”, “Hakem yorumlarına cevap”, “Savunma provası”), “Dışa aktar” (Word, PDF, “Tüm çalışma” / “Seçili bölümler”, “Savunma sunumu (.pptx)”, “Dergi önerisi ve ön yazı”, “Biçim ve kapak ayarları”), “?” Rehberli tur, ayar simgesi Proje ayarları (“Kılavuz yükle”).
+- Sol: bölümler ve alt başlıklar (“+” aynı düzeyde alt başlık, “Bölüm ekle”), “Başlangıç: Kurguyu oluştur”, “Haftalık hedef ve teslim tarihi belirle”.
+- Sağ sekmeler: Asistan, Kaynaklar (“Kaynak ara”, “DOI / elle ekle”, “Atıf ekle”, “Literatür matrisi”, Zotero için “İçe aktar”/“Dışa aktar”), Hafıza (“Belgeden öğren”), Yorum, Geçmiş (“Geri yükle”).
+- Editör: “Tablo ekle”, “Dipnot ekle”, şekil başlığı, H2/H3/H4. Grafik ve analiz için veri dosyası önce sol menüdeki “Dosyalarım”a çalışma seçilerek yüklenir.
+- Sol menü (uygulama): “Yeni çalışma”, “Kontrol paneli”, “Kaynak araştırması”, “Dosyalarım”, “Anketlerim”, “Konu bulma”, “Hesap ve abonelik” (paket, “Yükselt”, şifre).`;
 
 export const HELP_SYSTEM = `Sen Academiana’nın kullanım asistanısın. Kullanıcı platformun nasıl kullanılacağını soruyor.
 KURALLAR:

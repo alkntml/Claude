@@ -71,6 +71,19 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("paket vaatleri (migration 22): sayfa satırı eklenir, tekrar çalıştırmak güvenli, elle yapılan düzenleme korunur", async () => {
+    await db.exec("update public.plans set features = array_replace(features, 'TXT / Markdown dışa aktarma', 'TXT / PDF / Markdown dışa aktarma') where id = 'free'");
+    const f = fs.readdirSync(path.resolve(__dirname, "../supabase/migrations")).find((x) => x.includes("package_promises"))!;
+    await db.exec(fs.readFileSync(path.resolve(__dirname, "../supabase/migrations", f), "utf8"));
+    const rows = await db.query<{ id: string; features: string[]; pages: string }>("select id, features, limits->>'pages_month' as pages from public.plans order by sort_order");
+    const by = Object.fromEntries(rows.rows.map((r) => [r.id, r]));
+    expect(by.free.features[1]).toBe("Yapay zekâ ile yaklaşık 5 sayfa deneme taslağı");
+    expect(by.free.features).toContain("TXT / PDF / Markdown dışa aktarma");
+    expect(by.pro.features.filter((x) => x.startsWith("Ayda yaklaşık 50 sayfa"))).toHaveLength(1);
+    expect(by.pro.features).toContain("Sınırsız kaynak taraması (adil kullanım)");
+    expect(by.premium.features.join()).not.toMatch(/8\.000|En yüksek yapay zekâ/);
+    expect([by.free.pages, by.basic.pages, by.pro.pages, by.premium.pages]).toEqual(["5", "25", "50", "85"]);
+  });
   it("paketleri ve ayarları oluşturur", async () => {
     const plans = await db.query<{ id: string }>("select id from public.plans order by sort_order");
     expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium"]);

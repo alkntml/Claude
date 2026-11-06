@@ -449,3 +449,4 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Ana asistana tam kullanım rehberi (~12 bin karakter) yerine kısa rehber (`APP_GUIDE_SHORT`, ~1,2 bin) gider; tam rehber yalnızca kullanım sorusu yolunda (Haiku). Yazım isteği başına ~%5–8 tasarruf.
 - Kur hatırlatıcısı: Yönetim → Maliyet sağlığı, `billing.margin` 30 günden uzun süredir güncellenmediyse uyarır.
 - İstek sınırları (40/75/125) değişmedi: analizde kötümser senaryoda bile 1/3 bütçeyle uyumlu bulundu.
+- (D96 düzeltme) Migration 22 elle yapılmış kart düzenlemelerini ezmeyecek biçimde yeniden yazıldı (canlıda Ücretsiz kartta yönetimden girilmiş “TXT / PDF / Markdown” vardı): satırlar yalnızca eklenir/değiştirilir, tekrar çalıştırmak güvenli (PGlite testiyle doğrulandı).

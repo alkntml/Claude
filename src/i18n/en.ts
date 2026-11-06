@@ -1941,6 +1941,7 @@ export const EN: Record<string, string> = {
   "Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir mesaj açılır. Gönderdiğinizde size dönüş yapılır ve paketiniz hesabınıza tanımlanır.": "Upgrades are currently handled via WhatsApp: pressing “Upgrade” opens a ready-made message with your current and chosen plan. Once you send it, we will get back to you and activate the plan on your account.",
   "Aylık 20 yapay zekâ isteği": "20 AI requests per month",
   "Aylık 7 kaynak taraması": "7 source searches per month",
+  "TXT / PDF / Markdown dışa aktarma": "TXT / PDF / Markdown export",
   "Yapay zekâ ile yaklaşık 5 sayfa deneme taslağı": "About 5 pages of AI-assisted trial draft",
   "Ayda yaklaşık 25 sayfa yapay zekâ destekli akademik metin (ör. 1 makale veya tezin 2–3 bölümü)": "About 25 pages of AI-assisted academic text per month (e.g. 1 article or 2–3 thesis chapters)",
   "Ayda yaklaşık 50 sayfa yapay zekâ destekli akademik metin (ör. 2 makale; yüksek lisans tezi 1–2 ayda)": "About 50 pages of AI-assisted academic text per month (e.g. 2 articles; a master’s thesis in 1–2 months)",

@@ -473,3 +473,10 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kullanıcı kararı: davetle ödül kazanan kişinin bildirim kutusuna ödül bildirimi düşsün. Uygulamada bildirim kutusu yoktu; eklendi: sol menüde logonun yanında (telefonda üst çubukta) zil simgesi, okunmamış sayısı, açılınca liste ve tümü okundu (`components/notifications.tsx`, `/api/notifications`).
 - Migration 24: `notifications` (user_id, kind, data, read_at); RLS: yalnızca kendi bildirimini görür ve okundu işaretler (diğer alanlar tetikleyiciyle korunur); yazma yalnızca sunucu/tetikleyici. Metin istemcide `kind`+`data`’dan iki dilde üretilir.
 - `grant_referral_on_signup` ödülle birlikte `referral_reward` bildirimi; aylık sınır dolduysa `referral_cap` bildirimi (ödül verilmedi, ay başında yenilenir). TS yedeği de aynısını yazar. Son 60 gündeki davet ödülleri için geriye dönük bildirim migration’da bir kez oluşturulur.
+
+### D101 — Davet ödülünde aynı cihaz önlemi
+- Kullanıcı kararı: davet koduyla açılan hesap, davet edenin kullandığı cihazdan kaydolursa ödül verilmez (kişinin kendi e-postalarıyla ödül toplamasını önlemek).
+- Cihaz kimliği: tarayıcıda üretilen rastgele UUID (`device-client.ts`), localStorage ve birinci taraf çerez `acd_did` (biri silinirse diğerinden geri yüklenir). Sunucuya ve veritabanına yalnızca SHA-256 özeti gider; parmak izi (ekran, yazı tipi vb.) kullanılmaz (farklı kişilerin aynı model telefonlarında yanlış eşleşme olmasın; KVKK).
+- Kayıt: davet koduyla kayıtta özet auth meta verisine (`did`) eklenir; `handle_new_user` bunu `profiles.signup_device`’a ve `user_devices`’a yazar. Oturum açan her kullanıcının cihazı günde bir `/api/account/device` ile kaydedilir (davet edenin cihazları bilinsin).
+- Karar: `grant_referral_on_signup` davet edenin cihazlarında bu özet varsa ödül vermez, davet edene `referral_same_device` bildirimi bırakır. Cihaz bilgisi gelmezse (ör. sosyal giriş, betik engeli) karar ilk girişe kalır: sunucu çerezdeki cihazı kaydeder, `sharesDevice` ile aynı kuralı uygular.
+- Sınırlar: gizli pencere veya başka tarayıcı yeni cihaz sayılır; bu yüzden aylık ödül sınırı (20) ikinci savunma olarak kalır. Gizlilik metnine eklendi.

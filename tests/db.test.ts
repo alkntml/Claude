@@ -71,10 +71,32 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("davet ödülü aynı cihaz önlemi (migration 25)", async () => {
+    const code = (await db.query<{ referral_code: string }>(`select referral_code from public.profiles where id = '${A}'`)).rows[0].referral_code;
+    const dev = "a".repeat(64), other = "b".repeat(64);
+    await db.exec(`insert into public.user_devices (user_id, device) values ('${A}', '${dev}')`);
+    const [S, D, U] = ["00000000-0000-4000-8000-0000000000e1", "00000000-0000-4000-8000-0000000000e2", "00000000-0000-4000-8000-0000000000e3"];
+    // Davet edenin cihazından kayıt → ödül yok, bilgi bildirimi
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${S}', 's@ornek.com', '{"ref":"${code}","did":"${dev}"}')`);
+    // Başka cihazdan kayıt → ödül
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${D}', 'd@ornek.com', '{"ref":"${code}","did":"${other}"}')`);
+    // Cihaz bilgisi yok → karar ilk girişe kalır (işaretlenmez)
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${U}', 'u@ornek.com', '{"ref":"${code}"}')`);
+    const credits = (await db.query<{ n: number }>(`select count(*)::int as n from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows[0].n;
+    expect(credits).toBe(2);
+    const kinds = (await db.query<{ kind: string }>(`select kind from public.notifications where user_id = '${A}' order by id`)).rows.map((r) => r.kind);
+    expect(kinds).toEqual(["referral_same_device", "referral_reward"]);
+    const u = (await db.query<{ referral_rewarded_at: string | null; signup_device: string | null }>(`select referral_rewarded_at, signup_device from public.profiles where id = '${U}'`)).rows[0];
+    expect(u).toEqual({ referral_rewarded_at: null, signup_device: null });
+    expect((await db.query(`select 1 from public.user_devices where user_id = '${D}' and device = '${other}'`)).rows).toHaveLength(1);
+    // Geçersiz cihaz değeri yok sayılır
+    await db.exec(`delete from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'; delete from public.notifications where user_id = '${A}'; delete from public.user_devices where user_id = '${A}';`);
+    await db.exec(`delete from public.profiles where id in ('${S}','${D}','${U}'); delete from auth.users where id in ('${S}','${D}','${U}');`);
+  });
   it("davet ödülü (migration 23): kayıt anında yalnızca davet edene, Ücretsiz paket kadar, bir kez", async () => {
     const code = (await db.query<{ referral_code: string }>(`select referral_code from public.profiles where id = '${A}'`)).rows[0].referral_code;
     const N = "00000000-0000-4000-8000-0000000000d1";
-    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${N}', 'yeni@ornek.com', '{"ref":"${code}"}')`);
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${N}', 'yeni@ornek.com', '{"ref":"${code}","did":"${"c".repeat(64)}"}')`);
     const prof = (await db.query<{ referred_by: string; referral_rewarded_at: string | null }>(`select referred_by, referral_rewarded_at from public.profiles where id = '${N}'`)).rows[0];
     expect(prof.referred_by).toBe(A);
     expect(prof.referral_rewarded_at).not.toBeNull();
@@ -248,7 +270,7 @@ describe("kurumsal lisans, davet ve krediler", () => {
   it("her profilin tekil davet kodu var; kayıtta ref ile davet eden bağlanır", async () => {
     const [a] = await as<{ referral_code: string }>(A, "select referral_code from public.profiles where id = auth.uid()");
     expect(a.referral_code).toMatch(/^[0-9A-F]{8}$/);
-    await db.query("insert into auth.users (id, email, raw_user_meta_data) values ($1, 'c@ornek.com', $2)", [C, JSON.stringify({ ref: a.referral_code.toLowerCase() })]);
+    await db.query("insert into auth.users (id, email, raw_user_meta_data) values ($1, 'c@ornek.com', $2)", [C, JSON.stringify({ ref: a.referral_code.toLowerCase(), did: "d".repeat(64) })]);
     const [c] = await as<{ referred_by: string; referral_code: string }>(C, "select referred_by, referral_code from public.profiles where id = auth.uid()");
     expect(c.referred_by).toBe(A);
     expect(c.referral_code).not.toBe(a.referral_code);

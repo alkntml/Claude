@@ -117,10 +117,11 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 357 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 358 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D101: davet ödülünde aynı cihaz önlemi (cihaz kimliği özeti, migration 25)
 - D100: bildirim kutusu (zil simgesi); davet ödülü bildirimi (migration 24)
 - D99: davet ödülü yalnızca davet edene, davetli kaydolduğu anda (DB tetikleyicisi, migration 23)
 - D98: davet ödülü = Ücretsiz paket hakları (10 istek + 7 tarama), krediler tek seferlik bakiye, token sınırı krediyle artar

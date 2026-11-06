@@ -1941,6 +1941,8 @@ export const EN: Record<string, string> = {
   "Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir mesaj açılır. Gönderdiğinizde size dönüş yapılır ve paketiniz hesabınıza tanımlanır.": "Upgrades are currently handled via WhatsApp: pressing “Upgrade” opens a ready-made message with your current and chosen plan. Once you send it, we will get back to you and activate the plan on your account.",
   "Aylık 20 yapay zekâ isteği": "20 AI requests per month",
   "Aylık 7 kaynak taraması": "7 source searches per month",
+  "Davet ödülü verilmedi": "Referral reward not granted",
+  "Davet bağlantınızla açılan hesap, sizin daha önce kullandığınız bir cihazdan kaydolduğu için ödül tanımlanmadı. Davet ödülü yalnızca başka kişilerin kendi cihazlarından kaydolmasıyla kazanılır.": "The account created with your invitation link signed up from a device you have used before, so no reward was granted. Referral rewards are earned only when other people sign up from their own devices.",
   "Bildirimler": "Notifications",
   "Bildirim": "Notification",
   "Henüz bildirim yok.": "No notifications yet.",

@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Building2, ClipboardList, Gift, Lock, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./icons";
 import { Button } from "./ui/button";
 import { cn } from "./ui/cn";
@@ -16,6 +16,7 @@ import { createBrowser } from "@/lib/supabase/browser";
 import { expertUrl } from "@/lib/expert";
 import { GiftBox } from "@/components/gift-box";
 import { NotificationBell } from "@/components/notifications";
+import { deviceHash } from "@/lib/device-client";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; limitReached?: boolean; expiresAt?: string | null }
@@ -60,6 +61,15 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
       setSending(false);
     }
   }
+
+  // Davet ödülü kötüye kullanım önlemi (D101): kullanıcının cihazı günde bir kez kaydedilir
+  useEffect(() => {
+    let last = "";
+    try { last = localStorage.getItem("acd_dev_sent") ?? ""; } catch { /* yok say */ }
+    const today = new Date().toISOString().slice(0, 10);
+    if (last === today) return;
+    deviceHash().then((d) => d && api("/api/account/device", { method: "POST", json: { d } })).then(() => { try { localStorage.setItem("acd_dev_sent", today); } catch { /* yok say */ } }).catch(() => {});
+  }, []);
 
   const Side = (
     <div className="flex h-full flex-col">

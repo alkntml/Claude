@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import Link from "@/components/l-link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { deviceHash, deviceId } from "@/lib/device-client";
 import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { createBrowser } from "@/lib/supabase/browser";
@@ -60,6 +61,9 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
     if (error) { setError(t("{p} ile giriş şu anda kullanılamıyor. E-posta ile devam edebilirsiniz.", { p: provider === "google" ? "Google" : "Apple" })); setOauthBusy(null); }
   }
 
+  // Davet ödülü kötüye kullanım önlemi (D101): cihaz kimliği sayfa açılınca oluşturulur
+  useEffect(() => { deviceId(); }, []);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -69,7 +73,8 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
       if (mode === "signup") {
         if (password.length < 8) throw new Error(t("Şifre en az 8 karakter olmalıdır."));
         if (!consent) throw new Error(t("Devam etmek için aydınlatma metnini onaylayın."));
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, ...(ref ? { ref } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
+        const did = ref ? await deviceHash().catch(() => null) : null;
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, ...(ref ? { ref } : {}), ...(ref && did ? { did } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
         if (error) throw error;
         if (!data.session) { setSent(true); return; }
       } else {

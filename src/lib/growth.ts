@@ -1,4 +1,5 @@
 import "server-only";
+import { sharesDevice } from "@/lib/devices";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSetting } from "@/lib/settings";
 import { adminClient } from "@/lib/supabase/admin";
@@ -113,7 +114,7 @@ export async function attachReferral(userId: string, code: string, createdAt: st
  * Asıl iş veritabanı tetikleyicisinde (migration 23, kayıt anında); bu fonksiyon tetikleyici kurulmamışsa ilk girişte
  * aynı kuralla yedek olarak çalışır. Aynı davet için çift ödül olmaz (referral_rewarded_at önce işaretlenir).
  */
-export async function grantReferralReward(userId: string): Promise<boolean> {
+export async function grantReferralReward(userId: string, device?: string | null): Promise<boolean> {
   const cfg = await getSetting("referral");
   if (!cfg.enabled) return false;
   const db = adminClient();
@@ -122,6 +123,11 @@ export async function grantReferralReward(userId: string): Promise<boolean> {
     if (!p?.referred_by || p.referral_rewarded_at || p.referred_by === userId) return false;
     const { data: claimed } = await db.from("profiles").update({ referral_rewarded_at: new Date().toISOString() }).eq("id", userId).is("referral_rewarded_at", null).select("id");
     if (!claimed?.length) return false;
+    // D101: davet edenin kullandığı bir cihazdan açılan hesap için ödül verilmez
+    if (await sharesDevice(p.referred_by, userId, device).catch(() => false)) {
+      await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_same_device", data: {} }).then(() => undefined, () => undefined);
+      return true;
+    }
     const reward = await referralReward();
     const TR = 3 * 3600_000; const tr = new Date(Date.now() + TR);
     const monthStart = new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth(), 1) - TR).toISOString();

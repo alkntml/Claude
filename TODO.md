@@ -1,7 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [x] (2026-11-06) Migration 24 (bildirim kutusu) ve Ücretsiz kart PDF metni geri yüklendi
+- [ ] Supabase SQL Editor’de `20261120000025_referral_device_guard.sql` (davette aynı cihaz önlemi, D101)
 - [x] (2026-11-06) Migration 22 (paket vaatleri) ve 23 (davet ödülü) çalıştırıldı
-- [ ] Supabase SQL Editor’de `20261119000024_notifications.sql` (bildirim kutusu, D100)
-- [ ] Ücretsiz kartındaki “TXT / PDF / Markdown dışa aktarma” yazısını geri yükle (migration 22’nin ilk sürümü ezdi; SQL sohbette verildi)
 - [ ] Canlıda dene: kurgusu onaylı bir çalışmada alt başlığa girip “Bölümü yaz”; yanıtın altındaki “Taslak X kelime (hedef Y)” satırını kontrol et (D97)
 - [ ] Yönetim → Ayarlar → Kârlılık’ta dolar kurunu güncelle (Maliyet sağlığı 30 günü geçince uyarır)
 - [ ] Ay sonunda Yönetim → Maliyet sağlığı’ndaki “bu ay harcanan” ile Anthropic Console → Usage’daki gerçek faturayı karşılaştır (D94)

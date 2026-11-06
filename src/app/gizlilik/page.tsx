@@ -19,6 +19,8 @@ export default async function Page() {
         <p>When you use AI features, the relevant section text, project context and selected source abstracts are sent to the configured AI provider (e.g. Anthropic) solely to answer your request.</p>
         <h2>Visit statistics</h2>
         <p>To measure how many people visit the site, page views are counted without cookies. IP addresses and browser details are not stored; only an anonymous code that changes every day is kept, so a visitor cannot be identified or followed across days. Nothing is counted if your browser sends a “Do Not Track” or Global Privacy Control signal.</p>
+        <h2>Device identifier (referral abuse prevention)</h2>
+        <p>Your browser stores a random device identifier that contains no personal information (in browser storage and a first-party cookie). Only its one-way summary (SHA-256) is saved with your account. It is used solely to stop the “Invite a friend, earn” programme from being abused: if an account created with an invitation link signs up from a device the inviter has used, no reward is granted. It is not used for advertising or tracking and is deleted together with your account.</p>
         <h2>Your rights</h2>
         <p>From your account page you can download all your data in a portable format (JSON) and permanently delete your account with all its data. For other requests, contact the data controller.</p>
         <h2>Security</h2>
@@ -37,6 +39,8 @@ export default async function Page() {
       <p>Yapay zekâ özellikleri kullanıldığında ilgili bölüm metni, proje bağlamı ve seçili kaynak özetleri yapılandırılmış yapay zekâ sağlayıcısına (ör. Anthropic) iletilir. Bu aktarım yalnızca isteğinizi yanıtlamak için yapılır.</p>
       <h2>Ziyaret istatistikleri</h2>
       <p>Sitenin kaç kişi tarafından ziyaret edildiğini ölçmek için sayfa görüntülemeleri çerez kullanılmadan sayılır. IP adresi ve tarayıcı bilgisi saklanmaz; yalnızca her gün değişen anonim bir kod tutulur, bu nedenle ziyaretçi kimliği belirlenemez ve günler arasında izlenemez. Tarayıcınız “izleme yapma” (Do Not Track / Global Privacy Control) sinyali gönderiyorsa hiçbir sayım yapılmaz.</p>
+      <h2>Cihaz kimliği (davet kötüye kullanım önlemi)</h2>
+      <p>Tarayıcınızda kişisel bilgi içermeyen rastgele bir cihaz kimliği saklanır (tarayıcı belleği ve birinci taraf çerez). Hesabınızla birlikte yalnızca bu kimliğin geri çözülemeyen özeti (SHA-256) kaydedilir. Tek amacı “Davet et, kazan” programının kötüye kullanılmasını önlemektir: davet bağlantısıyla açılan hesap, davet edenin kullandığı bir cihazdan kaydolursa ödül verilmez. Reklam veya izleme için kullanılmaz; hesabınızla birlikte silinir.</p>
       <h2>Haklarınız</h2>
       <p>Hesap sayfanızdan tüm verilerinizi taşınabilir biçimde (JSON) indirebilir ve hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz. KVKK md. 11 kapsamındaki diğer talepleriniz için veri sorumlusuna başvurabilirsiniz.</p>
       <h2>Güvenlik</h2>

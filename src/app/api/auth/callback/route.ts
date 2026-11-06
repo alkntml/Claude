@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { attachReferral, grantReferralReward } from "@/lib/growth";
+import { deviceFromCookie, recordDevice } from "@/lib/devices";
 
 /** E-posta doğrulama ve OAuth dönüşü: kodu oturuma çevirir. */
 export async function GET(req: Request) {
@@ -16,7 +17,12 @@ export async function GET(req: Request) {
       // Google/Apple ile ilk girişte davet kodu geri dönüş adresinden gelir
       const ref = url.searchParams.get("ref");
       if (data.user && ref) await attachReferral(data.user.id, ref, data.user.created_at).catch(() => {});
-      if (data.user) await grantReferralReward(data.user.id).catch(() => false);
+      if (data.user) {
+        // D101: cihaz kaydı ve aynı cihaz kontrolü (sosyal girişte cihaz bilgisi kayıtta yoktur)
+        const device = await deviceFromCookie();
+        await recordDevice(data.user.id, device);
+        await grantReferralReward(data.user.id, device).catch(() => false);
+      }
       return NextResponse.redirect(new URL(safeNext, url.origin));
     }
   }

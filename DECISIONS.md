@@ -494,3 +494,8 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Uyarı (yöneticilere bildirim + kullanıcının kanıt kaydına not, kural başına 24 saatte bir): engellenen denemeler; indirdikten sonra ≥3.000 kelime silme; toplam silme ≥10.000 ve üretilenin ≥%60’ı; 3.000+ kelimelik çalışmada başlık/konunun belirgin değişmesi (eklentisiz kelime örtüşmesi <0,25); her 120.000 kelimelik üretim.
 - Maliyet notu (D95): 3.999 TL ≈ 69 $ KDV hariç; tipik YL tezi 8–12 $, doktora 15–23 $ (kötümser 31 $). Sınırsızlık ve süresizlik nedeniyle uç kullanım ve kur riski yöneticide; uyarılar ve kanıt kaydı izlemeyi sağlar.
 - Hata düzeltmesi (migration 27): migration 26’daki çalışma silme kaydı, hesap silinirken silinen hesaba kayıt yazmaya çalışıp hesap silmeyi başarısız kılıyordu; hesap yoksa yazılmıyor.
+
+### D104 — Tek Proje maliyet uyarısı (%40)
+- Kullanıcı kararı: Tek Proje paketinde maliyet paket gelirinin %40’ını geçince yönetici uyarılsın; kullanım kısıtlanmasın. Yalnızca Tek Proje.
+- Migration 28: `profiles.single_started_at` (paket atanınca; kullanıcı değiştiremez). `single_cost_status(user)`: paket başından beri usage_events maliyeti, bütçe = fiyat / (1+KDV) / kur × 0,40 (3.999 TL, %20, 48 TL → ≈ 27,8 $). `usage_events` AFTER INSERT tetikleyicisi sınır geçilince `raise_abuse_alert('cost_40')` — paket dönemi başına bir kez; yöneticilere “Tek Proje maliyet uyarısı” bildirimi. Sınırlar null kalır (kısıtlama yok).
+- Yönetim → kullanıcı ayrıntısı: Tek Proje kullanıcısında paket başından beri maliyet, gelirin yüzdesi ve %40 sınırı.

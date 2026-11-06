@@ -271,6 +271,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               {row("Aktif proje", d.usage.projects, d.limits.projects)}
               {row("Depolama (MB)", d.usage.storage_mb, d.limits.storage_mb)}
               <div className="mt-2 rounded-xl bg-ink-50 p-2.5 text-[13px]">API maliyeti: <b>{d.money.cost_try.toLocaleString("tr-TR")} TL</b> · Gelir (KDV hariç): <b>{d.money.revenue_try.toLocaleString("tr-TR")} TL</b>{d.money.cost_share != null && <> · Maliyet payı: <b className={d.money.cost_share > 33 ? "text-rose-600" : "text-emerald-700"}>%{d.money.cost_share}</b></>}</div>
+              {d.single && <div className={cn("mt-2 rounded-xl p-2.5 text-[13px]", Number(d.single.pct) >= 40 ? "bg-amber-50 text-amber-900" : "bg-ink-50")}>Tek Proje (paket başından beri): <b>${Number(d.single.cost_usd).toFixed(2)}</b> maliyet · paket gelirinin <b>%{d.single.pct}</b>’i · %40 sınırı ${d.single.budget_usd}{Number(d.single.pct) >= 40 ? " — sınır geçildi (kullanım kısıtlanmaz)" : ""}</div>}
             </div>
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="mb-2 font-semibold">Projeler ({d.projects.length})</p>

@@ -25,11 +25,16 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     getSetting("billing.margin"),
     db.from("organization_members").select("role, organizations(name, plan_id)").eq("user_id", id).limit(1),
   ]);
+  // Tek Proje (D104): paket atandığından beri toplam maliyet ve %40 sınırı
+  const single = profile.plan_id === "single"
+    ? ((await db.rpc("single_cost_status", { p_user: id })).data?.[0] ?? null) as { cost_usd: number; budget_usd: number; pct: number; started_at: string | null } | null
+    : null;
   const revenueUsd = plan.data?.price_monthly ? Number(plan.data.price_monthly) / (1 + margin.vat_rate) / Math.max(1, margin.usd_try) : 0;
   return json({
     profile, usage, limits, reasons: lockReasons(limits, usage, profile.plan_id),
     projects: projects.data ?? [], credits: credits.data ?? [], passes: passes.data ?? [], org: org.data?.[0] ?? null,
     plan: plan.data ?? null,
+    single,
     money: { revenue_try: plan.data ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, cost_try: Math.round(usage.cost_usd * margin.usd_try), cost_share: revenueUsd ? Math.round((usage.cost_usd / revenueUsd) * 100) : null },
   });
 });

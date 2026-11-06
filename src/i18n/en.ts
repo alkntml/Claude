@@ -1941,6 +1941,8 @@ export const EN: Record<string, string> = {
   "Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir mesaj açılır. Gönderdiğinizde size dönüş yapılır ve paketiniz hesabınıza tanımlanır.": "Upgrades are currently handled via WhatsApp: pressing “Upgrade” opens a ready-made message with your current and chosen plan. Once you send it, we will get back to you and activate the plan on your account.",
   "Aylık 20 yapay zekâ isteği": "20 AI requests per month",
   "Aylık 7 kaynak taraması": "7 source searches per month",
+  "Tek Proje maliyet uyarısı": "Single Project cost alert",
+  "{u} için yapay zekâ maliyeti paket gelirinin %{p}’ine ulaştı ({c} $; %40 sınırı {b} $). Kullanım kısıtlanmadı.": "AI cost for {u} reached {p}% of the plan revenue (${c}; 40% threshold ${b}). Usage was not restricted.",
   "tek ödeme": "one-time",
   "Tek Proje": "Single Project",
   "Tek bir çalışma için tek ödeme: süresiz ve sınırsız kullanım.": "One payment for a single work: no time limit, unlimited use.",

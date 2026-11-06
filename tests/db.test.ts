@@ -71,6 +71,27 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("Tek Proje maliyet uyarısı (migration 28): %40 geçince yöneticiye bir kez, kısıtlama yok", async () => {
+    const W = "00000000-0000-4000-8000-0000000000f3";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${W}', 'maliyet@ornek.com', '{}'); update public.profiles set plan_id = 'single' where id = '${W}';`);
+    const st = (await db.query<{ s: string | null }>(`select single_started_at as s from public.profiles where id = '${W}'`)).rows[0].s;
+    expect(st).not.toBeNull();
+    // Bütçe: 3999 / 1,2 / 48 ≈ 69,43 $; %40 ≈ 27,77 $
+    const [b] = (await db.query<{ budget_usd: string }>(`select * from public.single_cost_status('${W}')`)).rows;
+    expect(Number(b.budget_usd)).toBeCloseTo(27.77, 1);
+    await db.query(`insert into public.usage_events (user_id, kind, cost_usd) values ('${W}', 'ai_request', 20)`);
+    expect((await db.query(`select 1 from public.activity_log where user_id = '${W}' and action = 'cost_40'`)).rows).toHaveLength(0);
+    await db.query(`insert into public.usage_events (user_id, kind, cost_usd) values ('${W}', 'ai_request', 9)`);
+    await db.query(`insert into public.usage_events (user_id, kind, cost_usd) values ('${W}', 'ai_request', 5)`);
+    expect((await db.query(`select 1 from public.activity_log where user_id = '${W}' and action = 'cost_40'`)).rows).toHaveLength(1);
+    const n = (await db.query<{ data: { rule: string; pct: number } }>(`select data from public.notifications where user_id = '${ADMIN}' and kind = 'abuse_alert'`)).rows;
+    expect(n.map((r) => r.data.rule)).toEqual(["cost_40"]);
+    // Kullanım kısıtlanmaz: paket sınırları sınırsız kalır
+    const lim = (await db.query<{ l: { ai_requests_month: null; cost_usd_month: null } }>("select limits as l from public.plans where id = 'single'")).rows[0].l;
+    expect(lim.ai_requests_month).toBeNull();
+    expect(lim.cost_usd_month).toBeNull();
+    await db.exec(`delete from public.notifications where user_id = '${ADMIN}'; delete from auth.users where id = '${W}';`);
+  });
   it("Tek Proje paketi (migration 27): tek çalışma, silme/tür değiştirme engeli, kötüye kullanım uyarıları", async () => {
     const U = "00000000-0000-4000-8000-0000000000f1";
     await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${U}', 'tek@ornek.com', '{}')`);

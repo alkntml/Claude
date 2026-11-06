@@ -31,4 +31,6 @@ union all select '25 Davet: aynı cihaz önlemi',
 union all select '26 Kullanım kanıt kaydı',
   case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'activity_log') then 'YAPILMIŞ' else 'EKSİK' end
 union all select '27 Tek Proje paketi',
-  case when exists (select 1 from public.plans where id = 'single') and exists (select 1 from pg_trigger where tgname = 'projects_single_guard_del') then 'YAPILMIŞ' else 'EKSİK' end;
+  case when exists (select 1 from public.plans where id = 'single') and exists (select 1 from pg_trigger where tgname = 'projects_single_guard_del') then 'YAPILMIŞ' else 'EKSİK' end
+union all select '28 Tek Proje maliyet uyarısı (%40)',
+  case when exists (select 1 from pg_trigger where tgname = 'usage_single_cost_watch') then 'YAPILMIŞ' else 'EKSİK' end;

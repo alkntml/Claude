@@ -59,8 +59,9 @@ export function NotificationBell({ className, align = "left" }: { className?: st
         mass_delete: t("{u} çalışmasından toplam {w} kelime sildi (ürettiğinin büyük kısmı).", { u: who, w }),
         topic_change: t("{u} çalışmanın başlığını veya konusunu tamamen değiştirdi: “{o}” → “{n}”.", { u: who, o: d.old_title || d.old_topic || "", n: d.project_title || d.new_topic || "" }),
         heavy_generation: t("{u} toplam {w} kelime yapay zekâ metni üretti (birden fazla tez büyüklüğünde).", { u: who, w }),
+        cost_40: t("{u} için yapay zekâ maliyeti paket gelirinin %{p}’ine ulaştı ({c} $; %40 sınırı {b} $). Kullanım kısıtlanmadı.", { u: who, p: d.pct ?? 40, c: d.cost ?? 0, b: d.budget ?? 0 }),
       };
-      return { title: t("Kötüye kullanım uyarısı (Tek Proje)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
+      return { title: d.rule === "cost_40" ? t("Tek Proje maliyet uyarısı") : t("Kötüye kullanım uyarısı (Tek Proje)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
     }
     if (n.kind === "referral_cap") return { title: t("Davetiniz kaydoldu"), body: t("Davet ettiğiniz bir kişi kaydoldu, ancak bu ayki davet ödülü sınırına ({n}) ulaştığınız için ödül tanımlanmadı. Sınır her ayın başında yenilenir.", { n: n.data.cap ?? 0 }) };
     return { title: t("Bildirim"), body: "" };

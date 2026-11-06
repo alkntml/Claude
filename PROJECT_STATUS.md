@@ -117,10 +117,11 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Güvenlik: RLS + sahiplik tetikleyicileri, CSRF köken kontrolü, SSRF koruması, dosya imza kontrolü, güvenlik başlıkları
 
 **Kalite güvencesi**
-- 361 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
+- 362 test (atıf, kaynak ayrıştırıcıları, yol haritası, kalite, dışa aktarma, Stripe imzası, istatistik, PGlite üzerinde RLS)
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D104: Tek Proje maliyet uyarısı (%40, kısıtlamasız; migration 28)
 - D103: Tek Proje paketi (3.999 TL tek ödeme, süresiz, sınırsız, tek çalışma; engelleme + kötüye kullanım uyarıları; migration 27, hesap silme hatası düzeltmesi dahil)
 - Canlı veritabanı: migration 22–26 çalıştırıldı ve doğrulandı (2026-11-06)
 - D102: kullanım kanıt kaydı (yapay zekâ çıktıları + silmeler, yönetimde kullanıcı geçmişi; migration 26)

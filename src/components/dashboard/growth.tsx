@@ -71,7 +71,7 @@ export function GrowthSection() {
       {g.referral && (
         <section className="card p-6">
           <h2 className="flex items-center gap-2 font-semibold"><Gift className="h-4 w-4" /> {t("Arkadaşını davet et")}</h2>
-          <p className="mt-2 text-sm text-ink-500">{t("Arkadaşınız bu bağlantıyla kaydolup e-postasını doğruladığında ikinize de {a} yapay zekâ isteği ve {s} kaynak tarama hakkı ({d} gün geçerli).", { a: g.referral.reward.ai_requests, s: g.referral.reward.source_searches, d: g.referral.reward.valid_days })}</p>
+          <p className="mt-2 text-sm text-ink-500">{t("Arkadaşınız bu bağlantıyla kaydolduğunda size {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlanır ({d} gün geçerli).", { a: g.referral.reward.ai_requests, s: g.referral.reward.source_searches, d: g.referral.reward.valid_days })}</p>
           <div className="mt-3 flex gap-2">
             <input className="input !text-[13px]" readOnly value={g.referral.link} onFocus={(e) => e.target.select()} aria-label={t("Davet bağlantısı")} />
             <Button size="sm" variant="secondary" className="!h-10" onClick={() => { navigator.clipboard.writeText(g.referral!.link); toast({ tone: "success", title: t("Kopyalandı") }); }} aria-label={t("Kopyala")}><Copy className="h-4 w-4" /></Button>

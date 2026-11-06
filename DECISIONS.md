@@ -463,3 +463,8 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Hata düzeltmesi: 60 gün geçerli kredi, aktif olduğu her takvim ayında aylık sınıra yeniden ekleniyordu (50 istek → 100–150). `creditPool`: kredi tek seferlik bakiye; her ay paketin aylık hakkını aşan kullanım krediden düşer, kalan bu ayki sınıra eklenir; süresi dolanın kalanı silinir.
 - Hata düzeltmesi: token sınırı kredilerle artmıyordu (ücretsiz davetli ~18–20 istekte “token limiti”). Artık kredi isteği başına 50 bin token sınıra eklenir.
 - Maliyet (D95 modeli, temel): taraf başı ~$0,86 ≈ 41 TL, davet başı ~$1,71 ≈ 82 TL (önce amaçlanan 411 TL, hatalarla 820 TL’ye kadar). En kötü kötüye kullanım (ayda 20 ödül): ~$17/ay ≈ 820 TL.
+
+### D99 — Davet ödülü yalnızca davet edene, kayıt anında
+- Kullanıcı kararı: yeni kaydolan zaten Ücretsiz paketin haklarını alır; ödül (Ücretsiz paket hakları, D98) yalnızca davet edene verilir ve davet edilen kişi kaydolduğu anda tanımlanır (e-posta doğrulaması beklenmez).
+- Migration 23: `profiles` üzerinde BEFORE INSERT / UPDATE OF referred_by tetikleyicisi `grant_referral_on_signup` (kayıt ve sosyal girişte sonradan bağlanan davet kodu); `referral_rewarded_at` ile tek seferlik; davet edenin aylık sınırı (`referral.monthly_cap`, ödül sayısı) ve geçerlilik (`valid_days`) ayardan. Bekleyen eski davetler migration’da bir kez işlenir. `grantReferralReward` tetikleyici kurulmamışsa ilk girişte aynı kuralla yedek çalışır.
+- Maliyet: davet başı ≈ $0,86 ≈ 41 TL (önce iki taraf ≈ 82 TL). Kötüye kullanım (doğrulanmamış sahte kayıtlar) aylık sınırla ≈ $17/ay ≈ 820 TL ile sınırlı.

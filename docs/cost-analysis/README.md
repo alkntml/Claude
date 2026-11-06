@@ -91,3 +91,5 @@ Bulunan sorunlar:
 Öneri (karar bekliyor): ödül tek seferlik bakiye olsun (her ay yeniden sayılmasın); boyut 10–15 istek/taraf (~9–14 sayfa, ~$0,9–1,3 ≈ 41–62 TL); token sınırı da kredi kadar artsın; aylık üst sınır 20 → 5; isteğe bağlı: davet edenin ödülü davetli ücretli pakete geçince verilsin.
 
 **Uygulandı (D98, Kasım 2026):** Ödül = Ücretsiz paketin aylık hakları (10 istek + 7 tarama, ≈5 sayfa) her iki tarafa; tek seferlik bakiye (hata 1 düzeltildi); token sınırı krediyle artar (hata 2 düzeltildi). Yeni maliyet (temel): taraf başı ≈ $0,86 (41 TL), davet başı ≈ $1,71 (82 TL); ayda 20 ödül sınırıyla en kötü durumda davet eden başına ≈ $17/ay (820 TL). Aylık sınır (20) değiştirilmedi.
+
+**Güncelleme (D99):** Ödül yalnızca davet edene, davetli kaydolduğu anda (e-posta doğrulaması beklenmez). Davet başı ≈ $0,86 ≈ 41 TL; aylık 20 ödül sınırıyla davet eden başına en fazla ≈ $17/ay (820 TL).

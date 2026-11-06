@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!s) redirect("/giris");
   // Davet ödülü (D55): davet edilen kişi e-postasını doğruladıysa, hangi sayfayı açarsa açsın ikisine de otomatik tanımlanır
   const pr = s.profile as { referred_by?: string | null; referral_rewarded_at?: string | null };
-  if (pr.referred_by && !pr.referral_rewarded_at) await grantReferralReward(s.user.id, !!s.user.email_confirmed_at).catch(() => false);
+  if (pr.referred_by && !pr.referral_rewarded_at) await grantReferralReward(s.user.id).catch(() => false);
   // D81: hak dolunca çalışma kilitlenmez; yalnızca bilgilendirme şeridi gösterilir
   const { reasons } = await getWorkLock();
   return (

@@ -13,10 +13,10 @@ export default async function Panel() {
   const s = (await getSession())!;
   const db = s.supabase;
   const uid = s.user.id;
-  // E-posta doğrulaması geri dönüş bağlantısı olmadan yapıldıysa davet ödülü burada verilir (tek seferlik)
+  // Davet ödülü normalde kayıt anında veritabanında verilir (D99); tetikleyici yoksa burada yedek olarak (tek seferlik)
   // Yalnızca bekleyen bir davet ödülü varsa çalışır ve diğer sorgularla paralel yürür
   const pr = s.profile as unknown as { referred_by?: string | null; referral_rewarded_at?: string | null };
-  const reward = pr.referred_by && !pr.referral_rewarded_at ? grantReferralReward(uid, !!s.user.email_confirmed_at).catch(() => false) : Promise.resolve(false);
+  const reward = pr.referred_by && !pr.referral_rewarded_at ? grantReferralReward(uid).catch(() => false) : Promise.resolve(false);
   const [, projects, recentStages, sourcesCount, convs, files, ann, usage, limits] = await Promise.all([
     reward,
     db.from("projects").select("id, title, work_type, academic_level, status, progress, citation_style, updated_at, context").eq("user_id", uid).order("updated_at", { ascending: false }),

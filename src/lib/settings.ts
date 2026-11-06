@@ -31,7 +31,7 @@ export const DEFAULTS = {
   "ai.stage_prompts": {} as Record<string, string>,
   "sources.enabled": { openalex: true, crossref: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true, turkiye: true, eric: true, dblp: true, datacite: true } as Record<SourceProviderId, boolean>,
   "limits.rate": { ai_per_minute: 12, search_per_minute: 30 },
-  /** Davet programı: davet edilen e-postasını doğrulayınca her iki tarafa kredi */
+  /** Davet programı (D99): davet edilen kaydolunca yalnızca davet edene kredi (miktar = Ücretsiz paket hakları) */
   /** Kârlılık (D52): API maliyeti KDV hariç gelirin en fazla cost_share’i; dolar kuru güncel tutulmalı */
   "billing.margin": { usd_try: 48, vat_rate: 0.2, cost_share: 0.3333, avg_request_usd: 0.09 },
   "referral": { enabled: true, ai_requests: 10, source_searches: 7, valid_days: 60, monthly_cap: 20 },

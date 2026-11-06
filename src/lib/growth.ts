@@ -109,37 +109,29 @@ export async function attachReferral(userId: string, code: string, createdAt: st
 }
 
 /**
- * Davet ödülü: davet edilen kullanıcı e-postasını doğruladığında (bir kez) her iki tarafa kredi verilir.
- * Kötüye kullanıma karşı: davet edenin aylık ödül sayısı sınırlı, kendi kendini davet geçersiz.
+ * Davet ödülü (D99): yalnızca davet edene, davet edilen kaydolduğunda (e-posta doğrulaması beklenmez) bir kez verilir.
+ * Asıl iş veritabanı tetikleyicisinde (migration 23, kayıt anında); bu fonksiyon tetikleyici kurulmamışsa ilk girişte
+ * aynı kuralla yedek olarak çalışır. Aynı davet için çift ödül olmaz (referral_rewarded_at önce işaretlenir).
  */
-export async function grantReferralReward(userId: string, emailConfirmed: boolean): Promise<boolean> {
-  if (!emailConfirmed) return false;
+export async function grantReferralReward(userId: string): Promise<boolean> {
   const cfg = await getSetting("referral");
   if (!cfg.enabled) return false;
-  const reward = await referralReward();
   const db = adminClient();
   try {
     const { data: p } = await db.from("profiles").select("id, referred_by, referral_rewarded_at").eq("id", userId).maybeSingle();
     if (!p?.referred_by || p.referral_rewarded_at || p.referred_by === userId) return false;
-    // Önce işaretle (eşzamanlı isteklerde çift ödül olmasın)
     const { data: claimed } = await db.from("profiles").update({ referral_rewarded_at: new Date().toISOString() }).eq("id", userId).is("referral_rewarded_at", null).select("id");
     if (!claimed?.length) return false;
-    // Ay başı Türkiye saatiyle (sayaçlarla aynı dönem)
+    const reward = await referralReward();
     const TR = 3 * 3600_000; const tr = new Date(Date.now() + TR);
     const monthStart = new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth(), 1) - TR).toISOString();
-    const { count } = await db.from("usage_credits").select("id", { count: "exact", head: true }).eq("user_id", p.referred_by).eq("reason", "referral_inviter").gte("created_at", monthStart);
+    const { count } = await db.from("usage_credits").select("id", { count: "exact", head: true }).eq("user_id", p.referred_by).eq("reason", "referral_inviter").eq("kind", "ai_requests").gte("created_at", monthStart);
+    if ((count ?? 0) >= cfg.monthly_cap) return true;
     const expires = new Date(Date.now() + cfg.valid_days * 86_400_000).toISOString();
-    const rows: { user_id: string; kind: string; amount: number; reason: string; expires_at: string }[] = [
-      { user_id: userId, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_invitee", expires_at: expires },
-      { user_id: userId, kind: "source_searches", amount: reward.source_searches, reason: "referral_invitee", expires_at: expires },
-    ];
-    if ((count ?? 0) < cfg.monthly_cap * 2) {
-      rows.push(
-        { user_id: p.referred_by, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_inviter", expires_at: expires },
-        { user_id: p.referred_by, kind: "source_searches", amount: reward.source_searches, reason: "referral_inviter", expires_at: expires },
-      );
-    }
-    await db.from("usage_credits").insert(rows);
+    await db.from("usage_credits").insert([
+      { user_id: p.referred_by, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_inviter", expires_at: expires },
+      { user_id: p.referred_by, kind: "source_searches", amount: reward.source_searches, reason: "referral_inviter", expires_at: expires },
+    ]);
     return true;
   } catch {
     return false;

@@ -12,7 +12,7 @@ A) GİRİŞ YAPMADAN (herkese açık site)
 - Alt bilgide ayrıca: Yardım merkezi, Akademik dürüstlük, Gizlilik, Kullanım koşulları.
 - Şifre unutulduysa: “Giriş yap” sayfasında “Şifremi unuttum” → e-postanıza gelen bağlantıyla yeni şifre.
 - Ücretsiz araçlar (giriş gerekmez; “Ücretsiz araçlar” menüsü): Kaynakça oluşturucu (DOI veya başlıktan), Atıf stili dönüştürücü (düz metin, BibTeX, RIS), Örneklem hesaplayıcı (Cochran, Yamane), Cronbach alfa hesaplayıcı, Anket oluşturucu, Uydurma kaynak kontrolü.
-- Davet bağlantısıyla gelenler kayıt olunca ikisi de ek hak kazanır.
+- “Davet et, kazan”: davet bağlantınızla biri kaydolduğunda size Ücretsiz paket kadar ek hak (yapay zekâ isteği ve kaynak taraması) tanımlanır.
 
 B) UYGULAMA İÇİ SOL MENÜ (giriş yaptıktan sonra; telefonda sol üstteki “Menü” simgesi)
 - “Yeni çalışma” (en üstteki mavi düğme): çalışma türü (tez, makale, literatür taraması, araştırma önerisi, TÜBİTAK/BAP proje önerisi vb.) → akademik seviye → araştırma konusu, disiplin, anahtar kelimeler, yazım dili, atıf stili, üniversite/hedef dergi → “Çalışma alanını oluştur”.

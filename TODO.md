@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de `20261118000023_referral_inviter_only.sql` (davet ödülü yalnız davet edene, kayıt anında, D99)
 - [ ] Canlıda dene: kurgusu onaylı bir çalışmada alt başlığa girip “Bölümü yaz”; yanıtın altındaki “Taslak X kelime (hedef Y)” satırını kontrol et (D97)
 - [ ] Supabase SQL Editor’de `20261117000022_package_promises.sql` (paket kartlarında aylık sayfa vaadi, D96)
 - [ ] Yönetim → Ayarlar → Kârlılık’ta dolar kurunu güncelle (Maliyet sağlığı 30 günü geçince uyarır)

@@ -16,7 +16,7 @@ export async function GET(req: Request) {
       // Google/Apple ile ilk girişte davet kodu geri dönüş adresinden gelir
       const ref = url.searchParams.get("ref");
       if (data.user && ref) await attachReferral(data.user.id, ref, data.user.created_at).catch(() => {});
-      if (data.user) await grantReferralReward(data.user.id, !!data.user.email_confirmed_at).catch(() => false);
+      if (data.user) await grantReferralReward(data.user.id).catch(() => false);
       return NextResponse.redirect(new URL(safeNext, url.origin));
     }
   }

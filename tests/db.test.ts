@@ -71,6 +71,21 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("davet ödülü (migration 23): kayıt anında yalnızca davet edene, Ücretsiz paket kadar, bir kez", async () => {
+    const code = (await db.query<{ referral_code: string }>(`select referral_code from public.profiles where id = '${A}'`)).rows[0].referral_code;
+    const N = "00000000-0000-4000-8000-0000000000d1";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${N}', 'yeni@ornek.com', '{"ref":"${code}"}')`);
+    const prof = (await db.query<{ referred_by: string; referral_rewarded_at: string | null }>(`select referred_by, referral_rewarded_at from public.profiles where id = '${N}'`)).rows[0];
+    expect(prof.referred_by).toBe(A);
+    expect(prof.referral_rewarded_at).not.toBeNull();
+    const inviter = (await db.query<{ kind: string; amount: number }>(`select kind, amount from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter' order by kind`)).rows;
+    expect(inviter).toEqual([{ kind: "ai_requests", amount: 10 }, { kind: "source_searches", amount: 7 }]);
+    expect((await db.query(`select 1 from public.usage_credits where user_id = '${N}'`)).rows).toHaveLength(0);
+    // Aynı kişi için ikinci kez verilmez
+    await db.exec(`update public.profiles set referred_by = referred_by where id = '${N}'`);
+    expect((await db.query(`select 1 from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows).toHaveLength(2);    // Sonraki testler için temizlik
+    await db.exec(`delete from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'; delete from public.profiles where id = '${N}'; delete from auth.users where id = '${N}';`);
+  });
   it("paket vaatleri (migration 22): sayfa satırı eklenir, tekrar çalıştırmak güvenli, elle yapılan düzenleme korunur", async () => {
     await db.exec("update public.plans set features = array_replace(features, 'TXT / Markdown dışa aktarma', 'TXT / PDF / Markdown dışa aktarma') where id = 'free'");
     const f = fs.readdirSync(path.resolve(__dirname, "../supabase/migrations")).find((x) => x.includes("package_promises"))!;
@@ -237,7 +252,9 @@ describe("kurumsal lisans, davet ve krediler", () => {
   });
   it("krediler: kullanıcı yalnızca kendininkini görür, yazamaz", async () => {
     await db.query("insert into public.usage_credits (user_id, kind, amount, reason) values ($1, 'ai_requests', 50, 'davet')", [A]);
-    expect(await as(A, "select * from public.usage_credits")).toHaveLength(1);
+    // A’nın ayrıca C’yi davet ettiği için kayıtta aldığı davet ödülü vardır (D99)
+    expect(await as(A, "select * from public.usage_credits where reason = 'davet'")).toHaveLength(1);
+    expect(await as(A, "select * from public.usage_credits where reason = 'referral_inviter'")).toHaveLength(2);
     expect(await as(B, "select * from public.usage_credits")).toHaveLength(0);
     await expectError(as(A, "insert into public.usage_credits (user_id, kind, amount, reason) values (auth.uid(), 'ai_requests', 9999, 'hile')"), /row-level security/);
   });

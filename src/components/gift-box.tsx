@@ -64,8 +64,8 @@ export function GiftBox() {
             <div className="relative bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-500 p-5 text-white">
               <button onClick={() => setOpen(false)} className="absolute right-3 top-3 rounded-lg p-1 text-white/80 hover:bg-white/15" aria-label={t("Kapat")}><X className="h-4 w-4" /></button>
               <Gift className="h-8 w-8" />
-              <p className="mt-2 text-lg font-semibold">{t("Arkadaşını davet et, ikiniz de kazanın")}</p>
-              <p className="mt-1 text-sm text-white/85">{t("Davet ettiğin her arkadaş e-postasını doğruladığında ikinize de {a} yapay zekâ isteği ve {s} kaynak tarama hakkı ({d} gün geçerli).", { a: ref.reward.ai_requests, s: ref.reward.source_searches, d: ref.reward.valid_days })}</p>
+              <p className="mt-2 text-lg font-semibold">{t("Arkadaşını davet et, kazan")}</p>
+              <p className="mt-1 text-sm text-white/85">{t("Davet ettiğin her arkadaş kaydolduğunda sana {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlanır ({d} gün geçerli).", { a: ref.reward.ai_requests, s: ref.reward.source_searches, d: ref.reward.valid_days })}</p>
             </div>
             <div className="space-y-3 p-4">
               <div className="flex gap-2">
@@ -85,7 +85,7 @@ export function GiftBox() {
       <AnimatePresence>
         {peek && !open && (
           <motion.button initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} onClick={openBox} className="max-w-[240px] rounded-2xl bg-white px-4 py-2.5 text-left text-sm text-ink-800 shadow-xl ring-1 ring-ink-100">
-            🎁 {t("Arkadaşını davet et, ikinize de ek hak!")}
+            🎁 {t("Arkadaşını davet et, ek hak kazan!")}
           </motion.button>
         )}
       </AnimatePresence>

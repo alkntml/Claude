@@ -40,7 +40,7 @@ export default async function Pricing() {
           {referral.enabled && (
             <div className="card p-5">
               <p className="font-semibold text-ink-900">{t("Arkadaşını davet et")}</p>
-              <p className="mt-1 text-sm text-ink-500">{t("Davet ettiğiniz her arkadaşınız e-postasını doğruladığında ikinize de {a} yapay zekâ isteği ve {s} kaynak tarama hakkı ({d} gün geçerli).", { a: reward.ai_requests, s: reward.source_searches, d: referral.valid_days })}</p>
+              <p className="mt-1 text-sm text-ink-500">{t("Davet ettiğiniz her arkadaşınız kaydolduğunda size {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlanır ({d} gün geçerli).", { a: reward.ai_requests, s: reward.source_searches, d: referral.valid_days })}</p>
             </div>
           )}
         </div>

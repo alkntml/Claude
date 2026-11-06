@@ -83,8 +83,16 @@ describe("migration'lar ve seed", () => {
     expect((await db.query(`select 1 from public.usage_credits where user_id = '${N}'`)).rows).toHaveLength(0);
     // Aynı kişi için ikinci kez verilmez
     await db.exec(`update public.profiles set referred_by = referred_by where id = '${N}'`);
-    expect((await db.query(`select 1 from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows).toHaveLength(2);    // Sonraki testler için temizlik
-    await db.exec(`delete from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'; delete from public.profiles where id = '${N}'; delete from auth.users where id = '${N}';`);
+    expect((await db.query(`select 1 from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows).toHaveLength(2);
+    // Bildirim kutusu (D100): davet edene tek bildirim; davetliye yok; kullanıcı yalnızca okundu işaretleyebilir
+    const notes = (await db.query<{ kind: string; data: { ai: number; ss: number; days: number } }>(`select kind, data from public.notifications where user_id = '${A}'`)).rows;
+    expect(notes).toEqual([{ kind: "referral_reward", data: { ai: 10, ss: 7, days: 60 } }]);
+    expect((await db.query(`select 1 from public.notifications where user_id = '${N}'`)).rows).toHaveLength(0);
+    expect(await as(B, "select * from public.notifications")).toHaveLength(0);
+    expect(await as(A, "update public.notifications set read_at = now() returning id")).toHaveLength(1);
+    await expectError(as(A, "update public.notifications set data = '{}'::jsonb"), /yetkiniz yok/);
+    await expectError(as(A, "insert into public.notifications (user_id, kind) values (auth.uid(), 'sahte')"), /row-level security/);    // Sonraki testler için temizlik
+    await db.exec(`delete from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'; delete from public.notifications where user_id = '${A}'; delete from public.profiles where id = '${N}'; delete from auth.users where id = '${N}';`);
   });
   it("paket vaatleri (migration 22): sayfa satırı eklenir, tekrar çalıştırmak güvenli, elle yapılan düzenleme korunur", async () => {
     await db.exec("update public.plans set features = array_replace(features, 'TXT / Markdown dışa aktarma', 'TXT / PDF / Markdown dışa aktarma') where id = 'free'");

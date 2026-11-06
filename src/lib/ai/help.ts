@@ -24,6 +24,7 @@ B) UYGULAMA İÇİ SOL MENÜ (giriş yaptıktan sonra; telefonda sol üstteki �
 - “Hesap ve abonelik”: “Profil” (ad soyad, varsayılan atıf stili), “Şifremi değiştir”, “Bu ayki kullanım” (yapay zekâ istekleri, kaynak taramaları, depolama, aktif projeler), “Paketler” → “Yükselt” → “WhatsApp ile yükselt” (ödeme WhatsApp üzerinden), “Süreyi uzat”, “Arkadaşını davet et” (davet bağlantısı), “Kurum kodu” ile kurum lisansına katılma / “Kurumdan ayrıl”, “Verilerim (KVKK / GDPR)”: “Verilerimi indir”, “Veri talebi oluştur (KVKK)”, “Hesabımı sil”.
 - “Kurumum” (yalnızca kurum yöneticilerine görünür): katılım kodu, üyeler ve kullanımları, “Kurumdan çıkar”.
 - “Uzman desteği”: redaksiyon, çeviri, biçim desteği için iletişim.
+- Logonun yanındaki zil simgesi (telefonda üst çubukta): “Bildirimler” (ör. davet ödülü kazandığınızda); kırmızı sayı okunmamış bildirimleri gösterir.
 - Menünün altında: dil seçici (Türkçe/English), ay/güneş simgesi (gece/gündüz modu), “Davet et, kazan”, “Geri bildirim” (görüş ve hata bildirimi), dişli simgesi (Hesap), “Çıkış yap”.
 
 C) ÇALIŞMA ALANI (bir çalışmayı açınca)

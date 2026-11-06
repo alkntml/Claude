@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D100: bildirim kutusu (zil simgesi); davet ödülü bildirimi (migration 24)
 - D99: davet ödülü yalnızca davet edene, davetli kaydolduğu anda (DB tetikleyicisi, migration 23)
 - D98: davet ödülü = Ücretsiz paket hakları (10 istek + 7 tarama), krediler tek seferlik bakiye, token sınırı krediyle artar
 - D97: kurgudaki hedef uzunluğa uyum (kesin kelime hedefi, alt başlığa eşit pay, kısa kalan taslak otomatik tamamlanır)

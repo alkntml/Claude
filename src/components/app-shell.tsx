@@ -15,6 +15,7 @@ import { api, openUpgrade } from "@/lib/client";
 import { createBrowser } from "@/lib/supabase/browser";
 import { expertUrl } from "@/lib/expert";
 import { GiftBox } from "@/components/gift-box";
+import { NotificationBell } from "@/components/notifications";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; limitReached?: boolean; expiresAt?: string | null }
@@ -62,7 +63,7 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
 
   const Side = (
     <div className="flex h-full flex-col">
-      <div className="px-5 pb-6 pt-6"><Link href="/panel"><Logo /></Link></div>
+      <div className="flex items-center justify-between px-5 pb-6 pt-6"><Link href="/panel"><Logo /></Link><NotificationBell className="hidden lg:block" /></div>
       <div className="px-3">
         <Link href="/yeni" className="group mb-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_24px_-10px_rgb(39_71_220/0.8)] transition hover:-translate-y-px">
           <Plus className="h-4 w-4 transition group-hover:rotate-90" /> {t("Yeni çalışma")}
@@ -106,7 +107,10 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-100 bg-ink-50/50 lg:block">{Side}</aside>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/95 px-4 py-3 lg:hidden">
         <Logo />
-        <button onClick={() => setOpen(true)} aria-label={t("Menü")} className="rounded-lg p-2"><Menu /></button>
+        <div className="flex items-center gap-1">
+          <NotificationBell align="right" />
+          <button onClick={() => setOpen(true)} aria-label={t("Menü")} className="rounded-lg p-2"><Menu /></button>
+        </div>
       </div>
       <AnimatePresence>
         {open && (

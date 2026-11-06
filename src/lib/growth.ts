@@ -126,12 +126,17 @@ export async function grantReferralReward(userId: string): Promise<boolean> {
     const TR = 3 * 3600_000; const tr = new Date(Date.now() + TR);
     const monthStart = new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth(), 1) - TR).toISOString();
     const { count } = await db.from("usage_credits").select("id", { count: "exact", head: true }).eq("user_id", p.referred_by).eq("reason", "referral_inviter").eq("kind", "ai_requests").gte("created_at", monthStart);
-    if ((count ?? 0) >= cfg.monthly_cap) return true;
+    if ((count ?? 0) >= cfg.monthly_cap) {
+      await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_cap", data: { cap: cfg.monthly_cap } }).then(() => undefined, () => undefined);
+      return true;
+    }
     const expires = new Date(Date.now() + cfg.valid_days * 86_400_000).toISOString();
     await db.from("usage_credits").insert([
       { user_id: p.referred_by, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_inviter", expires_at: expires },
       { user_id: p.referred_by, kind: "source_searches", amount: reward.source_searches, reason: "referral_inviter", expires_at: expires },
     ]);
+    // Bildirim kutusu (D100); tablo yoksa sessizce atlanır
+    await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_reward", data: { ai: reward.ai_requests, ss: reward.source_searches, days: cfg.valid_days } }).then(() => undefined, () => undefined);
     return true;
   } catch {
     return false;

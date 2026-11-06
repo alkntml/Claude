@@ -68,3 +68,24 @@ Vaatler yoğun profile göre 5’e aşağı yuvarlandı (sık yeniden yazdıran 
 
 ## Doğrulama
 Model tahmindir. Yönetim → Maliyet sağlığı (D94) gerçek ortalama istek maliyeti ve önbellek isabetini gösterir; bir ay sonra katsayıları (`model.py` SCEN, WORDS_PER_DRAFT) gerçek veriyle düzelt ve raporu yeniden üret (`python3 -I model.py && python3 -I report.py`).
+
+## Davet ödülleri maliyeti (Kasım 2026)
+Ayar (`referral`, varsayılan): davet edilen e-postasını doğrulayınca **iki tarafa** 50 yapay zekâ isteği + 50 kaynak taraması; geçerlilik 60 gün; davet eden ayda en fazla 20 ödül. Kredi `effectiveLimits` ile aylık sınıra eklenir; maliyet tavanı da kredi × `avg_request_usd` kadar artar.
+
+Birim değerler (model, YL tezi akışı): istek başı **$0,064 / $0,086 / $0,114** (iyimser/temel/kötümser), istek başı ~45 bin token, **istek başı ~0,91 sayfa** (tez biçimi). Kaynak taraması yapay zekâ maliyeti doğurmaz (~0).
+
+| | İstek | Sayfa karşılığı | Maliyet (temel) | TL (48) |
+|---|---|---|---|---|
+| Tek taraf, tek sefer (amaçlanan) | 50 | ~45 | $4,29 (kötümser $5,68) | ~206 TL |
+| Bir davet, iki taraf (amaçlanan) | 100 | ~90 | $8,57 (kötümser $11,36) | ~411 TL |
+| Bir davet, gerçekte en fazla (hata 1) | 150–200 | ~135–180 | $12,9–17,1 | ~620–820 TL |
+| Kötüye kullanım: 1 davet eden, ayda 20 ödül | 1.000/ay (çakışmayla 2.000–3.000) | — | $86/ay (çakışmayla $171–257) | ~4.100–12.300 TL/ay |
+
+Karşılaştırma: tek tarafın ödülü (~45 sayfa) Basic’in aylık vaadinden (25 sayfa) fazla; bir davetin maliyeti (~411 TL) Basic’in KDV hariç aylık gelirinin (624 TL) %66’sı. Davet edilen Basic’e geçip ≥1 ay ödemezse program zarar eder.
+
+Bulunan sorunlar:
+1. **Kredi her ay yeniden sayılıyor:** 60 gün geçerli kredi, aktif olduğu her takvim ayında aylık sınıra eklenir (kullanım her ay sıfırlanır). Ödülün verildiği gün ayın ortasıysa 3 ayı kapsar → 50 istek yerine 100–150 istek.
+2. **Ücretsiz davetli ödülü kullanamıyor:** Token sınırı (ücretsizde 800 bin/ay) kredilerle artmıyor; istek başı ~41–45 bin tokenla ayda ~18–20 istekte durur (10 temel + ~9 ödül). 50 isteklik vaat ücretsiz pakette fiilen ~9–10 istek; kullanıcı “token limiti” uyarısı görür.
+3. **Kötüye kullanım açığı:** Yalnız e-posta doğrulaması yeterli; tek kullanımlık e-postalarla ayda 20 ödül toplanabilir.
+
+Öneri (karar bekliyor): ödül tek seferlik bakiye olsun (her ay yeniden sayılmasın); boyut 10–15 istek/taraf (~9–14 sayfa, ~$0,9–1,3 ≈ 41–62 TL); token sınırı da kredi kadar artsın; aylık üst sınır 20 → 5; isteğe bağlı: davet edenin ödülü davetli ücretli pakete geçince verilsin.

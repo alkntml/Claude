@@ -71,6 +71,34 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("rakip analizi iyileştirmeleri (migration 33): iddia denetimi, PRISMA kayıtları, gözlem ve kurum denetim tabloları izole", async () => {
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Derleme', 'literature_review', 'master') returning id`)).rows;
+    const [st] = (await db.query<{ id: string }>(`insert into public.project_stages (project_id, user_id, key, title, position) values ($1, '${A}', 'intro', 'Giriş', 0) returning id`, [p.id])).rows;
+    await db.query(`insert into public.claim_audits (project_id, stage_id, user_id, summary, results) values ($1, $2, '${A}', '{"total":1}', '[]')`, [p.id, st.id]);
+    await db.query(`insert into public.review_records (project_id, user_id, key, origin, record) values ($1, '${A}', 'doi:10.1/x', 'Scopus', '{"title":"X"}')`, [p.id]);
+    // Sahip görür, başkası görmez; doğrudan yazma yok (sunucu yazar)
+    expect(await as(A, `select id from public.claim_audits where project_id = '${p.id}'`)).toHaveLength(1);
+    expect(await as(B, `select id from public.claim_audits where project_id = '${p.id}'`)).toHaveLength(0);
+    expect(await as(A, `select id from public.review_records where project_id = '${p.id}'`)).toHaveLength(1);
+    expect(await as(B, `select id from public.review_records where project_id = '${p.id}'`)).toHaveLength(0);
+    await expectError(as(A, `insert into public.review_records (project_id, user_id, key, record) values ('${p.id}', auth.uid(), 'k', '{}')`), /row-level security/);
+    // Kayıt sahibi çalışma sahibi olmalı (ortak yazar adına yazılamaz)
+    await expectError(db.query(`insert into public.review_records (project_id, user_id, key, record) values ($1, '${B}', 'k', '{}')`, [p.id]), /ait değil/);
+    await expectError(db.query(`insert into public.review_records (project_id, user_id, key, record, stage) values ($1, '${A}', 'k', '{}', 'bilinmeyen')`, [p.id]), /check/i);
+    // Gözlem ve kurum denetim kayıtları kullanıcıya kapalı
+    await db.query(`insert into public.ai_calls (model, ms, ok) values ('claude-haiku-5-5', 900, true)`);
+    expect(await as(A, `select id from public.ai_calls`)).toHaveLength(0);
+    expect(await as(A, `select id from public.org_audit_log`)).toHaveLength(0);
+    // Paket kartı: Tek Proje’de koşulsuz “sınırsız” kalmadı
+    const single = (await db.query<{ features: string[]; description: string }>("select features, description from public.plans where id = 'single'")).rows[0];
+    for (const f of single.features) if (/^Sınırsız (kaynak|yapay)/.test(f)) expect(f).toMatch(/adil kullanım/);
+    expect(single.description).toMatch(/adil kullanım/);
+    // Çalışma silinince denetim ve derleme kayıtları da silinir
+    await db.query(`delete from public.projects where id = $1`, [p.id]);
+    expect((await db.query(`select 1 from public.review_records where project_id = $1`, [p.id])).rows).toHaveLength(0);
+    expect((await db.query(`select 1 from public.claim_audits where project_id = $1`, [p.id])).rows).toHaveLength(0);
+    await db.exec(`delete from public.ai_calls; delete from public.activity_log where user_id = '${A}';`);
+  });
   it("ortak yazım (migration 32): üyelik ve davetleri yalnızca sahip/üye görür, yazamaz; üyenin sohbeti kendi adına", async () => {
     const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Ortak çalışma', 'research_article', 'master') returning id`)).rows;
     // Sunucu (service role) üyelik ve davet yazar

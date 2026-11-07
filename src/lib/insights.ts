@@ -142,3 +142,39 @@ export function monthProjection(spent: number, now = new Date()) {
   const days = new Date(Date.UTC(tr.getUTCFullYear(), tr.getUTCMonth() + 1, 0)).getUTCDate();
   return day > 0.25 ? Math.round((spent / day) * days * 100) / 100 : null;
 }
+
+/* ---------------- Ürün analitiği (D125) ---------------- */
+export interface FunnelStep { key: string; label: string; count: number; rate: number }
+/**
+ * Aktivasyon hunisi: dönemde kaydolan kullanıcılar → çalışma açtı → en az 300 kelime yazdı → yapay zekâ kullandı →
+ * dışa aktardı → en az iki farklı gün geri geldi. Oranlar kayıt sayısına göredir.
+ */
+export function activationFunnel(o: { users: string[]; projectUsers: Set<string>; words: Map<string, number>; aiUsers: Set<string>; exportUsers: Set<string>; activeDays: Map<string, Set<string>> }): FunnelStep[] {
+  const n = o.users.length;
+  const steps: [string, string, (u: string) => boolean][] = [
+    ["signup", "Kaydoldu", () => true],
+    ["project", "Çalışma açtı", (u) => o.projectUsers.has(u)],
+    ["wrote", "En az 300 kelime yazdı", (u) => (o.words.get(u) ?? 0) >= 300],
+    ["ai", "Yapay zekâ kullandı", (u) => o.aiUsers.has(u)],
+    ["export", "Dışa aktardı", (u) => o.exportUsers.has(u)],
+    ["return", "İki farklı günde kullandı", (u) => (o.activeDays.get(u)?.size ?? 0) >= 2],
+  ];
+  return steps.map(([key, label, f]) => { const c = o.users.filter(f).length; return { key, label, count: c, rate: n ? Math.round((c / n) * 1000) / 10 : 0 }; });
+}
+
+/** Yapay zekâ güvenilirliği: model başına çağrı, hata oranı, medyan ve %95 süre (ms) */
+export function aiReliability(rows: { model: string; ms: number; ttft_ms: number | null; ok: boolean; error: string | null }[]) {
+  const pct = (xs: number[], p: number) => { if (!xs.length) return 0; const s = [...xs].sort((a, b) => a - b); return s[Math.min(s.length - 1, Math.floor((p / 100) * s.length))]; };
+  const by = new Map<string, typeof rows>();
+  for (const r of rows) { if (!by.has(r.model)) by.set(r.model, []); by.get(r.model)!.push(r); }
+  const models = [...by.entries()].map(([model, rs]) => ({
+    model, calls: rs.length, errors: rs.filter((r) => !r.ok && r.error !== "aborted").length,
+    errorRate: Math.round((rs.filter((r) => !r.ok && r.error !== "aborted").length / rs.length) * 1000) / 10,
+    p50: pct(rs.filter((r) => r.ok).map((r) => r.ms), 50), p95: pct(rs.filter((r) => r.ok).map((r) => r.ms), 95),
+    ttft50: pct(rs.filter((r) => r.ok && r.ttft_ms != null).map((r) => r.ttft_ms!), 50),
+  })).sort((a, b) => b.calls - a.calls);
+  const errs = new Map<string, number>();
+  for (const r of rows) if (!r.ok && r.error && r.error !== "aborted") errs.set(r.error, (errs.get(r.error) ?? 0) + 1);
+  const total = rows.length, failed = rows.filter((r) => !r.ok && r.error !== "aborted").length;
+  return { total, failed, errorRate: total ? Math.round((failed / total) * 1000) / 10 : 0, models, topErrors: [...errs.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([error, count]) => ({ error, count })) };
+}

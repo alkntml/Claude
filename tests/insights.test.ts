@@ -33,3 +33,18 @@ describe("yönetim ölçümleri (D90)", () => {
     expect(deviceOf("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)")).toBe("mobile");
   });
 });
+
+import { activationFunnel, aiReliability } from "@/lib/insights";
+describe("ürün analitiği (D125)", () => {
+  it("aktivasyon hunisi kayıtlara göre oran verir", () => {
+    const f = activationFunnel({ users: ["a", "b", "c", "d"], projectUsers: new Set(["a", "b", "c"]), words: new Map([["a", 500], ["b", 100]]), aiUsers: new Set(["a"]), exportUsers: new Set(["a"]), activeDays: new Map([["a", new Set(["d1", "d2"])]]) });
+    expect(f.map((x) => x.count)).toEqual([4, 3, 1, 1, 1, 1]);
+    expect(f[1].rate).toBe(75);
+  });
+  it("yapay zekâ güvenilirliği: iptaller hata sayılmaz, yüzdelikler", () => {
+    const r = aiReliability([{ model: "m", ms: 100, ttft_ms: 10, ok: true, error: null }, { model: "m", ms: 300, ttft_ms: 30, ok: true, error: null }, { model: "m", ms: 5, ttft_ms: null, ok: false, error: "529" }, { model: "m", ms: 5, ttft_ms: null, ok: false, error: "aborted" }]);
+    expect(r).toMatchObject({ total: 4, failed: 1, errorRate: 25 });
+    expect(r.models[0]).toMatchObject({ calls: 4, errors: 1, p50: 300 });
+    expect(r.topErrors).toEqual([{ error: "529", count: 1 }]);
+  });
+});

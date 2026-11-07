@@ -13,7 +13,7 @@ import { PROVIDER_LABELS } from "@/lib/sources/labels";
 import { UserActivity } from "./activity";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
-import { CostBreakdown, TrafficTab } from "./insights";
+import { CostBreakdown, ProductHealth, TrafficTab } from "./insights";
 import { memberCode } from "@/lib/member";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -120,6 +120,10 @@ function Overview() {
       <div>
         <h3 className="mb-3 flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> API maliyeti sayacı: hangi özellik ve araç ne kadar harcıyor?</h3>
         <CostBreakdown days={days} />
+      </div>
+      <div>
+        <h3 className="mb-3 flex items-center gap-2 font-semibold"><Activity className="h-4 w-4" /> Ürün analitiği: aktivasyon, yapay zekâ güvenilirliği ve yeni modüller</h3>
+        <ProductHealth days={days} />
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="card p-5">

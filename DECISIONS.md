@@ -572,3 +572,33 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kullanıcı kararı: “Uzman desteği” (dermanlik.com.tr yönlendirmesi) siteden tamamen kaldırıldı: /uzman-destegi sayfası, üst menü, alt bilgi, uygulama sol menüsü, çalışma alanı mobil menüsü, Dışa aktar menüsündeki bağlantı, istatistik penceresindeki “İstatistik danışmanlığı” bağlantısı, SSS maddesi ve SSS/blog içindeki atıflar, asistan rehberi, SEO/site haritası kayıtları, lib/expert.ts ve testi.
 - Eski adres (/uzman-destegi, /en/uzman-destegi) ana sayfaya kalıcı (308) yönlenir; arama motoru kaydı boşa düşmez.
 
+### D118 — Fiyat ve limit tutarlılığı (rakip analizi, kritik madde)
+- Ana sayfa ve Fiyatlar aynı bileşen (PricingCards) ve aynı kaynakla (publicPlans → plans tablosu) çalışır; `tests/pricing-consistency.test.ts` sabit fiyat/tarama sayısını ve koşulsuz “sınırsız” ifadesini yakalar. Migration 33 canlıda kalmış “Aylık 2.000/8.000 kaynak taraması” satırlarını ve Tek Proje’deki koşulsuz “sınırsız” ifadelerini adil kullanım ifadesine çevirir.
+- Fiyat sayfasına “Paket ölçüleri nasıl belirlendi?” kutusu (44 tam metin, yaklaşık sayfa, adil kullanım bağlantısı #adil-kullanim). Tek Proje iş modeli değiştirilmedi (D103 kullanıcı kararı); yalnızca ifade netleştirildi.
+
+### D119 — Kaynak destekli iddia denetimi (rakip analizi öncelik 1)
+- `lib/claims.ts` bölümü cümlelere böler (kısaltma koruması, cümle başına kayan atıf önceki cümleye), atıflı / atıfsız kesin iddia (sayı, yüzde, “araştırmalar göstermektedir”…) / [KAYNAK GEREKLİ] cümlelerini çıkarır.
+- `lib/claim-audit.ts`: kaynağa göre gruplanmış toplu denetim (kaynak başına ≤2 Haiku çağrısı: anahtar kelime + toplu karar; 6’lık partiler); alıntı kaynak metninde birebir yoksa gizlenir; yalnızca künyesi bilinen kaynak yapay zekâya gitmez (“yetersiz”). Değişmeyen cümle–kaynak çifti önceki denetimden yeniden kullanılır; tek seferde ≤40 yeni çift.
+- `claim_audits` tablosu (bölüm başına sonuç). Arayüz: bölüm başlığının yanında ve Araçlar’da “İddia denetimi”; süzgeçli liste, pasaj+sayfa, “Cümleye git”, “Asistanla düzelt”; editörde renkli alt çizgi (ProseMirror dekorasyonu `claim-marks.ts`).
+
+### D120 — Kalite puanı yöntemi ve Yöntem ve şeffaflık sayfası
+- Puan yalnızca kural tabanlı bulgulardan: 100 − Σ (Kritik 6 / Uyarı 2,5 / Bilgi 0,6 × çarpan) (`lib/quality/score.ts`); yapay zekâ jürisi bulguları puanı değiştirmez. Kalite sayfasında “Puan nasıl hesaplanır?” ve kategori başına düşülen puan.
+- Herkese açık `/yontem` (TR/EN): kaynak zinciri, künye doğrulaması, erişim seviyeleri, iddia denetimi, asistan kuralları, puan yöntemi, Araştırmalar ne diyor? sınırları, paket ölçüleri, bilinen sınırlamalar, bağımsız değerlendirme çağrısı. Performans iddiası veya sahte vaka çalışması yok.
+
+### D121 — Teslim / yayın öncesi kontrol listesi
+- `lib/quality/checklist.ts` (deterministik, yapay zekâsız): boş bölüm, [KAYNAK GEREKLİ]/[VERİ GİRİLECEK], iddia denetimi (desteklenmeyen/denetlenmemiş), atıfsız iddia, doğrulanmamış/eksik/okunmamış/atıfsız kaynak, özet, anahtar kelime, kalite puanı, biçim/kapak, dergi kılavuzu, dil denetimi. Kalite sayfasında, her maddede “Düzelt →”.
+
+### D122 — Sistematik derleme (PRISMA 2020)
+- `review_records` tablosu + protokol `projects.context.review`. Akış: Protokol → Kayıt toplama (Academiana araması veya RIS/BibTeX; yinelenen anahtarı DOI ya da sadeleştirilmiş başlık+yıl, yinelenenler “duplicate” olarak saklanır) → Başlık/özet tarama (Haiku yalnızca ÖNERİ; karar ve gerekçe kullanıcıda) → Tam metin uygunluğu → Akış şeması (PRISMA 2020 SVG; belgeye şekil, PNG, CSV) → dahil edilenleri kaynaklara ekleme. Aşama atlama engellenir (`canMove`). Özellik: Basic+ (`prisma`).
+
+### D123 — Literatür haritası
+- OpenAlex’ten toplu (50’lik) çekim; çalışma içi atıf ağı + en az iki kaynağın atıf yaptığı ama çalışmada olmayan yayınlar (“eksik olabilecek temel çalışmalar”, tek tıkla ekle). Bağımlılıksız kuvvet yönelimli yerleşim (`litmap-graph.ts`, deterministik). 24 saat `context.litmap` önbelleği; kaynak tarama hakkından 1 sayılır. Özellik: Basic+ (`litmap`).
+
+### D124 — Görev bazlı başlangıç
+- Panelde “Bugün ne yapmak istiyorsunuz?” (8 görev kartı → doğru akış; `/yeni?tur=…`, araçlar). Yeni kullanıcıda açık. Otomatik örnek proje oluşturulmadı (Ücretsiz paketin tek proje hakkını tüketirdi); bunun yerine /ornekler bağlantısı.
+
+### D125 — Ürün analitiği, gözlemlenebilirlik, kurumsal yönetim
+- `ai_calls` tablosu: her yapay zekâ çağrısının süresi, ilk parça süresi, başarı/hata, token (metin yok); registry `streamWith` sarmalayıcısı, yazma hatası çağrıyı etkilemez. Yönetim → Genel bakış: aktivasyon hunisi (kayıt → çalışma → 300+ kelime → YZ → dışa aktarma → 2. gün), YZ güvenilirliği (hata oranı, medyan/%95 süre, en sık hatalar), yeni modüllerin kullanımı.
+- Kurum: `org_audit_log` (katılma, ayrılma, çıkarma, rol değişikliği), rol yönetimi (son yönetici korunur, tek yönetici ayrılamaz), bu ayki özet, kullanım raporu CSV. İçerik paylaşılmaz. SSO bu turda yapılmadı (Supabase SAML ücretli plan gerektirir).
+- Migration 33: plan ifadeleri, claim_audits, review_records, ai_calls, org_audit_log.
+

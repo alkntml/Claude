@@ -139,6 +139,15 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     },
     keywords: { tr: ["kullanım koşulları"], en: ["terms of use"] },
   },
+  "/yontem": {
+    title: { tr: "Yöntem ve Şeffaflık: Kaynak ve İddia Doğrulama | Academiana", en: "Method and Transparency: Source and Claim Checks" },
+    description: {
+      tr: "Kaynaklar nereden gelir, nasıl doğrulanır, atıflı her cümle kaynağında desteklenir mi, kalite puanı nasıl hesaplanır ve sistemin sınırlamaları nelerdir?",
+      en: "Where sources come from, how they are verified, how each cited sentence is checked against its source, how the quality score works and its limits.",
+    },
+    keywords: { tr: ["kaynak doğrulama", "atıf doğrulama", "iddia denetimi", "yapay zeka akademik güvenilirlik", "uydurma kaynak"], en: ["citation verification", "claim checking", "source verification AI", "academic AI transparency", "hallucinated references"] },
+    tagline: { tr: "Kaynak ve iddia nasıl doğrulanır?", en: "How sources and claims are checked" },
+  },
   "/hakkimizda": {
     title: { tr: "Hakkımızda — Misyonumuz ve Vizyonumuz | Academiana", en: "About Academiana — Our Mission and Vision" },
     description: {

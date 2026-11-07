@@ -21,7 +21,7 @@ export default async function Page() {
         <h2>Single Project plan</h2>
         <p>The Single Project plan is a one-time payment for one work (a thesis, article, proposal or similar) chosen when the plan is assigned. It has no time limit. Unlimited AI use and source searches apply only within this work; AI use and searches outside it (for example the survey assistant or topic finder) are limited each month to the Free plan allowance. The work bound to the plan cannot be deleted or have its type changed, and no second work can be opened.</p>
         <p>Completing the work and then writing a different work in its place, for example by deleting or overwriting its content, changing its topic, or preparing works for other people, is a breach of these terms. The same applies to sharing the account with other people.</p>
-        <h2>Fair use</h2>
+        <h2 id="adil-kullanim">Fair use</h2>
         <p>“Unlimited” means normal use for one academic work by one person. To keep the service sustainable, usage is monitored automatically: unusual patterns (large deletions after download, content replaced between downloads, cover or author details changed, very high generation, use from many devices, text unrelated to the work’s topic) are reported to our administrators. Reports are reviewed by a person; no account is suspended automatically.</p>
         <p>Where a breach is found, we may notify you, restrict use or suspend the account. Fees for plans used in breach of these terms are not refunded, except where the law requires otherwise. You may contact us to dispute a decision.</p>
       </StaticPage>
@@ -40,7 +40,7 @@ export default async function Page() {
       <h2>Tek Proje paketi</h2>
       <p>Tek Proje paketi, paket tanımlanırken seçilen tek bir çalışma (tez, makale, proje önerisi vb.) için tek seferlik ödemedir ve süre sınırı yoktur. Sınırsız yapay zekâ kullanımı ve kaynak taraması yalnızca bu çalışmada geçerlidir; çalışma dışındaki yapay zekâ kullanımı ve taramalar (ör. anket yardımcısı, konu bulma) her ay Ücretsiz paket hakkı kadardır. Pakete bağlı çalışma silinemez, türü değiştirilemez ve ikinci bir çalışma açılamaz.</p>
       <p>Çalışmayı tamamladıktan sonra içeriğini silerek ya da üzerine yazarak, konusunu değiştirerek veya başka kişiler adına çalışma hazırlayarak paketi farklı çalışmalar için kullanmak bu koşulların ihlalidir. Hesabın başka kişilerle paylaşılması da aynı kapsamdadır.</p>
-      <h2>Adil kullanım</h2>
+      <h2 id="adil-kullanim">Adil kullanım</h2>
       <p>“Sınırsız”, bir kişinin bir akademik çalışma için olağan kullanımı anlamına gelir. Hizmetin sürdürülebilirliği için kullanım otomatik olarak izlenir: olağan dışı durumlar (indirdikten sonra büyük silme, indirmeler arasında içeriğin değişmesi, kapak veya yazar bilgisinin değişmesi, çok yüksek üretim, çok sayıda cihazdan kullanım, çalışmanın konusuyla ilgisiz metin) yöneticilerimize bildirilir. Bildirimleri bir kişi inceler; hiçbir hesap otomatik olarak askıya alınmaz.</p>
       <p>İhlal tespit edilirse sizi bilgilendirebilir, kullanımı kısıtlayabilir veya hesabı askıya alabiliriz. Bu koşullara aykırı kullanılan paketlerin ücreti, mevzuatın zorunlu kıldığı durumlar dışında iade edilmez. Karara itiraz etmek için bizimle iletişime geçebilirsiniz.</p>
     </StaticPage>

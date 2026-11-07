@@ -43,4 +43,8 @@ union all select '31 Tek Proje gözetimi (parmak izi, satın alma, kararlar)',
 union all select '32 Ortak yazım ve otomatik tamamlama',
   case when to_regclass('public.project_members') is not null and to_regclass('public.project_invites') is not null
         and exists (select 1 from pg_enum e join pg_type t on t.oid = e.enumtypid where t.typname = 'usage_kind' and e.enumlabel = 'autocomplete')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '33 İddia denetimi, PRISMA, gözlem, kurum denetim kaydı',
+  case when to_regclass('public.claim_audits') is not null and to_regclass('public.review_records') is not null
+        and to_regclass('public.ai_calls') is not null and to_regclass('public.org_audit_log') is not null
        then 'YAPILMIŞ' else 'EKSİK' end;

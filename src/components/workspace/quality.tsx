@@ -1,7 +1,7 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
-import { AlertOctagon, ArrowLeft, BookOpenCheck, Info, Languages, ListChecks, Repeat2, ScanSearch, ShieldAlert, Sparkles, TriangleAlert } from "lucide-react";
+import { AlertOctagon, ArrowLeft, BookOpenCheck, CheckCircle2, ChevronDown, CircleDashed, Info, Languages, ListChecks, Repeat2, ScanSearch, ShieldAlert, Sparkles, TriangleAlert, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { cn } from "@/components/ui/cn";
 import { Badge, Empty } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
+import type { CheckItem } from "@/lib/quality/checklist";
+import { penaltyByCategory, SEVERITY_WEIGHTS } from "@/lib/quality/score";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const CAT: Record<string, { label: string; icon: any }> = {
@@ -23,7 +25,7 @@ const CAT: Record<string, { label: string; icon: any }> = {
 };
 const SEV = { error: { label: "Kritik", tone: "red" as const }, warning: { label: "Uyarı", tone: "amber" as const }, info: { label: "Bilgi", tone: "ink" as const } };
 
-export function QualityView({ project, initial, stages }: { project: any; initial: any; stages: any[] }) {
+export function QualityView({ project, initial, stages, checklist = [] }: { project: any; initial: any; stages: any[]; checklist?: CheckItem[] }) {
   const { t } = useT();
   const toast = useToast();
   const [report, setReport] = useState<any>(initial);
@@ -40,6 +42,8 @@ export function QualityView({ project, initial, stages }: { project: any; initia
 
   const r = report?.report;
   const score = report?.score ?? 0;
+  const lost = r ? penaltyByCategory(r.issues) : {};
+  const [showMethod, setShowMethod] = useState(false);
   const groups = r ? Object.keys(CAT).map((k) => ({ k, items: r.issues.filter((i: any) => i.category === k) })).filter((g) => g.items.length) : [];
 
   return (
@@ -55,6 +59,29 @@ export function QualityView({ project, initial, stages }: { project: any; initia
           <Button onClick={run} loading={loading}>{report ? t("Yeniden kontrol et") : t("Kontrolü başlat")}</Button>
         </div>
       </div>
+
+      {checklist.length > 0 && (
+        <section className="mt-8">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="flex items-center gap-2 font-semibold text-ink-900"><ListChecks className="h-4 w-4 text-brand-600" /> {t("Teslim ve yayın öncesi kontrol listesi")}</h2>
+            <span className="text-sm text-ink-500">{t("{d}/{n} madde tamam", { d: checklist.filter((c) => c.status === "ok").length, n: checklist.length })}</span>
+          </div>
+          <p className="mt-1 text-sm text-ink-500">{t("Danışmana teslim etmeden veya dergiye göndermeden önce son kontroller. Liste çalışmanızın güncel verisinden hesaplanır; yapay zekâ kullanmaz.")}</p>
+          <ul className="card mt-3 divide-y divide-ink-100">
+            {checklist.map((c) => {
+              const I = c.status === "ok" ? CheckCircle2 : c.status === "fail" ? XCircle : c.status === "warn" ? TriangleAlert : CircleDashed;
+              const tone = c.status === "ok" ? "text-emerald-600" : c.status === "fail" ? "text-rose-600" : c.status === "warn" ? "text-amber-600" : "text-ink-400";
+              return (
+                <li key={c.id} className="flex items-start gap-3 p-3.5">
+                  <I className={cn("mt-0.5 h-5 w-5 shrink-0", tone)} />
+                  <div className="min-w-0 flex-1"><p className="font-medium text-ink-900">{t(c.label)}</p><p className="text-sm text-ink-600">{t(c.detail, c.vars)}</p></div>
+                  {c.stageId && <Link href={`/proje/${project.id}?bolum=${c.stageId}`} className="shrink-0 text-sm font-medium text-brand-600">{t("Düzelt →")}</Link>}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       {!report && !loading && <div className="mt-10"><Empty icon={<ListChecks className="h-5 w-5" />} title={t("Henüz kontrol yapılmadı")}>{t("Çalışmanızın tüm bölümleri ve kaynakları birlikte değerlendirilir.")}</Empty></div>}
       {loading && <div className="mt-10 grid gap-4 md:grid-cols-3">{[0, 1, 2].map((i) => <div key={i} className="skeleton h-32" />)}</div>}
@@ -75,6 +102,23 @@ export function QualityView({ project, initial, stages }: { project: any; initia
                 <div key={l as string} className="card p-4"><p className="text-2xl font-semibold text-ink-900">{v}</p><p className="text-sm text-ink-500">{l}</p></div>
               ))}
             </div>
+          </div>
+          <div className="mt-4 rounded-2xl border border-ink-100 bg-white">
+            <button onClick={() => setShowMethod((v) => !v)} className="flex w-full items-center gap-2 p-4 text-left text-sm font-semibold text-ink-800"><Info className="h-4 w-4 text-brand-500" /> {t("Puan nasıl hesaplanır?")}<ChevronDown className={cn("ml-auto h-4 w-4 transition", showMethod && "rotate-180")} /></button>
+            {showMethod && (
+              <div className="space-y-3 border-t border-ink-100 p-4 text-sm leading-relaxed text-ink-600">
+                <p>{t("Puan 100’den başlar; kural tabanlı her bulgu önemine göre puan düşürür: Kritik {e}, Uyarı {w}, Bilgi {i} puan. Bazı küçük bulgular (ör. çift boşluk) daha düşük ağırlıkla sayılır. Puan 0–100 arasında sınırlanır.", { e: SEVERITY_WEIGHTS.error, w: SEVERITY_WEIGHTS.warning, i: SEVERITY_WEIGHTS.info })}</p>
+                <p>{t("Yapay zekâ jürisinin bulguları listede “AI” etiketiyle gösterilir ama puanı değiştirmez; böylece aynı metin her kontrolde aynı puanı alır ve puan karşılaştırılabilir kalır.")}</p>
+                <p>{t("Puan; atıf–kaynakça tutarlılığını, kaynakların doğrulanabilirliğini, eksik bölümleri, akademik dil kurallarını ve tekrarları ölçer. Bilimsel değeri, özgünlüğü veya intihal oranını ölçmez; bir jüri ya da hakem değerlendirmesinin yerine geçmez.")}</p>
+                {Object.keys(lost).length > 0 && (
+                  <div>
+                    <p className="font-medium text-ink-800">{t("Bu kontrolde düşülen puanlar")}</p>
+                    <ul className="mt-1 grid gap-1 sm:grid-cols-2">{Object.entries(lost).sort((a, b) => b[1] - a[1]).map(([k, v]) => <li key={k} className="flex justify-between rounded-lg bg-ink-50 px-2.5 py-1"><span>{t(CAT[k]?.label ?? k)}</span><b className="tabular-nums">−{v}</b></li>)}</ul>
+                  </div>
+                )}
+                <Link href="/yontem" className="inline-block font-medium text-brand-700 hover:underline">{t("Yöntem ve şeffaflık sayfası →")}</Link>
+              </div>
+            )}
           </div>
           <div className="mt-4 flex items-start gap-2 rounded-2xl border border-ink-100 bg-white p-4 text-sm text-ink-600"><Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" /><span><b>{t("İntihal kontrolü:")}</b> {r.plagiarism.note} “Tekrarlanan ifadeler” analizi yalnızca kendi metninizdeki tekrarları gösterir; intihal oranı değildir.</span></div>
 

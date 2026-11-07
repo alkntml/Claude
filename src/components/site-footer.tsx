@@ -47,6 +47,7 @@ export function SiteFooter() {
             <li><Link href="/gizlilik" className="hover:text-ink-900">{t("Gizlilik ve KVKK")}</Link></li>
             <li><Link href="/kosullar" className="hover:text-ink-900">{t("Kullanım koşulları")}</Link></li>
             <li><Link href="/akademik-durustluk" className="hover:text-ink-900">{t("Akademik dürüstlük ilkeleri")}</Link></li>
+            <li><Link href="/yontem" className="hover:text-ink-900">{t("Yöntem ve şeffaflık")}</Link></li>
           </ul>
         </div>
       </div>

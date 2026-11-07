@@ -101,8 +101,32 @@ export const FAQ: FaqGroup[] = [
         id: "dogrula",
         q: { tr: "Bir cümlenin gerçekten kaynakta geçtiğinden nasıl emin olurum?", en: "How can I be sure a sentence is really supported by the source?" },
         a: {
-          tr: "Metindeki atfa tıklayın ve **Kaynakta doğrula**’yı seçin. Sistem kaynağın okunmuş metninde ilgili bölümleri bulur, sayfasıyla gösterir ve cümlenin kaynak tarafından desteklenip desteklenmediğini değerlendirir (destekliyor / kısmen / desteklemiyor / karar için yeterli metin yok). Gösterilen alıntı kaynak metninde birebir aranır; bulunamazsa gösterilmez. Son karar sizindir.",
-          en: "Click the citation in the text and choose **Check in source**. The system finds the relevant passages in the source’s read text, shows them with page numbers and assesses whether the sentence is supported (supports / partially / does not support / not enough text). The quote shown is matched verbatim against the source text and hidden if not found. The final decision is yours.",
+          tr: "Bölümün tamamı için bölüm başlığının yanındaki **İddia denetimi** düğmesini (veya Araçlar → İddia denetimi) kullanın: atıflı her cümle, atıf yaptığı kaynağın okunan metniyle karşılaştırılır; sonuç (destekleniyor / kısmen / desteklenmiyor / okunamadı) dayanak pasajı ve sayfasıyla listelenir, sorunlu cümleler metinde renkli altı çizili gösterilir ve tek tıkla asistanla düzeltilebilir. Atıfsız kesin ifadeler de işaretlenir. Tek bir atıf için metindeki atfa tıklayıp **Kaynakta doğrula**’yı seçin. Sistem kaynağın okunmuş metninde ilgili bölümleri bulur, sayfasıyla gösterir ve cümlenin kaynak tarafından desteklenip desteklenmediğini değerlendirir (destekliyor / kısmen / desteklemiyor / karar için yeterli metin yok). Gösterilen alıntı kaynak metninde birebir aranır; bulunamazsa gösterilmez. Son karar sizindir.",
+          en: "For a whole section use the **Claim audit** button next to the section title (or Tools → Claim audit): every cited sentence is compared with the text read from its source; the result (supported / partly / not supported / not readable) is listed with the supporting passage and page, problem sentences are underlined in the text and can be fixed with the assistant in one click. Uncited strong statements are flagged too. For a single citation, click it in the text and choose **Check in source**. The system finds the relevant passages in the source’s read text, shows them with page numbers and assesses whether the sentence is supported (supports / partially / does not support / not enough text). The quote shown is matched verbatim against the source text and hidden if not found. The final decision is yours.",
+        },
+      },
+      {
+        id: "prisma",
+        q: { tr: "Sistematik derleme (PRISMA) yapabilir miyim?", en: "Can I do a systematic review (PRISMA)?" },
+        a: {
+          tr: "Evet. Araçlar → **Sistematik derleme (PRISMA)**: protokolünüzü (soru, dahil etme ve hariç tutma ölçütleri) yazarsınız; kayıtları Academiana araması veya Scopus, Web of Science, PubMed gibi veri tabanlarından RIS/BibTeX içe aktararak toplarsınız (yinelenenler otomatik ayrılır). Başlık/özet taramasında yapay zekâ yalnızca öneri verir, kararı ve gerekçeyi siz seçersiniz. Tam metin uygunluğundan sonra PRISMA 2020 akış şeması sayılarla otomatik çizilir; belgeye şekil olarak ekleyebilir, kayıtları CSV indirebilir, dahil edilen çalışmaları tek tıkla kaynaklarınıza ekleyebilirsiniz.",
+          en: "Yes. Tools → **Systematic review (PRISMA)**: write your protocol (question, inclusion and exclusion criteria); collect records with Academiana search or by importing RIS/BibTeX from databases such as Scopus, Web of Science or PubMed (duplicates are separated automatically). In title/abstract screening the AI only suggests; you choose the decision and the reason. After full-text eligibility, the PRISMA 2020 flow diagram is drawn automatically with the counts; you can insert it as a figure, download the records as CSV and add the included studies to your sources in one click.",
+        },
+      },
+      {
+        id: "harita",
+        q: { tr: "Literatür haritası ne işe yarar?", en: "What is the literature map for?" },
+        a: {
+          tr: "Araçlar → **Literatür haritası**, çalışmanızdaki kaynakların birbirine atıf ilişkilerini OpenAlex kaynakça kayıtlarından bir ağ olarak gösterir; merkezi kaynakları ve bağlantısız kalanları görürsünüz. Ayrıca kaynaklarınızdan en az ikisinin atıf yaptığı ama sizin çalışmanızda olmayan yayınları “eksik olabilecek temel çalışmalar” olarak önerir; okuyup uygunsa tek tıkla eklersiniz. DOI’si olan kaynaklar haritaya girer.",
+          en: "Tools → **Literature map** shows how the sources in your work cite each other, built from OpenAlex reference lists; you see central sources and isolated ones. It also suggests publications that at least two of your sources cite but that are not in your work, as possibly missing key studies; read them and add in one click if relevant. Sources with a DOI are included in the map.",
+        },
+      },
+      {
+        id: "kalite-puani",
+        q: { tr: "Kalite puanı neyi ölçer?", en: "What does the quality score measure?" },
+        a: {
+          tr: "Puan 100’den başlar ve kural tabanlı her bulgu önemine göre puan düşürür (kritik, uyarı, bilgi). Atıf–kaynakça tutarlılığını, kaynakların doğrulanabilirliğini, eksik bölümleri, akademik dil kurallarını ve tekrarları ölçer; yapay zekâ jürisinin bulguları gösterilir ama puanı değiştirmez, böylece aynı metin hep aynı puanı alır. Bilimsel değeri, özgünlüğü veya intihali ölçmez. Kalite sayfasında “Puan nasıl hesaplanır?” bölümü ve teslim öncesi kontrol listesi bulunur; ayrıntılar **Yöntem ve şeffaflık** sayfasındadır.",
+          en: "The score starts at 100 and each rule-based finding lowers it by severity (critical, warning, information). It measures citation–reference consistency, source verifiability, missing sections, academic language rules and repetition; AI jury findings are shown but do not change the score, so the same text always gets the same score. It does not measure scientific merit, originality or plagiarism. The quality page has a “How is the score calculated?” section and a pre-submission checklist; details are on the **Method and transparency** page.",
         },
       },
       {

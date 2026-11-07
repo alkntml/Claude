@@ -1,5 +1,6 @@
 "use client";
 import { createInlineSuggest } from "./inline-suggest";
+import { ClaimMarks, findSentence } from "./claim-marks";
 import { captionNodes, formatCaption, maxCaptionNo, noteLabel } from "@/lib/citations/captions";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
@@ -9,7 +10,7 @@ import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
-  ArrowLeft, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, GraduationCap, ExternalLink, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
+  ArrowLeft, ShieldCheck, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -68,6 +69,9 @@ const TitleChooser = dynamic(() => import("./title-chooser").then((m) => m.Title
 const ImportDocModal = dynamic(() => import("./import-doc").then((m) => m.ImportDocModal), { ssr: false });
 const StageReviewModal = dynamic(() => import("./stage-review").then((m) => m.StageReviewModal), { ssr: false });
 const ConsensusTool = dynamic(() => import("@/components/tools/consensus").then((m) => m.ConsensusTool), { ssr: false });
+const ClaimAuditModal = dynamic(() => import("./claim-audit").then((m) => m.ClaimAuditModal), { ssr: false });
+const LitMapModal = dynamic(() => import("./litmap-modal").then((m) => m.LitMapModal), { ssr: false });
+const ReviewModal = dynamic(() => import("./review-modal").then((m) => m.ReviewModal), { ssr: false });
 const LanguageModal = dynamic(() => import("./language-modal").then((m) => m.LanguageModal), { ssr: false });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -199,7 +203,7 @@ export function Workspace(props: Props) {
       if (!res.ok) return "";
       return String((await res.json()).text ?? "");
     },
-  })], []); // eslint-disable-line react-hooks/exhaustive-deps
+  }), ClaimMarks], []); // eslint-disable-line react-hooks/exhaustive-deps
   const editor = useAcademicEditor({
     extensions: suggestExt,
     content: active?.content ?? null,
@@ -549,6 +553,12 @@ export function Workspace(props: Props) {
       return;
     }
     if (id === "consensus") { setConsensusOpen(true); return; }
+    if (id === "prisma") { flush(); setPrismaOpen(true); return; }
+    if (id === "litmap") { setMapOpen(true); return; }
+    if (id === "claims") {
+      if (!active || isBibliography || !editor) { toast({ tone: "info", title: t("Önce bir bölüm açın"), detail: t("Kaynakça dışındaki bir bölüme veya alt başlığa girin.") }); return; }
+      flush(); setClaimsOpen(true); return;
+    }
     if (id === "import") {
       if (!active || isBibliography) { toast({ tone: "info", title: t("Önce aktarılacak bölümü açın"), detail: t("Kaynakça dışındaki bir bölüme veya alt başlığa girin.") }); return; }
       flush(); setImportOpen(true);
@@ -792,6 +802,9 @@ export function Workspace(props: Props) {
   const [importOpen, setImportOpen] = useState(false);
   // Dil ve çeviri (D111): sekme ve açılırken seçili aralık
   const [consensusOpen, setConsensusOpen] = useState(false);
+  const [claimsOpen, setClaimsOpen] = useState(false);
+  const [prismaOpen, setPrismaOpen] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
   const [lang, setLang] = useState<{ tab: LanguageTab; range: { from: number; to: number } | null } | null>(null);
   async function applyImport(r: ImportResult) {
     if (r.sources.length) addSources(r.sources);
@@ -937,6 +950,7 @@ export function Workspace(props: Props) {
                           <Badge tone="brand">{focused.number || t("Alt başlık")}</Badge>
                           <span className="text-xs text-ink-400">{t("{n} kelime", { n: focused.words })}</span>
                           <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100"><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
+                          {canEdit && <button onClick={() => openTool("claims")} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800 transition hover:bg-emerald-100"><ShieldCheck className="h-3.5 w-3.5" /> {t("İddia denetimi")}</button>}
                           <button onClick={removeFocused} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
                         </div>
                         <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Alt başlık")} />
@@ -950,6 +964,7 @@ export function Workspace(props: Props) {
                         <StatusPicker value={active.status} onChange={(v) => patchStage(active.id, { status: v })} />
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                         <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100" title={t("Word belgesini kaynakları ve atıflarıyla bu bölüme aktar")}><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
+                        {canEdit && <button onClick={() => openTool("claims")} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800 transition hover:bg-emerald-100" title={t("Atıflı her cümle kaynağında gerçekten destekleniyor mu?")}><ShieldCheck className="h-3.5 w-3.5" /> {t("İddia denetimi")}</button>}
                         <span>{active.status === "done"
                           ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")} · {t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                           : <Button size="sm" variant="secondary" onClick={startComplete} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
@@ -1040,6 +1055,22 @@ export function Workspace(props: Props) {
           </div>
           <p className="mt-3 text-[12.5px] text-ink-500">{t("İpucu: Aynı bölümde birlikte çalışırken farklı alt başlıkları açarsanız çakışma olmaz.")}</p>
         </Modal>
+      )}
+      {mapOpen && <LitMapModal open onClose={() => setMapOpen(false)} projectId={project.id} sourceCount={sources.length} onSourcesAdded={addSources} />}
+      {prismaOpen && <ReviewModal open onClose={() => setPrismaOpen(false)} projectId={project.id} language={project.language} onInsertFigure={!isBibliography && editor ? insertFigure : undefined} onSourcesAdded={addSources} />}
+      {claimsOpen && editor && active && (
+        <ClaimAuditModal open onClose={() => setClaimsOpen(false)} editor={editor} stageId={active.id} focus={focus}
+          scopeLabel={focused ? t("Bu alt başlık: {n} {t}", { n: focused.number, t: focused.text }) : t("Bu bölüm: {t}", { t: active.title })}
+          sources={sourceIndex}
+          onFix={(it, hint) => {
+            const r = findSentence(editor.state.doc, it.text);
+            if (r) editor.chain().setTextSelection(r).run();
+            setClaimsOpen(false);
+            const msg = it.kind === "cited"
+              ? t("İddia denetimine göre bu cümle atıf yaptığı kaynakta tam desteklenmiyor: “{s}”. Kaynağın ilgili yeri: {h}. Cümleyi kaynağın söylediğine sadık kalacak biçimde düzelt; gerekirse yumuşat veya listedeki daha uygun bir kaynağa atıf yap.", { s: it.text, h: hint || "—" })
+              : t("Bu cümle atıfsız bir kesin iddia içeriyor: “{s}”. Listedeki uygun kaynakla destekle; uygun kaynak yoksa ifadeyi yumuşat veya [KAYNAK GEREKLİ] ekle.", { s: it.text });
+            askAssistant(msg, "fix_claim", it.text);
+          }} />
       )}
       <Modal open={consensusOpen} onClose={() => setConsensusOpen(false)} title={t("Araştırmalar ne diyor?")} wide>
         {consensusOpen && <ConsensusTool projectId={project.id} signedIn onAdded={addSources} />}

@@ -87,6 +87,13 @@ body { background: rgb(var(--bg)); color: rgb(var(--ink-900)); }
 .inline-suggest { color: rgb(var(--ink-400)); cursor: pointer; user-select: none; -webkit-user-select: none; }
 .inline-suggest-key { display: inline-block; margin-left: 0.4em; padding: 0 0.35em; border: 1px solid rgb(var(--ink-200)); border-radius: 4px; font-family: var(--font-sans), system-ui, sans-serif; font-size: 10.5px; line-height: 1.5; vertical-align: 0.15em; color: rgb(var(--ink-400)); }
 @media (hover: none) { .inline-suggest-key { display: none; } }
+/* İddia denetimi işaretleri (D119) */
+.claim-mark { text-decoration-line: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.claim-bad { text-decoration-color: rgb(225 29 72 / 0.85); text-decoration-style: wavy; background: rgb(225 29 72 / 0.06); }
+.claim-partial { text-decoration-color: rgb(217 119 6 / 0.85); text-decoration-style: wavy; }
+.claim-unknown { text-decoration-color: rgb(var(--ink-400)); text-decoration-style: dotted; }
+.claim-uncited { text-decoration-color: rgb(234 88 12 / 0.8); text-decoration-style: dashed; }
+.claim-good { text-decoration-color: rgb(16 185 129 / 0.6); }
 .prose-academic > * + * { margin-top: 0.9em; }
 .prose-academic h2 { font-family: var(--font-sans); font-weight: 650; font-size: 1.32em; letter-spacing: -0.01em; margin-top: 1.6em; }
 .prose-academic h3 { font-family: var(--font-sans); font-weight: 600; font-size: 1.12em; margin-top: 1.3em; }

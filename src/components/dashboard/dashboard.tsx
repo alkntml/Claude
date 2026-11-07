@@ -12,6 +12,7 @@ import { DeleteButton } from "@/components/ui/delete-button";
 import { api } from "@/lib/client";
 import { WORK_ICONS } from "@/components/icons";
 import { Badge, Empty, ProgressRing } from "@/components/ui/primitives";
+import { TaskStart } from "./task-start";
 import { UsageMeter } from "@/components/ui/charts";
 import { STYLES } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
@@ -82,6 +83,8 @@ export function Dashboard(p: Props) {
           <div><p className="text-sm font-medium text-ink-900">{a.title}</p>{a.body && <p className="text-sm text-ink-600">{a.body}</p>}</div>
         </motion.div>
       ))}
+
+      <motion.div variants={item}><TaskStart defaultOpen={projects.length <= 1} /></motion.div>
 
       <motion.div variants={item} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[

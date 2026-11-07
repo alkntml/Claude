@@ -90,7 +90,7 @@ export function offersLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
     itemListElement: plans.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      item: { "@type": "Offer", name: `${SITE_NAME} ${p.name}`, price: priceNumber(Number(p.price_monthly), locale, usdTry).amount, priceCurrency: priceNumber(0, locale).currency, url: absoluteUrl(localizedPath("/fiyatlar", locale)), category: "subscription", itemOffered: { "@id": `${SITE_URL}/#software` } },
+      item: { "@type": "Offer", name: `${SITE_NAME} ${p.name}`, price: priceNumber(Number(p.price_monthly), locale, usdTry).amount, priceCurrency: priceNumber(0, locale).currency, url: absoluteUrl(localizedPath("/fiyatlar", locale)), category: p.id === "single" ? "one-time purchase" : "subscription", itemOffered: { "@id": `${SITE_URL}/#software` } },
     })),
   };
 }

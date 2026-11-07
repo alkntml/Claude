@@ -42,7 +42,31 @@ export async function estimateCost(model: string, input: number, output: number,
 export function streamWith(ref: ModelRef, params: Omit<GenerateParams, "model">, signal?: AbortSignal): AsyncIterable<StreamEvent> {
   const entry = PROVIDERS[ref.provider];
   if (!entry?.configured()) throw new Error(`${ref.provider} API anahtarı tanımlı değil`);
-  return entry.provider.stream({ ...params, model: ref.model }, signal);
+  return observe(ref, entry.provider.stream({ ...params, model: ref.model }, signal));
+}
+
+/**
+ * Gözlemlenebilirlik (D125): her yapay zekâ çağrısının süresi, ilk parçaya kadar geçen süre, başarı/hata ve token
+ * sayısı `ai_calls` tablosuna yazılır (içerik yazılmaz). Yazma hatası çağrıyı asla etkilemez.
+ */
+async function* observe(ref: ModelRef, inner: AsyncIterable<StreamEvent>): AsyncIterable<StreamEvent> {
+  const t0 = Date.now();
+  let ttft: number | null = null, ok = false, error: string | null = null;
+  let done: { usage: Usage; stopReason: string | null; model: string } | null = null;
+  try {
+    for await (const ev of inner) {
+      if (ttft == null) ttft = Date.now() - t0;
+      if (ev.type !== "text") done = { usage: ev.usage, stopReason: ev.stopReason, model: ev.model };
+      yield ev;
+    }
+    ok = true;
+  } catch (e) {
+    error = ((e as Error)?.name === "AbortError" ? "aborted" : String((e as { status?: number })?.status ?? (e as Error)?.message ?? "error")).slice(0, 120);
+    throw e;
+  } finally {
+    const row = { model: done?.model ?? ref.model, ms: Date.now() - t0, ttft_ms: ttft, ok, error, stop_reason: done?.stopReason ?? null, input_tokens: done?.usage.input ?? 0, output_tokens: done?.usage.output ?? 0 };
+    import("@/lib/supabase/admin").then(({ adminClient }) => adminClient().from("ai_calls").insert(row)).then(() => undefined, () => undefined);
+  }
 }
 
 /** Akışsız tamamlama — kısa yapılandırılmış görevler için. */

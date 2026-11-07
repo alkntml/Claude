@@ -78,3 +78,30 @@ export function TrafficTab() {
     </div>
   );
 }
+
+/** Ürün analitiği (D125): aktivasyon hunisi, yapay zekâ güvenilirliği, yeni modüllerin benimsenmesi */
+export function ProductHealth({ days }: { days: number }) {
+  const [d, setD] = useState<any | null>(null);
+  useEffect(() => { setD(null); api(`/api/admin/product?days=${days}`).then(setD).catch(() => setD({ error: true })); }, [days]);
+  if (!d) return <div className="skeleton h-40" />;
+  if (d.error) return <p className="text-sm text-ink-500">Ürün analitiği yüklenemedi.</p>;
+  const r = d.reliability;
+  return (
+    <div className="grid gap-4 lg:grid-cols-3">
+      <div className="card p-5"><BarList title="Aktivasyon hunisi" subtitle={`Son ${d.days} günde kaydolan ${num(d.funnel[0]?.count ?? 0)} kişi`} format={num} items={d.funnel.map((f: any) => ({ label: f.label, value: f.count, sub: `%${f.rate}` }))} empty="Bu dönemde kayıt yok." /></div>
+      <div className="card space-y-3 p-5">
+        <p className="font-semibold">Yapay zekâ güvenilirliği</p>
+        <div className="grid grid-cols-2 gap-2">
+          <StatTile label="Çağrı" value={num(r.total)} />
+          <StatTile label="Hata oranı" value={`%${r.errorRate}`} />
+        </div>
+        <ul className="space-y-1 text-[12.5px] text-ink-600">
+          {r.models.slice(0, 4).map((m: any) => <li key={m.model} className="flex justify-between gap-2"><span className="truncate">{m.model}</span><span className="tabular-nums">{num(m.calls)} · medyan {(m.p50 / 1000).toFixed(1)} sn · %95 {(m.p95 / 1000).toFixed(1)} sn · hata %{m.errorRate}</span></li>)}
+          {!r.models.length && <li>Henüz kayıt yok (veritabanı güncellemesi 33 yapıldı mı?).</li>}
+        </ul>
+        {r.topErrors.length > 0 && <p className="text-[12px] text-ink-500">En sık hatalar: {r.topErrors.map((e: any) => `${e.error} (${e.count})`).join(", ")}</p>}
+      </div>
+      <div className="card p-5"><BarList title="Yeni modüllerin kullanımı" subtitle="Dönemdeki kullanım sayısı" color={1} format={num} items={d.features} empty="Henüz kullanım yok." /></div>
+    </div>
+  );
+}

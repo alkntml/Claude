@@ -11,7 +11,7 @@ export function Pillars() {
   const { t } = useT();
   const items = [
     { icon: Map, title: "Akademik süreç yönetimi", text: "Çalışma türünüze, seviyenize ve yönteminize göre oluşan yol haritası. Her aşamanın kendine özel bir asistanı ve kuralları var. Bölümler arasında geçerken proje hafızası korunur.", points: ["Dinamik aşama yapısı", "Üniversite kılavuzundan bölüm önerisi", "Ortak yazarlarla birlikte yazım"] },
-    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, PubMed, arXiv, DOAJ, ERIC ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["Erişim seviyesi şeffaflığı", "Kaynağa sor: sayfa numaralı cevap", "Araştırmalar ne diyor? uzlaşı göstergesi"] },
+    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, PubMed, arXiv, DOAJ, ERIC ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["İddia denetimi: her atıf kaynağında, pasaj ve sayfasıyla", "PRISMA 2020 sistematik derleme ve akış şeması", "Literatür haritası ve eksik kaynak önerisi"] },
     { icon: BookCheck, title: "Akademik yazım otomasyonu", text: "Atıflar metne yazı olarak değil, kaynağa bağlı canlı öğeler olarak eklenir. Stili değiştirdiğinizde bütün metin ve kaynakça yeni stile dönüşür.", points: ["APA, MLA, Chicago, IEEE ve 5 stil daha", "Atıfları koruyan TR ↔ EN akademik çeviri", "Dil denetimi ve yazarken otomatik tamamlama"] },
   ];
   return (
@@ -130,6 +130,7 @@ export function Principles() {
               </div>
             ))}
           </div>
+          <p className="mt-8 text-sm text-ink-500">{t("Kaynakların nasıl doğrulandığını, iddia denetiminin ve kalite puanının nasıl çalıştığını açıkça anlatıyoruz.")} <Link href="/yontem" className="font-medium text-brand-700 hover:underline">{t("Yöntem ve şeffaflık →")}</Link></p>
         </FadeIn>
       </div>
     </section>

@@ -17,7 +17,9 @@ export type FeatureId =
   | "guideline" // yazım kılavuzundan bölüm yapısı önerisi
   | "reviewer" // hakem yorumlarına cevap
   | "defense" // savunma sunumu ve savunma provası
-  | "coauthors"; // ortak yazar daveti (D115)
+  | "coauthors" // ortak yazar daveti (D115)
+  | "prisma" // sistematik derleme / PRISMA 2020 (D122)
+  | "litmap"; // literatür haritası (D123)
 
 export const FEATURE_MIN_PLAN: Record<FeatureId, PlanId> = {
   quality_ai: "basic",
@@ -31,6 +33,8 @@ export const FEATURE_MIN_PLAN: Record<FeatureId, PlanId> = {
   reviewer: "pro",
   defense: "pro",
   coauthors: "pro",
+  prisma: "basic",
+  litmap: "basic",
 };
 
 /** Kullanıcıya gösterilen özellik adları (t() ile çevrilir) */
@@ -46,6 +50,8 @@ export const FEATURE_LABEL: Record<FeatureId, string> = {
   reviewer: "Hakem yorumlarına cevap asistanı",
   defense: "Savunma sunumu ve savunma provası",
   coauthors: "Ortak yazarlarla birlikte yazım",
+  prisma: "Sistematik derleme (PRISMA 2020)",
+  litmap: "Literatür haritası",
 };
 
 export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium", single: "Tek Proje" };

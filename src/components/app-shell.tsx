@@ -3,7 +3,7 @@ import { deviceId } from "@/lib/device-client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, ClipboardList, Gift, Lock, Compass, ExternalLink, FolderOpen, GraduationCap, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket } from "lucide-react";
+import { Building2, ClipboardList, Gift, Lock, Compass, FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

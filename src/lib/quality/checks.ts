@@ -7,8 +7,9 @@ import { checkConsistency, findDuplicates, missingFields, FIELD_LABELS, type Cit
 import { makeT, type Locale } from "@/i18n";
 import { wordCount } from "@/lib/editor/doc";
 import { analyzeRepetition, isRepetitive } from "@/lib/quality/repetition";
+import { scoreOf, type Severity } from "@/lib/quality/score";
 
-export type Severity = "info" | "warning" | "error";
+export type { Severity };
 
 export interface QualityIssue {
   id: string;
@@ -161,9 +162,8 @@ export function runQualityChecks(stages: StageInput[], sources: SourceInput[], o
   if (metaOnly) issues.push({ id: nid("src"), category: "sources", severity: "info", title: T("Yalnızca künyesi bilinen kaynaklar"), detail: T("{n} atıf yapılan kaynağın ne özeti ne tam metni okundu. Bu kaynaklara dayalı iddiaları kontrol edin.", { n: metaOnly }) });
 
   // --- Puan
-  const weights: Record<Severity, number> = { error: 6, warning: 2.5, info: 0.6 };
-  const penalty = issues.reduce((acc, it) => acc + weights[it.severity] * (it.weight ?? 1), 0);
-  const score = Math.max(0, Math.min(100, Math.round(100 - penalty)));
+  // Yöntem: lib/quality/score.ts (D120) — kalite sayfasında kullanıcıya da açıklanır
+  const score = scoreOf(issues);
 
   const words = writable.reduce((a, s) => a + wordCount(s.text), 0);
   return {

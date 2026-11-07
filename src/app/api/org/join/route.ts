@@ -1,3 +1,4 @@
+import { logOrg } from "@/lib/org-audit";
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
@@ -19,5 +20,6 @@ export const POST = route("org.join", async (req) => {
   if (org.seats != null && (count ?? 0) >= org.seats) throw new ApiError(409, "Kurum lisansındaki kullanıcı sayısı doldu; kurum yöneticinize başvurun");
   const { error } = await db.from("organization_members").insert({ org_id: org.id, user_id: s.user.id, role: "member" });
   if (error) throw new ApiError(409, "Kuruma katılınamadı");
+  await logOrg(org.id, s.user.id, "member_joined", s.user.id);
   return json({ ok: true, org: { id: org.id, name: org.name } });
 });

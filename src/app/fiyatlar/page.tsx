@@ -30,6 +30,11 @@ export default async function Pricing() {
           <p className="mt-4 text-ink-500">{t("Her paket, çalışmanızın aşamasına uygun araçlar içerir. Taahhüt yok; ücretsiz başlayıp istediğiniz zaman yükseltebilirsiniz.")}</p>
         </div>
         <PricingCards plans={plans} signedIn={s} />
+        <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-ink-100 bg-white p-5 text-sm leading-relaxed text-ink-600">
+          <p className="font-semibold text-ink-900">{t("Paket ölçüleri nasıl belirlendi?")}</p>
+          <p className="mt-1">{t("Aylık sayfa miktarları, 44 gerçek akademik tam metin üzerinde ölçülen ortalama sayfa uzunluğu ve bir sayfanın ortalama yapay zekâ maliyeti esas alınarak hesaplanır; sayfa sayıları yaklaşıktır. Ana sayfa ve bu sayfa aynı paket kaydından beslenir.")}</p>
+          <p className="mt-2">{t("“Sınırsız” ifadesi, bir kişinin akademik çalışması için olağan kullanımı anlatır.")} <Link href="/kosullar#adil-kullanim" className="font-medium text-brand-700 hover:underline">{t("Adil kullanım koşulları →")}</Link> · <Link href="/yontem" className="font-medium text-brand-700 hover:underline">{t("Yöntem ve şeffaflık →")}</Link></p>
+        </div>
         <p className="mt-8 text-center"><Link href="/ornekler" className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">{t("Her hizmetin örnek çıktısını görün →")}</Link></p>
         <div className="mx-auto mt-12 grid max-w-4xl gap-4 md:grid-cols-2">
           <div className="card p-5">

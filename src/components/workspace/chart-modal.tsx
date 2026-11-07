@@ -1,4 +1,5 @@
 "use client";
+import { svgToPng } from "@/lib/svg-png";
 import { CaptionPreview } from "./caption-preview";
 import { formatCaption, noteLabel } from "@/lib/citations/captions";
 import { FilePlus2, LineChart, Loader2 } from "lucide-react";
@@ -23,20 +24,6 @@ const KINDS: { id: Kind; label: string; hint: string }[] = [
 ];
 const ERRORS: { id: ErrorKind; label: string }[] = [{ id: "ci95", label: "%95 güven aralığı" }, { id: "se", label: "Standart hata" }, { id: "sd", label: "Standart sapma" }, { id: "none", label: "Hata çubuğu yok" }];
 
-/** SVG → PNG veri adresi (2 kat çözünürlük; Word/PDF'te keskin görünür) */
-async function svgToPng(svg: string, w = 900, h = 560, scale = 2): Promise<string> {
-  const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
-  try {
-    const img = new Image();
-    await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = () => rej(new Error("svg")); img.src = url; });
-    const c = document.createElement("canvas");
-    c.width = w * scale; c.height = h * scale;
-    const ctx = c.getContext("2d")!;
-    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
-    ctx.drawImage(img, 0, 0, c.width, c.height);
-    return c.toDataURL("image/png");
-  } finally { URL.revokeObjectURL(url); }
-}
 
 export function ChartModal({ open, onClose, files, language, figureNo, style, onInsert }: {
   open: boolean; onClose: () => void; files: any[]; language: string; figureNo: number; style: string;

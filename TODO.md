@@ -3,7 +3,7 @@
 - [ ] Google Search Console: alan adını doğrula (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) → Site haritaları → sitemap.xml gönder; Bing Webmaster Tools için de aynısı (D107)
 - [ ] Supabase SQL Editor’de migration 29 ve 30’u çalıştır (D106), sonra check_status.sql ile YAPILMIŞ olduğunu doğrula
 - [ ] Supabase → Authentication → Sign In / Providers → Email → “Confirm email” AÇIK olmalı (davet ödülü e-posta doğrulamasına bağlı; kapalıysa doğrulama anında sayılır)
-- [ ] Denetim raporundaki kalan maddeler: “10.000’den fazla araştırmacı” iddiası, hukuki metinler/satıcı bilgisi, DergiPark “doğrudan arama” ifadesi, Tek Proje süre uzatma hatası, adil kullanım maddesi, 15 GB depolama (Supabase planı)
+- [ ] Hukuki metinler ve satıcı bilgisi (hukukçu); 15 GB depolama vaadi için Supabase planını kontrol et
 - [x] (2026-11-06) Migration 27 (Tek Proje + hesap silme düzeltmesi) ve 28 (%40 maliyet uyarısı) çalıştırıldı; Fiyatlar’da Tek Proje kartı doğrulandı
 - [x] (2026-11-06) Migration 22–26 canlıda doğrulandı (check_status: hepsi YAPILMIŞ); 23/24 yeniden çalıştırılmamalı (25’teki cihaz önlemini geri alır)
 - [x] (2026-11-06) Migration 24 (bildirim kutusu) ve Ücretsiz kart PDF metni geri yüklendi

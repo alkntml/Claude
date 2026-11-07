@@ -535,3 +535,7 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - **Karar ekranı:** Yönetim → Uyarılar: sorun yok / kullanıcıyı uyar (bildirim `admin_warning`, isteğe bağlı mesaj) / askıya al (`is_suspended`); kararlar `abuse_decisions`; askıyı kaldırma.
 - **Hukuki:** Kullanım koşullarına “Tek Proje paketi” ve “Adil kullanım” maddeleri (hukuki inceleme gerekir); gizlilik metninde cihaz kimliği ve parmak izi amacı güncellendi; SSS güncellendi.
 - Migration 31: export_fingerprints, plan_purchases, abuse_decisions (RLS açık, politika yok).
+
+### D110 — Kullanıcı kararı: bazı denetim maddeleri olduğu gibi kalacak
+- Kullanıcı şunların değiştirilmemesine karar verdi: ana sayfadaki “10.000’den fazla araştırmacı” ifadesi, “DergiPark’ta doğrudan arama” ifadesi, ödemenin WhatsApp üzerinden alınması (kartla ödeme eklenmeyecek). Ücretsiz araçlara IP başına kullanım sınırı konmayacak.
+- Bu konular yeniden önerilmez; kullanıcı kendisi isterse ele alınır.

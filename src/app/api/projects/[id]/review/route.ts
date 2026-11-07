@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { canMove, EMPTY_PROTOCOL, findFuzzyDuplicate, recordKey, REVIEW_STAGES, type ReviewStage } from "@/lib/prisma";
 import { isMissingColumn } from "@/lib/db-compat";
+import { serverDb } from "@/lib/server-db";
 import { projectAccess } from "@/lib/project-access";
 import { parseReferences } from "@/lib/sources/bib";
 import { assertFeature } from "@/lib/usage";
@@ -77,7 +78,7 @@ export const POST = route<Ctx>("review.add", async (req, { params }) => {
     const dup = exact || !!near;
     return { project_id: id, user_id: acc.ownerId, key: key.slice(0, 600), origin: b.origin, stage: dup ? "duplicate" : "identified", reason: near ? "Olası yinelenen (benzer başlık ve yıl)" : null, record: r, decided_by: null };
   });
-  const { error } = await acc.db.from("review_records").insert(rows);
+  const { error } = await serverDb().from("review_records").insert(rows);
   if (error) throw error;
   if (b.search) {
     const proto = { ...EMPTY_PROTOCOL, ...(acc.project.context?.review ?? {}) };
@@ -98,7 +99,7 @@ export const PATCH = route<Ctx>("review.decide", async (req, { params }) => {
   const { data: cur } = await acc.db.from("review_records").select("id, stage").eq("project_id", id).eq("user_id", acc.ownerId).in("id", b.ids);
   const ok = (cur ?? []).filter((r: any) => canMove(r.stage, b.stage)).map((r: any) => r.id);
   if (ok.length) {
-    const { error } = await acc.db.from("review_records").update({ stage: b.stage, reason: b.reason ?? null, decided_by: s.user.id, updated_at: new Date().toISOString() }).eq("project_id", id).eq("user_id", acc.ownerId).in("id", ok);
+    const { error } = await serverDb().from("review_records").update({ stage: b.stage, reason: b.reason ?? null, decided_by: s.user.id, updated_at: new Date().toISOString() }).eq("project_id", id).eq("user_id", acc.ownerId).in("id", ok);
     if (error) throw error;
   }
   return json({ updated: ok.length, skipped: b.ids.length - ok.length });
@@ -122,7 +123,7 @@ export const DELETE = route<Ctx>("review.delete", async (req, { params }) => {
   const { id } = await params;
   const acc = await projectAccess(s, id, "edit");
   const b = await parseBody(req, z.object({ ids: z.array(z.string().uuid()).min(1).max(5000) }));
-  const { error } = await acc.db.from("review_records").delete().eq("project_id", id).eq("user_id", acc.ownerId).in("id", b.ids);
+  const { error } = await serverDb().from("review_records").delete().eq("project_id", id).eq("user_id", acc.ownerId).in("id", b.ids);
   if (error) throw error;
   return json({ ok: true });
 });

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
+import { serverDb } from "@/lib/server-db";
 import { projectAccess } from "@/lib/project-access";
 import { assertFeature } from "@/lib/usage";
 import { addSourcesToProject } from "@/lib/research";
@@ -33,7 +34,7 @@ export const POST = route<Ctx>("review.include", async (req, { params }) => {
   const norm = (x: string) => x.toLocaleLowerCase("tr").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   for (const v of valid) {
     const src = result.sources.find((x: any) => (v.input.doi && x.doi && x.doi.toLowerCase() === String(v.input.doi).toLowerCase()) || norm(x.title) === norm(v.input.title));
-    if (src) await acc.db.from("review_records").update({ source_id: src.id }).eq("id", v.rec.id).eq("project_id", id).eq("user_id", acc.ownerId);
+    if (src) await serverDb().from("review_records").update({ source_id: src.id }).eq("id", v.rec.id).eq("project_id", id).eq("user_id", acc.ownerId);
   }
   return json({ sources: result.sources, skipped: result.skipped ?? 0 });
 });

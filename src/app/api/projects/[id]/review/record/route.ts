@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { isMissingColumn } from "@/lib/db-compat";
 import { APPRAISAL_ITEMS, EXTRACTION_FIELDS } from "@/lib/prisma";
+import { serverDb } from "@/lib/server-db";
 import { projectAccess } from "@/lib/project-access";
 import { assertFeature } from "@/lib/usage";
 
@@ -22,7 +23,7 @@ export const PATCH = route<Ctx>("review.record", async (req, { params }) => {
   const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (b.extraction) patch.extraction = b.extraction;
   if (b.appraisal) patch.appraisal = { ...b.appraisal, at: new Date().toISOString() };
-  const { error } = await acc.db.from("review_records").update(patch).eq("id", b.id).eq("project_id", id).eq("user_id", acc.ownerId);
+  const { error } = await serverDb().from("review_records").update(patch).eq("id", b.id).eq("project_id", id).eq("user_id", acc.ownerId);
   if (error && isMissingColumn(error)) throw new ApiError(409, "Bu özellik için veritabanı güncellemesi gerekiyor (migration 36).", "migration_required");
   if (error) throw error;
   return json({ ok: true });

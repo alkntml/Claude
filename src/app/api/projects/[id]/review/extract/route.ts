@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { localeFromRequest } from "@/i18n/server";
 import { isMissingColumn } from "@/lib/db-compat";
+import { serverDb } from "@/lib/server-db";
 import { projectAccess } from "@/lib/project-access";
 import { extractData } from "@/lib/review-ai";
 import { assertSingleProject } from "@/lib/single-project";
@@ -38,7 +39,7 @@ export const POST = route<Ctx>("review.extract", async (req, { params }) => {
     const abstract = src && src.access_level !== "metadata" ? src.abstract : r.record?.abstract ?? null;
     const x = await extractData({ planId: s.profile.plan_id, lang, title: r.record?.title ?? "", abstract, chunks: chunks.filter((c) => c.source_id === r.source_id) });
     if (x.usage) { usage.input += x.usage.input; usage.output += x.usage.output; cost += x.cost; model = x.model; provider = x.provider; calls++; }
-    await acc.db.from("review_records").update({ extraction: x.extraction, updated_at: new Date().toISOString() }).eq("id", r.id).eq("project_id", id).eq("user_id", acc.ownerId);
+    await serverDb().from("review_records").update({ extraction: x.extraction, updated_at: new Date().toISOString() }).eq("id", r.id).eq("project_id", id).eq("user_id", acc.ownerId);
     out.push({ id: r.id, extraction: x.extraction });
   }
   if (calls) await recordUsage(s.user.id, "ai_request", { quantity: calls, usage, costUsd: cost, provider: provider ?? undefined, model: model ?? undefined, meta: { action: "review_extract", projectId: id, records: calls } });

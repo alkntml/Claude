@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { isMissingColumn } from "@/lib/db-compat";
 import type { Votes } from "@/lib/prisma";
+import { serverDb } from "@/lib/server-db";
 import { projectAccess } from "@/lib/project-access";
 import { assertFeature } from "@/lib/usage";
 
@@ -28,7 +29,7 @@ export const POST = route<Ctx>("review.vote", async (req, { params }) => {
     const phase = { ...(votes[b.phase] ?? {}) };
     if (b.decision) phase[s.user.id] = { decision: b.decision, reason: b.reason ?? null, name, at: new Date().toISOString() };
     else delete phase[s.user.id];
-    const { error: e2 } = await acc.db.from("review_records").update({ votes: { ...votes, [b.phase]: phase } }).eq("id", r.id).eq("project_id", id).eq("user_id", acc.ownerId);
+    const { error: e2 } = await serverDb().from("review_records").update({ votes: { ...votes, [b.phase]: phase } }).eq("id", r.id).eq("project_id", id).eq("user_id", acc.ownerId);
     if (e2) throw e2;
   }
   return json({ updated: (cur ?? []).length });

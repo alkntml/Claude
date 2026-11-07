@@ -7,6 +7,7 @@ import { compatWrite } from "@/lib/db-compat";
 import type { JSONNode } from "@/lib/editor/doc";
 import { sectionDoc } from "@/lib/editor/sections";
 import { localeFromRequest } from "@/i18n/server";
+import { serverDb } from "@/lib/server-db";
 import { childAccess } from "@/lib/project-access";
 import { assertSingleProject } from "@/lib/single-project";
 import { loadChunks } from "@/lib/sources/chunk-insert";
@@ -129,9 +130,11 @@ export const POST = route<Ctx>("claim_audit.run", async (req, { params }) => {
   }
   const summary = { ...summarize(results), skipped };
   const scope = b.focus != null ? "section" : "stage";
-  const { data: saved } = await compatWrite({ project_id: stage.project_id, stage_id: id, user_id: access.ownerId, actor_id: s.user.id, scope, summary, results },
-    (row) => access.db.from("claim_audits").insert(row).select("id, created_at").single());
-  if (!saved && newPairs) throw new ApiError(409, "Bu özellik için veritabanı güncellemesi gerekiyor (migration 33).", "migration_required");
+  const { data: saved, error: saveErr } = await compatWrite({ project_id: stage.project_id, stage_id: id, user_id: access.ownerId, actor_id: s.user.id, scope, summary, results },
+    (row) => serverDb().from("claim_audits").insert(row).select("id, created_at").single());
+  // Yalnızca tablo gerçekten yoksa migration uyarısı; diğer hatalar olduğu gibi kaydedilir (yanıltıcı mesaj verilmez)
+  if (saveErr && /claim_audits/.test(saveErr.message ?? "") && /does not exist|not find|schema cache/i.test(saveErr.message ?? "")) throw new ApiError(409, "Bu özellik için veritabanı güncellemesi gerekiyor (migration 33).", "migration_required");
+  if (saveErr) throw saveErr;
   return json({ audit: { id: saved?.id ?? null, created_at: saved?.created_at ?? new Date().toISOString(), scope, summary, results } });
 });
 /* eslint-enable @typescript-eslint/no-explicit-any */

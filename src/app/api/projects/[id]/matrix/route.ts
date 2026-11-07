@@ -2,6 +2,7 @@ import { z } from "zod";
 import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 
@@ -23,9 +24,8 @@ export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
   assertFeature(s.profile.plan_id, "matrix");
   const { id } = await params;
   const b = await parseBody(req, z.object({ sourceIds: z.array(z.string().uuid()).min(1).max(4) }));
-  const { data: project } = await s.supabase.from("projects").select("id, title, topic, language").eq("id", id).eq("user_id", s.user.id).maybeSingle();
-  if (!project) throw new ApiError(404, "Proje bulunamadı");
-  const { data: sources } = await s.supabase.from("sources").select("*").eq("project_id", id).eq("user_id", s.user.id).in("id", b.sourceIds);
+  const { project, db, ownerId } = await projectAccess(s, id, "edit");
+  const { data: sources } = await db.from("sources").select("*").eq("project_id", id).eq("user_id", ownerId).in("id", b.sourceIds);
   const model = await resolveModel(s.profile.plan_id, "fast");
   if (!isProviderConfigured(model.provider)) throw new ApiError(503, "Yapay zekâ sağlayıcısı yapılandırılmamış");
 
@@ -33,7 +33,7 @@ export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
   for (const src of sources ?? []) {
     if (src.access_level === "metadata" || (!src.abstract && src.access_level !== "full_text")) {
       const summary = { basedOn: "metadata", generatedAt: new Date().toISOString() };
-      const { data, error } = await s.supabase.from("sources").update({ summary }).eq("id", src.id).select().single();
+      const { data, error } = await db.from("sources").update({ summary }).eq("id", src.id).eq("user_id", ownerId).select().single();
       if (error) throw migrationError(error);
       out.push(data);
       continue;
@@ -42,7 +42,7 @@ export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
     await assertSingleProject(s, id);
     let material = src.access_level !== "metadata" && src.abstract ? `ÖZET:\n${String(src.abstract).slice(0, 3000)}` : "";
     if (src.access_level === "full_text") {
-      const { data: chunks } = await s.supabase.from("source_chunks").select("content, page_hint, chunk_index").eq("source_id", src.id).order("chunk_index").limit(1500);
+      const { data: chunks } = await db.from("source_chunks").select("content, page_hint, chunk_index").eq("source_id", src.id).eq("user_id", ownerId).order("chunk_index").limit(1500);
       const list = chunks ?? [];
       const picked = [...list.slice(0, 2), ...list.filter((c) => METHOD_HINT.test(c.content.slice(0, 400))).slice(0, 6)];
       const seen = new Set<number>();
@@ -60,7 +60,7 @@ purpose: çalışmanın amacı · method: desen/yöntem/analiz · sample: örnek
     let parsed: Record<string, string> = {};
     try { parsed = JSON.parse(res.text); } catch { /* boş bırak */ }
     const summary = { ...parsed, basedOn: src.access_level, generatedAt: new Date().toISOString() };
-    const { data, error } = await s.supabase.from("sources").update({ summary }).eq("id", src.id).select().single();
+    const { data, error } = await db.from("sources").update({ summary }).eq("id", src.id).eq("user_id", ownerId).select().single();
     if (error) throw migrationError(error);
     out.push(data);
   }

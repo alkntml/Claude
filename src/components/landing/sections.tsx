@@ -10,9 +10,9 @@ import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan } from "@/lib/pr
 export function Pillars() {
   const { t } = useT();
   const items = [
-    { icon: Map, title: "Akademik süreç yönetimi", text: "Çalışma türünüze, seviyenize ve yönteminize göre oluşan yol haritası. Her aşamanın kendine özel bir asistanı ve kuralları var. Bölümler arasında geçerken proje hafızası korunur.", points: ["Dinamik aşama yapısı", "Üniversite kılavuzundan bölüm önerisi", "İlerleme takibi"] },
-    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, PubMed, arXiv, DOAJ, ERIC ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["Erişim seviyesi şeffaflığı", "Açık erişimli tam metin analizi", "Yinelenen kayıt birleştirme"] },
-    { icon: BookCheck, title: "Akademik yazım otomasyonu", text: "Atıflar metne yazı olarak değil, kaynağa bağlı canlı öğeler olarak eklenir. Stili değiştirdiğinizde bütün metin ve kaynakça yeni stile dönüşür.", points: ["APA, MLA, Chicago, IEEE ve 5 stil daha", "Eksik künye ve tutarlılık uyarısı", "DOCX ve PDF çıktı"] },
+    { icon: Map, title: "Akademik süreç yönetimi", text: "Çalışma türünüze, seviyenize ve yönteminize göre oluşan yol haritası. Her aşamanın kendine özel bir asistanı ve kuralları var. Bölümler arasında geçerken proje hafızası korunur.", points: ["Dinamik aşama yapısı", "Üniversite kılavuzundan bölüm önerisi", "Ortak yazarlarla birlikte yazım"] },
+    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, PubMed, arXiv, DOAJ, ERIC ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["Erişim seviyesi şeffaflığı", "Kaynağa sor: sayfa numaralı cevap", "Araştırmalar ne diyor? uzlaşı göstergesi"] },
+    { icon: BookCheck, title: "Akademik yazım otomasyonu", text: "Atıflar metne yazı olarak değil, kaynağa bağlı canlı öğeler olarak eklenir. Stili değiştirdiğinizde bütün metin ve kaynakça yeni stile dönüşür.", points: ["APA, MLA, Chicago, IEEE ve 5 stil daha", "Atıfları koruyan TR ↔ EN akademik çeviri", "Dil denetimi ve yazarken otomatik tamamlama"] },
   ];
   return (
     <section id="ozellikler" className="relative py-24">
@@ -113,7 +113,7 @@ export function Principles() {
   const items = [
     { icon: ShieldCheck, title: "Uydurma yok", text: "Kaynak, veri, istatistik ve bulgu üretilmez. Kaynakla desteklenemeyen kesin iddia yazılmaz; eksik konular için kaynak aranır." },
     { icon: Sparkles, title: "Sizin verileriniz", text: "Bulgular bölümü sizin analizinize dayanır. Yüklediğiniz veriler gerçek hesaplamayla özetlenir." },
-    { icon: Lock, title: "Gizlilik", text: "Çalışmalarınız yalnızca size görünür. Satır düzeyinde güvenlik, şifreli depolama ve tek tıkla veri silme." },
+    { icon: Lock, title: "Gizlilik", text: "Çalışmalarınız yalnızca size ve davet ettiğiniz ortak yazarlara görünür. Satır düzeyinde güvenlik, şifreli depolama ve tek tıkla veri silme." },
     { icon: BookCheck, title: "İntihal şeffaflığı", text: "Lisanslı bir servis bağlanmadan intihal yüzdesi gösterilmez. Sahte oranlar üretilmez." },
   ];
   return (

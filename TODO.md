@@ -1,4 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de migration 32’yi çalıştır (ortak yazım + otomatik tamamlama, D113/D115); çalıştırılmadan otomatik tamamlama ve ortak yazar daveti hata verir
+- [ ] Canlıda dene: bir Pro hesabıyla ikinci bir hesabı ortak yazar olarak davet et, iki tarayıcıda aynı bölümü açıp “X bu bölümde” göstergesini ve çakışma penceresini kontrol et (D115)
+- [ ] Canlıda dene: Araçlar → Dil ve çeviri ile atıflı bir paragrafı İngilizceye çevir; Kaynaklar → Sor; /araclar/arastirmalar-ne-diyor (canlı veri tabanı aramaları bulut oturumunda denenemedi)
 - [ ] Supabase SQL Editor’de migration 31’i çalıştır (Tek Proje gözetimi, D109); Kullanım koşullarındaki yeni Tek Proje ve Adil kullanım maddelerini hukukçuya incelet
 - [ ] Google Search Console: alan adını doğrula (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) → Site haritaları → sitemap.xml gönder; Bing Webmaster Tools için de aynısı (D107)
 - [ ] Supabase SQL Editor’de migration 29 ve 30’u çalıştır (D106), sonra check_status.sql ile YAPILMIŞ olduğunu doğrula

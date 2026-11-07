@@ -2,6 +2,7 @@ import { getT } from "@/i18n/server";
 import { notFound, redirect } from "next/navigation";
 import { QualityView } from "@/components/workspace/quality";
 import { getSession } from "@/lib/auth";
+import { projectAccessOrNull } from "@/lib/project-access";
 
 export const dynamic = "force-dynamic";
 export async function generateMetadata() {
@@ -13,11 +14,13 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const s = await getSession();
   if (!s) redirect("/giris");
   const { id } = await params;
-  const { data: project } = await s.supabase.from("projects").select("id, title").eq("id", id).eq("user_id", s.user.id).maybeSingle();
-  if (!project) notFound();
+  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  // Sahip veya ortak yazar (D115)
+  const acc = await projectAccessOrNull(s, id);
+  if (!acc) notFound();
   const [{ data: report }, { data: stages }] = await Promise.all([
-    s.supabase.from("quality_reports").select("*").eq("project_id", id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
-    s.supabase.from("project_stages").select("id, key, title").eq("project_id", id),
+    acc.db.from("quality_reports").select("*").eq("project_id", id).eq("user_id", acc.ownerId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    acc.db.from("project_stages").select("id, key, title").eq("project_id", id).eq("user_id", acc.ownerId),
   ]);
-  return <QualityView project={project} initial={report} stages={stages ?? []} />;
+  return <QualityView project={{ id: acc.project.id, title: acc.project.title }} initial={report} stages={stages ?? []} />;
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
-import { requireProject, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { logAiOutput } from "@/lib/activity";
 import { detokenize, proofreadBlocks, tokenizeForLanguage } from "@/lib/editor/translate-doc";
 import { docToPlain, type JSONNode } from "@/lib/editor/doc";
@@ -22,7 +23,7 @@ const Body = z.discriminatedUnion("mode", [
 export const POST = route<Ctx>("project.language", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const project = await requireProject(s, id);
+  const { project } = await projectAccess(s, id, "edit");
   const b = await parseBody(req, Body);
   if (JSON.stringify(b.doc).length > 2_000_000) throw new ApiError(413, "Metin çok büyük");
   await assertSingleProject(s, id);

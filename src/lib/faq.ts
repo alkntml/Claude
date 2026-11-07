@@ -159,6 +159,30 @@ export const FAQ: FaqGroup[] = [
           en: "Yes. Each work has its own language (Turkish or English); the assistant writes in that language and citation terms (vd./et al., s./p.) adapt. For Turkish works, “Turkish & English abstract” prepares the academic English version of the abstract. The interface is available in Turkish and English too.",
         },
       },
+      {
+        id: "ceviri",
+        q: { tr: "Türkçe metnimi akademik İngilizceye çevirebilir miyim? Atıflarım bozulur mu?", en: "Can I translate my Turkish text into academic English? Will my citations break?" },
+        a: {
+          tr: "Evet. Çalışma alanında **Araçlar → Dil ve çeviri** (veya metni seçince çıkan balondaki **Çevir**) bir bölümü, alt başlığı ya da seçili metni Türkçe ↔ İngilizce akademik dile çevirir. Atıflar, dipnotlar, şekiller, tablolar ve başlık düzeyleri olduğu gibi korunur; ondalık ve istatistik gösterimi (Ort./SS ↔ M/SD) hedef dile uyarlanır, sayılar değişmez. Amerikan veya İngiliz İngilizcesi seçilebilir. **Terim sözlüğü** alanınıza özgü karşılıkları (ör. öz yeterlik → self-efficacy) her çeviride aynı tutar. Çeviri öncesi hâl sürüm geçmişinde saklanır. **Dil denetimi** sekmesi de yazım, dil bilgisi, noktalama ve akademik üslup hatalarını tek tek önerir; isterseniz tek tıkla uygularsınız. Çeviri ve denetim aylık yapay zekâ hakkından düşer; dergiye gönderim öncesi profesyonel redaksiyon isterseniz uzman desteği alabilirsiniz.",
+          en: "Yes. In the workspace, **Tools → Language & translation** (or **Translate** in the bubble that appears when you select text) translates a section, a subheading or a selection between Turkish and academic English. Citations, footnotes, figures, tables and heading levels are preserved; decimal and statistical notation (Ort./SS ↔ M/SD) is adapted, numbers never change. You can choose American or British English. The **Glossary** keeps your field’s equivalents (e.g. öz yeterlik → self-efficacy) consistent. The pre-translation version is kept in the history. The **Language check** tab suggests spelling, grammar, punctuation and academic tone fixes one by one, which you can apply in one click. Translation and checks count towards your monthly AI allowance; for professional proofreading before journal submission you can get expert support.",
+        },
+      },
+      {
+        id: "kaynaga-sor",
+        q: { tr: "Bir makaleye soru sorabilir miyim (yöntemi, örneklemi, bulguları)?", en: "Can I ask questions about a specific paper (its method, sample, findings)?" },
+        a: {
+          tr: "Evet. **Kaynaklar** sekmesinde her kaynağın yanındaki **Sor** düğmesi o makaleyle sohbet açar. “Yöntem”, “Örneklem”, “Temel bulgular”, “Sınırlılıklar”, “Alıntılanabilir cümleler” gibi hazır sorular veya kendi sorunuz; cevap yalnızca o kaynağın okunan metnine dayanır ve tam metin okunduysa sayfa numarasıyla gelir. Cevabı **Atıfla metne ekle** ile sayfa numaralı atıf olarak yazınıza alabilirsiniz. Yalnızca özeti okunan kaynaklarda bu açıkça belirtilir; açık erişim tam metni getirebilir veya kendi PDF’inizi yükleyebilirsiniz.",
+          en: "Yes. In the **Sources** tab, the **Ask** button next to each source opens a chat with that paper. Use ready questions such as “Method”, “Sample”, “Key findings”, “Limitations”, “Quotable sentences” or your own; answers rely only on the text read from that source and come with page numbers when the full text was read. **Insert into text with citation** adds the answer with a page-numbered citation. If only the abstract was read, this is stated clearly; you can fetch the open-access full text or upload your own PDF.",
+        },
+      },
+      {
+        id: "arastirmalar-ne-diyor",
+        q: { tr: "“Araştırmalar ne diyor?” nedir?", en: "What is “What does research say?”" },
+        a: {
+          tr: "Bir araştırma sorusu yazarsınız (ör. “Uyku süresi akademik başarıyı etkiler mi?”); sistem akademik veri tabanlarında gerçek makaleleri bulur, özetlerini okur ve her cümlesi numaralı bir makaleye bağlı kısa bir cevap verir. Evet/hayır sorularında **uzlaşı göstergesi** çalışmaların ne kadarının aynı yönde sonuç bulduğunu gösterir. Yalnızca özetler okunur ve bu açıkça yazılır; bu bir literatür taraması değildir. Ücretsiz araçlar arasında giriş yapmadan da kullanılabilir; çalışma alanında **Araçlar** menüsünden açıp makaleleri tek tıkla çalışmanıza ekleyebilirsiniz.",
+          en: "You type a research question (e.g. “Does sleep duration affect academic achievement?”); the system finds real papers in academic databases, reads their abstracts and gives a short answer where every sentence is linked to a numbered paper. For yes/no questions, the **consensus meter** shows how many studies point the same way. Only abstracts are read and this is stated clearly; it is not a literature review. It is available among the free tools without signing in, and from **Tools** in the workspace, where you can add the papers to your work in one click.",
+        },
+      },
     ],
   },
   {
@@ -234,6 +258,22 @@ export const FAQ: FaqGroup[] = [
         a: {
           tr: "Evet. Hesap ve abonelik sayfasında “Verilerimi indir” ile tüm projelerinizi, kaynaklarınızı ve sohbetlerinizi taşınabilir biçimde (JSON) indirebilir, “Hesabımı sil” ile hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz. Çalışmalarınızı ayrıca Word/PDF olarak indirmeyi unutmayın.",
           en: "Yes. On the Account page, “Download my data” exports all your projects, sources and conversations in a portable format (JSON), and “Delete my account” permanently deletes your account with all your data. Remember to also download your work as Word/PDF.",
+        },
+      },
+      {
+        id: "ortak-yazar",
+        q: { tr: "Çalışmamı arkadaşımla veya ortak yazarlarla birlikte yazabilir miyim?", en: "Can I write my work together with a friend or co-authors?" },
+        a: {
+          tr: "Evet. Çalışma alanının üst çubuğundaki **Ortak yazarlar** düğmesiyle en fazla 5 kişiyi e-posta adresiyle davet edersiniz (Pro, Premium ve Tek Proje paketlerinde). **Ortak yazar** bölümleri yazar, kaynak ekler ve yapay zekâyı kendi paketiyle kullanır; **yorumcu** yalnızca okur ve yorum yazar. Kimin hangi bölümde olduğu adıyla görünür. İki kişi aynı bölümü aynı anda kaydederse hangi sürümle devam edileceği sorulur; diğer sürüm silinmez, sürüm geçmişinde saklanır. Ortak yazarın dosyaları ve asistan sohbetleri kendisine özeldir. Davet edilen kişinin ücretli pakete ihtiyacı yoktur; ücretsiz hesapla katılabilir.",
+          en: "Yes. With the **Co-authors** button in the workspace’s top bar you invite up to 5 people by email (on Pro, Premium and Single Project). A **co-author** writes sections, adds sources and uses AI with their own plan; a **commenter** only reads and comments. You can see who is in which section. If two people save the same section at once, you are asked which version to keep; the other is not deleted but kept in the version history. A co-author’s files and assistant chats stay private. Invitees do not need a paid plan; they can join with a free account.",
+        },
+      },
+      {
+        id: "otomatik-tamamlama",
+        q: { tr: "Yazarken çıkan gri öneri nedir? Nasıl kapatırım?", en: "What is the grey suggestion while I type? How do I turn it off?" },
+        a: {
+          tr: "Otomatik tamamlamadır: paragrafın sonunda yazmayı bıraktığınızda cümlenizin olası devamını gri renkte önerir. **Tab** tümünü, **Ctrl/⌘ + →** bir kelimeyi kabul eder, **Esc** kapatır; telefonda öneriye dokunabilirsiniz. Öneriler sayı, yıl, kişi adı veya atıf içermez; yalnızca kendi düşüncenizi akademik dille sürdürmenize yardım eder. Aylık yapay zekâ hakkınızdan düşmez (günlük sınırı vardır). Araç çubuğundaki sihirli değnek düğmesiyle açıp kapatabilirsiniz.",
+          en: "It is autocomplete: when you pause at the end of a paragraph, it suggests a possible continuation in grey. **Tab** accepts all of it, **Ctrl/⌘ + →** one word, **Esc** dismisses it; on phones you can tap the suggestion. Suggestions never contain numbers, years, names or citations; they only help you continue your own idea in academic language. They do not count towards your monthly AI allowance (there is a daily limit). Use the magic-wand button in the toolbar to turn it on or off.",
         },
       },
       {

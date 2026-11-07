@@ -39,4 +39,8 @@ union all select '29 Davet ödülü: e-posta doğrulaması + geçici e-posta eng
 union all select '30 Ücretsizde PDF, Premium’da öncelikli destek yok',
   case when exists (select 1 from public.plans where id = 'free' and limits->'export_formats' ? 'pdf') and not exists (select 1 from public.plans where 'Öncelikli destek' = any(features)) then 'YAPILMIŞ' else 'EKSİK' end
 union all select '31 Tek Proje gözetimi (parmak izi, satın alma, kararlar)',
-  case when to_regclass('public.export_fingerprints') is not null and to_regclass('public.plan_purchases') is not null and to_regclass('public.abuse_decisions') is not null then 'YAPILMIŞ' else 'EKSİK' end;
+  case when to_regclass('public.export_fingerprints') is not null and to_regclass('public.plan_purchases') is not null and to_regclass('public.abuse_decisions') is not null then 'YAPILMIŞ' else 'EKSİK' end
+union all select '32 Ortak yazım ve otomatik tamamlama',
+  case when to_regclass('public.project_members') is not null and to_regclass('public.project_invites') is not null
+        and exists (select 1 from pg_enum e join pg_type t on t.oid = e.enumtypid where t.typname = 'usage_kind' and e.enumlabel = 'autocomplete')
+       then 'YAPILMIŞ' else 'EKSİK' end;

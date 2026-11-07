@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D111–D115 (2026-11-07): Dil ve çeviri (Araçlar + seçim balonu: atıf/dipnot/şekil korunan TR↔EN akademik çeviri, dil denetimi, terim sözlüğü), Kaynağa sor (Kaynaklar → “Sor”, sayfa numaralı cevap), satır içi otomatik tamamlama (Tab; ayrı kullanım türü autocomplete, aylık haktan düşmez, günlük sınır), Araştırmalar ne diyor? (ücretsiz araç /araclar/arastirmalar-ne-diyor + çalışma alanı Araçlar; uzlaşı göstergesi), Ortak yazım (davet /ortak/[token], roller editor/commenter, en fazla 5, Pro+/Tek Proje; varlık göstergesi, çakışmada iki sürüm de saklanır; “Benimle paylaşılan çalışmalar”). Migration 32 çalıştırılmalı
 - D109: Tek Proje ikinci aşama önlemler (çalışma dışı sınır, parmak izi, cihaz, bölüm, konu dışı, satın alma kaydı, Uyarılar sekmesi, koşullar). Migration 31 çalıştırılmalı
 - D108: Hakkımızda sayfası (misyon, vizyon, değerler, kurucu Alkın Mert Temel — Kurucu ve CEO)
 - D107: SEO — başlık ≤60 (fitTitle), açıklama ≤160, araç sayfalarına rehber + SSS + şema, blog RSS, sabit lastmod, oturumlu sayfalar noindex

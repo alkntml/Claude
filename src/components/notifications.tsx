@@ -1,5 +1,5 @@
 "use client";
-import { Bell, Gift, Info, ShieldAlert } from "lucide-react";
+import { Bell, Gift, Info, ShieldAlert, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
@@ -46,7 +46,12 @@ export function NotificationBell({ className, align = "left" }: { className?: st
   }
 
   const d0 = (n: Note) => n.data ?? {};
-  const text = (n: Note): { title: string; body: string } => {
+  const text = (n: Note): { title: string; body: string; href?: string; cta?: string } => {
+    // Ortak yazım (D115)
+    if (n.kind === "coauthor_invite") return { title: t("Ortak yazar daveti"), body: t("{f} sizi “{p}” çalışmasına {r} olarak davet etti.", { f: d0(n).from ?? "", p: d0(n).project ?? "", r: d0(n).role === "commenter" ? t("yorumcu") : t("ortak yazar") }), href: `/ortak/${d0(n).token}`, cta: t("Daveti görüntüle") };
+    if (n.kind === "coauthor_joined") return { title: t("Ortak yazar katıldı"), body: t("{n} “{p}” çalışmanıza katıldı.", { n: d0(n).name ?? "", p: d0(n).project ?? "" }), href: d0(n).projectId ? `/proje/${d0(n).projectId}` : undefined, cta: t("Çalışmayı aç") };
+    if (n.kind === "coauthor_left") return { title: t("Ortak yazar ayrıldı"), body: t("{n} “{p}” çalışmanızdan ayrıldı.", { n: d0(n).name ?? "", p: d0(n).project ?? "" }) };
+    if (n.kind === "coauthor_removed") return { title: t("Ortak yazarlıktan çıkarıldınız"), body: t("“{p}” çalışmasının sahibi sizi ortak yazarlar listesinden çıkardı.", { p: d0(n).project ?? "" }) };
     if (n.kind === "referral_reward") return { title: t("Davet ödülü kazandınız"), body: t("Davet ettiğiniz bir kişi kaydoldu. Hesabınıza {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlandı ({d} gün geçerli).", { a: n.data.ai ?? 0, s: n.data.ss ?? 0, d: n.data.days ?? 60 }) };
     if (n.kind === "referral_same_device") return { title: t("Davet ödülü verilmedi"), body: t("Davet bağlantınızla açılan hesap, sizin daha önce kullandığınız bir cihazdan kaydolduğu için ödül tanımlanmadı. Davet ödülü yalnızca başka kişilerin kendi cihazlarından kaydolmasıyla kazanılır.") };
     if (n.kind === "referral_disposable_email") return { title: t("Davet ödülü verilmedi"), body: t("Davet bağlantınızla açılan hesap geçici (tek kullanımlık) bir e-posta adresiyle kaydolduğu için ödül tanımlanmadı. Davet ödülü yalnızca gerçek e-posta adresiyle kaydolup adresini doğrulayan kişiler için verilir.") };
@@ -89,13 +94,14 @@ export function NotificationBell({ className, align = "left" }: { className?: st
             {items.length === 0 && <p className="px-4 py-6 text-center text-sm text-ink-400">{t("Henüz bildirim yok.")}</p>}
             {items.map((n) => {
               const x = text(n);
-              const Icon = n.kind.startsWith("referral") ? Gift : n.kind === "abuse_alert" || n.kind === "admin_warning" ? ShieldAlert : Info;
+              const Icon = n.kind.startsWith("coauthor") ? Users : n.kind.startsWith("referral") ? Gift : n.kind === "abuse_alert" || n.kind === "admin_warning" ? ShieldAlert : Info;
               return (
                 <div key={n.id} className={cn("flex gap-3 border-b border-ink-50 px-4 py-3 last:border-0", !n.read_at && "bg-brand-50/40")}>
                   <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-fuchsia-50 text-fuchsia-600"><Icon className="h-4 w-4" /></span>
                   <div className="min-w-0">
                     <p className="text-[13.5px] font-medium text-ink-900">{x.title}</p>
                     {x.body && <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-600">{x.body}</p>}
+                    {x.href && <a href={x.href} className="mt-1 inline-block text-[12.5px] font-semibold text-brand-700 hover:underline">{x.cta} →</a>}
                     <p className="mt-1 text-[11px] text-ink-400">{when(n.created_at)}</p>
                   </div>
                 </div>

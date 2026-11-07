@@ -35,6 +35,9 @@ import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
 import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./panels";
 import { ProjectSources, ResearchModal } from "./sources";
 import { ShareButton } from "./share-modal";
+import { Avatar, CoauthorsButton, type PresencePerson } from "./coauthors";
+import { PRESENCE_INTERVAL_MS } from "@/lib/coauthors";
+import { ClientApiError } from "@/lib/client";
 
 
 
@@ -85,7 +88,7 @@ function saveDraft(id: string, doc: JSONNode) { try { localStorage.setItem(DRAFT
 function readDraft(id: string): { at: number; doc: JSONNode } | null { try { const v = localStorage.getItem(DRAFT_KEY(id)); return v ? JSON.parse(v) : null; } catch { return null; } }
 function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); } catch { /* yok */ } }
 
-interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string }
+interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter"; collaborative?: boolean }
 
 export function Workspace(props: Props) {
   const { t, dl } = useT();
@@ -98,8 +101,17 @@ export function Workspace(props: Props) {
   const [files, setFiles] = useState<any[]>(props.files);
   const [activeId, setActiveId] = useState<string>(props.initialStageId && props.stages.some((s) => s.id === props.initialStageId) ? props.initialStageId : (nextStage(props.stages) ?? props.stages[0])?.id);
   const [selection, setSelection] = useState("");
+  // Ortak yazım (D115): rol, kimler çalışmada, çakışma
+  const role = props.role ?? "owner";
+  const isOwner = role === "owner";
+  const canEdit = role !== "commenter";
+  const [collaborative, setCollaborative] = useState(!!props.collaborative);
+  const collabRef = useRef(collaborative);
+  collabRef.current = collaborative;
+  const [present, setPresent] = useState<PresencePerson[]>([]);
+  const [conflict, setConflict] = useState<{ stageId: string; mine: JSONNode; theirs: any; by: string } | null>(null);
   const [save, setSave] = useState<SaveState>("saved");
-  const [tab, setTab] = useState<RightTab>("assistant");
+  const [tab, setTab] = useState<RightTab>(props.role === "commenter" ? "comments" : "assistant");
   const [mobilePane, setMobilePane] = useState<"nav" | "editor" | "panel">("editor");
   const [research, setResearch] = useState<{ open: boolean; prefill: string }>({ open: false, prefill: "" });
   const [addStage, setAddStage] = useState(false);
@@ -142,8 +154,10 @@ export function Workspace(props: Props) {
     const target = p ?? { id: activeId, doc: (editorRef.current ? fullDocRef.current() : undefined) ?? stages.find((s) => s.id === activeId)?.content };
     pending.current = null;
     setSave("saving");
+    // Ortak yazımda sunucuya “bildiğim son sürüm” gönderilir; arada başkası kaydettiyse 409 döner (D115)
+    const baseUpdatedAt = collabRef.current ? (stagesRef.current.find((x: any) => x.id === target.id)?.updated_at as string | undefined) : undefined;
     try {
-      const r = await api<{ stage: any; progress: number }>(`/api/stages/${target.id}`, { method: "PATCH", json: { content: target.doc, ...(snapshot ? { snapshot } : {}) } });
+      const r = await api<{ stage: any; progress: number }>(`/api/stages/${target.id}`, { method: "PATCH", json: { content: target.doc, ...(snapshot ? { snapshot } : {}), ...(baseUpdatedAt ? { baseUpdatedAt } : {}) } });
       // Yerel içerik korunur (kayıt sürerken yazılanlar kaybolmaz); yalnızca sunucu meta verisi alınır
       setStages((l) => l.map((s) => (s.id === r.stage.id ? { ...s, status: r.stage.status, word_count: r.stage.word_count, updated_at: r.stage.updated_at, ...(pending.current?.id === s.id ? {} : { content: r.stage.content, content_text: r.stage.content_text }) } : s)));
       setProgress(r.progress);
@@ -151,6 +165,12 @@ export function Workspace(props: Props) {
       if ((pending.current as { id: string } | null)?.id !== target.id) clearDraft(target.id);
       if (snapshot) setHistVer((v) => v + 1);
     } catch (e) {
+      if (e instanceof ClientApiError && e.code === "stage_conflict" && e.extra?.stage) {
+        saveDraft(target.id, target.doc as JSONNode);
+        setConflict({ stageId: target.id, mine: target.doc as JSONNode, theirs: e.extra.stage, by: String(e.extra.by ?? "") });
+        setSave("dirty");
+        return;
+      }
       pending.current = pending.current ?? target;
       saveDraft(target.id, target.doc as JSONNode);
       const offline = typeof navigator !== "undefined" && !navigator.onLine;
@@ -168,7 +188,7 @@ export function Workspace(props: Props) {
   useEffect(() => { try { setAutoSuggest(localStorage.getItem("acd_autosuggest") !== "0"); } catch { /* yok say */ } }, []);
   const suggestCtx = useRef({ projectId: props.project.id, stageTitle: "", focusTitle: null as string | null, on: true, blocked: false });
   const suggestExt = useMemo(() => [createInlineSuggest({
-    enabled: () => suggestCtx.current.on && !suggestCtx.current.blocked && !!suggestCtx.current.stageTitle,
+    enabled: () => suggestCtx.current.on && !suggestCtx.current.blocked && !!suggestCtx.current.stageTitle && props.role !== "commenter",
     fetch: async (before, signal) => {
       const c = suggestCtx.current;
       const res = await fetch(`/api/projects/${c.projectId}/complete`, { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ before, stageTitle: c.stageTitle, focusTitle: c.focusTitle }) });
@@ -285,6 +305,94 @@ export function Workspace(props: Props) {
     window.addEventListener("beforeunload", fn);
     return () => window.removeEventListener("beforeunload", fn);
   }, []);
+
+  // --- Ortak yazım (D115): kim nerede + başkasının kaydettiği bölümü yenileme
+  const activeIdRef = useRef(activeId);
+  activeIdRef.current = activeId;
+  const saveRef = useRef(save);
+  saveRef.current = save;
+  useEffect(() => { if (editor && !editor.isDestroyed) editor.setEditable(canEdit); }, [editor, canEdit]);
+  /** Sunucudaki (başkasının kaydettiği) bölümü yerel duruma ve açıksa editöre uygular */
+  const applyRemote = useCallback((st: any) => {
+    setStages((l) => l.map((x) => (x.id === st.id ? { ...x, ...st } : x)));
+    if (st.id !== activeIdRef.current || !editorRef.current) return;
+    baseRef.current = st.content;
+    const f = focusRef.current;
+    const valid = f != null && st.content?.content?.[f]?.type === "heading" ? f : null;
+    if (valid !== f) { focusRef.current = valid; setFocus(valid); }
+    editorRef.current.commands.setContent(((valid != null ? sectionDoc(st.content, valid) : st.content) ?? { type: "doc", content: [{ type: "paragraph" }] }) as object, false);
+  }, []);
+  const presenceTick = useRef<() => void>(() => {});
+  useEffect(() => {
+    if (!collaborative) { setPresent([]); return; }
+    let stop = false;
+    const tick = async () => {
+      if (typeof document !== "undefined" && document.hidden) return;
+      try {
+        const r = await api<{ others: PresencePerson[]; stages: { id: string; updatedAt: string; by: string | null }[] }>(`/api/projects/${project.id}/presence`, { method: "POST", json: { stageId: activeIdRef.current ?? null } });
+        if (stop) return;
+        setPresent(r.others);
+        // Başkasının eklediği bölümler listeye girer, sildiği bölümler (açık değilse) çıkar
+        const remoteIds = new Set(r.stages.map((x) => x.id));
+        const localIds = new Set(stagesRef.current.map((x: any) => x.id));
+        const added = r.stages.filter((x) => !localIds.has(x.id));
+        if (added.length) {
+          const fresh = await Promise.all(added.map((x) => api<{ stage: any }>(`/api/stages/${x.id}`).then((y) => y.stage).catch(() => null)));
+          setStages((l) => [...l, ...fresh.filter(Boolean)].sort((a, b) => a.position - b.position));
+        }
+        if (stagesRef.current.some((x: any) => !remoteIds.has(x.id) && x.id !== activeIdRef.current)) setStages((l) => l.filter((x) => remoteIds.has(x.id) || x.id === activeIdRef.current));
+        for (const x of r.stages) {
+          const local = stagesRef.current.find((y: any) => y.id === x.id);
+          if (!local || !x.by || Date.parse(x.updatedAt) <= (Date.parse(local.updated_at ?? "") || 0) + 500) continue;
+          // Yerelde kaydedilmemiş değişiklik varsa dokunulmaz: kayıtta çakışma penceresi açılır
+          if (pending.current?.id === x.id || (x.id === activeIdRef.current && saveRef.current !== "saved")) continue;
+          const { stage } = await api<{ stage: any }>(`/api/stages/${x.id}`);
+          if (stop) return;
+          applyRemote(stage);
+          if (x.id === activeIdRef.current) toast({ tone: "info", title: t("{n} bu bölümü güncelledi", { n: x.by }), detail: t("Metin en güncel hâliyle yenilendi.") });
+        }
+      } catch { /* bağlantı yok: bir sonraki turda denenir */ }
+    };
+    presenceTick.current = tick;
+    tick();
+    const iv = setInterval(tick, PRESENCE_INTERVAL_MS);
+    const vis = () => { if (!document.hidden) tick(); };
+    document.addEventListener("visibilitychange", vis);
+    return () => { stop = true; clearInterval(iv); document.removeEventListener("visibilitychange", vis); presenceTick.current = () => {}; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collaborative, project.id]);
+  useEffect(() => { presenceTick.current(); }, [activeId]);
+
+  /** Çakışma: başkasının sürümünü al (sizin metniniz sürüm geçmişine saklanır) */
+  async function conflictTakeTheirs() {
+    if (!conflict) return;
+    try {
+      await api(`/api/stages/${conflict.stageId}/revisions`, { method: "POST", json: { content: conflict.mine, note: t("Çakışmada saklanan sizin sürümünüz") } });
+      pending.current = null;
+      clearDraft(conflict.stageId);
+      applyRemote(conflict.theirs);
+      setSave("saved");
+      setHistVer((v) => v + 1);
+      setConflict(null);
+      toast({ tone: "success", title: t("Güncel sürüm yüklendi"), detail: t("Sizin metniniz “Geçmiş” sekmesinde saklandı.") });
+    } catch (e) { toast({ tone: "error", title: t("İşlem yapılamadı"), detail: (e as Error).message }); }
+  }
+  /** Çakışma: kendi sürümünüzle devam (diğer kişinin sürümü sunucuda geçmişe saklanır) */
+  async function conflictKeepMine() {
+    if (!conflict) return;
+    try {
+      const doc = conflict.stageId === activeId && editor ? fullDoc() : conflict.mine;
+      const r = await api<{ stage: any; progress: number }>(`/api/stages/${conflict.stageId}`, { method: "PATCH", json: { content: doc, force: true } });
+      pending.current = null;
+      clearDraft(conflict.stageId);
+      setStages((l) => l.map((x) => (x.id === r.stage.id ? { ...x, ...r.stage } : x)));
+      setProgress(r.progress);
+      setSave("saved");
+      setHistVer((v) => v + 1);
+      setConflict(null);
+      toast({ tone: "success", title: t("Sizin sürümünüz kaydedildi"), detail: t("Diğer kişinin sürümü “Geçmiş” sekmesinde saklandı.") });
+    } catch (e) { toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); }
+  }
 
   /** Bölüme veya bölümün bir alt başlığına geçer (section: başlık düğümünün sırası; D83) */
   async function selectStage(id: string, section: number | null = null) {
@@ -737,7 +845,8 @@ export function Workspace(props: Props) {
                 <span className={cn("block truncate text-[14px] leading-tight lg:text-[13px]", sel ? "font-semibold text-ink-900" : "text-ink-700")}>{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
                 <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
               </span>
-              <button onClick={(e) => { e.stopPropagation(); removeStage(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-rose-50 hover:text-rose-500 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölümü sil")}><Trash2 className="h-3.5 w-3.5" /></button>
+              {present.some((p) => p.stageId === s.id) && <span className="flex -space-x-1" title={t("Bu bölümde: {n}", { n: present.filter((p) => p.stageId === s.id).map((p) => p.name).join(", ") })}>{present.filter((p) => p.stageId === s.id).slice(0, 2).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>}
+              {isOwner && <button onClick={(e) => { e.stopPropagation(); removeStage(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-rose-50 hover:text-rose-500 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölümü sil")}><Trash2 className="h-3.5 w-3.5" /></button>}
               </div>
               {/* Alt başlıklar (D83): her birine ayrı ayrı girilir */}
               {(trees[s.id] ?? []).length > 0 && (
@@ -770,7 +879,9 @@ export function Workspace(props: Props) {
   const MOBILE_NAV: { key: string; label: string; icon: React.ReactNode; active: boolean; onClick: () => void; badge?: number }[] = [
     { key: "nav", label: t("Bölümler"), icon: <ListTree className="h-5 w-5" />, active: mobilePane === "nav", onClick: () => go("nav") },
     { key: "editor", label: t("Metin"), icon: <PenSquare className="h-5 w-5" />, active: mobilePane === "editor", onClick: () => go("editor") },
-    { key: "assistant", label: t("Asistan"), icon: <Bot className="h-5 w-5" />, active: mobilePane === "panel" && tab === "assistant", onClick: () => go("panel", "assistant") },
+    canEdit
+      ? { key: "assistant", label: t("Asistan"), icon: <Bot className="h-5 w-5" />, active: mobilePane === "panel" && tab === "assistant", onClick: () => go("panel", "assistant") }
+      : { key: "comments", label: t("Yorum"), icon: <MessageSquare className="h-5 w-5" />, active: mobilePane === "panel" && tab === "comments", onClick: () => go("panel", "comments") },
     { key: "sources", label: t("Kaynaklar"), icon: <BookMarked className="h-5 w-5" />, active: mobilePane === "panel" && tab === "sources", onClick: () => go("panel", "sources"), badge: sources.length },
     { key: "more", label: t("Diğer"), icon: <MoreHorizontal className="h-5 w-5" />, active: mobilePane === "panel" && isMore, onClick: () => go("panel", isMore ? tab : "memory") },
   ];
@@ -789,10 +900,11 @@ export function Workspace(props: Props) {
             {STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
-          <ShareButton projectId={project.id} />
-          <ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} />
+          <CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} />
+          {isOwner && <ShareButton projectId={project.id} />}
+          {canEdit && <ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} />}
           <span data-tour="export"><ExportMenu onExport={exportAs} stages={stages.filter((x) => x.key !== "references").map((x) => ({ id: x.id, title: x.title, prefix: prefixes[x.id] ?? "", words: x.word_count ?? 0 }))} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
-          <MobileMenu projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
+          <MobileMenu isOwner={isOwner} canEdit={canEdit} coauthors={<CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} variant="row" onCountChange={(n) => setCollaborative(n > 0)} />} projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
           <button onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
         </header>
@@ -847,6 +959,13 @@ export function Workspace(props: Props) {
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
                     )}
+                    {!canEdit && <p className="mb-3 rounded-2xl border border-ink-100 bg-ink-50 px-3.5 py-2.5 text-[13px] text-ink-600">{t("Bu çalışmada yorumcusunuz: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilirsiniz.")}</p>}
+                    {present.some((p) => p.stageId === active.id) && (
+                      <div className="mb-3 flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-[13px] text-emerald-900">
+                        <span className="flex -space-x-1.5">{present.filter((p) => p.stageId === active.id).slice(0, 3).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>
+                        <span className="min-w-0 flex-1">{t("{n} şu an bu bölümde.", { n: present.filter((p) => p.stageId === active.id).map((p) => p.name).join(", ") })} <span className="text-emerald-700">{t("Farklı alt başlıklarda çalışmanız önerilir; aynı anda kaydederseniz hiçbir metin kaybolmaz.")}</span></span>
+                      </div>
+                    )}
                     <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
                       <Toolbar editor={editor} onFootnote={() => setFootnote("")} suggestOn={autoSuggest} onToggleSuggest={() => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); }} />
                     </div>
@@ -871,7 +990,7 @@ export function Workspace(props: Props) {
             <div className={cn("border-b border-ink-100 p-2 sm:p-2.5", !isMore && "hidden lg:block")}>
               <div className="hidden lg:block" data-tour="panel-tabs">
                 <Tabs compact value={tab} onChange={setTab} tabs={[
-                  { id: "assistant", label: t("Asistan"), icon: <Bot className="h-3.5 w-3.5" /> },
+                  ...(canEdit ? [{ id: "assistant" as const, label: t("Asistan"), icon: <Bot className="h-3.5 w-3.5" /> }] : []),
                   { id: "sources", label: t("Kaynaklar"), icon: <BookMarked className="h-3.5 w-3.5" />, count: sources.length },
                   { id: "memory", label: t("Hafıza"), icon: <Brain className="h-3.5 w-3.5" /> },
                   { id: "comments", label: t("Yorum"), icon: <MessageSquare className="h-3.5 w-3.5" /> },
@@ -892,7 +1011,7 @@ export function Workspace(props: Props) {
                   {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text, index: focused.index } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
                   {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
-                  {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={applyComment} />}
+                  {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={canEdit ? applyComment : undefined} isOwner={isOwner} />}
                   {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }} />}
                 </motion.div>
               </AnimatePresence>
@@ -913,6 +1032,16 @@ export function Workspace(props: Props) {
       </div>
 
       {lang && editor && <LanguageModal open onClose={() => setLang(null)} editor={editor} projectId={project.id} projectLanguage={project.language} glossary={Array.isArray(project.context?.glossary) ? project.context.glossary : []} stageTitle={active?.title ?? ""} scopeLabel={focused ? t("Bu alt başlık: {n} {t}", { n: focused.number, t: focused.text }) : t("Bu bölüm: {t}", { t: active?.title ?? "" })} initialTab={lang.tab} selectionRange={lang.range} onSnapshot={(note) => flush({ note, author: "user" })} onGlossarySaved={(g) => setProject((p: any) => ({ ...p, context: { ...(p.context ?? {}), glossary: g } }))} />}
+      {conflict && (
+        <Modal open onClose={() => {}} title={t("Bu bölüm başka biri tarafından da değiştirildi")}>
+          <p className="text-[14px] leading-relaxed text-ink-700">{t("{n} siz yazarken “{s}” bölümünü kaydetti. Hangi sürümle devam etmek istersiniz? Seçmediğiniz sürüm silinmez, “Geçmiş” sekmesinde saklanır.", { n: conflict.by || t("Bir ortak yazar"), s: stages.find((x) => x.id === conflict.stageId)?.title ?? "" })}</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <Button variant="secondary" onClick={conflictTakeTheirs}>{t("Onun sürümünü yükle")}</Button>
+            <Button onClick={conflictKeepMine}>{t("Benim sürümümle devam et")}</Button>
+          </div>
+          <p className="mt-3 text-[12.5px] text-ink-500">{t("İpucu: Aynı bölümde birlikte çalışırken farklı alt başlıkları açarsanız çakışma olmaz.")}</p>
+        </Modal>
+      )}
       <Modal open={consensusOpen} onClose={() => setConsensusOpen(false)} title={t("Araştırmalar ne diyor?")} wide>
         {consensusOpen && <ConsensusTool projectId={project.id} signedIn onAdded={addSources} />}
       </Modal>
@@ -955,7 +1084,7 @@ function SaveIndicator({ state }: { state: SaveState }) {
 }
 
 /** Mobil üst menü: atıf stili, kalite kontrol, paylaşım ve proje ayarları */
-function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, onTool, workType, planId }: { projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void; onTool: (id: ToolId) => void; workType: string; planId?: string }) {
+function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, onTool, workType, planId, isOwner = true, canEdit = true, coauthors }: { isOwner?: boolean; canEdit?: boolean; coauthors?: React.ReactNode; projectId: string; style: string; onStyle: (s: CitationStyleId) => void; onQuality: () => void; onSettings: () => void; onTour: () => void; onTool: (id: ToolId) => void; workType: string; planId?: string }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
   return (
@@ -973,8 +1102,9 @@ function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, 
               </select>
               <div className="mt-4 grid gap-2">
                 <Link href={`/proje/${projectId}/kalite`} onClick={onQuality} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><FileCheck2 className="h-5 w-5 text-emerald-600" /> {t("Kalite kontrol")}</Link>
-                <ShareButton projectId={projectId} variant="row" />
-                <ToolsMenu onPick={(id) => { setOpen(false); onTool(id); }} workType={workType} variant="rows" planId={planId} />
+                {coauthors}
+                {isOwner && <ShareButton projectId={projectId} variant="row" />}
+                {canEdit && <ToolsMenu onPick={(id) => { setOpen(false); onTool(id); }} workType={workType} variant="rows" planId={planId} />}
                 <button onClick={() => { setOpen(false); onSettings(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Settings2 className="h-5 w-5 text-ink-500" /> {t("Proje ayarları")}</button>
                 <a href={expertUrl(undefined, "workspace")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><GraduationCap className="h-5 w-5 text-violet-600" /> {t("Uzman desteği")}<ExternalLink className="ml-auto h-4 w-4 text-ink-400" /></a>
                 <button onClick={() => { setOpen(false); onTour(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><HelpCircle className="h-5 w-5 text-brand-600" /> {t("Rehberli tur")}</button>

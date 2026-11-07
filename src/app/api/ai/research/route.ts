@@ -4,6 +4,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
+import { projectAccess } from "@/lib/project-access";
 import { executeSearch, planResearch, recordResearchUsage } from "@/lib/research";
 import { assertWithinLimits, searchesRemaining } from "@/lib/usage";
 
@@ -27,7 +28,8 @@ export const POST = route("ai.research", async (req) => {
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, b.projectId);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
-  const bundle = await loadProjectBundle(s.supabase, b.projectId, s.user.id);
+  const acc = await projectAccess(s, b.projectId, "edit");
+  const bundle = await loadProjectBundle(acc.db, b.projectId, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
   const stage = b.stageId ? bundle.stages.find((x) => x.id === b.stageId) : null;
   const model = await resolveModel(s.profile.plan_id, "fast");

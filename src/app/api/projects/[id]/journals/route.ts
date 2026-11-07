@@ -1,6 +1,7 @@
 import { ApiError, json, route } from "@/lib/api";
 import { assertSingleProject } from "@/lib/single-project";
-import { requireProject, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { providerConfig } from "@/lib/env";
 import { getJson } from "@/lib/sources/http";
 import { aggregateVenues, enrichVenues, journalQuery } from "@/lib/sources/journals";
@@ -15,7 +16,7 @@ export const GET = route<Ctx>("project.journals", async (req, { params }) => {
   const s = await requireUser();
   assertFeature(s.profile.plan_id, "journals");
   const { id } = await params;
-  const project = await requireProject(s, id);
+  const { project, db, ownerId } = await projectAccess(s, id, "edit");
   const url = new URL(req.url);
   const q = (url.searchParams.get("q") || journalQuery(project)).slice(0, 200);
   if (q.trim().length < 3) throw new ApiError(422, "Dergi önerisi için projeye anahtar kelime veya konu ekleyin");
@@ -36,7 +37,7 @@ export const GET = route<Ctx>("project.journals", async (req, { params }) => {
     if (srcJson) list = enrichVenues(list, srcJson);
   }
   // Projedeki kaynakların yayımlandığı dergiler (atıf verdiğiniz dergiler çoğu zaman iyi adaydır)
-  const { data: rows } = await s.supabase.from("sources").select("container_title").eq("project_id", id).eq("user_id", s.user.id).eq("type", "article-journal");
+  const { data: rows } = await db.from("sources").select("container_title").eq("project_id", id).eq("user_id", ownerId).eq("type", "article-journal");
   const own = new Map<string, number>();
   for (const r of rows ?? []) if (r.container_title) own.set(r.container_title, (own.get(r.container_title) ?? 0) + 1);
   list = list.map((j) => ({ ...j, fromProjectSources: [...own.entries()].find(([n]) => n.toLowerCase() === j.name.toLowerCase())?.[1] ?? 0 }));

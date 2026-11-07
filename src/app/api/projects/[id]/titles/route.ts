@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
-import { requireProject, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { suggestTitles } from "@/lib/titles";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
 
@@ -13,7 +14,7 @@ export const POST = route<Ctx>("project.titles", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const b = await parseBody(req, z.object({ hint: z.string().max(500).optional() }));
-  const project = await requireProject(s, id);
+  const { project } = await projectAccess(s, id, "edit");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, id);
   try {

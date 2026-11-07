@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
+import { projectAccess } from "@/lib/project-access";
 import { runQualityChecks } from "@/lib/quality/checks";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
 import { stageDef } from "@/lib/workflows";
@@ -39,7 +40,8 @@ const AI_SCHEMA = {
 export const GET = route<Ctx>("quality.latest", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const { data } = await s.supabase.from("quality_reports").select("*").eq("project_id", id).eq("user_id", s.user.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+  const acc = await projectAccess(s, id, "read");
+  const { data } = await acc.db.from("quality_reports").select("*").eq("project_id", id).eq("user_id", acc.ownerId).order("created_at", { ascending: false }).limit(1).maybeSingle();
   return json({ report: data });
 });
 
@@ -47,7 +49,8 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const { withAi } = await parseBody(req, z.object({ withAi: z.boolean().default(false) }));
-  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  const acc = await projectAccess(s, id, "edit");
+  const bundle = await loadProjectBundle(acc.db, id, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
 
   const stages = bundle.stages.map((st) => {
@@ -85,6 +88,6 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
     }
   }
   await recordUsage(s.user.id, "quality_check");
-  const { data } = await s.supabase.from("quality_reports").insert({ project_id: id, user_id: s.user.id, score: report.score, report: { ...report, aiReview } }).select().single();
+  const { data } = await acc.db.from("quality_reports").insert({ project_id: id, user_id: acc.ownerId, score: report.score, report: { ...report, aiReview } }).select().single();
   return json({ report: data });
 });

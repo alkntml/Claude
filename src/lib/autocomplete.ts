@@ -11,7 +11,7 @@ export const AUTOCOMPLETE_DAILY: Record<string, number> = { free: 30, basic: 150
 
 /** Öneriyi güvenli hâle getirir: kaynak gerektiren içerik veya biçim bozukluğu varsa boş döner */
 export function sanitizeSuggestion(raw: string, before: string): string {
-  let s = raw.replace(/\s+/g, " ").replace(/^["“”'`]+|["“”'`]+$/g, "").trim();
+  let s = raw.replace(/\s+/g, " ").trim().replace(/^["“”'`]+|["“”'`]+$/g, "").trim();
   if (!s) return "";
   // Kaynak gerektirebilecek içerik: rakam, yıl, atıf işareti, yüzde, parantez içi yazar-yıl
   if (/\d|\[\[|\(|%|https?:|www\./.test(s)) return "";

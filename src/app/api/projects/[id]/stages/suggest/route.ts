@@ -1,6 +1,7 @@
 import { ApiError, json, route } from "@/lib/api";
 import { assertSingleProject } from "@/lib/single-project";
 import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
@@ -25,10 +26,11 @@ export const POST = route<Ctx>("stages.suggest", async (_req, { params }) => {
   const s = await requireUser();
   assertFeature(s.profile.plan_id, "guideline");
   const { id } = await params;
-  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  const acc = await projectAccess(s, id, "edit");
+  const bundle = await loadProjectBundle(acc.db, id, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
   if (!bundle.project.guideline_file_id) throw new ApiError(422, "Önce bir yazım kılavuzu yükleyin");
-  const { data: f } = await s.supabase.from("files").select("extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", s.user.id).maybeSingle();
+  const { data: f } = await acc.db.from("files").select("extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", acc.ownerId).maybeSingle();
   if (!f?.extracted_text) throw new ApiError(422, "Kılavuz metni okunamadı");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, id);

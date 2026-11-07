@@ -3,6 +3,7 @@ import { Dashboard } from "@/components/dashboard/dashboard";
 import { getSession } from "@/lib/auth";
 import { grantReferralReward } from "@/lib/growth";
 import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
+import { sharedWithMe } from "@/lib/project-access";
 
 export async function generateMetadata() {
   const { t } = await getT();
@@ -17,7 +18,7 @@ export default async function Panel() {
   // Yalnızca bekleyen bir davet ödülü varsa çalışır ve diğer sorgularla paralel yürür
   const pr = s.profile as unknown as { referred_by?: string | null; referral_rewarded_at?: string | null };
   const reward = pr.referred_by && !pr.referral_rewarded_at ? grantReferralReward(uid).catch(() => false) : Promise.resolve(false);
-  const [, projects, recentStages, sourcesCount, convs, files, ann, usage, limits] = await Promise.all([
+  const [, projects, recentStages, sourcesCount, convs, files, ann, usage, limits, shared] = await Promise.all([
     reward,
     db.from("projects").select("id, title, work_type, academic_level, status, progress, citation_style, updated_at, context").eq("user_id", uid).order("updated_at", { ascending: false }),
     db.from("project_stages").select("id, title, project_id, word_count, updated_at, status").eq("user_id", uid).gt("word_count", 0).order("updated_at", { ascending: false }).limit(6),
@@ -27,6 +28,7 @@ export default async function Panel() {
     db.from("announcements").select("id, title, body, level").order("starts_at", { ascending: false }).limit(3),
     usageSummary(uid).catch(() => null),
     effectiveLimits(s.user.id, s.profile.plan_id).catch(() => ({})),
+    sharedWithMe(uid).catch(() => []),
   ]);
   const safe = forClient(usage, limits);
   return (
@@ -34,6 +36,7 @@ export default async function Panel() {
       name={s.profile.full_name?.split(" ")[0] ?? ""}
       plan={s.profile.plan_id}
       projects={projects.data ?? []}
+      shared={shared}
       recentStages={recentStages.data ?? []}
       sourcesCount={sourcesCount.count ?? 0}
       conversations={convs.data ?? []}

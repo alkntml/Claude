@@ -1,6 +1,7 @@
 import { after } from "next/server";
 import { ApiError, json, logError, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
+import { childAccess } from "@/lib/project-access";
 import { providerConfig } from "@/lib/env";
 import { ingestOpenAccess } from "@/lib/sources/fulltext";
 import { adminClient } from "@/lib/supabase/admin";
@@ -13,11 +14,10 @@ export const maxDuration = 60;
 export const POST = route<Ctx>("source.fulltext", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const { data: src } = await s.supabase.from("sources").select("*").eq("id", id).eq("user_id", s.user.id).maybeSingle();
-  if (!src) throw new ApiError(404, "Kaynak bulunamadı");
+  const { row: src, access } = await childAccess(s, "sources", id, "edit");
   if (!src.project_id) throw new ApiError(422, "Tam metin analizi için kaynak bir projeye bağlı olmalıdır");
   if (src.fulltext_status === "processing" || src.fulltext_status === "queued") return json({ status: src.fulltext_status }, 202);
-  await s.supabase.from("sources").update({ fulltext_status: "queued", fulltext_message: null }).eq("id", id);
+  await access.db.from("sources").update({ fulltext_status: "queued", fulltext_message: null }).eq("id", id).eq("user_id", access.ownerId);
   // İstek bağlamı bittikten sonra çalışır; kullanıcı çerezine bağlı olmayan service role istemcisi kullanılır.
   // ingestOpenAccess yalnızca bu kaynağın kimliği ve sahibinin user_id'si ile yazar.
   after(async () => {

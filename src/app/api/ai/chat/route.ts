@@ -15,6 +15,7 @@ import { APP_GUIDE_SHORT, HELP_SYSTEM, isHelpQuestion } from "@/lib/ai/help";
 import type { Usage } from "@/lib/ai/types";
 import { estimateCost, isProviderConfigured, resolveModel, streamWith } from "@/lib/ai/registry";
 import { loadProjectBundle } from "@/lib/projects";
+import { projectAccess } from "@/lib/project-access";
 import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { addSourcesToProject, executeSearch, providerHealthMeta, focusOf, ingestWithBudget, minSourcesFor, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput, researchGate } from "@/lib/research";
@@ -56,7 +57,9 @@ export const POST = route("ai.chat", async (req) => {
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, b.projectId);
 
-  const bundle = await loadProjectBundle(s.supabase, b.projectId, s.user.id);
+  // Ortak yazım (D115): çalışma içeriği sahibin kaydıdır; sohbet kişiseldir (ortak yazarın kendi adına)
+  const acc = await projectAccess(s, b.projectId, "edit");
+  const bundle = await loadProjectBundle(acc.db, b.projectId, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
   const stage = b.stageId ? bundle.stages.find((x) => x.id === b.stageId) ?? null : null;
   if (b.stageId && !stage) throw new ApiError(404, "Bölüm bulunamadı");
@@ -182,7 +185,7 @@ export const POST = route("ai.chat", async (req) => {
               if (picks.length) {
                 controller.enqueue(sse("phase", { phase: "verify" }));
                 controller.enqueue(sse("status", { text: T("{n} sonuç bulundu; en uygun {k} kaynak doğrulanıyor…", { n: results.length, k: picks.length }) }));
-                const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput), { deferFulltext: true });
+                const added = await addSourcesToProject(acc.db, b.projectId, acc.ownerId, picks.map(recordToInput), { deferFulltext: true });
                 bundle.sources.push(...added.sources);
                 controller.enqueue(sse("sources_added", { sources: added.sources, queries }));
               } else {
@@ -214,7 +217,7 @@ export const POST = route("ai.chat", async (req) => {
             controller.enqueue(sse("status", { text: T("{n} kaynağın açık erişimli tam metni okunuyor…", { n: toRead.length }) }));
             const readIds = await ingestWithBudget(toRead, FULLTEXT_WAIT_MS);
             if (readIds.length) {
-              const { data: fresh } = await s.supabase.from("sources").select("*").in("id", readIds).eq("project_id", b.projectId);
+              const { data: fresh } = await acc.db.from("sources").select("*").in("id", readIds).eq("project_id", b.projectId).eq("user_id", acc.ownerId);
               for (const row of fresh ?? []) { const i = bundle.sources.findIndex((x) => x.id === row.id); if (i >= 0) bundle.sources[i] = row; }
               controller.enqueue(sse("fulltext_read", { sources: fresh ?? [] }));
               controller.enqueue(sse("status", { text: T("{n} kaynağın tam metni okundu; atıflarda sayfa numarası kullanılabilecek.", { n: readIds.length }) }));
@@ -239,11 +242,11 @@ export const POST = route("ai.chat", async (req) => {
         // Bölümün tamamı seçili metin olarak geldiyse (ör. toplu düzeltme) mevcut metin bağlama ikinci kez eklenmez
         const currentLen = String(stage?.content_text ?? "").length;
         const omitCurrentText = !!b.selection && currentLen > 0 && b.selection.length >= currentLen * 0.8;
-        const ctx = await buildContext({ db: s.supabase, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}`, otherChars: wholeWork ? 3500 : undefined, omitCurrentText, stagePrompt });
+        const ctx = await buildContext({ db: acc.db, project: bundle.project, stage, stages: bundle.stages, sources: bundle.sources, memory: bundle.memory, query: `${b.message} ${b.selection ?? ""}`, otherChars: wholeWork ? 3500 : undefined, omitCurrentText, stagePrompt });
         if (b.action === "journal_checklist") {
           // Yüklenen dergi/kılavuz metni karşılaştırma için bağlama eklenir
           const { data: g } = bundle.project.guideline_file_id
-            ? await s.supabase.from("files").select("name, extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", s.user.id).maybeSingle()
+            ? await acc.db.from("files").select("name, extracted_text").eq("id", bundle.project.guideline_file_id).eq("user_id", acc.ownerId).maybeSingle()
             : { data: null };
           ctx.tail += g?.extracted_text ? `\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ (${g.name})\n${String(g.extracted_text).slice(0, 20000)}` : "\n\n## YÜKLENEN DERGİ / KILAVUZ METNİ\n(Kılavuz yüklenmemiş.)";
         }
@@ -287,7 +290,7 @@ export const POST = route("ai.chat", async (req) => {
         if (stopReason === "refusal" && !answer) answer = T("Bu istek güvenlik nedeniyle yanıtlanamadı. Lütfen isteğinizi farklı ifade edin.");
         const memory = extractMemory(answer);
         if (memory.length) {
-          await s.supabase.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: s.user.id, kind: m.kind, content: m.content, source: "ai" })));
+          await acc.db.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: acc.ownerId, kind: m.kind, content: m.content, source: "ai" })));
         }
         const cost = await estimateCost(servedModel, usage.input, usage.output, usage);
         usageRecorded = true;
@@ -315,7 +318,7 @@ export const POST = route("ai.chat", async (req) => {
             const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
             const picks = pickForAutoAdd(results, existing, 6);
             if (picks.length) {
-              const added = await addSourcesToProject(s.supabase, b.projectId, s.user.id, picks.map(recordToInput));
+              const added = await addSourcesToProject(acc.db, b.projectId, acc.ownerId, picks.map(recordToInput));
               gapAdded = added.sources.length;
               if (gapAdded) controller.enqueue(sse("gap_sources", { sources: added.sources, queries: gaps }));
             }

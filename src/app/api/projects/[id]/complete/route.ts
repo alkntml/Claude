@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
-import { requireProject, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { AUTOCOMPLETE_DAILY, suggestContinuation } from "@/lib/autocomplete";
 import { detectLang } from "@/lib/editor/translate-doc";
 import { assertSingleProject } from "@/lib/single-project";
@@ -19,7 +20,7 @@ const trDayStart = () => { const TR = 3 * 3600_000; const d = new Date(Date.now(
 export const POST = route<Ctx>("project.complete", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const project = await requireProject(s, id);
+  const { project } = await projectAccess(s, id, "edit");
   const b = await parseBody(req, Body);
   await assertSingleProject(s, id);
   // Maliyet tavanı (haktan düşmeden)

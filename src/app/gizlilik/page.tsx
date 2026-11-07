@@ -27,7 +27,7 @@ export default async function Page() {
         <h2>Your rights</h2>
         <p>From your account page you can download all your data in a portable format (JSON) and permanently delete your account with all its data. For other requests, contact the data controller.</p>
         <h2>Security</h2>
-        <p>Data is protected with row-level security (RLS) policies; no user can access another user&apos;s work. Files are kept in private storage and can only be downloaded through time-limited signed links.</p>
+        <p>Data is protected with row-level security (RLS) policies; no user can access another user&apos;s work unless the owner invites them as a co-author or commenter (co-authors see the work’s sections, sources and comments, never the owner’s files or assistant chats). Files are kept in private storage and can only be downloaded through time-limited signed links.</p>
       </StaticPage>
     );
   }
@@ -50,7 +50,7 @@ export default async function Page() {
       <h2>Haklarınız</h2>
       <p>Hesap sayfanızdan tüm verilerinizi taşınabilir biçimde (JSON) indirebilir ve hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz. KVKK md. 11 kapsamındaki diğer talepleriniz için veri sorumlusuna başvurabilirsiniz.</p>
       <h2>Güvenlik</h2>
-      <p>Veriler satır düzeyinde erişim politikalarıyla (RLS) korunur. Hiçbir kullanıcı başka bir kullanıcının çalışmasına erişemez. Dosyalar özel depolama alanında tutulur ve yalnızca süreli imzalı bağlantılarla indirilebilir.</p>
+      <p>Veriler satır düzeyinde erişim politikalarıyla (RLS) korunur. Hiçbir kullanıcı başka bir kullanıcının çalışmasına erişemez; tek istisna, çalışma sahibinin ortak yazar veya yorumcu olarak davet ettiği kişilerdir. Ortak yazarlar çalışmanın bölümlerini, kaynaklarını ve yorumlarını görür; sahibin dosyalarını ve asistan sohbetlerini göremez. Davet için girilen e-posta adresi yalnızca daveti doğru kişiye ulaştırmak için saklanır. Dosyalar özel depolama alanında tutulur ve yalnızca süreli imzalı bağlantılarla indirilebilir.</p>
     </StaticPage>
   );
 }

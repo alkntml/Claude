@@ -4,7 +4,7 @@ import { InstallApp } from "@/components/pwa";
 import { useT } from "@/i18n/client";
 import { makeDictT, type TFn } from "@/i18n/core";
 import { motion } from "framer-motion";
-import { ArrowRight, BookMarked, Bot, CheckCircle2, Clock3, FileText, FolderOpen, Megaphone, Plus, Sparkles } from "lucide-react";
+import { ArrowRight, BookMarked, Bot, CheckCircle2, Clock3, FileText, FolderOpen, Megaphone, Plus, Sparkles, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,7 +19,7 @@ import { LEVEL_LABELS, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
-  name: string; plan: string; projects: any[]; recentStages: any[]; sourcesCount: number; conversations: any[]; files: any[]; announcements: any[];
+  name: string; plan: string; projects: any[]; shared?: { id: string; title: string; work_type: string; progress: number; updated_at: string; role: string; owner_name: string | null }[]; recentStages: any[]; sourcesCount: number; conversations: any[]; files: any[]; announcements: any[];
   usage: { ai_requests: number; source_searches: number; projects: number; storage_mb: number; ai_near?: boolean } | null; limits: any;
 }
 
@@ -137,6 +137,23 @@ export function Dashboard(p: Props) {
                   </Link>
                 );
               })}
+            </div>
+          )}
+          {(p.shared ?? []).length > 0 && (
+            <div className="mt-6">
+              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-ink-700"><Users className="h-4 w-4 text-brand-600" /> {t("Benimle paylaşılan çalışmalar")}</h3>
+              <div className="card divide-y divide-ink-100">
+                {p.shared!.map((pr) => (
+                  <Link key={pr.id} href={`/proje/${pr.id}`} className="flex items-center gap-3 px-4 py-3 text-sm transition hover:bg-ink-50">
+                    <span className="relative flex shrink-0 items-center justify-center"><ProgressRing value={pr.progress} size={32} /><span className="absolute text-[9px] font-semibold text-ink-700">{pr.progress}%</span></span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium text-ink-800">{pr.title}</span>
+                      <span className="block truncate text-xs text-ink-400">{pr.owner_name ? t("Sahibi: {n}", { n: pr.owner_name }) : ""}{pr.owner_name ? " · " : ""}{pr.role === "commenter" ? t("Yorumcu") : t("Ortak yazar")} · {t("Son düzenleme {x}", { x: ago(pr.updated_at) })}</span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-ink-300" />
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
           {done.length > 0 && (

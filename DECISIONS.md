@@ -539,3 +539,26 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 ### D110 — Kullanıcı kararı: bazı denetim maddeleri olduğu gibi kalacak
 - Kullanıcı şunların değiştirilmemesine karar verdi: ana sayfadaki “10.000’den fazla araştırmacı” ifadesi, “DergiPark’ta doğrudan arama” ifadesi, ödemenin WhatsApp üzerinden alınması (kartla ödeme eklenmeyecek). Ücretsiz araçlara IP başına kullanım sınırı konmayacak.
 - Bu konular yeniden önerilmez; kullanıcı kendisi isterse ele alınır.
+
+### D111 — Dil ve çeviri (akademik TR↔EN çeviri, dil denetimi, terim sözlüğü)
+- Yer: Araçlar → “Dil ve çeviri” (sekmeler Çeviri / Dil denetimi / Terim sözlüğü) ve metin seçince çıkan seçim balonu (Çevir, Dil denetimi, Akademikleştir, Kısalt, Genişlet, Asistana sor).
+- Atıflar ⟦Cn⟧, dipnotlar ⟦Fn⟧, şekiller ⟦Gn⟧ belirteçleriyle korunur; yerine oturmayan belirteç metnin sonuna eklenir ve kullanıcı uyarılır. Ondalık/istatistik gösterimi hedef dile çevrilir, sayılar değişmez. Değiştirmeden önce sürüm alınır.
+- Terim sözlüğü `projects.context.glossary` (çalışmaya özel; ortak yazarlar paylaşır). Model: balanced (Sonnet), parçalı (6.000 karakter); kullanım ai_request, adet = çağrı sayısı.
+
+### D112 — Kaynağa sor
+- Kaynaklar sekmesinde her kaynakta “Sor”. Cevap yalnızca o kaynağın okunan metnine dayanır (tam metin parçaları `rankChunks` ile; yoksa özet), sayfa “(s. N)” ile; erişim seviyesi rozetle gösterilir. “Atıfla metne ekle” sayfa numaralı atıf düğümü üretir. Hazır sorular: özet, yöntem, örneklem, bulgular, sınırlılıklar, ilişki, alıntılar, tanımlar.
+
+### D113 — Satır içi otomatik tamamlama
+- Paragraf sonunda ≈1 sn duraklamada en fazla bir cümle gri öneri (Haiku, 80 token). Tab / Ctrl+→ / Esc; dokunmatikte dokunma. Tablo ve listede yok.
+- Öneri sayı, yıl, %, parantez, [[, bağlantı içeriyorsa gösterilmez (uydurma riski). Kullanım türü `autocomplete`: aylık istek/token hakkından düşmez, maliyet tavanına dahil; günlük sınır (Ücretsiz 30, Basic 150, Pro 300, Premium/Tek Proje 500) ve dakikada 30.
+
+### D114 — Araştırmalar ne diyor?
+- Ücretsiz araç (/araclar/arastirmalar-ne-diyor; ziyaretçi saatte 5, üye 20) ve çalışma alanı Araçlar menüsü. Haiku arama ifadesi → OpenAlex/Europe PMC/ERIC/Crossref (+Türkiye kaynakları) → özeti ≥200 karakter olan en fazla 14 makale → Sonnet sentez (her cümle [n]); geçersiz numaralar silinir. Evet/hayır sorusunda ≥3 ilgili çalışma varsa uzlaşı göstergesi. Yalnızca özet okunduğu açıkça yazılır; “literatür taraması değildir”.
+
+### D115 — Ortak yazım
+- Sahip (Pro, Premium, Tek Proje) en fazla 5 kişiyi e-postayla davet eder; davet 14 gün, yalnızca aynı e-postayla giriş yapan kabul eder (`/ortak/[token]`, noindex). Geçici e-posta engelli. Kayıtlı kişiye bildirim.
+- Roller: editor (yazar, kaynak/hafıza ekler, yapay zekâyı KENDİ paketiyle kullanır) ve commenter (okur, yorum yazar). Silme, arşiv/durum, paylaşım bağlantısı, ortak yazar yönetimi, bölüm silme yalnız sahipte.
+- Veri modeli: içerik sahibin kaydı olarak kalır (`user_id = sahip`); erişim `src/lib/project-access.ts` (`projectAccess`, `childAccess`): sahip RLS ile, ortak yazar sunucu anahtarıyla ve her sorguda açık `project_id`/sahip `user_id` filtresiyle. RLS politikaları genişletilmedi. Tek istisna: ortak yazarın asistan sohbeti kendi adına (`assert_project_owner` ai_conversations için üyeye izin verir). Dosyalar kişisel kalır.
+- Eşzamanlılık: `project_presence` (25 sn sinyal; bölüm listesinde ve editör üstünde baş harfler), başkası kaydettiyse ve yerelde değişiklik yoksa bölüm otomatik yenilenir. Kayıtta `baseUpdatedAt`; arada başkası kaydettiyse 409 → “Onun sürümünü yükle” (sizinki sürüme) / “Benim sürümümle devam et” (onunki sürüme). Hiçbir metin kaybolmaz.
+- Sürüm ve yorumlarda `actor_id`; panelde “Benimle paylaşılan çalışmalar”. Migration 32: project_members, project_invites, project_presence, last_editor/actor_id sütunları, usage_kind autocomplete, paket kartı satırları.
+

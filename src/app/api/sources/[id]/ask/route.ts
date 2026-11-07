@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { ApiError, json, parseBody, route } from "@/lib/api";
-import { requireProject, requireUser } from "@/lib/auth";
+import { json, parseBody, route } from "@/lib/api";
+import { requireUser } from "@/lib/auth";
+import { childAccess } from "@/lib/project-access";
 import { logAiOutput } from "@/lib/activity";
 import { localeFromRequest } from "@/i18n/server";
 import { assertSingleProject } from "@/lib/single-project";
@@ -21,13 +22,12 @@ export const POST = route<Ctx>("source.ask", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const b = await parseBody(req, Body);
-  const { data: src } = await s.supabase.from("sources").select("id, project_id, title, authors, year, container_title, abstract, access_level").eq("id", id).maybeSingle();
-  if (!src) throw new ApiError(404, "Kaynak bulunamadı");
-  const project = await requireProject(s, src.project_id as string);
+  const { row: src, access } = await childAccess(s, "sources", id, "edit", "id, title, authors, year, container_title, abstract, access_level");
+  const project = access.project;
   await assertSingleProject(s, project.id);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   const { data: chunks } = src.access_level === "full_text"
-    ? await s.supabase.from("source_chunks").select("content, page_hint").eq("source_id", id).order("chunk_index").limit(2000)
+    ? await access.db.from("source_chunks").select("content, page_hint").eq("source_id", id).eq("user_id", access.ownerId).order("chunk_index").limit(2000)
     : { data: [] };
   const authors = (Array.isArray(src.authors) ? src.authors : []).slice(0, 3).map((a: { family?: string; literal?: string }) => a.family ?? a.literal ?? "").filter(Boolean).join(", ") + ((src.authors?.length ?? 0) > 3 ? " vd." : "");
   const lang = project.language === "en" ? "en" : localeFromRequest(req);

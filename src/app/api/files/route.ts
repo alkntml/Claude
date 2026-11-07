@@ -29,7 +29,8 @@ export const POST = route("files.upload", async (req) => {
   if (file.size > MAX_BYTES) throw new ApiError(413, "Dosya 25 MB sınırını aşıyor");
   const kind = kindOf(file.type, file.name);
   if (!kind) throw new ApiError(415, "Desteklenen türler: PDF, DOCX, XLSX, CSV, TXT");
-  if (projectId) await requireProject(s, projectId);
+  // Dosyalar kişiseldir (D115): ortak yazar başkasının çalışmasına dosya bağlayamaz
+  if (projectId) await requireProject(s, projectId).catch(() => { throw new ApiError(403, "Dosyalar kişiseldir; bu çalışmaya dosyayı yalnızca sahibi ekleyebilir. Metni asistana yapıştırarak kullanabilirsiniz.", "role_denied"); });
   await assertWithinLimits(s.user.id, s.profile.plan_id, "upload", { bytes: file.size });
 
   const buf = Buffer.from(await file.arrayBuffer());

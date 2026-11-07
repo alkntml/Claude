@@ -16,7 +16,8 @@ export type FeatureId =
   | "journals" // dergi önerisi ve dergi kılavuzu kontrolü
   | "guideline" // yazım kılavuzundan bölüm yapısı önerisi
   | "reviewer" // hakem yorumlarına cevap
-  | "defense"; // savunma sunumu ve savunma provası
+  | "defense" // savunma sunumu ve savunma provası
+  | "coauthors"; // ortak yazar daveti (D115)
 
 export const FEATURE_MIN_PLAN: Record<FeatureId, PlanId> = {
   quality_ai: "basic",
@@ -29,6 +30,7 @@ export const FEATURE_MIN_PLAN: Record<FeatureId, PlanId> = {
   guideline: "pro",
   reviewer: "pro",
   defense: "pro",
+  coauthors: "pro",
 };
 
 /** Kullanıcıya gösterilen özellik adları (t() ile çevrilir) */
@@ -43,6 +45,7 @@ export const FEATURE_LABEL: Record<FeatureId, string> = {
   guideline: "Yazım kılavuzu yükleme",
   reviewer: "Hakem yorumlarına cevap asistanı",
   defense: "Savunma sunumu ve savunma provası",
+  coauthors: "Ortak yazarlarla birlikte yazım",
 };
 
 export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium", single: "Tek Proje" };

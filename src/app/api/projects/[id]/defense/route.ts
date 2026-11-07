@@ -2,6 +2,7 @@ import { z } from "zod";
 import { assertSingleProject } from "@/lib/single-project";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { defenseFeedback, defenseQuestions } from "@/lib/defense";
 import { loadProjectBundle } from "@/lib/projects";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
@@ -22,7 +23,8 @@ export const POST = route<Ctx>("project.defense", async (req, { params }) => {
   const b = await parseBody(req, Body);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, id);
-  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  const acc = await projectAccess(s, id, "edit");
+  const bundle = await loadProjectBundle(acc.db, id, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
   try {
     const out = b.mode === "questions"

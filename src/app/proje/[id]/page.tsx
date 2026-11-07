@@ -4,6 +4,7 @@ import { Workspace } from "@/components/workspace/workspace";
 import { getSession } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { loadProjectBundle } from "@/lib/projects";
+import { hasMembers, projectAccessOrNull } from "@/lib/project-access";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +13,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const s = await getSession().catch(() => null);
   const { t } = await getT();
   if (!s) return { title: t("Çalışma") };
-  const { data } = await s.supabase.from("projects").select("title").eq("id", id).maybeSingle();
-  return { title: data?.title ?? t("Çalışma") };
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return { title: t("Çalışma") };
+  const a = await projectAccessOrNull(s, id);
+  return { title: a?.project.title ?? t("Çalışma"), robots: { index: false, follow: false } };
 }
 
 export default async function ProjectPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ bolum?: string }> }) {
@@ -23,12 +25,17 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { id } = await params;
   const { bolum } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-  // Proje, dosyalar ve “son açılma” güncellemesi paralel yürür
-  const [bundle, { data: files }] = await Promise.all([
-    loadProjectBundle(s.supabase, id, s.user.id),
-    s.supabase.from("files").select("id, name, mime_type, size_bytes, purpose, project_id, extraction_status, created_at").eq("user_id", s.user.id).eq("project_id", id).order("created_at", { ascending: false }),
-    s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", s.user.id),
+  // Sahip veya ortak yazar (D115). Dosyalar kişiseldir: ortak yazar sahibin dosyalarını görmez.
+  const access = await projectAccessOrNull(s, id);
+  if (!access) notFound();
+  const [bundle, { data: files }, shared] = await Promise.all([
+    loadProjectBundle(access.db, id, access.ownerId),
+    access.isOwner
+      ? s.supabase.from("files").select("id, name, mime_type, size_bytes, purpose, project_id, extraction_status, created_at").eq("user_id", s.user.id).eq("project_id", id).order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] }),
+    access.isOwner ? hasMembers(id).catch(() => false) : Promise.resolve(true),
+    access.isOwner ? s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", s.user.id) : Promise.resolve(null),
   ]);
   if (!bundle) notFound();
-  return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} planId={s.profile.plan_id} />;
+  return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} planId={s.profile.plan_id} role={access.role} collaborative={shared} />;
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
-import { requireProject, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { titleSimilarity } from "@/lib/citations/checks";
 import { addSourcesToProject } from "@/lib/research";
 import { parseReferences } from "@/lib/sources/bib";
@@ -20,13 +21,13 @@ export const POST = route<Ctx>("project.sources.import", async (req, { params })
   const s = await requireUser();
   assertFeature(s.profile.plan_id, "bib_io");
   const { id } = await params;
-  await requireProject(s, id);
+  const { db, ownerId } = await projectAccess(s, id, "edit");
   const b = await parseBody(req, z.object({ text: z.string().min(10).max(5_000_000), format: z.enum(["bibtex", "ris", "csljson"]).nullable().optional() }));
   const { format, refs } = parseReferences(b.text, b.format ?? null);
   if (!format) throw new ApiError(422, "Dosya biçimi tanınmadı. BibTeX (.bib), RIS (.ris) veya CSL-JSON (.json) yükleyin.");
   if (!refs.length) throw new ApiError(422, "Dosyada okunabilir kaynak bulunamadı");
 
-  const { data: existing } = await s.supabase.from("sources").select("title, doi").eq("project_id", id).eq("user_id", s.user.id);
+  const { data: existing } = await db.from("sources").select("title, doi").eq("project_id", id).eq("user_id", ownerId);
   const valid: z.infer<typeof SourceInput>[] = [];
   let invalid = 0, duplicates = 0;
   for (const r of refs.slice(0, MAX_ENTRIES)) {
@@ -37,7 +38,7 @@ export const POST = route<Ctx>("project.sources.import", async (req, { params })
     if (dupTitle || dupInFile) { duplicates++; continue; }
     valid.push(parsed.data);
   }
-  const added = valid.length ? await addSourcesToProject(s.supabase, id, s.user.id, valid) : { sources: [], skipped: 0 };
+  const added = valid.length ? await addSourcesToProject(db, id, ownerId, valid) : { sources: [], skipped: 0 };
   return json({
     format,
     found: refs.length,

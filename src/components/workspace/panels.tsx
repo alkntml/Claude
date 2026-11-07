@@ -86,7 +86,7 @@ export function MemoryPanel({ projectId, memory, setMemory }: { projectId: strin
   );
 }
 
-export function CommentsPanel({ stageId, selection, onApply }: { stageId: string; selection: string; onApply?: (c: { body: string; quote: string | null }) => void }) {
+export function CommentsPanel({ stageId, selection, onApply, isOwner = true }: { stageId: string; selection: string; onApply?: (c: { body: string; quote: string | null }) => void; isOwner?: boolean }) {
   const { t, dl } = useT();
   const [list, setList] = useState<any[]>([]);
   const [body, setBody] = useState("");
@@ -107,9 +107,9 @@ export function CommentsPanel({ stageId, selection, onApply }: { stageId: string
         {list.map((c) => (
           <div key={c.id} className={`rounded-xl border p-3 text-[13px] ${c.resolved ? "border-ink-100 bg-ink-50 text-ink-400" : "border-amber-100 bg-amber-50/50 text-ink-700"}`}>
             {c.quote && <p className="mb-1.5 border-l-2 border-amber-300 pl-2 font-serif italic text-ink-500">“{c.quote.slice(0, 200)}”</p>}
-            {c.author_name && <p className="mb-1 text-[11px] font-semibold text-brand-700">{t("Danışman:")} {c.author_name}</p>}
+            {c.author_name && !c.mine && <p className="mb-1 text-[11px] font-semibold text-brand-700">{c.share_id ? t("Danışman:") : t("Ortak yazar:")} {c.author_name}</p>}
             <p className={c.resolved ? "line-through" : ""}>{c.body}</p>
-            <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at, t, dl)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? t("Yeniden aç") : t("Çözüldü")}</button><DeleteButton className="-my-1 !p-1 text-rose-500" withText confirmText={t("Bu yorum kalıcı olarak silinsin mi?")} onDelete={() => api(`/api/stages/${stageId}/comments`, { method: "PATCH", json: { commentId: c.id, delete: true } })} onDone={() => setList((l) => l.filter((x) => x.id !== c.id))} />{!c.resolved && onApply && <button onClick={() => { onApply({ body: c.body, quote: c.quote ?? null }); toggle(c); }} className="ml-auto flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 font-medium text-white hover:bg-brand-700"><Wand2 className="h-3 w-3" />{t("Asistanla uygula")}</button>}</div>
+            <div className="mt-2 flex items-center gap-3 text-[11px]"><span className="text-ink-400">{timeAgo(c.created_at, t, dl)}</span><button onClick={() => toggle(c)} className="flex items-center gap-1 text-emerald-600"><Check className="h-3 w-3" />{c.resolved ? t("Yeniden aç") : t("Çözüldü")}</button>{(isOwner || c.mine) && <DeleteButton className="-my-1 !p-1 text-rose-500" withText confirmText={t("Bu yorum kalıcı olarak silinsin mi?")} onDelete={() => api(`/api/stages/${stageId}/comments`, { method: "PATCH", json: { commentId: c.id, delete: true } })} onDone={() => setList((l) => l.filter((x) => x.id !== c.id))} />}{!c.resolved && onApply && <button onClick={() => { onApply({ body: c.body, quote: c.quote ?? null }); toggle(c); }} className="ml-auto flex items-center gap-1 rounded-lg bg-brand-600 px-2 py-1 font-medium text-white hover:bg-brand-700"><Wand2 className="h-3 w-3" />{t("Asistanla uygula")}</button>}</div>
           </div>
         ))}
       </div>
@@ -142,7 +142,7 @@ export function HistoryPanel({ stageId, onRestore, onSnapshot, version }: { stag
           <div key={r.id} className="flex items-center gap-3 rounded-xl border border-ink-100 bg-white px-3 py-2.5">
             <div className="min-w-0 flex-1">
               <p className="truncate text-[13px] font-medium text-ink-800">{r.note ? t(r.note) : t("Sürüm")}</p>
-              <p className="text-[11px] text-ink-400">{new Date(r.created_at).toLocaleString(dl)} · {t("{n} kelime", { n: r.word_count })} · {r.author === "ai" ? t("AI ekleme") : r.author === "system" ? t("Otomatik") : t("Elle")}</p>
+              <p className="text-[11px] text-ink-400">{new Date(r.created_at).toLocaleString(dl)} · {t("{n} kelime", { n: r.word_count })} · {r.author === "ai" ? t("AI ekleme") : r.author === "system" ? t("Otomatik") : t("Elle")}{r.by ? ` · ${r.by}` : ""}</p>
             </div>
             <button onClick={() => restore(r.id)} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-800" title={t("Geri yükle")}><RotateCcw className="h-4 w-4" /></button>
             <DeleteButton label={t("Sürümü sil")} confirmText={t("Bu sürüm kalıcı olarak silinsin mi? Bölümün şimdiki metni etkilenmez.")} onDelete={() => api(`/api/stages/${stageId}/revisions`, { method: "DELETE", json: { revisionId: r.id } })} onDone={() => setList((l) => l.filter((x) => x.id !== r.id))} />

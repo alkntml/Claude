@@ -14,8 +14,8 @@ export interface PageSeo {
 export const PAGE_SEO: Record<string, PageSeo> = {
   "/araclar": {
     title: { tr: "Ücretsiz Akademik Araçlar: Kaynakça, Atıf, Örneklem | Academiana", en: "Free Academic Tools: References, Citations, Sample Size | Academiana" },
-    description: { tr: "Üyeliksiz ücretsiz araçlar: kaynakça oluşturucu, atıf stili dönüştürücü, örneklem büyüklüğü, Cronbach alfa, anket oluşturucu ve uydurma kaynak kontrolü.", en: "Free tools, no sign-up: reference generator, citation style converter, sample size, Cronbach's alpha, survey builder and fake reference checker." },
-    keywords: { tr: ["ücretsiz akademik araçlar", "kaynakça oluşturma", "atıf dönüştürücü", "örneklem hesaplama", "cronbach alfa hesaplama"], en: ["free academic tools", "reference generator", "citation converter", "sample size calculator", "cronbach alpha calculator"] },
+    description: { tr: "Üyeliksiz ücretsiz araçlar: Araştırmalar ne diyor?, kaynakça oluşturucu, atıf dönüştürücü, örneklem büyüklüğü, Cronbach alfa ve uydurma kaynak kontrolü.", en: "Free tools, no sign-up: What does research say?, reference generator, citation converter, sample size, Cronbach's alpha and fake reference checker." },
+    keywords: { tr: ["ücretsiz akademik araçlar", "araştırmalar ne diyor", "kaynakça oluşturma", "atıf dönüştürücü", "örneklem hesaplama", "cronbach alfa hesaplama"], en: ["free academic tools", "research consensus tool", "reference generator", "citation converter", "sample size calculator", "cronbach alpha calculator"] },
     tagline: { tr: "Üyelik gerekmez", en: "No sign-up needed" },
   },
   "/araclar/arastirmalar-ne-diyor": {
@@ -73,8 +73,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Write your thesis, paper or literature review with verified academic sources: automatic APA 7 citations, statistics, surveys and Word export.",
     },
     keywords: {
-      tr: ["tez yazma", "yapay zeka tez yazma", "akademik yazım asistanı", "makale yazma", "literatür taraması", "APA 7 kaynak gösterme", "kaynakça oluşturma", "TÜBİTAK 2209-A", "tez önerisi", "istatistik analizi", "anket hazırlama", "Academiana"],
-      en: ["AI thesis writer", "academic writing assistant", "AI research paper writer", "literature review tool", "APA 7 citation generator", "reference generator", "thesis help", "dissertation writing tool", "statistics for thesis", "survey builder for research", "Academiana"],
+      tr: ["tez yazma", "yapay zeka tez yazma", "akademik yazım asistanı", "makale yazma", "literatür taraması", "APA 7 kaynak gösterme", "kaynakça oluşturma", "TÜBİTAK 2209-A", "tez önerisi", "istatistik analizi", "anket hazırlama", "akademik İngilizce çeviri", "ortak yazarla tez yazma", "Academiana"],
+      en: ["AI thesis writer", "academic writing assistant", "AI research paper writer", "literature review tool", "APA 7 citation generator", "reference generator", "thesis help", "dissertation writing tool", "statistics for thesis", "survey builder for research", "academic translation Turkish English", "collaborative thesis writing", "Academiana"],
     },
     tagline: { tr: "Gerçek kaynaklarla yapay zekâ destekli akademik yazım", en: "AI academic writing with real, verified sources" },
   },

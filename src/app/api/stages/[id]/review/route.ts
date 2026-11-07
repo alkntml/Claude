@@ -1,6 +1,7 @@
 import { AiSpentError, ApiError, json, recordAiSpent, route } from "@/lib/api";
 import { assertSingleProject } from "@/lib/single-project";
 import { requireUser } from "@/lib/auth";
+import { childAccess } from "@/lib/project-access";
 import { makeT } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
 import { loadProjectBundle } from "@/lib/projects";
@@ -17,9 +18,9 @@ export const maxDuration = 90;
 export const POST = route<Ctx>("stage.review", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const { data: st } = await s.supabase.from("project_stages").select("id, project_id").eq("id", id).eq("user_id", s.user.id).maybeSingle();
+  const { row: st, access: acc } = await childAccess(s, "project_stages", id, "edit", "id");
   if (!st) throw new ApiError(404, "Bölüm bulunamadı");
-  const bundle = await loadProjectBundle(s.supabase, st.project_id, s.user.id);
+  const bundle = await loadProjectBundle(acc.db, st.project_id, acc.ownerId);
   await assertSingleProject(s, st.project_id);
   const stage = bundle?.stages.find((x) => x.id === id);
   if (!bundle || !stage) throw new ApiError(404, "Bölüm bulunamadı");

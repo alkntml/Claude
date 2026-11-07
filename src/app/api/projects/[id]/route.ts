@@ -5,6 +5,7 @@ import { STYLE_IDS } from "@/lib/citations";
 import { assertProjectQuota } from "@/lib/usage";
 import { assertSingleProjectChange } from "@/lib/single-project";
 import { adminClient } from "@/lib/supabase/admin";
+import { projectAccess } from "@/lib/project-access";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -23,16 +24,18 @@ const PatchSchema = z.object({
 export const GET = route<Ctx>("projects.get", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const project = await requireProject(s, id);
-  await s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id);
-  return json({ project });
+  const { project, role, isOwner } = await projectAccess(s, id, "read");
+  if (isOwner) await s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id);
+  return json({ project, role });
 });
 
 export const PATCH = route<Ctx>("projects.update", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const current = await requireProject(s, id);
+  // Ortak yazar (D115) çalışma ayarlarını düzenleyebilir; durum (tamamlandı/arşiv) yalnızca sahibindir
+  const { project: current, isOwner, db } = await projectAccess(s, id, "edit");
   const b = await parseBody(req, PatchSchema);
+  if (!isOwner && b.status !== undefined) throw new ApiError(403, "Bu işlemi yalnızca çalışmanın sahibi yapabilir", "role_denied");
   const update: Record<string, unknown> = {};
   if (b.title !== undefined) update.title = b.title;
   // Arşivden çıkarma proje kotasına tabidir ve yalnızca sunucuda yapılır (D51)
@@ -54,8 +57,8 @@ export const PATCH = route<Ctx>("projects.update", async (req, { params }) => {
     if (ue) throw ue;
   }
   const { data, error } = Object.keys(update).length
-    ? await s.supabase.from("projects").update(update).eq("id", id).select().single()
-    : await s.supabase.from("projects").select("*").eq("id", id).single();
+    ? await db.from("projects").update(update).eq("id", id).eq("user_id", current.user_id).select().single()
+    : await db.from("projects").select("*").eq("id", id).eq("user_id", current.user_id).single();
   if (error) throw error;
   return json({ project: data });
 });

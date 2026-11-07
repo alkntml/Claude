@@ -1,5 +1,6 @@
 import { ApiError, route } from "@/lib/api";
-import { requireProject, requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { toBibTeX, toRIS } from "@/lib/sources/bib";
 import { sourceRowToItemClient } from "@/lib/sources/row";
@@ -12,13 +13,13 @@ export const GET = route<Ctx>("project.sources.export", async (req, { params }) 
   const s = await requireUser();
   assertFeature(s.profile.plan_id, "bib_io");
   const { id } = await params;
-  await requireProject(s, id);
+  const acc = await projectAccess(s, id, "read");
   const url = new URL(req.url);
   const format = url.searchParams.get("format");
   if (format !== "bib" && format !== "ris") throw new ApiError(422, "Desteklenmeyen biçim");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { projectId: id });
-  const db = s.supabase;
-  const { data: sources } = await db.from("sources").select("*").eq("project_id", id).eq("user_id", s.user.id).order("created_at");
+  const db = acc.db;
+  const { data: sources } = await db.from("sources").select("*").eq("project_id", id).eq("user_id", acc.ownerId).order("created_at");
   let rows = sources ?? [];
   if (url.searchParams.get("scope") === "cited") {
     const { data: stages } = await db.from("project_stages").select("content, position").eq("project_id", id).order("position");

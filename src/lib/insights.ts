@@ -20,6 +20,7 @@ const FEATURE_LABEL: Record<string, string> = {
   defense: "Savunma provası",
   survey_generate: "Anket: yapay zekâ taslağı",
   blueprint: "Kurgu",
+  source_ask: "Kaynağa sor",
 };
 
 export const TOOL_LABEL: Record<string, string> = {
@@ -40,6 +41,8 @@ export function featureLabel(action: string | undefined | null): string {
   if (action.startsWith("survey")) return "Anket: yapay zekâ";
   if (action.startsWith("blueprint")) return "Kurgu";
   if (action.startsWith("defense")) return "Savunma provası";
+  if (action.startsWith("translate_")) return "Dil ve çeviri: çeviri";
+  if (action.startsWith("proofread_")) return "Dil ve çeviri: dil denetimi";
   return action;
 }
 

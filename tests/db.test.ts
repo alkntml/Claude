@@ -71,6 +71,43 @@ beforeAll(async () => {
 }, 60_000);
 
 describe("migration'lar ve seed", () => {
+  it("ortak yazım (migration 32): üyelik ve davetleri yalnızca sahip/üye görür, yazamaz; üyenin sohbeti kendi adına", async () => {
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Ortak çalışma', 'research_article', 'master') returning id`)).rows;
+    // Sunucu (service role) üyelik ve davet yazar
+    await db.query(`insert into public.project_members (project_id, user_id, role, invited_by) values ($1, '${B}', 'editor', '${A}')`, [p.id]);
+    await db.query(`insert into public.project_invites (project_id, email, role, token, invited_by) values ($1, 'c@ornek.com', 'commenter', repeat('x', 40), '${A}')`, [p.id]);
+    // Sahip üyeleri ve davetleri görür; üye yalnızca kendi üyeliğini görür, davetleri göremez; ikisi de doğrudan yazamaz
+    expect(await as(A, `select user_id from public.project_members where project_id = '${p.id}'`)).toHaveLength(1);
+    expect(await as(A, `select id from public.project_invites where project_id = '${p.id}'`)).toHaveLength(1);
+    expect(await as(B, `select user_id from public.project_members where project_id = '${p.id}'`)).toHaveLength(1);
+    expect(await as(B, `select id from public.project_invites where project_id = '${p.id}'`)).toHaveLength(0);
+    expect(await as(ADMIN, `select user_id from public.project_members where project_id = '${p.id}'`)).toHaveLength(0);
+    await expectError(as(B, `insert into public.project_members (project_id, user_id, role) values ('${p.id}', '${ADMIN}', 'editor')`), /row-level security/);
+    await expectError(as(A, `insert into public.project_invites (project_id, email, role, token, invited_by) values ('${p.id}', 'd@ornek.com', 'editor', repeat('y', 40), auth.uid())`), /row-level security/);
+    expect(await as(B, `select user_id from public.project_presence`)).toHaveLength(0);
+    // Çalışma içeriği sahibin kaydıdır: üye kendi adına bölüm yazamaz; RLS ile sahibin bölümünü de göremez (erişim sunucudan)
+    await expectError(db.query(`insert into public.project_stages (project_id, user_id, key, title, position) values ($1, '${B}', 'x', 'X', 0)`, [p.id]), /ait değil/);
+    await db.query(`insert into public.project_stages (project_id, user_id, key, title, position, last_editor) values ($1, '${A}', 'intro', 'Giriş', 0, '${B}')`, [p.id]);
+    expect(await as(B, `select id from public.project_stages where project_id = '${p.id}'`)).toHaveLength(0);
+    // Üyenin asistan sohbeti kendi adına açılabilir; üye olmayan açamaz
+    await db.query(`insert into public.ai_conversations (project_id, user_id, title) values ($1, '${B}', 'Üye sohbeti')`, [p.id]);
+    await expectError(db.query(`insert into public.ai_conversations (project_id, user_id, title) values ($1, '${ADMIN}', 'Yabancı')`, [p.id]), /ait değil/);
+    expect(await as(A, `select id from public.ai_conversations where project_id = '${p.id}' and user_id = '${B}'`)).toHaveLength(0);
+    // Otomatik tamamlama kullanım türü
+    await db.query(`insert into public.usage_events (user_id, kind) values ('${B}', 'autocomplete')`);
+    // Paket kartı satırı
+    const f = (await db.query<{ id: string }>(`select id from public.plans where 'Ortak yazarlarla birlikte yazım' = any(features) order by id`)).rows.map((r) => r.id);
+    expect(f).toEqual(["premium", "pro", "single"]);
+    // Ücretsiz paket kartı: yeni satırlar “10 atıf stili” satırının hemen ardından gelir (yedek liste ile aynı sıra)
+    const free = (await db.query<{ features: string[] }>("select features from public.plans where id = 'free'")).rows[0].features;
+    const i = free.indexOf("10 atıf stili ve otomatik kaynakça");
+    expect(free.slice(i + 1, i + 3)).toEqual(["Atıfları koruyan akademik İngilizce çeviri ve dil denetimi", "Kaynağa sor: makaleyle sayfa numaralı sohbet"]);
+    // Çalışma silinince üyelik/davet/varlık kayıtları da kalkar
+    await db.query(`delete from public.projects where id = $1`, [p.id]);
+    expect((await db.query(`select 1 from public.project_members where project_id = $1`, [p.id])).rows).toHaveLength(0);
+    expect((await db.query(`select 1 from public.project_invites where project_id = $1`, [p.id])).rows).toHaveLength(0);
+    await db.exec(`delete from public.usage_events where kind = 'autocomplete'; delete from public.activity_log where user_id = '${A}';`);
+  });
   it("Tek Proje maliyet uyarısı (migration 28): %40 geçince yöneticiye bir kez, kısıtlama yok", async () => {
     const W = "00000000-0000-4000-8000-0000000000f3";
     await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${W}', 'maliyet@ornek.com', '{}'); update public.profiles set plan_id = 'single' where id = '${W}';`);

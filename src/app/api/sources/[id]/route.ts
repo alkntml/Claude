@@ -1,5 +1,6 @@
-import { assertDeleted, ApiError, json, parseBody, route } from "@/lib/api";
+import { assertDeleted, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
+import { childAccess } from "@/lib/project-access";
 import { SourceInput, toRow } from "@/lib/sources/input";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -7,16 +8,14 @@ type Ctx = { params: Promise<{ id: string }> };
 export const GET = route<Ctx>("source.get", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const { data } = await s.supabase.from("sources").select("*").eq("id", id).eq("user_id", s.user.id).maybeSingle();
-  if (!data) throw new ApiError(404, "Kaynak bulunamadı");
-  return json({ source: data });
+  const { row } = await childAccess(s, "sources", id, "read");
+  return json({ source: row });
 });
 
 export const PATCH = route<Ctx>("source.update", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  const { data: cur } = await s.supabase.from("sources").select("id, access_level, doi, pmid, arxiv_id, title").eq("id", id).eq("user_id", s.user.id).maybeSingle();
-  if (!cur) throw new ApiError(404, "Kaynak bulunamadı");
+  const { row: cur, access } = await childAccess(s, "sources", id, "edit", "id, access_level, doi, pmid, arxiv_id, title");
   const b = await parseBody(req, SourceInput.partial().extend({ notes: SourceInput.shape.relevanceNote }));
   const full = toRow({ ...b, title: b.title ?? cur.title, origins: b.origins ?? ["manual"], authors: b.authors ?? [] } as Parameters<typeof toRow>[0]);
   const update: Record<string, unknown> = {};
@@ -30,7 +29,7 @@ export const PATCH = route<Ctx>("source.update", async (req, { params }) => {
   if (b.notes !== undefined) update.notes = b.notes;
   // Tanımlayıcı değiştiyse doğrulama sıfırlanır
   if ("doi" in update || "pmid" in update || "arxiv_id" in update) { update.verified = false; update.verification = {}; }
-  const { data, error } = await s.supabase.from("sources").update(update).eq("id", id).select().single();
+  const { data, error } = await access.db.from("sources").update(update).eq("id", id).eq("user_id", access.ownerId).select().single();
   if (error) throw error;
   return json({ source: data });
 });
@@ -38,6 +37,7 @@ export const PATCH = route<Ctx>("source.update", async (req, { params }) => {
 export const DELETE = route<Ctx>("source.delete", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  assertDeleted(await s.supabase.from("sources").delete().eq("id", id).eq("user_id", s.user.id).select("id"), "Kaynak bulunamadı");
+  const { access } = await childAccess(s, "sources", id, "edit", "id");
+  assertDeleted(await access.db.from("sources").delete().eq("id", id).eq("user_id", access.ownerId).select("id"), "Kaynak bulunamadı");
   return json({ ok: true });
 });

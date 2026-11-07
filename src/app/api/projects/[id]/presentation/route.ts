@@ -1,6 +1,7 @@
 import { ApiError, route } from "@/lib/api";
 import { assertSingleProject } from "@/lib/single-project";
 import { requireUser } from "@/lib/auth";
+import { projectAccess } from "@/lib/project-access";
 import { generateDeck, renderPptx } from "@/lib/export/presentation";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
@@ -20,7 +21,8 @@ export const POST = route<Ctx>("project.presentation", async (_req, { params }) 
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { format: "docx" });
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, id);
-  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  const acc = await projectAccess(s, id, "edit");
+  const bundle = await loadProjectBundle(acc.db, id, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
   let gen;
   try {

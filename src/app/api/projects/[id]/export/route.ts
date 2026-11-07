@@ -6,6 +6,7 @@ import { toDocx } from "@/lib/export/render-docx";
 import { toPdf } from "@/lib/export/render-pdf";
 import { toMarkdown, toText } from "@/lib/export/render-text";
 import { loadProjectBundle, sourceRowToItem } from "@/lib/projects";
+import { projectAccess } from "@/lib/project-access";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -30,7 +31,8 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
   if (!TYPES[format]) throw new ApiError(422, "Desteklenmeyen biçim");
   // D81: kullanıcı kendi çalışmasını her zaman indirebilir (aylık hak dolsa bile); yalnızca paketin biçim izni kontrol edilir
   await assertWithinLimits(s.user.id, s.profile.plan_id, "export", { format, projectId: id });
-  const bundle = await loadProjectBundle(s.supabase, id, s.user.id);
+  const acc = await projectAccess(s, id, "read");
+  const bundle = await loadProjectBundle(acc.db, id, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
 
   const doc = buildExportDoc({
@@ -52,7 +54,7 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
   await recordUsage(s.user.id, "export", { meta: { format, projectId: id } });
   // D109: Tek Proje gözetimi — yalnızca tam indirmeler karşılaştırılır (seçili bölüm indirmesi farklı içerik sayılmasın)
   if (!(url.searchParams.get("stages") ?? "").trim()) {
-    await watchExport({ userId: s.user.id, profile: s.profile, projectId: id, projectTitle: bundle.project.title, doc, cover: bundle.project.context?.format?.cover ?? {} }).catch(() => {});
+    if (acc.isOwner) await watchExport({ userId: s.user.id, profile: s.profile, projectId: id, projectTitle: bundle.project.title, doc, cover: bundle.project.context?.format?.cover ?? {} }).catch(() => {});
   }
   const filename = `${safeName(bundle.project.title)}.${format}`;
   return new Response(typeof body === "string" ? body : new Uint8Array(body), {

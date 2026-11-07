@@ -8,6 +8,7 @@
  *  - CORE: API anahtarı zorunludur.
  *  - Google Books: yalnızca kitap künyesi için; açıklama metni akademik özet olarak KULLANILMAZ.
  *  - Unpaywall: yalnızca DOI bazlı açık erişim zenginleştirmesi, e-posta zorunlu.
+ *  - NASA ADS, Springer Nature, IEEE Xplore: ücretsiz API anahtarı gerekir; anahtar yoksa arama atlanır (D129).
  */
 import type { ItemType, Person } from "@/lib/citations/types";
 import { normalizeDoi } from "@/lib/citations/util";
@@ -604,11 +605,325 @@ const datacite: SourceProvider = {
     return parseDatacite(await getJsonRetry(`https://api.datacite.org/dois?${p}`, { signal }, { retries: 1 }));
   },
 };
+// ---------------------------------------------------------------------------
+// D129: kapsam genişletme — PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (anahtarsız);
+// NASA ADS, Springer Nature, IEEE Xplore (ücretsiz anahtarla; anahtar yoksa atlanır)
+// ---------------------------------------------------------------------------
+
+/** Solr/Lucene sorgu dilindeki özel karakterleri etkisizleştirir (kullanıcı metni sorgu sözdizimi olarak yorumlanmasın). */
+export function solrEscape(s: string): string {
+  return s.replace(/([+\-!(){}[\]^"~*?:\\/]|&&|\|\|)/g, " ").replace(/\s+/g, " ").trim();
+}
+
+const first = (v: any): string | null => (Array.isArray(v) ? (v[0] ?? null) : v ?? null);
+
+// PLOS — tamamı açık erişim (CC BY) biyomedikal ve bilim dergileri
+export function parsePlos(json: any): SourceRecord[] {
+  return (json?.response?.docs ?? []).map((d: any) => {
+    const doi = typeof d.id === "string" ? d.id : null;
+    const abs = first(d.abstract);
+    return finalize({
+      type: "article-journal",
+      title: first(d.title_display) ?? first(d.title) ?? "",
+      authors: (d.author_display ?? []).map((a: string) => splitName(a)),
+      year: d.publication_date ? Number(String(d.publication_date).slice(0, 4)) : null,
+      month: d.publication_date ? Number(String(d.publication_date).slice(5, 7)) || null : null,
+      containerTitle: d.journal ?? null,
+      volume: d.volume != null ? String(d.volume) : null,
+      issue: d.issue != null ? String(d.issue) : null,
+      publisher: "Public Library of Science",
+      doi,
+      url: doi ? `https://doi.org/${doi}` : null,
+      oaUrl: doi ? `https://doi.org/${doi}` : null,
+      license: "CC BY 4.0",
+      abstract: abs ? String(abs).trim() : null,
+      origins: ["plos"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const plos: SourceProvider = {
+  id: "plos",
+  label: "PLOS",
+  async search(q, _cfg, signal) {
+    const p = new URLSearchParams({ q: solrEscape(q.query) || "*", wt: "json", rows: String(Math.min(q.limit ?? 20, 50)), fl: "id,title_display,author_display,journal,publication_date,abstract,volume,issue" });
+    p.append("fq", "doc_type:full");
+    if (q.yearFrom || q.yearTo) p.append("fq", `publication_date:[${q.yearFrom ?? 1900}-01-01T00:00:00Z TO ${q.yearTo ?? 2100}-12-31T23:59:59Z]`);
+    return parsePlos(await getJsonRetry(`https://api.plos.org/search?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// Zenodo — CERN’in açık arşivi: makale, tez, rapor, ön baskı, kitap bölümü (yalnız “publication” türü)
+const ZENODO_TYPE: Record<string, SourceRecord["type"]> = { article: "article-journal", thesis: "thesis", book: "book", section: "chapter", conferencepaper: "paper-conference", preprint: "preprint", report: "report", workingpaper: "report", technicalnote: "report", deliverable: "report", proposal: "report" };
+
+export function parseZenodo(json: any): SourceRecord[] {
+  return (json?.hits?.hits ?? []).map((h: any) => {
+    const m = h.metadata ?? {};
+    if (m.resource_type?.type && m.resource_type.type !== "publication") return null;
+    const sub = String(m.resource_type?.subtype ?? "article");
+    const date = String(m.publication_date ?? "");
+    const open = m.access_right === "open" || h.access?.record === "public" && h.access?.files === "public";
+    const page = h.links?.self_html ?? h.links?.html ?? (h.id ? `https://zenodo.org/records/${h.id}` : null);
+    return finalize({
+      type: ZENODO_TYPE[sub] ?? "other",
+      title: m.title ?? "",
+      authors: (m.creators ?? []).map((c: any) => splitName(String(c.name ?? ""))),
+      year: /^\d{4}/.test(date) ? Number(date.slice(0, 4)) : null,
+      containerTitle: m.journal?.title ?? m.imprint?.title ?? null,
+      volume: m.journal?.volume ?? null,
+      issue: m.journal?.issue ?? null,
+      pages: m.journal?.pages ?? null,
+      publisher: m.imprint?.publisher ?? null,
+      doi: h.doi ?? m.doi ?? null,
+      url: page,
+      oaUrl: open ? page : null,
+      license: m.license?.id ?? null,
+      abstract: m.description ?? null,
+      language: m.language ?? null,
+      origins: ["zenodo"],
+    });
+  }).filter((r: SourceRecord | null): r is SourceRecord => !!r && !!r.title);
+}
+
+const zenodo: SourceProvider = {
+  id: "zenodo",
+  label: "Zenodo",
+  async search(q, _cfg, signal) {
+    let query = solrEscape(q.query);
+    if (q.yearFrom || q.yearTo) query += ` AND publication_date:[${q.yearFrom ?? 1900}-01-01 TO ${q.yearTo ?? 2100}-12-31]`;
+    if (q.openAccessOnly) query += " AND access_right:open";
+    const p = new URLSearchParams({ q: query, size: String(Math.min(q.limit ?? 20, 50)), sort: "bestmatch", type: "publication" });
+    return parseZenodo(await getJsonRetry(`https://zenodo.org/api/records?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// HAL — Fransa’nın ulusal açık arşivi (her alandan makale, bildiri, tez; çok dilli)
+const HAL_TYPE: Record<string, SourceRecord["type"]> = { ART: "article-journal", COMM: "paper-conference", THESE: "thesis", HDR: "thesis", OUV: "book", COUV: "chapter", REPORT: "report", UNDEFINED: "preprint", PREPRINT: "preprint" };
+
+export function parseHal(json: any): SourceRecord[] {
+  return (json?.response?.docs ?? []).map((d: any) => {
+    const files: string[] = Array.isArray(d.files_s) ? d.files_s : [];
+    return finalize({
+      type: HAL_TYPE[String(d.docType_s ?? "")] ?? "other",
+      title: first(d.title_s) ?? "",
+      authors: (d.authFullName_s ?? []).map((a: string) => splitName(a)),
+      year: d.producedDateY_i ? Number(d.producedDateY_i) : null,
+      containerTitle: d.journalTitle_s ?? d.conferenceTitle_s ?? null,
+      volume: d.volume_s ?? null,
+      issue: first(d.issue_s),
+      pages: d.page_s ?? null,
+      publisher: first(d.publisher_s),
+      doi: d.doiId_s ?? null,
+      url: d.uri_s ?? null,
+      oaUrl: files[0] ?? null,
+      abstract: first(d.abstract_s),
+      language: first(d.language_s),
+      origins: ["hal"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const hal: SourceProvider = {
+  id: "hal",
+  label: "HAL",
+  async search(q, _cfg, signal) {
+    const p = new URLSearchParams({ q: solrEscape(q.query) || "*", wt: "json", rows: String(Math.min(q.limit ?? 20, 50)), fl: "title_s,authFullName_s,producedDateY_i,doiId_s,uri_s,abstract_s,journalTitle_s,conferenceTitle_s,docType_s,volume_s,issue_s,page_s,files_s,language_s,publisher_s" });
+    if (q.yearFrom || q.yearTo) p.append("fq", `producedDateY_i:[${q.yearFrom ?? 1900} TO ${q.yearTo ?? 2100}]`);
+    if (q.openAccessOnly) p.append("fq", "openAccess_bool:true");
+    return parseHal(await getJsonRetry(`https://api.archives-ouvertes.fr/search/?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// Open Library — Internet Archive’ın kitap kataloğu (kitap künyesi; okunabilir e-kitap varsa bağlantı)
+export function parseOpenLibrary(json: any): SourceRecord[] {
+  return (json?.docs ?? []).map((d: any) => finalize({
+    type: "book",
+    title: [d.title, d.subtitle].filter(Boolean).join(": "),
+    authors: (d.author_name ?? []).map((a: string) => splitName(a)),
+    year: d.first_publish_year ? Number(d.first_publish_year) : null,
+    publisher: first(d.publisher),
+    isbn: first(d.isbn),
+    url: d.key ? `https://openlibrary.org${d.key}` : null,
+    oaUrl: d.ebook_access === "public" && d.key ? `https://openlibrary.org${d.key}` : null,
+    language: first(d.language),
+    origins: ["openlibrary"],
+  })).filter((r: SourceRecord) => r.title);
+}
+
+const openlibrary: SourceProvider = {
+  id: "openlibrary",
+  label: "Open Library",
+  async search(q, _cfg, signal) {
+    let query = solrEscape(q.query);
+    if (q.yearFrom || q.yearTo) query += ` first_publish_year:[${q.yearFrom ?? 1000} TO ${q.yearTo ?? 2100}]`;
+    if (q.author) query += ` author:(${solrEscape(q.author)})`;
+    const p = new URLSearchParams({ q: query, limit: String(Math.min(q.limit ?? 20, 40)), fields: "key,title,subtitle,author_name,first_publish_year,publisher,isbn,ebook_access,language" });
+    return parseOpenLibrary(await getJsonRetry(`https://openlibrary.org/search.json?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// INSPIRE-HEP — yüksek enerji fiziği ve ilgili alanlar
+export function parseInspire(json: any): SourceRecord[] {
+  return (json?.hits?.hits ?? []).map((h: any) => {
+    const m = h.metadata ?? {};
+    const pub = (m.publication_info ?? []).find((p: any) => p.journal_title) ?? m.publication_info?.[0] ?? {};
+    const docType = String(first(m.document_type) ?? "article");
+    const arxiv = m.arxiv_eprints?.[0]?.value ?? null;
+    return finalize({
+      type: /conference/.test(docType) ? "paper-conference" : /thesis/.test(docType) ? "thesis" : /book chapter/.test(docType) ? "chapter" : /book/.test(docType) ? "book" : /report/.test(docType) ? "report" : pub.journal_title ? "article-journal" : arxiv ? "preprint" : "article-journal",
+      title: m.titles?.[0]?.title ?? "",
+      authors: (m.authors ?? []).slice(0, 50).map((a: any) => splitName(String(a.full_name ?? ""))),
+      year: pub.year ? Number(pub.year) : m.preprint_date ? Number(String(m.preprint_date).slice(0, 4)) : null,
+      containerTitle: pub.journal_title ?? null,
+      volume: pub.journal_volume ?? null,
+      issue: pub.journal_issue ?? null,
+      pages: pages(pub.page_start, pub.page_end),
+      doi: m.dois?.[0]?.value ?? null,
+      arxivId: arxiv,
+      url: h.id ? `https://inspirehep.net/literature/${h.id}` : null,
+      oaUrl: arxiv ? `https://arxiv.org/abs/${arxiv}` : null,
+      abstract: m.abstracts?.[0]?.value ?? null,
+      citedByCount: typeof m.citation_count === "number" ? m.citation_count : null,
+      origins: ["inspire"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const inspire: SourceProvider = {
+  id: "inspire",
+  label: "INSPIRE-HEP",
+  async search(q, _cfg, signal) {
+    let query = q.query.replace(/[()"]/g, " ").trim();
+    if (q.yearFrom || q.yearTo) query += ` and date ${q.yearFrom ?? 1900}->${q.yearTo ?? 2100}`;
+    // Sıralama verilmez: sorgu varken INSPIRE varsayılan olarak ilgiye göre sıralar
+    const p = new URLSearchParams({ q: query, size: String(Math.min(q.limit ?? 20, 50)), fields: "titles,authors.full_name,abstracts,dois,arxiv_eprints,publication_info,document_type,citation_count,preprint_date" });
+    return parseInspire(await getJsonRetry(`https://inspirehep.net/api/literature?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// NASA ADS — astronomi, astrofizik, yer bilimleri (ücretsiz anahtar: ADS_API_KEY)
+export function parseAds(json: any): SourceRecord[] {
+  return (json?.response?.docs ?? []).map((d: any) => {
+    const arxiv = (d.identifier ?? []).find((x: string) => /^arXiv:/i.test(x))?.replace(/^arXiv:/i, "") ?? null;
+    return finalize({
+      type: d.doctype === "phdthesis" || d.doctype === "mastersthesis" ? "thesis" : d.doctype === "inproceedings" ? "paper-conference" : d.doctype === "book" ? "book" : d.doctype === "eprint" ? "preprint" : "article-journal",
+      title: first(d.title) ?? "",
+      authors: (d.author ?? []).slice(0, 50).map((a: string) => splitName(a)),
+      year: d.year ? Number(d.year) : null,
+      containerTitle: d.pub ?? null,
+      volume: d.volume ?? null,
+      issue: d.issue ?? null,
+      pages: first(d.page),
+      doi: first(d.doi),
+      arxivId: arxiv,
+      url: d.bibcode ? `https://ui.adsabs.harvard.edu/abs/${encodeURIComponent(d.bibcode)}` : null,
+      oaUrl: arxiv ? `https://arxiv.org/abs/${arxiv}` : null,
+      abstract: d.abstract ?? null,
+      citedByCount: typeof d.citation_count === "number" ? d.citation_count : null,
+      origins: ["ads"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const ads: SourceProvider = {
+  id: "ads",
+  label: "NASA ADS",
+  unavailableReason: (cfg) => (cfg.adsKey ? null : "ADS_API_KEY tanımlı değil"),
+  silentWhenUnavailable: true,
+  async search(q, cfg, signal) {
+    let query = q.query.replace(/[()"]/g, " ").trim();
+    if (q.yearFrom || q.yearTo) query += ` year:${q.yearFrom ?? 1900}-${q.yearTo ?? 2100}`;
+    const p = new URLSearchParams({ q: query, rows: String(Math.min(q.limit ?? 20, 50)), fl: "title,author,year,doi,abstract,pub,volume,issue,page,bibcode,identifier,doctype,citation_count" });
+    return parseAds(await getJsonRetry(`https://api.adsabs.harvard.edu/v1/search/query?${p}`, { signal, headers: { Authorization: `Bearer ${cfg.adsKey}` } }, { retries: 1 }));
+  },
+};
+
+// Springer Nature — Springer, Nature, BMC dergileri ve kitapları (ücretsiz anahtar: SPRINGER_API_KEY)
+export function parseSpringer(json: any): SourceRecord[] {
+  return (json?.records ?? []).map((r: any) => {
+    const abs = typeof r.abstract === "string" ? r.abstract : r.abstract?.p ?? null;
+    const html = (r.url ?? []).find((u: any) => u.format === "html")?.value ?? (r.url ?? [])[0]?.value ?? null;
+    const ct = String(r.contentType ?? "");
+    const open = r.openaccess === "true" || r.openaccess === true;
+    return finalize({
+      type: /chapter/i.test(ct) ? "chapter" : /book/i.test(ct) ? "book" : /conference/i.test(ct) ? "paper-conference" : "article-journal",
+      title: r.title ?? "",
+      authors: (r.creators ?? []).map((c: any) => splitName(String(c.creator ?? ""))),
+      year: r.publicationDate ? Number(String(r.publicationDate).slice(0, 4)) : null,
+      containerTitle: r.publicationName ?? null,
+      volume: r.volume ?? null,
+      issue: r.number ?? null,
+      pages: pages(r.startingPage, r.endingPage),
+      publisher: r.publisher ?? "Springer Nature",
+      doi: r.doi ?? null,
+      isbn: r.isbn ?? r.printIsbn ?? null,
+      url: html ?? (r.doi ? `https://doi.org/${r.doi}` : null),
+      oaUrl: open ? html ?? (r.doi ? `https://doi.org/${r.doi}` : null) : null,
+      abstract: abs,
+      language: r.language ?? null,
+      origins: ["springer"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const springer: SourceProvider = {
+  id: "springer",
+  label: "Springer Nature",
+  unavailableReason: (cfg) => (cfg.springerKey ? null : "SPRINGER_API_KEY tanımlı değil"),
+  silentWhenUnavailable: true,
+  async search(q, cfg, signal) {
+    let query = q.query.replace(/[()"]/g, " ").trim();
+    if (q.openAccessOnly) query += " openaccess:true";
+    const p = new URLSearchParams({ q: query, p: String(Math.min(q.limit ?? 20, 50)), api_key: cfg.springerKey! });
+    return parseSpringer(await getJsonRetry(`https://api.springernature.com/meta/v2/json?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
+// IEEE Xplore — mühendislik, elektrik-elektronik, bilgisayar (ücretsiz anahtar: IEEE_API_KEY)
+export function parseIeee(json: any): SourceRecord[] {
+  return (json?.articles ?? []).map((a: any) => {
+    const ct = String(a.content_type ?? "");
+    const open = a.access_type === "OPEN_ACCESS" || a.access_type === "Open Access";
+    return finalize({
+      type: /conference/i.test(ct) ? "paper-conference" : /book/i.test(ct) ? "book" : /standard/i.test(ct) ? "report" : "article-journal",
+      title: a.title ?? "",
+      authors: (a.authors?.authors ?? []).map((x: any) => splitName(String(x.full_name ?? ""))),
+      year: a.publication_year ? Number(a.publication_year) : null,
+      containerTitle: a.publication_title ?? null,
+      volume: a.volume ?? null,
+      issue: a.issue ?? null,
+      pages: pages(a.start_page, a.end_page),
+      publisher: a.publisher ?? "IEEE",
+      doi: a.doi ?? null,
+      url: a.html_url ?? (a.doi ? `https://doi.org/${a.doi}` : null),
+      oaUrl: open ? a.pdf_url ?? a.html_url ?? null : null,
+      abstract: a.abstract ?? null,
+      citedByCount: typeof a.citing_paper_count === "number" ? a.citing_paper_count : null,
+      origins: ["ieee"],
+    });
+  }).filter((r: SourceRecord) => r.title);
+}
+
+const ieee: SourceProvider = {
+  id: "ieee",
+  label: "IEEE Xplore",
+  unavailableReason: (cfg) => (cfg.ieeeKey ? null : "IEEE_API_KEY tanımlı değil"),
+  silentWhenUnavailable: true,
+  async search(q, cfg, signal) {
+    const p = new URLSearchParams({ querytext: q.query.replace(/[()"]/g, " ").trim(), max_records: String(Math.min(q.limit ?? 20, 50)), apikey: cfg.ieeeKey!, format: "json" });
+    if (q.yearFrom) p.set("start_year", String(q.yearFrom));
+    if (q.yearTo) p.set("end_year", String(q.yearTo));
+    if (q.openAccessOnly) p.set("open_access", "true");
+    return parseIeee(await getJsonRetry(`https://ieeexploreapi.ieee.org/api/v1/search/articles?${p}`, { signal }, { retries: 1 }));
+  },
+};
+
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export const PROVIDERS: Record<SourceProviderId, SourceProvider> = {
   openalex, crossref, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall, turkiye,
   eric, dblp, datacite,
+  plos, zenodo, hal, openlibrary, inspire, ads, springer, ieee,
 };
 
 export const PROVIDER_LABELS: Record<SourceProviderId, string> = Object.fromEntries(

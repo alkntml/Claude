@@ -14,6 +14,9 @@ export const env = {
   coreKey: process.env.CORE_API_KEY ?? "",
   openalexKey: process.env.OPENALEX_API_KEY ?? "",
   googleBooksKey: process.env.GOOGLE_BOOKS_API_KEY ?? "",
+  adsKey: process.env.ADS_API_KEY ?? "",
+  springerKey: process.env.SPRINGER_API_KEY ?? "",
+  ieeeKey: process.env.IEEE_API_KEY ?? "",
   stripeSecret: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   iyzicoKey: process.env.IYZICO_API_KEY ?? "",
@@ -33,6 +36,9 @@ export function integrationStatus() {
     openai: !!env.openaiKey,
     contactEmail: !!env.contactEmail,
     coreKey: !!env.coreKey,
+    adsKey: !!env.adsKey,
+    springerKey: !!env.springerKey,
+    ieeeKey: !!env.ieeeKey,
     stripe: !!(env.stripeSecret && env.stripeWebhookSecret),
     iyzico: !!(env.iyzicoKey && env.iyzicoSecret),
   };
@@ -44,5 +50,8 @@ export function providerConfig() {
     coreKey: env.coreKey || undefined,
     openalexKey: env.openalexKey || undefined,
     googleBooksKey: env.googleBooksKey || undefined,
+    adsKey: env.adsKey || undefined,
+    springerKey: env.springerKey || undefined,
+    ieeeKey: env.ieeeKey || undefined,
   };
 }

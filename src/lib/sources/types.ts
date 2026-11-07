@@ -3,7 +3,8 @@ import type { ItemType, Person } from "@/lib/citations/types";
 export type SourceProviderId =
   | "openalex" | "crossref" | "europepmc" | "arxiv"
   | "doaj" | "core" | "openaire" | "google_books" | "unpaywall" | "turkiye"
-  | "eric" | "dblp" | "datacite";
+  | "eric" | "dblp" | "datacite"
+  | "plos" | "zenodo" | "hal" | "openlibrary" | "inspire" | "ads" | "springer" | "ieee";
 
 export type AccessLevel = "metadata" | "abstract" | "full_text";
 
@@ -71,6 +72,9 @@ export interface ProviderConfig {
   coreKey?: string;
   openalexKey?: string;
   googleBooksKey?: string;
+  adsKey?: string;
+  springerKey?: string;
+  ieeeKey?: string;
 }
 
 export interface SourceProvider {
@@ -80,4 +84,6 @@ export interface SourceProvider {
   search?: (q: SearchQuery, cfg: ProviderConfig, signal: AbortSignal) => Promise<SourceRecord[]>;
   /** Yapılandırma eksikse neden kullanılamadığını döndürür */
   unavailableReason?: (cfg: ProviderConfig) => string | null;
+  /** Anahtar yoksa sessizce atlanır (sonuç listesinde hata olarak görünmez; D129) */
+  silentWhenUnavailable?: boolean;
 }

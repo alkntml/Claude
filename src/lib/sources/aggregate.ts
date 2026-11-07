@@ -94,6 +94,7 @@ export async function searchAll(
     ids.map(async (id) => {
       const p = PROVIDERS[id];
       const reason = p.unavailableReason?.(cfg);
+      if (reason && p.silentWhenUnavailable) return [];
       if (reason) {
         providers.push({ provider: id, ok: false, count: 0, error: reason, ms: 0 });
         return [];

@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (İsteğe bağlı, ücretsiz) Vercel’e `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY`, `CORE_API_KEY` ekle → Redeploy; CORE için yönetimden açılmalı (D129)
+- [ ] Canlıda dene: Kaynak araştırmasında bir arama yap; sonuç çiplerinde PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP görünüyor mu (D129)
 - [ ] Tanıtım videosu seslendirmesi: kaydı gönder; ses videoya eklenip `public/video/academiana-tanitim.mp4` aynı adla değiştirilecek (D127)
 - [ ] Supabase SQL Editor’de migration 35’i çalıştır (PRISMA ve literatür haritası Pro kartında, D128); 34’ten sonra
 - [ ] Supabase SQL Editor’de migration 34’ü çalıştır (paket kartlarında iddia denetimi, PRISMA, literatür haritası; D126). 32 ve 33 yapıldı (kullanıcı onayladı)

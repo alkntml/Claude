@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D129 (2026-11-07): Kaynak kapsamı 17 veri tabanı (PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP eklendi) + anahtarla NASA ADS, Springer Nature, IEEE Xplore
 - D128 (2026-11-07): PRISMA ve literatür haritası Pro ve üstü paketlere taşındı (migration 35)
 - D127 (2026-11-07): Ana sayfada 68 sn tanıtım videosu (yalnız TR, tıklayınca yüklenir, VideoObject şeması)
 - D126 (2026-11-07): Vitrin — ana sayfada “Teslim etmeden önce emin olun” bölümü, hero/adım/ekip/kurumlar metinleri, menüde Yöntem, paket kartlarına iddia denetimi/PRISMA/harita. Migration 34 çalıştırılmalı

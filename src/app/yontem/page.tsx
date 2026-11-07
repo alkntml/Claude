@@ -22,7 +22,7 @@ export default async function MethodPage() {
         <h2>What we promise and what we do not</h2>
         <p>Academiana helps you prepare your own academic work with real sources. It does not invent sources, data or findings, does not present AI decisions as certainties, and does not show a plagiarism percentage, because no licensed similarity service is connected. Every AI decision described below can be inspected by you, with the passage it is based on.</p>
         <h2>1. Where sources come from</h2>
-        <p>Searches run at the same time in academic databases: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, CORE, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite and Turkish sources (DergiPark, TR Dizin, YÖK Thesis Centre). Duplicate records are merged. The AI never writes a reference itself: it can only cite sources that are in your project’s source list.</p>
+        <p>Searches run at the same time in academic databases: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, CORE, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (and NASA ADS, Springer Nature and IEEE Xplore when their keys are configured) and Turkish sources (DergiPark, TR Dizin, YÖK Thesis Centre). Duplicate records are merged. The AI never writes a reference itself: it can only cite sources that are in your project’s source list.</p>
         <h2>2. Does the source exist? (bibliographic verification)</h2>
         <p>DOIs are checked against Crossref and DataCite, PMIDs against Europe PMC and arXiv identifiers against arXiv. A verified source is marked “Verified”. This only proves that the publication exists and its bibliographic data is correct.</p>
         <h2>3. How much of the source was read? (access level)</h2>
@@ -72,7 +72,7 @@ export default async function MethodPage() {
       <h2>Neyi vaat ediyoruz, neyi etmiyoruz</h2>
       <p>Academiana, kendi akademik çalışmanızı gerçek kaynaklarla hazırlamanıza yardım eder. Kaynak, veri veya bulgu uydurmaz; yapay zekâ kararlarını kesinlik gibi sunmaz; lisanslı bir benzerlik servisi bağlı olmadığı için intihal yüzdesi göstermez. Aşağıda anlatılan her yapay zekâ kararını, dayandığı pasajla birlikte kendiniz inceleyebilirsiniz.</p>
       <h2>1. Kaynaklar nereden geliyor?</h2>
-      <p>Aramalar akademik veri tabanlarında eşzamanlı yapılır: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, CORE, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite ve Türkiye kaynakları (DergiPark, TR Dizin, YÖK Tez Merkezi). Yinelenen kayıtlar birleştirilir. Yapay zekâ kendi başına künye yazmaz; yalnızca çalışmanızın kaynak listesindeki kaynaklara atıf yapabilir.</p>
+      <p>Aramalar akademik veri tabanlarında eşzamanlı yapılır: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, CORE, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (anahtarları tanımlıysa NASA ADS, Springer Nature ve IEEE Xplore) ve Türkiye kaynakları (DergiPark, TR Dizin, YÖK Tez Merkezi). Yinelenen kayıtlar birleştirilir. Yapay zekâ kendi başına künye yazmaz; yalnızca çalışmanızın kaynak listesindeki kaynaklara atıf yapabilir.</p>
       <h2>2. Kaynak gerçekten var mı? (künye doğrulaması)</h2>
       <p>DOI numaraları Crossref ve DataCite’ta, PMID’ler Europe PMC’de, arXiv kimlikleri arXiv’de kontrol edilir. Doğrulanan kaynak “Doğrulandı” olarak işaretlenir. Bu yalnızca yayının var olduğunu ve künyesinin doğru olduğunu gösterir.</p>
       <h2>3. Kaynağın ne kadarı okundu? (erişim seviyesi)</h2>

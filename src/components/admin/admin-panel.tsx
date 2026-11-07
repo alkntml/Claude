@@ -453,7 +453,7 @@ function SourcesTab() {
     setEnabled(next);
     try { await api("/api/admin/settings", { method: "PATCH", json: { id: "sources.enabled", value: next } }); load(); } catch (e) { toast({ tone: "error", title: "Kaydedilemedi", detail: (e as Error).message }); }
   }
-  const notes: Record<string, string> = { turkiye: "OpenAlex üzerinden Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil).", core: "CORE_API_KEY gerektirir.", unpaywall: "Yalnızca DOI ile açık erişim bulma; ACADEMIC_CONTACT_EMAIL gerektirir.", google_books: "Yalnızca kitap künyesi; açıklamalar özet olarak kullanılmaz. Kullanım koşullarını kontrol edin.", semantic_scholar: "Anahtarsız kullanımda düşük hız limiti vardır.", openaire: "Graph API v1." };
+  const notes: Record<string, string> = { turkiye: "OpenAlex üzerinden Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil).", core: "CORE_API_KEY gerektirir.", unpaywall: "Yalnızca DOI ile açık erişim bulma; ACADEMIC_CONTACT_EMAIL gerektirir.", google_books: "Yalnızca kitap künyesi; açıklamalar özet olarak kullanılmaz. Kullanım koşullarını kontrol edin.", openaire: "Graph API v1.", plos: "Tamamı açık erişim; özet ve tam metin bağlantısı.", zenodo: "Açık arşiv: makale, tez, rapor, ön baskı.", hal: "Fransa ulusal açık arşivi; her alandan, çok dilli.", openlibrary: "Kitap künyesi; okunabilir e-kitap varsa bağlantı.", inspire: "Fizik ve ilgili alanlar.", ads: "ADS_API_KEY gerektirir (ücretsiz). Anahtar yoksa atlanır.", springer: "SPRINGER_API_KEY gerektirir (ücretsiz). Anahtar yoksa atlanır.", ieee: "IEEE_API_KEY gerektirir (ücretsiz). Anahtar yoksa atlanır." };
   return (
     <div className="grid gap-3 md:grid-cols-2">
       {Object.entries(PROVIDER_LABELS).map(([k, l]) => (

@@ -56,7 +56,7 @@ const SYN_SCHEMA = {
   },
 };
 
-const SEARCH_PROVIDERS: SourceProviderId[] = ["openalex", "europepmc", "eric", "crossref", "turkiye"];
+const SEARCH_PROVIDERS: SourceProviderId[] = ["openalex", "europepmc", "eric", "crossref", "turkiye", "plos", "hal", "springer", "ieee", "ads"];
 const norm = (s: string) => s.toLocaleLowerCase("tr").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 
 export async function researchConsensus(o: { planId: string; question: string; lang: "tr" | "en" }): Promise<ConsensusResult & { usage: Usage; cost: number; model: string; provider: string }> {

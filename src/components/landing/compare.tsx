@@ -9,7 +9,7 @@ const ROWS: [string, string][] = [
   ["Kaynağı olmayan iddiayı yazmaz, [KAYNAK GEREKLİ] diye işaretler", "Boşlukları ikna edici ama dayanaksız cümlelerle doldurabilir"],
   ["Tez ve makale bölüm bölüm, akademik iskelet ve bölüm kontrolüyle ilerler", "Genelde tek blok metin verir; bölüm yapısı ve ilerleme takibi yok"],
   ["APA 7, ISNAD, MLA, IEEE dahil 10 atıf stili; kaynakça kendiliğinden oluşur", "Atıf biçimi tutarsız olabilir; kaynakçayı elle düzenlersin"],
-  ["OpenAlex, PubMed ve arXiv’den DergiPark’a 12 akademik veri tabanında doğrudan arar", "Akademik veri tabanlarına doğrudan bağlı değildir; kaynak bulma genel web aramasına dayanır"],
+  ["OpenAlex, PubMed ve arXiv’den DergiPark’a 17 akademik veri tabanında doğrudan arar", "Akademik veri tabanlarına doğrudan bağlı değildir; kaynak bulma genel web aramasına dayanır"],
   ["Atıflı her cümlenin kaynağında gerçekten desteklenip desteklenmediğini pasaj ve sayfasıyla denetler", "Kaynağın var olduğunu bile her zaman garanti etmez; cümle ile kaynak arasındaki uyumu denetlemez"],
   ["Makaleye soru sorarsın, cevap sayfa numarasıyla gelir; çeviride atıf ve dipnotlar korunur", "Cevabın kaynağın neresine dayandığını her zaman göstermez; kopyala-yapıştır çeviride atıflar bozulabilir"],
   ["İstatistik, anket, grafik ve Word/PDF çıktısı aynı çalışma alanında", "Analiz, anket ve biçimli belge için farklı araçlar arasında gidip gelirsin"],

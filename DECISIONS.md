@@ -618,3 +618,10 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kullanıcı kararı: Sistematik derleme (PRISMA 2020) ve literatür haritası yalnız Pro, Premium ve Tek Proje’de (`features.ts` prisma/litmap: "pro"). Ücretsiz ve Basic erişemez.
 - Sunucu: derleme uçlarının tamamı (GET/POST/PATCH/PUT/DELETE, screen, include) ve litmap `assertFeature`; arayüzde araç menüsü yükseltme penceresini açar.
 - Migration 35: Basic kartından iki satır çıkarılır, Pro kartına “Literatür matrisi”nin arkasına eklenir. SSS, yardım rehberi ve ana sayfa vitrini (“Pro ve üstü” rozeti) güncel.
+
+### D129 — Kaynak kapsamı genişletildi (17 veri tabanı + 3 anahtarlı)
+- Yeni anahtarsız kaynaklar (varsayılan açık): **PLOS** (tamamı açık erişim), **Zenodo** (yalnız “publication” türü: makale, tez, rapor, ön baskı, kitap bölümü), **HAL** (Fransa ulusal açık arşivi, çok dilli), **Open Library** (kitap künyesi; okunabilir e-kitap bağlantısı), **INSPIRE-HEP** (fizik). Toplam 17 anahtarsız veri tabanı (pazarlama metinleri güncel).
+- Ücretsiz anahtarla çalışan kaynaklar: **NASA ADS** (`ADS_API_KEY`), **Springer Nature** (`SPRINGER_API_KEY`, meta/v2), **IEEE Xplore** (`IEEE_API_KEY`). Varsayılan açık ama anahtar yoksa `silentWhenUnavailable` ile sessizce atlanır (arama sonucunda hata çipi çıkmaz). Anahtar Vercel’e eklenince kendiliğinden devreye girer.
+- Kullanıcı metni Solr/Lucene sözdizimi olarak yorumlanmasın diye `solrEscape`. “Araştırmalar ne diyor?” (consensus.ts) artık PLOS, HAL ve anahtar varsa Springer/IEEE/ADS’de de arar.
+- Consensus.app bağlanmadı: herkese açık bir API’si yok (yalnız kurumsal/ortaklık başvurusuyla). Benzeri işi kendi “Araştırmalar ne diyor?” özelliğimiz yapıyor. Semantic Scholar D93 yönetici kararıyla kapalı kalır. TR Dizin ve DergiPark’ın resmî arama API’si yok; bağlantıyla arama (labels.ts) sürer, DergiPark kayıtları OpenAlex/Crossref üzerinden gelir.
+- Ayrıştırıcılar fixture testli (`tests/providers-more.test.ts`); canlı yanıt biçimi bulut oturumunda denenemedi — yönetim → Veri kaynağı sağlığı ve kullanıcı ekran görüntüleriyle doğrulanacak.

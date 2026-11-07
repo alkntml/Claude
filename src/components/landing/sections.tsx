@@ -79,7 +79,7 @@ export function HowItWorks() {
 
 export function SourcesStrip() {
   const { t } = useT();
-  const sources = ["OpenAlex", "DergiPark", "Crossref", "PubMed", "Europe PMC", "arXiv", "DOAJ", "PLOS", "CORE", "OpenAIRE", "Zenodo", "HAL", "Unpaywall", "DataCite", "ERIC", "DBLP", "INSPIRE-HEP", "Open Library", "Google Books"];
+  const sources = ["OpenAlex", "DergiPark", "Crossref", "PubMed", "Europe PMC", "arXiv", "DOAJ", "PLOS", "OpenAIRE", "Zenodo", "HAL", "Unpaywall", "DataCite", "ERIC", "DBLP", "INSPIRE-HEP", "Open Library", "Google Books"];
   return (
     <section id="kaynaklar" className="py-20">
       <div className="mx-auto max-w-6xl px-6">

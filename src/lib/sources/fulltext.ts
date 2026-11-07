@@ -30,7 +30,7 @@ async function fetchPdf(url: string, signal: AbortSignal): Promise<Buffer> {
 
 /**
  * Açık erişimli tam metni içe aktarır. Yalnızca yasal olarak açık erişimli bağlantılar
- * (OpenAlex/Unpaywall/Europe PMC/arXiv/DOAJ/CORE'un bildirdiği) kullanılır; ücretli içerik indirilmez.
+ * (OpenAlex/Unpaywall/Europe PMC/arXiv/DOAJ/PLOS/HAL'ın bildirdiği) kullanılır; ücretli içerik indirilmez.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export async function ingestOpenAccess(db: SupabaseClient, source: any, cfg: ProviderConfig): Promise<IngestResult> {

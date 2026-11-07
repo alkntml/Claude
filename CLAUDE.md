@@ -51,7 +51,7 @@ src/app/                 Sayfalar + API rotaları
 src/components/          landing, dashboard, workspace, admin, share, ui
 src/lib/
   citations/             Atıf motoru (10 stil, ISNAD 2 metin içi dahil), checks.ts (eksik künye, yinelenen, tutarlılık), captions.ts (tablo/şekil başlığı her stile göre: konum, etiket, kalın/italik; dışa aktarmada güncel stile çevrilir — D106)
-  sources/               http.ts (safeFetch: dış bağlantıda her yönlendirme + DNS denetimi, SSRF — D106), providers.ts (17 anahtarsız veri tabanı: +ERIC, DBLP, DataCite — D92; +PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve anahtarla NASA ADS, Springer Nature, IEEE Xplore — D129; Semantic Scholar kaldırıldı — D93), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
+  sources/               http.ts (safeFetch: dış bağlantıda her yönlendirme + DNS denetimi, SSRF — D106), providers.ts (16 anahtarsız veri tabanı: +ERIC, DBLP, DataCite — D92; +PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve anahtarla NASA ADS, Springer Nature, IEEE Xplore — D129; Semantic Scholar kaldırıldı — D93; CORE kaldırıldı — D130), aggregate.ts, verify.ts, fulltext.ts, input.ts, row.ts
   research.ts            Araştırma planlama (Haiku), arama yürütme, kaynakları projeye ekleme; researchGate: tarama yalnızca gerektiğinde (D75)
   ai/                    registry (model katmanları), anthropic, openai, context (RAG + hafıza; head önbellekte, tail değişken — D78), history (geçmiş kısaltma), cost (önbellekli maliyet), prompts (ACTION_TIER, ACTION_EFFORT)
   workflows/length.ts    Kurgudaki hedef uzunluk (D97): draftTarget (alt başlığa eşit pay), lengthInstruction, taslak %85’in altındaysa devam (appendToDraft)
@@ -148,7 +148,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 
 ## Ortam değişkenleri (Vercel → Settings → Environment Variables)
 Zorunlu: `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (veya `..._PUBLISHABLE_KEY`), `SUPABASE_SERVICE_ROLE_KEY` (veya `SUPABASE_SECRET_KEY`). Supabase değişkenleri Vercel entegrasyonu tarafından otomatik eklendi.
-Önerilen: `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`. İsteğe bağlı: `OPENAI_API_KEY`, `CORE_API_KEY`, `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY` (D129), `STRIPE_*`, `IYZICO_*` (ödeme şimdilik kapalı). Değişiklikten sonra Vercel'de Redeploy gerekir.
+Önerilen: `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`. İsteğe bağlı: `OPENAI_API_KEY`, `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY` (D129), `STRIPE_*`, `IYZICO_*` (ödeme şimdilik kapalı). Değişiklikten sonra Vercel'de Redeploy gerekir.
 
 ## Geliştirme ortamı notu
 Claude'un bulut oturumunda akademik API'lere (OpenAlex, Crossref vb.) ağ erişimi yok; adaptörler fixture testleriyle doğrulanır, canlı davranış kullanıcının ekran görüntüleriyle kontrol edilir. Anthropic API ve npm erişilebilir. Dışarıya tünel açmak yasak/engelli.

@@ -29,7 +29,7 @@ export const DEFAULTS = {
   } as AiModelsSetting,
   "ai.system_prompt": { text: "Sen titiz ve dürüst bir akademik danışmansın. Asla kaynak, veri veya bulgu uydurma. Yalnızca KAYNAKLAR listesindeki eserlere atıf yap; listede olmayan hiçbir yazar veya eser adını notlarda bile anma, bunun yerine Literatür araştır özelliğini öner." },
   "ai.stage_prompts": {} as Record<string, string>,
-  "sources.enabled": { openalex: true, crossref: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true, turkiye: true, eric: true, dblp: true, datacite: true, plos: true, zenodo: true, hal: true, openlibrary: true, inspire: true, ads: true, springer: true, ieee: true } as Record<SourceProviderId, boolean>,
+  "sources.enabled": { openalex: true, crossref: true, europepmc: true, arxiv: true, doaj: true, openaire: true, google_books: false, unpaywall: true, turkiye: true, eric: true, dblp: true, datacite: true, plos: true, zenodo: true, hal: true, openlibrary: true, inspire: true, ads: true, springer: true, ieee: true } as Record<SourceProviderId, boolean>,
   "limits.rate": { ai_per_minute: 12, search_per_minute: 30 },
   /** Davet programı (D99): davet edilen kaydolunca yalnızca davet edene kredi (miktar = Ücretsiz paket hakları) */
   /** Kârlılık (D52): API maliyeti KDV hariç gelirin en fazla cost_share’i; dolar kuru güncel tutulmalı */

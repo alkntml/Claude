@@ -278,7 +278,7 @@ function adminStats() {
     money: { paidUsers: 36, revenueTry: 21540, costTry: 5980, profitTry: 15560, costShare: 28, usdTry: 48 },
     expiring: [{ id: "x", email: "ornek@uni.edu.tr", full_name: "Örnek Kullanıcı", plan_id: "pro", plan_expires_at: new Date(Date.now() + 3 * 86400000).toISOString() }],
     locked: 4,
-    integrations: { supabase: true, supabaseServiceRole: true, anthropic: true, openai: false, contactEmail: true, semanticScholarKey: false, coreKey: false, stripe: false, iyzico: false },
+    integrations: { supabase: true, supabaseServiceRole: true, anthropic: true, openai: false, contactEmail: true, semanticScholarKey: false, stripe: false, iyzico: false },
     payments: [{ id: "stripe", label: "Stripe (uluslararası kartlar)", configured: false, implemented: true, usable: false }, { id: "iyzico", label: "iyzico (Türkiye)", configured: false, implemented: false, usable: false }],
   };
 }
@@ -289,7 +289,7 @@ function adminRows(resource: string): any[] {
     { key: "ai.models", value: { default: { provider: "anthropic", model: "claude-opus-5-5" }, balanced: { provider: "anthropic", model: "claude-sonnet-5-5" }, fast: { provider: "anthropic", model: "claude-haiku-5-5" }, premium: { provider: "anthropic", model: "claude-opus-5-5" }, plan_tiers: { free: "fast", basic: "balanced", pro: "default", premium: "premium" }, max_output_tokens: 16000, effort: "medium" } },
     { key: "ai.system_prompt", value: { text: "Sen titiz, dürüst ve deneyimli bir akademik danışmansın… Asla kaynak, veri veya bulgu uydurma." } },
     { key: "ai.stage_prompts", value: {} },
-    { key: "sources.enabled", value: { openalex: true, crossref: true, semantic_scholar: true, europepmc: true, arxiv: true, doaj: true, core: false, openaire: true, google_books: false, unpaywall: true } },
+    { key: "sources.enabled", value: { openalex: true, crossref: true, semantic_scholar: true, europepmc: true, arxiv: true, doaj: true, openaire: true, google_books: false, unpaywall: true } },
     { key: "limits.rate", value: { ai_per_minute: 12, search_per_minute: 30 } },
   ];
   return [];

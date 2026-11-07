@@ -5,7 +5,6 @@
  *
  * Kullanım koşulları:
  *  - OpenAlex / Crossref: "polite pool" için `mailto` parametresi gönderilir.
- *  - CORE: API anahtarı zorunludur.
  *  - Google Books: yalnızca kitap künyesi için; açıklama metni akademik özet olarak KULLANILMAZ.
  *  - Unpaywall: yalnızca DOI bazlı açık erişim zenginleştirmesi, e-posta zorunlu.
  *  - NASA ADS, Springer Nature, IEEE Xplore: ücretsiz API anahtarı gerekir; anahtar yoksa arama atlanır (D129).
@@ -334,44 +333,6 @@ const doaj: SourceProvider = {
     if (q.yearFrom || q.yearTo) query += ` AND bibjson.year:[${q.yearFrom ?? 1900} TO ${q.yearTo ?? 2100}]`;
     const url = `https://doaj.org/api/search/articles/${encodeURIComponent(query)}?pageSize=${q.limit ?? 20}`;
     return parseDoaj(await getJson(url, { signal }));
-  },
-};
-
-// ---------------------------------------------------------------------------
-// CORE
-// ---------------------------------------------------------------------------
-
-export function parseCore(json: any): SourceRecord[] {
-  return (json?.results ?? []).map((r: any) =>
-    finalize({
-      type: r.documentType === "thesis" ? "thesis" : "article-journal",
-      title: r.title ?? "",
-      authors: (r.authors ?? []).map((a: any) => splitName(a.name ?? "")),
-      year: r.yearPublished ?? null,
-      containerTitle: r.journals?.[0]?.title ?? null,
-      publisher: r.publisher ?? null,
-      doi: r.doi ?? null,
-      url: r.links?.find((l: any) => l.type === "display")?.url ?? (r.id ? `https://core.ac.uk/works/${r.id}` : null),
-      oaUrl: r.downloadUrl ?? null,
-      abstract: r.abstract ?? null,
-      fullText: typeof r.fullText === "string" ? r.fullText : null,
-      language: r.language?.code ?? null,
-      citedByCount: r.citationCount ?? null,
-      origins: ["core"],
-    }),
-  );
-}
-
-const core: SourceProvider = {
-  id: "core",
-  label: "CORE",
-  unavailableReason: (cfg) => (cfg.coreKey ? null : "CORE_API_KEY tanımlı değil"),
-  async search(q, cfg, signal) {
-    let query = q.query;
-    if (q.yearFrom) query += ` AND yearPublished>=${q.yearFrom}`;
-    if (q.yearTo) query += ` AND yearPublished<=${q.yearTo}`;
-    const p = new URLSearchParams({ q: query, limit: String(q.limit ?? 20) });
-    return parseCore(await getJson(`https://api.core.ac.uk/v3/search/works?${p}`, { signal, headers: { Authorization: `Bearer ${cfg.coreKey}` } }));
   },
 };
 
@@ -921,7 +882,7 @@ const ieee: SourceProvider = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export const PROVIDERS: Record<SourceProviderId, SourceProvider> = {
-  openalex, crossref, europepmc, arxiv, doaj, core, openaire, google_books: googleBooks, unpaywall, turkiye,
+  openalex, crossref, europepmc, arxiv, doaj, openaire, google_books: googleBooks, unpaywall, turkiye,
   eric, dblp, datacite,
   plos, zenodo, hal, openlibrary, inspire, ads, springer, ieee,
 };

@@ -11,7 +11,6 @@ export const env = {
   anthropicKey: process.env.ANTHROPIC_API_KEY ?? "",
   openaiKey: process.env.OPENAI_API_KEY ?? "",
   contactEmail: process.env.ACADEMIC_CONTACT_EMAIL ?? "",
-  coreKey: process.env.CORE_API_KEY ?? "",
   openalexKey: process.env.OPENALEX_API_KEY ?? "",
   googleBooksKey: process.env.GOOGLE_BOOKS_API_KEY ?? "",
   adsKey: process.env.ADS_API_KEY ?? "",
@@ -35,7 +34,6 @@ export function integrationStatus() {
     anthropic: !!env.anthropicKey,
     openai: !!env.openaiKey,
     contactEmail: !!env.contactEmail,
-    coreKey: !!env.coreKey,
     adsKey: !!env.adsKey,
     springerKey: !!env.springerKey,
     ieeeKey: !!env.ieeeKey,
@@ -47,7 +45,6 @@ export function integrationStatus() {
 export function providerConfig() {
   return {
     contactEmail: env.contactEmail || undefined,
-    coreKey: env.coreKey || undefined,
     openalexKey: env.openalexKey || undefined,
     googleBooksKey: env.googleBooksKey || undefined,
     adsKey: env.adsKey || undefined,

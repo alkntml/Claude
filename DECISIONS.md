@@ -625,3 +625,6 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kullanıcı metni Solr/Lucene sözdizimi olarak yorumlanmasın diye `solrEscape`. “Araştırmalar ne diyor?” (consensus.ts) artık PLOS, HAL ve anahtar varsa Springer/IEEE/ADS’de de arar.
 - Consensus.app bağlanmadı: herkese açık bir API’si yok (yalnız kurumsal/ortaklık başvurusuyla). Benzeri işi kendi “Araştırmalar ne diyor?” özelliğimiz yapıyor. Semantic Scholar D93 yönetici kararıyla kapalı kalır. TR Dizin ve DergiPark’ın resmî arama API’si yok; bağlantıyla arama (labels.ts) sürer, DergiPark kayıtları OpenAlex/Crossref üzerinden gelir.
 - Ayrıştırıcılar fixture testli (`tests/providers-more.test.ts`); canlı yanıt biçimi bulut oturumunda denenemedi — yönetim → Veri kaynağı sağlığı ve kullanıcı ekran görüntüleriyle doğrulanacak.
+
+### D130 — CORE kaldırıldı
+- Yönetici kararı: CORE veri kaynağı tamamen kaldırıldı (sağlayıcı, ayrıştırıcı, ayar, `CORE_API_KEY`, kurulum satırı). Veritabanındaki eski `sources.enabled` kaydında kalan `core` anahtarı zararsızdır (arama yalnızca tanımlı sağlayıcıları çağırır); daha önce CORE’dan eklenmiş kaynaklar olduğu gibi kalır. Anahtarsız veri tabanı sayısı 16 (metinler güncel).

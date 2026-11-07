@@ -2,7 +2,7 @@ import type { SourceProviderId } from "./types";
 
 export const PROVIDER_LABELS: Record<SourceProviderId, string> = {
   openalex: "OpenAlex", crossref: "Crossref", europepmc: "PubMed / Europe PMC", arxiv: "arXiv",
-  doaj: "DOAJ", core: "CORE", openaire: "OpenAIRE", google_books: "Google Books", unpaywall: "Unpaywall", turkiye: "Türkiye (TR)",
+  doaj: "DOAJ", openaire: "OpenAIRE", google_books: "Google Books", unpaywall: "Unpaywall", turkiye: "Türkiye (TR)",
   eric: "ERIC (eğitim)", dblp: "DBLP (bilgisayar)", datacite: "DataCite (tez, veri seti)",
   plos: "PLOS (açık erişim)", zenodo: "Zenodo (açık arşiv)", hal: "HAL (açık arşiv)", openlibrary: "Open Library (kitap)", inspire: "INSPIRE-HEP (fizik)",
   ads: "NASA ADS (astronomi, yer bilimleri)", springer: "Springer Nature", ieee: "IEEE Xplore (mühendislik)",

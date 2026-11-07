@@ -2,7 +2,7 @@ import type { ItemType, Person } from "@/lib/citations/types";
 
 export type SourceProviderId =
   | "openalex" | "crossref" | "europepmc" | "arxiv"
-  | "doaj" | "core" | "openaire" | "google_books" | "unpaywall" | "turkiye"
+  | "doaj" | "openaire" | "google_books" | "unpaywall" | "turkiye"
   | "eric" | "dblp" | "datacite"
   | "plos" | "zenodo" | "hal" | "openlibrary" | "inspire" | "ads" | "springer" | "ieee";
 
@@ -33,7 +33,7 @@ export interface SourceRecord {
   abstract?: string | null;
   language?: string | null;
   citedByCount?: number | null;
-  /** Tam metin sağlayıcıdan doğrudan geldiyse (ör. CORE fullText) */
+  /** Tam metin sağlayıcıdan doğrudan geldiyse (sağlayıcı tam metin döndürdüyse) */
   fullText?: string | null;
   origins: SourceProviderId[];
   /** Erişim seviyesi: künye / özet / tam metin */
@@ -69,7 +69,6 @@ export interface SearchResponse {
 
 export interface ProviderConfig {
   contactEmail?: string;
-  coreKey?: string;
   openalexKey?: string;
   googleBooksKey?: string;
   adsKey?: string;

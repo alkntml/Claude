@@ -48,7 +48,7 @@ export function HowItWorks() {
     { icon: Brain, title: "Konunuzu tanımlayın", text: "Asistan konunuzu analiz eder, kavramları ayrıştırır ve sizinle birlikte bir çalışma planı yapar." },
     { icon: Library, title: "Literatürü tarayın", text: "Gerçek veri tabanlarında arama yapılır. Hangi kaynakları kütüphanenize ekleyeceğinize siz karar verirsiniz." },
     { icon: Workflow, title: "Bölümleri geliştirin", text: "Her bölümde yazın, yeniden yazdırın, genişletin. Her iddia bir kaynağa bağlanır, her sürüm geçmişte saklanır." },
-    { icon: ListChecks, title: "Kaliteyi kontrol edin", text: "Atıf tutarlılığı, eksik künye, bölümler arası uyum ve akademik dil kontrol edilir." },
+    { icon: ListChecks, title: "Teslimden önce denetleyin", text: "Atıflı her cümle kaynağıyla karşılaştırılır; eksik künye, atıf tutarlılığı ve bölümler arası uyum kontrol edilir. Teslim öncesi kontrol listesi hiçbir şeyin atlanmamasını sağlar." },
     { icon: FileDown, title: "Dışa aktarın", text: "Word, PDF, Markdown veya TXT olarak indirin. İçindekiler, numaralandırma ve kaynakça hazır gelir." },
   ];
   return (
@@ -184,7 +184,7 @@ function TeamCard({ plans }: { plans: PlanLike[] }) {
     t("Basic, Pro veya Premium: seçtiğiniz paketin tüm özellikleri"),
     t("Her üyeye kendi hesabı, kendi çalışmaları ve kullanım hakları"),
     t("Tek katılım koduyla ekibe katılım"),
-    t("Ekip yöneticisi paneli: üyeleri görme ve yönetme"),
+    t("Yönetici paneli: kullanım özeti, roller, CSV rapor ve işlem kaydı"),
     t("Ekip adına tek ödeme"),
   ];
   return (

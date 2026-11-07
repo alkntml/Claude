@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D126 (2026-11-07): Vitrin — ana sayfada “Teslim etmeden önce emin olun” bölümü, hero/adım/ekip/kurumlar metinleri, menüde Yöntem, paket kartlarına iddia denetimi/PRISMA/harita. Migration 34 çalıştırılmalı
 - D118–D125 (2026-11-08, rakip analizi sonrası): fiyat/limit tek kaynak + test; kaynak destekli iddia denetimi (bölüm geneli, pasaj+sayfa, editörde işaret); kalite puanı yöntemi + /yontem şeffaflık sayfası (TR/EN); teslim öncesi kontrol listesi; PRISMA 2020 sistematik derleme modülü; literatür haritası; görev bazlı başlangıç; ürün analitiği (aktivasyon hunisi, YZ güvenilirliği), kurum denetim kaydı ve rol yönetimi. Migration 33 çalıştırılmalı
 - D117 (2026-11-08): Uzman desteği tamamen kaldırıldı; eski adres ana sayfaya yönlenir
 - D116 (2026-11-07): npm audit 0 açık — TipTap 3.33, vitest 5, mammoth güncel, minimatch override; editör TipTap 3’e uyarlandı ve tarayıcıda denendi

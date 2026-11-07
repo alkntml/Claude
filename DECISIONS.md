@@ -602,3 +602,8 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kurum: `org_audit_log` (katılma, ayrılma, çıkarma, rol değişikliği), rol yönetimi (son yönetici korunur, tek yönetici ayrılamaz), bu ayki özet, kullanım raporu CSV. İçerik paylaşılmaz. SSO bu turda yapılmadı (Supabase SAML ücretli plan gerektirir).
 - Migration 33: plan ifadeleri, claim_audits, review_records, ai_calls, org_audit_log.
 
+
+### D126 — Vitrinde yeni özellikler (ana sayfa, paket kartları, kurumlar)
+- Ana sayfaya “Teslim etmeden önce emin olun” bölümü (`components/landing/assurance.tsx`, `#guvence`): iddia denetimi, kalite puanı + kontrol listesi, PRISMA 2020, literatür haritası; /yontem bağlantısı. Görseller temsilî ve öyle etiketli; sayı/başarı iddiası yok.
+- Hero rozeti “Atıflar kaynağında denetlenir”; Nasıl çalışır 5. adım “Teslimden önce denetleyin”; Ekip kartı ve /kurumlar yönetici paneli metni güncel; menüye “Yöntem”; ana sayfa SSS öne çıkanlarına `dogrula`; ana sayfa meta açıklaması iddia denetimi ve PRISMA’yı anar.
+- Migration 34: paket kartları — Ücretsiz’e “İddia denetimi ve teslim öncesi kontrol listesi”, Basic’e “PRISMA 2020 sistematik derleme” ve “Literatür haritası ve eksik kaynak önerisi” (ilgili satırın hemen arkasına, tekrar çalıştırılabilir).

@@ -1,8 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] Supabase SQL Editor’de migration 33’ü çalıştır (iddia denetimi, PRISMA, gözlem, kurum denetim kaydı; D118–D125). Önce migration 32 yapılmış olmalı
+- [ ] Supabase SQL Editor’de migration 34’ü çalıştır (paket kartlarında iddia denetimi, PRISMA, literatür haritası; D126). 32 ve 33 yapıldı (kullanıcı onayladı)
 - [ ] Canlıda dene: atıflı bir bölümde “İddia denetimi”; Araçlar → Sistematik derleme (PRISMA) ile bir RIS dosyası içe aktar; Araçlar → Literatür haritası (DOI’li kaynaklarla); Kalite sayfasındaki kontrol listesi
 - [ ] Sonraki adım önerisi (rapor): 3–5 pilot akademisyen/kurumla iddia denetimi ve PRISMA modülünü değerlendirt; sonuçları /yontem sayfasında yayımla (sahte vaka çalışması yazılmaz)
-- [ ] Supabase SQL Editor’de migration 32’yi çalıştır (ortak yazım + otomatik tamamlama, D113/D115); çalıştırılmadan otomatik tamamlama ve ortak yazar daveti hata verir
 - [ ] Canlıda dene: bir Pro hesabıyla ikinci bir hesabı ortak yazar olarak davet et, iki tarayıcıda aynı bölümü açıp “X bu bölümde” göstergesini ve çakışma penceresini kontrol et (D115)
 - [ ] Canlıda dene: Araçlar → Dil ve çeviri ile atıflı bir paragrafı İngilizceye çevir; Kaynaklar → Sor; /araclar/arastirmalar-ne-diyor (canlı veri tabanı aramaları bulut oturumunda denenemedi)
 - [ ] Supabase SQL Editor’de migration 31’i çalıştır (Tek Proje gözetimi, D109); Kullanım koşullarındaki yeni Tek Proje ve Adil kullanım maddelerini hukukçuya incelet

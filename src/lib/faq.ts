@@ -445,7 +445,7 @@ export const FAQ: FaqGroup[] = [
 ];
 
 /** Ana sayfada gösterilecek en kritik sorular */
-export const FAQ_HIGHLIGHTS = ["uydurur-mu", "tamamen-yazar-mi", "ozgun-mu", "kim-gorur", "egitim", "benzerlik", "ucretsiz", "iptal"];
+export const FAQ_HIGHLIGHTS = ["uydurur-mu", "dogrula", "tamamen-yazar-mi", "ozgun-mu", "kim-gorur", "egitim", "benzerlik", "ucretsiz", "iptal"];
 
 export function faqText(l: "tr" | "en") {
   return FAQ.flatMap((g) => g.items).map((i) => ({ id: i.id, q: i.q[l], a: i.a[l] }));

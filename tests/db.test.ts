@@ -616,4 +616,16 @@ describe("anketler", () => {
     await expectError(as(null, "insert into public.analytics_events (kind, path) values ('pageview', '/x')"));
     await expectError(db.query("insert into public.analytics_events (kind, path) values ('click', '/x')"));
   });
+  it("paket kartları yeni özellikleri doğru sırada gösterir; migration 34 tekrar çalıştırılabilir (D126)", async () => {
+    const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/migrations/20261128000034_plan_features_assurance.sql"), "utf8");
+    await db.exec(sql);
+    const rows = (await db.query<{ id: string; features: string[] }>(`select id, features from public.plans where id in ('free', 'basic')`)).rows;
+    const free = rows.find((r) => r.id === "free")!.features;
+    const basic = rows.find((r) => r.id === "basic")!.features;
+    expect(free.filter((f) => f === "İddia denetimi ve teslim öncesi kontrol listesi")).toHaveLength(1);
+    expect(free.indexOf("İddia denetimi ve teslim öncesi kontrol listesi")).toBe(free.indexOf("Başlık önerisi ve bölüm kontrolü") + 1);
+    expect(basic.filter((f) => f === "PRISMA 2020 sistematik derleme")).toHaveLength(1);
+    expect(basic.indexOf("PRISMA 2020 sistematik derleme")).toBe(basic.indexOf("Yapay zekâ destekli kalite raporu") + 1);
+    expect(basic).toContain("Literatür haritası ve eksik kaynak önerisi");
+  });
 });

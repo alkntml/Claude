@@ -69,11 +69,11 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Academiana — AI Thesis & Academic Writing Assistant",
     },
     description: {
-      tr: "Tez, makale, literatür taraması ve TÜBİTAK önerinizi gerçek akademik kaynaklarla adım adım yazın. APA 7 atıf, istatistik analizi, anket ve Word çıktısı.",
-      en: "Write your thesis, paper or literature review with verified academic sources: automatic APA 7 citations, statistics, surveys and Word export.",
+      tr: "Tez, makale ve literatür taramanızı gerçek kaynaklarla yazın; atıflı her cümle kaynağında denetlenir. APA 7, PRISMA, istatistik, anket ve Word çıktısı.",
+      en: "Write your thesis, article and literature review with real sources; every cited sentence is checked against its source. APA 7, PRISMA, statistics, Word export.",
     },
     keywords: {
-      tr: ["tez yazma", "yapay zeka tez yazma", "akademik yazım asistanı", "makale yazma", "literatür taraması", "APA 7 kaynak gösterme", "kaynakça oluşturma", "TÜBİTAK 2209-A", "tez önerisi", "istatistik analizi", "anket hazırlama", "akademik İngilizce çeviri", "ortak yazarla tez yazma", "Academiana"],
+      tr: ["tez yazma", "yapay zeka tez yazma", "akademik yazım asistanı", "makale yazma", "literatür taraması", "APA 7 kaynak gösterme", "kaynakça oluşturma", "TÜBİTAK 2209-A", "tez önerisi", "istatistik analizi", "anket hazırlama", "akademik İngilizce çeviri", "ortak yazarla tez yazma", "iddia denetimi", "PRISMA sistematik derleme", "Academiana"],
       en: ["AI thesis writer", "academic writing assistant", "AI research paper writer", "literature review tool", "APA 7 citation generator", "reference generator", "thesis help", "dissertation writing tool", "statistics for thesis", "survey builder for research", "academic translation Turkish English", "collaborative thesis writing", "Academiana"],
     },
     tagline: { tr: "Gerçek kaynaklarla yapay zekâ destekli akademik yazım", en: "AI academic writing with real, verified sources" },

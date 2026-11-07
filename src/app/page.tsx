@@ -16,6 +16,7 @@ import { publicPlans } from "@/lib/plans";
 import { getUsdTry } from "@/lib/fx";
 import { CompareSection } from "@/components/landing/compare";
 import { TraceDemo } from "@/components/landing/trace-demo";
+import { AssuranceSection } from "@/components/landing/assurance";
 import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
@@ -40,6 +41,7 @@ export default async function Home() {
         <Hero signedIn={signedIn} />
         <CompareSection />
         <TraceDemo />
+        <AssuranceSection />
         <section id="ucretsiz-araclar" className="scroll-mt-24 py-16">
           <div className="mx-auto max-w-6xl px-6">
             <FadeIn className="mb-10 flex flex-wrap items-end justify-between gap-4">

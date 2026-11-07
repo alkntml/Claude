@@ -47,4 +47,8 @@ union all select '32 Ortak yazım ve otomatik tamamlama',
 union all select '33 İddia denetimi, PRISMA, gözlem, kurum denetim kaydı',
   case when to_regclass('public.claim_audits') is not null and to_regclass('public.review_records') is not null
         and to_regclass('public.ai_calls') is not null and to_regclass('public.org_audit_log') is not null
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '34 Paket kartlarında iddia denetimi, PRISMA, literatür haritası',
+  case when exists (select 1 from public.plans where id = 'free' and 'İddia denetimi ve teslim öncesi kontrol listesi' = any(features))
+        and exists (select 1 from public.plans where id = 'basic' and 'PRISMA 2020 sistematik derleme' = any(features))
        then 'YAPILMIŞ' else 'EKSİK' end;

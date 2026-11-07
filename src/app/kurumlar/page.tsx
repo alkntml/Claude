@@ -17,7 +17,8 @@ export default async function Institutions() {
   const items = [
     ["Toplu lisans", "Belirlediğiniz sayıda kullanıcıya Pro veya Premium paket; tek fatura, yıllık sözleşme."],
     ["Kolay katılım", "Öğrencileriniz kurum koduyla katılır. İsterseniz yalnızca kurum e-posta uzantısıyla (ör. @universite.edu.tr) katılıma izin verilir."],
-    ["Kurum yöneticisi paneli", "Kullanıcı sayısı, katılım kodu ve üyelerin aylık kullanım sayıları. Gizlilik gereği öğrencilerin çalışma içerikleri kurumla paylaşılmaz."],
+    ["Kurum yöneticisi paneli", "Üye sayısı, katılım kodu ve aylık kullanım özeti; başka üyelere yönetici rolü verme, CSV raporu ve kimin katılıp ayrıldığını gösteren işlem kaydı. Gizlilik gereği öğrencilerin çalışma içerikleri kurumla paylaşılmaz."],
+    ["Araştırma yöntemine uygun araçlar", "İddia denetimi (atıflı her cümle kaynağıyla karşılaştırılır), PRISMA 2020 sistematik derleme, literatür haritası ve teslim öncesi kontrol listesi. Kalite puanının yöntemi herkese açıktır."],
     ["Akademik dürüstlük", "Uydurma kaynak yok, erişim seviyesi şeffaflığı, her atıf doğrulanabilir kaynağa bağlı. Kurumunuzun yapay zekâ politikasıyla uyumlu kullanım."],
     ["Veri güvenliği", "Avrupa Birliği’nde (Frankfurt) barındırma, satır düzeyinde erişim denetimi, KVKK uyumlu veri silme ve dışa aktarma."],
   ];
@@ -30,6 +31,7 @@ export default async function Institutions() {
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map(([h, b]) => <div key={h} className="card p-5"><p className="font-semibold text-ink-900">{t(h)}</p><p className="mt-1 text-[14.5px] text-ink-600">{t(b)}</p></div>)}
       </div>
+      <p className="text-sm text-ink-500">{t("Kaynak doğrulama, iddia denetimi ve kalite puanının nasıl çalıştığı:")} <Link href="/yontem" className="font-medium text-brand-700 hover:underline">{t("Yöntem ve şeffaflık →")}</Link></p>
       <h2>{t("Nasıl başlarız?")}</h2>
       <ol className="space-y-1 [&>li]:ml-5 [&>li]:list-decimal">
         <li>{t("Kullanıcı sayısını ve paketi bize iletin; teklif hazırlayalım.")}</li>

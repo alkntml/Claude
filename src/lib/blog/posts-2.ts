@@ -401,7 +401,7 @@ Yalnızca p değerini yazmak yetmez. Test istatistiği, serbestlik derecesi, p d
 
 ## Academiana ile istatistik
 
-Academiana’nın istatistik aracında verinizi yükleyip analizi seçersiniz: betimsel istatistikler ve normallik, t testleri, ANOVA, Mann-Whitney, Kruskal-Wallis, korelasyon, regresyon, ki-kare ve Cronbach alfa. Hesaplamalar sunucuda, bilinen formüllerle yapılır ve sonuç APA 7 biçiminde tablo ve yorum cümlesi olarak gelir. Hangi analizi seçeceğinizden emin değilseniz istatistik danışmanlığı için uzman desteğine yönlendirme de bulunur.`,
+Academiana’nın istatistik aracında verinizi yükleyip analizi seçersiniz: betimsel istatistikler ve normallik, t testleri, ANOVA, Mann-Whitney, Kruskal-Wallis, korelasyon, regresyon, ki-kare ve Cronbach alfa. Hesaplamalar sunucuda, bilinen formüllerle yapılır ve sonuç APA 7 biçiminde tablo ve yorum cümlesi olarak gelir.`,
   },
   {
     slug: "akademik-makale-nasil-yazilir",

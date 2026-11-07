@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const updated = SITE_CONTENT_UPDATED;
   const pages: [string, number, "daily" | "weekly" | "monthly" | "yearly"][] = [
     ["/", 1, "weekly"], ["/fiyatlar", 0.9, "weekly"], ["/ornekler", 0.8, "monthly"], ["/blog", 0.9, "weekly"], ["/sss", 0.8, "monthly"], ["/kurumlar", 0.7, "monthly"],
-    ["/uzman-destegi", 0.6, "monthly"], ["/akademik-durustluk", 0.6, "monthly"], ["/hakkimizda", 0.6, "monthly"], ["/kayit", 0.6, "monthly"], ["/yardim", 0.5, "monthly"],
+    ["/akademik-durustluk", 0.6, "monthly"], ["/hakkimizda", 0.6, "monthly"], ["/kayit", 0.6, "monthly"], ["/yardim", 0.5, "monthly"],
     ["/gizlilik", 0.3, "yearly"], ["/kosullar", 0.3, "yearly"],
     ["/araclar", 0.9, "weekly"], ["/araclar/arastirmalar-ne-diyor", 0.9, "monthly"], ["/araclar/uydurma-kaynak-kontrolu", 0.9, "monthly"], ["/araclar/kaynakca-olusturucu", 0.9, "monthly"], ["/araclar/atif-donusturucu", 0.8, "monthly"],
     ["/araclar/orneklem-hesaplayici", 0.8, "monthly"], ["/araclar/cronbach-alfa", 0.8, "monthly"], ["/araclar/anket-olusturucu", 0.8, "monthly"],

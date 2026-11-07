@@ -147,8 +147,8 @@ export const FAQ: FaqGroup[] = [
         id: "bulgular",
         q: { tr: "Bulgular bölümünü yazabilir mi? İstatistik yapıyor mu?", en: "Can it write the results section? Does it do statistics?" },
         a: {
-          tr: "Asistan hiçbir veri, sayı veya bulgu uydurmaz. Kendi verinizi (CSV veya Excel) yüklerseniz **İstatistik analizi** ile t testi, ANOVA, korelasyon, regresyon, ki-kare, Cronbach alfa, Mann-Whitney ve Kruskal-Wallis analizleri sunucuda gerçek hesaplamayla (SPSS ile aynı formüllerle) yapılır; sonuç APA 7 biçiminde tablo ve cümle olarak belgeye eklenir. Asistan bu gerçek sonuçları yorumlamanıza yardım eder. Analiz seçiminden emin değilseniz uzman desteği alabilirsiniz.",
-          en: "The assistant never fabricates data, numbers or findings. If you upload your own data (CSV or Excel), **Statistical analysis** runs t-tests, ANOVA, correlation, regression, chi-square, Cronbach’s alpha, Mann-Whitney and Kruskal-Wallis with real calculations on the server (same formulas as SPSS), and inserts the result as an APA 7 table and sentence. The assistant then helps you interpret these real results. If you are unsure which analysis to choose, you can get expert support.",
+          tr: "Asistan hiçbir veri, sayı veya bulgu uydurmaz. Kendi verinizi (CSV veya Excel) yüklerseniz **İstatistik analizi** ile t testi, ANOVA, korelasyon, regresyon, ki-kare, Cronbach alfa, Mann-Whitney ve Kruskal-Wallis analizleri sunucuda gerçek hesaplamayla (SPSS ile aynı formüllerle) yapılır; sonuç APA 7 biçiminde tablo ve cümle olarak belgeye eklenir. Asistan bu gerçek sonuçları yorumlamanıza yardım eder.",
+          en: "The assistant never fabricates data, numbers or findings. If you upload your own data (CSV or Excel), **Statistical analysis** runs t-tests, ANOVA, correlation, regression, chi-square, Cronbach’s alpha, Mann-Whitney and Kruskal-Wallis with real calculations on the server (same formulas as SPSS), and inserts the result as an APA 7 table and sentence. The assistant then helps you interpret these real results.",
         },
       },
       {
@@ -163,8 +163,8 @@ export const FAQ: FaqGroup[] = [
         id: "ceviri",
         q: { tr: "Türkçe metnimi akademik İngilizceye çevirebilir miyim? Atıflarım bozulur mu?", en: "Can I translate my Turkish text into academic English? Will my citations break?" },
         a: {
-          tr: "Evet. Çalışma alanında **Araçlar → Dil ve çeviri** (veya metni seçince çıkan balondaki **Çevir**) bir bölümü, alt başlığı ya da seçili metni Türkçe ↔ İngilizce akademik dile çevirir. Atıflar, dipnotlar, şekiller, tablolar ve başlık düzeyleri olduğu gibi korunur; ondalık ve istatistik gösterimi (Ort./SS ↔ M/SD) hedef dile uyarlanır, sayılar değişmez. Amerikan veya İngiliz İngilizcesi seçilebilir. **Terim sözlüğü** alanınıza özgü karşılıkları (ör. öz yeterlik → self-efficacy) her çeviride aynı tutar. Çeviri öncesi hâl sürüm geçmişinde saklanır. **Dil denetimi** sekmesi de yazım, dil bilgisi, noktalama ve akademik üslup hatalarını tek tek önerir; isterseniz tek tıkla uygularsınız. Çeviri ve denetim aylık yapay zekâ hakkından düşer; dergiye gönderim öncesi profesyonel redaksiyon isterseniz uzman desteği alabilirsiniz.",
-          en: "Yes. In the workspace, **Tools → Language & translation** (or **Translate** in the bubble that appears when you select text) translates a section, a subheading or a selection between Turkish and academic English. Citations, footnotes, figures, tables and heading levels are preserved; decimal and statistical notation (Ort./SS ↔ M/SD) is adapted, numbers never change. You can choose American or British English. The **Glossary** keeps your field’s equivalents (e.g. öz yeterlik → self-efficacy) consistent. The pre-translation version is kept in the history. The **Language check** tab suggests spelling, grammar, punctuation and academic tone fixes one by one, which you can apply in one click. Translation and checks count towards your monthly AI allowance; for professional proofreading before journal submission you can get expert support.",
+          tr: "Evet. Çalışma alanında **Araçlar → Dil ve çeviri** (veya metni seçince çıkan balondaki **Çevir**) bir bölümü, alt başlığı ya da seçili metni Türkçe ↔ İngilizce akademik dile çevirir. Atıflar, dipnotlar, şekiller, tablolar ve başlık düzeyleri olduğu gibi korunur; ondalık ve istatistik gösterimi (Ort./SS ↔ M/SD) hedef dile uyarlanır, sayılar değişmez. Amerikan veya İngiliz İngilizcesi seçilebilir. **Terim sözlüğü** alanınıza özgü karşılıkları (ör. öz yeterlik → self-efficacy) her çeviride aynı tutar. Çeviri öncesi hâl sürüm geçmişinde saklanır. **Dil denetimi** sekmesi de yazım, dil bilgisi, noktalama ve akademik üslup hatalarını tek tek önerir; isterseniz tek tıkla uygularsınız. Çeviri ve denetim aylık yapay zekâ hakkından düşer.",
+          en: "Yes. In the workspace, **Tools → Language & translation** (or **Translate** in the bubble that appears when you select text) translates a section, a subheading or a selection between Turkish and academic English. Citations, footnotes, figures, tables and heading levels are preserved; decimal and statistical notation (Ort./SS ↔ M/SD) is adapted, numbers never change. You can choose American or British English. The **Glossary** keeps your field’s equivalents (e.g. öz yeterlik → self-efficacy) consistent. The pre-translation version is kept in the history. The **Language check** tab suggests spelling, grammar, punctuation and academic tone fixes one by one, which you can apply in one click. Translation and checks count towards your monthly AI allowance.",
         },
       },
       {
@@ -406,14 +406,6 @@ export const FAQ: FaqGroup[] = [
         a: {
           tr: "Bir bölüm yazarken asistan önce kaynak gerekip gerekmediğine karar verir, gerekirse veri tabanlarında arar, bulduğu kaynakları doğrular ve açık erişimli tam metinleri okur; sonra yazar. Bu adımlar kaliteyi ve doğruluğu artırır ama 1–2 dakika sürebilir. Hangi adımda olduğu ekranda ilerleme çubuğuyla gösterilir.",
           en: "When writing a section, the assistant first decides whether sources are needed, searches databases if so, verifies the sources and reads open-access full texts, then writes. These steps improve quality and accuracy but can take 1–2 minutes. The current step is shown with a progress bar.",
-        },
-      },
-      {
-        id: "uzman",
-        q: { tr: "Yapay zekâ yetmediğinde bir insandan yardım alabilir miyim?", en: "Can I get help from a person when AI isn’t enough?" },
-        a: {
-          tr: "Evet. Akademik dil ve redaksiyon, istatistik danışmanlığı, çeviri ve biçim kontrolü için iş ortağımız dermanlik.com.tr üzerinden uzman desteği alabilirsiniz (“Uzman desteği” sayfası). Bu hizmetler metninizin düzeltilmesi ve danışmanlık içindir; çalışmanın başkası tarafından yazılması kurumların etik kurallarına aykırıdır.",
-          en: "Yes. For academic editing, statistics consulting, translation and formatting checks you can get expert support through our partner dermanlik.com.tr (see the “Expert support” page). These services are for editing and consulting; having your work written by someone else violates institutions’ ethical rules.",
         },
       },
       {

@@ -14,7 +14,6 @@ import { Modal } from "./ui/primitives";
 import { useToast } from "./ui/toast";
 import { api, openUpgrade } from "@/lib/client";
 import { createBrowser } from "@/lib/supabase/browser";
-import { expertUrl } from "@/lib/expert";
 import { GiftBox } from "@/components/gift-box";
 import { NotificationBell } from "@/components/notifications";
 import { deviceHash } from "@/lib/device-client";
@@ -92,9 +91,6 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
               </Link>
             );
           })}
-          <a href={expertUrl(undefined, "app-menu")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-500 transition-colors hover:text-ink-900">
-            <GraduationCap className="h-[18px] w-[18px]" /><span>{t("Uzman desteği")}</span><ExternalLink className="ml-auto h-3.5 w-3.5 opacity-60" />
-          </a>
         </nav>
       </div>
       <div className="mt-auto space-y-2 p-3">

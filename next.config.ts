@@ -47,6 +47,13 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["pdfkit", "unpdf", "mammoth", "read-excel-file", "unzipper"],
   outputFileTracingIncludes: { "/api/projects/[id]/export": ["./assets/fonts/**"], "/api/og": ["./assets/fonts/**", "./public/brand/**"] },
   experimental: { serverActions: { bodySizeLimit: "2mb" } },
+  // Kaldırılan sayfalar: eski bağlantılar ve arama motoru kayıtları ana sayfaya kalıcı yönlenir
+  async redirects() {
+    return [
+      { source: "/uzman-destegi", destination: "/", permanent: true },
+      { source: "/en/uzman-destegi", destination: "/en", permanent: true },
+    ];
+  },
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },

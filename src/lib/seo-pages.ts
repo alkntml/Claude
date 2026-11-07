@@ -114,14 +114,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     keywords: { tr: ["üniversite yapay zeka lisansı", "enstitü tez yazım aracı", "kurumsal akademik yazılım"], en: ["university AI writing licence", "institutional academic writing software", "graduate school thesis tool"] },
     tagline: { tr: "Kurumunuz için toplu lisans", en: "Licences for your institution" },
   },
-  "/uzman-destegi": {
-    title: { tr: "Uzman Desteği — Redaksiyon, İstatistik, Çeviri | Academiana", en: "Expert Support — Editing, Statistics, Translation | Academiana" },
-    description: {
-      tr: "Akademik dil ve redaksiyon, istatistik danışmanlığı, akademik çeviri ve biçim kontrolü için uzman desteği. Yapay zekânın yetmediği yerde insan uzmanlar.",
-      en: "Expert help with academic editing, statistics consulting, academic translation and formatting checks — human experts where AI is not enough.",
-    },
-    keywords: { tr: ["tez redaksiyon", "istatistik danışmanlığı", "akademik çeviri", "tez biçim kontrolü"], en: ["academic editing service", "statistics consulting thesis", "academic translation Turkish English"] },
-  },
+
   "/yardim": {
     title: { tr: "Yardım Merkezi — Kullanım Rehberleri | Academiana", en: "Help Center — How-to Guides | Academiana" },
     description: {

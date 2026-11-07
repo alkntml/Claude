@@ -568,3 +568,7 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Kritik ders: TipTap 3 `useEditor` ayarlarını ve BubbleMenu’nün `options`/`shouldShow` değerlerini her çizimde karşılaştırır; her çizimde yeni nesne verilirse editör yeniden ayarlanır → işlem → yeniden çizim → sonsuz döngü (React #185, boş ekran). Uzantılar/içerik/editorProps ilk çizimde bir kez oluşturulur (useRef), BubbleMenu değerleri modül düzeyinde sabittir.
 - vitest 5 ile esbuild artık dolaylı gelmediği için demo derlemesine açık geliştirme bağımlılığı olarak eklendi. Tarayıcıda (demo) yazma, geri al, kalın, tablo, atıf görünümü, seçim balonu ve bölüm değiştirme denendi.
 
+### D117 — Uzman desteği kaldırıldı
+- Kullanıcı kararı: “Uzman desteği” (dermanlik.com.tr yönlendirmesi) siteden tamamen kaldırıldı: /uzman-destegi sayfası, üst menü, alt bilgi, uygulama sol menüsü, çalışma alanı mobil menüsü, Dışa aktar menüsündeki bağlantı, istatistik penceresindeki “İstatistik danışmanlığı” bağlantısı, SSS maddesi ve SSS/blog içindeki atıflar, asistan rehberi, SEO/site haritası kayıtları, lib/expert.ts ve testi.
+- Eski adres (/uzman-destegi, /en/uzman-destegi) ana sayfaya kalıcı (308) yönlenir; arama motoru kaydı boşa düşmez.
+

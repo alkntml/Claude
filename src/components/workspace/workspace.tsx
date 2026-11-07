@@ -30,7 +30,6 @@ import { sourceRowToItemClient } from "@/lib/sources/row";
 import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 import { AssistantPanel } from "./assistant";
 import { CitationContext } from "./citation-context";
-import { expertUrl } from "@/lib/expert";
 import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
 import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./panels";
 import { ProjectSources, ResearchModal } from "./sources";
@@ -1106,7 +1105,6 @@ function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, 
                 {isOwner && <ShareButton projectId={projectId} variant="row" />}
                 {canEdit && <ToolsMenu onPick={(id) => { setOpen(false); onTool(id); }} workType={workType} variant="rows" planId={planId} />}
                 <button onClick={() => { setOpen(false); onSettings(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Settings2 className="h-5 w-5 text-ink-500" /> {t("Proje ayarları")}</button>
-                <a href={expertUrl(undefined, "workspace")} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><GraduationCap className="h-5 w-5 text-violet-600" /> {t("Uzman desteği")}<ExternalLink className="ml-auto h-4 w-4 text-ink-400" /></a>
                 <button onClick={() => { setOpen(false); onTour(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><HelpCircle className="h-5 w-5 text-brand-600" /> {t("Rehberli tur")}</button>
                 <div className="flex items-center justify-between rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800">{t("Dil")} <LanguageSwitch /></div>
               </div>
@@ -1176,7 +1174,6 @@ function ExportMenu({ onExport, stages, onFormat, onPresentation, onJournals, pr
               {blocked && <p className="px-3 pb-1 text-[11.5px] text-amber-700">{t("Aktarılacak en az bir bölüm seçin.")}</p>}
               <button onClick={() => { setOpen(false); onPresentation(); }} disabled={presenting} className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50 disabled:opacity-50">{t("Savunma sunumu (.pptx)")}{presenting && <Loader2 className="h-4 w-4 animate-spin" />}</button>
               <button onClick={() => { setOpen(false); onJournals(); }} className="flex w-full items-center rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50">{t("Dergi önerisi ve ön yazı")}</button>
-              <a href={expertUrl("bicim", "export-menu")} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13.5px] text-ink-700 transition hover:bg-ink-50">{t("Uzman desteği (redaksiyon, çeviri, biçim)")}<ExternalLink className="h-3.5 w-3.5 text-ink-400" /></a>
               <button onClick={() => { setOpen(false); onFormat(); }} className="mt-1 flex w-full items-center gap-2 rounded-xl border-t border-ink-100 px-3 py-2 text-left text-[13.5px] font-medium text-brand-700 transition hover:bg-brand-50"><Settings2 className="h-4 w-4" /> {t("Biçim ve kapak ayarları")}</button>
               <p className="px-3 pb-1.5 pt-1 text-[11px] text-ink-400">{t("Kapak, içindekiler, numaralandırma, dipnotlar ve kaynakça eklenir.")}</p>
             </motion.div>

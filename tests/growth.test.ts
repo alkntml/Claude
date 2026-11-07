@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { discounted, emailMatchesDomain, higherPlan, isStudentEmail } from "@/lib/pricing";
-import { expertUrl } from "@/lib/expert";
 
 describe("öğrenci indirimi ve kurum paketi", () => {
   it("üniversite e-postasını tanır", () => {
@@ -27,11 +26,5 @@ describe("öğrenci indirimi ve kurum paketi", () => {
     expect(higherPlan("free", "premium")).toBe("premium");
     expect(higherPlan("premium", "pro")).toBe("premium");
     expect(higherPlan("basic", null)).toBe("basic");
-  });
-  it("uzman desteği bağlantısı dermanlik.com.tr'ye UTM ile gider", () => {
-    const u = new URL(expertUrl("istatistik", "analysis"));
-    expect(u.host).toBe("dermanlik.com.tr");
-    expect(u.searchParams.get("utm_source")).toBe("akademi-ai");
-    expect(u.searchParams.get("utm_campaign")).toBe("istatistik");
   });
 });

@@ -385,7 +385,7 @@ A p value alone is not enough. Report the test statistic, degrees of freedom, p 
 
 ## Statistics with Academiana
 
-In Academiana’s statistics tool you upload your data and choose an analysis: descriptives and normality, t-tests, ANOVA, Mann-Whitney, Kruskal-Wallis, correlation, regression, chi-square and Cronbach’s alpha. Calculations run on the server using established formulas and results come back as APA 7 tables with an interpretation sentence. If you are unsure which test to use, you can also reach expert statistics consulting.`,
+In Academiana’s statistics tool you upload your data and choose an analysis: descriptives and normality, t-tests, ANOVA, Mann-Whitney, Kruskal-Wallis, correlation, regression, chi-square and Cronbach’s alpha. Calculations run on the server using established formulas and results come back as APA 7 tables with an interpretation sentence.`,
   },
   "akademik-makale-nasil-yazilir": {
     slug: "how-to-write-and-publish-a-research-paper",

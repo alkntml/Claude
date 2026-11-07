@@ -8,7 +8,7 @@
 export const APP_GUIDE = `ACADEMIANA KULLANIM REHBERİ (menü ve düğme adları arayüzdekiyle aynıdır; tırnak içindekiler düğme/menü adıdır)
 
 A) GİRİŞ YAPMADAN (herkese açık site)
-- Üst menü: “Özellikler”, “Nasıl çalışır”, “Veri kaynakları”, “Ücretsiz araçlar”, “Örnekler”, “Fiyatlar”, “Kurumlar”, “Uzman desteği”, “Blog”, “SSS”; sağda “Giriş yap” ve “Ücretsiz başla” (kayıt). Giriş yapmışsanız “Çalışma alanım”.
+- Üst menü: “Özellikler”, “Nasıl çalışır”, “Veri kaynakları”, “Ücretsiz araçlar”, “Örnekler”, “Fiyatlar”, “Kurumlar”, “Blog”, “SSS”; sağda “Giriş yap” ve “Ücretsiz başla” (kayıt). Giriş yapmışsanız “Çalışma alanım”.
 - Alt bilgide ayrıca: Yardım merkezi, Akademik dürüstlük, Gizlilik, Kullanım koşulları.
 - Şifre unutulduysa: “Giriş yap” sayfasında “Şifremi unuttum” → e-postanıza gelen bağlantıyla yeni şifre.
 - Ücretsiz araçlar (giriş gerekmez; “Ücretsiz araçlar” menüsü): Kaynakça oluşturucu (DOI veya başlıktan), Atıf stili dönüştürücü (düz metin, BibTeX, RIS), Örneklem hesaplayıcı (Cochran, Yamane), Cronbach alfa hesaplayıcı, Anket oluşturucu, Uydurma kaynak kontrolü.
@@ -23,7 +23,6 @@ B) UYGULAMA İÇİ SOL MENÜ (giriş yaptıktan sonra; telefonda sol üstteki �
 - “Konu bulma”: konu/anahtar kelime ve isteğe bağlı bilim dalı → “Keşfet”: yıllara göre yayın sayısı, alt konular ve eğilimleri, Türkiye’den yayınlar, en çok atıf alan çalışmalar, “Verilere dayalı konu önerileri” → “Bu konuyla tez başlat”.
 - “Hesap ve abonelik”: “Profil” (ad soyad, varsayılan atıf stili), “Şifremi değiştir”, “Bu ayki kullanım” (yapay zekâ istekleri, kaynak taramaları, depolama, aktif projeler), “Paketler” → “Yükselt” → “WhatsApp ile yükselt” (ödeme WhatsApp üzerinden), “Süreyi uzat”, “Arkadaşını davet et” (davet bağlantısı), “Kurum kodu” ile kurum lisansına katılma / “Kurumdan ayrıl”, “Verilerim (KVKK / GDPR)”: “Verilerimi indir”, “Veri talebi oluştur (KVKK)”, “Hesabımı sil”.
 - “Kurumum” (yalnızca kurum yöneticilerine görünür): katılım kodu, üyeler ve kullanımları, “Kurumdan çıkar”.
-- “Uzman desteği”: redaksiyon, çeviri, biçim desteği için iletişim.
 - Logonun yanındaki zil simgesi (telefonda üst çubukta): “Bildirimler” (ör. davet ödülü kazandığınızda); kırmızı sayı okunmamış bildirimleri gösterir.
 - Menünün altında: dil seçici (Türkçe/English), ay/güneş simgesi (gece/gündüz modu), “Davet et, kazan”, “Geri bildirim” (görüş ve hata bildirimi), dişli simgesi (Hesap), “Çıkış yap”.
 
@@ -56,7 +55,7 @@ Sağ taraf — sekmeler (simgelerle): Asistan, Kaynaklar (sayıyla), Hafıza (be
 - “Ortak yazarlar”: çalışmayı birlikte yazacağınız kişileri e-postayla davet edin (Pro, Premium ve Tek Proje; en fazla 5 kişi). Roller: “Ortak yazar” (yazar, kaynak ekler, yapay zekâyı kendi paketiyle kullanır) ve “Yorumcu” (okur, yorum yazar). “Davet bağlantısı oluştur” → bağlantı kopyalanır, WhatsApp/e-postayla iletilir; kişi aynı e-postayla giriş yapıp “Daveti kabul et”e basar. Kim hangi bölümdeyse adı bölüm listesinde ve editörün üstünde görünür. Aynı bölümü aynı anda kaydederseniz “Onun sürümünü yükle” / “Benim sürümümle devam et” sorulur; diğer sürüm Geçmiş’te saklanır. Paylaşılan çalışmalar kontrol panelinde “Benimle paylaşılan çalışmalar” altındadır.
 - “Paylaş” → “Danışmanla paylaş”: süreli, salt okunur bağlantı; “Yorumlara izin ver”; “Bağlantı oluştur”, “Kopyala”, “İptal et”. Danışmanın yorumları Yorum sekmesine düşer.
 - “Araçlar”: “Dil ve çeviri” (sekmeler: “Çeviri” — Türkçe ↔ İngilizce akademik çeviri, Amerikan/İngiliz İngilizcesi, atıf/dipnot/şekil korunur, “Seçimin yerine koy”/“Metni çeviriyle değiştir”/“Sonuna ekle”; “Dil denetimi” — yazım, dil bilgisi, noktalama, üslup önerileri, “Uygula”/“Tümünü uygula”; “Terim sözlüğü” — çalışmaya özel terim karşılıkları), “Araştırmalar ne diyor?” (bir araştırma sorusuna gerçek makale özetlerinden numaralı cevap, uzlaşı göstergesi ve makaleleri çalışmaya ekleme), “Word’den içe aktar”, “Grafik oluştur”, “İstatistik analizi”, “Anket oluştur”, “Hakem yorumlarına cevap” (makale türlerinde), “Savunma provası”. Pakete göre kilitli araçta yükseltme penceresi açılır.
-- “Dışa aktar”: “Tüm çalışma” veya “Seçili bölümler” → Word (.docx), PDF, “Düz metin (.txt)” (kapak, içindekiler, numaralandırma, dipnotlar ve kaynakça otomatik); “Savunma sunumu (.pptx)”; “Dergi önerisi ve ön yazı”; “Biçim ve kapak ayarları”; “Uzman desteği (redaksiyon, çeviri, biçim)”.
+- “Dışa aktar”: “Tüm çalışma” veya “Seçili bölümler” → Word (.docx), PDF, “Düz metin (.txt)” (kapak, içindekiler, numaralandırma, dipnotlar ve kaynakça otomatik); “Savunma sunumu (.pptx)”; “Dergi önerisi ve ön yazı”; “Biçim ve kapak ayarları”.
 - “?” simgesi: “Rehberli tur”. Ayar (sürgü) simgesi: “Proje ayarları” (başlık, araştırma konusu, disiplin, anahtar kelimeler, dil; “Kılavuz yükle” ile üniversite/dergi yazım kılavuzu; “Bölüm yapısı öner”; “Proje durumu”: “Tamamlandı olarak işaretle”, “Arşivle”; “Projeyi sil”).
 - Telefonda: alttaki sekmeler “Bölümler”, “Metin”, “Asistan”, “Kaynaklar”, “Diğer”; üstteki “Daha fazla” (⋯) menüsünde atıf stili, kalite kontrol, araçlar, proje ayarları ve rehberli tur.
 

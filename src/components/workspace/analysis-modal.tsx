@@ -8,7 +8,6 @@ import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 import { reportToMarkdown, type AnalysisReport } from "@/lib/stats/apa";
 import { Markdown } from "./markdown";
-import { expertUrl } from "@/lib/expert";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Kind = "describe" | "ttest_ind" | "ttest_paired" | "ttest_one" | "anova" | "mannwhitney" | "kruskal" | "correlation" | "regression" | "chisquare" | "alpha";
@@ -117,7 +116,6 @@ export function AnalysisModal({ open, onClose, files, language, tableNo, style, 
           )}
           <div className="flex flex-wrap items-center gap-3">
             <Button onClick={run} loading={busy} disabled={!cols}><BarChart3 className="h-4 w-4" /> {t("Analizi çalıştır")}</Button>
-            <a href={expertUrl("istatistik", "analysis")} target="_blank" rel="noopener noreferrer" className="text-[13px] text-ink-500 hover:text-brand-700">{t("Hangi analizi seçeceğinizden emin değil misiniz? İstatistik danışmanlığı →")}</a>
           </div>
           {report && (
             <div className="rounded-2xl border border-ink-100 bg-white p-4">

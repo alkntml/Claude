@@ -140,7 +140,7 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
                 {mode === "signup" && (
                   <label className="flex items-start gap-2.5 text-[13px] text-ink-600">
                     <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-ink-300 text-brand-600" />
-                    <span><Link href="/gizlilik" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("KVKK aydınlatma metnini")}</Link> {t("ve")} <Link href="/kosullar" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("kullanım koşullarını")}</Link> {t("okudum, kabul ediyorum.")}</span>
+                    <span><Link href="/gizlilik" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("güvenlik ve gizlilik politikasını")}</Link> {t("ve")} <Link href="/kosullar" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("kullanım koşullarını")}</Link> {t("okudum, kabul ediyorum.")}</span>
                   </label>
                 )}
                 {error && <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</motion.p>}

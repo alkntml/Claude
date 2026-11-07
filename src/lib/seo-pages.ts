@@ -124,12 +124,12 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     keywords: { tr: ["Academiana nasıl kullanılır", "yardım"], en: ["how to use Academiana", "help"] },
   },
   "/gizlilik": {
-    title: { tr: "Gizlilik Politikası ve KVKK Aydınlatma Metni | Academiana", en: "Privacy Policy | Academiana" },
+    title: { tr: "Güvenlik ve Gizlilik Politikası | Academiana", en: "Security and Privacy Policy | Academiana" },
     description: {
-      tr: "Academiana hangi verileri işler, nerede saklar ve kimlerle paylaşır? KVKK kapsamındaki haklarınız ve verilerinizi silme, indirme seçenekleri.",
-      en: "What data Academiana processes, where it is stored and who it is shared with. Your rights and how to download or delete your data.",
+      tr: "Academiana verilerinizi ve akademik çalışmalarınızı nasıl korur: şifreli iletişim, RLS ile izolasyon, Frankfurt’ta saklama, yapay zekâ aktarımı ve haklarınız.",
+      en: "How Academiana protects your data and academic work: encrypted connections, RLS isolation, Frankfurt hosting, AI data transfer and your rights.",
     },
-    keywords: { tr: ["KVKK aydınlatma metni", "gizlilik politikası"], en: ["privacy policy", "data protection"] },
+    keywords: { tr: ["gizlilik politikası", "güvenlik politikası", "KVKK aydınlatma metni"], en: ["privacy policy", "security policy", "data protection"] },
   },
   "/kosullar": {
     title: { tr: "Kullanım Koşulları | Academiana", en: "Terms of Use | Academiana" },

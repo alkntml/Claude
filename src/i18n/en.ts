@@ -3445,4 +3445,6 @@ export const EN: Record<string, string> = {
   "LaTeX ve Overleaf": "LaTeX and Overleaf",
   "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır.": "Your work is exported to LaTeX as .tex and .bib files; citations become biblatex commands and it opens in Overleaf in one click.",
   "LaTeX / Overleaf": "LaTeX / Overleaf",
+  "Güvenlik ve Gizlilik": "Security & Privacy",
+  "güvenlik ve gizlilik politikasını": "the security and privacy policy",
 };

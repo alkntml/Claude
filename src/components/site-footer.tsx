@@ -44,7 +44,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold text-ink-800">{t("Yasal")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-ink-500">
-            <li><Link href="/gizlilik" className="hover:text-ink-900">{t("Gizlilik ve KVKK")}</Link></li>
+            <li><Link href="/gizlilik" className="hover:text-ink-900">{t("Güvenlik ve Gizlilik")}</Link></li>
             <li><Link href="/kosullar" className="hover:text-ink-900">{t("Kullanım koşulları")}</Link></li>
             <li><Link href="/akademik-durustluk" className="hover:text-ink-900">{t("Akademik dürüstlük ilkeleri")}</Link></li>
             <li><Link href="/yontem" className="hover:text-ink-900">{t("Yöntem ve şeffaflık")}</Link></li>

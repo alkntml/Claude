@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D135 (2026-11-07): Ana sayfa “Özellikler” bölümü kapsamlı vitrine dönüştü (6 sekme, temsilî görseller, altyapı şeması)
 - D132–D134 (2026-11-07): Gelişmiş PDF okuma (üst/alt bilgi, bölüm tanıma, kaynakça ayırma, taranmış PDF) + çoklu belge analizi (Birlikte analiz et: sor/karşılaştır); iddia denetiminde “Kaynakla çelişiyor” ve diğer kaynaklarla destek/çelişki kontrolü + CSV; PRISMA: bulanık yinelenen, çift değerlendirici + kappa, veri çıkarma, kalite değerlendirmesi, yöntem/sonuç metni. Migration 36 çalıştırılmalı
 - D131 (2026-11-07): Kapsam ifadesi “16 veri tabanında 250 milyondan fazla yayın” sitenin tüm ilgili yerlerinde
 - D130 (2026-11-07): CORE veri kaynağı kaldırıldı; 16 anahtarsız veri tabanı

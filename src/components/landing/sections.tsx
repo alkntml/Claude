@@ -1,45 +1,11 @@
 "use client";
 import { useT } from "@/i18n/client";
-import { BookCheck, Brain, CheckCircle2, Users, FileDown, FileSearch2, Layers3, Library, ListChecks, Lock, Map, ShieldCheck, Sparkles, Workflow } from "lucide-react";
+import { BookCheck, Brain, CheckCircle2, Users, FileDown, Layers3, Library, ListChecks, Lock, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 import { usePrice } from "@/components/price-context";
 import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan } from "@/lib/pricing";
-
-export function Pillars() {
-  const { t } = useT();
-  const items = [
-    { icon: Map, title: "Akademik süreç yönetimi", text: "Çalışma türünüze, seviyenize ve yönteminize göre oluşan yol haritası. Her aşamanın kendine özel bir asistanı ve kuralları var. Bölümler arasında geçerken proje hafızası korunur.", points: ["Dinamik aşama yapısı", "Üniversite kılavuzundan bölüm önerisi", "Ortak yazarlarla birlikte yazım"] },
-    { icon: FileSearch2, title: "Gerçek bilimsel araştırma", text: "OpenAlex, Crossref, PubMed, arXiv, DOAJ, ERIC ve diğer veri tabanlarında eşzamanlı tarama. DOI, PMID ve arXiv kimlikleri doğrulanır.", points: ["İddia denetimi: her atıf kaynağında, pasaj ve sayfasıyla", "PRISMA 2020 sistematik derleme ve akış şeması", "Literatür haritası ve eksik kaynak önerisi"] },
-    { icon: BookCheck, title: "Akademik yazım otomasyonu", text: "Atıflar metne yazı olarak değil, kaynağa bağlı canlı öğeler olarak eklenir. Stili değiştirdiğinizde bütün metin ve kaynakça yeni stile dönüşür.", points: ["APA, MLA, Chicago, IEEE ve 5 stil daha", "Atıfları koruyan TR ↔ EN akademik çeviri", "Dil denetimi ve yazarken otomatik tamamlama"] },
-  ];
-  return (
-    <section id="ozellikler" className="relative py-24">
-      <div className="mx-auto max-w-6xl px-6">
-        <FadeIn className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Üç temel güç")}</p>
-          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">{t("Metin üretmekten öte:")} <span className="italic">{t("yönlendirilen")}</span> {t("bir akademik süreç")}</h2>
-        </FadeIn>
-        <div className="mt-14 grid gap-5 lg:grid-cols-3">
-          {items.map((it, i) => (
-            <FadeIn key={it.title} delay={i * 0.08}>
-              <div className="group relative h-full overflow-hidden rounded-3xl border border-ink-100 bg-white p-7 shadow-soft transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgb(39_71_220/0.35)]">
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400 to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ink-900 text-white shadow-lg shadow-ink-900/20"><it.icon className="h-5 w-5" /></span>
-                <h3 className="mt-5 text-xl font-semibold text-ink-900">{t(it.title)}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-500">{t(it.text)}</p>
-                <ul className="mt-5 space-y-2">
-                  {it.points.map((p) => <li key={p} className="flex items-center gap-2 text-sm text-ink-700"><CheckCircle2 className="h-4 w-4 text-brand-500" /> {t(p)}</li>)}
-                </ul>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export function HowItWorks() {
   const { t } = useT();

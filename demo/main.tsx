@@ -14,7 +14,8 @@ import { FilesView } from "@/components/dashboard/files";
 import { LibraryView } from "@/components/dashboard/library";
 import { NewProjectWizard } from "@/components/dashboard/new-project";
 import { Hero } from "@/components/landing/hero";
-import { HowItWorks, Pillars, PricingCards, Principles, SourcesStrip } from "@/components/landing/sections";
+import { HowItWorks, PricingCards, Principles, SourcesStrip } from "@/components/landing/sections";
+import { FeatureShowcase } from "@/components/landing/feature-showcase";
 import { WorkTypePicker } from "@/components/landing/work-type-picker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -82,7 +83,7 @@ function Landing() {
             <WorkTypePicker signedIn />
           </div>
         </section>
-        <Pillars />
+        <FeatureShowcase />
         <HowItWorks />
         <SourcesStrip />
         <Principles />

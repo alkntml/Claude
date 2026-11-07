@@ -6,7 +6,8 @@ import { PAGE_SEO } from "@/lib/seo-pages";
 import { localizedPath } from "@/lib/seo";
 import { getPost, localizePost, postPath } from "@/lib/blog";
 import { Hero } from "@/components/landing/hero";
-import { HowItWorks, Pillars, PricingCards, Principles, SourcesStrip } from "@/components/landing/sections";
+import { HowItWorks, PricingCards, Principles, SourcesStrip } from "@/components/landing/sections";
+import { FeatureShowcase } from "@/components/landing/feature-showcase";
 import { WorkTypePicker } from "@/components/landing/work-type-picker";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -66,7 +67,7 @@ export default async function Home() {
             <WorkTypePicker signedIn={signedIn} />
           </div>
         </section>
-        <Pillars />
+        <FeatureShowcase />
         <HowItWorks />
         <SourcesStrip />
         <Principles />

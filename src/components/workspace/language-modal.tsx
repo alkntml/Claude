@@ -112,7 +112,7 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
     if (scope === "selection" && selectionRange) {
       if (mode === "replace") chain.insertContentAt(selectionRange, content).run();
       else { const $to = editor.state.doc.resolve(Math.min(selectionRange.to, editor.state.doc.content.size)); chain.insertContentAt($to.depth >= 1 ? $to.after(1) : $to.pos, content).run(); }
-    } else if (mode === "replace") chain.setContent({ type: "doc", content }, true).run();
+    } else if (mode === "replace") chain.setContent({ type: "doc", content }, { emitUpdate: true }).run();
     else chain.insertContentAt(editor.state.doc.content.size, content).run();
     // Önerilen terimler sözlüğe eklenir
     const add = result.terms.filter((_, i) => pickedTerms.has(i));

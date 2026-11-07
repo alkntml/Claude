@@ -1,5 +1,6 @@
 "use client";
-import { BubbleMenu, type Editor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import { Languages, Maximize2, Minimize2, SpellCheck2, Sparkles, WandSparkles } from "lucide-react";
 import { useT } from "@/i18n/client";
 
@@ -7,6 +8,14 @@ import { useT } from "@/i18n/client";
  * Seçili metin balonu (D111): metin seçilince hemen üstünde açılır. Öğrencinin en sık yaptığı işler tek tıkla:
  * çeviri, dil denetimi, akademik üslup, kısaltma, genişletme. Atıf düğümü seçiliyken ve tek kelimeden kısa seçimde görünmez.
  */
+// TipTap 3: bu iki değer her çizimde aynı nesne olmalı; yeni nesne verilirse balon her çizimde güncellenir ve sonsuz döngü oluşur
+const BUBBLE_OPTIONS = { placement: "top" as const, offset: 8, flip: true, shift: { padding: 12 } };
+const shouldShow = ({ editor: e, from, to }: { editor: Editor; from: number; to: number }) => {
+  if (!e.isEditable || from === to) return false;
+  if (e.isActive("citation") || e.isActive("figure")) return false;
+  return e.state.doc.textBetween(from, to, " ").trim().length >= 3;
+};
+
 export function SelectionBubble({ editor, onLanguage, onAssistant }: {
   editor: Editor;
   onLanguage: (tab: "translate" | "proofread", range: { from: number; to: number }) => void;
@@ -18,12 +27,8 @@ export function SelectionBubble({ editor, onLanguage, onAssistant }: {
   return (
     <BubbleMenu
       editor={editor}
-      tippyOptions={{ duration: 120, placement: "top", maxWidth: "calc(100vw - 24px)" }}
-      shouldShow={({ editor: e, from, to }) => {
-        if (!e.isEditable || from === to) return false;
-        if (e.isActive("citation") || e.isActive("figure")) return false;
-        return e.state.doc.textBetween(from, to, " ").trim().length >= 3;
-      }}
+      options={BUBBLE_OPTIONS}
+      shouldShow={shouldShow}
     >
       <div className="no-scrollbar flex max-w-[calc(100vw-24px)] items-center gap-0.5 overflow-x-auto rounded-xl border border-ink-100 bg-white p-1 shadow-xl" onMouseDown={(e) => e.preventDefault()}>
         <button type="button" className={btn} onClick={() => { const s = sel(); onLanguage("translate", s); }}><Languages className="h-4 w-4 text-brand-600" /> {t("Çevir")}</button>

@@ -1,19 +1,14 @@
 "use client";
 import { useT } from "@/i18n/client";
-import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import Table from "@tiptap/extension-table";
-import TableCell from "@tiptap/extension-table-cell";
-import TableHeader from "@tiptap/extension-table-header";
-import TableRow from "@tiptap/extension-table-row";
-import Underline from "@tiptap/extension-underline";
+import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import type { AnyExtension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import {
   WandSparkles, Bold, Heading2, Heading3, Heading4, Italic, List, ListOrdered, Minus, Quote, Redo2, Rows3, StickyNote, Table2, Underline as U, Undo2, Columns3, Trash2, ImageIcon,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { cn } from "@/components/ui/cn";
 import type { JSONNode } from "@/lib/editor/doc";
 import { Citation, Figure, Footnote } from "./nodes";
@@ -21,9 +16,12 @@ import { Citation, Figure, Footnote } from "./nodes";
 /** Çalışma alanı editörünün düğüm ve biçim uzantıları (önizleme editörleri de aynısını kullanır) */
 export function academicExtensions(placeholder?: () => string) {
   return [
-    StarterKit.configure({ heading: { levels: [2, 3, 4] } }),
-    Underline,
-    Link.configure({ openOnClick: false, autolink: true, protocols: ["https"], HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } }),
+    // TipTap 3: bağlantı ve altı çizili StarterKit’e dahil; sona otomatik boş paragraf eklenmez (kayıtlı belgeler değişmesin)
+    StarterKit.configure({
+      heading: { levels: [2, 3, 4] },
+      link: { openOnClick: false, autolink: true, protocols: ["https"], HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } },
+      trailingNode: false,
+    }),
     ...(placeholder ? [Placeholder.configure({ placeholder })] : []),
     Table.configure({ resizable: false }),
     TableRow,
@@ -37,21 +35,31 @@ export function academicExtensions(placeholder?: () => string) {
 
 /** Salt okunur belge önizlemesi (çeviri sonucu vb.); atıflar çalışma alanındaki stile göre görünür */
 export function DocPreview({ doc, className }: { doc: JSONNode; className?: string }) {
-  const editor = useEditor({ immediatelyRender: false, editable: false, extensions: academicExtensions(), content: doc as object, editorProps: { attributes: { class: cn("prose-academic", className) } } }, [JSON.stringify(doc)]);
+  const key = JSON.stringify(doc);
+  // TipTap 3: ayarlar her çizimde aynı nesne olmalı; aksi hâlde editör her çizimde yeniden ayarlanır
+  const options = useMemo(() => ({ immediatelyRender: false, editable: false, extensions: academicExtensions(), content: JSON.parse(key) as object, editorProps: { attributes: { class: cn("prose-academic", className) } } }), [key, className]);
+  const editor = useEditor(options, [key]);
   return <EditorContent editor={editor} />;
 }
 
 export function useAcademicEditor(opts: { content: JSONNode | null; placeholder: string; onUpdate: (doc: JSONNode, editor: Editor) => void; onSelection?: (text: string) => void; extensions?: AnyExtension[] }) {
   const cb = useRef(opts);
   cb.current = opts;
+  // TipTap 3 ayarları her çizimde karşılaştırır; uzantılar, içerik ve editorProps ilk çizimde bir kez oluşturulur.
+  // (İçerik sonradan setContent ile değişir; yer tutucu metni cb üzerinden güncel okunur.)
+  const stable = useRef<{ extensions: AnyExtension[]; content: object; editorProps: { attributes: Record<string, string> } } | null>(null);
+  if (!stable.current) {
+    stable.current = {
+      extensions: [...academicExtensions(() => cb.current.placeholder), ...(opts.extensions ?? [])],
+      content: (opts.content as object) ?? { type: "doc", content: [{ type: "paragraph" }] },
+      editorProps: { attributes: { class: "prose-academic numbered min-h-[45vh] pb-24 sm:min-h-[55vh] sm:pb-40", spellcheck: "true" } },
+    };
+  }
   return useEditor({
     immediatelyRender: false,
-    extensions: [
-      ...academicExtensions(() => cb.current.placeholder),
-      ...(opts.extensions ?? []),
-    ],
-    content: (opts.content as object) ?? { type: "doc", content: [{ type: "paragraph" }] },
-    editorProps: { attributes: { class: "prose-academic numbered min-h-[45vh] pb-24 sm:min-h-[55vh] sm:pb-40", spellcheck: "true" } },
+    // Araç çubuğundaki etkin düğmeler her işlemde güncellensin (TipTap 3’te varsayılan kapalı)
+    shouldRerenderOnTransaction: true,
+    ...stable.current,
     onUpdate: ({ editor }) => cb.current.onUpdate(editor.getJSON() as JSONNode, editor),
     onSelectionUpdate: ({ editor }) => {
       const { from, to } = editor.state.selection;

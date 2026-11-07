@@ -250,7 +250,7 @@ export function Workspace(props: Props) {
     baseRef.current = next;
     setFocus(nextFocus);
     focusRef.current = nextFocus;
-    editor.commands.setContent((nextFocus != null ? sectionDoc(next, nextFocus) : next) as object, false);
+    editor.commands.setContent((nextFocus != null ? sectionDoc(next, nextFocus) : next) as object, { emitUpdate: false });
     const text = docToPlain(next);
     setStages((l) => l.map((x) => (x.id === activeId ? { ...x, content: next, content_text: text, word_count: wordCount(text) } : x)));
     pending.current = { id: activeId, doc: next };
@@ -286,7 +286,7 @@ export function Workspace(props: Props) {
       if (d.at <= serverAt || JSON.stringify(d.doc) === JSON.stringify(st.content)) { clearDraft(st.id); continue; }
       count++;
       if (st.id === activeId) {
-        editor.commands.setContent(d.doc as object, false);
+        editor.commands.setContent(d.doc as object, { emitUpdate: false });
         pending.current = { id: st.id, doc: d.doc };
         flushRef.current({ note: t("Cihazda saklanan taslak geri yüklendi"), author: "system" });
       } else {
@@ -320,7 +320,7 @@ export function Workspace(props: Props) {
     const f = focusRef.current;
     const valid = f != null && st.content?.content?.[f]?.type === "heading" ? f : null;
     if (valid !== f) { focusRef.current = valid; setFocus(valid); }
-    editorRef.current.commands.setContent(((valid != null ? sectionDoc(st.content, valid) : st.content) ?? { type: "doc", content: [{ type: "paragraph" }] }) as object, false);
+    editorRef.current.commands.setContent(((valid != null ? sectionDoc(st.content, valid) : st.content) ?? { type: "doc", content: [{ type: "paragraph" }] }) as object, { emitUpdate: false });
   }, []);
   const presenceTick = useRef<() => void>(() => {});
   useEffect(() => {
@@ -415,7 +415,7 @@ export function Workspace(props: Props) {
     setFocus(valid);
     setActiveId(id);
     setSelection("");
-    editor?.commands.setContent((valid != null ? sectionDoc(nextDoc, valid) : nextDoc) as object, false);
+    editor?.commands.setContent((valid != null ? sectionDoc(nextDoc, valid) : nextDoc) as object, { emitUpdate: false });
     setMobilePane("editor");
     router.replace(`/proje/${project.id}?bolum=${id}`, { scroll: false });
   }
@@ -624,7 +624,7 @@ export function Workspace(props: Props) {
       const next = replaceBlockByText(fullDocRef.current(), plain, nodes);
       if (!next) return false;
       baseRef.current = next;
-      editor.commands.setContent((focusRef.current != null ? sectionDoc(next, focusRef.current) : next) as object, false);
+      editor.commands.setContent((focusRef.current != null ? sectionDoc(next, focusRef.current) : next) as object, { emitUpdate: false });
       pending.current = { id: activeId, doc: next };
       await flush({ note, author: "ai" });
       return true;
@@ -707,7 +707,7 @@ export function Workspace(props: Props) {
     catch (e) { toast({ tone: "error", title: t("Silinemedi"), detail: (e as Error).message }); return; }
     const rest = stages.filter((s) => s.id !== id);
     setStages(rest);
-    if (id === activeId && rest[0]) { setActiveId(rest[0].id); focusRef.current = null; setFocus(null); baseRef.current = rest[0].content; editor?.commands.setContent((rest[0].content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }
+    if (id === activeId && rest[0]) { setActiveId(rest[0].id); focusRef.current = null; setFocus(null); baseRef.current = rest[0].content; editor?.commands.setContent((rest[0].content as object) ?? { type: "doc", content: [{ type: "paragraph" }] }, { emitUpdate: false }); }
   }
 
   async function exportAs(format: string, stageIds?: string[]) {
@@ -1012,7 +1012,7 @@ export function Workspace(props: Props) {
                   {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={canEdit ? applyComment : undefined} isOwner={isOwner} />}
-                  {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }} />}
+                  {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, { emitUpdate: false }); }} />}
                 </motion.div>
               </AnimatePresence>
             </div>

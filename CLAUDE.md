@@ -26,7 +26,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 5. Kullanıcı verisi RLS ile izole. Service role (`adminClient`) yalnızca sunucuda; kullanırken her zaman açık `user_id`/`project_id` filtresi.
 
 ## Teknoloji
-Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · Tailwind 3 · Framer Motion · TipTap 2 (tüm @tiptap paketleri aynı sürümde tutulmalı) · Supabase (Postgres + Auth + Storage) · `@anthropic-ai/sdk` (Claude) + OpenAI (REST, isteğe bağlı) · docx · pdfkit (DejaVu fontları `assets/fonts`) · unpdf · mammoth · Vitest · PGlite (DB testleri).
+Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · Tailwind 3 · Framer Motion · TipTap 3 (tüm @tiptap paketleri aynı sürümde tutulmalı; bağlantı ve altı çizili StarterKit içinde; useEditor ayarları ve BubbleMenu `options`/`shouldShow` her çizimde AYNI nesne olmalı, yoksa sonsuz döngü — D116; `setContent(doc, { emitUpdate: false })`) · Supabase (Postgres + Auth + Storage) · `@anthropic-ai/sdk` (Claude) + OpenAI (REST, isteğe bağlı) · docx · pdfkit (DejaVu fontları `assets/fonts`) · unpdf · mammoth · Vitest · PGlite (DB testleri).
 
 ## Komutlar
 ```bash
@@ -119,7 +119,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 
 ## Güvenlik başlıkları
 - `next.config.ts`: CSP (yalnızca kendi alan adı + Supabase; çerçeve yok), HSTS, X-Frame-Options, COOP. Tarayıcıdan yeni bir dış adrese bağlanan özellik eklenirse CSP’ye eklenmeli (D106).
-- Bağımlılık açıkları `package.json` → `overrides` ile kapatıldı (postcss, sharp, image-size); zod 4.
+- Bağımlılık açıkları `package.json` → `overrides` ile kapatıldı (postcss, sharp, image-size, typescript-estree→minimatch 11); zod 4, TipTap 3, vitest 5; `npm audit` 0 açık (D116). Demo derlemesi için esbuild açık geliştirme bağımlılığı.
 
 ## Kodlama kuralları
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.

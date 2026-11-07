@@ -562,3 +562,9 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Eşzamanlılık: `project_presence` (25 sn sinyal; bölüm listesinde ve editör üstünde baş harfler), başkası kaydettiyse ve yerelde değişiklik yoksa bölüm otomatik yenilenir. Kayıtta `baseUpdatedAt`; arada başkası kaydettiyse 409 → “Onun sürümünü yükle” (sizinki sürüme) / “Benim sürümümle devam et” (onunki sürüme). Hiçbir metin kaybolmaz.
 - Sürüm ve yorumlarda `actor_id`; panelde “Benimle paylaşılan çalışmalar”. Migration 32: project_members, project_invites, project_presence, last_editor/actor_id sütunları, usage_kind autocomplete, paket kartı satırları.
 
+### D116 — Bağımlılık açıkları sıfırlandı (TipTap 3, vitest 5)
+- `npm audit`: 41 açık (39 orta, 2 kritik) → 0. TipTap 2.27 → 3.33 (mergeAttributes prototip açığı yalnızca 3.x’te kapalı); mammoth güncellendi (dizin geçişi); vitest 3 → 5 (tinypool/mocker kritik açıkları; yalnızca geliştirme aracı); typescript-eslint içindeki minimatch `overrides` ile 11.x.
+- TipTap 3 uyarlamaları: Link ve Underline artık StarterKit içinde (ayrı paketler kaldırıldı); tablo uzantıları `@tiptap/extension-table` içinden adlı içe aktarma; `trailingNode: false` (kayıtlı belgelere boş paragraf eklenmesin); `setContent(..., { emitUpdate: false })`; BubbleMenu `@tiptap/react/menus`, tippy yerine floating-ui `options`; araç çubuğu için `shouldRerenderOnTransaction: true`.
+- Kritik ders: TipTap 3 `useEditor` ayarlarını ve BubbleMenu’nün `options`/`shouldShow` değerlerini her çizimde karşılaştırır; her çizimde yeni nesne verilirse editör yeniden ayarlanır → işlem → yeniden çizim → sonsuz döngü (React #185, boş ekran). Uzantılar/içerik/editorProps ilk çizimde bir kez oluşturulur (useRef), BubbleMenu değerleri modül düzeyinde sabittir.
+- vitest 5 ile esbuild artık dolaylı gelmediği için demo derlemesine açık geliştirme bağımlılığı olarak eklendi. Tarayıcıda (demo) yazma, geri al, kalın, tablo, atıf görünümü, seçim balonu ve bölüm değiştirme denendi.
+

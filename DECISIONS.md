@@ -667,3 +667,8 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Sorun: `claim_audits` ve `review_records` tablolarında RLS yalnızca SELECT politikası içeriyor; sahip için `childAccess`/`projectAccess` RLS istemcisi döndüğünden ekleme reddediliyor, güncelleme sessizce 0 satır etkiliyordu. İddia denetimi kaydı hatayı yanlışlıkla “migration 33 gerekli” diye gösteriyordu.
 - Çözüm: `lib/server-db.ts` → `serverDb()` (sunucu anahtarı). İddia denetimi ve tüm PRISMA uçları (`review`, `screen`, `include`, `vote`, `extract`, `record`) yazmayı bununla, açık `project_id`/`user_id` filtresiyle yapar; erişim denetimi önceden `childAccess`/`projectAccess` ile yapılmış olmalı. Okumalar RLS istemcisinde kalır.
 - Migration mesajı yalnızca tablo gerçekten yoksa gösterilir; diğer hatalar olduğu gibi kaydedilir. Veritabanı değişikliği yok.
+
+### D138 — İddia denetiminde aşırı “çelişiyor” kararı
+- Gözlem: “VVIQ yalnızca görsel modaliteyi kapsar” cümlesi “Kaynakla çelişiyor” işaretlendi, oysa açıklama “karar kısmi kalır” diyordu. Neden: şemada karar alanı gerekçeden önce geliyordu (model gerekçeyi yazmadan karar veriyordu) ve “yalnızca” gibi aşırı genelleme çelişki sayılabiliyordu.
+- Çözüm: şema sırası alıntı → sayfa → açıklama → karar; istemde “daha güçlü ifade veya kaynağın belirtmediği ayrıntı çelişki değildir; şüphede contradicts seçme; karar açıklamayla tutarlı olmalı”. `guardVerdict`: kaynakta birebir doğrulanmış alıntı yoksa “contradicts” → “not_supported”.
+- `AUDIT_VERSION` (2): önceki sürümle verilmiş kararlar önbellekten kullanılmaz; “Yeniden denetle” eski sonuçları yeni kurallarla değerlendirir.

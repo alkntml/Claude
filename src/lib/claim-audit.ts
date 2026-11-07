@@ -12,7 +12,15 @@ import { mapLimit } from "@/lib/research";
 
 export interface PairInput { claimId: string; sentence: string; locator: string | null }
 export interface SourceInput { id: string; title: string; abstract: string | null; access_level: "metadata" | "abstract" | "full_text"; chunks: { content: string; page_hint: string | null }[] }
-export interface PairResult { claimId: string; sourceId: string; verdict: ClaimVerdict; explanation: string; quote: string | null; quotePage: string | null; access: SourceInput["access_level"] }
+export interface PairResult { claimId: string; sourceId: string; verdict: ClaimVerdict; explanation: string; quote: string | null; quotePage: string | null; access: SourceInput["access_level"]; /** Denetim yöntemi sürümü; eski sürüm sonuçları önbellekten kullanılmaz */ av?: number }
+
+/** Karar kuralları değişince artır: önceki denetim sonuçları yeniden değerlendirilir */
+export const AUDIT_VERSION = 2;
+
+/** “Çelişiyor” yalnızca kaynaktan birebir doğrulanmış bir alıntıyla verilebilir; yoksa “desteklenmiyor”a düşer */
+export function guardVerdict(verdict: ClaimVerdict, quoteOk: boolean): ClaimVerdict {
+  return verdict === "contradicts" && !quoteOk ? "not_supported" : verdict;
+}
 
 const KW_SCHEMA = {
   type: "object", additionalProperties: false, required: ["items"],
@@ -24,11 +32,11 @@ const VERDICT_SCHEMA = {
     items: {
       type: "array",
       items: {
-        type: "object", additionalProperties: false, required: ["id", "verdict", "explanation", "quote", "quotePage"],
+        type: "object", additionalProperties: false, required: ["id", "quote", "quotePage", "explanation", "verdict"],
         properties: {
-          id: { type: "string" },
+          // Önce kanıt ve gerekçe, karar en son (karar gerekçeyle tutarlı olsun)
+          id: { type: "string" }, quote: { type: "string" }, quotePage: { type: "string" }, explanation: { type: "string" },
           verdict: { type: "string", enum: ["supports", "partial", "not_supported", "contradicts", "insufficient"] },
-          explanation: { type: "string" }, quote: { type: "string" }, quotePage: { type: "string" },
         },
       },
     },
@@ -82,9 +90,9 @@ export async function auditSources(o: { planId: string; lang: "tr" | "en"; group
     }).join("\n");
     const v = await complete(model, {
       system: `Akademik atıfların doğruluğunu denetleyen titiz bir editörsün. Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma. Her iddia için:
-verdict: "supports" = kaynak metni iddiayı açıkça destekliyor; "partial" = kısmen destekliyor ya da iddia kaynaktan daha güçlü/genel ifade edilmiş (ör. kaynak “ilişkili” diyor, cümle “etkiler” diyor; kaynak belirli bir örneklem için söylüyor, cümle genelliyor); "not_supported" = metin bu iddiaya değinmiyor veya iddiayı taşımıyor; "contradicts" = kaynak metni iddianın tersini ya da onunla bağdaşmayan bir bulgu açıkça söylüyor (ör. cümle “artırır” diyor, kaynak “anlamlı fark bulunmadı” diyor); "insufficient" = verilen metin karar vermeye yetmiyor (ör. yalnızca özet var ve konu özette geçmiyor).
+verdict: "supports" = kaynak metni iddiayı açıkça destekliyor; "partial" = kısmen destekliyor ya da iddia kaynaktan daha güçlü/genel ifade edilmiş (ör. kaynak “ilişkili” diyor, cümle “etkiler” diyor; kaynak belirli bir örneklem için söylüyor, cümle genelliyor); "not_supported" = metin bu iddiaya değinmiyor veya iddiayı taşımıyor; "contradicts" = kaynak metni iddianın tersini ya da onunla bağdaşmayan bir bulgu AÇIKÇA söylüyor (ör. cümle “artırır” diyor, kaynak “anlamlı fark bulunmadı” diyor) — bu kararı yalnızca tersini söyleyen ifadeyi alıntılayabiliyorsan ver; cümlenin “yalnızca, her zaman, kesinlikle” gibi kaynaktan daha güçlü ifade etmesi ya da kaynağın bir ayrıntıyı belirtmemesi çelişki DEĞİLDİR (bunlar "partial" ya da "not_supported"); şüphedeysen "contradicts" seçme; "insufficient" = verilen metin karar vermeye yetmiyor (ör. yalnızca özet var ve konu özette geçmiyor).
 quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN (yoksa boş). quotePage: alıntının sayfası (yoksa boş).
-explanation: ${L ? "English" : "Türkçe"}, tek cümle; atıfta sayfa verilmişse sayfanın uygun olup olmadığını da belirt.
+explanation: ${L ? "English" : "Türkçe"}, tek cümle; atıfta sayfa verilmişse sayfanın uygun olup olmadığını da belirt. verdict, açıklamanla tutarlı olmalı (açıklama “kısmen” diyorsa verdict "partial").
 Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
       messages: [{ role: "user", content: `KAYNAK: ${source.title}\nERİŞİM: ${source.access_level}\n\nİDDİALAR:\n${claimsText}\n\nKAYNAK METNİ:\n${material}` }],
       maxTokens: 400 + pairs.length * 220, effort: "low", jsonSchema: VERDICT_SCHEMA,
@@ -96,7 +104,7 @@ Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle 
     return pairs.map((p) => {
       const it = items.find((x) => x.id === p.claimId);
       const quoteOk = !!it?.quote && nm.includes(norm(it.quote));
-      return { ...base, claimId: p.claimId, verdict: it?.verdict ?? "insufficient", explanation: it?.explanation ?? (L ? "No decision could be made." : "Karar verilemedi."), quote: quoteOk ? it!.quote : null, quotePage: quoteOk && it!.quotePage ? it!.quotePage : null };
+      return { ...base, claimId: p.claimId, av: AUDIT_VERSION, verdict: it ? guardVerdict(it.verdict, quoteOk) : "insufficient", explanation: it?.explanation ?? (L ? "No decision could be made." : "Karar verilemedi."), quote: quoteOk ? it!.quote : null, quotePage: quoteOk && it!.quotePage ? it!.quotePage : null };
     });
   });
   return { results: results.flat(), usage, cost, calls, model: model.model, provider: model.provider };

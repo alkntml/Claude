@@ -31,3 +31,12 @@ describe("iddia çıkarımı (D119)", () => {
     expect(summarize([{ kind: "cited", verdict: "supports" }, { kind: "cited" }, { kind: "uncited" }])).toMatchObject({ total: 3, supports: 1, pending: 1, uncited: 1 });
   });
 });
+
+describe("guardVerdict (çelişki ancak doğrulanmış alıntıyla)", () => {
+  it("alıntısı kaynakta bulunmayan çelişki kararını desteklenmiyor’a düşürür", async () => {
+    const { guardVerdict } = await import("@/lib/claim-audit");
+    expect(guardVerdict("contradicts", false)).toBe("not_supported");
+    expect(guardVerdict("contradicts", true)).toBe("contradicts");
+    expect(guardVerdict("partial", false)).toBe("partial");
+  });
+});

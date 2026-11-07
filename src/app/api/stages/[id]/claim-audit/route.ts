@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
-import { auditSources, crossCheckSources, type PairInput, type PairResult, type SourceInput } from "@/lib/claim-audit";
+import { AUDIT_VERSION, auditSources, crossCheckSources, type PairInput, type PairResult, type SourceInput } from "@/lib/claim-audit";
 import { bestVerdict, extractClaims, relatedCandidates, summarize, type AuditItem } from "@/lib/claims";
 import { compatWrite } from "@/lib/db-compat";
 import type { JSONNode } from "@/lib/editor/doc";
@@ -51,7 +51,7 @@ export const POST = route<Ctx>("claim_audit.run", async (req, { params }) => {
   // Önceki denetimden değişmeyen (cümle + kaynak + sayfa) sonuçları yeniden kullan
   const prev = await lastAudit(access.db, id, stage.project_id).catch(() => null);
   const cache = new Map<string, Omit<PairResult, "claimId">>();
-  for (const it of prev?.results ?? []) for (const c of it.checks ?? []) cache.set(`${it.id}|${c.sourceId}`, c);
+  for (const it of prev?.results ?? []) for (const c of it.checks ?? []) if ((c as { av?: number }).av === AUDIT_VERSION) cache.set(`${it.id}|${c.sourceId}`, c);
 
   const sourceIds = [...new Set(claims.flatMap((c) => c.citations.flatMap((x) => x.ids)))];
   const { data: srcRows } = sourceIds.length

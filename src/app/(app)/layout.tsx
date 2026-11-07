@@ -7,6 +7,7 @@ import { getWorkLock } from "@/lib/lock";
 import { memberCode } from "@/lib/member";
 import { grantReferralReward } from "@/lib/growth";
 import { deviceFromCookie, recordDevice } from "@/lib/devices";
+import { watchDevices } from "@/lib/single-watch";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     await recordDevice(s.user.id, device);
     await grantReferralReward(s.user.id, device).catch(() => false);
   }
+  // D109: Tek Proje — hesap paylaşımı işareti için cihazlar kaydedilir (yalnızca bu pakette; engellemez)
+  if (s.profile.plan_id === "single" && s.profile.role !== "admin") await watchDevices(s.user.id, s.profile, await deviceFromCookie()).catch(() => {});
   // D81: hak dolunca çalışma kilitlenmez; yalnızca bilgilendirme şeridi gösterilir
   const { reasons } = await getWorkLock();
   return (

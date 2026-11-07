@@ -1,4 +1,5 @@
 import { makeT } from "@/i18n";
+import { watchOutput } from "@/lib/single-watch";
 import { assertSingleProject } from "@/lib/single-project";
 import { localeFromRequest } from "@/i18n/server";
 import { z } from "zod";
@@ -296,6 +297,8 @@ export const POST = route("ai.chat", async (req) => {
           recordUsage(s.user.id, "ai_request", { usage, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
           // Kullanım kanıt kaydı (D102): kullanıcı metni sonradan silse de yönetici görebilir
           logAiOutput({ userId: s.user.id, action: b.action, projectId: b.projectId, projectTitle: bundle.project.title, stageTitle: stage?.title ?? null, model: servedModel, output: answer }),
+          // D109: Tek Proje — yazım çıktısı çalışmanın konusundan tamamen kopuksa yöneticiye uyarı (engellemez)
+          LENGTH_ACTIONS.has(b.action) ? watchOutput({ userId: s.user.id, profile: s.profile, projectId: b.projectId, project: bundle.project, stageTitle: stage?.title ?? null, output: answer }).catch(() => {}) : Promise.resolve(),
         ]);
         // 3) Eksik konular: asistanın :::eksik bloğundaki sorgularla ek kaynak araması (mesaj başına bir kez)
         let gapAdded = 0;

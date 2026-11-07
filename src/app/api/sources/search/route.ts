@@ -6,6 +6,7 @@ import { providerConfig } from "@/lib/env";
 import { enabledProviders } from "@/lib/settings";
 import { searchAll } from "@/lib/sources/aggregate";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertSingleProject, singleScope } from "@/lib/single-project";
 
 const Schema = z.object({
   query: z.string().trim().min(2).max(500),
@@ -16,14 +17,18 @@ const Schema = z.object({
   limit: z.number().int().min(1).max(50).default(15),
   providers: z.array(z.string()).max(12).optional(),
   turkishOnly: z.boolean().optional(),
+  /** Arama bir çalışmanın içinden yapılıyorsa (Tek Proje sınırı için, D109) */
+  projectId: z.string().uuid().optional(),
 });
 
 export const POST = route("sources.search", async (req) => {
   const s = await requireUser();
   const q = await parseBody(req, Schema);
   await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
+  await assertSingleProject(s, q.projectId);
+  const off = await singleScope(s, "source_search", q.projectId);
   const enabled = await enabledProviders();
   const res = await searchAll(q as Parameters<typeof searchAll>[0], enabled, providerConfig());
-  await recordUsage(s.user.id, "source_search", { meta: { query: q.query, providers: providerHealthMeta(res.providers) } });
+  await recordUsage(s.user.id, "source_search", { meta: { query: q.query, providers: providerHealthMeta(res.providers), ...(q.projectId ? { projectId: q.projectId } : {}), ...(off ? { offProject: true } : {}) } });
   return json(res);
 });

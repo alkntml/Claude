@@ -1,4 +1,5 @@
 import { ApiError, route } from "@/lib/api";
+import { watchExport } from "@/lib/single-watch";
 import { requireUser } from "@/lib/auth";
 import { buildExportDoc } from "@/lib/export/model";
 import { toDocx } from "@/lib/export/render-docx";
@@ -49,6 +50,10 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
   else body = toText(doc);
 
   await recordUsage(s.user.id, "export", { meta: { format, projectId: id } });
+  // D109: Tek Proje gözetimi — yalnızca tam indirmeler karşılaştırılır (seçili bölüm indirmesi farklı içerik sayılmasın)
+  if (!(url.searchParams.get("stages") ?? "").trim()) {
+    await watchExport({ userId: s.user.id, profile: s.profile, projectId: id, projectTitle: bundle.project.title, doc, cover: bundle.project.context?.format?.cover ?? {} }).catch(() => {});
+  }
   const filename = `${safeName(bundle.project.title)}.${format}`;
   return new Response(typeof body === "string" ? body : new Uint8Array(body), {
     headers: { "Content-Type": TYPES[format], "Content-Disposition": `attachment; filename="${filename}"`, "Cache-Control": "no-store" },

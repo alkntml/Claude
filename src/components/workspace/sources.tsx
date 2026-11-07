@@ -113,7 +113,7 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
     if (q.trim().length < 2) return;
     setLoading(true);
     try {
-      const r = await api<{ results: any[]; providers: any[]; demoNotice?: string }>("/api/sources/search", { method: "POST", json: { query: q, yearFrom: yearFrom ? Number(yearFrom) : undefined, yearTo: yearTo ? Number(yearTo) : undefined, openAccessOnly: oa, turkishOnly: turkish || undefined, limit: 15 } });
+      const r = await api<{ results: any[]; providers: any[]; demoNotice?: string }>("/api/sources/search", { method: "POST", json: { projectId, query: q, yearFrom: yearFrom ? Number(yearFrom) : undefined, yearTo: yearTo ? Number(yearTo) : undefined, openAccessOnly: oa, turkishOnly: turkish || undefined, limit: 15 } });
       setResults(r.results);
       setProviders(r.demoNotice ? [] : r.providers);
       setNotice(r.demoNotice ?? null);

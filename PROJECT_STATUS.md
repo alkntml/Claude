@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D109: Tek Proje ikinci aşama önlemler (çalışma dışı sınır, parmak izi, cihaz, bölüm, konu dışı, satın alma kaydı, Uyarılar sekmesi, koşullar). Migration 31 çalıştırılmalı
 - D108: Hakkımızda sayfası (misyon, vizyon, değerler, kurucu Alkın Mert Temel — Kurucu ve CEO)
 - D107: SEO — başlık ≤60 (fitTitle), açıklama ≤160, araç sayfalarına rehber + SSS + şema, blog RSS, sabit lastmod, oturumlu sayfalar noindex
 - D106: güvenlik ve tutarlılık düzeltmeleri — davet ödülü e-posta doğrulamasına bağlı + geçici e-posta engeli (migration 29); tablo/şekil başlıkları 10 atıf stiline göre; ücretsiz pakette PDF, Premium’da öncelikli destek yok (migration 30); yüksek seviyeli bağımlılık açıkları kapatıldı (zod 4, overrides); SSRF: yönlendirme + DNS denetimi; CSP başlığı. Canlı veritabanında migration 29–30 çalıştırılmalı

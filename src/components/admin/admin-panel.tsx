@@ -1,7 +1,8 @@
 "use client";
+import { AlertsTab } from "./alerts";
 import { AutopilotTab } from "./autopilot";
 import { motion } from "framer-motion";
-import { Activity, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket } from "lucide-react";
+import { Activity, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -16,9 +17,9 @@ import { CostBreakdown, TrafficTab } from "./insights";
 import { memberCode } from "@/lib/member";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
+type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
+  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
   { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift },
 ];
@@ -53,6 +54,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
       </div>
       <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
         {tab === "overview" && <Overview />}
+        {tab === "alerts" && <AlertsTab />}
         {tab === "traffic" && <TrafficTab />}
         {tab === "autopilot" && <AutopilotTab />}
         {tab === "users" && <UsersTab selfId={selfId} />}
@@ -202,6 +204,8 @@ function UsersTab({ selfId }: { selfId: string }) {
   }
   async function setPlan(id: string, planId: string) {
     // Ücretli paket atanınca varsayılan 30 günlük süre başlar (D53)
+    // D109: Tek Proje ödeyen kişi bilgisiyle kullanıcı ayrıntısından atanır
+    if (planId === "single") { toast({ tone: "info", title: "Tek Proje’yi kullanıcı ayrıntısından atayın", detail: "Ödeyen kişinin adı ve telefonu paketle birlikte kaydedilir." }); load(); return; }
     try { await api(`/api/admin/user/${id}`, { method: "POST", json: { action: "set_plan", planId, days: planId === "free" ? null : 30 } }); toast({ tone: "success", title: "Paket atandı", detail: planId === "free" ? "" : "30 günlük süre başladı; ayrıntıdan değiştirebilirsiniz." }); load(); }
     catch (e) { toast({ tone: "error", title: "Atanamadı", detail: (e as Error).message }); }
   }
@@ -242,6 +246,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
   const [days, setDays] = useState(30);
   const [date, setDate] = useState("");
   const [credit, setCredit] = useState({ ai: 10, search: 0, days: 30, note: "" });
+  const [pur, setPur] = useState({ name: "", phone: "", amount: "", note: "" });
   const load = useCallback(async () => { try { const r = await api<any>(`/api/admin/user/${id}`); setD(r); setDate(r.profile.plan_expires_at ? r.profile.plan_expires_at.slice(0, 10) : ""); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [id, toast]);
   useEffect(() => { load(); }, [load]);
   async function act(body: any, ok: string) {
@@ -286,17 +291,26 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               <div className="mt-1 flex gap-2">
                 <select id="plan-pick" className="input !py-2" defaultValue={d.profile.plan_id}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
                 <input className="input !w-24 !py-2" type="number" min={1} value={days} onChange={(e) => setDays(Number(e.target.value) || 30)} />
-                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" || v === "single" ? null : days }, v === "single" ? "Tek Proje atandı (süresiz)" : "Paket atandı"); }}>Ata</Button>
+                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" || v === "single" ? null : days, purchase: { payerName: pur.name, payerPhone: pur.phone, amountTry: pur.amount ? Number(pur.amount.replace(",", ".")) : null, note: pur.note } }, v === "single" ? "Tek Proje atandı (süresiz)" : "Paket atandı"); }}>Ata</Button>
               </div>
+              <p className="mt-3 text-xs text-ink-500">Ödeme bilgisi (paketle birlikte kaydedilir; Tek Proje’de ödeyen adı zorunlu)</p>
+              <div className="mt-1 grid grid-cols-2 gap-2">
+                <input className="input !py-1.5" placeholder="Ödeyen adı soyadı" value={pur.name} onChange={(e) => setPur({ ...pur, name: e.target.value })} />
+                <input className="input !py-1.5" placeholder="Telefon" value={pur.phone} onChange={(e) => setPur({ ...pur, phone: e.target.value })} />
+                <input className="input !py-1.5" placeholder="Tutar (TL)" inputMode="decimal" value={pur.amount} onChange={(e) => setPur({ ...pur, amount: e.target.value })} />
+                <input className="input !py-1.5" placeholder="Not (ör. hangi tez için)" value={pur.note} onChange={(e) => setPur({ ...pur, note: e.target.value })} />
+              </div>
+              {d.purchases?.length > 0 && <div className="mt-2 space-y-0.5">{d.purchases.map((x: any, i: number) => <p key={i} className="text-[12px] text-ink-500">{new Date(x.created_at).toLocaleDateString("tr-TR")} · {x.plan_id} · {x.payer_name || "—"}{x.payer_phone ? ` · ${x.payer_phone}` : ""}{x.amount_try != null ? ` · ${Number(x.amount_try).toLocaleString("tr-TR")} TL` : ""}{x.note ? ` · ${x.note}` : ""}</p>)}</div>}
               <p className="mt-3 text-xs text-ink-500">Ek gün ver (bitiş tarihinden, süresi geçtiyse bugünden itibaren)</p>
               <div className="mt-1 flex flex-wrap gap-1.5">
-                {[7, 15, 30, 90, 365].map((n) => <Button key={n} size="sm" variant="secondary" disabled={d.profile.plan_id === "free"} onClick={() => act({ action: "extend", days: n }, `${n} gün eklendi`)}>+{n} gün</Button>)}
-                <Button size="sm" variant="ghost" disabled={d.profile.plan_id === "free"} onClick={() => { const n = Number(prompt("Kaç gün eklensin? (eksi değer süreyi kısaltır)", "10")); if (n) act({ action: "extend", days: n }, `${n} gün eklendi`); }}>Özel…</Button>
+                {d.profile.plan_id === "single" && <span className="text-[12px] text-ink-500">Tek Proje süresizdir; süre değiştirilemez.</span>}
+                {[7, 15, 30, 90, 365].map((n) => <Button key={n} size="sm" variant="secondary" disabled={d.profile.plan_id === "free" || d.profile.plan_id === "single"} onClick={() => act({ action: "extend", days: n }, `${n} gün eklendi`)}>+{n} gün</Button>)}
+                <Button size="sm" variant="ghost" disabled={d.profile.plan_id === "free" || d.profile.plan_id === "single"} onClick={() => { const n = Number(prompt("Kaç gün eklensin? (eksi değer süreyi kısaltır)", "10")); if (n) act({ action: "extend", days: n }, `${n} gün eklendi`); }}>Özel…</Button>
               </div>
               <p className="mt-3 text-xs text-ink-500">Bitiş tarihini değiştir</p>
               <div className="mt-1 flex gap-2">
                 <input className="input !py-2" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                <Button size="sm" variant="secondary" disabled={!date} onClick={() => act({ action: "set_expiry", expiresAt: new Date(`${date}T23:59:00+03:00`).toISOString() }, "Bitiş tarihi güncellendi")}>Kaydet</Button>
+                <Button size="sm" variant="secondary" disabled={!date || d.profile.plan_id === "single"} onClick={() => act({ action: "set_expiry", expiresAt: new Date(`${date}T23:59:00+03:00`).toISOString() }, "Bitiş tarihi güncellendi")}>Kaydet</Button>
                 <Button size="sm" variant="ghost" onClick={() => act({ action: "set_expiry", expiresAt: null }, "Süresiz yapıldı")}>Süresiz</Button>
               </div>
             </div>

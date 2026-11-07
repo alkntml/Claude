@@ -57,6 +57,11 @@ export const PATCH = route<Ctx>("admin.update", async (req, { params }) => {
     return json({ row: data });
   }
   if (resource === "users" && String(id) === s.user.id && patch.role === "user") throw new ApiError(422, "Kendi yönetici yetkinizi kaldıramazsınız");
+  // D109: Tek Proje paketinin süresi yoktur; bitiş tarihi yazılırsa paket ileride ücretsize düşerdi
+  if (resource === "users" && ("plan_id" in patch || "plan_expires_at" in patch)) {
+    const { data: cur } = await db.from("profiles").select("plan_id").eq("id", id).maybeSingle();
+    if ((patch.plan_id ?? cur?.plan_id) === "single") patch.plan_expires_at = null;
+  }
   const key = resource === "settings" ? "key" : "id";
   const { data, error } = await db.from(r.table).update(patch).eq(key, id).select().single();
   if (error) throw new ApiError(400, error.message);

@@ -526,3 +526,12 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 ### D108 — Hakkımızda sayfası
 - `/hakkimizda` (TR/EN): hikâyemiz (yapay zekâya eğitimde doğru rol, zaman kazandırma; rakip veya açık kapatma dili kullanılmaz — kullanıcı isteği), misyon, vizyon, değerler, kurucu (Alkın Mert Temel, Kurucu ve CEO), iletişim (herkese açık WhatsApp hattı; ACADEMIC_CONTACT_EMAIL tanımlıysa e-posta). Sayı veya kullanıcı iddiası yok; kurucu hakkında doğrulanmamış biyografi yazılmadı.
 - Şema: AboutPage + Person (kurucu); Organization’a `founder`. Alt bilgide “Hakkımızda” bağlantısı, site haritası, PAGE_SEO.
+
+### D109 — Tek Proje kötüye kullanım önlemleri (ikinci aşama)
+- **Çalışma dışı sınır:** Sohbet her zaman bir çalışmaya bağlı (ön denetimdeki “projesiz sohbet” tespiti yanlıştı). Bağlı olmayanlar: anket yapay zekâsı, konu bulma, çalışma dışından kaynak arama. Tek Proje’de bunlar ayda Ücretsiz paket kadar (`singleScope`; kayıtta `meta.offProject`). Çalışmanın içinden yapılan arama `projectId` gönderir ve sınırsız kalır.
+- **Süre hatası:** Tek Proje’ye süre uzatma ve bitiş tarihi verilemez (API 422, arayüzde kapalı); genel kullanıcı güncellemesinde bitiş tarihi sıfırlanır; auth.ts Tek Proje’yi tarih geçse de düşürmez.
+- **Gözetim (engellemez, yöneticiye uyarı; kural başına 24 saatte bir):** tam indirmelerin parmak izi (64 sayılık MinHash, metin saklanmaz) — ardışık iki indirme ≥3.000 kelime ve benzerlik <%30 → `content_replaced`; yazar/üniversite/bölüm/danışman değişimi → `cover_change`; 30 günde ≥5 farklı tarayıcı/cihaz → `many_devices`; bölüm sayısı şablonun 2 katını aşarsa → `many_sections`; ≥800 kelimelik yazım çıktısında konu terimlerinden (başlık/konu/anahtar kelime, 5 harf kökü) hiçbiri yoksa → `off_topic`. Seçili bölüm indirmeleri karşılaştırılmaz.
+- **Satın alma kaydı:** paket atanırken ödeyen adı, telefon, tutar, not (`plan_purchases`); Tek Proje’de ad zorunlu, hızlı atama kullanıcı ayrıntısına yönlendirir.
+- **Karar ekranı:** Yönetim → Uyarılar: sorun yok / kullanıcıyı uyar (bildirim `admin_warning`, isteğe bağlı mesaj) / askıya al (`is_suspended`); kararlar `abuse_decisions`; askıyı kaldırma.
+- **Hukuki:** Kullanım koşullarına “Tek Proje paketi” ve “Adil kullanım” maddeleri (hukuki inceleme gerekir); gizlilik metninde cihaz kimliği ve parmak izi amacı güncellendi; SSS güncellendi.
+- Migration 31: export_fingerprints, plan_purchases, abuse_decisions (RLS açık, politika yok).

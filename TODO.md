@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de migration 31’i çalıştır (Tek Proje gözetimi, D109); Kullanım koşullarındaki yeni Tek Proje ve Adil kullanım maddelerini hukukçuya incelet
 - [ ] Google Search Console: alan adını doğrula (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) → Site haritaları → sitemap.xml gönder; Bing Webmaster Tools için de aynısı (D107)
 - [ ] Supabase SQL Editor’de migration 29 ve 30’u çalıştır (D106), sonra check_status.sql ile YAPILMIŞ olduğunu doğrula
 - [ ] Supabase → Authentication → Sign In / Providers → Email → “Confirm email” AÇIK olmalı (davet ödülü e-posta doğrulamasına bağlı; kapalıysa doğrulama anında sayılır)

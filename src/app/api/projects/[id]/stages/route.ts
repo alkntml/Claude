@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { watchSections } from "@/lib/single-watch";
 import { json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
-import { STAGE_LIBRARY } from "@/lib/workflows";
+import { buildRoadmap, STAGE_LIBRARY } from "@/lib/workflows";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -24,7 +25,7 @@ const AddSchema = z.object({
 export const POST = route<Ctx>("stages.add", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
-  await requireProject(s, id);
+  const project = await requireProject(s, id);
   const b = await parseBody(req, AddSchema);
   const { data: existing } = await s.supabase.from("project_stages").select("id, key, position").eq("project_id", id).order("position");
   const list = existing ?? [];
@@ -40,6 +41,10 @@ export const POST = route<Ctx>("stages.add", async (req, { params }) => {
     project_id: id, user_id: s.user.id, key, title: b.title, description: b.description || lib?.purpose || "", position: pos,
   }).select().single();
   if (error) throw error;
+  // D109: Tek Proje — bölüm sayısı çalışma türü şablonunun iki katını aşarsa yöneticiye uyarı (engellemez)
+  let template = 0;
+  try { template = buildRoadmap({ workType: project.work_type, level: project.academic_level, methodology: project.methodology ?? undefined, program: project.context?.program }).length; } catch { /* bilinmeyen tür */ }
+  await watchSections({ userId: s.user.id, profile: s.profile, projectId: id, projectTitle: project.title, count: list.length + 1, template }).catch(() => {});
   return json({ stage: data }, 201);
 });
 

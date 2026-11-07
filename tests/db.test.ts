@@ -185,6 +185,23 @@ describe("migration'lar ve seed", () => {
     const again = await q();
     expect(again[0].ef.filter((x) => x === "pdf")).toHaveLength(1);
   });
+  it("Tek Proje gözetimi (migration 31): parmak izi, satın alma ve karar tabloları yalnızca sunucuya açık", async () => {
+    const sig = `{${Array.from({ length: 64 }, (_, i) => i - 32).join(",")}}`;
+    const [fp] = (await db.query<{ id: number }>(`insert into public.export_fingerprints (user_id, project_id, words, sig, author) values ('${A}', gen_random_uuid(), 3500, '${sig}', 'Ayşe') returning id`)).rows;
+    expect(fp.id).toBeGreaterThan(0);
+    await expectError(db.query(`insert into public.export_fingerprints (user_id, project_id, sig) values ('${A}', gen_random_uuid(), '{1,2,3}')`), /check/);
+    await db.query(`insert into public.plan_purchases (user_id, plan_id, payer_name, payer_phone, amount_try, created_by) values ('${A}', 'single', 'Ayşe Yılmaz', '0555', 3999, '${ADMIN}')`);
+    const [al] = (await db.query<{ id: number }>(`insert into public.activity_log (user_id, kind, action, output) values ('${A}', 'abuse_alert', 'content_replaced', '{}') returning id`)).rows;
+    await db.query(`insert into public.abuse_decisions (alert_id, decision, decided_by) values (${al.id}, 'warn', '${ADMIN}')`);
+    await expectError(db.query(`insert into public.abuse_decisions (alert_id, decision) values (${al.id}, 'ban')`), /duplicate|check/);
+    // Kullanıcılar ve yönetici oturumu bile doğrudan göremez (yalnızca sunucu, service role)
+    expect(await as(A, "select * from public.export_fingerprints")).toHaveLength(0);
+    expect(await as(A, "select * from public.plan_purchases")).toHaveLength(0);
+    expect(await as(A, "select * from public.abuse_decisions")).toHaveLength(0);
+    await db.exec(`delete from public.activity_log where id = ${al.id}`);
+    expect((await db.query(`select 1 from public.abuse_decisions where alert_id = ${al.id}`)).rows).toHaveLength(0);
+    await db.exec(`delete from public.export_fingerprints where user_id = '${A}'; delete from public.plan_purchases where user_id = '${A}';`);
+  });
   it("durum sorgusu (check_status.sql) tüm migration'ları YAPILMIŞ gösterir", async () => {
     const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/check_status.sql"), "utf8");
     const res = await db.exec(sql);

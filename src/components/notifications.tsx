@@ -45,6 +45,7 @@ export function NotificationBell({ className, align = "left" }: { className?: st
     }
   }
 
+  const d0 = (n: Note) => n.data ?? {};
   const text = (n: Note): { title: string; body: string } => {
     if (n.kind === "referral_reward") return { title: t("Davet ödülü kazandınız"), body: t("Davet ettiğiniz bir kişi kaydoldu. Hesabınıza {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlandı ({d} gün geçerli).", { a: n.data.ai ?? 0, s: n.data.ss ?? 0, d: n.data.days ?? 60 }) };
     if (n.kind === "referral_same_device") return { title: t("Davet ödülü verilmedi"), body: t("Davet bağlantınızla açılan hesap, sizin daha önce kullandığınız bir cihazdan kaydolduğu için ödül tanımlanmadı. Davet ödülü yalnızca başka kişilerin kendi cihazlarından kaydolmasıyla kazanılır.") };
@@ -60,10 +61,16 @@ export function NotificationBell({ className, align = "left" }: { className?: st
         mass_delete: t("{u} çalışmasından toplam {w} kelime sildi (ürettiğinin büyük kısmı).", { u: who, w }),
         topic_change: t("{u} çalışmanın başlığını veya konusunu tamamen değiştirdi: “{o}” → “{n}”.", { u: who, o: d.old_title || d.old_topic || "", n: d.project_title || d.new_topic || "" }),
         heavy_generation: t("{u} toplam {w} kelime yapay zekâ metni üretti (birden fazla tez büyüklüğünde).", { u: who, w }),
+        content_replaced: t("{u} çalışmasını yeniden indirdi; içerik bir önceki indirmeyle yalnızca %{p} örtüşüyor ({a} → {b} kelime). Metin silinmeden üzerine başka bir çalışma yazılmış olabilir.", { u: who, p: d.similarity ?? 0, a: Number(d.words_before ?? 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR"), b: Number(d.words_after ?? 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR") }),
+        cover_change: t("{u} indirmeler arasında kapak bilgisini değiştirdi ({f}). Çalışma başka biri adına hazırlanıyor olabilir.", { u: who, f: (Array.isArray(d.fields) ? d.fields : []).map((x: string) => ({ author: t("yazar"), university: t("üniversite"), department: t("bölüm"), advisor: t("danışman") } as Record<string, string>)[x] ?? x).join(", ") }),
+        many_devices: t("{u} hesabına son {d} günde {n} farklı tarayıcı veya cihazdan girildi. Hesap paylaşılıyor olabilir.", { u: who, n: d.devices ?? 0, d: d.days ?? 30 }),
+        many_sections: t("{u} çalışmasına çok sayıda bölüm ekledi ({n} bölüm; şablonda {m}). Aynı çalışmada ikinci bir metin yazılıyor olabilir.", { u: who, n: d.sections ?? 0, m: d.template ?? 0 }),
+        off_topic: t("{u} için üretilen {w} kelimelik metinde çalışmanın konusuyla ilgili hiçbir terim geçmiyor (“{s}”). Pakete bağlı çalışma dışında bir metin yazdırılıyor olabilir.", { u: who, w: Number(d.words ?? 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR"), s: d.stage_title || d.project_title || "" }),
         cost_40: t("{u} için yapay zekâ maliyeti paket gelirinin %{p}’ine ulaştı ({c} $; %40 sınırı {b} $). Kullanım kısıtlanmadı.", { u: who, p: d.pct ?? 40, c: d.cost ?? 0, b: d.budget ?? 0 }),
       };
       return { title: d.rule === "cost_40" ? t("Tek Proje maliyet uyarısı") : t("Kötüye kullanım uyarısı (Tek Proje)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
     }
+    if (n.kind === "admin_warning") return { title: t("Hesabınızla ilgili uyarı"), body: d0(n).message ? String(d0(n).message) : t("Kullanımınız paket kurallarına uygun görünmüyor. Ayrıntı için bizimle iletişime geçin.") };
     if (n.kind === "referral_cap") return { title: t("Davetiniz kaydoldu"), body: t("Davet ettiğiniz bir kişi kaydoldu, ancak bu ayki davet ödülü sınırına ({n}) ulaştığınız için ödül tanımlanmadı. Sınır her ayın başında yenilenir.", { n: n.data.cap ?? 0 }) };
     return { title: t("Bildirim"), body: "" };
   };
@@ -82,7 +89,7 @@ export function NotificationBell({ className, align = "left" }: { className?: st
             {items.length === 0 && <p className="px-4 py-6 text-center text-sm text-ink-400">{t("Henüz bildirim yok.")}</p>}
             {items.map((n) => {
               const x = text(n);
-              const Icon = n.kind.startsWith("referral") ? Gift : n.kind === "abuse_alert" ? ShieldAlert : Info;
+              const Icon = n.kind.startsWith("referral") ? Gift : n.kind === "abuse_alert" || n.kind === "admin_warning" ? ShieldAlert : Info;
               return (
                 <div key={n.id} className={cn("flex gap-3 border-b border-ink-50 px-4 py-3 last:border-0", !n.read_at && "bg-brand-50/40")}>
                   <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-fuchsia-50 text-fuchsia-600"><Icon className="h-4 w-4" /></span>

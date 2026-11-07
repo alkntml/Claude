@@ -1,4 +1,5 @@
 "use client";
+import { deviceId } from "@/lib/device-client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
@@ -63,6 +64,8 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
   }
 
   // Davet ödülü kötüye kullanım önlemi (D101): kullanıcının cihazı günde bir kez kaydedilir
+  // D101/D109: her cihazda kimlik çerezi oluşsun (sunucu yalnızca özetini görür)
+  useEffect(() => { deviceId(); }, []);
   useEffect(() => {
     let last = "";
     try { last = localStorage.getItem("acd_dev_sent") ?? ""; } catch { /* yok say */ }

@@ -15,7 +15,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
   const db = adminClient();
   const { data: profile } = await db.from("profiles").select("*").eq("id", id).maybeSingle();
   if (!profile) throw new ApiError(404, "Kullanıcı bulunamadı");
-  const [usage, limits, projects, credits, passes, plan, margin, org] = await Promise.all([
+  const [usage, limits, projects, credits, passes, plan, margin, org, purchases] = await Promise.all([
     usageSummary(id),
     effectiveLimits(id, profile.plan_id),
     db.from("projects").select("id, title, work_type, status, updated_at").eq("user_id", id).order("updated_at", { ascending: false }).limit(20),
@@ -24,6 +24,8 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     db.from("plans").select("name, price_monthly").eq("id", profile.plan_id).maybeSingle(),
     getSetting("billing.margin"),
     db.from("organization_members").select("role, organizations(name, plan_id)").eq("user_id", id).limit(1),
+    // D109: satın alma kayıtları (tablo yoksa boş döner)
+    db.from("plan_purchases").select("plan_id, payer_name, payer_phone, amount_try, note, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(20),
   ]);
   // Tek Proje (D104): paket atandığından beri toplam maliyet ve %40 sınırı
   const single = profile.plan_id === "single"
@@ -34,6 +36,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     profile, usage, limits, reasons: lockReasons(limits, usage, profile.plan_id),
     projects: projects.data ?? [], credits: credits.data ?? [], passes: passes.data ?? [], org: org.data?.[0] ?? null,
     plan: plan.data ?? null,
+    purchases: purchases.data ?? [],
     single,
     money: { revenue_try: plan.data ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, cost_try: Math.round(usage.cost_usd * margin.usd_try), cost_share: revenueUsd ? Math.round((usage.cost_usd / revenueUsd) * 100) : null },
   });
@@ -42,13 +45,17 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
 const Action = z.discriminatedUnion("action", [
   z.object({ action: z.literal("extend"), days: z.number().int().min(-365).max(3650) }),
   z.object({ action: z.literal("set_expiry"), expiresAt: z.string().datetime({ offset: true }).nullable() }),
-  z.object({ action: z.literal("set_plan"), planId: z.string().max(40), days: z.number().int().min(1).max(3650).nullable().default(30) }),
+  z.object({
+    action: z.literal("set_plan"), planId: z.string().max(40), days: z.number().int().min(1).max(3650).nullable().default(30),
+    // D109: ödeme WhatsApp’tan alındığı için ödeyen kişinin bilgisi paketle birlikte kaydedilir (Tek Proje’de ad zorunlu)
+    purchase: z.object({ payerName: z.string().trim().max(200).default(""), payerPhone: z.string().trim().max(40).default(""), amountTry: z.number().min(0).max(1_000_000).nullable().default(null), note: z.string().trim().max(1000).default("") }).optional(),
+  }),
   z.object({ action: z.literal("grant_credits"), aiRequests: z.number().int().min(0).max(100000).default(0), sourceSearches: z.number().int().min(0).max(100000).default(0), days: z.number().int().min(1).max(365).default(30), note: z.string().max(200).default("") }),
 ]);
 
 /** Yönetici işlemleri: süre uzat / bitiş tarihi / paket ata (süreli) / ek hak ver */
 export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const { id } = await params;
   const b = await parseBody(req, Action);
   const db = adminClient();
@@ -57,12 +64,22 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
   let update: Record<string, unknown> = {};
   if (b.action === "extend") {
     if (profile.plan_id === "free") throw new ApiError(422, "Ücretsiz pakette süre yok; önce bir paket atayın");
+    if (profile.plan_id === "single") throw new ApiError(422, "Tek Proje paketi süresizdir; süre uzatılamaz");
     update = { plan_expires_at: addDays(profile.plan_expires_at, b.days) };
   }
-  if (b.action === "set_expiry") update = { plan_expires_at: b.expiresAt };
+  if (b.action === "set_expiry") {
+    if (profile.plan_id === "single" && b.expiresAt) throw new ApiError(422, "Tek Proje paketi süresizdir; bitiş tarihi verilemez");
+    update = { plan_expires_at: b.expiresAt };
+  }
   if (b.action === "set_plan") {
     const { data: plan } = await db.from("plans").select("id").eq("id", b.planId).maybeSingle();
     if (!plan) throw new ApiError(404, "Paket bulunamadı");
+    if (b.planId === "single" && !b.purchase?.payerName) throw new ApiError(422, "Tek Proje atarken ödeyen kişinin adını yazın");
+    const pu = b.purchase;
+    if (b.planId !== "free" && pu && (pu.payerName || pu.payerPhone || pu.amountTry != null || pu.note)) {
+      const { error } = await db.from("plan_purchases").insert({ user_id: id, plan_id: b.planId, payer_name: pu.payerName, payer_phone: pu.payerPhone, amount_try: pu.amountTry, note: pu.note, created_by: admin.user.id });
+      if (error) throw new ApiError(500, "Satın alma kaydı yazılamadı (migration 31 çalıştırıldı mı?)");
+    }
     update = { plan_id: b.planId, plan_expires_at: b.planId === "free" || b.planId === "single" || b.days == null ? null : addDays(null, b.days) };
   }
   if (b.action === "grant_credits") {

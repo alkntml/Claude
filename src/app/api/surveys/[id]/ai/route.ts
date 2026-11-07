@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { improveQuestion, reviewSurvey, reviseSurvey } from "@/lib/survey-ai";
 import { QuestionSchema, type Question } from "@/lib/surveys";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
+import { singleScope } from "@/lib/single-project";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 120;
@@ -27,15 +28,16 @@ export const POST = route<Ctx>("surveys.ai", async (req, { params }) => {
     z.object({ mode: z.literal("improve"), question: z.unknown(), instruction: z.string().trim().max(500).optional(), lang: z.enum(["tr", "en"]).default("tr") }),
     z.object({ mode: z.literal("review"), questions: Draft, lang: z.enum(["tr", "en"]).default("tr") }),
   ]));
-  const { data: survey } = await s.supabase.from("surveys").select("id, title, description, response_count").eq("id", id).eq("user_id", s.user.id).maybeSingle();
+  const { data: survey } = await s.supabase.from("surveys").select("id, title, description, response_count, project_id").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!survey) throw new ApiError(404, "Anket bulunamadı");
   if (b.mode !== "review" && survey.response_count > 0) throw new ApiError(409, "Cevap almaya başlamış ankette sorular değiştirilemez; yeni sorular için anketin kopyasını oluşturun");
   if (b.mode !== "improve" && !b.questions.length) throw new ApiError(422, "Önce en az bir soru ekleyin");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  const off = await singleScope(s, "ai_request", survey.project_id);
 
   const planId = s.profile.plan_id;
   const record = (o: { usage: { input: number; output: number }; cost: number; provider: string; model: string }) =>
-    recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action: `survey_${b.mode}`, surveyId: id } });
+    recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action: `survey_${b.mode}`, surveyId: id, ...(off ? { offProject: true } : {}) } });
   try {
     if (b.mode === "revise") {
       const out = await reviseSurvey(planId, { questions: b.questions, instruction: b.instruction, lang: b.lang, title: survey.title });

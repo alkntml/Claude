@@ -55,7 +55,8 @@ export const getSession = cache(async (): Promise<Session | null> => {
   if (!profile) return null;
   const p = profile as Profile;
   // Paket süresi dolduysa ücretsiz pakete düşer (D53); tarih bilgi için saklanır
-  if (p.plan_id !== "free" && p.plan_expires_at && new Date(p.plan_expires_at).getTime() < Date.now()) {
+  // Tek Proje süresizdir (D103): yanlışlıkla yazılmış bir bitiş tarihi paketi düşürmez (D109)
+  if (p.plan_id !== "free" && p.plan_id !== "single" && p.plan_expires_at && new Date(p.plan_expires_at).getTime() < Date.now()) {
     p.plan_id = "free";
     try { await adminClient().from("profiles").update({ plan_id: "free" }).eq("id", p.id); } catch { /* service role yoksa yalnızca bu istekte düşer */ }
   }

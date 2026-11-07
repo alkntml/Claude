@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { generateSurvey } from "@/lib/survey-ai";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
+import { singleScope } from "@/lib/single-project";
 
 export const maxDuration = 120;
 
@@ -30,10 +31,11 @@ export const POST = route("surveys.ai.generate", async (req) => {
     project = { title: p.title, topic: p.topic, keywords: p.keywords, discipline: p.discipline, memory: (mem ?? []).map((m) => m.content.slice(0, 300)) };
   }
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  const off = await singleScope(s, "ai_request", b.projectId);
   let out;
   try { out = await generateSurvey(s.profile.plan_id, { ...b, project }); }
   catch (e) { throw new ApiError(422, e instanceof Error ? e.message : "Anket oluşturulamadı"); }
-  await recordUsage(s.user.id, "ai_request", { usage: out.usage, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "survey_generate" } });
+  await recordUsage(s.user.id, "ai_request", { usage: out.usage, costUsd: out.cost, provider: out.provider, model: out.model, meta: { action: "survey_generate", ...(off ? { offProject: true } : {}) } });
   const { data, error } = await s.supabase.from("surveys").insert({
     user_id: s.user.id, project_id: b.projectId ?? null, title: out.survey.title || b.purpose.slice(0, 80),
     description: out.survey.description, consent: out.survey.consent, questions: out.survey.questions,

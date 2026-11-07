@@ -3,7 +3,7 @@ import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/li
 
 /* Atıf doğrulama: bir cümlenin, atıf yapılan kaynakta gerçekten desteklenip desteklenmediğini kontrol eder. */
 
-export interface EvidenceChunk { content: string; page: string | null }
+export interface EvidenceChunk { content: string; page: string | null; section?: string | null }
 export type Verdict = "supports" | "partial" | "not_supported" | "insufficient";
 export interface EvidenceResult {
   access: "metadata" | "abstract" | "full_text";
@@ -18,7 +18,7 @@ export interface EvidenceResult {
 const tokens = (s: string) => (s.toLocaleLowerCase("tr").match(/[\p{L}\p{N}]{3,}/gu) ?? []);
 
 /** Parçaları anahtar kelime örtüşmesine göre sıralar (sayfa eşleşmesine ek puan). */
-export function rankChunks(chunks: { content: string; page_hint: string | null }[], keywords: string[], page?: string | null, limit = 4): EvidenceChunk[] {
+export function rankChunks(chunks: { content: string; page_hint: string | null; section?: string | null }[], keywords: string[], page?: string | null, limit = 4, opts: { sections?: string[] } = {}): EvidenceChunk[] {
   const kw = new Set(keywords.flatMap(tokens));
   const pageNums = page ? page.split(/[-–]/).map((x) => x.trim()) : [];
   return chunks
@@ -28,11 +28,14 @@ export function rankChunks(chunks: { content: string; page_hint: string | null }
       for (const w of kw) if (words.has(w)) hit++;
       const p = c.page_hint?.replace(/^s\.\s*/, "") ?? null;
       const onPage = p && pageNums.length && (pageNums.includes(p) || (pageNums.length === 2 && Number(p) >= Number(pageNums[0]) && Number(p) <= Number(pageNums[1])));
-      return { c, score: hit / Math.max(1, kw.size) + (onPage ? 1.5 : 0) };
+      // D132: istenen bölümdeki parça öne alınır; eski parçalarda kalmış kaynakça satırları geri itilir
+      const inSection = c.section && opts.sections?.includes(c.section) ? 0.35 : 0;
+      const refsPenalty = c.section === "references" ? -0.5 : 0;
+      return { c, score: hit / Math.max(1, kw.size) + (onPage ? 1.5 : 0) + inSection + refsPenalty };
     })
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map(({ c }) => ({ content: c.content, page: c.page_hint?.replace(/^s\.\s*/, "") ?? null }));
+    .map(({ c }) => ({ content: c.content, page: c.page_hint?.replace(/^s\.\s*/, "") ?? null, section: c.section ?? null }));
 }
 
 const KW_SCHEMA = { type: "object", additionalProperties: false, required: ["keywords"], properties: { keywords: { type: "array", items: { type: "string" } } } };

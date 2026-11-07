@@ -55,4 +55,8 @@ union all select '34 Paket kartlarında iddia denetimi, PRISMA, literatür harit
 union all select '35 PRISMA ve literatür haritası Pro paketinde',
   case when exists (select 1 from public.plans where id = 'pro' and 'PRISMA 2020 sistematik derleme' = any(features))
         and not exists (select 1 from public.plans where id = 'basic' and 'PRISMA 2020 sistematik derleme' = any(features))
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '36 PDF bölümleri, derleme oyları, veri çıkarma ve kalite',
+  case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'source_chunks' and column_name = 'section')
+        and exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'review_records' and column_name = 'appraisal')
        then 'YAPILMIŞ' else 'EKSİK' end;

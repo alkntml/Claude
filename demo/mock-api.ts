@@ -129,6 +129,22 @@ on("POST", "/api/projects", (_m, b) => {
 });
 const proj = (id: string) => db.projects.find((x) => x.id === id) ?? fail(404, "Proje bulunamadı", "not_found");
 on("GET", "/api/projects/([^/]+)", (m) => ({ project: proj(m[1]) }));
+// Demo: sistematik derleme (D134) — örnek kayıtlar, iki değerlendiricinin oyları, veri çıkarma ve kalite örneği
+const REVIEW_DEMO: { protocol: any; records: any[] } = {
+  protocol: { question: "Bağlanma stilleri ile ilişki odaklı obsesif belirtiler arasında ilişki var mı?", inclusion: ["Yetişkin örneklem", "Nicel desen"], exclusion: ["Çocuk/ergen örneklemi", "Konu dışı"], searches: [{ database: "Scopus", query: "attachment AND (ROCD OR relationship obsessive)", date: "2026-10-01", results: 42 }], dual: true },
+  records: SAMPLE_RECORDS.map((r, i) => ({
+    id: `rv${i}`, key: `t:${i}`, origin: i % 2 ? "Scopus" : "Web of Science", record: { title: r.title, authors: r.authors, year: r.year, containerTitle: r.containerTitle ?? null, doi: r.doi ?? null, abstract: null },
+    stage: i < 2 ? "included" : i < 4 ? "identified" : i === 4 ? "excluded_screening" : i === 5 ? "duplicate" : "sought", reason: i === 4 ? "Konu dışı" : i === 5 ? "Olası yinelenen (benzer başlık ve yıl)" : null, ai: null, source_id: null,
+    votes: { screening: { demo: { decision: i === 3 ? "exclude" : "include", name: "Siz", at: now() }, co: { decision: i === 2 || i === 3 ? "include" : i === 4 ? "exclude" : "include", name: "Ortak yazar", at: now() } } },
+    extraction: i === 0 ? { basedOn: "abstract", at: now(), design: { value: "Kavramsal çerçeve (kuramsal makale)" }, sample: { value: "belirtilmemiş" }, findings: { value: "ROCD’nin bilişsel-davranışçı modeli önerilmiştir." } } : null,
+    appraisal: i === 0 ? { answers: { aim: "yes", design: "yes", sampling: "na", measures: "unclear", analysis: "na", confounding: "no", findings: "yes" } } : null,
+  })),
+};
+on("GET", "/api/projects/([^/]+)/review", () => ({ records: REVIEW_DEMO.records, protocol: REVIEW_DEMO.protocol, me: "demo", upgraded: true }));
+on("PATCH", "/api/projects/([^/]+)/review", () => ({ updated: 1, skipped: 0 }));
+on("PUT", "/api/projects/([^/]+)/review", (_m, body) => { REVIEW_DEMO.protocol = body; return { protocol: body }; });
+on("POST", "/api/projects/([^/]+)/review/vote", () => ({ updated: 1 }));
+on("PATCH", "/api/projects/([^/]+)/review/record", () => ({ ok: true }));
 // Demo: bölüm kontrolü (yalnızca basit kurallar; gerçek sürümde yapay zekâ incelemesi de yapılır)
 on("POST", "/api/stages/([^/]+)/review", (m) => {
   const st = db.stages.find((x: any) => x.id === m[1]) ?? fail(404, "Bölüm bulunamadı", "not_found");

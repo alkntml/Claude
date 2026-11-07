@@ -1057,7 +1057,7 @@ export function Workspace(props: Props) {
         </Modal>
       )}
       {mapOpen && <LitMapModal open onClose={() => setMapOpen(false)} projectId={project.id} sourceCount={sources.length} onSourcesAdded={addSources} />}
-      {prismaOpen && <ReviewModal open onClose={() => setPrismaOpen(false)} projectId={project.id} language={project.language} onInsertFigure={!isBibliography && editor ? insertFigure : undefined} onSourcesAdded={addSources} />}
+      {prismaOpen && <ReviewModal open onClose={() => setPrismaOpen(false)} projectId={project.id} language={project.language} onInsertFigure={!isBibliography && editor ? insertFigure : undefined} onInsertMarkdown={!isBibliography && editor ? (md, map) => insertMarkdown(md, map, "append") : undefined} onSourcesAdded={addSources} />}
       {claimsOpen && editor && active && (
         <ClaimAuditModal open onClose={() => setClaimsOpen(false)} editor={editor} stageId={active.id} focus={focus}
           scopeLabel={focused ? t("Bu alt başlık: {n} {t}", { n: focused.number, t: focused.text }) : t("Bu bölüm: {t}", { t: active.title })}

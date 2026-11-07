@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
-import { canMove, EMPTY_PROTOCOL, recordKey, REVIEW_STAGES, type ReviewStage } from "@/lib/prisma";
+import { canMove, EMPTY_PROTOCOL, findFuzzyDuplicate, recordKey, REVIEW_STAGES, type ReviewStage } from "@/lib/prisma";
+import { isMissingColumn } from "@/lib/db-compat";
 import { projectAccess } from "@/lib/project-access";
 import { parseReferences } from "@/lib/sources/bib";
 import { assertFeature } from "@/lib/usage";
@@ -24,7 +25,7 @@ const RecordData = z.object({
   publisher: z.string().max(300).nullable().optional(), pmid: z.string().max(40).nullable().optional(), arxivId: z.string().max(60).nullable().optional(), isbn: z.string().max(40).nullable().optional(),
 });
 const Search = z.object({ database: z.string().trim().min(1).max(60), query: z.string().trim().max(1000), date: z.string().max(20), results: z.number().int().min(0).max(1_000_000) });
-const Protocol = z.object({ question: z.string().max(2000), inclusion: z.array(z.string().trim().max(300)).max(20), exclusion: z.array(z.string().trim().max(300)).max(20), searches: z.array(Search).max(50) });
+const Protocol = z.object({ question: z.string().max(2000), inclusion: z.array(z.string().trim().max(300)).max(20), exclusion: z.array(z.string().trim().max(300)).max(20), searches: z.array(Search).max(50), dual: z.boolean().optional() });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /** Kayıtlar + protokol (D122) */
@@ -33,9 +34,13 @@ export const GET = route<Ctx>("review.list", async (_req, { params }) => {
   assertFeature(s.profile.plan_id, "prisma");
   const { id } = await params;
   const acc = await projectAccess(s, id, "read");
-  const { data, error } = await acc.db.from("review_records").select("id, key, origin, stage, reason, record, ai, source_id, created_at").eq("project_id", id).eq("user_id", acc.ownerId).order("created_at").limit(MAX_RECORDS);
+  const q = (cols: string) => acc.db.from("review_records").select(cols).eq("project_id", id).eq("user_id", acc.ownerId).order("created_at").limit(MAX_RECORDS);
+  // D134 sütunları (oylar, veri çıkarma, kalite) migration 36 ile gelir; yoksa eski sütunlarla okunur
+  let { data, error } = await q("id, key, origin, stage, reason, record, ai, source_id, created_at, votes, extraction, appraisal");
+  let upgraded = true;
+  if (error && isMissingColumn(error)) { upgraded = false; ({ data, error } = await q("id, key, origin, stage, reason, record, ai, source_id, created_at")); }
   if (error && /review_records/.test(error.message)) throw new ApiError(409, "Bu özellik için veritabanı güncellemesi gerekiyor (migration 33).", "migration_required");
-  return json({ records: data ?? [], protocol: { ...EMPTY_PROTOCOL, ...(acc.project.context?.review ?? {}) } });
+  return json({ records: data ?? [], protocol: { ...EMPTY_PROTOCOL, ...(acc.project.context?.review ?? {}) }, me: s.user.id, upgraded });
 });
 
 /** Kayıt ekleme: arama sonuçları, RIS/BibTeX içe aktarma veya elle. Yinelenenler “duplicate” aşamasında saklanır (akış şemasında sayılır). */
@@ -56,14 +61,21 @@ export const POST = route<Ctx>("review.add", async (req, { params }) => {
   } else incoming = b.records;
   if (!incoming.length) throw new ApiError(422, "Eklenecek kayıt bulunamadı");
 
-  const { data: existing, count } = await acc.db.from("review_records").select("key, stage", { count: "exact" }).eq("project_id", id).eq("user_id", acc.ownerId).limit(MAX_RECORDS);
+  const { data: existing, count } = await acc.db.from("review_records").select("key, stage, title:record->>title, year:record->>year, doi:record->>doi", { count: "exact" }).eq("project_id", id).eq("user_id", acc.ownerId).limit(MAX_RECORDS);
   if ((count ?? 0) + incoming.length > MAX_RECORDS) throw new ApiError(422, `Bir derlemede en fazla ${MAX_RECORDS} kayıt tutulabilir.`);
-  const seen = new Set((existing ?? []).filter((r: any) => r.stage !== "duplicate").map((r: any) => r.key));
+  const live = (existing ?? []).filter((r: any) => r.stage !== "duplicate");
+  const seen = new Set(live.map((r: any) => r.key));
+  // D134: DOI’siz veya farklı yazılmış aynı yayınlar için başlık benzerliği (bulanık eşleşme)
+  const pool = live.map((r: any) => ({ key: r.key, title: String(r.title ?? ""), year: r.year ? Number(r.year) : null, doi: r.doi ?? null }));
+  let fuzzy = 0;
   const rows = incoming.map((r) => {
     const key = recordKey(r);
-    const dup = seen.has(key);
-    seen.add(key);
-    return { project_id: id, user_id: acc.ownerId, key: key.slice(0, 600), origin: b.origin, stage: dup ? "duplicate" : "identified", record: r, decided_by: dup ? null : null };
+    const exact = seen.has(key);
+    const near = exact ? null : findFuzzyDuplicate(r, pool);
+    if (near) fuzzy++;
+    if (!exact && !near) { seen.add(key); pool.push({ key, title: r.title, year: r.year ?? null, doi: r.doi ?? null }); }
+    const dup = exact || !!near;
+    return { project_id: id, user_id: acc.ownerId, key: key.slice(0, 600), origin: b.origin, stage: dup ? "duplicate" : "identified", reason: near ? "Olası yinelenen (benzer başlık ve yıl)" : null, record: r, decided_by: null };
   });
   const { error } = await acc.db.from("review_records").insert(rows);
   if (error) throw error;
@@ -72,7 +84,7 @@ export const POST = route<Ctx>("review.add", async (req, { params }) => {
     proto.searches = [...proto.searches, b.search].slice(-50);
     await acc.db.from("projects").update({ context: { ...(acc.project.context ?? {}), review: proto } }).eq("id", id).eq("user_id", acc.ownerId);
   }
-  return json({ added: rows.filter((r) => r.stage === "identified").length, duplicates: rows.filter((r) => r.stage === "duplicate").length }, 201);
+  return json({ added: rows.filter((r) => r.stage === "identified").length, duplicates: rows.filter((r) => r.stage === "duplicate").length, fuzzy }, 201);
 });
 
 /** Toplu karar: aşama + gerekçe. Aşama atlama engellenir (ör. taranmadan dahil edilemez). */

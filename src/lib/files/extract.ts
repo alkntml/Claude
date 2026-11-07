@@ -1,9 +1,12 @@
 import "server-only";
+import { cleanPdfPages, contentSegments, segmentPages, type Segment } from "./pdf-clean";
 
 export interface Extracted {
   text: string;
   /** Sayfa bazlı metin (PDF) — RAG parçalarında sayfa bilgisi için */
   pages?: string[];
+  /** Temizlenmiş PDF’in bölümlere ayrılmış hâli (kaynakça ve ekler hariç; D132) */
+  segments?: Segment[];
   /** Tablo verisi (CSV/XLSX) */
   rows?: string[][];
   meta: Record<string, unknown>;
@@ -41,8 +44,12 @@ export async function extract(kind: string, buf: Buffer): Promise<Extracted> {
       const { getDocumentProxy, extractText } = await import("unpdf");
       const pdf = await getDocumentProxy(new Uint8Array(buf));
       const { totalPages, text } = await extractText(pdf, { mergePages: false });
-      const pages = (Array.isArray(text) ? text : [text]).map((p) => p.replace(/\s+\n/g, "\n").trim());
-      return { text: pages.join("\n\n"), pages, meta: { pages: totalPages } };
+      const raw = (Array.isArray(text) ? text : [text]).map((p) => p.replace(/[ \t]+\n/g, "\n").trim());
+      // D132: üst/alt bilgi, bölünmüş kelime ve bitişik harf temizliği; bölüm tanıma; kaynakça ayrılır
+      const clean = cleanPdfPages(raw);
+      const { kept, droppedReferences } = contentSegments(segmentPages(clean.pages));
+      const sections = [...new Set(kept.map((s) => s.section).filter(Boolean))];
+      return { text: clean.pages.join("\n\n"), pages: clean.pages, segments: kept, meta: { pages: totalPages, scanned: clean.scanned, removedLines: clean.removedLines, droppedReferenceSegments: droppedReferences, sections } };
     }
     case "docx": {
       const mammoth = await import("mammoth");

@@ -14,7 +14,7 @@ export interface ChecklistInput {
   hasFormat: boolean;
   stages: { id: string; key: string; title: string; content: JSONNode | null; generated?: boolean }[];
   sources: { id: string; verified: boolean; access_level: string }[];
-  audits: Record<string, { not_supported: number; partial: number; insufficient: number; uncited: number; marked: number; total: number; created_at: string } | undefined>;
+  audits: Record<string, { not_supported: number; contradicts?: number; partial: number; insufficient: number; uncited: number; marked: number; total: number; created_at: string } | undefined>;
   qualityScore: number | null;
 }
 
@@ -46,8 +46,8 @@ export function buildChecklist(o: ChecklistInput): CheckItem[] {
   // 3) İddia denetimi (atıflı bölümler)
   const cited = writable.filter((s) => citedIdsInOrder([s.content]).length > 0);
   const notAudited = cited.filter((s) => !o.audits[s.id]);
-  const sum = cited.reduce((acc, s) => { const a = o.audits[s.id]; if (a) { acc.bad += a.not_supported; acc.partial += a.partial; acc.unread += a.insufficient; acc.uncited += a.uncited + a.marked; } return acc; }, { bad: 0, partial: 0, unread: 0, uncited: 0 });
-  const worst = cited.find((s) => (o.audits[s.id]?.not_supported ?? 0) > 0) ?? notAudited[0];
+  const sum = cited.reduce((acc, s) => { const a = o.audits[s.id]; if (a) { acc.bad += a.not_supported + (a.contradicts ?? 0); acc.partial += a.partial; acc.unread += a.insufficient; acc.uncited += a.uncited + a.marked; } return acc; }, { bad: 0, partial: 0, unread: 0, uncited: 0 });
+  const worst = cited.find((s) => (o.audits[s.id]?.not_supported ?? 0) + (o.audits[s.id]?.contradicts ?? 0) > 0) ?? notAudited[0];
   items.push(!cited.length
     ? { id: "claims", label: "İddia denetimi", status: "todo", detail: "Henüz atıflı cümle yok." }
     : sum.bad

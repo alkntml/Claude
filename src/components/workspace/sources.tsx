@@ -3,6 +3,7 @@ import { SourceAskModal } from "./source-ask";
 import { useT } from "@/i18n/client";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { MatrixButton, MatrixModal } from "./matrix";
+import { MultiAnalyzeButton, MultiAnalyzeModal } from "./multi-analyze";
 import { RefsImportExport } from "./refs-io";
 import { motion } from "framer-motion";
 import { BadgeCheck, MessageCircleQuestion, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
@@ -183,6 +184,7 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
 export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds, onInsertMarkdown }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string>; onInsertMarkdown?: (md: string, sourceMap: Record<string, string>) => void }) {
   const { t } = useT();
   const [matrix, setMatrix] = useState(false);
+  const [multi, setMulti] = useState(false);
   const [pdfOpen, setPdfOpen] = useState(false);
   // Kaynağa sor (D112)
   const [askId, setAskId] = useState<string | null>(null);
@@ -268,6 +270,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
         {mode === "search" && <SourceSearch projectId={projectId} existingDois={existing} onAdded={(rows) => setSources((l) => [...l, ...rows])} />}
         {mode === "manual" && <ManualSource projectId={projectId} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setMode("list"); }} />}
         {asking && <SourceAskModal source={asking} projectId={projectId} onClose={() => setAskId(null)} canInsert={canCite} onInsert={onInsertMarkdown} onUploadPdf={(f) => uploadPdf(asking, f)} onFetchFulltext={asking.access_level !== "full_text" && (asking.oa_url || asking.doi || asking.arxiv_id || asking.pmcid) ? () => fulltext(asking.id) : undefined} />}
+        {multi && <MultiAnalyzeModal open onClose={() => setMulti(false)} projectId={projectId} sources={sources} canInsert={canCite} onInsertMarkdown={onInsertMarkdown} onInsertTable={onInsertTable} />}
         <MatrixModal open={matrix} onClose={() => setMatrix(false)} projectId={projectId} sources={sources} setSources={setSources} language={language} onInsertTable={onInsertTable} />
         {mode === "list" && (
           sources.length === 0 ? (
@@ -277,9 +280,10 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="flex gap-2">
-                <input className="input !py-2 text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
+              <div className="flex flex-wrap gap-2">
+                <input className="input !py-2 min-w-0 flex-1 basis-40 text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
                 <MatrixButton onClick={() => setMatrix(true)} />
+                {sources.length >= 2 && <MultiAnalyzeButton onClick={() => setMulti(true)} />}
               </div>
               <RefsImportExport projectId={projectId} onAdded={(rows) => setSources((l) => [...l, ...rows.filter((r) => !l.some((x) => x.id === r.id))])} />
               {noFull.length > 0 && (

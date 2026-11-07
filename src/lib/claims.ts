@@ -98,26 +98,70 @@ export function extractClaims(doc: JSONNode | null | undefined): Claim[] {
   return out;
 }
 
-export type ClaimVerdict = "supports" | "partial" | "not_supported" | "insufficient";
-/** Bir cümle birden çok kaynağa atıf yapıyorsa en güçlü destek sonucu esas alınır */
-const RANK: Record<ClaimVerdict, number> = { supports: 3, partial: 2, insufficient: 1, not_supported: 0 };
+export type ClaimVerdict = "supports" | "partial" | "not_supported" | "contradicts" | "insufficient";
+/** Bir cümle birden çok kaynağa atıf yapıyorsa en güçlü destek sonucu esas alınır (D133: “çelişiyor” en alttadır) */
+const RANK: Record<ClaimVerdict, number> = { supports: 4, partial: 3, insufficient: 2, not_supported: 1, contradicts: 0 };
 export function bestVerdict(vs: ClaimVerdict[]): ClaimVerdict {
   return vs.reduce<ClaimVerdict>((a, b) => (RANK[b] > RANK[a] ? b : a), vs[0] ?? "insufficient");
 }
 
-export interface AuditSummary { total: number; supports: number; partial: number; not_supported: number; insufficient: number; uncited: number; marked: number; pending: number }
-export function summarize(items: { kind: ClaimKind; verdict?: ClaimVerdict | null }[]): AuditSummary {
-  const s: AuditSummary = { total: items.length, supports: 0, partial: 0, not_supported: 0, insufficient: 0, uncited: 0, marked: 0, pending: 0 };
+export interface AuditSummary { total: number; supports: number; partial: number; not_supported: number; contradicts: number; insufficient: number; uncited: number; marked: number; pending: number; mixed?: number; relatedSupport?: number; relatedContradict?: number }
+export function summarize(items: { kind: ClaimKind; verdict?: ClaimVerdict | null; checks?: { verdict: ClaimVerdict }[]; related?: { stance: string }[] }[]): AuditSummary {
+  const s: AuditSummary = { total: items.length, supports: 0, partial: 0, not_supported: 0, contradicts: 0, insufficient: 0, uncited: 0, marked: 0, pending: 0, mixed: 0, relatedSupport: 0, relatedContradict: 0 };
   for (const i of items) {
     if (i.kind === "uncited") s.uncited++;
     else if (i.kind === "marked") s.marked++;
     else if (!i.verdict) s.pending++;
     else s[i.verdict]++;
+    if (isMixed(i.checks)) s.mixed!++;
+    if (i.related?.some((r) => r.stance === "supports")) s.relatedSupport!++;
+    if (i.related?.some((r) => r.stance === "contradicts")) s.relatedContradict!++;
   }
   return s;
 }
 
+/** Atıf yapılan kaynaklardan biri destekleyip diğeri çelişiyorsa (karışık kanıt) */
+export function isMixed(checks?: { verdict: ClaimVerdict }[]): boolean {
+  if (!checks || checks.length < 2) return false;
+  return checks.some((c) => c.verdict === "supports" || c.verdict === "partial") && checks.some((c) => c.verdict === "contradicts");
+}
+
 /** Denetim sonucu (cümle başına): atıf yaptığı her kaynak için karar ve kanıt */
 export interface ClaimCheck { sourceId: string; verdict: ClaimVerdict; explanation: string; quote: string | null; quotePage: string | null; access: "metadata" | "abstract" | "full_text" }
-export interface AuditItem extends Claim { verdict: ClaimVerdict | null; checks: ClaimCheck[] }
+/** D133: atıf yapılmayan, projedeki başka bir kaynağın bu cümleyi destekleyip desteklemediği / çeliştiği */
+export interface RelatedEvidence { sourceId: string; stance: "supports" | "contradicts"; explanation: string; quote: string | null; quotePage: string | null }
+export interface AuditItem extends Claim { verdict: ClaimVerdict | null; checks: ClaimCheck[]; related?: RelatedEvidence[]; relatedChecked?: boolean }
+
+const ctoks = (s: string) => new Set((s.toLocaleLowerCase("tr").match(/[\p{L}\p{N}]{4,}/gu) ?? []).filter((w) => !STOP.has(w)));
+const STOP = new Set(["olarak", "ancak", "ayrıca", "üzerine", "arasında", "olduğu", "olduğunu", "yapılan", "çalışma", "çalışmada", "araştırma", "bulunmuştur", "göstermektedir", "with", "that", "this", "from", "were", "have", "their", "which", "study", "studies", "results", "between", "among", "these", "there"]);
+
+/**
+ * Kaynaklar arası kontrol için aday seçimi (D133): cümleyle başlık+özet kelime örtüşmesi en yüksek kaynaklar.
+ * Cümlenin zaten atıf yaptığı kaynaklar hariç; örtüşme eşiği altındaki kaynaklar gönderilmez (maliyet ve gürültü).
+ */
+export function relatedCandidates(claim: { text: string; citations: { ids: string[] }[] }, sources: { id: string; text: string }[], max = 2, minOverlap = 3): string[] {
+  const cited = new Set(claim.citations.flatMap((c) => c.ids));
+  const ct = ctoks(claim.text);
+  if (ct.size < 3) return [];
+  return sources
+    .filter((s) => !cited.has(s.id))
+    .map((s) => { const st = ctoks(s.text); let hit = 0; for (const w of ct) if (st.has(w)) hit++; return { id: s.id, hit, score: hit / ct.size }; })
+    .filter((x) => x.hit >= minOverlap && x.score >= 0.2)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, max)
+    .map((x) => x.id);
+}
+
+/** Denetim sonuçlarını CSV’ye çevirir (Excel uyumlu, noktalı virgül) */
+export function auditCsv(items: AuditItem[], o: { title: (id: string) => string; verdictLabel: (v: ClaimVerdict | null, kind: ClaimKind) => string; stanceLabel: (s: "supports" | "contradicts") => string }): string {
+  const q = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const head = ["Cümle", "Sonuç", "Atıf yapılan kaynak", "Kaynağa göre karar", "Açıklama", "Alıntı", "Sayfa", "Diğer kaynaklar (destek/çelişki)"];
+  const rows: unknown[][] = [];
+  for (const it of items) {
+    const rel = (it.related ?? []).map((r) => `${o.stanceLabel(r.stance)}: ${o.title(r.sourceId)}${r.quote ? ` — “${r.quote}”` : ""}`).join(" | ");
+    if (!it.checks.length) rows.push([it.text, o.verdictLabel(it.verdict, it.kind), "", "", "", "", "", rel]);
+    for (const c of it.checks) rows.push([it.text, o.verdictLabel(it.verdict, it.kind), o.title(c.sourceId), o.verdictLabel(c.verdict, "cited"), c.explanation, c.quote ?? "", c.quotePage ?? "", rel]);
+  }
+  return "\uFEFF" + [head, ...rows].map((r) => r.map(q).join(";")).join("\r\n");
+}
 export interface ClaimAudit { id: string | null; created_at: string; scope: string; summary: AuditSummary & { skipped?: number }; results: AuditItem[] }

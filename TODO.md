@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de migration 36’yı çalıştır (PDF bölümleri, derleme oyları, veri çıkarma, kalite; D132–D134)
+- [ ] Canlıda dene: Kaynaklar → “Birlikte analiz et” → Karşılaştır; İddia denetimi (Diğer kaynaklarımla da karşılaştır); PRISMA → Protokol’de çift değerlendirici, 5. Veri çıkarma ve kalite, 6. Yöntem metni → Belgeye ekle; yeni yüklenen bir PDF’te “Kaynağa sor → Yöntemi”
 - [ ] (İsteğe bağlı, ücretsiz) Vercel’e `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY` ekle → Redeploy (D129)
 - [ ] Canlıda dene: Kaynak araştırmasında bir arama yap; sonuç çiplerinde PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP görünüyor mu (D129)
 - [ ] Tanıtım videosu seslendirmesi: kaydı gönder; ses videoya eklenip `public/video/academiana-tanitim.mp4` aynı adla değiştirilecek (D127)

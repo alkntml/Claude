@@ -4,23 +4,24 @@
  * burada atıflı her cümlenin kaynağın okunan metninde desteklenip desteklenmediği, dayanak pasajı ve sayfasıyla gösterilir.
  */
 import type { Editor } from "@tiptap/react";
-import { AlertTriangle, BookOpen, CheckCircle2, CircleHelp, Crosshair, Eraser, FileWarning, Loader2, ShieldCheck, Wand2, XCircle } from "lucide-react";
+import { AlertOctagon, AlertTriangle, BookOpen, CheckCircle2, CircleHelp, Crosshair, Download, Eraser, FileWarning, Link2, Loader2, ShieldCheck, Wand2, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
-import type { AuditItem, ClaimAudit, ClaimVerdict } from "@/lib/claims";
+import { auditCsv, isMixed, type AuditItem, type ClaimAudit, type ClaimVerdict } from "@/lib/claims";
 import { api } from "@/lib/client";
 import { findSentence, setClaimMarks, type ClaimMark, type MarkTone } from "./claim-marks";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Filter = "problems" | "all" | ClaimVerdict | "uncited" | "marked";
+type Filter = "problems" | "all" | ClaimVerdict | "uncited" | "marked" | "related";
 const VERDICT: Record<ClaimVerdict, { label: string; tone: MarkTone; cls: string; Icon: typeof CheckCircle2 }> = {
   supports: { label: "Destekleniyor", tone: "good", cls: "bg-emerald-50 text-emerald-700", Icon: CheckCircle2 },
   partial: { label: "Kısmen destekleniyor", tone: "partial", cls: "bg-amber-50 text-amber-800", Icon: AlertTriangle },
   not_supported: { label: "Desteklenmiyor", tone: "bad", cls: "bg-rose-50 text-rose-700", Icon: XCircle },
+  contradicts: { label: "Kaynakla çelişiyor", tone: "bad", cls: "bg-rose-100 text-rose-800", Icon: AlertOctagon },
   insufficient: { label: "Kaynak metni yetersiz", tone: "unknown", cls: "bg-ink-100 text-ink-600", Icon: CircleHelp },
 };
 const ACCESS: Record<string, string> = { full_text: "Tam metin okundu", abstract: "Yalnızca özet okundu", metadata: "Yalnızca künye" };
@@ -41,6 +42,7 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("problems");
   const [marks, setMarks] = useState(true);
+  const [cross, setCross] = useState(true);
 
   useEffect(() => {
     if (!open) return;
@@ -57,7 +59,7 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
   async function run() {
     setBusy(true);
     try {
-      const r = await api<{ audit: ClaimAudit }>(`/api/stages/${stageId}/claim-audit`, { method: "POST", json: { focus } });
+      const r = await api<{ audit: ClaimAudit }>(`/api/stages/${stageId}/claim-audit`, { method: "POST", json: { focus, crossCheck: cross } });
       setAudit(r.audit);
       applyMarks(r.audit, marks);
       const s = r.audit.summary;
@@ -68,13 +70,24 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
 
   const items = useMemo(() => {
     const all = audit?.results ?? [];
-    const order = (x: AuditItem) => (x.kind !== "cited" ? 1 : x.verdict === "not_supported" ? 0 : x.verdict === "partial" ? 2 : x.verdict === "insufficient" ? 3 : x.verdict ? 5 : 4);
+    const order = (x: AuditItem) => (x.kind !== "cited" ? 1 : x.verdict === "contradicts" ? -1 : x.verdict === "not_supported" ? 0 : x.verdict === "partial" ? 2 : x.verdict === "insufficient" ? 3 : x.verdict ? 5 : 4);
     const f = all.filter((x) => filter === "all" ? true
-      : filter === "problems" ? !(x.kind === "cited" && x.verdict === "supports")
+      : filter === "related" ? !!x.related?.length
+      : filter === "problems" ? !(x.kind === "cited" && x.verdict === "supports") || isMixed(x.checks) || !!x.related?.some((r) => r.stance === "contradicts")
       : filter === "uncited" || filter === "marked" ? x.kind === filter
       : x.kind === "cited" && x.verdict === filter);
     return [...f].sort((a, b) => order(a) - order(b));
   }, [audit, filter]);
+
+  function exportCsv() {
+    if (!audit) return;
+    const body = auditCsv(audit.results, {
+      title: (id) => sources[id]?.title ?? id,
+      verdictLabel: (v, kind) => (kind === "uncited" ? t("Atıfsız iddia") : kind === "marked" ? t("[KAYNAK GEREKLİ]") : v ? t(VERDICT[v].label) : t("Denetlenmedi")),
+      stanceLabel: (st) => (st === "supports" ? t("Destekliyor") : t("Çelişiyor")),
+    });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([body], { type: "text/csv;charset=utf-8" })); a.download = "iddia-denetimi.csv"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
 
   function goTo(it: AuditItem) {
     const r = findSentence(editor.state.doc, it.text);
@@ -84,7 +97,7 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
   }
 
   const s = audit?.summary;
-  const bar: [keyof typeof VERDICT | "uncited", number, string][] = s ? [["not_supported", s.not_supported, "bg-rose-500"], ["partial", s.partial, "bg-amber-400"], ["insufficient", s.insufficient, "bg-ink-300"], ["uncited", s.uncited + s.marked, "bg-orange-400"], ["supports", s.supports, "bg-emerald-500"]] : [];
+  const bar: [keyof typeof VERDICT | "uncited", number, string][] = s ? [["contradicts", s.contradicts ?? 0, "bg-rose-700"], ["not_supported", s.not_supported, "bg-rose-500"], ["partial", s.partial, "bg-amber-400"], ["insufficient", s.insufficient, "bg-ink-300"], ["uncited", s.uncited + s.marked, "bg-orange-400"], ["supports", s.supports, "bg-emerald-500"]] : [];
 
   return (
     <Modal open={open} onClose={onClose} title={t("İddia denetimi")} wide>
@@ -96,12 +109,14 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
 
         <div className="flex flex-wrap items-center gap-2">
           <Button onClick={run} loading={busy}><ShieldCheck className="h-4 w-4" /> {audit ? t("Yeniden denetle") : t("Denetimi başlat")}</Button>
+          <label className="flex items-center gap-1.5 text-[12.5px] text-ink-600" title={t("Atıfsız veya desteklenmeyen cümleler için projedeki diğer kaynaklara da bakılır: destekleyen kaynak önerilir, çelişen kaynak uyarılır.")}><input type="checkbox" checked={cross} onChange={(e) => setCross(e.target.checked)} /> {t("Diğer kaynaklarımla da karşılaştır")}</label>
           {audit?.id && <span className="text-[12.5px] text-ink-500">{t("Son denetim: {d}", { d: new Date(audit.created_at).toLocaleString(dl) })}</span>}
           {audit && (
             <label className="ml-auto flex items-center gap-2 text-[13px] text-ink-600">
               <input type="checkbox" checked={marks} onChange={(e) => { setMarks(e.target.checked); applyMarks(audit, e.target.checked); }} /> {t("Sorunlu cümleleri metinde işaretle")}
             </label>
           )}
+          {audit && <button onClick={exportCsv} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[12.5px] text-ink-500 hover:bg-ink-100"><Download className="h-3.5 w-3.5" /> CSV</button>}
           {audit && <button onClick={() => applyMarks(null, false)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[12.5px] text-ink-500 hover:bg-ink-100"><Eraser className="h-3.5 w-3.5" /> {t("İşaretleri temizle")}</button>}
         </div>
         {busy && <p className="flex items-center gap-2 text-[13px] text-ink-500"><Loader2 className="h-4 w-4 animate-spin" /> {t("Cümleler kaynaklarla karşılaştırılıyor… Değişmeyen cümleler yeniden denetlenmez.")}</p>}
@@ -113,10 +128,12 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
             <div>
               <div className="flex h-2.5 overflow-hidden rounded-full bg-ink-100">{bar.map(([k, n, c]) => n > 0 && <span key={k} className={c} style={{ width: `${(n / s.total) * 100}%` }} />)}</div>
               <div className="mt-2 flex flex-wrap gap-1.5 text-[12.5px]">
-                {([["problems", t("Sorunlular"), s.total - s.supports], ["not_supported", t("Desteklenmiyor"), s.not_supported], ["partial", t("Kısmen"), s.partial], ["insufficient", t("Okunamadı"), s.insufficient], ["uncited", t("Atıfsız iddia"), s.uncited], ["marked", t("[KAYNAK GEREKLİ]"), s.marked], ["supports", t("Destekleniyor"), s.supports], ["all", t("Tümü"), s.total]] as [Filter, string, number][]).map(([k, l, n]) => (
+                {([["problems", t("Sorunlular"), s.total - s.supports], ["contradicts", t("Çelişiyor"), s.contradicts ?? 0], ["not_supported", t("Desteklenmiyor"), s.not_supported], ["related", t("Diğer kaynaklar"), s.total ? audit!.results.filter((x) => x.related?.length).length : 0], ["partial", t("Kısmen"), s.partial], ["insufficient", t("Okunamadı"), s.insufficient], ["uncited", t("Atıfsız iddia"), s.uncited], ["marked", t("[KAYNAK GEREKLİ]"), s.marked], ["supports", t("Destekleniyor"), s.supports], ["all", t("Tümü"), s.total]] as [Filter, string, number][]).map(([k, l, n]) => (
                   <button key={k} onClick={() => setFilter(k)} className={cn("rounded-full border px-2.5 py-1 transition", filter === k ? "border-brand-300 bg-brand-50 text-brand-800" : "border-ink-200 text-ink-600 hover:border-ink-300")}>{l} <b className="tabular-nums">{n}</b></button>
                 ))}
               </div>
+              {((s.contradicts ?? 0) > 0 || (s.relatedContradict ?? 0) > 0 || (s.mixed ?? 0) > 0) && <p className="mt-2 flex items-start gap-1.5 rounded-xl bg-rose-50 p-2.5 text-[12.5px] text-rose-800"><AlertOctagon className="mt-0.5 h-4 w-4 shrink-0" />{t("Çelişki bulundu: {a} cümle atıf yaptığı kaynakla çelişiyor, {b} cümle projenizdeki başka bir kaynakla çelişiyor, {c} cümlenin kaynakları birbirinden farklı sonuç veriyor. Akademik metinde çelişen bulguları görmezden gelmek yerine tartışmanız önerilir.", { a: s.contradicts ?? 0, b: s.relatedContradict ?? 0, c: s.mixed ?? 0 })}</p>}
+              {(s.relatedSupport ?? 0) > 0 && <p className="mt-2 flex items-start gap-1.5 rounded-xl bg-emerald-50 p-2.5 text-[12.5px] text-emerald-800"><Link2 className="mt-0.5 h-4 w-4 shrink-0" />{t("{n} cümle için projenizde onu destekleyen ama atıf yapılmamış bir kaynak bulundu. “Diğer kaynaklar” filtresinden görebilirsiniz.", { n: s.relatedSupport ?? 0 })}</p>}
               {!!s.skipped && <p className="mt-2 text-[12px] text-amber-700">{t("{n} cümle–kaynak eşleşmesi bu turda denetlenmedi (tek seferde en fazla 40). Kalanlar için yeniden denetleyin.", { n: s.skipped })}</p>}
             </div>
 
@@ -142,6 +159,23 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
                       {c.access === "metadata" && <p className="mt-1 text-[12px] text-ink-500">{t("Bu kaynağın içeriği okunmadı. Kaynaklar sekmesinden tam metni getirin veya PDF’ini yükleyin, sonra yeniden denetleyin.")}</p>}
                     </div>
                   ))}
+                  {isMixed(it.checks) && <p className="mt-2 rounded-lg bg-rose-50 px-2.5 py-1.5 text-[12px] text-rose-800">{t("Karışık kanıt: atıf yaptığınız kaynaklardan biri destekliyor, diğeri çelişiyor. Bu ayrışmayı cümlede belirtmeniz önerilir.")}</p>}
+                  {!!it.related?.length && (
+                    <div className="mt-2 space-y-1.5">
+                      <p className="text-[11.5px] font-semibold uppercase tracking-wide text-ink-400">{t("Projenizdeki diğer kaynaklar")}</p>
+                      {it.related.map((r) => (
+                        <div key={r.sourceId} className={cn("rounded-xl p-2.5 text-[12.5px]", r.stance === "supports" ? "bg-emerald-50/70 text-emerald-900" : "bg-rose-50/80 text-rose-900")}>
+                          <p className="flex flex-wrap items-center gap-1.5">{r.stance === "supports" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertOctagon className="h-3.5 w-3.5" />}<b>{r.stance === "supports" ? t("Destekliyor") : t("Çelişiyor")}</b> · <span className="font-medium">{sources[r.sourceId]?.title ?? t("Kaynak")}</span></p>
+                          <p className="mt-1">{r.explanation}</p>
+                          {r.quote && <blockquote className="mt-1 border-l-2 border-current pl-2 italic opacity-80">“{r.quote}”{r.quotePage ? ` (s. ${r.quotePage})` : ""}</blockquote>}
+                          <button onClick={() => onFix(it, r.stance === "supports"
+                            ? `${t("Projedeki şu kaynak bu cümleyi destekliyor; uygunsa cümleye bu kaynağı atıf olarak ekle:")} ${sources[r.sourceId]?.title ?? ""}${r.quote ? ` — “${r.quote}”${r.quotePage ? ` (s. ${r.quotePage})` : ""}` : ""}`
+                            : `${t("Projedeki şu kaynak bu cümleyle çelişen bir bulgu bildiriyor; cümleyi bu çelişkiyi de belirtecek biçimde, iki kaynağa da atıf yaparak yeniden yaz:")} ${sources[r.sourceId]?.title ?? ""}${r.quote ? ` — “${r.quote}”${r.quotePage ? ` (s. ${r.quotePage})` : ""}` : ""}`)}
+                            className="mt-1.5 inline-flex items-center gap-1 rounded-lg bg-white/80 px-2 py-1 text-[12px] font-medium hover:bg-white">{r.stance === "supports" ? <><Link2 className="h-3.5 w-3.5" /> {t("Atıf olarak ekle")}</> : <><Wand2 className="h-3.5 w-3.5" /> {t("Çelişkiyi metne işle")}</>}</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {it.kind === "uncited" && <p className="mt-1.5 text-[12.5px] text-ink-500">{t("Sayı, oran veya “araştırmalar göstermektedir” gibi kesin bir ifade içeriyor ama atıf yok. Kendi bulgunuzsa sorun değil; değilse kaynak ekleyin.")}</p>}
                 </li>
               ))}

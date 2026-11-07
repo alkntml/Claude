@@ -114,7 +114,7 @@ function App() {
     const stages = db.stages.filter((s) => s.project_id === project.id).sort((a, b) => a.position - b.position);
     if (proj[2]) return <div className="min-h-screen bg-[rgb(var(--bg))]"><QualityView project={project} initial={db.reports.find((r) => r.project_id === project.id) ?? null} stages={stages} /></div>;
     return (
-      <Workspace key={project.id} project={project} stages={stages} sources={db.sources.filter((s) => s.project_id === project.id)} memory={db.memory.filter((m) => m.project_id === project.id)} files={[]} initialStageId={route.query.get("bolum")} />
+      <Workspace key={project.id} project={project} stages={stages} sources={db.sources.filter((s) => s.project_id === project.id)} memory={db.memory.filter((m) => m.project_id === project.id)} files={[]} initialStageId={route.query.get("bolum")} planId="pro" />
     );
   }
 

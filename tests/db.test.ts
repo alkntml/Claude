@@ -640,4 +640,20 @@ describe("anketler", () => {
     expect(pro.indexOf("PRISMA 2020 sistematik derleme")).toBe(pro.indexOf("Literatür matrisi") + 1);
     expect(pro).toContain("Literatür haritası ve eksik kaynak önerisi");
   });
+  it("migration 36: parça bölümü, derleme oyları, veri çıkarma ve kalite sütunları; tekrar çalıştırılabilir (D132–D134)", async () => {
+    const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/migrations/20261130000036_review_pdf_upgrade.sql"), "utf8");
+    await db.exec(sql);
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Derleme 36', 'literature_review', 'master') returning id`)).rows;
+    const [r] = (await db.query<{ id: string; votes: unknown }>(`insert into public.review_records (project_id, user_id, key, origin, record) values ($1, '${A}', 't:x|2020', 'Scopus', '{"title":"X"}') returning id, votes`, [p.id])).rows;
+    expect(r.votes).toEqual({});
+    await db.query(`update public.review_records set votes = '{"screening":{"u1":{"decision":"include","at":"2026"}}}', extraction = '{"design":{"value":"Kesitsel"}}', appraisal = '{"answers":{"aim":"yes"}}' where id = $1`, [r.id]);
+    const [row] = (await db.query<{ extraction: { design: { value: string } } }>(`select extraction from public.review_records where id = $1`, [r.id])).rows;
+    expect(row.extraction.design.value).toBe("Kesitsel");
+    await db.query(`insert into public.source_chunks (project_id, user_id, chunk_index, content, section, file_id) select $1, '${A}', 0, 'Yöntem metni', 'method', null where false`, [p.id]);
+    const cols = (await db.query<{ column_name: string }>(`select column_name from information_schema.columns where table_name = 'source_chunks' and column_name = 'section'`)).rows;
+    expect(cols).toHaveLength(1);
+    // Sahibi okuyabilir, başkası göremez
+    expect(await as(A, `select votes from public.review_records where id = '${r.id}'`)).toHaveLength(1);
+    expect(await as(B, `select votes from public.review_records where id = '${r.id}'`)).toHaveLength(0);
+  });
 });

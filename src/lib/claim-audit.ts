@@ -7,7 +7,7 @@ import "server-only";
  */
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { rankChunks, type EvidenceChunk } from "@/lib/ai/evidence";
-import type { ClaimVerdict } from "@/lib/claims";
+import type { ClaimVerdict, RelatedEvidence } from "@/lib/claims";
 import { mapLimit } from "@/lib/research";
 
 export interface PairInput { claimId: string; sentence: string; locator: string | null }
@@ -27,7 +27,7 @@ const VERDICT_SCHEMA = {
         type: "object", additionalProperties: false, required: ["id", "verdict", "explanation", "quote", "quotePage"],
         properties: {
           id: { type: "string" },
-          verdict: { type: "string", enum: ["supports", "partial", "not_supported", "insufficient"] },
+          verdict: { type: "string", enum: ["supports", "partial", "not_supported", "contradicts", "insufficient"] },
           explanation: { type: "string" }, quote: { type: "string" }, quotePage: { type: "string" },
         },
       },
@@ -82,7 +82,7 @@ export async function auditSources(o: { planId: string; lang: "tr" | "en"; group
     }).join("\n");
     const v = await complete(model, {
       system: `Akademik atıfların doğruluğunu denetleyen titiz bir editörsün. Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma. Her iddia için:
-verdict: "supports" = kaynak metni iddiayı açıkça destekliyor; "partial" = kısmen destekliyor ya da iddia kaynaktan daha güçlü/genel ifade edilmiş; "not_supported" = metin iddiayı desteklemiyor veya çelişiyor; "insufficient" = verilen metin karar vermeye yetmiyor (ör. yalnızca özet var ve konu özette geçmiyor).
+verdict: "supports" = kaynak metni iddiayı açıkça destekliyor; "partial" = kısmen destekliyor ya da iddia kaynaktan daha güçlü/genel ifade edilmiş (ör. kaynak “ilişkili” diyor, cümle “etkiler” diyor; kaynak belirli bir örneklem için söylüyor, cümle genelliyor); "not_supported" = metin bu iddiaya değinmiyor veya iddiayı taşımıyor; "contradicts" = kaynak metni iddianın tersini ya da onunla bağdaşmayan bir bulgu açıkça söylüyor (ör. cümle “artırır” diyor, kaynak “anlamlı fark bulunmadı” diyor); "insufficient" = verilen metin karar vermeye yetmiyor (ör. yalnızca özet var ve konu özette geçmiyor).
 quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN (yoksa boş). quotePage: alıntının sayfası (yoksa boş).
 explanation: ${L ? "English" : "Türkçe"}, tek cümle; atıfta sayfa verilmişse sayfanın uygun olup olmadığını da belirt.
 Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
@@ -100,4 +100,50 @@ Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle 
     });
   });
   return { results: results.flat(), usage, cost, calls, model: model.model, provider: model.provider };
+}
+
+const STANCE_SCHEMA = {
+  type: "object", additionalProperties: false, required: ["items"],
+  properties: { items: { type: "array", items: { type: "object", additionalProperties: false, required: ["id", "stance", "explanation", "quote", "quotePage"], properties: { id: { type: "string" }, stance: { type: "string", enum: ["supports", "contradicts", "unrelated"] }, explanation: { type: "string" }, quote: { type: "string" }, quotePage: { type: "string" } } } } },
+};
+
+/**
+ * Kaynaklar arası destek/çelişki kontrolü (D133): cümlenin atıf YAPMADIĞI, projedeki başka bir kaynak bu cümleyi
+ * destekliyor mu, yoksa çelişiyor mu? Aday kaynaklar kelime örtüşmesiyle seçilir (relatedCandidates); her kaynak için
+ * tek bir küçük model çağrısı yapılır. Alıntı kaynak metninde birebir yoksa gösterilmez; “ilgisiz” sonuçlar atılır.
+ */
+export async function crossCheckSources(o: { planId: string; lang: "tr" | "en"; groups: { source: SourceInput; claims: { claimId: string; sentence: string }[] }[] }) {
+  const model = await resolveModel(o.planId, "fast");
+  if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
+  const usage = { input: 0, output: 0 };
+  let cost = 0, calls = 0;
+  const L = o.lang === "en";
+  const out = await mapLimit(o.groups, 3, async ({ source, claims }): Promise<(RelatedEvidence & { claimId: string })[]> => {
+    const per = new Map<string, EvidenceChunk[]>();
+    for (const c of claims) per.set(c.claimId, source.chunks.length ? rankChunks(source.chunks, [c.sentence], null, 2) : []);
+    const used = new Map<string, EvidenceChunk & { label: string }>();
+    for (const list of per.values()) for (const c of list) if (!used.has(c.content)) used.set(c.content, { ...c, label: `P${used.size + 1}` });
+    const material = [source.abstract ? `ÖZET:\n${source.abstract.slice(0, 2200)}` : "", ...[...used.values()].map((c) => `${c.label}${c.page ? ` (s. ${c.page})` : ""}:\n${c.content.slice(0, 1300)}`)].filter(Boolean).join("\n\n");
+    if (!material) return [];
+    const r = await complete(model, {
+      system: `Bir öğrencinin akademik metnindeki cümleleri, bu cümlelerde ATIF YAPILMAMIŞ başka bir kaynağın metniyle karşılaştırıyorsun. Yalnızca verilen KAYNAK METNİNE dayan.
+stance: "supports" = kaynak metni cümlenin iddiasını açıkça destekliyor (öğrenci bu kaynağı da atıf olarak ekleyebilir); "contradicts" = kaynak metni cümlenin iddiasının tersini ya da onunla bağdaşmayan bir bulguyu açıkça söylüyor; "unrelated" = konu aynı olsa bile cümlenin iddiası hakkında açık bir şey söylemiyor (şüphede unrelated seç).
+quote: kararı dayandırdığın en kısa ifade, kaynak metninden AYNEN (yoksa boş). quotePage: alıntının sayfası (yoksa boş). explanation: ${L ? "English" : "Türkçe"}, tek cümle.
+Her cümle için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
+      messages: [{ role: "user", content: `KAYNAK: ${source.title}\n\nCÜMLELER:\n${claims.map((c) => `[${c.claimId}] ${c.sentence}`).join("\n")}\n\nKAYNAK METNİ:\n${material}` }],
+      maxTokens: 300 + claims.length * 200, effort: "low", jsonSchema: STANCE_SCHEMA,
+    });
+    usage.input += r.usage.input; usage.output += r.usage.output; calls++;
+    cost += await estimateCost(r.model, r.usage.input, r.usage.output, r.usage);
+    let items: { id: string; stance: "supports" | "contradicts" | "unrelated"; explanation: string; quote: string; quotePage: string }[] = [];
+    try { items = JSON.parse(r.text).items ?? []; } catch { /* yok say */ }
+    const nm = norm(material);
+    return items.filter((x) => x.stance !== "unrelated" && claims.some((c) => c.claimId === x.id)).map((x) => {
+      const quoteOk = !!x.quote && nm.includes(norm(x.quote));
+      return { claimId: x.id, sourceId: source.id, stance: x.stance as "supports" | "contradicts", explanation: x.explanation.slice(0, 400), quote: quoteOk ? x.quote : null, quotePage: quoteOk && x.quotePage ? x.quotePage : null };
+    })
+      // Alıntısı doğrulanamayan “çelişiyor” sonucu gösterilmez (yanlış alarm riskini azaltır)
+      .filter((x) => x.stance === "supports" || x.quote);
+  });
+  return { results: out.flat(), usage, cost, calls, model: model.model, provider: model.provider };
 }

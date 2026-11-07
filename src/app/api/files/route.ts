@@ -2,6 +2,8 @@ import { ApiError, json, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { chunkText } from "@/lib/files/chunk";
 import { checkMagic, extract, kindOf } from "@/lib/files/extract";
+import type { Segment } from "@/lib/files/pdf-clean";
+import { insertChunks } from "@/lib/sources/chunk-insert";
 import { assertWithinLimits, recordUsage } from "@/lib/usage";
 
 export const maxDuration = 120;
@@ -45,12 +47,14 @@ export const POST = route("files.upload", async (req) => {
   let text = "";
   let meta: Record<string, unknown> = { kind };
   let pages: string[] | undefined;
+  let segments: Segment[] | undefined;
   try {
     const ex = await extract(kind, buf);
     text = ex.text.slice(0, 2_000_000);
     pages = ex.pages;
+    segments = ex.segments;
     meta = { ...meta, ...ex.meta, chars: ex.text.length };
-    if (kind === "pdf" && ex.text.trim().length < 200) meta.warning = "Metin çıkarılamadı; taranmış (görüntü) PDF olabilir.";
+    if (kind === "pdf" && (ex.meta.scanned || ex.text.trim().length < 200)) meta.warning = "Metin çıkarılamadı; taranmış (görüntü) PDF olabilir.";
   } catch (e) {
     status = "failed";
     meta.error = e instanceof Error ? e.message : "Okuma hatası";
@@ -67,10 +71,8 @@ export const POST = route("files.upload", async (req) => {
 
   // Metin belgeleri proje içinde aranabilir parçalara bölünür (RAG)
   if (projectId && status === "done" && kind !== "csv" && kind !== "xlsx" && text) {
-    const chunks = chunkText({ pages, text }).slice(0, 3000);
-    for (let k = 0; k < chunks.length; k += 200) {
-      await s.supabase.from("source_chunks").insert(chunks.slice(k, k + 200).map((c, idx) => ({ file_id: row.id, project_id: projectId, user_id: s.user.id, chunk_index: k + idx, page_hint: c.pageHint, content: c.content })));
-    }
+    const chunks = chunkText({ pages, text, segments }).slice(0, 3000);
+    await insertChunks(s.supabase, chunks.map((c, idx) => ({ file_id: row.id, project_id: projectId, user_id: s.user.id, chunk_index: idx, page_hint: c.pageHint, content: c.content, section: c.section ?? null })));
     if (purpose === "guideline") await s.supabase.from("projects").update({ guideline_file_id: row.id }).eq("id", projectId);
   }
   await recordUsage(s.user.id, "upload", { meta: { bytes: file.size, kind } });

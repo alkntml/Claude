@@ -7,6 +7,7 @@ import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
 import { rankChunks, type EvidenceChunk } from "@/lib/ai/evidence";
 import { spentError } from "@/lib/ai/spent";
+import { SECTION_PREFS } from "@/lib/files/pdf-clean";
 
 export type AskPreset = "summary" | "method" | "sample" | "findings" | "limitations" | "relation" | "quotes" | "definitions";
 
@@ -32,7 +33,7 @@ export async function askSource(o: {
   history: { q: string; a: string }[];
   lang: "tr" | "en";
   source: { title: string; authors: string; year: number | null; container: string | null; abstract: string | null; access_level: "metadata" | "abstract" | "full_text" };
-  chunks: { content: string; page_hint: string | null }[];
+  chunks: { content: string; page_hint: string | null; section?: string | null }[];
   project: { title: string; topic?: string | null };
 }): Promise<AskResult & { usage: Usage; cost: number; model: string; provider: string }> {
   const model = await resolveModel(o.planId, "balanced");
@@ -40,7 +41,7 @@ export async function askSource(o: {
   // Özet ve genel sorularda metnin farklı yerlerinden parça alınır; diğerlerinde en ilgili parçalar
   let evidence: EvidenceChunk[] = [];
   if (o.chunks.length) {
-    const ranked = rankChunks(o.chunks, kw, null, o.preset === "summary" ? 4 : 9);
+    const ranked = rankChunks(o.chunks, kw, null, o.preset === "summary" ? 4 : 9, { sections: o.preset ? SECTION_PREFS[o.preset] : undefined });
     if (o.preset === "summary") {
       const step = Math.max(1, Math.floor(o.chunks.length / 5));
       const spread = o.chunks.filter((_, i) => i % step === 0).slice(0, 5).map((c) => ({ content: c.content, page: c.page_hint?.replace(/^s\.\s*/, "") ?? null }));
@@ -62,7 +63,7 @@ KURALLAR:
   const material = [
     `KAYNAK: ${o.source.authors}${o.source.year ? ` (${o.source.year})` : ""}. ${o.source.title}${o.source.container ? `. ${o.source.container}` : ""}`,
     o.source.abstract && o.source.access_level !== "metadata" ? `ÖZET:\n${o.source.abstract.slice(0, 3000)}` : "",
-    ...evidence.map((c, i) => `PARÇA ${i + 1}${c.page ? ` (s. ${c.page})` : ""}:\n${c.content.slice(0, 1800)}`),
+    ...evidence.map((c, i) => `PARÇA ${i + 1}${c.page ? ` (s. ${c.page})` : ""}${c.section ? ` [${c.section}]` : ""}:\n${c.content.slice(0, 1800)}`),
   ].filter(Boolean).join("\n\n");
   const messages = [
     ...o.history.slice(-4).flatMap((h) => [{ role: "user" as const, content: h.q.slice(0, 1500) }, { role: "assistant" as const, content: h.a.slice(0, 3000) }]),

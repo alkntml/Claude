@@ -3,7 +3,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { chunkText } from "@/lib/files/chunk";
 import { extract } from "@/lib/files/extract";
 import { safeFetch, stripTags } from "./http";
+import { insertChunks } from "./chunk-insert";
 import { pdfPageLabels } from "./pages";
+import type { Segment } from "@/lib/files/pdf-clean";
 import { unpaywallLookup } from "./providers";
 import type { ProviderConfig } from "./types";
 
@@ -51,6 +53,8 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
   const timer = setTimeout(() => ctrl.abort(), 45_000);
   try {
     let pages: string[] | undefined;
+    let segments: Segment[] | undefined;
+    let scanned = false;
     let text = "";
     let usedUrl: string | undefined;
     let license: string | null = source.license ?? null;
@@ -77,7 +81,8 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
       for (const url of [...new Set(candidates)]) {
         try {
           const ex = await extract("pdf", await fetchPdf(url, ctrl.signal));
-          if (ex.text.length >= 2000) { pages = ex.pages; text = ex.text; usedUrl = url; break; }
+          if (ex.meta.scanned) scanned = true;
+          if (ex.text.length >= 2000) { pages = ex.pages; segments = ex.segments; text = ex.text; usedUrl = url; break; }
         } catch {
           // sonraki adayı dene
         }
@@ -85,16 +90,12 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
       if (!usedUrl && !candidates.length) return { status: "no_open_access", message: "Bu kaynak için açık erişimli tam metin bulunamadı. PDF'iniz varsa yükleyerek ekleyebilirsiniz." };
     }
 
-    if (text.length < 2000) return { status: "failed", message: "Tam metin indirilemedi veya okunamadı (taranmış PDF ya da yayıncı engeli olabilir)." };
+    if (text.length < 2000) return { status: "failed", message: scanned ? "PDF taranmış görüntüden oluşuyor; metni seçilemediği için okunamadı. Metin seçilebilen bir sürümünü yükleyebilirsiniz." : "Tam metin indirilemedi veya okunamadı (taranmış PDF ya da yayıncı engeli olabilir)." };
 
     // Sayfa ipuçları yayındaki gerçek sayfa numaralarıyla yazılır (atıfta sayfa gösterimi için)
-    const chunks = chunkText({ pages, text, pageLabels: pages ? pdfPageLabels(source.pages, pages.length) : undefined });
+    const chunks = chunkText({ pages, text, segments, pageLabels: pages ? pdfPageLabels(source.pages, pages.length) : undefined });
     await db.from("source_chunks").delete().eq("source_id", source.id);
-    for (let k = 0; k < chunks.length; k += 200) {
-      const slice = chunks.slice(k, k + 200).map((c, idx) => ({ source_id: source.id, project_id: source.project_id, user_id: source.user_id, chunk_index: k + idx, page_hint: c.pageHint, content: c.content }));
-      const { error } = await db.from("source_chunks").insert(slice);
-      if (error) throw error;
-    }
+    await insertChunks(db, chunks.map((c, idx) => ({ source_id: source.id, project_id: source.project_id, user_id: source.user_id, chunk_index: idx, page_hint: c.pageHint, content: c.content, section: c.section ?? null })));
     await db.from("sources").update({ access_level: "full_text", license, oa_url: source.oa_url ?? usedUrl }).eq("id", source.id);
     return { status: "ingested", message: `${chunks.length} parça analiz için hazırlandı.`, chunks: chunks.length, url: usedUrl };
   } catch (e) {

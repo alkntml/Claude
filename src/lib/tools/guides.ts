@@ -9,6 +9,52 @@ export interface ToolGuide {
 type L = { tr: ToolGuide; en: ToolGuide };
 
 export const TOOL_GUIDES: Record<string, L> = {
+  "/araclar/arastirmalar-ne-diyor": {
+    tr: {
+      sections: [
+        { h: "Nasıl çalışır?", p: ["Sorunuz önce akademik arama ifadelerine çevrilir; ardından **OpenAlex, Europe PMC, ERIC ve Crossref**’te İngilizce, Türkiye kaynaklarında Türkçe arama yapılır. Özeti okunabilen en ilgili makaleler (en fazla 14) seçilir ve kısa cevap **yalnızca bu özetlerden** derlenir."], list: [
+          "Cevaptaki her bilginin yanında dayandığı makalenin numarası [3] yazar; numaraya tıklayınca makaleye gidersiniz.",
+          "Her makalenin ana bulgusu, çalışma türü (meta-analiz, deneysel, ilişkisel, nitel…) ve soruya göre yönü gösterilir.",
+          "Makalenin künyesine ve DOI bağlantısına tek tıkla ulaşırsınız; giriş yaptıysanız makaleyi çalışmanıza ekleyebilirsiniz.",
+        ] },
+        { h: "Uzlaşı göstergesi ne anlatır?", p: [
+          "“Etkiler mi, ilişkili mi?” gibi evet/hayır sorularında, ilgili çalışmaların kaçının **evet**, **kısmen / koşullu**, **karışık** veya **hayır** sonucuna vardığı gösterilir. Gösterge en az 3 ilgili çalışma olduğunda çıkar.",
+          "Gösterge bir oylama değildir: tek bir güçlü meta-analiz, birçok küçük kesitsel çalışmadan daha ağırlıklı olabilir. Bu yüzden çalışma türlerine de bakın.",
+        ] },
+        { h: "Sınırları", p: [
+          "Cevap yalnızca özetlere dayanır; tam metinler okunmaz. Bulunan makaleler veri tabanlarının arama sonuçlarıdır, alanın tamamı değildir. Tezinizde bir bulguyu kullanmadan önce makalenin kendisini okuyun. Sistemli bir tarama için [literatür taraması rehberimize](/blog/literatur-taramasi-nasil-yapilir) ve [sistematik derleme yazımıza](/blog/sistematik-derleme-meta-analiz-prisma) bakabilirsiniz.",
+        ] },
+      ],
+      faq: [
+        { q: "Bulunan makaleler gerçek mi?", a: "Evet. Makaleler doğrudan akademik veri tabanlarından gelir; yapay zekâ makale üretmez, yalnızca bulunan makalelerin özetlerini okuyup özetler. Her makalenin DOI veya kayıt bağlantısı gösterilir." },
+        { q: "Ücretsiz mi, kaç soru sorabilirim?", a: "Evet, üyelik gerekmez. Ziyaretçiler saatte 5, üyeler saatte 20 soru sorabilir." },
+        { q: "Türkçe soru sorabilir miyim?", a: "Evet. Sorunuz hem İngilizce literatürde hem Türkçe ve Türkiye adresli yayınlarda aranır; cevap sorunuzun dilinde verilir." },
+        { q: "Cevabı tezimde kaynak olarak kullanabilir miyim?", a: "Hayır, cevabın kendisi kaynak değildir. Listelenen makaleleri okuyup kendi cümlelerinizle ve onlara atıf yaparak kullanın. Academiana’da makaleleri çalışmanıza ekleyip kaynakçaya otomatik dönüştürebilirsiniz." },
+      ],
+    },
+    en: {
+      sections: [
+        { h: "How does it work?", p: ["Your question is turned into academic search terms; then **OpenAlex, Europe PMC, ERIC and Crossref** are searched in English and Turkish sources in Turkish. The most relevant papers with readable abstracts (up to 14) are selected and the short answer is written **only from these abstracts**."], list: [
+          "Each statement in the answer shows the number of the paper it rests on, e.g. [3]; click it to jump to the paper.",
+          "For each paper you see its main finding, study type (meta-analysis, experimental, correlational, qualitative…) and its direction relative to your question.",
+          "Bibliographic details and the DOI link are one click away; if you are signed in, you can add the paper to your work.",
+        ] },
+        { h: "What does the consensus meter show?", p: [
+          "For yes/no questions such as “does X affect Y?”, it shows how many relevant studies concluded **yes**, **partly / conditionally**, **mixed** or **no**. It appears when there are at least 3 relevant studies.",
+          "The meter is not a vote: one strong meta-analysis can outweigh many small cross-sectional studies, so look at study types too.",
+        ] },
+        { h: "Limitations", p: [
+          "The answer rests on abstracts only; full texts are not read. The papers are database search results, not the whole field. Read a paper before using its findings in your thesis. For a systematic search, see our [literature review guide](/en/blog/how-to-write-a-literature-review) and [systematic review guide](/en/blog/systematic-review-meta-analysis-prisma-2020).",
+        ] },
+      ],
+      faq: [
+        { q: "Are the papers real?", a: "Yes. Papers come directly from academic databases; the AI does not create papers, it only reads and summarises the abstracts of the papers found. Each paper shows its DOI or record link." },
+        { q: "Is it free, and how many questions can I ask?", a: "Yes, no sign-up is needed. Visitors can ask 5 questions per hour and members 20." },
+        { q: "Can I ask in Turkish?", a: "Yes. Your question is searched in English literature and in Turkish and Turkey-affiliated publications; the answer is given in your language." },
+        { q: "Can I cite the answer in my thesis?", a: "No, the answer itself is not a source. Read the listed papers and use them in your own words with citations. In Academiana you can add the papers to your work and turn them into a reference list automatically." },
+      ],
+    },
+  },
   "/araclar/uydurma-kaynak-kontrolu": {
     tr: {
       sections: [

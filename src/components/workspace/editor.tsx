@@ -8,33 +8,47 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import Underline from "@tiptap/extension-underline";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import type { AnyExtension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import {
-  Bold, Heading2, Heading3, Heading4, Italic, List, ListOrdered, Minus, Quote, Redo2, Rows3, StickyNote, Table2, Underline as U, Undo2, Columns3, Trash2, ImageIcon,
+  WandSparkles, Bold, Heading2, Heading3, Heading4, Italic, List, ListOrdered, Minus, Quote, Redo2, Rows3, StickyNote, Table2, Underline as U, Undo2, Columns3, Trash2, ImageIcon,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/components/ui/cn";
 import type { JSONNode } from "@/lib/editor/doc";
 import { Citation, Figure, Footnote } from "./nodes";
 
-export function useAcademicEditor(opts: { content: JSONNode | null; placeholder: string; onUpdate: (doc: JSONNode, editor: Editor) => void; onSelection?: (text: string) => void }) {
+/** Çalışma alanı editörünün düğüm ve biçim uzantıları (önizleme editörleri de aynısını kullanır) */
+export function academicExtensions(placeholder?: () => string) {
+  return [
+    StarterKit.configure({ heading: { levels: [2, 3, 4] } }),
+    Underline,
+    Link.configure({ openOnClick: false, autolink: true, protocols: ["https"], HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } }),
+    ...(placeholder ? [Placeholder.configure({ placeholder })] : []),
+    Table.configure({ resizable: false }),
+    TableRow,
+    TableHeader,
+    TableCell,
+    Citation,
+    Footnote,
+    Figure,
+  ];
+}
+
+/** Salt okunur belge önizlemesi (çeviri sonucu vb.); atıflar çalışma alanındaki stile göre görünür */
+export function DocPreview({ doc, className }: { doc: JSONNode; className?: string }) {
+  const editor = useEditor({ immediatelyRender: false, editable: false, extensions: academicExtensions(), content: doc as object, editorProps: { attributes: { class: cn("prose-academic", className) } } }, [JSON.stringify(doc)]);
+  return <EditorContent editor={editor} />;
+}
+
+export function useAcademicEditor(opts: { content: JSONNode | null; placeholder: string; onUpdate: (doc: JSONNode, editor: Editor) => void; onSelection?: (text: string) => void; extensions?: AnyExtension[] }) {
   const cb = useRef(opts);
   cb.current = opts;
   return useEditor({
     immediatelyRender: false,
     extensions: [
-      StarterKit.configure({ heading: { levels: [2, 3, 4] } }),
-      Underline,
-      Link.configure({ openOnClick: false, autolink: true, protocols: ["https"], HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" } }),
-      // Yer tutucu her çizimde güncel bölüm adını okur (bölüm değişince eski bölümün adı kalmasın)
-      Placeholder.configure({ placeholder: () => cb.current.placeholder }),
-      Table.configure({ resizable: false }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      Citation,
-      Footnote,
-      Figure,
+      ...academicExtensions(() => cb.current.placeholder),
+      ...(opts.extensions ?? []),
     ],
     content: (opts.content as object) ?? { type: "doc", content: [{ type: "paragraph" }] },
     editorProps: { attributes: { class: "prose-academic numbered min-h-[45vh] pb-24 sm:min-h-[55vh] sm:pb-40", spellcheck: "true" } },
@@ -55,7 +69,7 @@ function TB({ on, active, label, children, disabled }: { on: () => void; active?
   );
 }
 
-export function Toolbar({ editor, onFootnote }: { editor: Editor | null; onFootnote: () => void }) {
+export function Toolbar({ editor, onFootnote, suggestOn, onToggleSuggest }: { editor: Editor | null; onFootnote: () => void; suggestOn?: boolean; onToggleSuggest?: () => void }) {
   const { t } = useT();
   if (!editor) return <div className="h-11" />;
   const c = () => editor.chain().focus();
@@ -81,6 +95,12 @@ export function Toolbar({ editor, onFootnote }: { editor: Editor | null; onFootn
       <TB label={t("Dipnot ekle")} on={onFootnote}><StickyNote className="h-4 w-4" /></TB>
       <TB label={t("Tablo ekle")} on={() => c().insertContent([{ type: "paragraph", content: [{ type: "text", text: t("Tablo 1. Başlık"), marks: [{ type: "italic" }] }] }]).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><Table2 className="h-4 w-4" /></TB>
       <TB label={t("Şekil başlığı ekle")} on={() => c().insertContent({ type: "paragraph", content: [{ type: "text", text: t("Şekil 1. Açıklama"), marks: [{ type: "italic" }] }] }).run()}><ImageIcon className="h-4 w-4" /></TB>
+      {onToggleSuggest && (
+        <>
+          <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+          <TB label={suggestOn ? t("Otomatik tamamlama açık (kapat)") : t("Otomatik tamamlama kapalı (aç)")} active={!!suggestOn} on={onToggleSuggest}><WandSparkles className="h-4 w-4" /></TB>
+        </>
+      )}
       {inTable && (
         <>
           <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />

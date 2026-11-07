@@ -5,7 +5,7 @@ import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
 import { activeCredits } from "@/lib/growth";
 
-export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check";
+export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check" | "autocomplete";
 
 export interface PlanLimits {
   ai_requests_month?: number | null;

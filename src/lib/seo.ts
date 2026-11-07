@@ -6,7 +6,7 @@
 import type { Locale } from "@/i18n";
 import { SITE_URL } from "./site";
 
-export const PUBLIC_PATHS = ["/", "/fiyatlar", "/ornekler", "/sss", "/kurumlar", "/uzman-destegi", "/yardim", "/gizlilik", "/kosullar", "/akademik-durustluk", "/hakkimizda", "/blog", "/kayit", "/giris", "/araclar", "/araclar/uydurma-kaynak-kontrolu", "/araclar/kaynakca-olusturucu", "/araclar/atif-donusturucu", "/araclar/orneklem-hesaplayici", "/araclar/cronbach-alfa", "/araclar/anket-olusturucu"];
+export const PUBLIC_PATHS = ["/", "/fiyatlar", "/ornekler", "/sss", "/kurumlar", "/uzman-destegi", "/yardim", "/gizlilik", "/kosullar", "/akademik-durustluk", "/hakkimizda", "/blog", "/kayit", "/giris", "/araclar", "/araclar/arastirmalar-ne-diyor", "/araclar/uydurma-kaynak-kontrolu", "/araclar/kaynakca-olusturucu", "/araclar/atif-donusturucu", "/araclar/orneklem-hesaplayici", "/araclar/cronbach-alfa", "/araclar/anket-olusturucu"];
 
 export function isPublicPath(path: string): boolean {
   const p = path.split(/[?#]/)[0] || "/";

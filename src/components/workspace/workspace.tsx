@@ -1,4 +1,5 @@
 "use client";
+import { createInlineSuggest } from "./inline-suggest";
 import { captionNodes, formatCaption, maxCaptionNo, noteLabel } from "@/lib/citations/captions";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
@@ -45,6 +46,9 @@ import { shouldShowTour, Tour } from "./tour";
 
 
 import { TOOL_FEATURE, ToolsMenu, type ToolId } from "./tools-menu";
+import { SelectionBubble } from "./selection-bubble";
+import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
+import type { LanguageTab } from "./language-modal";
 
 
 import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
@@ -61,6 +65,8 @@ const BlueprintScreen = dynamic(() => import("./blueprint").then((m) => m.Bluepr
 const TitleChooser = dynamic(() => import("./title-chooser").then((m) => m.TitleChooser), { ssr: false });
 const ImportDocModal = dynamic(() => import("./import-doc").then((m) => m.ImportDocModal), { ssr: false });
 const StageReviewModal = dynamic(() => import("./stage-review").then((m) => m.StageReviewModal), { ssr: false });
+const ConsensusTool = dynamic(() => import("@/components/tools/consensus").then((m) => m.ConsensusTool), { ssr: false });
+const LanguageModal = dynamic(() => import("./language-modal").then((m) => m.LanguageModal), { ssr: false });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type SaveState = "saved" | "dirty" | "saving" | "error" | "offline";
@@ -157,7 +163,26 @@ export function Workspace(props: Props) {
   const flushRef = useRef(flush);
   flushRef.current = flush;
 
+  // Satır içi otomatik tamamlama (D113): ayarı tarayıcıda hatırlanır; günlük sınır dolunca o oturumda kapanır
+  const [autoSuggest, setAutoSuggest] = useState(true);
+  useEffect(() => { try { setAutoSuggest(localStorage.getItem("acd_autosuggest") !== "0"); } catch { /* yok say */ } }, []);
+  const suggestCtx = useRef({ projectId: props.project.id, stageTitle: "", focusTitle: null as string | null, on: true, blocked: false });
+  const suggestExt = useMemo(() => [createInlineSuggest({
+    enabled: () => suggestCtx.current.on && !suggestCtx.current.blocked && !!suggestCtx.current.stageTitle,
+    fetch: async (before, signal) => {
+      const c = suggestCtx.current;
+      const res = await fetch(`/api/projects/${c.projectId}/complete`, { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ before, stageTitle: c.stageTitle, focusTitle: c.focusTitle }) });
+      if (res.status === 402 || res.status === 429) {
+        const j = await res.json().catch(() => ({}));
+        if (j?.code !== "rate_limited") { c.blocked = true; toast({ tone: "info", title: t("Otomatik tamamlama bugünlük durdu"), detail: j?.error ? t(j.error) : undefined }); }
+        return "";
+      }
+      if (!res.ok) return "";
+      return String((await res.json()).text ?? "");
+    },
+  })], []); // eslint-disable-line react-hooks/exhaustive-deps
   const editor = useAcademicEditor({
+    extensions: suggestExt,
     content: active?.content ?? null,
     placeholder: focus != null && active?.content?.content?.[focus]?.type === "heading"
       ? t("“{title}” alt başlığını yazmaya başlayın veya asistandan yardım isteyin…", { title: docToPlain({ type: "doc", content: active.content.content[focus].content }).trim() })
@@ -410,6 +435,13 @@ export function Workspace(props: Props) {
     // Pakete bağlı araçlar (D49): paket yetmiyorsa yükseltme penceresi
     const feature = TOOL_FEATURE[id];
     if (feature && !hasFeature(props.planId, feature)) { openUpgrade({ code: "feature_locked", feature, plan: FEATURE_MIN_PLAN[feature] }); return; }
+    if (id === "language") {
+      if (!active || isBibliography || !editor) { toast({ tone: "info", title: t("Önce bir bölüm açın"), detail: t("Kaynakça dışındaki bir bölüme veya alt başlığa girin.") }); return; }
+      const { from, to } = editor.state.selection;
+      flush(); setLang({ tab: "translate", range: to - from > 2 ? { from, to } : null });
+      return;
+    }
+    if (id === "consensus") { setConsensusOpen(true); return; }
     if (id === "import") {
       if (!active || isBibliography) { toast({ tone: "info", title: t("Önce aktarılacak bölümü açın"), detail: t("Kaynakça dışındaki bir bölüme veya alt başlığa girin.") }); return; }
       flush(); setImportOpen(true);
@@ -611,6 +643,9 @@ export function Workspace(props: Props) {
   const trees = useMemo<Record<string, SectionInfo[]>>(() => Object.fromEntries(stages.map((s) => [s.id, sectionTree(s.content as JSONNode, prefixes[s.id] ?? "")])), [stages, prefixes]);
   const activeTree: SectionInfo[] = active ? trees[active.id] ?? [] : [];
   const focused = focus != null ? activeTree.find((x) => x.index === focus) ?? null : null;
+  suggestCtx.current.stageTitle = !isBibliography && active ? active.title : "";
+  suggestCtx.current.focusTitle = focused?.text ?? null;
+  suggestCtx.current.on = autoSuggest;
   const maxLevel = active ? maxSectionLevel(!!chapterGroup(active.key) && !!prefixes[active.id]?.includes(".")) : 4;
   const [subOpen, setSubOpen] = useState(false);
   const subParent: SubheadingParent | null = focused ? { index: focused.index, title: focused.text, number: focused.number, level: focused.level } : null;
@@ -648,6 +683,9 @@ export function Workspace(props: Props) {
   }
   /** Word’den içe aktar (D87): açık bölüme ya da alt başlığa yerleştirir; kaynaklar ve atıflar sunucuda hazırlanır */
   const [importOpen, setImportOpen] = useState(false);
+  // Dil ve çeviri (D111): sekme ve açılırken seçili aralık
+  const [consensusOpen, setConsensusOpen] = useState(false);
+  const [lang, setLang] = useState<{ tab: LanguageTab; range: { from: number; to: number } | null } | null>(null);
   async function applyImport(r: ImportResult) {
     if (r.sources.length) addSources(r.sources);
     const next = insertImported(fullDoc(), r.nodes, focused ? focused.index : null);
@@ -810,9 +848,19 @@ export function Workspace(props: Props) {
                     </div>
                     )}
                     <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
-                      <Toolbar editor={editor} onFootnote={() => setFootnote("")} />
+                      <Toolbar editor={editor} onFootnote={() => setFootnote("")} suggestOn={autoSuggest} onToggleSuggest={() => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); }} />
                     </div>
                     <AcademicEditor editor={editor} chapter={chapterNumber} />
+                    {editor && !isBibliography && (
+                      <SelectionBubble
+                        editor={editor}
+                        onLanguage={(tab, range) => { flush(); setLang({ tab, range }); }}
+                        onAssistant={(action, text) => {
+                          if (action === "chat") { setTab("assistant"); setMobilePane("panel"); setTimeout(() => document.getElementById("assistant-input")?.focus(), 250); return; }
+                          askAssistant(t(ASSISTANT_ACTIONS[action].label), action, text);
+                        }}
+                      />
+                    )}
                   </>
                 )}
               </div>
@@ -842,7 +890,7 @@ export function Workspace(props: Props) {
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
                   {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text, index: focused.index } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
-                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
+                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={applyComment} />}
                   {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, false); }} />}
@@ -864,6 +912,10 @@ export function Workspace(props: Props) {
         </nav>
       </div>
 
+      {lang && editor && <LanguageModal open onClose={() => setLang(null)} editor={editor} projectId={project.id} projectLanguage={project.language} glossary={Array.isArray(project.context?.glossary) ? project.context.glossary : []} stageTitle={active?.title ?? ""} scopeLabel={focused ? t("Bu alt başlık: {n} {t}", { n: focused.number, t: focused.text }) : t("Bu bölüm: {t}", { t: active?.title ?? "" })} initialTab={lang.tab} selectionRange={lang.range} onSnapshot={(note) => flush({ note, author: "user" })} onGlossarySaved={(g) => setProject((p: any) => ({ ...p, context: { ...(p.context ?? {}), glossary: g } }))} />}
+      <Modal open={consensusOpen} onClose={() => setConsensusOpen(false)} title={t("Araştırmalar ne diyor?")} wide>
+        {consensusOpen && <ConsensusTool projectId={project.id} signedIn onAdded={addSources} />}
+      </Modal>
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { const n = [...stages]; n.splice(activeIndex + 1, 0, st); const fixed = academicOrder(n); setStages((fixed ?? n).map((x, i) => ({ ...x, position: i }))); if (fixed) api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: fixed.map((x) => x.id) } }).catch(() => {}); setAddStage(false); }} />
       {active && !isBibliography && importOpen && <ImportDocModal open={importOpen} onClose={() => setImportOpen(false)} projectId={project.id} target={focused ? `${focused.number ? `${focused.number} ` : ""}${focused.text}` : `${chapterNumber ? `${chapterNumber} ` : ""}${active.title}`} base={focused ? Math.min(maxLevel, focused.level + 1) : 2} max={maxLevel} dropTitle={focused ? focused.text : active.title} onImported={applyImport} />}

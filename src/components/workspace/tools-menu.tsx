@@ -1,15 +1,17 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import { BarChart3, ClipboardList, FileUp, Gavel, LineChart, Lock, MessageSquareReply, Wrench } from "lucide-react";
+import { BarChart3, ClipboardList, FileUp, Gavel, Languages, LineChart, Lock, MessageSquareReply, Scale, Wrench } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/i18n/client";
 import { FEATURE_MIN_PLAN, PLAN_NAME, hasFeature, type FeatureId } from "@/lib/features";
 
-export type ToolId = "import" | "chart" | "analysis" | "survey" | "reviewer" | "defense";
+export type ToolId = "language" | "consensus" | "import" | "chart" | "analysis" | "survey" | "reviewer" | "defense";
 /** Pakete bağlı araçlar; listede olmayan araç (Word’den içe aktar) her pakette açıktır */
 export const TOOL_FEATURE: Partial<Record<ToolId, FeatureId>> = { chart: "stats", analysis: "stats", survey: "surveys", reviewer: "reviewer", defense: "defense" };
 const TOOLS: { id: ToolId; label: string; hint: string; Icon: typeof Wrench; types?: string[] }[] = [
+  { id: "language", label: "Dil ve çeviri", hint: "Akademik İngilizce çeviri, dil denetimi, terim sözlüğü", Icon: Languages },
+  { id: "consensus", label: "Araştırmalar ne diyor?", hint: "Gerçek makalelerin özetlerinden kaynaklı cevap ve uzlaşı göstergesi", Icon: Scale },
   { id: "import", label: "Word’den içe aktar", hint: "Belgeyi kaynakları ve atıflarıyla bölüme aktarın", Icon: FileUp },
   { id: "chart", label: "Grafik oluştur", hint: "Verinizden APA biçiminde şekil", Icon: LineChart },
   { id: "analysis", label: "İstatistik analizi", hint: "t testi, ANOVA, korelasyon, regresyon…", Icon: BarChart3 },

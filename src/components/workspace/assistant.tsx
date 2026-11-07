@@ -310,7 +310,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
             </div>
           )}
           <button type="button" onClick={toggleDictation} className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition", listening ? "animate-pulse bg-rose-500 text-white" : "text-ink-500 hover:bg-ink-100", !speechSupported && "opacity-50")} aria-label={listening ? t("Dinlemeyi durdur") : t("Sesle yaz")} title={listening ? t("Dinlemeyi durdur") : t("Sesle yaz")}>{listening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}</button>
-          <textarea ref={ta} rows={1} value={input} onChange={(e) => setInput(e.target.value)}
+          <textarea id="assistant-input" ref={ta} rows={1} value={input} onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && window.matchMedia("(min-width: 1024px)").matches) { e.preventDefault(); send(input); } }}
             placeholder={listening ? t("Dinleniyor… konuşun") : stage ? t("“{title}” hakkında yazın…", { title: focus ? `${focus.number ? `${focus.number} ` : ""}${focus.title}` : stage.title }) : t("Mesajınızı yazın…")}
             aria-label={t("Asistana mesaj")}

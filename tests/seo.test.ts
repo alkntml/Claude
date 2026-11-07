@@ -66,7 +66,7 @@ describe("blog İngilizce sürümleri", () => {
 describe("site haritası", () => {
   it("her sayfa TR ve EN adresiyle, hreflang eşleşmeleriyle yer alır", () => {
     const sm = sitemap();
-    expect(sm.length).toBe((20 + POSTS.length) * 2);
+    expect(sm.length).toBe((21 + POSTS.length) * 2);
     const urls = sm.map((x) => x.url);
     expect(new Set(urls).size).toBe(urls.length);
     expect(urls).toContain("https://www.academiana.com.tr/en/blog/apa-7-citation-guide");

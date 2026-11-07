@@ -1,11 +1,11 @@
 "use client";
-import { BookMarked, Calculator, ClipboardList, Repeat2, Sigma, ShieldCheck } from "lucide-react";
+import { BookMarked, Calculator, ClipboardList, Repeat2, Scale, Sigma, ShieldCheck } from "lucide-react";
 import Link from "@/components/l-link";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { TOOLS } from "@/lib/tools";
 
-const ICON: Record<string, typeof BookMarked> = { fake_check: ShieldCheck, bibliography: BookMarked, convert: Repeat2, sample_size: Calculator, alpha: Sigma, survey_builder: ClipboardList };
+const ICON: Record<string, typeof BookMarked> = { consensus: Scale, fake_check: ShieldCheck, bibliography: BookMarked, convert: Repeat2, sample_size: Calculator, alpha: Sigma, survey_builder: ClipboardList };
 
 /** Ücretsiz araç kartları (ana sayfa ve /araclar); `exclude` o an açık olan aracı gizler */
 export function ToolCards({ exclude, compact }: { exclude?: string; compact?: boolean }) {

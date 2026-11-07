@@ -24,6 +24,7 @@ const FEATURE_LABEL: Record<string, string> = {
 
 export const TOOL_LABEL: Record<string, string> = {
   fake_check: "Uydurma kaynak kontrolü",
+  consensus: "Araştırmalar ne diyor?",
   bibliography: "Kaynakça oluşturucu",
   convert: "Atıf stili dönüştürücü",
   sample_size: "Örneklem hesaplayıcı",

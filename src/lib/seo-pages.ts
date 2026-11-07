@@ -18,6 +18,15 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     keywords: { tr: ["ücretsiz akademik araçlar", "kaynakça oluşturma", "atıf dönüştürücü", "örneklem hesaplama", "cronbach alfa hesaplama"], en: ["free academic tools", "reference generator", "citation converter", "sample size calculator", "cronbach alpha calculator"] },
     tagline: { tr: "Üyelik gerekmez", en: "No sign-up needed" },
   },
+  "/araclar/arastirmalar-ne-diyor": {
+    title: { tr: "Araştırmalar Ne Diyor? Kaynaklı Cevap ve Uzlaşı | Academiana", en: "What Does the Research Say? Evidence and Consensus" },
+    description: {
+      tr: "Araştırma sorunuza gerçek makalelerin özetlerinden numaralı kaynaklı kısa cevap ve çalışmaların ne kadarının aynı sonuca vardığını gösteren uzlaşı göstergesi.",
+      en: "Ask a research question and get a short answer cited from real paper abstracts, with a consensus meter showing how many studies agree.",
+    },
+    keywords: { tr: ["araştırmalar ne diyor", "bilimsel kanıt", "literatür özeti", "makale bulma yapay zeka", "akademik soru cevap"], en: ["what does the research say", "research consensus", "evidence summary", "AI research assistant", "find academic papers"] },
+    tagline: { tr: "Gerçek makalelerden kaynaklı cevap", en: "Answers cited from real papers" },
+  },
   "/araclar/uydurma-kaynak-kontrolu": {
     title: { tr: "Uydurma Kaynak Kontrolü: Kaynakça Gerçek mi? | Academiana", en: "Fake Reference Checker: Are Your Sources Real? | Academiana" },
     description: { tr: "Kaynakçanızı yapıştırın; her kaynak Crossref, DataCite ve OpenAlex’te aranır. ChatGPT’nin uydurduğu kaynakları ve yanlış DOI’leri ücretsiz bulun.", en: "Paste your reference list; each source is checked in Crossref, DataCite and OpenAlex. Find fabricated references and wrong DOIs for free." },

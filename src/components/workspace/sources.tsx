@@ -1,10 +1,11 @@
 "use client";
+import { SourceAskModal } from "./source-ask";
 import { useT } from "@/i18n/client";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { MatrixButton, MatrixModal } from "./matrix";
 import { RefsImportExport } from "./refs-io";
 import { motion } from "framer-motion";
-import { BadgeCheck, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
+import { BadgeCheck, MessageCircleQuestion, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -65,14 +66,8 @@ export function SourceCard({ s, actions, compact, foundBy }: { s: any; actions?:
   );
 }
 
-export function toSourceInput(r: any) {
-  return {
-    type: r.type, title: r.title, authors: r.authors, year: r.year, month: r.month ?? null, containerTitle: r.containerTitle ?? null, volume: r.volume ?? null,
-    issue: r.issue ?? null, pages: r.pages ?? null, publisher: r.publisher ?? null, doi: r.doi ?? null, pmid: r.pmid ?? null, pmcid: r.pmcid ?? null,
-    arxivId: r.arxivId ?? null, isbn: r.isbn ?? null, openalexId: r.openalexId ?? null, url: r.url ?? null, oaUrl: r.oaUrl ?? null,
-    abstract: r.abstract ?? null, license: r.license ?? null, language: r.language ?? null, origins: r.origins,
-  };
-}
+export { toSourceInput } from "@/lib/sources/to-input";
+import { toSourceInput } from "@/lib/sources/to-input";
 
 /** DergiPark, TR Dizin ve YÖK Tez Merkezi'nde aynı sorguyla arama (yeni sekme). Bulunan kaynak DOI veya elle eklenir. */
 function TurkishLinks({ query }: { query: string }) {
@@ -185,10 +180,13 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
   );
 }
 
-export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string> }) {
+export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds, onInsertMarkdown }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string>; onInsertMarkdown?: (md: string, sourceMap: Record<string, string>) => void }) {
   const { t } = useT();
   const [matrix, setMatrix] = useState(false);
   const [pdfOpen, setPdfOpen] = useState(false);
+  // Kaynağa sor (D112)
+  const [askId, setAskId] = useState<string | null>(null);
+  const asking = askId ? sources.find((x) => x.id === askId) ?? null : null;
   const [uploading, setUploading] = useState<string | null>(null);
   // Tam metni okunamayan (kapalı erişim) kaynaklar: önce metinde atıf yapılanlar
   const noFull = sources.filter((x) => x.access_level !== "full_text" && (x.fulltext_status === "unavailable" || x.fulltext_status === "failed" || (!x.oa_url && !x.arxiv_id && !x.pmcid && !x.doi)))
@@ -269,6 +267,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
       <div className="flex-1 overflow-y-auto p-4">
         {mode === "search" && <SourceSearch projectId={projectId} existingDois={existing} onAdded={(rows) => setSources((l) => [...l, ...rows])} />}
         {mode === "manual" && <ManualSource projectId={projectId} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setMode("list"); }} />}
+        {asking && <SourceAskModal source={asking} projectId={projectId} onClose={() => setAskId(null)} canInsert={canCite} onInsert={onInsertMarkdown} onUploadPdf={(f) => uploadPdf(asking, f)} onFetchFulltext={asking.access_level !== "full_text" && (asking.oa_url || asking.doi || asking.arxiv_id || asking.pmcid) ? () => fulltext(asking.id) : undefined} />}
         <MatrixModal open={matrix} onClose={() => setMatrix(false)} projectId={projectId} sources={sources} setSources={setSources} language={language} onInsertTable={onInsertTable} />
         {mode === "list" && (
           sources.length === 0 ? (
@@ -308,6 +307,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
               {shown.map((s) => (
                 <div key={s.id} id={`src-${s.id}`}>
                   <SourceCard s={s} compact actions={<>
+                    <Button size="sm" variant="soft" onClick={() => setAskId(s.id)} title={t("Bu kaynağa soru sorun; cevaplar sayfa numaralı gelir")}><MessageCircleQuestion className="h-3.5 w-3.5" /> {t("Sor")}</Button>
                     <Button size="sm" variant="soft" disabled={!canCite} onClick={() => onCite(s.id)} title={canCite ? t("İmlecin bulunduğu yere atıf ekle") : t("Önce editörde bir yere tıklayın")}><Quote className="h-3.5 w-3.5" /> {t("Atıf ekle")}</Button>
                     {!s.verified && <Button size="sm" variant="ghost" loading={busy === `v${s.id}`} onClick={() => verify(s.id)}><BadgeCheck className="h-3.5 w-3.5" /> {t("Doğrula")}</Button>}
                     {s.access_level !== "full_text" && s.fulltext_status !== "queued" && s.fulltext_status !== "processing" && (s.oa_url || s.doi || s.arxiv_id || s.pmcid) && <Button size="sm" variant="ghost" loading={busy === `f${s.id}`} onClick={() => fulltext(s.id)}><Unlock className="h-3.5 w-3.5" /> {t("Tam metni analiz et")}</Button>}

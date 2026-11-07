@@ -130,6 +130,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "latex",
+        q: { tr: "Çalışmamı LaTeX’e veya Overleaf’e aktarabilir miyim?", en: "Can I export my work to LaTeX or Overleaf?" },
+        a: {
+          tr: "Evet. Dışa aktar → **LaTeX (.tex + .bib, ZIP)** çalışmanızı main.tex, references.bib ve şekiller olarak indirir; atıflarınız biblatex komutlarına (\\parencite, \\textcite) dönüşür, sayfa numaraları korunur. **Overleaf’te aç** aynı dosyaları yeni sekmede Overleaf projesi olarak açar. APA, IEEE, MLA, Vancouver ve yazar–yıl stilleri biblatex karşılıklarıyla kullanılır; ISNAD gibi karşılığı olmayan stillerde en yakın stil seçilir ve dosyada belirtilir. Derleme pdfLaTeX + Biber ile yapılır (Overleaf varsayılanı).",
+          en: "Yes. Export → **LaTeX (.tex + .bib, ZIP)** downloads your work as main.tex, references.bib and figures; your citations become biblatex commands (\\parencite, \\textcite) and page numbers are kept. **Open in Overleaf** opens the same files as an Overleaf project in a new tab. APA, IEEE, MLA, Vancouver and author–year styles use their biblatex equivalents; for styles without one, such as ISNAD, the closest style is chosen and noted in the file. Compile with pdfLaTeX + Biber (the Overleaf default).",
+        },
+      },
+      {
         id: "harita",
         q: { tr: "Literatür haritası ne işe yarar?", en: "What is the literature map for?" },
         a: {

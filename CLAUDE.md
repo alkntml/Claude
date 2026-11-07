@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 452 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 459 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -66,7 +66,7 @@ src/lib/
   tools/                 Ücretsiz araçlar (D90): index (liste), guides.ts (sayfa rehberi + SSS, TR/EN, D107), sample-size, table-parse, server (künye bulma, uydurma kaynak kontrolü); arayüz components/tools, sayfalar app/araclar
   analytics.ts insights.ts  Çerezsiz ölçüm + araç kullanım kaydı; yönetim maliyet/ziyaret özetleri (D90); grafikler components/ui/charts.tsx
   quality/checks.ts      Kural tabanlı kalite kontrol
-  export/                model.ts + render-docx/pdf/text
+  export/                model.ts + render-docx/pdf/text + render-latex (D136: LaTeX ZIP, biblatex, Overleaf’te aç; Türkçe biblatex ayarı biblatexSetup)
   files/                 extract, chunk, stats (deterministik istatistik)
   payments/              Stripe/iyzico kütüphanesi (şimdilik kullanılmıyor; rotalar kaldırıldı, D48)
   stats/                 dist.ts (dağılımlar), tests.ts (t, ANOVA, regresyon…), apa.ts (APA rapor)

@@ -398,14 +398,25 @@ const bibEscape = (s: string) => s.replace(/([&%$#_])/g, "\\$1").replace(/[{}]/g
 const personBib = (p: Person) => (p.literal ? `{${bibEscape(p.literal)}}` : [p.family, p.given].filter(Boolean).map((x) => bibEscape(String(x))).join(", "));
 const asciiKey = (s: string) => s.normalize("NFKD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i").replace(/[^A-Za-z0-9]/g, "");
 
-export function toBibTeX(items: CitationItem[]): string {
+/** Kaynak kimliği → BibTeX anahtarı (Soyad + yıl; çakışmada a, b, c…). LaTeX çıktısındaki \cite anahtarlarıyla aynıdır (D136). */
+export function bibKeyMap(items: CitationItem[]): Map<string, string> {
   const used = new Set<string>();
-  return items.map((it) => {
+  const out = new Map<string, string>();
+  for (const it of items) {
     const first = it.authors[0];
-    let key = `${asciiKey(first?.family ?? first?.literal ?? "anon").slice(0, 20)}${it.year ?? "nd"}`;
+    const key = `${asciiKey(first?.family ?? first?.literal ?? "anon").slice(0, 20) || "anon"}${it.year ?? "nd"}`;
     let k = key, n = 0;
     while (used.has(k)) k = `${key}${String.fromCharCode(97 + n++)}`;
-    used.add(k); key = k;
+    used.add(k);
+    out.set(it.id, k);
+  }
+  return out;
+}
+
+export function toBibTeX(items: CitationItem[]): string {
+  const keys = bibKeyMap(items);
+  return items.map((it) => {
+    const key = keys.get(it.id)!;
     const type = it.type === "thesis" && it.genre === "master" ? "mastersthesis" : TO_BIB[it.type] ?? "misc";
     const f: [string, string | null | undefined][] = [
       ["author", it.authors.length ? it.authors.map(personBib).join(" and ") : null],

@@ -3437,4 +3437,12 @@ export const EN: Record<string, string> = {
   "Akademik güven için kurulmuş sağlam bir altyapı": "A solid infrastructure built for academic trust",
   "Kaynak, yapay zekâ, doğrulama ve veri katmanları birbirinden ayrıdır: yapay zekâ hiçbir zaman kaynak üretmez, yalnızca doğrulanmış ve okunmuş metinle çalışır.": "The source, AI, verification and data layers are separate: the AI never produces sources and works only with verified text that has been read.",
   "Kaynakların nasıl doğrulandığını ve puanların nasıl hesaplandığını herkese açık anlatıyoruz.": "We explain publicly how sources are verified and how scores are calculated.",
+  "LaTeX (.tex + .bib, ZIP)": "LaTeX (.tex + .bib, ZIP)",
+  "Overleaf’te aç": "Open in Overleaf",
+  "Overleaf’te açılıyor": "Opening in Overleaf",
+  "Çalışmanız yeni sekmede Overleaf projesi olarak açılır; Overleaf hesabınızla giriş yapmanız istenebilir.": "Your work opens as an Overleaf project in a new tab; you may be asked to sign in to Overleaf.",
+  "Overleaf’e aktarılamadı": "Could not export to Overleaf",
+  "LaTeX ve Overleaf": "LaTeX and Overleaf",
+  "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır.": "Your work is exported to LaTeX as .tex and .bib files; citations become biblatex commands and it opens in Overleaf in one click.",
+  "LaTeX / Overleaf": "LaTeX / Overleaf",
 };

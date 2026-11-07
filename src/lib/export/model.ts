@@ -16,6 +16,8 @@ export interface Run {
   sup?: boolean;
   /** Bu run bir dipnot işaretidir; değeri dipnot metnidir */
   footnote?: string;
+  /** LaTeX çıktısında atıf biçimlenmez; kaynak kimlikleriyle \cite komutuna çevrilir (D136) */
+  cite?: { ids: string[]; locator: string | null; narrative?: boolean; suppressAuthor?: boolean; prefix?: string | null; suffix?: string | null };
 }
 
 export type Block =
@@ -77,7 +79,7 @@ export function buildExportDoc(params: {
   engineItems: CitationItem[];
   authorName: string;
   /** onlyStageIds: yalnızca seçilen bölümler aktarılır; numaralar tüm çalışmadaki yerlerini korur (D91) */
-  options?: { numberHeadings?: boolean; onlyStageIds?: string[] };
+  options?: { numberHeadings?: boolean; onlyStageIds?: string[]; latexCitations?: boolean };
 }): ExportDoc {
   const { project, stages } = params;
   const locale: CiteLocale = project.language === "en" ? "en" : "tr";
@@ -105,6 +107,7 @@ export function buildExportDoc(params: {
         out.push({ text: n.text ?? "", bold: marks.has("bold"), italic: marks.has("italic"), underline: marks.has("underline"), sup: marks.has("superscript") });
       } else if (n.type === "citation") {
         const a = citationAttrs(n);
+        if (params.options?.latexCitations) { out.push({ text: "", cite: { ids: a.ids, locator: a.locator, narrative: a.narrative, suppressAuthor: a.suppressAuthor, prefix: a.prefix, suffix: a.suffix } }); continue; }
         const first = a.ids.some((id) => !firstSeen.has(id));
         a.ids.forEach((id) => firstSeen.add(id));
         out.push(...richToRuns(engine.cite(a.ids, { locator: a.locator, narrative: a.narrative, suppressAuthor: a.suppressAuthor, prefix: a.prefix, suffix: a.suffix }, first)));
@@ -162,9 +165,9 @@ export function buildExportDoc(params: {
       }
       case "paragraph": {
         const runs = inlineRuns(n.content);
-        if (runs.some((r) => r.text.trim() || r.footnote)) {
+        if (runs.some((r) => r.text.trim() || r.footnote || r.cite)) {
           const blk: Block = { kind: "paragraph", runs };
-          const cap = runs.some((r) => r.footnote) ? null : parseCaption(runsToPlain(runs));
+          const cap = runs.some((r) => r.footnote || r.cite) ? null : parseCaption(runsToPlain(runs));
           if (cap) capOf.set(blk, cap);
           blocks.push(blk);
         }

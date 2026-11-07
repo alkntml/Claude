@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Canlıda dene: Dışa aktar → “LaTeX (.tex + .bib, ZIP)” ve “Overleaf’te aç” (Overleaf hesabıyla); derlenen PDF’in ekran görüntüsü (D136)
+- [ ] (Ertelendi, D136) ORCID ile yayın aktarma ve Zotero canlı eşitleme
 - [ ] Supabase SQL Editor’de migration 36’yı çalıştır (PDF bölümleri, derleme oyları, veri çıkarma, kalite; D132–D134)
 - [ ] Canlıda dene: Kaynaklar → “Birlikte analiz et” → Karşılaştır; İddia denetimi (Diğer kaynaklarımla da karşılaştır); PRISMA → Protokol’de çift değerlendirici, 5. Veri çıkarma ve kalite, 6. Yöntem metni → Belgeye ekle; yeni yüklenen bir PDF’te “Kaynağa sor → Yöntemi”
 - [ ] (İsteğe bağlı, ücretsiz) Vercel’e `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY` ekle → Redeploy (D129)

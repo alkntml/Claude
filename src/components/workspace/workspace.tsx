@@ -720,6 +720,8 @@ export function Workspace(props: Props) {
   }
 
   async function exportAs(format: string, stageIds?: string[]) {
+    // D136: Overleaf yeni sekmede açılır; açılır pencere engellenmesin diye sekme tıklama anında açılır
+    if (format === "overleaf") return openInOverleaf(stageIds, window.open("about:blank", "acd-overleaf"));
     await flush();
     try {
       const res = await fetch(`/api/projects/${project.id}/export?format=${format}${stageIds?.length ? `&stages=${stageIds.join(",")}` : ""}`);
@@ -732,6 +734,23 @@ export function Workspace(props: Props) {
       URL.revokeObjectURL(a.href);
     } catch (e) {
       toast({ tone: "error", title: t("Dışa aktarma başarısız"), detail: (e as Error).message });
+    }
+  }
+
+  async function openInOverleaf(stageIds: string[] | undefined, win: Window | null) {
+    try {
+      await flush();
+      const res = await fetch(`/api/projects/${project.id}/export?format=latex&target=overleaf${stageIds?.length ? `&stages=${stageIds.join(",")}` : ""}`);
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.url) { handlePlanError(res.status, j); throw new Error(j.error ?? t("Dışa aktarılamadı")); }
+      // Overleaf “Open in Overleaf” bağlantısı: ZIP adresi snip_uri ile verilir, derleyici pdfLaTeX
+      const link = `https://www.overleaf.com/docs?snip_uri=${encodeURIComponent(j.url)}&engine=pdflatex`;
+      if (win && !win.closed) win.location.href = link;
+      else window.open(link, "_blank", "noopener");
+      toast({ tone: "success", title: t("Overleaf’te açılıyor"), detail: t("Çalışmanız yeni sekmede Overleaf projesi olarak açılır; Overleaf hesabınızla giriş yapmanız istenebilir.") });
+    } catch (e) {
+      win?.close();
+      toast({ tone: "error", title: t("Overleaf’e aktarılamadı"), detail: (e as Error).message });
     }
   }
 
@@ -1175,7 +1194,7 @@ function ExportMenu({ onExport, stages, onFormat, onPresentation, onJournals, pr
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   const chosen = scope === "some" ? stages.filter((x) => picked.has(x.id)).map((x) => x.id) : undefined;
   const blocked = scope === "some" && !chosen?.length;
-  const items = [["docx", "Microsoft Word (.docx)"], ["pdf", "PDF"], ["md", "Markdown"], ["txt", t("Düz metin (.txt)")]];
+  const items = [["docx", "Microsoft Word (.docx)"], ["pdf", "PDF"], ["latex", t("LaTeX (.tex + .bib, ZIP)")], ["overleaf", t("Overleaf’te aç")], ["md", "Markdown"], ["txt", t("Düz metin (.txt)")]];
   return (
     <div className="relative">
       <Button size="sm" variant="dark" className="!h-9" onClick={() => setOpen((o) => !o)}><Download className="h-4 w-4" /><span className="hidden sm:inline">{t("Dışa aktar")}</span></Button>

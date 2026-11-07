@@ -613,3 +613,8 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - `components/landing/promo-video.tsx`: hero’nun hemen altında, yalnız Türkçe sayfada (video Türkçe). Sayfa açılırken yalnızca kapak yüklenir; video tıklanınca indirilir (preload="none"). Oynat düğmesi köşede (kapaktaki başlığı kapatmasın).
 - VideoObject JSON-LD (`promoVideoLd`, sabit `PROMO_VIDEO` site.ts’de). Ara katman eşleyicisi mp4/webm/vtt dosyalarını atlar (gereksiz oturum yenileme olmasın).
 - Seslendirme gelirse aynı dosya adıyla değiştirilir; `uploadDate` güncellenir.
+
+### D128 — PRISMA ve literatür haritası Pro ve üstü
+- Kullanıcı kararı: Sistematik derleme (PRISMA 2020) ve literatür haritası yalnız Pro, Premium ve Tek Proje’de (`features.ts` prisma/litmap: "pro"). Ücretsiz ve Basic erişemez.
+- Sunucu: derleme uçlarının tamamı (GET/POST/PATCH/PUT/DELETE, screen, include) ve litmap `assertFeature`; arayüzde araç menüsü yükseltme penceresini açar.
+- Migration 35: Basic kartından iki satır çıkarılır, Pro kartına “Literatür matrisi”nin arkasına eklenir. SSS, yardım rehberi ve ana sayfa vitrini (“Pro ve üstü” rozeti) güncel.

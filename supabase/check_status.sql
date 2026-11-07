@@ -50,5 +50,9 @@ union all select '33 İddia denetimi, PRISMA, gözlem, kurum denetim kaydı',
        then 'YAPILMIŞ' else 'EKSİK' end
 union all select '34 Paket kartlarında iddia denetimi, PRISMA, literatür haritası',
   case when exists (select 1 from public.plans where id = 'free' and 'İddia denetimi ve teslim öncesi kontrol listesi' = any(features))
-        and exists (select 1 from public.plans where id = 'basic' and 'PRISMA 2020 sistematik derleme' = any(features))
+        and exists (select 1 from public.plans where id in ('basic', 'pro') and 'PRISMA 2020 sistematik derleme' = any(features))
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '35 PRISMA ve literatür haritası Pro paketinde',
+  case when exists (select 1 from public.plans where id = 'pro' and 'PRISMA 2020 sistematik derleme' = any(features))
+        and not exists (select 1 from public.plans where id = 'basic' and 'PRISMA 2020 sistematik derleme' = any(features))
        then 'YAPILMIŞ' else 'EKSİK' end;

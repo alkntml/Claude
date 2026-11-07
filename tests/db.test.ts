@@ -628,4 +628,16 @@ describe("anketler", () => {
     expect(basic.indexOf("PRISMA 2020 sistematik derleme")).toBe(basic.indexOf("Yapay zekâ destekli kalite raporu") + 1);
     expect(basic).toContain("Literatür haritası ve eksik kaynak önerisi");
   });
+  it("PRISMA ve literatür haritası yalnız Pro kartında; migration 35 tekrar çalıştırılabilir (D128)", async () => {
+    const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/migrations/20261129000035_prisma_litmap_pro.sql"), "utf8");
+    await db.exec(sql);
+    const rows = (await db.query<{ id: string; features: string[] }>(`select id, features from public.plans where id in ('basic', 'pro')`)).rows;
+    const basic = rows.find((r) => r.id === "basic")!.features;
+    const pro = rows.find((r) => r.id === "pro")!.features;
+    expect(basic).not.toContain("PRISMA 2020 sistematik derleme");
+    expect(basic).not.toContain("Literatür haritası ve eksik kaynak önerisi");
+    expect(pro.filter((f) => f === "PRISMA 2020 sistematik derleme")).toHaveLength(1);
+    expect(pro.indexOf("PRISMA 2020 sistematik derleme")).toBe(pro.indexOf("Literatür matrisi") + 1);
+    expect(pro).toContain("Literatür haritası ve eksik kaynak önerisi");
+  });
 });

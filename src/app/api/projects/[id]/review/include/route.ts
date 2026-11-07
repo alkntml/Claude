@@ -2,6 +2,7 @@ import { z } from "zod";
 import { json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { projectAccess } from "@/lib/project-access";
+import { assertFeature } from "@/lib/usage";
 import { addSourcesToProject } from "@/lib/research";
 import { SourceInput } from "@/lib/sources/input";
 
@@ -13,6 +14,7 @@ const TYPES = new Set(["article-journal", "book", "chapter", "paper-conference",
 /** Derlemeye dahil edilen çalışmaları çalışmanın kaynaklarına ekler (D122); doğrulama ve tam metin okuma normal akışla yapılır. */
 export const POST = route<Ctx>("review.include", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "prisma");
   const { id } = await params;
   const acc = await projectAccess(s, id, "edit");
   const b = await parseBody(req, z.object({ ids: z.array(z.string().uuid()).min(1).max(30) }));

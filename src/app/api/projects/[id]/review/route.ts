@@ -30,6 +30,7 @@ const Protocol = z.object({ question: z.string().max(2000), inclusion: z.array(z
 /** Kayıtlar + protokol (D122) */
 export const GET = route<Ctx>("review.list", async (_req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "prisma");
   const { id } = await params;
   const acc = await projectAccess(s, id, "read");
   const { data, error } = await acc.db.from("review_records").select("id, key, origin, stage, reason, record, ai, source_id, created_at").eq("project_id", id).eq("user_id", acc.ownerId).order("created_at").limit(MAX_RECORDS);
@@ -77,6 +78,7 @@ export const POST = route<Ctx>("review.add", async (req, { params }) => {
 /** Toplu karar: aşama + gerekçe. Aşama atlama engellenir (ör. taranmadan dahil edilemez). */
 export const PATCH = route<Ctx>("review.decide", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "prisma");
   const { id } = await params;
   const acc = await projectAccess(s, id, "edit");
   const b = await parseBody(req, z.object({ ids: z.array(z.string().uuid()).min(1).max(500), stage: z.enum(REVIEW_STAGES as [ReviewStage, ...ReviewStage[]]), reason: z.string().trim().max(300).nullable().optional() }));
@@ -93,6 +95,7 @@ export const PATCH = route<Ctx>("review.decide", async (req, { params }) => {
 /** Protokolü kaydeder (soru, dahil etme/hariç tutma ölçütleri, aramalar) */
 export const PUT = route<Ctx>("review.protocol", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "prisma");
   const { id } = await params;
   const acc = await projectAccess(s, id, "edit");
   const protocol = await parseBody(req, Protocol);
@@ -103,6 +106,7 @@ export const PUT = route<Ctx>("review.protocol", async (req, { params }) => {
 
 export const DELETE = route<Ctx>("review.delete", async (req, { params }) => {
   const s = await requireUser();
+  assertFeature(s.profile.plan_id, "prisma");
   const { id } = await params;
   const acc = await projectAccess(s, id, "edit");
   const b = await parseBody(req, z.object({ ids: z.array(z.string().uuid()).min(1).max(5000) }));

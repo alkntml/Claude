@@ -1,5 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
 - [ ] Tanıtım videosu seslendirmesi: kaydı gönder; ses videoya eklenip `public/video/academiana-tanitim.mp4` aynı adla değiştirilecek (D127)
+- [ ] Supabase SQL Editor’de migration 35’i çalıştır (PRISMA ve literatür haritası Pro kartında, D128); 34’ten sonra
 - [ ] Supabase SQL Editor’de migration 34’ü çalıştır (paket kartlarında iddia denetimi, PRISMA, literatür haritası; D126). 32 ve 33 yapıldı (kullanıcı onayladı)
 - [ ] Canlıda dene: atıflı bir bölümde “İddia denetimi”; Araçlar → Sistematik derleme (PRISMA) ile bir RIS dosyası içe aktar; Araçlar → Literatür haritası (DOI’li kaynaklarla); Kalite sayfasındaki kontrol listesi
 - [ ] Sonraki adım önerisi (rapor): 3–5 pilot akademisyen/kurumla iddia denetimi ve PRISMA modülünü değerlendirt; sonuçları /yontem sayfasında yayımla (sahte vaka çalışması yazılmaz)

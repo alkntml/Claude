@@ -49,7 +49,7 @@ export function AssuranceSection() {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <Card icon={GitFork} title={t("Sistematik derleme (PRISMA 2020)")} text={t("Kayıtları ekleyin veya içe aktarın; yinelenenler ayıklanır, tarama ve uygunluk aşamaları işlenir, PRISMA akış şeması kendiliğinden çizilir. Yapay zekâ yalnızca öneri verir, kararı siz verirsiniz.")}>
+            <Card icon={GitFork} badge={t("Pro ve üstü")} title={t("Sistematik derleme (PRISMA 2020)")} text={t("Kayıtları ekleyin veya içe aktarın; yinelenenler ayıklanır, tarama ve uygunluk aşamaları işlenir, PRISMA akış şeması kendiliğinden çizilir. Yapay zekâ yalnızca öneri verir, kararı siz verirsiniz.")}>
               <div className="flex flex-wrap items-center gap-1.5 text-[12px]">
                 {[t("Tanımlanan"), t("Taranan"), t("Tam metin"), t("Dahil edilen")].map((s, i, a) => (
                   <span key={s} className="flex items-center gap-1.5">
@@ -63,7 +63,7 @@ export function AssuranceSection() {
           </FadeIn>
 
           <FadeIn delay={0.14}>
-            <Card icon={Network} title={t("Literatür haritası")} text={t("Kaynaklarınızın birbirine atıf ağını görün. Kaynaklarınızın birden fazlasının atıf yaptığı ama sizde olmayan temel çalışmalar ayrıca önerilir.")}>
+            <Card icon={Network} badge={t("Pro ve üstü")} title={t("Literatür haritası")} text={t("Kaynaklarınızın birbirine atıf ağını görün. Kaynaklarınızın birden fazlasının atıf yaptığı ama sizde olmayan temel çalışmalar ayrıca önerilir.")}>
               <svg viewBox="0 0 260 74" className="h-[74px] w-full" aria-hidden>
                 <g className="stroke-ink-200" strokeWidth="1.5">
                   <line x1="30" y1="40" x2="90" y2="18" /><line x1="30" y1="40" x2="95" y2="58" /><line x1="90" y1="18" x2="160" y2="34" /><line x1="95" y1="58" x2="160" y2="34" />
@@ -87,12 +87,13 @@ export function AssuranceSection() {
   );
 }
 
-function Card({ icon: Icon, title, text, children }: { icon: typeof ScanSearch; title: string; text: string; children: React.ReactNode }) {
+function Card({ icon: Icon, title, text, badge, children }: { icon: typeof ScanSearch; title: string; text: string; badge?: string; children: React.ReactNode }) {
   return (
     <div className="flex h-full flex-col rounded-3xl border border-ink-100 bg-white p-7 shadow-soft">
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-ink-900 text-white"><Icon className="h-5 w-5" /></span>
         <h3 className="text-lg font-semibold text-ink-900">{title}</h3>
+        {badge && <span className="ml-auto shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11.5px] font-semibold text-brand-700">{badge}</span>}
       </div>
       <p className="mt-3 text-[14.5px] leading-relaxed text-ink-500">{text}</p>
       <div className="mt-5 flex-1 rounded-2xl border border-ink-100 bg-ink-50/50 p-4" aria-hidden>{children}</div>

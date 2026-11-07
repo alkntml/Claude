@@ -33,8 +33,8 @@ export const FEATURE_MIN_PLAN: Record<FeatureId, PlanId> = {
   reviewer: "pro",
   defense: "pro",
   coauthors: "pro",
-  prisma: "basic",
-  litmap: "basic",
+  prisma: "pro",
+  litmap: "pro",
 };
 
 /** Kullanıcıya gösterilen özellik adları (t() ile çevrilir) */

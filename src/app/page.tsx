@@ -1,7 +1,7 @@
 import { getT } from "@/i18n/server";
 import { pageMeta } from "@/lib/seo-server";
 import { JsonLd } from "@/components/json-ld";
-import { softwareLd, webPageLd } from "@/lib/structured-data";
+import { promoVideoLd, softwareLd, webPageLd } from "@/lib/structured-data";
 import { PAGE_SEO } from "@/lib/seo-pages";
 import { localizedPath } from "@/lib/seo";
 import { getPost, localizePost, postPath } from "@/lib/blog";
@@ -17,6 +17,7 @@ import { getUsdTry } from "@/lib/fx";
 import { CompareSection } from "@/components/landing/compare";
 import { TraceDemo } from "@/components/landing/trace-demo";
 import { AssuranceSection } from "@/components/landing/assurance";
+import { PromoVideo } from "@/components/landing/promo-video";
 import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
@@ -36,9 +37,10 @@ export default async function Home() {
   return (
     <>
       <SiteHeader signedIn={signedIn} />
-      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] })]} />
+      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] }), ...(locale === "en" ? [] : [promoVideoLd()])]} />
       <main>
         <Hero signedIn={signedIn} />
+        {locale !== "en" && <PromoVideo />}
         <CompareSection />
         <TraceDemo />
         <AssuranceSection />

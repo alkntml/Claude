@@ -4,7 +4,7 @@
  */
 import type { Locale } from "@/i18n";
 import { absoluteUrl, localizedPath } from "./seo";
-import { SITE_NAME, SITE_URL } from "./site";
+import { PROMO_VIDEO, SITE_NAME, SITE_URL } from "./site";
 import { priceNumber, WHATSAPP_NUMBER } from "@/lib/pricing";
 
 const ORG_ID = `${SITE_URL}/#organization`;
@@ -113,6 +113,23 @@ export function webPageLd(locale: Locale, o: { path: string; name: string; descr
     url: absoluteUrl(o.path),
     inLanguage: locale === "en" ? "en" : "tr-TR",
     isPartOf: { "@id": SITE_ID },
+    publisher: { "@id": ORG_ID },
+  };
+}
+
+/** Tanıtım videosu (D127): yalnızca Türkçe ana sayfada (video Türkçe). */
+
+export function promoVideoLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: "Academiana tanıtım videosu",
+    description: "Academiana’nın kaynak tarama, atıf, iddia denetimi, veri analizi, PRISMA, literatür haritası ve kalite kontrol özelliklerini 68 saniyede anlatan tanıtım.",
+    thumbnailUrl: `${SITE_URL}${PROMO_VIDEO.poster}`,
+    contentUrl: `${SITE_URL}${PROMO_VIDEO.src}`,
+    uploadDate: PROMO_VIDEO.uploadDate,
+    duration: PROMO_VIDEO.duration,
+    inLanguage: "tr-TR",
     publisher: { "@id": ORG_ID },
   };
 }

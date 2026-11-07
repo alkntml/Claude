@@ -607,3 +607,9 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Ana sayfaya “Teslim etmeden önce emin olun” bölümü (`components/landing/assurance.tsx`, `#guvence`): iddia denetimi, kalite puanı + kontrol listesi, PRISMA 2020, literatür haritası; /yontem bağlantısı. Görseller temsilî ve öyle etiketli; sayı/başarı iddiası yok.
 - Hero rozeti “Atıflar kaynağında denetlenir”; Nasıl çalışır 5. adım “Teslimden önce denetleyin”; Ekip kartı ve /kurumlar yönetici paneli metni güncel; menüye “Yöntem”; ana sayfa SSS öne çıkanlarına `dogrula`; ana sayfa meta açıklaması iddia denetimi ve PRISMA’yı anar.
 - Migration 34: paket kartları — Ücretsiz’e “İddia denetimi ve teslim öncesi kontrol listesi”, Basic’e “PRISMA 2020 sistematik derleme” ve “Literatür haritası ve eksik kaynak önerisi” (ilgili satırın hemen arkasına, tekrar çalıştırılabilir).
+
+### D127 — Tanıtım videosu ana sayfada
+- 68 sn, 1920×1080, sessiz tanıtım (`public/video/academiana-tanitim.mp4`, 5,4 MB, H.264 + faststart; kapak `academiana-tanitim.jpg`). Kaynağı HTML animasyon (oturum çalışma alanında üretildi; repoya girmedi). Örnek veri/kaynaklar ekranda “örnek” diye etiketli.
+- `components/landing/promo-video.tsx`: hero’nun hemen altında, yalnız Türkçe sayfada (video Türkçe). Sayfa açılırken yalnızca kapak yüklenir; video tıklanınca indirilir (preload="none"). Oynat düğmesi köşede (kapaktaki başlığı kapatmasın).
+- VideoObject JSON-LD (`promoVideoLd`, sabit `PROMO_VIDEO` site.ts’de). Ara katman eşleyicisi mp4/webm/vtt dosyalarını atlar (gereksiz oturum yenileme olmasın).
+- Seslendirme gelirse aynı dosya adıyla değiştirilir; `uploadDate` güncellenir.

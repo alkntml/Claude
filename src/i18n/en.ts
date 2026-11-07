@@ -3201,4 +3201,9 @@ export const EN: Record<string, string> = {
   "İddia denetimi (atıflı her cümle kaynağıyla karşılaştırılır), PRISMA 2020 sistematik derleme, literatür haritası ve teslim öncesi kontrol listesi. Kalite puanının yöntemi herkese açıktır.": "Claim audit (every cited sentence compared with its source), PRISMA 2020 systematic review, literature map and a pre-submission checklist. The quality score method is public.",
   "İddia denetimi ve teslim öncesi kontrol listesi": "Claim audit and pre-submission checklist",
   "PRISMA 2020 sistematik derleme": "PRISMA 2020 systematic review",
+  "68 saniyede Academiana": "Academiana in 68 seconds",
+  "Kaynak taramasından teslim öncesi kontrole kadar bütün süreci izleyin.": "Watch the whole process, from source search to the pre-submission check.",
+  "Academiana tanıtım videosu": "Academiana introduction video",
+  "Tanıtım videosunu oynat": "Play the introduction video",
+  "Tanıtımı izle": "Watch the intro",
 };

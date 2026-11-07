@@ -85,7 +85,7 @@ export function SourcesStrip() {
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="grid items-center gap-10 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Veri kaynakları")}</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Veri kaynakları")} · {t("16 veri tabanı, 250 milyon+ yayın")}</p>
             <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Erişebildiği kadarını kullanır, ne kadarını okuduğunu söyler.")}</h2>
             <p className="mt-4 text-[15px] leading-relaxed text-ink-500">{t("Her kaynağın yanında erişim seviyesi açıkça yazar:")} <b>{t("yalnızca künye")}</b>, <b>{t("özet okundu")}</b> {t("veya")} <b>{t("tam metin okundu")}</b>. {t("Yapay zekâ, yalnızca özetini gördüğü bir makaleyi tam metnini okumuş gibi yorumlamaz. Doğrulanamayan kaynaklar ise kesin referans olarak gösterilmez.")}</p>
           </div>

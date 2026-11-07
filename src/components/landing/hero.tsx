@@ -15,7 +15,7 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
       <div className="relative mx-auto grid max-w-6xl animate-rise items-center gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white/80 px-3 py-1 text-[13px] font-medium text-brand-700 shadow-sm">
-            <Sparkles className="h-3.5 w-3.5" /> {t("250 milyondan fazla akademik yayını tarar")}
+            <Sparkles className="h-3.5 w-3.5" /> {t("16 veri tabanında 250 milyondan fazla akademik yayını tarar")}
           </div>
           <h1 className="font-serif text-[42px] font-medium leading-[1.05] tracking-tight text-ink-950 sm:text-6xl">
             {t("Akademik çalışmanızı")} <span className="text-gradient italic">{t("ilk fikirden")}</span> {t("son kaynakçaya kadar yönetin.")}
@@ -37,7 +37,7 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
           <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-500">
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("Uydurma kaynak yok")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("Atıflar kaynağında denetlenir")}</li>
-            <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("16 akademik veri tabanı")}</li>
+            <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("16 veri tabanı, 250 milyon+ yayın")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("10 atıf stili")}</li>
             <li className="flex items-center gap-1.5"><BadgeCheck className="h-4 w-4 text-emerald-500" /> {t("KVKK uyumlu")}</li>
           </ul>

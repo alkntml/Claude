@@ -61,8 +61,8 @@ export const FAQ: FaqGroup[] = [
         id: "nereden",
         q: { tr: "Kaynaklar nereden geliyor?", en: "Where do the sources come from?" },
         a: {
-          tr: "OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, OpenAIRE ve diğer açık akademik veri tabanlarından; ayrıca Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil) ayrıca aranabilir. TR Dizin ve YÖK Ulusal Tez Merkezi’nde aynı sorguyla arama yapmak için bağlantılar vardır. Kendi kaynaklarınızı da DOI ile, elle, PDF yükleyerek veya Zotero/Mendeley/EndNote dosyasıyla ekleyebilirsiniz.",
-          en: "From OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, OpenAIRE and other open academic databases; Turkish-language and Turkey-affiliated publications (including DergiPark journals) can also be searched. There are links to run the same search in TR Dizin and the YÖK National Thesis Center. You can add your own sources by DOI, manually, by uploading a PDF or from a Zotero/Mendeley/EndNote file.",
+          tr: "16 akademik veri tabanından; tekrarlar ayıklandığında 250 milyondan fazla farklı yayın. Başlıcaları OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, OpenAIRE, ERIC, PLOS, HAL ve Zenodo; ayrıca Türkçe ve Türkiye adresli yayınlar (DergiPark dergileri dahil) ayrıca aranabilir. TR Dizin ve YÖK Ulusal Tez Merkezi’nde aynı sorguyla arama yapmak için bağlantılar vardır. Kendi kaynaklarınızı da DOI ile, elle, PDF yükleyerek veya Zotero/Mendeley/EndNote dosyasıyla ekleyebilirsiniz.",
+          en: "From 16 academic databases — more than 250 million distinct publications once duplicates are removed. The main ones are OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, OpenAIRE, ERIC, PLOS, HAL and Zenodo; Turkish-language and Turkey-affiliated publications (including DergiPark journals) can also be searched. There are links to run the same search in TR Dizin and the YÖK National Thesis Center. You can add your own sources by DOI, manually, by uploading a PDF or from a Zotero/Mendeley/EndNote file.",
         },
       },
       {

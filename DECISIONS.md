@@ -628,3 +628,7 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 
 ### D130 — CORE kaldırıldı
 - Yönetici kararı: CORE veri kaynağı tamamen kaldırıldı (sağlayıcı, ayrıştırıcı, ayar, `CORE_API_KEY`, kurulum satırı). Veritabanındaki eski `sources.enabled` kaydında kalan `core` anahtarı zararsızdır (arama yalnızca tanımlı sağlayıcıları çağırır); daha önce CORE’dan eklenmiş kaynaklar olduğu gibi kalır. Anahtarsız veri tabanı sayısı 16 (metinler güncel).
+
+### D131 — Kapsam ifadesi: “16 veri tabanında 250 milyondan fazla yayın”
+- Kullanıcı kararı (A seçeneği). “400 milyon” önerisi dayanaksız olduğu için kullanılmadı: tekrarlar ayıklandığında farklı yayın sayısı ~250–300 milyon (OpenAlex ~250 milyon üst küme); veri tabanlarındaki kayıtların toplamı 750 milyonu aşar ama aynı yayını birden çok kez sayar.
+- Güncellenen yerler: ana sayfa rozeti ve onay listesi, karşılaştırma tablosu, veri kaynakları bölümü, örnekler sayfası, SSS “Kaynaklar nereden geliyor?”, Yöntem sayfası (sayının tekrarsız olduğu açıklaması), kaynak araştırması ekranı. Veri tabanı eklenir/çıkarılırsa bu yerler birlikte güncellenmeli.

@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D139 (2026-11-07): İddia denetimi kalibrasyonu: aşırı “kısmen” kararları azaltıldı, gerçek sayfa numarası, “karar verilemedi” önbelleğe girmez
 - D138 (2026-11-07): İddia denetimi: “çelişiyor” kararı yalnızca doğrulanmış alıntıyla; gerekçe karardan önce; eski kararlar yeniden değerlendirilir
 - D137 (2026-11-07): İddia denetimi ve PRISMA kayıtları yazılamıyordu (yalnız-okuma RLS); yazmalar serverDb() ile, SQL gerekmez
 - D136 (2026-11-07): LaTeX (.tex + .bib + şekiller, ZIP) ve “Overleaf’te aç”; 10 atıf stili × TR/EN derleme testi hatasız

@@ -15,9 +15,26 @@ export interface SourceInput { id: string; title: string; abstract: string | nul
 export interface PairResult { claimId: string; sourceId: string; verdict: ClaimVerdict; explanation: string; quote: string | null; quotePage: string | null; access: SourceInput["access_level"]; /** Denetim yöntemi sürümü; eski sürüm sonuçları önbellekten kullanılmaz */ av?: number }
 
 /** Karar kuralları değişince artır: önceki denetim sonuçları yeniden değerlendirilir */
-export const AUDIT_VERSION = 2;
+export const AUDIT_VERSION = 3;
 
 /** “Çelişiyor” yalnızca kaynaktan birebir doğrulanmış bir alıntıyla verilebilir; yoksa “desteklenmiyor”a düşer */
+/**
+ * Alıntının yerini ve sayfasını sunucu belirler: alıntıyı birebir içeren parçanın sayfası. Modelin yazdığı
+ * “P1”, “ÖZET” gibi iç etiketler sayfa olarak gösterilmez; özetteki alıntının sayfası yoktur.
+ */
+export function locateQuote(quote: string | null | undefined, abstract: string | null, chunks: { content: string; page: string | null }[]): { ok: boolean; page: string | null } {
+  if (!quote || quote.trim().length < 8) return { ok: false, page: null };
+  const q = norm(quote);
+  for (const c of chunks) if (norm(c.content).includes(q)) return { ok: true, page: c.page ? String(c.page) : null };
+  if (abstract && norm(abstract).includes(q)) return { ok: true, page: null };
+  return { ok: false, page: null };
+}
+
+/** Açıklamadan iç parça etiketlerini (P1, P2 …) temizler */
+export function cleanExplanation(s: string): string {
+  return s.replace(/\s*\((?:P\d+(?:\s*[,–-]\s*P?\d+)*)\)/g, "").replace(/\s{2,}/g, " ").slice(0, 400).trim();
+}
+
 export function guardVerdict(verdict: ClaimVerdict, quoteOk: boolean): ClaimVerdict {
   return verdict === "contradicts" && !quoteOk ? "not_supported" : verdict;
 }
@@ -32,10 +49,10 @@ const VERDICT_SCHEMA = {
     items: {
       type: "array",
       items: {
-        type: "object", additionalProperties: false, required: ["id", "quote", "quotePage", "explanation", "verdict"],
+        type: "object", additionalProperties: false, required: ["id", "quote", "explanation", "verdict"],
         properties: {
-          // Önce kanıt ve gerekçe, karar en son (karar gerekçeyle tutarlı olsun)
-          id: { type: "string" }, quote: { type: "string" }, quotePage: { type: "string" }, explanation: { type: "string" },
+          // Önce kanıt ve gerekçe, karar en son (karar gerekçeyle tutarlı olsun); sayfa sunucuda bulunur
+          id: { type: "string" }, quote: { type: "string" }, explanation: { type: "string" },
           verdict: { type: "string", enum: ["supports", "partial", "not_supported", "contradicts", "insufficient"] },
         },
       },
@@ -89,22 +106,30 @@ export async function auditSources(o: { planId: string; lang: "tr" | "en"; group
       return `[${p.claimId}] ${p.sentence}${p.locator ? ` (atıfta sayfa: ${p.locator})` : ""}${labels ? ` → ilgili parçalar: ${labels}` : ""}`;
     }).join("\n");
     const v = await complete(model, {
-      system: `Akademik atıfların doğruluğunu denetleyen titiz bir editörsün. Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma. Her iddia için:
-verdict: "supports" = kaynak metni iddiayı açıkça destekliyor; "partial" = kısmen destekliyor ya da iddia kaynaktan daha güçlü/genel ifade edilmiş (ör. kaynak “ilişkili” diyor, cümle “etkiler” diyor; kaynak belirli bir örneklem için söylüyor, cümle genelliyor); "not_supported" = metin bu iddiaya değinmiyor veya iddiayı taşımıyor; "contradicts" = kaynak metni iddianın tersini ya da onunla bağdaşmayan bir bulgu AÇIKÇA söylüyor (ör. cümle “artırır” diyor, kaynak “anlamlı fark bulunmadı” diyor) — bu kararı yalnızca tersini söyleyen ifadeyi alıntılayabiliyorsan ver; cümlenin “yalnızca, her zaman, kesinlikle” gibi kaynaktan daha güçlü ifade etmesi ya da kaynağın bir ayrıntıyı belirtmemesi çelişki DEĞİLDİR (bunlar "partial" ya da "not_supported"); şüphedeysen "contradicts" seçme; "insufficient" = verilen metin karar vermeye yetmiyor (ör. yalnızca özet var ve konu özette geçmiyor).
-quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN (yoksa boş). quotePage: alıntının sayfası (yoksa boş).
-explanation: ${L ? "English" : "Türkçe"}, tek cümle; atıfta sayfa verilmişse sayfanın uygun olup olmadığını da belirt. verdict, açıklamanla tutarlı olmalı (açıklama “kısmen” diyorsa verdict "partial").
+      system: `Akademik atıfları denetleyen deneyimli, adil bir danışmansın. Soru şu: “Bu cümleye bu kaynakla atıf yapmak akademik olarak doğru mu?” Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma.
+verdict:
+- "supports": cümlenin ANA bilgisi (bulgu, sayı, yön, örneklem/kapsam) kaynakta var. Başka sözcüklerle anlatım, çeviri, özetleme, kaynakta açıkça tanımlanan şeyin eş anlamlısıyla söylenmesi (ör. “genel nüfus/çok uluslu topluluk örneklemi” → “klinik olmayan örneklem”), küçük ifade farkları ve cümlenin sonunda yazarın kendi yorumunu “düşündürmektedir, olabilir, işaret eder” gibi temkinli dille eklemesi "supports" kalır. Küçük bir not varsa açıklamada belirt ama kararı düşürme.
+- "partial": cümlenin ANA bilgilerinden biri kaynakta yok ya da önemli ölçüde değiştirilmiş: sayı/oran farklı ya da yanlış niteleniyor (ör. kaynak “en fazla %71” diyor, cümle “%71’i” diyor), ilişki nedensellik olarak sunulmuş (kaynak “ilişkili”, cümle “etkiler”), kaynağın belirli bir örneklem için söylediği genelleştirilmiş, ya da kaynaktaki temkinli ifade kesin hâle getirilmiş.
+- "not_supported": kaynak metni cümlenin ana bilgisine hiç değinmiyor.
+- "contradicts": kaynak metni cümlenin tersini ya da onunla bağdaşmayan bir bulguyu AÇIKÇA söylüyor ve bunu alıntılayabiliyorsun (ör. cümle “artırır”, kaynak “anlamlı fark bulunmadı”). “yalnızca, her zaman” gibi aşırı kesinlik ya da kaynağın bir ayrıntıyı belirtmemesi çelişki DEĞİLDİR. Şüphede seçme.
+- "insufficient": yalnızca özet var ve cümlenin konusu özette geçmiyor (tam metin okunmadığı için karar verilemez).
+Küçük ayrıntılar yüzünden "partial" verme; bir danışmanın düzeltme isteyeceği bir sorun yoksa "supports" ver.
+quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN kopyala (yoksa boş).
+explanation: ${L ? "English" : "Türkçe"}, TEK kısa cümle (en fazla 30 kelime); “P1, P2, ÖZET” gibi parça etiketlerinden söz etme. "partial" ise neyin düzeltilmesi gerektiğini söyle. Atıfta sayfa verilmişse ve bu sayfa uygun değilse belirt. verdict açıklamanla tutarlı olmalı.
 Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
       messages: [{ role: "user", content: `KAYNAK: ${source.title}\nERİŞİM: ${source.access_level}\n\nİDDİALAR:\n${claimsText}\n\nKAYNAK METNİ:\n${material}` }],
-      maxTokens: 400 + pairs.length * 220, effort: "low", jsonSchema: VERDICT_SCHEMA,
+      maxTokens: 800 + pairs.length * 350, effort: "low", jsonSchema: VERDICT_SCHEMA,
     });
     await track(v);
-    let items: { id: string; verdict: ClaimVerdict; explanation: string; quote: string; quotePage: string }[] = [];
+    let items: { id: string; verdict: ClaimVerdict; explanation: string; quote: string }[] = [];
     try { items = JSON.parse(v.text).items ?? []; } catch { /* aşağıda yetersiz sayılır */ }
-    const nm = norm(material);
+    const evidence = [...used.values()];
     return pairs.map((p) => {
       const it = items.find((x) => x.id === p.claimId);
-      const quoteOk = !!it?.quote && nm.includes(norm(it.quote));
-      return { ...base, claimId: p.claimId, av: AUDIT_VERSION, verdict: it ? guardVerdict(it.verdict, quoteOk) : "insufficient", explanation: it?.explanation ?? (L ? "No decision could be made." : "Karar verilemedi."), quote: quoteOk ? it!.quote : null, quotePage: quoteOk && it!.quotePage ? it!.quotePage : null };
+      // Yanıt alınamadıysa sürüm işareti konmaz: sonuç önbelleğe girmez, “Yeniden denetle” bu cümleyi tekrar dener
+      if (!it) return { ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null, explanation: L ? "No answer was received for this sentence; please run the audit again." : "Bu cümle için yanıt alınamadı; lütfen yeniden denetleyin." };
+      const loc = locateQuote(it.quote, source.abstract, evidence);
+      return { ...base, claimId: p.claimId, av: AUDIT_VERSION, verdict: guardVerdict(it.verdict, loc.ok), explanation: cleanExplanation(it.explanation), quote: loc.ok ? it.quote : null, quotePage: loc.page };
     });
   });
   return { results: results.flat(), usage, cost, calls, model: model.model, provider: model.provider };
@@ -112,7 +137,7 @@ Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle 
 
 const STANCE_SCHEMA = {
   type: "object", additionalProperties: false, required: ["items"],
-  properties: { items: { type: "array", items: { type: "object", additionalProperties: false, required: ["id", "stance", "explanation", "quote", "quotePage"], properties: { id: { type: "string" }, stance: { type: "string", enum: ["supports", "contradicts", "unrelated"] }, explanation: { type: "string" }, quote: { type: "string" }, quotePage: { type: "string" } } } } },
+  properties: { items: { type: "array", items: { type: "object", additionalProperties: false, required: ["id", "quote", "explanation", "stance"], properties: { id: { type: "string" }, quote: { type: "string" }, explanation: { type: "string" }, stance: { type: "string", enum: ["supports", "contradicts", "unrelated"] } } } } },
 };
 
 /**
@@ -136,19 +161,19 @@ export async function crossCheckSources(o: { planId: string; lang: "tr" | "en"; 
     const r = await complete(model, {
       system: `Bir öğrencinin akademik metnindeki cümleleri, bu cümlelerde ATIF YAPILMAMIŞ başka bir kaynağın metniyle karşılaştırıyorsun. Yalnızca verilen KAYNAK METNİNE dayan.
 stance: "supports" = kaynak metni cümlenin iddiasını açıkça destekliyor (öğrenci bu kaynağı da atıf olarak ekleyebilir); "contradicts" = kaynak metni cümlenin iddiasının tersini ya da onunla bağdaşmayan bir bulguyu açıkça söylüyor; "unrelated" = konu aynı olsa bile cümlenin iddiası hakkında açık bir şey söylemiyor (şüphede unrelated seç).
-quote: kararı dayandırdığın en kısa ifade, kaynak metninden AYNEN (yoksa boş). quotePage: alıntının sayfası (yoksa boş). explanation: ${L ? "English" : "Türkçe"}, tek cümle.
+quote: kararı dayandırdığın en kısa ifade, kaynak metninden AYNEN (yoksa boş). explanation: ${L ? "English" : "Türkçe"}, tek kısa cümle (en fazla 30 kelime); “P1, ÖZET” gibi parça etiketlerinden söz etme.
 Her cümle için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
       messages: [{ role: "user", content: `KAYNAK: ${source.title}\n\nCÜMLELER:\n${claims.map((c) => `[${c.claimId}] ${c.sentence}`).join("\n")}\n\nKAYNAK METNİ:\n${material}` }],
-      maxTokens: 300 + claims.length * 200, effort: "low", jsonSchema: STANCE_SCHEMA,
+      maxTokens: 600 + claims.length * 300, effort: "low", jsonSchema: STANCE_SCHEMA,
     });
     usage.input += r.usage.input; usage.output += r.usage.output; calls++;
     cost += await estimateCost(r.model, r.usage.input, r.usage.output, r.usage);
-    let items: { id: string; stance: "supports" | "contradicts" | "unrelated"; explanation: string; quote: string; quotePage: string }[] = [];
+    let items: { id: string; stance: "supports" | "contradicts" | "unrelated"; explanation: string; quote: string }[] = [];
     try { items = JSON.parse(r.text).items ?? []; } catch { /* yok say */ }
-    const nm = norm(material);
+    const evidence = [...used.values()];
     return items.filter((x) => x.stance !== "unrelated" && claims.some((c) => c.claimId === x.id)).map((x) => {
-      const quoteOk = !!x.quote && nm.includes(norm(x.quote));
-      return { claimId: x.id, sourceId: source.id, stance: x.stance as "supports" | "contradicts", explanation: x.explanation.slice(0, 400), quote: quoteOk ? x.quote : null, quotePage: quoteOk && x.quotePage ? x.quotePage : null };
+      const loc = locateQuote(x.quote, source.abstract, evidence);
+      return { claimId: x.id, sourceId: source.id, stance: x.stance as "supports" | "contradicts", explanation: cleanExplanation(x.explanation), quote: loc.ok ? x.quote : null, quotePage: loc.page };
     })
       // Alıntısı doğrulanamayan “çelişiyor” sonucu gösterilmez (yanlış alarm riskini azaltır)
       .filter((x) => x.stance === "supports" || x.quote);

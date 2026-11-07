@@ -40,3 +40,18 @@ describe("guardVerdict (çelişki ancak doğrulanmış alıntıyla)", () => {
     expect(guardVerdict("partial", false)).toBe("partial");
   });
 });
+
+describe("locateQuote / cleanExplanation", () => {
+  it("sayfayı alıntıyı içeren parçadan bulur; özetteki alıntıya sayfa vermez; uydurma alıntıyı reddeder", async () => {
+    const { locateQuote } = await import("@/lib/claim-audit");
+    const chunks = [{ content: "Intro text. Up to 71% of trauma victims diagnosed with PTSD have frequent nightmares.", page: "1574" }];
+    expect(locateQuote("Up to 71% of trauma victims", "Abstract here.", chunks)).toEqual({ ok: true, page: "1574" });
+    expect(locateQuote("71%", "Abstract here.", chunks)).toEqual({ ok: false, page: null }); // çok kısa
+    expect(locateQuote("Abstract here about dreams", "Abstract here about dreams.", chunks)).toEqual({ ok: true, page: null });
+    expect(locateQuote("not in the source at all", null, chunks)).toEqual({ ok: false, page: null });
+  });
+  it("açıklamadan (P1, P2) etiketlerini atar", async () => {
+    const { cleanExplanation } = await import("@/lib/claim-audit");
+    expect(cleanExplanation("Kaynak oranı veriyor (P1, P2) ve uyumlu.")).toBe("Kaynak oranı veriyor ve uyumlu.");
+  });
+});

@@ -5,11 +5,11 @@ export const WORK_ICONS: Record<string, LucideIcon> = { GraduationCap, FlaskConi
 /* eslint-disable @next/next/no-img-element */
 /**
  * Academiana logosu. Varsayılan: amblem (kep + A + kitap) ve kelime işareti; dar yerlerde yeterince okunaklı.
- * variant="full": “Akademik destek ve danışmanlık” alt yazılı tam logo görseli (ör. alt bilgi, giriş ekranı).
+ * variant="full": “The Complete Academic Research Workspace” alt yazılı tam logo görseli (ör. alt bilgi, giriş ekranı).
  */
 export function Logo({ className = "", variant = "mark" }: { className?: string; variant?: "mark" | "full" }) {
   if (variant === "full") {
-    return <img src="/brand/academiana-logo-transparent.png" alt="Academiana — Akademik destek ve danışmanlık" width={960} height={245} className={`h-12 w-auto ${className}`} />;
+    return <img src="/brand/academiana-logo-transparent.png" alt="Academiana — The Complete Academic Research Workspace" width={960} height={245} className={`h-12 w-auto ${className}`} />;
   }
   return (
     <span className={`inline-flex items-center gap-2 ${className}`}>

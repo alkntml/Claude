@@ -5,6 +5,7 @@
  */
 import { citedIdsInOrder, docToPlain, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { runQualityChecks } from "@/lib/quality/checks";
+import { buildGraph, insights, topicMap } from "@/lib/litmap-graph";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { buildRoadmap, stageDef, type WorkType, type AcademicLevel, type Methodology } from "@/lib/workflows";
 
@@ -140,6 +141,27 @@ const REVIEW_DEMO: { protocol: any; records: any[] } = {
     appraisal: i === 0 ? { answers: { aim: "yes", design: "yes", sampling: "na", measures: "unclear", analysis: "na", confounding: "no", findings: "yes" } } : null,
   })),
 };
+// Literatür haritası (demo): örnek ağ — gerçek sürümde OpenAlex kayıtlarından kurulur
+on("POST", "/api/projects/([^/]+)/litmap", (m) => {
+  const src = db.sources.filter((x) => x.project_id === m[1]);
+  const topicA = { id: "T1", name: "Attachment and romantic relationships", subfield: "Social Psychology", field: "Psychology" };
+  const topicB = { id: "T2", name: "Obsessive-compulsive disorder", subfield: "Clinical Psychology", field: "Psychology" };
+  const topicC = { id: "T3", name: "Parenting styles", subfield: "Developmental Psychology", field: "Psychology" };
+  const extra = Array.from({ length: 10 }, (_, i) => ({ id: `demo-x${i}`, title: `Örnek kaynak ${i + 1} (demo)`, year: 1995 + i * 3 }));
+  const all = [...src.map((x: any, i: number) => ({ id: x.id, title: x.title, year: x.year ?? 2000 + i })), ...extra];
+  const works = all.map((x, i) => {
+    const g = i % 3, refs = g === 0 ? ["R1", "R2", "R3", `R${10 + i}`] : g === 1 ? ["Q1", "Q2", "Q3", `Q${10 + i}`] : ["P1", "P2", `P${10 + i}`, i > 6 ? "R1" : "P3"];
+    if (i > 0 && i % 4 === 0) refs.push(`W${i - 1}`);
+    return { id: `W${i}`, doi: null, title: x.title, year: x.year, referenced_works: refs, cited_by_count: 40 + i * 13, sourceId: x.id, topic: g === 0 ? topicA : g === 1 ? topicB : topicC };
+  });
+  const citing = Array.from({ length: 8 }, (_, k) => ({ id: `N${k}`, referenced_works: [`W${k}`, `W${(k + 3) % works.length}`, `W${(k + 6) % works.length}`] }));
+  const g = buildGraph(works, { citing });
+  const rec = (title: string, year: number, extra: Record<string, unknown>) => ({ title, year, authors: [{ family: "Örnek" }], containerTitle: "Demo Dergisi", openalexId: `https://openalex.org/D${title.length}${year}`, citedByCount: 120, ...extra });
+  const suggestions = [rec("Örnek temel çalışma: bağlanma kuramı (demo)", 1987, { refCount: 4, topic: topicA }), rec("Örnek temel çalışma: obsesyonların bilişsel modeli (demo)", 1997, { refCount: 3, topic: topicB })];
+  const newWorks = [rec("Örnek yeni çalışma: ilişki odaklı OKB ve bağlanma (demo)", 2024, { citesMine: 3, topic: { id: "T4", name: "Rumination and worry", subfield: "Clinical Psychology", field: "Psychology" } }), rec("Örnek yeni çalışma: ebeveyn tutumları meta-analizi (demo)", 2023, { citesMine: 2, topic: topicC })];
+  const topics = topicMap(works.map((w) => w.topic), [...suggestions, ...newWorks, ...newWorks].map((x: any) => x.topic));
+  return { ...g, suggestions, newWorks, topics, insights: insights(g, topics, 2026), mapped: works.length, unmapped: 0, version: 2, cachedAt: Date.now() };
+});
 on("GET", "/api/projects/([^/]+)/review", () => ({ records: REVIEW_DEMO.records, protocol: REVIEW_DEMO.protocol, me: "demo", upgraded: true }));
 on("PATCH", "/api/projects/([^/]+)/review", () => ({ updated: 1, skipped: 0 }));
 on("PUT", "/api/projects/([^/]+)/review", (_m, body) => { REVIEW_DEMO.protocol = body; return { protocol: body }; });

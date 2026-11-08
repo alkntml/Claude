@@ -3,10 +3,11 @@ import { useT } from "@/i18n/client";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import type { Transaction } from "@tiptap/pm/state";
 import type { AnyExtension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import {
-  WandSparkles, Bold, Heading2, Heading3, Heading4, Italic, List, ListOrdered, Minus, Quote, Redo2, Rows3, StickyNote, Table2, Underline as U, Undo2, Columns3, Trash2, ImageIcon,
+  WandSparkles, Search, Bold, Heading2, Heading3, Heading4, Italic, List, ListOrdered, Minus, Quote, Redo2, Rows3, StickyNote, Table2, Underline as U, Undo2, Columns3, Trash2, ImageIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { cn } from "@/components/ui/cn";
@@ -42,7 +43,7 @@ export function DocPreview({ doc, className }: { doc: JSONNode; className?: stri
   return <EditorContent editor={editor} />;
 }
 
-export function useAcademicEditor(opts: { content: JSONNode | null; placeholder: string; onUpdate: (doc: JSONNode, editor: Editor) => void; onSelection?: (text: string) => void; extensions?: AnyExtension[] }) {
+export function useAcademicEditor(opts: { content: JSONNode | null; placeholder: string; onUpdate: (doc: JSONNode, editor: Editor, tr: Transaction) => void; onSelection?: (text: string) => void; extensions?: AnyExtension[] }) {
   const cb = useRef(opts);
   cb.current = opts;
   // TipTap 3 ayarları her çizimde karşılaştırır; uzantılar, içerik ve editorProps ilk çizimde bir kez oluşturulur.
@@ -60,7 +61,7 @@ export function useAcademicEditor(opts: { content: JSONNode | null; placeholder:
     // Araç çubuğundaki etkin düğmeler her işlemde güncellensin (TipTap 3’te varsayılan kapalı)
     shouldRerenderOnTransaction: true,
     ...stable.current,
-    onUpdate: ({ editor }) => cb.current.onUpdate(editor.getJSON() as JSONNode, editor),
+    onUpdate: ({ editor, transaction }) => cb.current.onUpdate(editor.getJSON() as JSONNode, editor, transaction),
     onSelectionUpdate: ({ editor }) => {
       const { from, to } = editor.state.selection;
       cb.current.onSelection?.(from === to ? "" : editor.state.doc.textBetween(from, to, "\n"));
@@ -77,7 +78,7 @@ function TB({ on, active, label, children, disabled }: { on: () => void; active?
   );
 }
 
-export function Toolbar({ editor, onFootnote, suggestOn, onToggleSuggest }: { editor: Editor | null; onFootnote: () => void; suggestOn?: boolean; onToggleSuggest?: () => void }) {
+export function Toolbar({ editor, onFootnote, suggestOn, onToggleSuggest, onFind, findOn }: { editor: Editor | null; onFootnote: () => void; suggestOn?: boolean; onToggleSuggest?: () => void; onFind?: () => void; findOn?: boolean }) {
   const { t } = useT();
   if (!editor) return <div className="h-11" />;
   const c = () => editor.chain().focus();
@@ -103,6 +104,12 @@ export function Toolbar({ editor, onFootnote, suggestOn, onToggleSuggest }: { ed
       <TB label={t("Dipnot ekle")} on={onFootnote}><StickyNote className="h-4 w-4" /></TB>
       <TB label={t("Tablo ekle")} on={() => c().insertContent([{ type: "paragraph", content: [{ type: "text", text: t("Tablo 1. Başlık"), marks: [{ type: "italic" }] }] }]).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><Table2 className="h-4 w-4" /></TB>
       <TB label={t("Şekil başlığı ekle")} on={() => c().insertContent({ type: "paragraph", content: [{ type: "text", text: t("Şekil 1. Açıklama"), marks: [{ type: "italic" }] }] }).run()}><ImageIcon className="h-4 w-4" /></TB>
+      {onFind && (
+        <>
+          <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+          <TB label={t("Bul ve değiştir (Ctrl+F)")} active={!!findOn} on={onFind}><Search className="h-4 w-4" /></TB>
+        </>
+      )}
       {onToggleSuggest && (
         <>
           <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />

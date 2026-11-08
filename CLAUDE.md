@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 462 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 480 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -101,7 +101,8 @@ src/lib/
   quality/score.ts quality/checklist.ts  Kalite puanı yöntemi (D120; YZ bulguları puanı etkilemez) + teslim öncesi kontrol listesi (D121); herkese açık /yontem sayfası
   prisma.ts review-ai.ts  PRISMA 2020 (D122): aşamalar, yinelenen anahtarı, akış şeması SVG, CSV; YZ yalnızca eleme ÖNERİSİ; review_records; arayüz workspace/review-modal.tsx. D134: bulanık yinelenen, çift değerlendirici oyları + kappa (agreement), veri çıkarma (extractData), kalite (APPRAISAL_ITEMS), methodsMarkdown/characteristicsMarkdown
   files/pdf-clean.ts multi-ask.ts  Gelişmiş PDF okuma (D132: üst/alt bilgi, tire, bölüm tanıma, kaynakça ayırma; parça section; sources/chunk-insert.ts insertChunks/loadChunks) + çoklu belge analizi (Birlikte analiz et; workspace/multi-analyze.tsx)
-  litmap.ts litmap-graph.ts  Literatür haritası (D123): OpenAlex atıf ağı + eksik temel çalışma önerisi; arayüz workspace/litmap-modal.tsx
+  litmap.ts litmap-graph.ts  Literatür haritası (D123, D141): atıf + ortak kaynakça + birlikte atıf ağı, kümeler (clusterize), zaman çizelgesi, konu haritası, yeni çalışmalar (ileri atıf), boşluk analizi (insights); arayüz workspace/litmap-modal.tsx
+  editor/merge.ts        Ortak yazımda paragraf düzeyinde üç yollu birleştirme (D140); canlı kanal workspace/live-collab.ts (Supabase Realtime `project:<id>`, migration 37), editör eklentileri workspace/collab-ext.ts (RemotePeers, applyDocPatch), bul-değiştir workspace/find-replace.ts + find-bar.tsx
   org-audit.ts           Kurum denetim kaydı (D125); ai/registry streamWith her çağrıyı ai_calls’a yazar (gözlemlenebilirlik); yönetim → ürün analitiği (api/admin/product)
   source-ask.ts          Kaynağa sor (D112); consensus.ts Araştırmalar ne diyor? (D114); autocomplete.ts satır içi öneri (D113, kullanım türü autocomplete) + workspace/inline-suggest.ts
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts

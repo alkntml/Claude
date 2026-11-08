@@ -59,4 +59,8 @@ union all select '35 PRISMA ve literatür haritası Pro paketinde',
 union all select '36 PDF bölümleri, derleme oyları, veri çıkarma ve kalite',
   case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'source_chunks' and column_name = 'section')
         and exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'review_records' and column_name = 'appraisal')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '37 Gerçek zamanlı ortak yazım kanalı',
+  case when exists (select 1 from pg_proc where proname = 'collab_project_access')
+        and exists (select 1 from pg_policies where schemaname = 'realtime' and tablename = 'messages' and policyname = 'academiana_collab_read')
        then 'YAPILMIŞ' else 'EKSİK' end;

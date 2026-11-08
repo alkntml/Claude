@@ -1,4 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de migration 37’yi çalıştır (gerçek zamanlı ortak yazım kanalı, D140); check_status.sql’de “37” YAPILMIŞ görünmeli
+- [ ] Canlıda dene: iki tarayıcıda (sahip + ortak yazar) aynı bölümü aç; üstte yeşil “Canlı”, diğerinin paragrafında renkli çizgi; farklı paragraflara yazınca metin saniyeler içinde diğer tarafta görünmeli (D140)
+- [ ] Canlıda dene: Araçlar → Literatür haritası → Ağ / Zaman çizelgesi / Konu haritası / Yeni çalışmalar (D141)
 - [ ] Canlıda dene: Dışa aktar → “LaTeX (.tex + .bib, ZIP)” ve “Overleaf’te aç” (Overleaf hesabıyla); derlenen PDF’in ekran görüntüsü (D136)
 - [ ] (Ertelendi, D136) ORCID ile yayın aktarma ve Zotero canlı eşitleme
 - [ ] Supabase SQL Editor’de migration 36’yı çalıştır (PDF bölümleri, derleme oyları, veri çıkarma, kalite; D132–D134)

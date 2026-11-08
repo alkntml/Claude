@@ -54,7 +54,7 @@ function WritingVisual() {
         <p className="mt-2 font-serif text-[14px] leading-7 text-ink-800">{t("Öz düzenleme, uzaktan eğitimde başarının güçlü bir yordayıcısıdır")} <span className="rounded-md border border-brand-100 bg-brand-50 px-1.5 font-sans text-[11px] text-brand-700">(Kaya, 2021, s. 211)</span>. {t("Geri bildirimin zamanlaması bu ilişkide")}<span className="text-ink-300"> {t("aracı rol üstlenir…")}</span><span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 bg-brand-500" /></p>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
-        {[[Bot, "Yazım asistanı"], [Users, "2 ortak yazar çevrim içi"], [FileText, "Sürüm geçmişi"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="flex items-center gap-1.5 rounded-xl bg-ink-50 px-2 py-2 text-ink-600"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}
+        {[[Bot, "Yazım asistanı"], [Users, "Canlı: 2 ortak yazar"], [FileText, "Sürüm geçmişi"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="flex items-center gap-1.5 rounded-xl bg-ink-50 px-2 py-2 text-ink-600"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}
       </div>
     </Frame>
   );
@@ -158,7 +158,7 @@ const CATEGORIES: Category[] = [
     { icon: Bot, title: "Bölüm bölüm yazım asistanı", text: "Taslak, genişletme, yeniden yazma ve sentez; işin zorluğuna göre model seçilir, her sürüm geçmişte saklanır." },
     { icon: Sparkles, title: "Yazarken otomatik tamamlama", text: "Paragraf sonunda gri öneri belirir, Tab ile kabul edilir; metninizin üslubunu sürdürür." },
     { icon: FileText, title: "Word’den içe aktarma", text: "Hazır tezinizi veya makalenizi yükleyin; bölümler, kaynakça ve atıflar otomatik bağlanır." },
-    { icon: Users, title: "Ortak yazım", text: "Ortak yazarlar rolleriyle aynı çalışmada; kim hangi bölümde görünür, çakışmalar önlenir.", plan: "coauthors" },
+    { icon: Users, title: "Ortak yazım", text: "Gerçek zamanlı ortak yazım: kim hangi paragrafta anında görünür, değişiklikler saniyeler içinde yansır ve farklı paragraflarda otomatik birleşir.", plan: "coauthors" },
   ] },
   { id: "literatur", icon: Library, title: "Kaynak ve literatür", lead: "16 akademik veri tabanında 250 milyondan fazla yayın; her kaynağın ne kadarının okunduğu açıkça yazar.", Visual: SourcesVisual, features: [
     { icon: Database, title: "16 veri tabanında eşzamanlı arama", text: "OpenAlex, Crossref, PubMed, arXiv, ERIC, DOAJ, HAL, PLOS ve diğerleri; sonuçlar birleştirilir, tekrarlar ayıklanır." },
@@ -166,7 +166,7 @@ const CATEGORIES: Category[] = [
     { icon: FileSearch2, title: "Tam metin okuma", text: "Açık erişimli metinler otomatik okunur, PDF’iniz yüklenebilir; bölümler tanınır, alıntılar yayındaki sayfa numarasıyla gelir." },
     { icon: MessagesSquare, title: "Kaynağa sor", text: "Bir makaleye soru sorun; cevap yalnızca o makaleden, sayfa numaralarıyla gelir." },
     { icon: Layers, title: "Birlikte analiz et", text: "2–8 makaleyi karşılaştırın: uyuşan noktalar, çelişen bulgular ve araştırma boşlukları tek tabloda.", plan: "matrix" },
-    { icon: Network, title: "Literatür haritası ve matrisi", text: "Kaynaklarınızın atıf ağı, eksik olabilecek temel çalışmalar ve amaç–yöntem–bulgu matrisi.", plan: "litmap" },
+    { icon: Network, title: "Literatür haritası ve matrisi", text: "Atıf, ortak kaynakça ve birlikte atıf ağı; konu kümeleri, zaman çizelgesi, konu haritası, eksik temel ve yeni çalışmalar; amaç–yöntem–bulgu matrisi.", plan: "litmap" },
     { icon: Table2, title: "Konu bulma ve kütüphane aktarımı", text: "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma.", plan: "topics" },
   ] },
   { id: "dogruluk", icon: ShieldCheck, title: "Atıf ve doğruluk", lead: "Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. Academiana ikisini de denetler.", Visual: CitationVisual, features: [

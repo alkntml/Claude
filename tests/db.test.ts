@@ -25,6 +25,14 @@ alter table storage.objects enable row level security; -- Supabase varsayılanı
 create function storage.foldername(name text) returns text[] language sql immutable as $$ select (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1] $$;
 grant usage on schema auth, storage to anon, authenticated, service_role;
 grant execute on all functions in schema auth to anon, authenticated, service_role;
+create schema realtime;
+create table realtime.messages (id bigserial primary key, topic text not null, extension text not null default 'broadcast', payload jsonb, event text, private boolean default true);
+alter table realtime.messages enable row level security;
+create function realtime.topic() returns text language sql stable as $$ select nullif(current_setting('realtime.topic', true), '') $$;
+grant usage on schema realtime to authenticated, anon;
+grant select, insert on realtime.messages to authenticated;
+grant usage on sequence realtime.messages_id_seq to authenticated;
+grant execute on all functions in schema realtime to anon, authenticated;
 `;
 
 let db: PGlite;
@@ -655,5 +663,31 @@ describe("anketler", () => {
     // Sahibi okuyabilir, başkası göremez
     expect(await as(A, `select votes from public.review_records where id = '${r.id}'`)).toHaveLength(1);
     expect(await as(B, `select votes from public.review_records where id = '${r.id}'`)).toHaveLength(0);
+  });
+  it("migration 37: gerçek zamanlı kanal yalnızca sahibe ve ortak yazarlara açık; yorumcu yazamaz (D140)", async () => {
+    const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/migrations/20261201000037_realtime_collab.sql"), "utf8");
+    await db.exec(sql);
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'Canlı 37', 'research_article', 'master') returning id`)).rows;
+    const topic = `project:${p.id}`;
+    const onTopic = (uid: string, q: string, t = topic) => db.transaction(async (tx) => {
+      await tx.exec("set local role authenticated");
+      await tx.query(`select set_config('request.jwt.claim.sub', $1, true), set_config('request.jwt.claim.role', 'authenticated', true), set_config('realtime.topic', $2, true)`, [uid, t]);
+      return (await tx.query(q)).rows;
+    });
+    const send = (uid: string, t = topic) => onTopic(uid, `insert into realtime.messages (topic, payload, event) values ('${t}', '{}', 'doc') returning id`, t);
+    await send(A);
+    expect(await onTopic(A, `select id from realtime.messages where topic = '${topic}'`)).toHaveLength(1);
+    // Üye olmayan ne okuyabilir ne yazabilir
+    expect(await onTopic(B, `select id from realtime.messages where topic = '${topic}'`)).toHaveLength(0);
+    await expectError(send(B), /row-level security/);
+    // Ortak yazar (editör) okur ve yazar; yorumcu yalnızca okur
+    await db.query(`insert into public.project_members (project_id, user_id, role) values ($1, '${B}', 'editor')`, [p.id]);
+    await send(B);
+    expect(await onTopic(B, `select id from realtime.messages where topic = '${topic}'`)).toHaveLength(2);
+    await db.query(`update public.project_members set role = 'commenter' where project_id = $1 and user_id = '${B}'`, [p.id]);
+    expect(await onTopic(B, `select id from realtime.messages where topic = '${topic}'`)).toHaveLength(2);
+    await expectError(send(B), /row-level security/);
+    // Biçimi bozuk konu kabul edilmez
+    await expectError(send(A, "project:x"), /row-level security/);
   });
 });

@@ -32,6 +32,11 @@ import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type
 import { AssistantPanel } from "./assistant";
 import { CitationContext } from "./citation-context";
 import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
+import { applyDocPatch, cursorBlock, REMOTE_META, RemotePeers, setPeerMarks } from "./collab-ext";
+import { useLiveCollab, type LiveDocMsg, type LiveSavedMsg } from "./live-collab";
+import { FindReplace } from "./find-replace";
+import { FindBar } from "./find-bar";
+import { mergeDocs } from "@/lib/editor/merge";
 import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./panels";
 import { ProjectSources, ResearchModal } from "./sources";
 import { ShareButton } from "./share-modal";
@@ -91,7 +96,7 @@ function saveDraft(id: string, doc: JSONNode) { try { localStorage.setItem(DRAFT
 function readDraft(id: string): { at: number; doc: JSONNode } | null { try { const v = localStorage.getItem(DRAFT_KEY(id)); return v ? JSON.parse(v) : null; } catch { return null; } }
 function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); } catch { /* yok */ } }
 
-interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter"; collaborative?: boolean }
+interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter"; collaborative?: boolean; me?: { id: string; name: string } }
 
 export function Workspace(props: Props) {
   const { t, dl } = useT();
@@ -122,6 +127,20 @@ export function Workspace(props: Props) {
   const [footnote, setFootnote] = useState<string | null>(null);
   const [histVer, setHistVer] = useState(0);
   const [progress, setProgress] = useState<number>(props.project.progress);
+  const [findOpen, setFindOpen] = useState(false);
+  // Ctrl/⌘+F: tarayıcının araması yerine editörde bul-değiştir (D140)
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === "f" || e.key === "F" || ((e.key === "h" || e.key === "H") && e.ctrlKey && !e.metaKey))) {
+        const inEditor = !!(document.activeElement as HTMLElement | null)?.closest?.(".prose-academic") || !!(document.activeElement as HTMLElement | null)?.closest?.("[role=search]");
+        if (!inEditor) return;
+        e.preventDefault();
+        setFindOpen(true);
+      }
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, []);
 
   /** Editörde açık olan alt başlık (D83): başlık düğümünün belgedeki sırası; null ise bölümün tamamı */
   const [focus, setFocus] = useState<number | null>(null);
@@ -129,6 +148,12 @@ export function Workspace(props: Props) {
   focusRef.current = focus;
   /** Odak varken bölümün tam belgesi (editördeki alt başlık metni buna geri yazılır) */
   const baseRef = useRef<JSONNode | null>(null);
+  /** Ortak yazım (D140): her bölüm için diğer yazarlarla/sunucuyla en son ortak sürüm (üç yollu birleştirmenin tabanı) */
+  const syncBase = useRef<Record<string, JSONNode>>(Object.fromEntries(props.stages.map((x: any) => [x.id, x.content])));
+  /** Canlı kanal işlevleri (aşağıda kurulur; editör olaylarından erişmek için) */
+  const liveRef = useRef<{ live: boolean; sendDoc: (id: string, d: JSONNode) => boolean; sendSaved: (id: string, at: string, d?: JSONNode) => void; update: (x: { stageId?: string | null; block?: number | null; typing?: boolean }) => void; peersHere: () => boolean }>({ live: false, sendDoc: () => false, sendSaved: () => {}, update: () => {}, peersHere: () => false });
+  const liveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const active = stages.find((s) => s.id === activeId) ?? null;
   const activeIndex = stages.findIndex((s) => s.id === activeId);
@@ -165,10 +190,29 @@ export function Workspace(props: Props) {
       setStages((l) => l.map((s) => (s.id === r.stage.id ? { ...s, status: r.stage.status, word_count: r.stage.word_count, updated_at: r.stage.updated_at, ...(pending.current?.id === s.id ? {} : { content: r.stage.content, content_text: r.stage.content_text }) } : s)));
       setProgress(r.progress);
       setSave(pending.current ? "dirty" : "saved");
+      syncBase.current[target.id] = target.doc as JSONNode;
+      liveRef.current.sendSaved(target.id, r.stage.updated_at, target.doc as JSONNode);
       if ((pending.current as { id: string } | null)?.id !== target.id) clearDraft(target.id);
       if (snapshot) setHistVer((v) => v + 1);
     } catch (e) {
       if (e instanceof ClientApiError && e.code === "stage_conflict" && e.extra?.stage) {
+        // D140: farklı paragraflardaki değişiklikler otomatik birleştirilir; yalnızca aynı paragraf çakışırsa sorulur
+        const theirs = e.extra.stage as any;
+        const isActive = target.id === activeIdRef.current && !!editorRef.current;
+        const pend = pending.current as { id: string; doc: JSONNode } | null;
+        const mineNow = isActive ? fullDocRef.current() : (pend?.id === target.id ? pend.doc : target.doc) as JSONNode;
+        const m = mergeDocs(syncBase.current[target.id], mineNow, theirs.content as JSONNode);
+        if (!m.conflicts) {
+          syncBase.current[target.id] = theirs.content;
+          setStages((l) => l.map((x) => (x.id === target.id ? { ...x, updated_at: theirs.updated_at } : x)));
+          stagesRef.current = stagesRef.current.map((x: any) => (x.id === target.id ? { ...x, updated_at: theirs.updated_at } : x));
+          if (isActive) applyFullDocRef.current(m.doc);
+          else setStages((l) => l.map((x) => (x.id === target.id ? { ...x, content: m.doc } : x)));
+          pending.current = { id: target.id, doc: m.doc };
+          if (m.changed) toast({ tone: "info", title: t("{n} ile aynı anda yazdınız", { n: String(e.extra.by || t("Bir ortak yazar")) }), detail: t("Değişiklikler farklı paragraflarda olduğu için otomatik birleştirildi.") });
+          setTimeout(() => flushRef.current(), 50);
+          return;
+        }
         saveDraft(target.id, target.doc as JSONNode);
         setConflict({ stageId: target.id, mine: target.doc as JSONNode, theirs: e.extra.stage, by: String(e.extra.by ?? "") });
         setSave("dirty");
@@ -203,7 +247,7 @@ export function Workspace(props: Props) {
       if (!res.ok) return "";
       return String((await res.json()).text ?? "");
     },
-  }), ClaimMarks], []); // eslint-disable-line react-hooks/exhaustive-deps
+  }), ClaimMarks, RemotePeers, FindReplace], []); // eslint-disable-line react-hooks/exhaustive-deps
   const editor = useAcademicEditor({
     extensions: suggestExt,
     content: active?.content ?? null,
@@ -211,11 +255,25 @@ export function Workspace(props: Props) {
       ? t("“{title}” alt başlığını yazmaya başlayın veya asistandan yardım isteyin…", { title: docToPlain({ type: "doc", content: active.content.content[focus].content }).trim() })
       : def ? t("{title} bölümünü yazmaya başlayın veya asistandan yardım isteyin…", { title: active?.title ?? t(def.title) }) : t("Yazmaya başlayın…"),
     onSelection: setSelection,
-    onUpdate: (edited) => {
+    onUpdate: (edited, _ed, tr) => {
       if (!activeId) return;
+      if (tr.getMeta(REMOTE_META)) return; // diğer yazarın değişikliği: yayınlanmaz, kayıt onların işi
       const doc = mergeFocus(edited);
       pending.current = { id: activeId, doc };
       setSave("dirty");
+      // Canlı yazım (D140): belge ~0,4 sn’de bir aynı bölümdeki yazarlara gider; “yazıyor” göstergesi
+      if (liveRef.current.live) {
+        liveRef.current.update({ typing: true, block: liveBlock() });
+        if (typingTimer.current) clearTimeout(typingTimer.current);
+        typingTimer.current = setTimeout(() => liveRef.current.update({ typing: false }), 2500);
+        if (liveRef.current.peersHere() && !liveTimer.current) {
+          liveTimer.current = setTimeout(() => {
+            liveTimer.current = null;
+            const id = activeIdRef.current;
+            if (id && editorRef.current) liveRef.current.sendDoc(id, fullDocRef.current());
+          }, 400);
+        }
+      }
       if (stateTimer.current) clearTimeout(stateTimer.current);
       stateTimer.current = setTimeout(() => {
         saveDraft(activeId, doc);
@@ -247,6 +305,37 @@ export function Workspace(props: Props) {
   };
   const fullDocRef = useRef(fullDoc);
   fullDocRef.current = fullDoc;
+  /** İmlecin bulunduğu paragrafın bölümün tam belgesindeki sırası (odakta alt başlık gövdesi kayar) */
+  const liveBlock = (): number | null => {
+    const b = cursorBlock(editorRef.current);
+    if (b == null) return null;
+    return focusRef.current != null ? focusRef.current + 1 + b : b;
+  };
+  /**
+   * Etkin bölüme dışarıdan gelen tam belgeyi uygular (D140): editörde yalnızca değişen kısım değişir, imleç korunur.
+   * Alt başlığa odaklıyken başlık yerini değiştirdiyse yeni yeri bulunur; başlık silindiyse bölümün tamamına dönülür.
+   */
+  const applyFullDoc = (next: JSONNode) => {
+    const ed = editorRef.current;
+    const text = docToPlain(next);
+    setStages((l) => l.map((x) => (x.id === activeIdRef.current ? { ...x, content: next, content_text: text, word_count: wordCount(text) } : x)));
+    if (!ed) return;
+    const f = focusRef.current;
+    if (f != null && baseRef.current) {
+      const head = JSON.stringify((baseRef.current.content ?? [])[f]);
+      const idx = (next.content ?? []).map((n) => JSON.stringify(n)).reduce<number[]>((acc, k, i) => (k === head ? [...acc, i] : acc), []);
+      const nf = idx.length ? idx.reduce((a, b) => (Math.abs(b - f) < Math.abs(a - f) ? b : a)) : null;
+      baseRef.current = next;
+      if (nf == null) { focusRef.current = null; setFocus(null); ed.commands.setContent(next as object, { emitUpdate: false }); return; }
+      if (nf !== f) { focusRef.current = nf; setFocus(nf); }
+      applyDocPatch(ed, sectionDoc(next, nf));
+      return;
+    }
+    baseRef.current = next;
+    applyDocPatch(ed, next);
+  };
+  const applyFullDocRef = useRef(applyFullDoc);
+  applyFullDocRef.current = applyFullDoc;
   /** Etkin bölümün tam belgesini değiştirir, editörü (odak varsa yalnızca alt başlığı) yeniler ve kaydeder */
   async function setFullDoc(next: JSONNode, note: string, nextFocus: number | null = focusRef.current) {
     if (!editor) return;
@@ -318,13 +407,87 @@ export function Workspace(props: Props) {
   /** Sunucudaki (başkasının kaydettiği) bölümü yerel duruma ve açıksa editöre uygular */
   const applyRemote = useCallback((st: any) => {
     setStages((l) => l.map((x) => (x.id === st.id ? { ...x, ...st } : x)));
+    if (st.content) syncBase.current[st.id] = st.content;
     if (st.id !== activeIdRef.current || !editorRef.current) return;
+    if (st.content) { applyFullDocRef.current(st.content); return; }
     baseRef.current = st.content;
     const f = focusRef.current;
     const valid = f != null && st.content?.content?.[f]?.type === "heading" ? f : null;
     if (valid !== f) { focusRef.current = valid; setFocus(valid); }
     editorRef.current.commands.setContent(((valid != null ? sectionDoc(st.content, valid) : st.content) ?? { type: "doc", content: [{ type: "paragraph" }] }) as object, { emitUpdate: false });
   }, []);
+  // --- Gerçek zamanlı ortak yazım (D140)
+  const me = props.me ?? { id: "", name: "" };
+  const lastConflictNote = useRef(0);
+  const onLiveDoc = (m: LiveDocMsg) => {
+    if (m.from === me.id) return;
+    if (m.stageId !== activeIdRef.current || !editorRef.current) {
+      // Açık olmayan bölüm: yerelde bekleyen değişiklik yoksa doğrudan güncellenir
+      if (pending.current?.id === m.stageId) return;
+      syncBase.current[m.stageId] = m.doc;
+      const text = docToPlain(m.doc);
+      setStages((l) => l.map((x) => (x.id === m.stageId ? { ...x, content: m.doc, content_text: text, word_count: wordCount(text) } : x)));
+      return;
+    }
+    const mine = fullDocRef.current();
+    // Aynı paragrafta çakışmada iki taraf aynı sonuca varsın diye sabit kural: kimliği küçük olanın metni kalır
+    const prefer = m.from < me.id ? "theirs" : "mine";
+    const r = mergeDocs(syncBase.current[m.stageId] ?? mine, mine, m.doc, prefer);
+    syncBase.current[m.stageId] = m.doc;
+    if (JSON.stringify(r.doc) !== JSON.stringify(mine)) applyFullDocRef.current(r.doc);
+    const extra = JSON.stringify(r.doc) !== JSON.stringify(m.doc);
+    if (extra) {
+      // Bende karşı tarafta olmayan değişiklik var: birleşmiş hâl yayınlanır ve kaydedilir
+      pending.current = { id: m.stageId, doc: r.doc };
+      liveRef.current.sendDoc(m.stageId, r.doc);
+    }
+    if (r.conflicts && prefer === "theirs" && Date.now() - lastConflictNote.current > 60_000) {
+      lastConflictNote.current = Date.now();
+      api(`/api/stages/${m.stageId}/revisions`, { method: "POST", json: { content: mine, note: t("Aynı paragrafta eşzamanlı düzenleme: sizin sürümünüz") } }).then(() => setHistVer((v) => v + 1)).catch(() => {});
+      toast({ tone: "info", title: t("{n} ile aynı paragrafı düzenlediniz", { n: m.name }), detail: t("Onun metni kullanıldı; sizin sürümünüz “Geçmiş” sekmesinde saklandı.") });
+    }
+  };
+  const onLiveSaved = (m: LiveSavedMsg) => {
+    if (m.from === me.id) return;
+    const local = stagesRef.current.find((x: any) => x.id === m.stageId);
+    if (!local) return;
+    if (pending.current?.id === m.stageId) {
+      // Bende kaydedilmemiş değişiklik var: kayıtta sunucu sürümüyle otomatik birleşir
+      return;
+    }
+    if (m.doc) {
+      onLiveDoc({ stageId: m.stageId, doc: m.doc, from: m.from, name: m.name });
+      setStages((l) => l.map((x) => (x.id === m.stageId ? { ...x, updated_at: m.updatedAt } : x)));
+    } else {
+      api<{ stage: any }>(`/api/stages/${m.stageId}`).then(({ stage }) => { if (pending.current?.id !== m.stageId) applyRemote(stage); }).catch(() => {});
+    }
+  };
+  const live = useLiveCollab({ projectId: project.id, enabled: collaborative && !!props.me, me, canWrite: canEdit, onDoc: onLiveDoc, onSaved: onLiveSaved });
+  const isLive = live.status === "live";
+  liveRef.current = {
+    live: isLive,
+    sendDoc: live.sendDoc,
+    sendSaved: live.sendSaved,
+    update: live.update,
+    peersHere: () => live.peers.some((x) => x.stageId === activeIdRef.current),
+  };
+  // Bölüm değişince ve imleç hareket edince konum bildirilir
+  useEffect(() => { if (isLive) live.update({ stageId: activeId ?? null, block: null, typing: false }); }, [isLive, activeId]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!editor || !isLive) return;
+    const fn = () => liveRef.current.update({ block: liveBlock() });
+    editor.on("selectionUpdate", fn);
+    return () => { editor.off("selectionUpdate", fn); };
+  }, [editor, isLive]);
+  useEffect(() => { if (isLive) setPresent(live.peers.map((x) => ({ userId: x.userId, name: x.name, stageId: x.stageId }))); }, [isLive, live.peers]);
+  // Diğer yazarların paragraf işaretleri (odakta alt başlık gövdesine göre kaydırılır)
+  useEffect(() => {
+    if (!editor) return;
+    const here = isLive ? live.peers.filter((x) => x.stageId === activeId && x.block != null) : [];
+    const off = focus != null ? focus + 1 : 0;
+    setPeerMarks(editor, here.map((x) => ({ userId: x.userId, name: x.name, typing: x.typing, block: (x.block as number) - off })).filter((x) => x.block >= 0));
+  }, [editor, isLive, live.peers, activeId, focus]);
+
   const presenceTick = useRef<() => void>(() => {});
   useEffect(() => {
     if (!collaborative) { setPresent([]); return; }
@@ -334,7 +497,7 @@ export function Workspace(props: Props) {
       try {
         const r = await api<{ others: PresencePerson[]; stages: { id: string; updatedAt: string; by: string | null }[] }>(`/api/projects/${project.id}/presence`, { method: "POST", json: { stageId: activeIdRef.current ?? null } });
         if (stop) return;
-        setPresent(r.others);
+        if (!liveRef.current.live) setPresent(r.others);
         // Başkasının eklediği bölümler listeye girer, sildiği bölümler (açık değilse) çıkar
         const remoteIds = new Set(r.stages.map((x) => x.id));
         const localIds = new Set(stagesRef.current.map((x: any) => x.id));
@@ -931,6 +1094,7 @@ export function Workspace(props: Props) {
             {STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}
           </select>
           <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
+          {isLive && <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11.5px] font-medium text-emerald-700 sm:inline-flex" title={t("Ortak yazarlarla gerçek zamanlı bağlantı açık: değişiklikler anında görünür ve birleşir.")}><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>{t("Canlı")}</span>}
           <CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} />
           {isOwner && <ShareButton projectId={project.id} />}
           {canEdit && <ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} />}
@@ -996,11 +1160,12 @@ export function Workspace(props: Props) {
                     {present.some((p) => p.stageId === active.id) && (
                       <div className="mb-3 flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-[13px] text-emerald-900">
                         <span className="flex -space-x-1.5">{present.filter((p) => p.stageId === active.id).slice(0, 3).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>
-                        <span className="min-w-0 flex-1">{t("{n} şu an bu bölümde.", { n: present.filter((p) => p.stageId === active.id).map((p) => p.name).join(", ") })} <span className="text-emerald-700">{t("Farklı alt başlıklarda çalışmanız önerilir; aynı anda kaydederseniz hiçbir metin kaybolmaz.")}</span></span>
+                        <span className="min-w-0 flex-1">{t("{n} şu an bu bölümde.", { n: present.filter((p) => p.stageId === active.id).map((p) => p.name).join(", ") })} <span className="text-emerald-700">{isLive ? t("Değişiklikler anında görünür ve farklı paragraflarda otomatik birleşir; renkli çizgi diğer yazarın bulunduğu paragrafı gösterir.") : t("Farklı alt başlıklarda çalışmanız önerilir; aynı anda kaydederseniz hiçbir metin kaybolmaz.")}</span></span>
                       </div>
                     )}
                     <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
-                      <Toolbar editor={editor} onFootnote={() => setFootnote("")} suggestOn={autoSuggest} onToggleSuggest={() => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); }} />
+                      <Toolbar editor={editor} onFind={() => setFindOpen((v) => !v)} findOn={findOpen} onFootnote={() => setFootnote("")} suggestOn={autoSuggest} onToggleSuggest={() => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); }} />
+                      {findOpen && <FindBar key={`${activeId}-${focus ?? "all"}`} editor={editor} canEdit={canEdit} onClose={() => { setFindOpen(false); editor?.commands.focus(); }} scopeLabel={focused ? t("Arama yalnızca açık alt başlıkta: {n} {t}", { n: focused.number, t: focused.text }) : t("Arama yalnızca açık bölümde: {t}", { t: active?.title ?? "" })} />}
                     </div>
                     <AcademicEditor editor={editor} chapter={chapterNumber} />
                     {editor && !isBibliography && (
@@ -1075,7 +1240,7 @@ export function Workspace(props: Props) {
           <p className="mt-3 text-[12.5px] text-ink-500">{t("İpucu: Aynı bölümde birlikte çalışırken farklı alt başlıkları açarsanız çakışma olmaz.")}</p>
         </Modal>
       )}
-      {mapOpen && <LitMapModal open onClose={() => setMapOpen(false)} projectId={project.id} sourceCount={sources.length} onSourcesAdded={addSources} />}
+      {mapOpen && <LitMapModal open onClose={() => setMapOpen(false)} projectId={project.id} sourceCount={sources.length} onSourcesAdded={addSources} citedSourceIds={citedOrder} />}
       {prismaOpen && <ReviewModal open onClose={() => setPrismaOpen(false)} projectId={project.id} language={project.language} onInsertFigure={!isBibliography && editor ? insertFigure : undefined} onInsertMarkdown={!isBibliography && editor ? (md, map) => insertMarkdown(md, map, "append") : undefined} onSourcesAdded={addSources} />}
       {claimsOpen && editor && active && (
         <ClaimAuditModal open onClose={() => setClaimsOpen(false)} editor={editor} stageId={active.id} focus={focus}

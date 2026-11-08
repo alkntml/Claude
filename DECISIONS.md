@@ -678,3 +678,19 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Çözüm: soru “Bu cümleye bu kaynakla atıf yapmak akademik olarak doğru mu?”; “supports” ana bilgi (bulgu, sayı, yön, örneklem) kaynaktaysa — anlatım farkı, çeviri, eş anlamlı nitelendirme, temkinli yazar yorumu düşürmez; “partial” yalnızca danışmanın düzeltme isteyeceği bir sorun varsa (yanlış nitelenen sayı, nedensellik, genelleme, kesinleştirme) ve açıklama neyin düzeltileceğini söyler. Açıklama ≤30 kelime, parça etiketi yok (`cleanExplanation`).
 - Sayfa sunucuda bulunur (`locateQuote`: alıntıyı birebir içeren parçanın `page_hint`’i; özetteki alıntıya sayfa yazılmaz); şemadan quotePage kalktı (iddia + kaynaklar arası).
 - Yanıt token sınırı artırıldı (800 + 350/çift); yanıtı gelmeyen cümle “yanıt alınamadı, yeniden denetleyin” der ve önbelleğe alınmaz. `AUDIT_VERSION` = 3.
+
+### D140 — Gerçek zamanlı ortak yazım ve editör geliştirmeleri
+- Sorun: ortak yazım 25 sn’de bir yoklamaydı; aynı bölümü kaydeden iki kişi her seferinde “hangi sürüm?” penceresi görüyordu.
+- Aktarım: Supabase Realtime özel kanalı `project:<id>` (migration 37: `collab_project_access` + `realtime.messages` RLS; sahip ve ortak yazar okur/yazar, yorumcu yalnızca okur; konu biçimi doğrulanır). Kanal açılamazsa eski yoklama yöntemi sürer. Vercel’de kalıcı WebSocket sunucusu olmadığından Yjs/CRDT yerine bu yol seçildi; mevcut editör mimarisi (tek editör, alt başlığa odak, setContent ile bölüm değişimi) korunur.
+- Varlık (presence): kim, hangi bölüm, hangi paragraf, yazıyor mu — anında. Editörde diğer yazarın paragrafı renkli çizgi + ad etiketiyle (`collab-ext.ts` RemotePeers).
+- İçerik: yazarken bölümün tam belgesi ~0,4 sn’de bir yayınlanır (≤180 KB; büyükse yalnızca “saved” sinyali ve sunucudan çekme). Alan taraf `mergeDocs` (lib/editor/merge.ts) ile üç yollu PARAGRAF düzeyinde birleştirir (taban: `syncBase`, son ortak sürüm). Editöre `applyDocPatch` ile yalnızca değişen kısım uygulanır; imleç korunur, geri alma geçmişine girmez, “remote” işaretli olduğundan yeniden yayınlanmaz.
+- Aynı paragraf aynı anda değiştiyse iki tarafın aynı sonuca varması için sabit kural: kullanıcı kimliği küçük olanın metni kalır; kaybeden taraf sürüm geçmişine kaydedilir ve bildirilir (en çok dakikada bir).
+- Sunucu 409 (bölüm başkası tarafından kaydedildi): önce otomatik birleştirme; yalnızca aynı paragraf çakışırsa eski seçim penceresi.
+- Editör: “Bul ve değiştir” (find-replace.ts + find-bar.tsx; Ctrl/⌘+F, Türkçe büyük/küçük harf, tam kelime, biçim sınırını aşan eşleşme, tümünü değiştir).
+
+### D141 — Literatür ağı ve araştırma haritası
+- Ağ türleri: doğrudan atıf + ortak kaynakça (Salton kosinüsü, en az 2 ortak kaynak, düğüm başına en güçlü 4 bağ) + birlikte atıf (son 6 yılda kaynaklarınıza atıf yapan yayınlar üzerinden, en az 2 kez).
+- Kümeler: ağırlıklı etiket yayılımı (deterministik), küme adı üyelerin en sık OpenAlex `primary_topic`’i; köprü kaynak (iki+ kümeye bağlı), merkezi kaynak.
+- Yeni: “Yeni çalışmalar” (OpenAlex `cites:` filtresi, kaynaklarınızın en az ikisine atıf yapanlar), zaman çizelgesi (yıl × küme şeridi), konu haritası (kaynaklarınız vs ilgili literatür; eksik alt konu), kural tabanlı boşluk analizi (güncellik, bağlantısız kaynak, kümeler arası boşluk, köprü, eksik konu). Yapay zekâ kullanılmaz.
+- Arayüz: sekmeler, kenar türü filtreleri, renk küme/yıl, arama, yakınlaştırma/kaydırma, PNG/SVG, metinde atıf yapılmamış kaynak (kesikli halka).
+- Önbellek imzası `v2:` + kaynak kimlik/DOI özeti; eski önbellek yeniden kurulur. OpenAlex çağrıları: DOI başına 50’lik gruplar (paralel), ileri atıf 1–2, öneri kayıtları 1.

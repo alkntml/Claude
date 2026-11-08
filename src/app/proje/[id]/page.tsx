@@ -4,7 +4,7 @@ import { Workspace } from "@/components/workspace/workspace";
 import { getSession } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { loadProjectBundle } from "@/lib/projects";
-import { hasMembers, projectAccessOrNull } from "@/lib/project-access";
+import { displayName, hasMembers, projectAccessOrNull } from "@/lib/project-access";
 
 export const dynamic = "force-dynamic";
 
@@ -37,5 +37,5 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     access.isOwner ? s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", s.user.id) : Promise.resolve(null),
   ]);
   if (!bundle) notFound();
-  return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} planId={s.profile.plan_id} role={access.role} collaborative={shared} />;
+  return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} planId={s.profile.plan_id} role={access.role} collaborative={shared} me={{ id: s.user.id, name: displayName({ full_name: s.profile.full_name, email: s.user.email }) }} />;
 }

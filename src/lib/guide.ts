@@ -3,7 +3,9 @@
  * Menü ve düğme adları arayüzdekiyle aynıdır (bkz. ai/help.ts APP_GUIDE); özellik değişince ikisi birlikte güncellenir.
  * plan: özelliğin açıldığı en düşük paket (features.ts FEATURE_MIN_PLAN anahtarı).
  */
+import type { Locale } from "@/i18n/core";
 import type { FeatureId } from "./features";
+import { GUIDE_DE } from "./guide-de";
 
 export interface L { tr: string; en: string }
 export interface GuideArticle { id: string; title: L; where?: L; plan?: FeatureId; steps: L[]; tip?: L }
@@ -11,6 +13,11 @@ export interface GuideChapter { id: string; icon: GuideIcon; title: L; intro: L;
 export type GuideIcon = "rocket" | "file" | "pen" | "book" | "shield" | "flask" | "users" | "download" | "user" | "wrench";
 
 const s = (tr: string, en: string): L => ({ tr, en });
+
+/** Rehber metninin seçilen dildeki hâli (Almanca: guide-de.ts; eksikse İngilizce) */
+export function guideText(x: L, l: Locale): string {
+  return l === "de" ? GUIDE_DE[x.tr] ?? x.en : x[l];
+}
 
 /** İlk gün: 6 adımda ilk çalışma */
 export const QUICK_START: { title: L; text: L }[] = [
@@ -346,7 +353,7 @@ export const GUIDE: GuideChapter[] = [
         s("“Veri talebi oluştur (KVKK)” veya “Hesabımı sil”. Ayrıntılar “Güvenlik ve Gizlilik” sayfasında.", "“Create data request (KVKK)” or “Delete my account”. Details on the “Security & Privacy” page."),
       ] },
       { id: "gorunum", title: s("Dil, gece modu ve telefon", "Language, dark mode and phone"), where: s("Sol menünün altı", "Bottom of left menu"), steps: [
-        s("Dil seçiciyle Türkçe/English; ay/güneş simgesiyle gece/gündüz modu.", "Switch Türkçe/English with the language picker; dark/light mode with the moon/sun icon."),
+        s("Dil seçiciyle Türkçe/English/Deutsch; ay/güneş simgesiyle gece/gündüz modu.", "Switch between Türkçe, English and Deutsch with the language picker; dark/light mode with the moon/sun icon."),
         s("Telefonda alttaki sekmeler: “Bölümler”, “Metin”, “Asistan”, “Kaynaklar”, “Diğer”; “⋯” menüsünde atıf stili, araçlar ve ayarlar.", "On phones use the bottom tabs: “Sections”, “Text”, “Assistant”, “Sources”, “More”; the “⋯” menu has style, tools and settings."),
         s("“Uygulamayı yükle” ile siteyi telefonunuza uygulama gibi ekleyebilirsiniz.", "Use “Install app” to add the site to your phone like an app."),
       ] },

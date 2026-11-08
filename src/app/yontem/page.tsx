@@ -15,8 +15,59 @@ const W = SEVERITY_WEIGHTS;
  * nasıl çalıştığı, bilinen sınırlamalar. Yalnızca sistemin gerçekte yaptığını anlatır; performans iddiası içermez.
  */
 export default async function MethodPage() {
-  const en = (await getLocale()) === "en";
-  if (en) {
+  const locale = await getLocale();
+  if (locale === "de") {
+    return (
+      <StaticPage path="/yontem" title="Methode und Transparenz" lead="Wie Academiana Quellen findet und verifiziert, wie geprüft wird, ob eine Quelle einen Satz wirklich stützt, wie die Qualitätsbewertung berechnet wird und was das System nicht tut.">
+        <h2>Was wir versprechen – und was nicht</h2>
+        <p>Academiana hilft Ihnen, Ihre eigene wissenschaftliche Arbeit mit echten Quellen zu erstellen. Es erfindet keine Quellen, Daten oder Ergebnisse, stellt KI-Entscheidungen nicht als Gewissheiten dar und zeigt keinen Plagiatsprozentsatz an, da kein lizenzierter Ähnlichkeitsdienst angebunden ist. Jede unten beschriebene KI-Entscheidung können Sie zusammen mit der Passage, auf der sie beruht, selbst nachvollziehen.</p>
+        <h2>1. Woher die Quellen stammen</h2>
+        <p>Die Suche läuft gleichzeitig in wissenschaftlichen Datenbanken: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (sowie NASA ADS, Springer Nature und IEEE Xplore, sofern deren Schlüssel hinterlegt sind) und türkische Quellen (DergiPark, TR Dizin, YÖK-Thesenzentrum). Doppelte Datensätze werden zusammengeführt. Zusammen enthalten diese Datenbanken mehr als 250 Millionen verschiedene Publikationen; derselbe Artikel ist oft in mehreren verzeichnet (etwa in Crossref, OpenAlex und OpenAIRE), die Zahl zählt jede Publikation daher nur einmal. Die meisten Datensätze enthalten bibliografische Angaben, ein kleinerer Teil ein Abstract und ein noch kleinerer Teil einen Open-Access-Volltext. Die KI schreibt nie selbst eine Literaturangabe: Sie kann nur Quellen zitieren, die in der Quellenliste Ihres Projekts stehen.</p>
+        <h2>2. Gibt es die Quelle? (bibliografische Verifizierung)</h2>
+        <p>DOIs werden bei Crossref und DataCite geprüft, PMIDs bei Europe PMC und arXiv-Kennungen bei arXiv. Eine verifizierte Quelle wird als „Verifiziert“ markiert. Das belegt nur, dass die Publikation existiert und ihre bibliografischen Angaben stimmen.</p>
+        <h2>3. Wie viel der Quelle wurde gelesen? (Zugriffsstufe)</h2>
+        <ul>
+          <li><b>Nur bibliografische Angaben:</b> Bekannt sind nur die bibliografischen Daten; der Inhalt wurde nicht gelesen.</li>
+          <li><b>Abstract gelesen:</b> Das Abstract liegt vor.</li>
+          <li><b>Volltext gelesen:</b> Ein Open-Access-Volltext (oder ein von Ihnen hochgeladenes PDF) wurde auf dem Server tatsächlich gelesen und in Passagen mit Seitenzahlen zerlegt. Diese Kennzeichnung vergibt ausschließlich der Server, und erst nachdem der Text wirklich gelesen wurde.</li>
+        </ul>
+        <h2>4. Stützt die Quelle den Satz? (Aussagenprüfung)</h2>
+        <p>Dass eine Quelle existiert, heißt nicht, dass sie Ihren Satz stützt. Die <b>Aussagenprüfung</b> zerlegt einen Abschnitt in Sätze und vergleicht jeden zitierten Satz mit dem Text, der aus der zitierten Quelle gelesen wurde:</p>
+        <ul>
+          <li>Bei Volltexten werden die für den Satz relevantesten Passagen ausgewählt (in der Sprache des Satzes und anhand englischer Schlüsselwörter); bei Abstracts wird das Abstract verwendet.</li>
+          <li>Ein kleines KI-Modell entscheidet: <i>stützt</i>, <i>stützt teilweise</i> (oder der Satz ist stärker/allgemeiner als die Quelle), <i>stützt nicht</i>, <i>widerspricht</i> oder <i>der Text reicht für eine Entscheidung nicht aus</i>.</li>
+          <li>Die Entscheidung wird mit dem kürzesten stützenden Zitat und dessen Seite angezeigt. Ein Zitat erscheint nur, wenn es wörtlich im Quellentext vorkommt; andernfalls wird es ausgeblendet.</li>
+          <li>Quellen, deren Inhalt nicht gelesen wurde, werden nie an die KI gesendet; sie werden als „nicht prüfbar“ gemeldet.</li>
+          <li>Unzitierte Sätze mit Zahlen, Prozentangaben oder starken Formulierungen („Studien zeigen …“) werden als möglicherweise quellenbedürftig markiert.</li>
+          <li>Unveränderte Satz-Quelle-Paare werden nicht erneut geprüft; eine wiederholte Prüfung verursacht also keine erneuten Kosten.</li>
+        </ul>
+        <p>Die Prüfung ist eine KI-Einschätzung, die Ihnen hilft; das letzte Urteil liegt bei Ihnen. Sie stützt sich nur auf Gelesenes: Liegt nur das Abstract vor, lassen sich Details, die nur im Volltext stehen, nicht bestätigen.</p>
+        <h2>5. Regeln, denen der Schreibassistent folgt</h2>
+        <ul>
+          <li>Er zitiert nur Quellen aus Ihrer Liste und nennt keine Werke, die nicht in der Liste stehen.</li>
+          <li>Wo eine Aussage eine Quelle braucht, die nicht vorhanden ist, schreibt er „[KAYNAK GEREKLİ]“ (Quelle erforderlich); wo Ihre Daten nötig sind, „[VERİ GİRİLECEK]“ (Daten einzutragen). Zahlen erfindet er nicht.</li>
+          <li>Statistiken erzeugt nicht die KI: Analysen werden auf dem Server aus Ihren eigenen Daten berechnet.</li>
+          <li>Aufgaben werden an das jeweils passende Modell (klein, mittel oder groß) geleitet; das Produkt hängt nicht von einem einzigen Modell oder Anbieter ab.</li>
+        </ul>
+        <h2>6. Wie die Qualitätsbewertung berechnet wird</h2>
+        <p>Die Bewertung beginnt bei 100. Jeder regelbasierte Befund senkt sie je nach Schweregrad: kritisch {W.error}, Warnung {W.warning}, Hinweis {W.info} Punkte (manche geringfügigen Befunde wie doppelte Leerzeichen zählen mit geringerem Gewicht). Befunde der KI-Prüfungskommission werden mit dem Etikett „AI“ angezeigt, verändern die Bewertung aber nicht – derselbe Text erhält also immer dieselbe Bewertung. Gemessen werden die Konsistenz von Zitaten und Literaturverzeichnis, die Verifizierbarkeit der Quellen, fehlende Abschnitte, Regeln der Wissenschaftssprache und Wiederholungen. Nicht gemessen werden wissenschaftlicher Wert, Originalität oder Plagiat; die Bewertung ersetzt keine Prüfungskommission und kein Gutachten.</p>
+        <h2>7. „Was sagt die Forschung?“</h2>
+        <p>Die Antwort wird ausschließlich aus den Abstracts der gefundenen Artikel (höchstens 14) zusammengestellt; jeder Satz ist mit einem nummerierten Artikel verknüpft, Verweise auf Nummern, die nicht in der Liste stehen, werden entfernt. Die Konsensanzeige erscheint nur bei Ja/Nein-Fragen mit mindestens drei relevanten Studien. Sie ist keine Literaturübersicht.</p>
+        <h2>8. Wie die Tarifumfänge festgelegt wurden</h2>
+        <p>Die monatlichen Seitenumfänge beruhen auf der durchschnittlichen Seitenlänge und den KI-Kosten, gemessen an 44 echten wissenschaftlichen Volltexten; die Seitenzahlen sind Näherungswerte. „Unbegrenzt“ bezeichnet die übliche Nutzung durch eine Person für wissenschaftliche Arbeit und unterliegt den <Link href="/kosullar#adil-kullanim">Fair-Use-Bedingungen</Link>.</p>
+        <h2>9. Bekannte Grenzen</h2>
+        <ul>
+          <li>Artikel hinter Bezahlschranken können nicht gelesen werden, es sei denn, Sie laden das PDF selbst hoch.</li>
+          <li>KI-Einschätzungen können falsch sein; prüfen Sie immer die zitierte Passage.</li>
+          <li>Die Satztrennung ist regelbasiert und kann Sätze gelegentlich ungewöhnlich zusammenfassen oder trennen.</li>
+          <li>Es wird kein Ähnlichkeits- (Plagiats-)Prozentsatz berechnet.</li>
+        </ul>
+        <h2>10. Unabhängige Bewertung</h2>
+        <p>Wir begrüßen die unabhängige Bewertung durch Wissenschaftler:innen und Institutionen. Pilotzugänge zur Bewertung können über die Seite <Link href="/kurumlar">Institutionen</Link> angefragt werden. Die hier beschriebenen Regeln der Plattform sind durch mehr als 400 automatisierte Tests abgesichert, darunter Tests zur Datenisolation auf einer echten PostgreSQL-Datenbank.</p>
+      </StaticPage>
+    );
+  }
+  if (locale === "en") {
     return (
       <StaticPage path="/yontem" title="Method and transparency" lead="How Academiana finds and verifies sources, how it checks that a source really supports a sentence, how the quality score is calculated, and what the system does not do.">
         <h2>What we promise and what we do not</h2>
@@ -35,7 +86,7 @@ export default async function MethodPage() {
         <p>A source existing does not mean it supports your sentence. The <b>claim audit</b> splits a section into sentences and compares each cited sentence with the text that was read from the cited source:</p>
         <ul>
           <li>For full texts, the passages most relevant to the sentence are selected (in the sentence’s language and in English); for abstracts, the abstract is used.</li>
-          <li>A small AI model decides: <i>supports</i>, <i>partially supports</i> (or the sentence is stronger/more general than the source), <i>does not support</i>, or <i>the text is not enough to decide</i>.</li>
+          <li>A small AI model decides: <i>supports</i>, <i>partially supports</i> (or the sentence is stronger/more general than the source), <i>does not support</i>, <i>contradicts</i>, or <i>the text is not enough to decide</i>.</li>
           <li>The decision is shown with the shortest supporting quote and its page. A quote is shown only if it appears word for word in the source text; otherwise it is hidden.</li>
           <li>Sources whose content was not read are never sent to the AI; they are reported as “cannot be checked”.</li>
           <li>Uncited sentences containing figures, percentages or strong statements (“studies show…”) are flagged as possibly needing a source.</li>
@@ -85,7 +136,7 @@ export default async function MethodPage() {
       <p>Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. <b>İddia denetimi</b> bölümü cümlelere ayırır ve atıflı her cümleyi, atıf yaptığı kaynaktan okunan metinle karşılaştırır:</p>
       <ul>
         <li>Tam metinde cümleyle en ilgili pasajlar (cümlenin dilinde ve İngilizce anahtar kelimelerle) seçilir; tam metin yoksa özet kullanılır.</li>
-        <li>Küçük bir yapay zekâ modeli karar verir: <i>destekliyor</i>, <i>kısmen destekliyor</i> (veya cümle kaynaktan daha güçlü/genel), <i>desteklemiyor</i> ya da <i>metin karar vermeye yetmiyor</i>.</li>
+        <li>Küçük bir yapay zekâ modeli karar verir: <i>destekliyor</i>, <i>kısmen destekliyor</i> (veya cümle kaynaktan daha güçlü/genel), <i>desteklemiyor</i>, <i>çelişiyor</i> ya da <i>metin karar vermeye yetmiyor</i>.</li>
         <li>Karar, dayandığı en kısa alıntı ve sayfasıyla gösterilir. Alıntı yalnızca kaynak metninde kelimesi kelimesine geçiyorsa gösterilir; aksi hâlde gizlenir.</li>
         <li>İçeriği okunmamış kaynaklar yapay zekâya hiç gönderilmez; “denetlenemez” olarak bildirilir.</li>
         <li>Atıf içermeyen ama sayı, oran veya “araştırmalar göstermektedir” gibi kesin ifade taşıyan cümleler “kaynak gerektirebilir” diye işaretlenir.</li>

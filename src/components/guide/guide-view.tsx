@@ -5,15 +5,16 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { FEATURE_MIN_PLAN } from "@/lib/features";
-import { GUIDE, QUICK_START, type GuideIcon, type L } from "@/lib/guide";
+import type { Locale } from "@/i18n/core";
+import { GUIDE, QUICK_START, guideText, type GuideIcon, type L } from "@/lib/guide";
 
 const ICONS: Record<GuideIcon, typeof Rocket> = { rocket: Rocket, file: FileText, pen: PenLine, book: BookOpen, shield: ShieldCheck, flask: FlaskConical, users: Users, download: Download, user: User, wrench: Wrench };
 const PLAN_NAME: Record<string, string> = { basic: "Basic", pro: "Pro", premium: "Premium" };
 const fold = (s: string) => s.toLocaleLowerCase("tr").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i");
 
-export function GuideView({ locale }: { locale: "tr" | "en" }) {
+export function GuideView({ locale }: { locale: Locale }) {
   const { t } = useT();
-  const L = (x: L) => x[locale] ?? x.tr;
+  const L = (x: L) => guideText(x, locale);
   const [q, setQ] = useState("");
   const [openIds, setOpenIds] = useState<Set<string>>(new Set());
 

@@ -9,7 +9,121 @@ export async function generateMetadata() {
 const H3 = ({ children }: { children: React.ReactNode }) => <h3 className="mt-6 text-lg font-semibold text-ink-900">{children}</h3>;
 
 export default async function Page() {
-  if ((await getLocale()) === "en") {
+  const locale = await getLocale();
+  if (locale === "de") {
+    return (
+      <StaticPage path="/gizlilik" title="Sicherheits- und Datenschutzrichtlinie" lead="Wie wir Ihre personenbezogenen Daten, wissenschaftlichen Arbeiten und hochgeladenen Dokumente schützen.">
+        <p className="text-sm text-ink-500">Zuletzt aktualisiert: 08.11.2026 · Diese Übersetzung dient der Information; maßgeblich ist die türkische Fassung.</p>
+
+        <h2>1. Zweck und Geltungsbereich</h2>
+        <p>Für Academiana gehören der Schutz der Privatsphäre und die Sicherheit der personenbezogenen Daten, wissenschaftlichen Arbeiten und hochgeladenen Dokumente unserer Nutzer:innen sowie der auf der Plattform erstellten Inhalte zu unseren wichtigsten Prioritäten.</p>
+        <p>Diese Sicherheits- und Datenschutzrichtlinie legt die Grundsätze zum Schutz der Informationen fest, die bei der Nutzung der Website, der Anwendungen, der akademischen Arbeitsbereiche, der KI-gestützten Dienste, der Datenbankanbindungen und der zugehörigen digitalen Dienste von Academiana anfallen.</p>
+        <p>Unser Grundsatz ist es zu verhindern, dass die wissenschaftlichen Arbeiten unserer Nutzer:innen von Unbefugten eingesehen, verändert, kopiert oder verwendet werden.</p>
+
+        <h2>2. Geschützte Informationen und Daten</h2>
+        <p>Bei Academiana werden insbesondere folgende Informationen und Daten geschützt:</p>
+        <ul>
+          <li>Vor- und Nachname, E-Mail-Adresse und Kontoinformationen der Nutzer:innen.</li>
+          <li>Von Nutzer:innen erstellte Abschlussarbeiten, Artikel, Forschungsexposés und sonstige wissenschaftliche Arbeiten.</li>
+          <li>Projektabschnitte, Texte, Literaturverzeichnisse, Zitate und Literaturdatensätze.</li>
+          <li>Von Nutzer:innen hochgeladene PDF-, Word- und sonstige Dateien.</li>
+          <li>Gespräche mit KI-Assistenten und die erzeugten Ausgaben.</li>
+          <li>Statistische Analysen, Umfragen, Datentabellen und Forschungsdateien.</li>
+          <li>Nutzungs-, Vorgangs-, Sicherheits- und Fehlerprotokolle.</li>
+          <li>Informationen zu Abonnements, Tarifen und Zahlungsvorgängen.</li>
+          <li>Informationen zu Mitautorschaft, Freigaben für Betreuende und Teammitgliedschaften.</li>
+        </ul>
+        <p>Von Nutzer:innen hochgeladene wissenschaftliche Inhalte können personenbezogene Daten enthalten, auch personenbezogene Daten oder besondere Kategorien personenbezogener Daten Dritter. Beim Hochladen solcher Daten auf die Plattform müssen Nutzer:innen die geltenden Rechtsvorschriften einhalten.</p>
+
+        <h2>3. Datensicherheit und technische Schutzmaßnahmen</h2>
+        <p>Academiana trifft technische und organisatorische Maßnahmen, um personenbezogene Daten und wissenschaftliche Inhalte sicher aufzubewahren.</p>
+        <H3>3.1. Verschlüsselte Kommunikation</H3>
+        <p>Die Datenübertragung zwischen Plattform und Nutzer:innen erfolgt über HTTPS. Sichere Verbindungskonfigurationen und zugehörige Sicherheitsrichtlinien verringern das Risiko, dass Daten während der Übertragung von Unbefugten abgefangen werden.</p>
+        <H3>3.2. Trennung der Daten zwischen Nutzer:innen</H3>
+        <p>Nutzerdaten werden durch auf Datenbankebene angewandte Row-Level-Security-Richtlinien (RLS) geschützt.</p>
+        <p>Projekte, Dokumente, Quellen und KI-Gespräche jeder Person werden innerhalb ihrer eigenen Zugriffsrechte gehalten.</p>
+        <p>Die technischen Zugriffsrichtlinien sind darauf ausgelegt, unbefugten Zugriff einer Person auf die wissenschaftlichen Arbeiten einer anderen zu verhindern.</p>
+        <H3>3.3. Dateisicherheit</H3>
+        <p>Von Nutzer:innen hochgeladene Dokumente werden in privaten Speicherbereichen aufbewahrt.</p>
+        <p>Der Zugriff auf Dateien erfolgt über Berechtigungsprüfungen und zeitlich begrenzte signierte Links. Über öffentliche Links sind Dateien grundsätzlich nicht zugänglich.</p>
+        <H3>3.4. Anwendungssicherheit</H3>
+        <p>Zur Unterstützung der Anwendungssicherheit der Plattform werden folgende Mechanismen eingesetzt:</p>
+        <ul>
+          <li>HTTPS und HTTP Strict Transport Security (HSTS).</li>
+          <li>Content Security Policy (CSP).</li>
+          <li>Prüfungen von Anfrageherkunft und Berechtigung.</li>
+          <li>Sicherheitsprüfungen ausgehender Verbindungen, die auf interne Netzwerke zielen.</li>
+          <li>Zugriffsrichtlinien der Datenbank.</li>
+          <li>Überwachung von Fehlern und Systemzustand.</li>
+          <li>Automatisierte Software- und Regressionstests.</li>
+        </ul>
+        <p>Die Sicherheitsmaßnahmen können entsprechend technologischen Entwicklungen und erkannten Risiken aktualisiert werden.</p>
+
+        <h2>4. Vertraulichkeit wissenschaftlicher Arbeiten</h2>
+        <p>Die wissenschaftlichen Arbeiten der Nutzer:innen sind standardmäßig nur für die jeweilige Person zugänglich. Es gelten folgende Ausnahmen:</p>
+        <p><strong>4.1. Mitautor:innen:</strong> Von der Person zu einem Projekt eingeladene Mitautor:innen können im Rahmen der ihnen zugewiesenen Berechtigungen auf die betreffenden Abschnitte, Quellen und Kommentare zugreifen.</p>
+        <p><strong>4.2. Teilen mit der Betreuung:</strong> Über einen auf eigenen Wunsch erstellten Freigabelink können Betreuende oder Dritte die durch den Link freigegebenen Inhalte ansehen oder kommentieren. Die Person kann den Link über die vorhandenen Freigabefunktionen widerrufen.</p>
+        <p><strong>4.3. Administrator:innen von Institutionen:</strong> Im Rahmen einer Institutionslizenz können Administrator:innen der Institution innerhalb ihrer Verwaltungsberechtigungen Mitgliedsangaben und Nutzungsstatistiken einsehen. Auf den Inhalt der wissenschaftlichen Arbeiten haben sie keinen Zugriff.</p>
+        <p><strong>4.4. Berechtigtes Personal der Plattform:</strong> Administrator:innen der Plattform und berechtigtes technisches Personal erhalten technischen Zugriff nur in dem Umfang, der zur Bearbeitung einer Supportanfrage, für eine Sicherheitsprüfung, den Systembetrieb oder die Erfüllung gesetzlicher Pflichten erforderlich ist.</p>
+
+        <h2>5. KI-Dienste und Datenschutz</h2>
+        <p>Academiana nutzt für wissenschaftliches Schreiben, Textbearbeitung, Quellenbewertung und weitere KI-gestützte Vorgänge Claude-Modelle von Anthropic.</p>
+        <p>Wenn Sie eine KI-Funktion nutzen, können der für den Vorgang erforderliche Text, der Projektkontext und ausgewählte Quelleninhalte an den jeweiligen KI-Dienstanbieter übermittelt werden.</p>
+        <p>Diese Übermittlung erfolgt zur Erbringung des angefragten Dienstes und beschränkt sich auf die erforderlichen Daten.</p>
+        <p>Academiana beabsichtigt nicht, die wissenschaftlichen Arbeiten seiner Nutzer:innen zum Training eigener KI-Modelle zu verwenden. Die Datenverarbeitungs- und Trainingspraktiken der KI-Anbieter werden im Rahmen der jeweiligen kommerziellen API-Verträge und Nutzungsbedingungen bewertet.</p>
+        <p>Nutzerdaten werden weder zu Werbezwecken verkauft noch zu diesem Zweck Dritten zur Verfügung gestellt.</p>
+
+        <h2>6. Speicherort der Daten und Infrastruktur</h2>
+        <p>Innerhalb der öffentlich angegebenen Infrastruktur der Plattform werden Anwendung, Datenbank und Dateispeicher in der Europäischen Union, in der Rechenzentrumsregion Frankfurt, betrieben.</p>
+        <p>Der Zugang zur Infrastruktur, in der die Daten gespeichert sind, ist durch Berechtigungsmechanismen beschränkt.</p>
+        <p>Datenverarbeitungen und grenzüberschreitende Übermittlungen, die Drittanbieter auf ihrer eigenen Infrastruktur vornehmen können, werden gesondert nach den einschlägigen Rechtsvorschriften und Verträgen bewertet.</p>
+
+        <h2>7. Nutzungs- und Sicherheitsprotokolle</h2>
+        <p>Um den sicheren Betrieb der Plattform zu gewährleisten, die Tarifnutzung zu berechnen, technische Probleme zu beheben und Missbrauch zu verhindern, können bestimmte Vorgangsprotokolle gespeichert werden.</p>
+        <p>Diese Protokolle können Datum des Vorgangs, betroffenes Projekt bzw. betroffenen Abschnitt, Nutzungsumfang, KI-Ausgaben, Löschungen und Sicherheitsereignisse umfassen.</p>
+        <p>Bestimmte Vorgangsprotokolle, die zur Klärung von Streitfällen über die Tarifnutzung gespeichert werden, werden nach derzeitiger Praxis 12 Monate aufbewahrt. Der Zugriff darauf ist auf berechtigtes Personal beschränkt.</p>
+        <p>Zur Verhinderung von Missbrauch kann im Browser eine zufällige Gerätekennung verwendet werden. Diese Kennung wird nicht für Werbe- oder Marketingzwecke genutzt.</p>
+
+        <h2>8. Aufbewahrung und Löschung von Daten</h2>
+        <p>Personenbezogene Daten und wissenschaftliche Inhalte werden so lange aufbewahrt, wie es die Zwecke ihrer Verarbeitung erfordern, und im Rahmen der in den geltenden Rechtsvorschriften vorgesehenen Aufbewahrungspflichten.</p>
+        <p>Über die Funktionen im Bereich „Konto und Abonnement“ können Nutzer:innen:</p>
+        <ul>
+          <li>ihre personenbezogenen Daten und wissenschaftlichen Arbeiten im JSON-Format exportieren,</li>
+          <li>die Löschung ihres Kontos und der damit verbundenen Daten beantragen.</li>
+        </ul>
+        <p>Für Datensätze, die nach geltendem Recht aufbewahrt werden müssen, und für Sicherungskopien, die technisch nicht sofort gelöscht werden können, gelten die jeweiligen Aufbewahrungs- und Vernichtungsverfahren.</p>
+
+        <h2>9. Cookies und Gerätekennungen</h2>
+        <p>Academiana kann für Sitzungsverwaltung, Kontosicherheit, den Betrieb des Dienstes und die Verhinderung von Missbrauch notwendige Cookies und Gerätekennungen verwenden.</p>
+        <p>Werden nicht notwendige Analyse-, Werbe- oder Marketing-Cookies eingesetzt, werden die nach geltendem Recht erforderlichen Informations- und Einwilligungsmechanismen angewandt.</p>
+        <p>Arten, Zwecke und Speicherdauer der Cookies werden in der Cookie-Richtlinie erläutert (siehe unten <a href="#ayrintilar" className="text-brand-700 underline">Ausführliche Informationen</a>).</p>
+
+        <h2>10. Datenschutzverletzungen und Sicherheitsvorfälle</h2>
+        <p>Wird ein rechtswidriger Erwerb personenbezogener Daten, ein unbefugter Zugriff oder ein Ereignis festgestellt, das die Datensicherheit beeinträchtigt, werden die erforderlichen Untersuchungs- und Reaktionsprozesse entsprechend der Art des Vorfalls und den geltenden Rechtsvorschriften durchgeführt.</p>
+        <p>Erforderliche Meldungen an betroffene Personen und zuständige Behörden erfolgen innerhalb der gesetzlichen Fristen und nach den vorgeschriebenen Verfahren.</p>
+
+        <h2>11. Aktualisierungen dieser Richtlinie</h2>
+        <p>Academiana kann diese Richtlinie bei Änderungen der technischen Infrastruktur, der Dienste, der Datenverarbeitung oder der einschlägigen Rechtsvorschriften aktualisieren.</p>
+        <p>Die jeweils gültige Fassung wird auf der Website veröffentlicht.</p>
+
+        <h2 id="ayrintilar">Ausführliche Informationen</h2>
+        <H3>Kontodaten und Anmeldung</H3>
+        <p>Wenn Sie sich mit Google oder Apple anmelden, erhalten wir von diesem Dienst nur Ihren Namen und Ihre E-Mail-Adresse (bei Apple ggf. eine private Weiterleitungsadresse); Ihr Google- oder Apple-Passwort sehen wir nie. Zahlungsdaten verarbeitet der Zahlungsdienstleister; Kartendaten werden nie auf unseren Servern gespeichert.</p>
+        <H3>Besuchsstatistik (ohne Cookies)</H3>
+        <p>Um zu messen, wie viele Personen die Website besuchen, werden Seitenaufrufe ohne Cookies gezählt. IP-Adressen und Browserdetails werden nicht gespeichert; aufbewahrt wird nur ein anonymer Code, der sich täglich ändert, sodass Besucher:innen weder identifiziert noch über mehrere Tage verfolgt werden können. Sendet Ihr Browser ein „Do Not Track“- oder „Global Privacy Control“-Signal, wird nichts gezählt.</p>
+        <H3>Nutzungsprotokolle</H3>
+        <p>Zur Klärung von Streitfällen über die Tarifnutzung werden die KI-Ausgaben, die Sie erhalten (Datum, Titel von Arbeit und Abschnitt, Wortzahl und Ausgabetext), sowie Ihre Löschungen von Arbeiten, Abschnitten oder größeren Textteilen protokolliert. Dieses Protokoll wird 12 Monate aufbewahrt, ist nur für berechtigte Administrator:innen sichtbar, wird für keinen anderen Zweck verwendet und zusammen mit Ihrem Konto gelöscht.</p>
+        <p>Im Tarif „Tek Proje“ (Einzelprojekt) wird zusätzlich von jedem vollständigen Download ein Fingerabdruck gespeichert: die Wortzahl, eine Zusammenfassung aus 64 Zahlen, aus der sich der Text nicht rekonstruieren lässt, und die Titelblattangaben (Autor:in, Hochschule, Fachbereich, Betreuung). Er dient ausschließlich dazu festzustellen, ob innerhalb des Tarifs verschiedene Arbeiten geschrieben werden, und unterliegt denselben Aufbewahrungs- und Zugriffsregeln.</p>
+        <H3>Cookies und Gerätekennung</H3>
+        <p>Sitzungscookies halten Sie angemeldet. Ihr Browser speichert außerdem eine zufällige Gerätekennung ohne personenbezogene Informationen (im Browserspeicher und in einem Erstanbieter-Cookie). Mit Ihrem Konto wird nur ihre Einweg-Zusammenfassung (SHA-256) gespeichert. Sie dient ausschließlich der Missbrauchsverhinderung: Registriert sich ein über einen Einladungslink angelegtes Konto von einem Gerät aus, das die einladende Person genutzt hat, wird keine Empfehlungsprämie gewährt; im Tarif „Tek Proje“ wird die Nutzung eines Kontos auf vielen Geräten den Administrator:innen als mögliche Kontoweitergabe gemeldet. Sie wird weder für Werbung noch für Tracking verwendet und zusammen mit Ihrem Konto gelöscht. Es werden keine Werbe- oder Drittanbieter-Analyse-Cookies verwendet.</p>
+        <H3>Mitautor:innen</H3>
+        <p>Mitautor:innen sehen die Abschnitte, Quellen und Kommentare der Arbeit; die Dateien und Assistenten-Chats der Eigentümerin bzw. des Eigentümers sehen sie nie. Die für eine Einladung eingegebene E-Mail-Adresse wird nur gespeichert, um die Einladung der richtigen Person zuzustellen.</p>
+        <H3>Ihre Rechte</H3>
+        <p>Auf Ihrer Kontoseite können Sie alle Ihre Daten in einem portablen Format (JSON) herunterladen und Ihr Konto mit allen Daten endgültig löschen. Für Ihre weiteren Rechte nach Art. 11 KVKK und der DSGVO können Sie sich an die verantwortliche Stelle wenden.</p>
+      </StaticPage>
+    );
+  }
+  if (locale === "en") {
     return (
       <StaticPage path="/gizlilik" title="Security and Privacy Policy" lead="How we protect your personal data, academic work and uploaded documents.">
         <p className="text-sm text-ink-500">Last updated: 08.11.2026</p>

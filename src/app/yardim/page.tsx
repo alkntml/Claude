@@ -39,7 +39,7 @@ export default async function Help() {
         <p className="mt-4 max-w-2xl text-lg text-ink-500">{lead}</p>
         <p className="mt-3 text-[14px] text-ink-500">{t("{n} konu · {c} bölüm", { n: guideArticleCount(), c: GUIDE.length })} · <Link href="/sss" className="font-medium text-brand-700 hover:underline">{t("Sık sorulan sorular")} →</Link> · <Link href="/yontem" className="font-medium text-brand-700 hover:underline">{t("Yöntem ve şeffaflık")} →</Link></p>
         <div className="mt-10">
-          <GuideView locale={locale === "en" ? "en" : "tr"} />
+          <GuideView locale={locale} />
         </div>
         {articles.length > 0 && (
           <section className="mt-14 space-y-4">

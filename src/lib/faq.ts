@@ -2,6 +2,9 @@
  * Sık sorulan sorular (TR/EN). Cevaplar platformun gerçek davranışını anlatır; özellik değişince burası da güncellenmelidir.
  * Kısa biçimlendirme: **kalın**, satır sonu ile paragraf.
  */
+import type { Locale } from "@/i18n/core";
+import { FAQ_DE, FAQ_GROUP_DE } from "@/lib/faq-de";
+
 export type L2 = { tr: string; en: string };
 export interface FaqItem { id: string; q: L2; a: L2 }
 export interface FaqGroup { id: string; title: L2; items: FaqItem[] }
@@ -479,6 +482,17 @@ export const FAQ: FaqGroup[] = [
 /** Ana sayfada gösterilecek en kritik sorular */
 export const FAQ_HIGHLIGHTS = ["uydurur-mu", "dogrula", "tamamen-yazar-mi", "ozgun-mu", "kim-gorur", "egitim", "benzerlik", "ucretsiz", "iptal"];
 
-export function faqText(l: "tr" | "en") {
-  return FAQ.flatMap((g) => g.items).map((i) => ({ id: i.id, q: i.q[l], a: i.a[l] }));
+/** Sorunun seçilen dildeki metni (Almanca: faq-de.ts; yoksa İngilizce) */
+export function faqQ(i: FaqItem, l: Locale) {
+  return l === "de" ? FAQ_DE[i.id]?.q ?? i.q.en : i.q[l];
+}
+export function faqA(i: FaqItem, l: Locale) {
+  return l === "de" ? FAQ_DE[i.id]?.a ?? i.a.en : i.a[l];
+}
+export function faqGroupTitle(g: FaqGroup, l: Locale) {
+  return l === "de" ? FAQ_GROUP_DE[g.id] ?? g.title.en : g.title[l];
+}
+
+export function faqText(l: Locale) {
+  return FAQ.flatMap((g) => g.items).map((i) => ({ id: i.id, q: faqQ(i, l), a: faqA(i, l) }));
 }

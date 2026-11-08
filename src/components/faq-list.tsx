@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
-import type { FaqItem } from "@/lib/faq";
+import { faqA, faqQ, type FaqItem } from "@/lib/faq";
+import type { Locale } from "@/i18n/core";
 
 /** **kalın** ve satır sonlarını paragraflara çeviren küçük biçimlendirici (HTML enjekte etmez) */
 function Rich({ text }: { text: string }) {
@@ -14,16 +15,16 @@ function Rich({ text }: { text: string }) {
   );
 }
 
-export function FaqList({ items, locale }: { items: FaqItem[]; locale: "tr" | "en" }) {
+export function FaqList({ items, locale }: { items: FaqItem[]; locale: Locale }) {
   return (
     <div className="divide-y divide-ink-100 overflow-hidden rounded-2xl border border-ink-100 bg-white">
       {items.map((i) => (
         <details key={i.id} id={i.id} className="group scroll-mt-28">
           <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-5 py-4 text-left font-medium text-ink-900 hover:bg-ink-50/60 [&::-webkit-details-marker]:hidden">
-            <span>{i.q[locale]}</span>
+            <span>{faqQ(i, locale)}</span>
             <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-ink-400 transition group-open:rotate-180" />
           </summary>
-          <div className="px-5 pb-5 text-[15px] leading-relaxed text-ink-600"><Rich text={i.a[locale]} /></div>
+          <div className="px-5 pb-5 text-[15px] leading-relaxed text-ink-600"><Rich text={faqA(i, locale)} /></div>
         </details>
       ))}
     </div>

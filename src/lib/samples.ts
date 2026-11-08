@@ -4,10 +4,13 @@
  * ve atıf biçimleri elle yazılmaz: sitenin kendi motorlarıyla bu örnek veriden üretilir.
  * İstemci + sunucu ortak, saf modül. Metinler { tr, en } biçimindedir (faq.ts gibi).
  */
+import type { Locale } from "@/i18n/core";
 import type { CitationItem } from "@/lib/citations/types";
+import { SAMPLES_DE } from "./samples-de";
 
 export type L2 = { tr: string; en: string };
-export const pick = (x: L2, l: "tr" | "en") => x[l];
+/** Almanca metin samples-de.ts’ten (eksikse İngilizce) */
+export const pick = (x: L2, l: Locale) => (l === "de" ? SAMPLES_DE[x.tr] ?? x.en : x[l]);
 
 /** Örnek çalışma */
 export const SAMPLE_WORK = {

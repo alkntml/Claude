@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { GUIDE, QUICK_START } from "@/lib/guide";
+import { GUIDE_DE } from "@/lib/guide-de";
 
 describe("kullanım rehberi (D142)", () => {
   const ids = GUIDE.flatMap((c) => c.articles.map((a) => `${c.id}-${a.id}`));
@@ -18,5 +19,16 @@ describe("kullanım rehberi (D142)", () => {
     const more = [...tour.matchAll(/more: "([^"]+)"/g)].map((m) => m[1]);
     expect(more.length).toBeGreaterThan(10);
     for (const m of more) expect(ids).toContain(m);
+  });
+  it("Almanca: rehberdeki her metnin karşılığı var, fazlalık yok", () => {
+    const all: string[] = [];
+    for (const q of QUICK_START) all.push(q.title.tr, q.text.tr);
+    for (const c of GUIDE) {
+      all.push(c.title.tr, c.intro.tr);
+      for (const a of c.articles) for (const x of [a.title, ...a.steps, ...(a.where ? [a.where] : []), ...(a.tip ? [a.tip] : [])]) all.push(x.tr);
+    }
+    const keys = new Set(all);
+    for (const k of keys) expect(GUIDE_DE[k]?.trim(), k).toBeTruthy();
+    for (const k of Object.keys(GUIDE_DE)) expect(keys.has(k), k).toBe(true);
   });
 });

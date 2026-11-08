@@ -11,7 +11,7 @@ Bu dosya her yeni Claude oturumunun ilk okuması gereken proje kılavuzudur. Ayr
 Bağlam sıfırlanınca önce bu dosyayı, sonra `PROJECT_STATUS.md` (canlı durum + çalışma şekli), `TODO.md` ve `DECISIONS.md`’yi oku. Her büyük değişiklik commit’inde ve kullanıcı “yedekle” dediğinde bu dört dosyayı güncelle.
 
 ## Proje
-Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, literatür taraması, araştırma önerisi). Türkçe arayüz, Türk kullanıcı kitlesi. Sahibi teknik değil; adım adım, sade Türkçe ile iletişim kurulmalı. Ekran görüntüleriyle ilerler.
+Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, literatür taraması, araştırma önerisi). Türkçe arayüz (İngilizce ve Almanca da var, D143), Türk kullanıcı kitlesi. Sahibi teknik değil; adım adım, sade Türkçe ile iletişim kurulmalı. Ekran görüntüleriyle ilerler.
 
 - **Canlı site:** https://www.academiana.com.tr (alan adı hosting.com.tr’den alındı, nameserver’lar Vercel DNS’e devredildi; www’siz adres www’ye 308 ile yönlenir). Eski adres: https://akademi-ai-umber.vercel.app
 - **Marka:** Academiana. Ad ve adres `src/lib/site.ts` içinde (SITE_NAME, SITE_URL).
@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 482 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 488 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -78,8 +78,8 @@ src/lib/
   seo-server.ts          buildMeta/pageMeta: canonical, hreflang, Open Graph, Twitter, robots
   structured-data.ts     JSON-LD: Organization, WebSite, SoftwareApplication, ItemList, BreadcrumbList, WebPage
   samples.ts             Örnek çıktılar sayfası içeriği (D72; kurgusal çalışma, örnek veri seti); görünüm components/samples
-  faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
-  guide.ts               Kullanım rehberi içeriği (D142, TR/EN) — /yardim (components/guide/guide-view.tsx); rehberli tur workspace/tour.tsx adımları buradaki konulara bağlanır; menü/özellik değişince ai/help.ts ile birlikte güncelle
+  faq.ts                 SSS içeriği (TR/EN; Almancası faq-de.ts) — /sss ve ana sayfa; özellik değişince güncelle
+  guide.ts               Kullanım rehberi içeriği (D142, TR/EN; Almancası guide-de.ts) — /yardim (components/guide/guide-view.tsx); rehberli tur workspace/tour.tsx adımları buradaki konulara bağlanır; menü/özellik değişince ai/help.ts ile birlikte güncelle
   growth.ts pricing.ts  Kurum lisansı, krediler (tek seferlik bakiye: creditPool, D98), davet (ödül = Ücretsiz paket hakları: referralReward; yalnız davet edene, kayıt anında DB tetikleyicisiyle — D99); WhatsApp yükseltme bağlantısı + Akademik Ekip İndirimi %30, en az 3 kişi, sınırsız üye (pricing.ts, D70)
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)
   surveys.ts             Anket modeli: soru şeması, cevap doğrulama, analize hazır tablo, CSV, kod kitabı, hızlı kontrol (surveyLint), fromAiQuestions
@@ -107,7 +107,7 @@ src/lib/
   org-audit.ts           Kurum denetim kaydı (D125); ai/registry streamWith her çağrıyı ai_calls’a yazar (gözlemlenebilirlik); yönetim → ürün analitiği (api/admin/product)
   source-ask.ts          Kaynağa sor (D112); consensus.ts Araştırmalar ne diyor? (D114); autocomplete.ts satır içi öneri (D113, kullanım türü autocomplete) + workspace/inline-suggest.ts
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
-src/i18n/                core.ts (sözlüksüz çekirdek; istemci bunu kullanır), index.ts (core + EN, sunucu), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts (sözlük)
+src/i18n/                core.ts (sözlüksüz çekirdek: Locale tr/en/de, pick, contentLang, AI_LANGUAGE; istemci bunu kullanır), index.ts (core + sözlükler, sunucu; dictFor), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts + de.ts (sözlükler)
 supabase/migrations/     Sıralı SQL migration'ları
 supabase/setup.sql       Tüm migration'ların birleşimi (sıfırdan kurulum)
 public/                  brand/ (logo ve amblem PNG), favicon.ico, icons/ (uygulama simgeleri; amblemden üretildi), sw.js (servis çalışanı; sürüm değişince VERSION artır)
@@ -133,7 +133,7 @@ API uçları: `projects`, `projects/[id]` (+ `stages`, `stages/suggest`, `source
 - Tüm API rotaları `route(name, handler)` sarmalayıcısını kullanır (CSRF köken kontrolü + hata kaydı). Gövde doğrulaması `parseBody(req, zodSchema)`.
 - Route dosyalarından yalnızca HTTP metotları ve Next config (`maxDuration` vb.) export edilir; yardımcılar `src/lib`'e.
 - Sunucuya özel modüller `import "server-only"` ile başlar.
-- Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()` — istemci bileşeninde `@/i18n` içe aktarma, sözlük pakete girer; sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e eklenir; `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
+- Kullanıcıya dönük tüm metinler Türkçe yazılır ve `t("…")` ile sarılır (istemci: `useT()` — istemci bileşeninde `@/i18n` içe aktarma, sözlük pakete girer; sunucu: `getT()`, API: `makeT(localeFromRequest(req))`). Her yeni metnin İngilizcesi `src/i18n/en.ts`'e, Almancası `src/i18n/de.ts`'e eklenir (içerik dosyalarında da *-de.ts karşılığı güncellenir); `tests/i18n.test.ts` eksikleri yakalar. Türkçe eklerde apostrof için `’` kullan (ESLint `no-unescaped-entities`).
 - Renkleri `ink-*` / marka sınıflarıyla ver, sabit hex kullanma: gece modu (D61) CSS değişkenleriyle çalışır.
 - Atıflar editörde `citation` düğümüdür; asla düz metin "(Yazar, Yıl)" üretme.
 - API maliyeti (D78, D94): sabit bağlamı `context`, değişkeni `contextTail` ile ver (önbellek); maliyet `estimateCost(model, in, out, usage)` (fiyatlar `ai/cost.ts` KNOWN_PRICES); kayıt `recordUsage(..., { usage, costUsd })` (önbellek tokenları da yazılır); yanıt okunamazsa `throw await spentError(...)` (maliyet kaybolmaz); sohbet geçmişini `compactHistory` ile gönder.

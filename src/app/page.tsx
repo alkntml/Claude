@@ -104,7 +104,7 @@ export default async function Home() {
               <h2 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Sık sorulan sorular")}</h2>
               <p className="mt-3 text-ink-500">{t("En çok merak edilenlere açık ve dürüst cevaplar.")}</p>
             </FadeIn>
-            <FaqList items={faq} locale={locale === "en" ? "en" : "tr"} />
+            <FaqList items={faq} locale={locale} />
             <p className="mt-6 text-center"><Link href="/sss" className="text-sm font-medium text-brand-700 hover:underline">{t("Tüm soruları gör →")}</Link></p>
           </div>
         </section>

@@ -19,7 +19,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
   const all = POSTS.map((p) => ({ p, l: localizePost(p, locale) }));
   const list = kategori ? all.filter((x) => x.p.category === kategori) : all;
   const jsonLd = [
-    { "@context": "https://schema.org", "@type": "Blog", "@id": `${SITE_URL}/blog#blog`, name: `${SITE_NAME} Blog`, url: absoluteUrl(localizedPath("/blog", locale)), inLanguage: locale === "en" ? "en" : "tr-TR", publisher: { "@id": `${SITE_URL}/#organization` } },
+    { "@context": "https://schema.org", "@type": "Blog", "@id": `${SITE_URL}/blog#blog`, name: `${SITE_NAME} Blog`, url: absoluteUrl(localizedPath("/blog", locale)), inLanguage: locale === "en" ? "en" : locale === "de" ? "de-DE" : "tr-TR", publisher: { "@id": `${SITE_URL}/#organization` } },
     { "@context": "https://schema.org", "@type": "ItemList", itemListElement: all.map((x, i) => ({ "@type": "ListItem", position: i + 1, url: absoluteUrl(postPath(x.p, locale)), name: x.l.title })) },
     breadcrumbLd(locale, [{ name: "Blog", path: localizedPath("/blog", locale) }]),
   ];

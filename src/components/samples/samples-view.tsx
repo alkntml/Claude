@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "@/components/l-link";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
+import { contentLang, dateLocale } from "@/i18n/core";
 import { renderChartSvg } from "@/lib/charts/svg";
 import { CitationEngine, STYLE_IDS, STYLES } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
@@ -32,8 +33,10 @@ function mdTable(md: string): string {
  */
 export function SamplesView({ signedIn }: { signedIn: boolean }) {
   const { t, locale } = useT();
-  const l = locale === "en" ? "en" : "tr";
-  const p = (x: L2) => pick(x, l);
+  // Motor çıktıları (istatistik, grafik, atıf) yalnızca TR/EN; Almancada İngilizce motor + Almanca metinler (D143)
+  const l = contentLang(locale);
+  const de = locale === "de";
+  const p = (x: L2) => pick(x, locale);
   const [style, setStyle] = useState<CitationStyleId>("apa7");
   const V = VARS[l];
 
@@ -64,12 +67,12 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
           <div className="rounded-xl border border-ink-100 p-3"><p className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">{t("Araştırma soruları")}</p><ol className="mt-1 list-decimal space-y-0.5 pl-5 text-[14px] text-ink-800">{BLUEPRINT.questions.map((q) => <li key={q.tr}>{p(q)}</li>)}</ol></div>
         </div>
         <div>
-          <p className="mb-2 text-[13px] font-semibold text-ink-800">{t("Bölüm bölüm yol haritası · toplam {n} kelime", { n: BLUEPRINT.total.toLocaleString(l === "en" ? "en-US" : "tr-TR") })}</p>
+          <p className="mb-2 text-[13px] font-semibold text-ink-800">{t("Bölüm bölüm yol haritası · toplam {n} kelime", { n: BLUEPRINT.total.toLocaleString(dateLocale(locale)) })}</p>
           <ol className="space-y-2 border-l-2 border-brand-100 pl-4">
             {BLUEPRINT.chapters.map((c, i) => (
               <li key={c.t.tr} className="relative rounded-xl border border-ink-100 p-2.5">
                 <span className="absolute -left-[27px] top-3 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] font-semibold text-white">{i + 1}</span>
-                <div className="flex items-center justify-between gap-2 text-[13.5px]"><span className="font-medium text-ink-900">{p(c.t)}</span><span className="shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11.5px] font-medium text-brand-700">~{c.w.toLocaleString(l === "en" ? "en-US" : "tr-TR")} {t("kelime")}</span></div>
+                <div className="flex items-center justify-between gap-2 text-[13.5px]"><span className="font-medium text-ink-900">{p(c.t)}</span><span className="shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11.5px] font-medium text-brand-700">~{c.w.toLocaleString(dateLocale(locale))} {t("kelime")}</span></div>
                 <div className="mt-1.5 h-1.5 rounded-full bg-ink-100"><div className="h-1.5 rounded-full bg-brand-500" style={{ width: `${(c.w / 7000) * 100}%` }} /></div>
               </li>
             ))}
@@ -230,14 +233,14 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
     cikti: (
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="flex aspect-[1/1.414] flex-col items-center justify-between rounded-lg bg-[rgb(255_255_255)] p-6 text-center text-[rgb(20_20_20)] shadow-soft ring-1 ring-ink-100">
-          <p className="text-[9px] uppercase tracking-wider">{l === "en" ? "Graduate School of Educational Sciences" : "Eğitim Bilimleri Enstitüsü"}</p>
+          <p className="text-[9px] uppercase tracking-wider">{de ? "Institut für Erziehungswissenschaften" : l === "en" ? "Graduate School of Educational Sciences" : "Eğitim Bilimleri Enstitüsü"}</p>
           <p className="font-serif text-[13px] font-semibold uppercase leading-snug">{p(SAMPLE_WORK.title)}</p>
-          <div className="text-[9px]"><p>{l === "en" ? "MASTER’S THESIS" : "YÜKSEK LİSANS TEZİ"}</p><p className="mt-2">2026</p></div>
+          <div className="text-[9px]"><p>{de ? "MASTERARBEIT" : l === "en" ? "MASTER’S THESIS" : "YÜKSEK LİSANS TEZİ"}</p><p className="mt-2">2026</p></div>
         </div>
         <div className="flex aspect-[1/1.414] flex-col rounded-lg bg-[rgb(255_255_255)] p-6 text-[rgb(20_20_20)] shadow-soft ring-1 ring-ink-100">
-          <p className="mb-3 text-center font-serif text-[12px] font-semibold">{l === "en" ? "CONTENTS" : "İÇİNDEKİLER"}</p>
+          <p className="mb-3 text-center font-serif text-[12px] font-semibold">{de ? "INHALTSVERZEICHNIS" : l === "en" ? "CONTENTS" : "İÇİNDEKİLER"}</p>
           <ul className="space-y-1 font-serif text-[9.5px]">
-            {[[l === "en" ? "Abstract" : "Özet", "iv"], ...BLUEPRINT.chapters.map((c, i) => [`${i + 1}. ${p(c.t)}`, String([1, 9, 31, 42, 57, 68][i])]), [l === "en" ? "References" : "Kaynakça", "72"]].map(([a, b]) => <li key={a} className="flex gap-1"><span>{a}</span><span className="flex-1 border-b border-dotted border-[rgb(160_160_160)]" /><span>{b}</span></li>)}
+            {[[de || l === "en" ? "Abstract" : "Özet", "iv"], ...BLUEPRINT.chapters.map((c, i) => [`${i + 1}. ${p(c.t)}`, String([1, 9, 31, 42, 57, 68][i])]), [de ? "Literaturverzeichnis" : l === "en" ? "References" : "Kaynakça", "72"]].map(([a, b]) => <li key={a} className="flex gap-1"><span>{a}</span><span className="flex-1 border-b border-dotted border-[rgb(160_160_160)]" /><span>{b}</span></li>)}
           </ul>
         </div>
       </div>

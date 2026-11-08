@@ -10,6 +10,7 @@ import { toolByPath } from "@/lib/tools";
 import { ToolCards } from "./tool-cards";
 import { Inline } from "@/components/blog/rich";
 import { TOOL_GUIDES } from "@/lib/tools/guides";
+import { TOOL_GUIDES_DE } from "@/lib/tools/guides-de";
 import { PAGE_SEO } from "@/lib/seo-pages";
 import { absoluteUrl } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -19,15 +20,15 @@ export async function ToolShell({ path, intro, children, faq }: { path: string; 
   const [signedIn, { t, locale }] = await Promise.all([hasAuthCookie(), getT()]);
   const tool = toolByPath(path)!;
   // D107: aracın nasıl kullanılacağı ve sık sorulanlar (arama motorları için içerik + FAQPage/WebApplication şeması)
-  const guide = TOOL_GUIDES[path]?.[locale === "en" ? "en" : "tr"];
+  const guide = locale === "de" ? TOOL_GUIDES_DE[path] : TOOL_GUIDES[path]?.[locale];
   const seo = PAGE_SEO[path];
   const url = absoluteUrl(localizedPath(path, locale));
   const plain = (x: string) => x.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
   const appLd = {
     "@context": "https://schema.org", "@type": "WebApplication", "@id": `${url}#app`, name: t(tool.title), url,
-    description: seo?.description[locale === "en" ? "en" : "tr"] ?? t(tool.short), applicationCategory: "EducationalApplication",
-    operatingSystem: "Web", browserRequirements: "JavaScript", isAccessibleForFree: true, inLanguage: locale === "en" ? "en" : "tr-TR",
-    offers: { "@type": "Offer", price: 0, priceCurrency: locale === "en" ? "USD" : "TRY" }, publisher: { "@id": `${SITE_URL}/#organization` },
+    description: seo?.description[locale] ?? t(tool.short), applicationCategory: "EducationalApplication",
+    operatingSystem: "Web", browserRequirements: "JavaScript", isAccessibleForFree: true, inLanguage: locale === "tr" ? "tr-TR" : locale,
+    offers: { "@type": "Offer", price: 0, priceCurrency: locale === "tr" ? "TRY" : "USD" }, publisher: { "@id": `${SITE_URL}/#organization` },
   };
   const faqLd = guide?.faq.length ? { "@context": "https://schema.org", "@type": "FAQPage", "@id": `${url}#faq`, mainEntity: guide.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: plain(f.a) } })) } : null;
   return (

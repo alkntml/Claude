@@ -1,4 +1,5 @@
 import "server-only";
+import { AI_LANGUAGE } from "@/i18n/core";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { spentError } from "@/lib/ai/spent";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
@@ -49,7 +50,7 @@ export async function aiStageReview(params: { planId: string; bundle: any; stage
   if (!isProviderConfigured(model.provider)) return null;
   const others = bundle.stages.filter((x: any) => x.id !== stage.id && String(x.content_text ?? "").trim()).map((x: any) => `- ${x.title}: ${String(x.content_text).slice(0, 300).replace(/\s+/g, " ")}…`).join("\n");
   const res = await complete(model, {
-    system: `Deneyimli bir tez danışmanısın; öğrencinin tamamladığını söylediği TEK bir bölümü değerlendiriyorsun. Geri bildirim dili: ${params.uiLocale === "en" ? "English" : "Türkçe"}.
+    system: `Deneyimli bir tez danışmanısın; öğrencinin tamamladığını söylediği TEK bir bölümü değerlendiriyorsun. Geri bildirim dili: ${AI_LANGUAGE[params.uiLocale]}.
 DEĞERLENDİR:
 - Bölüm, amacını ve yazım kurallarını karşılıyor mu? Beklenen alt konular eksik mi?
 - Çalışma başlığı ve konusuyla uyumlu mu; bölüme ait olmayan içerik (ör. özet bölümünde ana metin, yöntemde bulgu) var mı?

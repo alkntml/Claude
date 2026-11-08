@@ -1,4 +1,5 @@
 import "server-only";
+import { AI_LANGUAGE, type Locale } from "@/i18n/core";
 /**
  * Çoklu belge analizi (D132): 2–8 kaynağa birlikte soru sorma ve karşılaştırmalı sentez.
  * Her kaynaktan yalnızca okunan metin (tam metin parçaları, yoksa özet) kullanılır; kaynak etiketleri S1…S8’dir ve
@@ -61,11 +62,10 @@ export function sanitizeCitations(md: string, labels: string[]): string {
 }
 
 export async function analyzeSources(o: {
-  planId: string; lang: "tr" | "en"; mode: MultiMode; question: string;
+  planId: string; lang: Locale; mode: MultiMode; question: string;
   sources: MultiSource[]; project: { title: string; topic?: string | null };
 }) {
   const model = await resolveModel(o.planId, "balanced");
-  const L = o.lang === "en";
   const labeled = o.sources.map((s, i) => {
     const label = `S${i + 1}`;
     const kw = o.mode === "compare" ? [o.question, ...COMPARE_KEYWORDS] : [o.question];
@@ -76,7 +76,7 @@ export async function analyzeSources(o: {
   const rules = `KURALLAR:
 - Yalnızca verilen KAYNAK MALZEMESİNE dayan; kendi bilgini, kaynakta olmayan sayı/örneklem/bulgu ekleme.
 - Bir kaynağın içeriği okunmadıysa (yalnızca künye) ona bilgi yükleme; “içeriği okunmadı” de.
-- Dil: ${L ? "English" : "Türkçe"}.`;
+- Dil: ${AI_LANGUAGE[o.lang]}.`;
 
   if (o.mode === "ask") {
     const res = await complete(model, {

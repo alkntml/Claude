@@ -59,13 +59,14 @@ export function usdFromTry(tl: number, usdTry: number = DEFAULT_USD_TRY): number
   return Math.ceil(tl / Math.max(1, usdTry)) - 0.01;
 }
 
-/** Fiyat metni: tr → “₺499”, en → “$10.99” */
-export function formatPrice(tl: number, locale: "tr" | "en", usdTry: number = DEFAULT_USD_TRY): string {
+/** Fiyat metni: tr → “₺499”, en → “$10.99”, de → “10,99 $” (ödeme TL ile; yabancı dilde dolar karşılığı gösterilir) */
+export function formatPrice(tl: number, locale: "tr" | "en" | "de", usdTry: number = DEFAULT_USD_TRY): string {
   const n = Number(tl) || 0;
   if (locale === "en") return n === 0 ? "$0" : `$${usdFromTry(n, usdTry).toFixed(2)}`;
+  if (locale === "de") return n === 0 ? "0 $" : `${usdFromTry(n, usdTry).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $`;
   return `₺${n.toLocaleString("tr-TR")}`;
 }
 
-export function priceNumber(tl: number, locale: "tr" | "en", usdTry: number = DEFAULT_USD_TRY): { amount: number; currency: "TRY" | "USD" } {
-  return locale === "en" ? { amount: usdFromTry(Number(tl) || 0, usdTry), currency: "USD" } : { amount: Number(tl) || 0, currency: "TRY" };
+export function priceNumber(tl: number, locale: "tr" | "en" | "de", usdTry: number = DEFAULT_USD_TRY): { amount: number; currency: "TRY" | "USD" } {
+  return locale !== "tr" ? { amount: usdFromTry(Number(tl) || 0, usdTry), currency: "USD" } : { amount: Number(tl) || 0, currency: "TRY" };
 }

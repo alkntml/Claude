@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { localeFromRequest } from "@/i18n/server";
+import { contentLang } from "@/i18n/core";
 import { extract, kindOf } from "@/lib/files/extract";
 import { runAnalysis, type AnalysisSpec } from "@/lib/stats/apa";
 import { assertFeature } from "@/lib/usage";
@@ -38,7 +39,7 @@ export const POST = route<Ctx>("file.analyze", async (req, { params }) => {
   if (error || !blob) throw new ApiError(500, "Dosya okunamadı");
   const ex = await extract(kind, Buffer.from(await blob.arrayBuffer()));
   try {
-    const report = runAnalysis(ex.rows ?? [], b.spec as AnalysisSpec, b.language ?? localeFromRequest(req));
+    const report = runAnalysis(ex.rows ?? [], b.spec as AnalysisSpec, b.language ?? contentLang(localeFromRequest(req)));
     return json({ report });
   } catch (e) {
     throw new ApiError(422, e instanceof Error ? e.message : "Analiz yapılamadı");

@@ -3,6 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { localeForCountry, normalizeLocale, translate } from "@/i18n";
 import { EN } from "@/i18n/en";
+import { DE } from "@/i18n/de";
 import { LEVEL_LABELS, METHODOLOGY_LABELS, STAGE_LIBRARY, WORK_TYPES } from "@/lib/workflows";
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
 
@@ -14,13 +15,15 @@ function walk(dir: string): string[] {
 }
 
 describe("i18n", () => {
-  it("ülkeye göre varsayılan dil: TR ve bilinmeyen → Türkçe, diğerleri → İngilizce", () => {
+  it("ülkeye göre varsayılan dil: TR ve bilinmeyen → Türkçe, Almanca konuşulan ülkeler → Almanca, diğerleri → İngilizce", () => {
     expect(localeForCountry("TR")).toBe("tr");
     expect(localeForCountry("tr")).toBe("tr");
     expect(localeForCountry(null)).toBe("tr");
-    expect(localeForCountry("DE")).toBe("en");
+    for (const c of ["DE", "de", "AT", "CH", "LI"]) expect(localeForCountry(c)).toBe("de");
     expect(localeForCountry("US")).toBe("en");
+    expect(localeForCountry("NL")).toBe("en");
     expect(normalizeLocale("en")).toBe("en");
+    expect(normalizeLocale("de")).toBe("de");
     expect(normalizeLocale("fr")).toBeNull();
   });
 
@@ -57,5 +60,16 @@ describe("i18n", () => {
   it("çevirilerde değişken adları korunur", () => {
     const bad = Object.entries(EN).filter(([k, v]) => JSON.stringify((k.match(/\{\w+\}/g) ?? []).sort()) !== JSON.stringify((v.match(/\{\w+\}/g) ?? []).sort()));
     expect(bad).toEqual([]);
+  });
+  it("Almanca sözlük İngilizce sözlüğün tüm anahtarlarını içerir; değişken adları ve boş olmayan değerler korunur (D143)", () => {
+    const ph = (x: string) => (x.match(/\{\w+\}/g) ?? []).sort().join(",");
+    const missing = Object.keys(EN).filter((k) => !(k in DE));
+    expect(missing, `DE eksik: ${missing.slice(0, 5).join(" | ")}`).toEqual([]);
+    for (const [k, v] of Object.entries(DE)) {
+      expect(ph(v), `değişken uyumsuz: ${k}`).toBe(ph(k));
+      if ((EN[k] ?? "").trim()) expect(v.trim(), `boş çeviri: ${k}`).not.toBe("");
+    }
+    expect(translate("de", "Kaydet")).toBe("Speichern");
+    expect(translate("de", "{n} kaynak eklendi", { n: 3 })).toMatch(/3/);
   });
 });

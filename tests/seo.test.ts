@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { BOT_UA, isPublicPath, localizedPath, splitLocale } from "@/lib/seo";
-import { EN_POSTS, findPost, localizePost, parseBody, POSTS, postPath } from "@/lib/blog";
+import { DE_POSTS, EN_POSTS, findPost, localizePost, parseBody, POSTS, postPath } from "@/lib/blog";
 import { PAGE_SEO } from "@/lib/seo-pages";
 import sitemap from "@/app/sitemap";
 
@@ -64,12 +64,13 @@ describe("blog İngilizce sürümleri", () => {
 });
 
 describe("site haritası", () => {
-  it("her sayfa TR ve EN adresiyle, hreflang eşleşmeleriyle yer alır", () => {
+  it("her sayfa TR, EN ve DE adresiyle, hreflang eşleşmeleriyle yer alır (Almancası olmayan blog yazısı DE’siz)", () => {
     const sm = sitemap();
-    expect(sm.length).toBe((21 + POSTS.length) * 2);
+    expect(sm.length).toBe(21 * 3 + POSTS.length * 2 + POSTS.filter((p) => DE_POSTS[p.slug]).length);
     const urls = sm.map((x) => x.url);
     expect(new Set(urls).size).toBe(urls.length);
     expect(urls).toContain("https://www.academiana.com.tr/en/blog/apa-7-citation-guide");
-    expect(sm[0].alternates?.languages).toMatchObject({ tr: "https://www.academiana.com.tr", en: "https://www.academiana.com.tr/en" });
+    expect(sm[0].alternates?.languages).toMatchObject({ tr: "https://www.academiana.com.tr", en: "https://www.academiana.com.tr/en", de: "https://www.academiana.com.tr/de" });
+    expect(urls).toContain("https://www.academiana.com.tr/de/fiyatlar");
   });
 });

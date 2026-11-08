@@ -8,7 +8,7 @@ import { TOOL_GUIDES } from "@/lib/tools/guides";
 const allTitles = () => [
   ...POSTS.map((p) => p.seoTitle ?? p.title),
   ...Object.values(EN_POSTS).map((e) => e.seoTitle ?? e.title),
-  ...Object.values(PAGE_SEO).flatMap((s) => [s.title.tr, s.title.en]),
+  ...Object.values(PAGE_SEO).flatMap((s) => [s.title.tr, s.title.en, s.title.de]),
 ];
 
 describe("SEO kalitesi (D107)", () => {
@@ -25,7 +25,7 @@ describe("SEO kalitesi (D107)", () => {
   it("meta açıklamalar 160 karakteri aşmaz (arama sonucunda kesilmez)", () => {
     for (const p of POSTS) expect(p.description.length, p.slug).toBeLessThanOrEqual(160);
     for (const [k, e] of Object.entries(EN_POSTS)) expect(e.description.length, k).toBeLessThanOrEqual(160);
-    for (const [k, s] of Object.entries(PAGE_SEO)) for (const l of ["tr", "en"] as const) {
+    for (const [k, s] of Object.entries(PAGE_SEO)) for (const l of ["tr", "en", "de"] as const) {
       if (s.noindex) continue;
       expect(s.description[l].length, `${k} ${l}`).toBeLessThanOrEqual(160);
       expect(s.description[l].length, `${k} ${l}`).toBeGreaterThan(70);

@@ -2,16 +2,18 @@
  * schema.org yapılandırılmış verileri (JSON-LD). Yalnızca gerçek bilgiler kullanılır:
  * sahte puan/yorum (aggregateRating, review) EKLENMEZ — Google kurallarına aykırıdır.
  */
+import { pick } from "@/i18n/core";
 import type { Locale } from "@/i18n";
 import { absoluteUrl, localizedPath } from "./seo";
 import { PROMO_VIDEO, SITE_NAME, SITE_URL } from "./site";
 import { priceNumber, WHATSAPP_NUMBER } from "@/lib/pricing";
 
+const LANG_TAG: Record<Locale, string> = { tr: "tr-TR", en: "en", de: "de-DE" };
 const ORG_ID = `${SITE_URL}/#organization`;
 const FOUNDER_ID = `${SITE_URL}/hakkimizda#founder`;
 
 /** Kurucu (D108): Hakkımızda sayfası ve Organization şeması */
-export const FOUNDER = { name: "Alkın Mert Temel", title: { tr: "Kurucu ve CEO", en: "Founder and CEO" } };
+export const FOUNDER = { name: "Alkın Mert Temel", title: { tr: "Kurucu ve CEO", en: "Founder and CEO", de: "Gründer und CEO" } };
 
 export function founderLd(locale: Locale) {
   return { "@context": "https://schema.org", "@type": "Person", "@id": FOUNDER_ID, name: FOUNDER.name, jobTitle: FOUNDER.title[locale], worksFor: { "@id": ORG_ID } };
@@ -34,7 +36,7 @@ export function organizationLd() {
     areaServed: ["TR", "Worldwide"],
     // Sitede herkese açık olarak verilen WhatsApp destek hattı (pricing.ts WHATSAPP_NUMBER)
     contactPoint: { "@type": "ContactPoint", contactType: "customer support", telephone: `+${WHATSAPP_NUMBER}`, availableLanguage: ["Turkish", "English"] },
-    knowsLanguage: ["tr", "en"],
+    knowsLanguage: ["tr", "en", "de"],
   };
 }
 
@@ -45,17 +47,17 @@ export function websiteLd(locale: Locale) {
     "@id": SITE_ID,
     name: SITE_NAME,
     url: SITE_URL,
-    inLanguage: ["tr-TR", "en"],
+    inLanguage: ["tr-TR", "en", "de-DE"],
     publisher: { "@id": ORG_ID },
-    description: locale === "en" ? "AI thesis and academic writing assistant with real sources." : "Gerçek kaynaklarla yapay zekâ destekli tez ve akademik yazım platformu.",
+    description: pick({ tr: "Gerçek kaynaklarla yapay zekâ destekli tez ve akademik yazım platformu.", en: "AI thesis and academic writing assistant with real sources.", de: "KI-gestützte Plattform für Abschlussarbeiten und wissenschaftliches Schreiben mit echten Quellen." }, locale),
   };
 }
 
 interface PlanLike { id: string; name: string; price_monthly: number | string; currency?: string | null }
 
 export function softwareLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
-  const en = locale === "en";
-  // İngilizce sayfada fiyatlar dolar (D59)
+  const en = locale !== "tr";
+  // İngilizce ve Almanca sayfada fiyatlar dolar (D59)
   const prices = plans.map((p) => priceNumber(Number(p.price_monthly), locale, usdTry).amount).filter((n) => Number.isFinite(n));
   const currency = en ? "USD" : plans.find((p) => p.currency)?.currency ?? "TRY";
   return {
@@ -67,7 +69,7 @@ export function softwareLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
     applicationCategory: "EducationalApplication",
     applicationSubCategory: en ? "Academic writing and research assistant" : "Akademik yazım ve araştırma asistanı",
     operatingSystem: "Web, Android, iOS",
-    inLanguage: ["tr", "en"],
+    inLanguage: ["tr", "en", "de"],
     publisher: { "@id": ORG_ID },
     image: `${SITE_URL}/icons/icon-512.png`,
     description: en
@@ -86,7 +88,7 @@ export function offersLd(locale: Locale, plans: PlanLike[], usdTry?: number) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: locale === "en" ? "Academiana plans" : "Academiana paketleri",
+    name: pick({ tr: "Academiana paketleri", en: "Academiana plans", de: "Academiana-Tarife" }, locale),
     itemListElement: plans.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -111,7 +113,7 @@ export function webPageLd(locale: Locale, o: { path: string; name: string; descr
     name: o.name,
     description: o.description,
     url: absoluteUrl(o.path),
-    inLanguage: locale === "en" ? "en" : "tr-TR",
+    inLanguage: LANG_TAG[locale],
     isPartOf: { "@id": SITE_ID },
     publisher: { "@id": ORG_ID },
   };

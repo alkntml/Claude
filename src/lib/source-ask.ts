@@ -1,4 +1,5 @@
 import "server-only";
+import { AI_LANGUAGE, pick, type Locale } from "@/i18n/core";
 /**
  * Kaynağa sor (D112): öğrenci tek bir kaynağa soru sorar; cevap yalnızca o kaynağın okunan metninden (tam metin parçaları
  * veya özet) verilir, tam metindeki her bilgi sayfa numarasıyla (s. N) gösterilir. Metinde olmayan bilgi uydurulmaz;
@@ -31,7 +32,7 @@ export async function askSource(o: {
   question: string;
   preset?: AskPreset;
   history: { q: string; a: string }[];
-  lang: "tr" | "en";
+  lang: Locale;
   source: { title: string; authors: string; year: number | null; container: string | null; abstract: string | null; access_level: "metadata" | "abstract" | "full_text" };
   chunks: { content: string; page_hint: string | null; section?: string | null }[];
   project: { title: string; topic?: string | null };
@@ -48,16 +49,15 @@ export async function askSource(o: {
       evidence = [...spread, ...ranked.filter((r) => !spread.some((s) => s.content === r.content))].slice(0, 9);
     } else evidence = ranked;
   }
-  const L = o.lang === "en";
-  const accessNote = o.source.access_level === "full_text" ? (L ? "Full text was read (passages below)." : "Tam metin okundu (aşağıdaki parçalar).")
-    : o.source.access_level === "abstract" ? (L ? "Only the abstract is available; the full text has not been read." : "Yalnızca özet var; tam metin okunmadı.")
-    : (L ? "Only citation data is available; neither the abstract nor the full text has been read." : "Yalnızca künye bilgisi var; özet ve tam metin okunmadı.");
+  const accessNote = pick(o.source.access_level === "full_text" ? { tr: "Tam metin okundu (aşağıdaki parçalar).", en: "Full text was read (passages below).", de: "Der Volltext wurde gelesen (Auszüge unten)." }
+    : o.source.access_level === "abstract" ? { tr: "Yalnızca özet var; tam metin okunmadı.", en: "Only the abstract is available; the full text has not been read.", de: "Nur das Abstract liegt vor; der Volltext wurde nicht gelesen." }
+    : { tr: "Yalnızca künye bilgisi var; özet ve tam metin okunmadı.", en: "Only citation data is available; neither the abstract nor the full text has been read.", de: "Nur bibliografische Angaben liegen vor; weder Abstract noch Volltext wurden gelesen." }, o.lang);
   const system = `Sen akademik bir okuma asistanısın. Öğrenci TEK BİR KAYNAK hakkında soru soruyor. Yalnızca aşağıda verilen kaynak materyaline (özet ve tam metin parçaları) dayanarak cevap ver.
 KURALLAR:
 - Materyalde olmayan hiçbir bilgiyi yazma: sayı, örneklem, bulgu, yazar görüşü uydurma. Materyal cevap için yetmiyorsa bunu açıkça söyle ve hangi bölümün (ör. yöntem bölümü) okunması gerektiğini belirt.
 - Tam metin parçasından aldığın her bilginin sonuna sayfasını “(s. N)” biçiminde yaz; parçanın sayfası yoksa “(tam metin)” yaz. Özetten aldığın bilgiye “(özet)” yaz.
 - Doğrudan alıntıyı yalnızca materyaldeki cümleyi birebir aktararak ve tırnak içinde ver; kelime değiştirme.
-- Cevap ${L ? "İngilizce" : "Türkçe"}, açık ve öğrencinin tezinde kullanabileceği netlikte olsun. Kısa başlıklar ve madde işaretleri kullanabilirsin (Markdown). Gereksiz giriş cümlesi yazma.
+- Cevap ${AI_LANGUAGE[o.lang]}, açık ve öğrencinin tezinde kullanabileceği netlikte olsun. Kısa başlıklar ve madde işaretleri kullanabilirsin (Markdown). Gereksiz giriş cümlesi yazma.
 - “Çalışmamla ilişkisi” sorulursa öğrencinin çalışması: “${o.project.title}”${o.project.topic ? ` (${o.project.topic})` : ""}. İlişkiyi yalnızca kaynağın gerçekten söylediklerine dayandır; kaynağın söylemediği bir sonucu ona atfetme.
 - Erişim durumu: ${accessNote}`;
   const material = [

@@ -28,7 +28,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [title, setTitle] = useState("");
   const [topic, setTopic] = useState(() => (params.get("konu") ?? "").slice(0, 4000));
   const [keywords, setKeywords] = useState("");
-  const [language, setLanguage] = useState<"tr" | "en">(locale);
+  const [language, setLanguage] = useState<"tr" | "en">(locale === "tr" ? "tr" : "en");
   const [style, setStyle] = useState(defaultStyle);
   const [university, setUniversity] = useState("");
   const [program, setProgram] = useState<GrantProgram>("tubitak_2209a");

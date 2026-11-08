@@ -17,7 +17,7 @@ export const GET = route("og.image", async (req) => {
   const u = new URL(req.url);
   const title = (u.searchParams.get("t") || "Academiana").slice(0, 120);
   const sub = (u.searchParams.get("s") || "academiana.com.tr").slice(0, 90);
-  const en = u.searchParams.get("l") === "en";
+  const lang = u.searchParams.get("l");
   const [bold, regular, logo] = await loadAssets();
   const size = title.length > 80 ? 52 : title.length > 50 ? 62 : 72;
   return new ImageResponse(
@@ -31,7 +31,7 @@ export const GET = route("og.image", async (req) => {
         <div style={{ display: "flex", fontSize: size, fontWeight: 700, lineHeight: 1.15, color: "#0f1d3d", letterSpacing: -1 }}>{title}</div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 28, color: "#454d74" }}>
           <span style={{ fontWeight: 400 }}>{sub}</span>
-          <span style={{ fontWeight: 700, color: "#a87f2e" }}>{en ? "academiana.com.tr/en" : "academiana.com.tr"}</span>
+          <span style={{ fontWeight: 700, color: "#a87f2e" }}>{lang === "en" ? "academiana.com.tr/en" : lang === "de" ? "academiana.com.tr/de" : "academiana.com.tr"}</span>
         </div>
       </div>
     ),

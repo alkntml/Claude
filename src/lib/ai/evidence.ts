@@ -1,4 +1,5 @@
 import "server-only";
+import { AI_LANGUAGE, pick, type Locale } from "@/i18n/core";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 
 /* Atıf doğrulama: bir cümlenin, atıf yapılan kaynakta gerçekten desteklenip desteklenmediğini kontrol eder. */
@@ -50,7 +51,7 @@ const VERDICT_SCHEMA = {
 };
 
 export async function checkEvidence(params: {
-  planId: string; uiLanguage: "tr" | "en"; sentence: string; locator: string | null;
+  planId: string; uiLanguage: Locale; sentence: string; locator: string | null;
   source: { title: string; abstract: string | null; access_level: "metadata" | "abstract" | "full_text" };
   chunks: { content: string; page_hint: string | null }[];
 }) {
@@ -73,7 +74,7 @@ export async function checkEvidence(params: {
   }
 
   if (!best.length && !params.source.abstract) {
-    return { result: { access: params.source.access_level, chunks: [], abstract: null, verdict: "insufficient" as Verdict, explanation: params.uiLanguage === "en" ? "Only the citation data of this source is known; its content has not been read, so the claim cannot be checked." : "Bu kaynağın yalnızca künyesi biliniyor; içeriği okunmadığı için iddia kontrol edilemez.", quote: null, quotePage: null }, usage: { tokensIn, tokensOut, cost, model: model.model, provider: model.provider } };
+    return { result: { access: params.source.access_level, chunks: [], abstract: null, verdict: "insufficient" as Verdict, explanation: pick({ tr: "Bu kaynağın yalnızca künyesi biliniyor; içeriği okunmadığı için iddia kontrol edilemez.", en: "Only the citation data of this source is known; its content has not been read, so the claim cannot be checked.", de: "Von dieser Quelle sind nur die bibliografischen Angaben bekannt; ihr Inhalt wurde nicht gelesen, daher kann die Aussage nicht geprüft werden." }, params.uiLanguage), quote: null, quotePage: null }, usage: { tokensIn, tokensOut, cost, model: model.model, provider: model.provider } };
   }
 
   const material = [
@@ -84,7 +85,7 @@ export async function checkEvidence(params: {
     system: `Bir akademik atfın doğruluğunu denetleyen titiz bir editörsün. Yalnızca verilen kaynak metnine dayan; kendi bilgini kullanma.
 verdict: "supports" = metin iddiayı açıkça destekliyor; "partial" = kısmen destekliyor veya iddia kaynaktan daha güçlü/genel ifade edilmiş; "not_supported" = metin iddiayı desteklemiyor veya çelişiyor; "insufficient" = verilen metin karar vermeye yetmiyor (ör. yalnızca özet var ve konu özette geçmiyor).
 quote: kararını dayandırdığın en kısa ifade, kaynak metinden AYNEN (yoksa boş). quotePage: alıntının sayfası (yoksa boş).
-explanation: ${params.uiLanguage === "en" ? "English" : "Türkçe"}, en fazla 2 cümle; atıfta sayfa numarası verilmişse sayfanın doğru olup olmadığını da belirt.`,
+explanation: ${AI_LANGUAGE[params.uiLanguage]}, en fazla 2 cümle; atıfta sayfa numarası verilmişse sayfanın doğru olup olmadığını da belirt.`,
     messages: [{ role: "user", content: `KAYNAK: ${params.source.title}\nERİŞİM: ${params.source.access_level}\nATIFTA VERİLEN SAYFA: ${params.locator ?? "yok"}\n\nMETİNDEKİ İDDİA:\n${params.sentence}\n\nKAYNAK METNİ:\n${material}` }],
     maxTokens: 700, effort: "low", jsonSchema: VERDICT_SCHEMA,
   });

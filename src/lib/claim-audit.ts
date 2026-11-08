@@ -1,4 +1,5 @@
 import "server-only";
+import { AI_LANGUAGE, pick, type Locale } from "@/i18n/core";
 /**
  * Kaynak destekli iddia denetimi (D119). Atıflı her cümle, atıf yaptığı kaynağın OKUNAN metniyle (tam metin parçaları
  * veya özet) karşılaştırılır. Maliyeti düşük tutmak için cümleler kaynağa göre gruplanır: her kaynak için en fazla iki
@@ -62,7 +63,7 @@ const VERDICT_SCHEMA = {
 const norm = (s: string) => s.replace(/\s+/g, " ").trim().toLocaleLowerCase("tr");
 const BATCH = 6;
 
-export async function auditSources(o: { planId: string; lang: "tr" | "en"; groups: { source: SourceInput; pairs: PairInput[] }[] }) {
+export async function auditSources(o: { planId: string; lang: Locale; groups: { source: SourceInput; pairs: PairInput[] }[] }) {
   const model = await resolveModel(o.planId, "fast");
   if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
   const usage = { input: 0, output: 0 };
@@ -71,14 +72,13 @@ export async function auditSources(o: { planId: string; lang: "tr" | "en"; group
     usage.input += r.usage.input; usage.output += r.usage.output; calls++;
     cost += await estimateCost(r.model, r.usage.input, r.usage.output, r.usage);
   };
-  const L = o.lang === "en";
   const jobs = o.groups.flatMap((g) => Array.from({ length: Math.ceil(g.pairs.length / BATCH) }, (_, i) => ({ source: g.source, pairs: g.pairs.slice(i * BATCH, (i + 1) * BATCH) })));
 
   const results = await mapLimit(jobs, 3, async ({ source, pairs }): Promise<PairResult[]> => {
     const base = { sourceId: source.id, access: source.access_level };
     if (!source.chunks.length && !source.abstract) {
       return pairs.map((p) => ({ ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null,
-        explanation: L ? "Only the citation data of this source is known; its content has not been read." : "Bu kaynağın yalnızca künyesi biliniyor; içeriği okunmadığı için iddia kontrol edilemez." }));
+        explanation: pick({ tr: "Bu kaynağın yalnızca künyesi biliniyor; içeriği okunmadığı için iddia kontrol edilemez.", en: "Only the citation data of this source is known; its content has not been read.", de: "Von dieser Quelle sind nur die bibliografischen Angaben bekannt; ihr Inhalt wurde nicht gelesen, daher kann die Aussage nicht geprüft werden." }, o.lang) }));
     }
     // 1) Tam metin varsa: her cümle için (cümle dilinde + İngilizce) anahtar kelime → en ilgili parçalar
     const perClaim = new Map<string, EvidenceChunk[]>();
@@ -115,7 +115,7 @@ verdict:
 - "insufficient": yalnızca özet var ve cümlenin konusu özette geçmiyor (tam metin okunmadığı için karar verilemez).
 Küçük ayrıntılar yüzünden "partial" verme; bir danışmanın düzeltme isteyeceği bir sorun yoksa "supports" ver.
 quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN kopyala (yoksa boş).
-explanation: ${L ? "English" : "Türkçe"}, TEK kısa cümle (en fazla 30 kelime); “P1, P2, ÖZET” gibi parça etiketlerinden söz etme. "partial" ise neyin düzeltilmesi gerektiğini söyle. Atıfta sayfa verilmişse ve bu sayfa uygun değilse belirt. verdict açıklamanla tutarlı olmalı.
+explanation: ${AI_LANGUAGE[o.lang]}, TEK kısa cümle (en fazla 30 kelime); “P1, P2, ÖZET” gibi parça etiketlerinden söz etme. "partial" ise neyin düzeltilmesi gerektiğini söyle. Atıfta sayfa verilmişse ve bu sayfa uygun değilse belirt. verdict açıklamanla tutarlı olmalı.
 Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
       messages: [{ role: "user", content: `KAYNAK: ${source.title}\nERİŞİM: ${source.access_level}\n\nİDDİALAR:\n${claimsText}\n\nKAYNAK METNİ:\n${material}` }],
       maxTokens: 800 + pairs.length * 350, effort: "low", jsonSchema: VERDICT_SCHEMA,
@@ -127,7 +127,7 @@ Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle 
     return pairs.map((p) => {
       const it = items.find((x) => x.id === p.claimId);
       // Yanıt alınamadıysa sürüm işareti konmaz: sonuç önbelleğe girmez, “Yeniden denetle” bu cümleyi tekrar dener
-      if (!it) return { ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null, explanation: L ? "No answer was received for this sentence; please run the audit again." : "Bu cümle için yanıt alınamadı; lütfen yeniden denetleyin." };
+      if (!it) return { ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null, explanation: pick({ tr: "Bu cümle için yanıt alınamadı; lütfen yeniden denetleyin.", en: "No answer was received for this sentence; please run the audit again.", de: "Für diesen Satz kam keine Antwort; bitte führen Sie die Prüfung erneut durch." }, o.lang) };
       const loc = locateQuote(it.quote, source.abstract, evidence);
       return { ...base, claimId: p.claimId, av: AUDIT_VERSION, verdict: guardVerdict(it.verdict, loc.ok), explanation: cleanExplanation(it.explanation), quote: loc.ok ? it.quote : null, quotePage: loc.page };
     });
@@ -145,12 +145,11 @@ const STANCE_SCHEMA = {
  * destekliyor mu, yoksa çelişiyor mu? Aday kaynaklar kelime örtüşmesiyle seçilir (relatedCandidates); her kaynak için
  * tek bir küçük model çağrısı yapılır. Alıntı kaynak metninde birebir yoksa gösterilmez; “ilgisiz” sonuçlar atılır.
  */
-export async function crossCheckSources(o: { planId: string; lang: "tr" | "en"; groups: { source: SourceInput; claims: { claimId: string; sentence: string }[] }[] }) {
+export async function crossCheckSources(o: { planId: string; lang: Locale; groups: { source: SourceInput; claims: { claimId: string; sentence: string }[] }[] }) {
   const model = await resolveModel(o.planId, "fast");
   if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
   const usage = { input: 0, output: 0 };
   let cost = 0, calls = 0;
-  const L = o.lang === "en";
   const out = await mapLimit(o.groups, 3, async ({ source, claims }): Promise<(RelatedEvidence & { claimId: string })[]> => {
     const per = new Map<string, EvidenceChunk[]>();
     for (const c of claims) per.set(c.claimId, source.chunks.length ? rankChunks(source.chunks, [c.sentence], null, 2) : []);
@@ -161,7 +160,7 @@ export async function crossCheckSources(o: { planId: string; lang: "tr" | "en"; 
     const r = await complete(model, {
       system: `Bir öğrencinin akademik metnindeki cümleleri, bu cümlelerde ATIF YAPILMAMIŞ başka bir kaynağın metniyle karşılaştırıyorsun. Yalnızca verilen KAYNAK METNİNE dayan.
 stance: "supports" = kaynak metni cümlenin iddiasını açıkça destekliyor (öğrenci bu kaynağı da atıf olarak ekleyebilir); "contradicts" = kaynak metni cümlenin iddiasının tersini ya da onunla bağdaşmayan bir bulguyu açıkça söylüyor; "unrelated" = konu aynı olsa bile cümlenin iddiası hakkında açık bir şey söylemiyor (şüphede unrelated seç).
-quote: kararı dayandırdığın en kısa ifade, kaynak metninden AYNEN (yoksa boş). explanation: ${L ? "English" : "Türkçe"}, tek kısa cümle (en fazla 30 kelime); “P1, ÖZET” gibi parça etiketlerinden söz etme.
+quote: kararı dayandırdığın en kısa ifade, kaynak metninden AYNEN (yoksa boş). explanation: ${AI_LANGUAGE[o.lang]}, tek kısa cümle (en fazla 30 kelime); “P1, ÖZET” gibi parça etiketlerinden söz etme.
 Her cümle için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
       messages: [{ role: "user", content: `KAYNAK: ${source.title}\n\nCÜMLELER:\n${claims.map((c) => `[${c.claimId}] ${c.sentence}`).join("\n")}\n\nKAYNAK METNİ:\n${material}` }],
       maxTokens: 600 + claims.length * 300, effort: "low", jsonSchema: STANCE_SCHEMA,

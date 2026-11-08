@@ -25,7 +25,7 @@ export const POST = route("public.track", async (req) => {
     kind: "pageview", path, visitor: visitorHash(req), device: deviceOf(ua),
     referrer: referrerHost(b.data.referrer, req.headers.get("host")),
     utm_source: b.data.utm_source?.slice(0, 100) || null, utm_medium: b.data.utm_medium?.slice(0, 100) || null, utm_campaign: b.data.utm_campaign?.slice(0, 100) || null,
-    locale: b.data.locale === "en" ? "en" : "tr",
+    locale: b.data.locale === "en" || b.data.locale === "de" ? b.data.locale : "tr",
   });
   return json({ ok: true });
 });

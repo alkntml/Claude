@@ -23,7 +23,7 @@ export const GET = route("account.get", async (req) => {
 
 export const PATCH = route("account.update", async (req) => {
   const s = await requireUser();
-  const b = await parseBody(req, z.object({ fullName: z.string().max(200).optional(), institution: z.string().max(300).optional(), locale: z.enum(["tr", "en"]).optional(), defaultCitationStyle: z.enum(STYLE_IDS as [string, ...string[]]).optional() }));
+  const b = await parseBody(req, z.object({ fullName: z.string().max(200).optional(), institution: z.string().max(300).optional(), locale: z.enum(["tr", "en", "de"]).optional(), defaultCitationStyle: z.enum(STYLE_IDS as [string, ...string[]]).optional() }));
   const update: Record<string, unknown> = {};
   if (b.fullName !== undefined) update.full_name = b.fullName;
   if (b.institution !== undefined) update.institution = b.institution;

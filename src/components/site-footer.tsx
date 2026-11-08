@@ -4,7 +4,7 @@ import Link from "@/components/l-link";
 import { Logo } from "./icons";
 
 // Sık aranan rehberler (iç bağlantı): [Türkçe adres, İngilizce adres, başlık]
-const FOOTER_GUIDES: [string, string, string][] = [
+const FOOTER_GUIDES: [string, string, string, string?][] = [
   ["tez-nasil-yazilir", "how-to-write-a-thesis", "Tez nasıl yazılır?"],
   ["apa-7-atif-kurallari", "apa-7-citation-guide", "APA 7 atıf kuralları"],
   ["literatur-taramasi-nasil-yapilir", "how-to-write-a-literature-review", "Literatür taraması"],
@@ -38,7 +38,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold text-ink-800">{t("Rehberler")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-ink-500">
-            {FOOTER_GUIDES.map(([slug, en, label]) => <li key={slug}><Link href={locale === "en" ? `/en/blog/${en}` : `/blog/${slug}`} className="hover:text-ink-900">{t(label)}</Link></li>)}
+            {FOOTER_GUIDES.map(([slug, en, label, de]) => <li key={slug}><Link href={locale === "tr" ? `/blog/${slug}` : locale === "de" && de ? `/de/blog/${de}` : `/en/blog/${en}`} className="hover:text-ink-900">{t(label)}</Link></li>)}
           </ul>
         </div>
         <div>

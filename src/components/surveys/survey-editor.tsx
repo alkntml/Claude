@@ -1,4 +1,5 @@
 "use client";
+import { contentLang } from "@/i18n/core";
 import { ArrowDown, ArrowUp, Check, Copy, Download, ExternalLink, FileSpreadsheet, Loader2, Plus, Save, Share2, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -42,7 +43,7 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   const { t, locale } = useT();
   const toast = useToast();
   const router = useRouter();
-  const lang = locale === "en" ? "en" : "tr";
+  const lang = contentLang(locale);
   const [s, setS] = useState<any>(initial);
   const [qs, setQs] = useState<Question[]>(initial.questions ?? []);
   const [dirty, setDirty] = useState(false);

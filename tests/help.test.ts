@@ -78,4 +78,11 @@ describe("paket vaatleri ve kısa rehber (D96)", () => {
     expect(f.pro).toContain("Sınırsız kaynak taraması (adil kullanım)");
   });
   it("rehber paket başına sayfa bilgisini verir", () => expect(APP_GUIDE).toContain("Premium 85 sayfa"));
+  it("Almanca kullanım sorularını tanır, Almanca yazım isteklerini tanımaz (D143)", () => {
+    expect(isHelpQuestion("Wo kann ich ein Diagramm erstellen?")).toBe(true);
+    expect(isHelpQuestion("Wie kann ich meine Arbeit als PDF herunterladen?")).toBe(true);
+    expect(isHelpQuestion("Welche Schaltfläche öffnet die Aussagenprüfung?")).toBe(true);
+    expect(isHelpQuestion("Schreibe die Einleitung über Bindungstheorie mit Quellen.")).toBe(false);
+    expect(HELP_SYSTEM).toContain("Almanca");
+  });
 });

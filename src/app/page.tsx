@@ -1,4 +1,5 @@
 import { getT } from "@/i18n/server";
+import { pick } from "@/i18n/core";
 import { pageMeta } from "@/lib/seo-server";
 import { JsonLd } from "@/components/json-ld";
 import { promoVideoLd, softwareLd, webPageLd } from "@/lib/structured-data";
@@ -38,7 +39,7 @@ export default async function Home() {
   return (
     <>
       <SiteHeader signedIn={signedIn} />
-      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: PAGE_SEO["/"].title[locale], description: PAGE_SEO["/"].description[locale] }), ...(locale === "en" ? [] : [promoVideoLd()])]} />
+      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: pick(PAGE_SEO["/"].title, locale), description: pick(PAGE_SEO["/"].description, locale) }), ...(locale === "en" ? [] : [promoVideoLd()])]} />
       <main>
         <Hero signedIn={signedIn} />
         {locale !== "en" && <PromoVideo />}

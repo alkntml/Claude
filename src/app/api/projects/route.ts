@@ -1,3 +1,4 @@
+import { pick } from "@/i18n/core";
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
@@ -76,7 +77,7 @@ export const POST = route("projects.create", async (req) => {
     throw stErr;
   }
   if (body.topic) {
-    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `${uiLocale === "en" ? "Research topic" : "Araştırma konusu"}: ${body.topic}`, source: "user", pinned: true });
+    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `${pick({ tr: "Araştırma konusu", en: "Research topic", de: "Forschungsthema" }, uiLocale)}: ${body.topic}`, source: "user", pinned: true });
   }
   return json({ project }, 201);
 });

@@ -1,4 +1,5 @@
 "use client";
+import { dateLocale } from "@/i18n/core";
 import { Bell, Gift, Info, ShieldAlert, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
@@ -57,7 +58,7 @@ export function NotificationBell({ className, align = "left" }: { className?: st
     if (n.kind === "referral_disposable_email") return { title: t("Davet ödülü verilmedi"), body: t("Davet bağlantınızla açılan hesap geçici (tek kullanımlık) bir e-posta adresiyle kaydolduğu için ödül tanımlanmadı. Davet ödülü yalnızca gerçek e-posta adresiyle kaydolup adresini doğrulayan kişiler için verilir.") };
     if (n.kind === "abuse_alert") {
       // Yöneticiye: Tek Proje paketinde kötüye kullanım şüphesi (D103)
-      const d = n.data, who = d.email || t("Bir kullanıcı"), w = Number(d.words || 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR");
+      const d = n.data, who = d.email || t("Bir kullanıcı"), w = Number(d.words || 0).toLocaleString(dateLocale(locale));
       const body: Record<string, string> = {
         second_project: t("{u} ikinci bir çalışma açmaya çalıştı (engellendi).", { u: who }),
         delete_project: t("{u} pakete bağlı çalışmasını silmeye çalıştı (engellendi).", { u: who }),
@@ -66,11 +67,11 @@ export function NotificationBell({ className, align = "left" }: { className?: st
         mass_delete: t("{u} çalışmasından toplam {w} kelime sildi (ürettiğinin büyük kısmı).", { u: who, w }),
         topic_change: t("{u} çalışmanın başlığını veya konusunu tamamen değiştirdi: “{o}” → “{n}”.", { u: who, o: d.old_title || d.old_topic || "", n: d.project_title || d.new_topic || "" }),
         heavy_generation: t("{u} toplam {w} kelime yapay zekâ metni üretti (birden fazla tez büyüklüğünde).", { u: who, w }),
-        content_replaced: t("{u} çalışmasını yeniden indirdi; içerik bir önceki indirmeyle yalnızca %{p} örtüşüyor ({a} → {b} kelime). Metin silinmeden üzerine başka bir çalışma yazılmış olabilir.", { u: who, p: d.similarity ?? 0, a: Number(d.words_before ?? 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR"), b: Number(d.words_after ?? 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR") }),
+        content_replaced: t("{u} çalışmasını yeniden indirdi; içerik bir önceki indirmeyle yalnızca %{p} örtüşüyor ({a} → {b} kelime). Metin silinmeden üzerine başka bir çalışma yazılmış olabilir.", { u: who, p: d.similarity ?? 0, a: Number(d.words_before ?? 0).toLocaleString(dateLocale(locale)), b: Number(d.words_after ?? 0).toLocaleString(dateLocale(locale)) }),
         cover_change: t("{u} indirmeler arasında kapak bilgisini değiştirdi ({f}). Çalışma başka biri adına hazırlanıyor olabilir.", { u: who, f: (Array.isArray(d.fields) ? d.fields : []).map((x: string) => ({ author: t("yazar"), university: t("üniversite"), department: t("bölüm"), advisor: t("danışman") } as Record<string, string>)[x] ?? x).join(", ") }),
         many_devices: t("{u} hesabına son {d} günde {n} farklı tarayıcı veya cihazdan girildi. Hesap paylaşılıyor olabilir.", { u: who, n: d.devices ?? 0, d: d.days ?? 30 }),
         many_sections: t("{u} çalışmasına çok sayıda bölüm ekledi ({n} bölüm; şablonda {m}). Aynı çalışmada ikinci bir metin yazılıyor olabilir.", { u: who, n: d.sections ?? 0, m: d.template ?? 0 }),
-        off_topic: t("{u} için üretilen {w} kelimelik metinde çalışmanın konusuyla ilgili hiçbir terim geçmiyor (“{s}”). Pakete bağlı çalışma dışında bir metin yazdırılıyor olabilir.", { u: who, w: Number(d.words ?? 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR"), s: d.stage_title || d.project_title || "" }),
+        off_topic: t("{u} için üretilen {w} kelimelik metinde çalışmanın konusuyla ilgili hiçbir terim geçmiyor (“{s}”). Pakete bağlı çalışma dışında bir metin yazdırılıyor olabilir.", { u: who, w: Number(d.words ?? 0).toLocaleString(dateLocale(locale)), s: d.stage_title || d.project_title || "" }),
         cost_40: t("{u} için yapay zekâ maliyeti paket gelirinin %{p}’ine ulaştı ({c} $; %40 sınırı {b} $). Kullanım kısıtlanmadı.", { u: who, p: d.pct ?? 40, c: d.cost ?? 0, b: d.budget ?? 0 }),
       };
       return { title: d.rule === "cost_40" ? t("Tek Proje maliyet uyarısı") : t("Kötüye kullanım uyarısı (Tek Proje)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
@@ -79,7 +80,7 @@ export function NotificationBell({ className, align = "left" }: { className?: st
     if (n.kind === "referral_cap") return { title: t("Davetiniz kaydoldu"), body: t("Davet ettiğiniz bir kişi kaydoldu, ancak bu ayki davet ödülü sınırına ({n}) ulaştığınız için ödül tanımlanmadı. Sınır her ayın başında yenilenir.", { n: n.data.cap ?? 0 }) };
     return { title: t("Bildirim"), body: "" };
   };
-  const when = (iso: string) => new Date(iso).toLocaleDateString(locale === "en" ? "en-GB" : "tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  const when = (iso: string) => new Date(iso).toLocaleDateString(dateLocale(locale), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 
   return (
     <div ref={box} className={cn("relative", className)}>

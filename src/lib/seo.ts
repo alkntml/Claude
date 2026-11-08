@@ -1,6 +1,6 @@
 /**
  * Arama motoru altyapısı: dil bazlı adresler ve yardımcılar (istemci + sunucu).
- * Türkçe sayfalar köke, İngilizce sayfalar /en önekine yerleşir: /fiyatlar ↔ /en/fiyatlar.
+ * Türkçe sayfalar köke, İngilizce sayfalar /en, Almanca sayfalar /de önekine yerleşir: /fiyatlar ↔ /en/fiyatlar ↔ /de/fiyatlar.
  * Yalnızca herkese açık (tanıtım) sayfalar önekli; uygulama sayfaları çerezdeki dili kullanır.
  */
 import type { Locale } from "@/i18n";
@@ -13,11 +13,14 @@ export function isPublicPath(path: string): boolean {
   return PUBLIC_PATHS.includes(p) || p.startsWith("/blog/");
 }
 
-/** /en/… → { locale: "en", path: "/…" } */
-export function splitLocale(pathname: string): { locale: Locale | null; path: string } {
-  if (pathname === "/en" || pathname.startsWith("/en/") || pathname.startsWith("/en?") || pathname.startsWith("/en#")) {
-    const rest = pathname.slice(3);
-    return { locale: "en", path: rest.startsWith("/") ? rest : `/${rest}` };
+/** /en/… veya /de/… → { locale, path: "/…" } */
+export function splitLocale(pathname: string): { locale: Exclude<Locale, "tr"> | null; path: string } {
+  for (const l of ["en", "de"] as const) {
+    const p = `/${l}`;
+    if (pathname === p || pathname.startsWith(`${p}/`) || pathname.startsWith(`${p}?`) || pathname.startsWith(`${p}#`)) {
+      const rest = pathname.slice(3);
+      return { locale: l, path: rest.startsWith("/") ? rest : `/${rest}` };
+    }
   }
   return { locale: null, path: pathname };
 }
@@ -31,7 +34,7 @@ export function localizedPath(href: string, locale: Locale): string {
   const clean = already ? path : base;
   if (!isPublicPath(clean)) return href;
   if (locale === "tr") return `${clean}${m[2]}`;
-  return `${clean === "/" ? "/en" : `/en${clean}`}${m[2]}`;
+  return `${clean === "/" ? `/${locale}` : `/${locale}${clean}`}${m[2]}`;
 }
 
 /** Herkese açık sayfaların son içerik güncellemesi (site haritası lastmod); sayfa metinleri değişince güncellenir */

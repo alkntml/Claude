@@ -49,7 +49,7 @@ export default async function Pricing() {
             </div>
           )}
         </div>
-        <p className="mt-10 text-center text-sm text-ink-400">{locale === "en" ? t("Dolar fiyatları güncel kurla yaklaşık olarak hesaplanır; ödeme TL veya dolar ile yapılabilir.") : t("Fiyatlara KDV dahildir.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
+        <p className="mt-10 text-center text-sm text-ink-400">{locale !== "tr" ? t("Dolar fiyatları güncel kurla yaklaşık olarak hesaplanır; ödeme TL veya dolar ile yapılabilir.") : t("Fiyatlara KDV dahildir.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
       </main>
       <SiteFooter />
     </>

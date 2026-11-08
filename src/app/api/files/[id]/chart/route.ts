@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { localeFromRequest } from "@/i18n/server";
+import { contentLang } from "@/i18n/core";
 import { extract, kindOf } from "@/lib/files/extract";
 import { buildChart, type ChartSpec } from "@/lib/stats/charts";
 import { assertFeature } from "@/lib/usage";
@@ -34,7 +35,7 @@ export const POST = route<Ctx>("file.chart", async (req, { params }) => {
   if (error || !blob) throw new ApiError(500, "Dosya okunamadı");
   const ex = await extract(kind, Buffer.from(await blob.arrayBuffer()));
   try {
-    return json({ chart: buildChart(ex.rows ?? [], b.spec as ChartSpec, b.language ?? localeFromRequest(req)) });
+    return json({ chart: buildChart(ex.rows ?? [], b.spec as ChartSpec, b.language ?? contentLang(localeFromRequest(req))) });
   } catch (e) {
     throw new ApiError(422, e instanceof Error ? e.message : "Grafik oluşturulamadı");
   }

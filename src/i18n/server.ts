@@ -21,7 +21,7 @@ export async function getT() {
 
 /** API rotalarında istek çerezinden dil */
 export function localeFromRequest(req: Request): Locale {
-  const m = (req.headers.get("cookie") ?? "").match(/(?:^|;\s*)lang=(tr|en)/);
+  const m = (req.headers.get("cookie") ?? "").match(/(?:^|;\s*)lang=(tr|en|de)/);
   if (m) return m[1] as Locale;
   return localeForCountry(req.headers.get("x-vercel-ip-country"));
 }

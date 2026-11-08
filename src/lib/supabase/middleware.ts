@@ -6,7 +6,7 @@ import { BOT_UA, isPublicPath, splitLocale } from "@/lib/seo";
 
 const PROTECTED = ["/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni", "/anketler", "/kurum", "/konu-bul"];
 
-/** İlk ziyarette ülkeye göre dil: Türkiye (veya bilinmeyen) → tr, diğer ülkeler → en. Kullanıcı seçimi (çerez) her zaman önceliklidir. */
+/** İlk ziyarette ülkeye göre dil: Türkiye (veya bilinmeyen) → tr, Almanca konuşulan ülkeler → de, diğerleri → en. Kullanıcı seçimi (çerez) her zaman önceliklidir. */
 export async function updateSession(request: NextRequest) {
   // Eski Vercel adresinden gelen sayfa ziyaretleri resmî alan adına yönlendirilir (REDIRECT_TO_DOMAIN=1 iken; API hariç)
   const host = request.headers.get("host") ?? "";
@@ -20,12 +20,13 @@ export async function updateSession(request: NextRequest) {
   const setLang = (res: NextResponse, l: string) => { res.cookies.set(LOCALE_COOKIE, l, { path: "/", maxAge: 31536000, sameSite: "lax" }); return res; };
 
   // Herkese açık sayfalar: dil adresten belirlenir (arama motorları her dili ayrı adreste görür)
-  if (prefixed === "en" && !isPublicPath(basePath)) return NextResponse.redirect(new URL(`${basePath}${search}`, request.url), 308);
+  if (prefixed && !isPublicPath(basePath)) return NextResponse.redirect(new URL(`${basePath}${search}`, request.url), 308);
   if (isPublicPath(basePath)) {
     const urlLocale = prefixed ?? "tr";
-    // İnsan ziyaretçi, öneksiz (Türkçe) sayfaya geldi ve tercihi İngilizce ise /en sürümüne yönlendir (botlar hariç)
-    if (!prefixed && request.method === "GET" && !BOT_UA.test(request.headers.get("user-agent") ?? "") && (cookieLang ?? geo) === "en") {
-      return setLang(NextResponse.redirect(new URL(`${pathname === "/" ? "/en" : `/en${pathname}`}${search}`, request.url), 307), "en");
+    // İnsan ziyaretçi, öneksiz (Türkçe) sayfaya geldi ve tercihi İngilizce/Almanca ise /en veya /de sürümüne yönlendir (botlar hariç)
+    const pref = cookieLang ?? geo;
+    if (!prefixed && pref !== "tr" && request.method === "GET" && !BOT_UA.test(request.headers.get("user-agent") ?? "")) {
+      return setLang(NextResponse.redirect(new URL(`${pathname === "/" ? `/${pref}` : `/${pref}${pathname}`}${search}`, request.url), 307), pref);
     }
     request.cookies.set(LOCALE_COOKIE, urlLocale);
     const build = () => {

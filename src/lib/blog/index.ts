@@ -8,6 +8,7 @@ import { EN_2 } from "./en-2";
 import { EN_3 } from "./en-3";
 import { EN_4 } from "./en-4";
 import { EN_5 } from "./en-5";
+import { DE_POSTS as DE_ALL } from "./de";
 import type { BlogPost, BlogPostEn } from "./types";
 import type { Locale } from "@/i18n";
 
@@ -18,6 +19,9 @@ export const CATEGORIES = [...new Set(POSTS.map((p) => p.category))];
 
 /** İngilizce sürümler (anahtar: Türkçe adres) */
 export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5 };
+/** Almanca sürümler (anahtar: Türkçe adres; D143). Almancası olmayan yazı Almanca sitede İngilizce gösterilir. */
+export const DE_POSTS: Record<string, BlogPostEn> = DE_ALL;
+const TRANSLATED: Record<"en" | "de", Record<string, BlogPostEn>> = { en: EN_POSTS, de: DE_POSTS };
 
 export const getPost = (slug: string) => POSTS.find((p) => p.slug === slug);
 
@@ -25,21 +29,32 @@ export const getPost = (slug: string) => POSTS.find((p) => p.slug === slug);
 export function findPost(slug: string): { post: BlogPost; lang: Locale } | null {
   const tr = POSTS.find((p) => p.slug === slug);
   if (tr) return { post: tr, lang: "tr" };
-  const en = POSTS.find((p) => EN_POSTS[p.slug]?.slug === slug);
-  return en ? { post: en, lang: "en" } : null;
+  for (const l of ["de", "en"] as const) {
+    const x = POSTS.find((p) => TRANSLATED[l][p.slug]?.slug === slug);
+    if (x) return { post: x, lang: l };
+  }
+  return null;
 }
 
-/** Yazının istenen dildeki içeriği (İngilizcesi yoksa Türkçesi) */
+/** Yazının bu dilde gösterilecek sürümünün dili: Almancası yoksa İngilizce, İngilizcesi yoksa Türkçe */
+export function postLang(p: BlogPost, locale: Locale): Locale {
+  if (locale === "de" && DE_POSTS[p.slug]) return "de";
+  if (locale !== "tr" && EN_POSTS[p.slug]) return "en";
+  return "tr";
+}
+
+/** Yazının istenen dildeki içeriği (yoksa yukarıdaki sırayla) */
 export function localizePost(p: BlogPost, locale: Locale): BlogPost & { lang: Locale } {
-  const e = locale === "en" ? EN_POSTS[p.slug] : undefined;
-  if (!e) return { ...p, lang: "tr" };
-  return { ...p, slug: e.slug, title: e.title, seoTitle: e.seoTitle, description: e.description, keywords: e.keywords, body: e.body, cta: { ...p.cta, text: e.cta.text, label: e.cta.label }, lang: "en" };
+  const l = postLang(p, locale);
+  if (l === "tr") return { ...p, lang: "tr" };
+  const e = TRANSLATED[l][p.slug];
+  return { ...p, slug: e.slug, title: e.title, seoTitle: e.seoTitle, description: e.description, keywords: e.keywords, body: e.body, cta: { ...p.cta, text: e.cta.text, label: e.cta.label }, lang: l };
 }
 
-/** Yazının dildeki tam yolu: /blog/<tr> veya /en/blog/<en> */
+/** Yazının dildeki tam yolu: /blog/<tr>, /en/blog/<en> veya /de/blog/<de> */
 export function postPath(p: BlogPost, locale: Locale): string {
-  const e = EN_POSTS[p.slug];
-  return locale === "en" && e ? `/en/blog/${e.slug}` : `/blog/${p.slug}`;
+  const l = postLang(p, locale);
+  return l === "tr" ? `/blog/${p.slug}` : `/${l}/blog/${TRANSLATED[l][p.slug].slug}`;
 }
 
 /** Okuma süresi (dakika): ortalama 200 kelime/dakika */

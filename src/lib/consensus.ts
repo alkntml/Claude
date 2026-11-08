@@ -1,4 +1,5 @@
 import "server-only";
+import { AI_LANGUAGE, type Locale } from "@/i18n/core";
 /**
  * Araştırmalar ne diyor? (D114): bir araştırma sorusuna, akademik veri tabanlarından bulunan GERÇEK makalelerin özetlerine
  * dayanan kısa cevap ve “uzlaşı göstergesi” (çalışmaların ne kadarı aynı yönde). Yalnızca özetler okunur ve bu açıkça yazılır;
@@ -59,7 +60,7 @@ const SYN_SCHEMA = {
 const SEARCH_PROVIDERS: SourceProviderId[] = ["openalex", "europepmc", "eric", "crossref", "turkiye", "plos", "hal", "springer", "ieee", "ads"];
 const norm = (s: string) => s.toLocaleLowerCase("tr").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 
-export async function researchConsensus(o: { planId: string; question: string; lang: "tr" | "en" }): Promise<ConsensusResult & { usage: Usage; cost: number; model: string; provider: string }> {
+export async function researchConsensus(o: { planId: string; question: string; lang: Locale }): Promise<ConsensusResult & { usage: Usage; cost: number; model: string; provider: string }> {
   const fast = await resolveModel(o.planId, "fast");
   const usage: Usage = { input: 0, output: 0 };
   let cost = 0;
@@ -95,13 +96,12 @@ export async function researchConsensus(o: { planId: string; question: string; l
 
   // 3) Özetlerden sentez (her makale numarasıyla)
   const model = await resolveModel(o.planId, "balanced");
-  const L = o.lang === "en";
   const system = `Sen kanıta dayalı çalışan bir araştırma asistanısın. Aşağıdaki NUMARALI makale özetleri gerçek veri tabanı kayıtlarıdır. Soruya YALNIZCA bu özetlere dayanarak cevap ver.
 KURALLAR:
 - Özetlerde olmayan hiçbir bilgiyi, sayıyı veya kaynağı yazma. Her iddianın sonuna dayandığı makale numarasını [3] veya [2, 5] biçiminde yaz.
-- “answer”: ${L ? "İngilizce" : "Türkçe"}, 3–5 cümle; ne bulunduğunu, kanıtın gücünü (çalışma türleri, tutarlılık) ve önemli koşulları özetle. Kanıt yetersiz veya çelişkiliyse bunu açıkça söyle.
-- Her makale için: relevant (soruyla doğrudan ilgili mi), stance (soru evet/hayır ise: yes = destekliyor, possibly = kısmen/koşullu, mixed = karışık sonuç, no = desteklemiyor; ilgisiz veya evet/hayır sorusu değilse none), finding (özetteki ana bulgu, ${L ? "İngilizce" : "Türkçe"}, tek cümle, yalnızca özetten), study_type.
-- “caveats”: en fazla 3 kısa uyarı (ör. yalnızca özetler okundu, çalışmalar kesitsel, örneklemler küçük). ${L ? "English" : "Türkçe"}.`;
+- “answer”: ${AI_LANGUAGE[o.lang]}, 3–5 cümle; ne bulunduğunu, kanıtın gücünü (çalışma türleri, tutarlılık) ve önemli koşulları özetle. Kanıt yetersiz veya çelişkiliyse bunu açıkça söyle.
+- Her makale için: relevant (soruyla doğrudan ilgili mi), stance (soru evet/hayır ise: yes = destekliyor, possibly = kısmen/koşullu, mixed = karışık sonuç, no = desteklemiyor; ilgisiz veya evet/hayır sorusu değilse none), finding (özetteki ana bulgu, ${AI_LANGUAGE[o.lang]}, tek cümle, yalnızca özetten), study_type.
+- “caveats”: en fazla 3 kısa uyarı (ör. yalnızca özetler okundu, çalışmalar kesitsel, örneklemler küçük). ${AI_LANGUAGE[o.lang]}.`;
   const material = papers.map((p, i) => `[${i + 1}] ${p.title} (${p.year ?? "t.y."}${p.containerTitle ? `, ${p.containerTitle}` : ""})\nÖZET: ${p.abstract!.slice(0, 1300)}`).join("\n\n");
   const syn = await complete(model, { system, messages: [{ role: "user", content: `SORU: ${o.question}\n\nMAKALELER:\n${material}` }], maxTokens: 3500, effort: "low", jsonSchema: SYN_SCHEMA });
   await track(syn);

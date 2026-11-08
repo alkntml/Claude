@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Canlıda dene: /yardim (Kullanım rehberi) ve çalışma alanında “?” → 15 adımlı rehberli tur (D142)
 - [ ] Supabase SQL Editor’de migration 37’yi çalıştır (gerçek zamanlı ortak yazım kanalı, D140); check_status.sql’de “37” YAPILMIŞ görünmeli
 - [ ] Canlıda dene: iki tarayıcıda (sahip + ortak yazar) aynı bölümü aç; üstte yeşil “Canlı”, diğerinin paragrafında renkli çizgi; farklı paragraflara yazınca metin saniyeler içinde diğer tarafta görünmeli (D140)
 - [ ] Canlıda dene: Araçlar → Literatür haritası → Ağ / Zaman çizelgesi / Konu haritası / Yeni çalışmalar (D141)

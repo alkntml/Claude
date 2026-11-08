@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 480 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 482 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -79,6 +79,7 @@ src/lib/
   structured-data.ts     JSON-LD: Organization, WebSite, SoftwareApplication, ItemList, BreadcrumbList, WebPage
   samples.ts             Örnek çıktılar sayfası içeriği (D72; kurgusal çalışma, örnek veri seti); görünüm components/samples
   faq.ts                 SSS içeriği (TR/EN) — /sss ve ana sayfa; özellik değişince güncelle
+  guide.ts               Kullanım rehberi içeriği (D142, TR/EN) — /yardim (components/guide/guide-view.tsx); rehberli tur workspace/tour.tsx adımları buradaki konulara bağlanır; menü/özellik değişince ai/help.ts ile birlikte güncelle
   growth.ts pricing.ts  Kurum lisansı, krediler (tek seferlik bakiye: creditPool, D98), davet (ödül = Ücretsiz paket hakları: referralReward; yalnız davet edene, kayıt anında DB tetikleyicisiyle — D99); WhatsApp yükseltme bağlantısı + Akademik Ekip İndirimi %30, en az 3 kişi, sınırsız üye (pricing.ts, D70)
   auth-providers.ts      Supabase’de etkin sosyal giriş sağlayıcıları (Google/Apple)
   surveys.ts             Anket modeli: soru şeması, cevap doğrulama, analize hazır tablo, CSV, kod kitabı, hızlı kontrol (surveyLint), fromAiQuestions

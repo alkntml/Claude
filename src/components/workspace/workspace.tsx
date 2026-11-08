@@ -1014,7 +1014,7 @@ export function Workspace(props: Props) {
       </div>
       <div data-tour="goal"><GoalWidget project={project} stages={stages} onOpen={() => setGoalOpen(true)} /></div>
       <div className="space-y-1.5 px-3 pt-2">
-        <button onClick={() => setBpOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", bpApproved ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
+        <button data-tour="blueprint" onClick={() => setBpOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", bpApproved ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
           <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", bpApproved ? "bg-emerald-500 text-white" : "bg-brand-600 text-white")}>{bpApproved ? <Check className="h-3 w-3" /> : <Compass className="h-3 w-3" />}</span>
           <span className="min-w-0 flex-1"><span className="block font-medium">{bpApproved ? t("Kurgu onaylandı") : project.context?.blueprint ? t("Kurgu taslağı: onayla") : t("Başlangıç: Kurguyu oluştur")}</span><span className="block truncate text-[11.5px] opacity-80">{t("Problem, amaç, yöntem ve bölüm planı")}</span></span>
         </button>
@@ -1090,17 +1090,17 @@ export function Workspace(props: Props) {
             <p className="truncate text-[14px] font-semibold text-ink-900 sm:text-[14.5px]">{mobilePane !== "nav" && active ? <span className="lg:hidden">{active.title}</span> : null}<span className={mobilePane !== "nav" && active ? "hidden lg:inline" : ""}>{project.title}</span></p>
             <SaveIndicator state={save} />
           </div>
-          <select aria-label={t("Atıf stili")} value={project.citation_style} onChange={(e) => changeStyle(e.target.value as CitationStyleId)} className="hidden h-9 rounded-xl border border-ink-200 bg-white px-2.5 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 md:block">
+          <select data-tour="style" aria-label={t("Atıf stili")} value={project.citation_style} onChange={(e) => changeStyle(e.target.value as CitationStyleId)} className="hidden h-9 rounded-xl border border-ink-200 bg-white px-2.5 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 md:block">
             {STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}
           </select>
-          <Link href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
+          <Link data-tour="quality" href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           {isLive && <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11.5px] font-medium text-emerald-700 sm:inline-flex" title={t("Ortak yazarlarla gerçek zamanlı bağlantı açık: değişiklikler anında görünür ve birleşir.")}><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>{t("Canlı")}</span>}
-          <CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} />
-          {isOwner && <ShareButton projectId={project.id} />}
-          {canEdit && <ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} />}
+          <span data-tour="coauthors" className="flex"><CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} /></span>
+          {isOwner && <span data-tour="share" className="flex"><ShareButton projectId={project.id} /></span>}
+          {canEdit && <span data-tour="tools" className="flex"><ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} /></span>}
           <span data-tour="export"><ExportMenu onExport={exportAs} stages={stages.filter((x) => x.key !== "references").map((x) => ({ id: x.id, title: x.title, prefix: prefixes[x.id] ?? "", words: x.word_count ?? 0 }))} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
           <MobileMenu isOwner={isOwner} canEdit={canEdit} coauthors={<CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} variant="row" onCountChange={(n) => setCollaborative(n > 0)} />} projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
-          <button onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
+          <button data-tour="help" onClick={() => setTourOpen(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Rehberli tur")} title={t("Rehberli tur")}><HelpCircle className="h-4 w-4" /></button>
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
         </header>
 

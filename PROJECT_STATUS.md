@@ -121,6 +121,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Next.js 15.5.28 / React 19.1.10 (güvenlik yaması)
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
+- D142 (2026-11-08): Kullanım rehberi (/yardim: hızlı başlangıç + 10 bölüm, 58 konu, arama) ve 15 adımlı rehberli tur
 - D140–D141 (2026-11-08): Gerçek zamanlı ortak yazım (Supabase Realtime, migration 37, paragraf düzeyinde otomatik birleştirme, canlı paragraf işaretleri), Bul ve değiştir; literatür ağı (ortak kaynakça + birlikte atıf, kümeler, zaman çizelgesi, konu haritası, yeni çalışmalar, boşluk analizi)
 - D139 (2026-11-07): İddia denetimi kalibrasyonu: aşırı “kısmen” kararları azaltıldı, gerçek sayfa numarası, “karar verilemedi” önbelleğe girmez
 - D138 (2026-11-07): İddia denetimi: “çelişiyor” kararı yalnızca doğrulanmış alıntıyla; gerekçe karardan önce; eski kararlar yeniden değerlendirilir

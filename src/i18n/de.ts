@@ -3705,4 +3705,16 @@ export const DE: Dict = {
   "incelenen ilişki veya etki": "den untersuchten Zusammenhang oder Effekt",
   "örneklem/bağlam (kimlerde, nerede)": "Stichprobe/Kontext (wer, wo)",
   "yöntem (ör. anket, görüşme)": "Methode (z. B. Befragung, Interview)",
+  // D151: manşet
+  "Yapay zekâ destekli eksiksiz akademik araştırma ve çalışma alanı": "Ein KI-gestützter, vollständiger Arbeitsbereich für Forschung und wissenschaftliches Schreiben",
+  "Akademik çalışmanızın tamamı, baştan sona tek bir çalışma alanında.": "Ihre gesamte wissenschaftliche Arbeit – von Anfang bis Ende in einem Arbeitsbereich.",
+  "Konu seçiminden kaynak taramasına, yazımdan atıf denetimine ve teslime kadar ihtiyaç duyduğunuz bütün araçlar bir arada. Süreci başından sonuna tek yerden yönetin; tekrarlayan ve zaman alan işleri sistem üstlensin, siz zihninizi araştırmanın kendisine ayırın.": "Alle Werkzeuge, die Sie brauchen – von der Themenwahl und Quellensuche bis zum Schreiben, zur Zitatprüfung und Abgabe. Steuern Sie den gesamten Prozess an einem Ort; wiederkehrende, zeitraubende Aufgaben übernimmt das System, und Sie widmen Ihren Kopf der eigentlichen Forschung.",
+  "Konu ve başlık": "Thema und Titel",
+  "Konu bulma, başlık önerisi": "Themenfindung, Titelvorschläge",
+  "Problem, amaç, bölüm planı": "Problem, Ziel, Gliederung",
+  "16 veri tabanında doğrulanmış tarama": "Geprüfte Suche in 16 Datenbanken",
+  "Bölüm bölüm, atıflı taslak": "Abschnitt für Abschnitt, mit Zitaten",
+  "İstatistik, grafik, anket": "Statistik, Diagramme, Umfragen",
+  "Denetim ve teslim": "Prüfung und Abgabe",
+  "İddia denetimi, Word/PDF/LaTeX": "Aussagenprüfung, Word/PDF/LaTeX",
 };

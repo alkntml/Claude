@@ -210,3 +210,4 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - D148 (2026-11-14): Sade ve zarif arayüz — nötr griler, indigo vurgu, editörde Inter ve bağlantı biçimli atıflar, düz araç çubuğu, çerçevesiz üst düğmeler
 - D149 (2026-11-14): Seçim menüsünde “Yapay zekâ ile düzenle” (14 eylem), kaynak tercihleri + izin kartı, 5 adımlı sihirbaz (istem gücü, yapı seçimi), “Mevcut çalışmamı içe aktar” (yapay zekâ künye analizi + bölümlere ayırma), İçe aktarma merkezi (tüm çalışma, PDF, Zotero API, Mendeley dosya, DOI, bib/ris)
 - D150 (2026-11-14): İddia denetimi — yazımda atıf doğruluğu kuralı, denetimde zayıf sonuçlar için geniş ikinci okuma (ölçüt gevşetilmedi)
+- D151 (2026-11-14): Ana sayfa manşeti ortalandı, eğik yazılar kaldırıldı; “eksiksiz akademik çalışma alanı” mesajı ve süreç şeridi

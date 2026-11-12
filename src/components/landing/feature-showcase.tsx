@@ -250,7 +250,7 @@ export function FeatureShowcase() {
       <div className="mx-auto max-w-6xl px-6">
         <FadeIn className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Özellikler")}</p>
-          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">{t("Akademik çalışmanın her adımı,")} <span className="italic">{t("tek ve güvenilir")}</span> {t("bir çalışma alanında")}</h2>
+          <h2 className="mt-3 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">{t("Akademik çalışmanın her adımı,")} {t("tek ve güvenilir")} {t("bir çalışma alanında")}</h2>
           <p className="mt-4 text-[17px] leading-relaxed text-ink-500">{t("Fikirden teslime kadar: literatür taraması, yazım, atıf denetimi, sistematik derleme, veri analizi ve kalite kontrolü. Her biri gerçek kaynaklara ve doğrulanabilir yöntemlere dayanır.")}</p>
         </FadeIn>
 

@@ -69,8 +69,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Academiana | The Complete Academic Research Workspace", de: "Academiana | Der komplette Arbeitsbereich für Forschung",
     },
     description: {
-      tr: "Tez, makale ve literatür taramanızı gerçek kaynaklarla yazın; atıflı her cümle kaynağında denetlenir. APA 7, PRISMA, istatistik, anket ve Word çıktısı.",
-      en: "Write your thesis, article and literature review with real sources; every cited sentence is checked against its source. APA 7, PRISMA, statistics, Word export.", de: "Abschlussarbeit, Artikel und Literaturübersicht mit echten Quellen schreiben; jeder zitierte Satz wird an der Quelle geprüft. APA 7, PRISMA, Statistik.",
+      tr: "Yapay zekâ destekli eksiksiz akademik çalışma alanı: konu seçiminden kaynak taramasına, yazımdan atıf denetimine kadar tüm süreci tek yerden yönetin.",
+      en: "An AI-assisted, complete academic workspace: manage the whole process in one place, from topic and source search to writing and citation checking.", de: "KI-gestützter, vollständiger Forschungsarbeitsbereich: der ganze Prozess an einem Ort, von Thema und Quellensuche bis zu Schreiben und Zitatprüfung.",
     },
     keywords: {
       tr: ["tez yazma", "yapay zeka tez yazma", "akademik yazım asistanı", "makale yazma", "literatür taraması", "APA 7 kaynak gösterme", "kaynakça oluşturma", "TÜBİTAK 2209-A", "tez önerisi", "istatistik analizi", "anket hazırlama", "akademik İngilizce çeviri", "ortak yazarla tez yazma", "iddia denetimi", "PRISMA sistematik derleme", "Academiana"],

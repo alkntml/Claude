@@ -30,7 +30,7 @@ export function HowItWorks() {
           {steps.map((s, i) => (
             <FadeIn key={s.title} delay={i * 0.05} className="bg-ink-950/90 p-7 transition hover:bg-ink-900">
               <div className="flex items-center gap-3">
-                <span className="font-serif text-3xl italic text-brand-300/70">{String(i + 1).padStart(2, "0")}</span>
+                <span className="font-serif text-3xl font-semibold text-brand-300">{String(i + 1).padStart(2, "0")}</span>
                 <s.icon className="h-5 w-5 text-white/70" />
               </div>
               <h3 className="mt-4 text-lg font-semibold">{t(s.title)}</h3>

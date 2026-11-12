@@ -3713,4 +3713,16 @@ export const EN: Record<string, string> = {
   "incelenen ilişki veya etki": "the relationship or effect studied",
   "örneklem/bağlam (kimlerde, nerede)": "sample/context (who, where)",
   "yöntem (ör. anket, görüşme)": "method (e.g. survey, interview)",
+  // D151: manşet
+  "Yapay zekâ destekli eksiksiz akademik araştırma ve çalışma alanı": "An AI-assisted, complete academic research and writing workspace",
+  "Akademik çalışmanızın tamamı, baştan sona tek bir çalışma alanında.": "Your entire academic work, from start to finish, in one workspace.",
+  "Konu seçiminden kaynak taramasına, yazımdan atıf denetimine ve teslime kadar ihtiyaç duyduğunuz bütün araçlar bir arada. Süreci başından sonuna tek yerden yönetin; tekrarlayan ve zaman alan işleri sistem üstlensin, siz zihninizi araştırmanın kendisine ayırın.": "Every tool you need, from choosing a topic and searching sources to writing, checking citations and submitting. Manage the whole process from one place; let the system take over repetitive, time-consuming tasks while you keep your mind on the research itself.",
+  "Konu ve başlık": "Topic and title",
+  "Konu bulma, başlık önerisi": "Topic finder, title suggestions",
+  "Problem, amaç, bölüm planı": "Problem, aim, section plan",
+  "16 veri tabanında doğrulanmış tarama": "Verified search in 16 databases",
+  "Bölüm bölüm, atıflı taslak": "Section by section, with citations",
+  "İstatistik, grafik, anket": "Statistics, charts, surveys",
+  "Denetim ve teslim": "Review and submission",
+  "İddia denetimi, Word/PDF/LaTeX": "Claim audit, Word/PDF/LaTeX",
 };

@@ -1,9 +1,10 @@
 "use client";
 import { AlertsTab } from "./alerts";
+import { isSafeInternalLink } from "@/lib/notify";
 import { AutopilotTab } from "./autopilot";
 import { DiscountsTab } from "./discounts";
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent } from "lucide-react";
+import { Activity, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -252,7 +253,8 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
   const [d, setD] = useState<any | null>(null);
   const [days, setDays] = useState(30);
   const [date, setDate] = useState("");
-  const [credit, setCredit] = useState({ ai: 10, search: 0, days: 30, note: "" });
+  const [credit, setCredit] = useState({ ai: 10, search: 0, pages: 0, days: 30, note: "" });
+  const [msg, setMsg] = useState({ title: "", message: "", link: "" });
   const [pur, setPur] = useState({ name: "", phone: "", amount: "", note: "" });
   const load = useCallback(async () => { try { const r = await api<any>(`/api/admin/user/${id}`); setD(r); setDate(r.profile.plan_expires_at ? r.profile.plan_expires_at.slice(0, 10) : ""); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [id, toast]);
   useEffect(() => { load(); }, [load]);
@@ -325,16 +327,42 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="font-semibold">Ek kullanım hakkı ver</p>
               <p className="mt-0.5 text-xs text-ink-500">Paket değiştirmeden bu ayın sınırına ekler (ör. telafi, kampanya). Kilit varsa hemen yeniden değerlendirilir.</p>
-              <div className="mt-2 grid grid-cols-3 gap-2 text-xs text-ink-500">
+              <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-ink-500 sm:grid-cols-4">
+                <label>Sayfa<input className="input !py-1.5" type="number" min={0} value={credit.pages} onChange={(e) => setCredit({ ...credit, pages: Number(e.target.value) || 0 })} /></label>
                 <label>YZ isteği<input className="input !py-1.5" type="number" min={0} value={credit.ai} onChange={(e) => setCredit({ ...credit, ai: Number(e.target.value) || 0 })} /></label>
                 <label>Tarama<input className="input !py-1.5" type="number" min={0} value={credit.search} onChange={(e) => setCredit({ ...credit, search: Number(e.target.value) || 0 })} /></label>
                 <label>Geçerlilik (gün)<input className="input !py-1.5" type="number" min={1} value={credit.days} onChange={(e) => setCredit({ ...credit, days: Number(e.target.value) || 30 })} /></label>
               </div>
               <input className="input mt-2 !py-1.5" placeholder="Not (isteğe bağlı)" value={credit.note} onChange={(e) => setCredit({ ...credit, note: e.target.value })} />
-              <Button className="mt-2" size="sm" onClick={() => act({ action: "grant_credits", aiRequests: credit.ai, sourceSearches: credit.search, days: credit.days, note: credit.note }, "Ek hak verildi")}>Hakkı ver</Button>
+              <Button className="mt-2" size="sm" onClick={() => act({ action: "grant_credits", aiRequests: credit.ai, sourceSearches: credit.search, pages: credit.pages, days: credit.days, note: credit.note }, "Ek hak verildi")}>Hakkı ver</Button>
               {d.credits.length > 0 && <div className="mt-3 space-y-0.5">{d.credits.map((c: any, i: number) => <p key={i} className="text-[12px] text-ink-500">+{c.amount} {c.kind === "ai_requests" ? "YZ isteği" : c.kind === "pages" ? "sayfa" : "tarama"} · {c.reason} · {c.expires_at ? `${new Date(c.expires_at).toLocaleDateString("tr-TR")}’e kadar` : "süresiz"}</p>)}</div>}
             </div>
           </div>
+        </div>
+        <div className="mt-4 rounded-2xl border border-ink-100 p-4">
+          <p className="flex items-center gap-2 font-semibold"><Bell className="h-4 w-4" /> Bildirim gönder</p>
+          <p className="mt-0.5 text-xs text-ink-500">Yalnızca bu kullanıcıya gider; uygulamada zil simgesindeki bildirim kutusuna düşer (okunmamış sayısı kırmızıyla görünür). Mesaj yazdığınız gibi gösterilir, çevrilmez.</p>
+          <div className="mt-2 grid gap-2">
+            <input className="input !py-1.5" placeholder="Başlık (ör. Paketiniz tanımlandı)" maxLength={120} value={msg.title} onChange={(e) => setMsg({ ...msg, title: e.target.value })} />
+            <textarea className="input min-h-[90px]" placeholder="Mesaj" maxLength={2000} value={msg.message} onChange={(e) => setMsg({ ...msg, message: e.target.value })} />
+            <input className="input !py-1.5" placeholder="Bağlantı (isteğe bağlı, site içi: /hesap, /panel, /fiyatlar…)" maxLength={300} value={msg.link} onChange={(e) => setMsg({ ...msg, link: e.target.value.trim() })} />
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Button size="sm" disabled={!msg.title.trim() || !msg.message.trim() || (!!msg.link && !isSafeInternalLink(msg.link))} onClick={async () => { await act({ action: "notify", title: msg.title, message: msg.message, link: msg.link }, "Bildirim gönderildi"); setMsg({ title: "", message: "", link: "" }); }}>Gönder</Button>
+            {msg.link && !isSafeInternalLink(msg.link) && <span className="text-xs text-rose-600">Bağlantı / ile başlamalı (yalnızca site içi).</span>}
+          </div>
+          {(d.messages ?? []).length > 0 && (
+            <div className="mt-3 space-y-1.5">
+              <p className="text-xs font-medium text-ink-500">Gönderilenler</p>
+              {d.messages.map((m: any) => (
+                <div key={m.id} className="rounded-xl bg-ink-50 px-3 py-2 text-[13px]">
+                  <div className="flex items-center justify-between gap-2"><b className="min-w-0 truncate">{m.data?.title}</b>{m.read_at ? <Badge tone="green">Okundu</Badge> : <Badge tone="amber">Okunmadı</Badge>}</div>
+                  <p className="mt-0.5 whitespace-pre-line text-ink-600">{m.data?.message}</p>
+                  <p className="mt-0.5 text-[11.5px] text-ink-400">{new Date(m.created_at).toLocaleString("tr-TR")}{m.data?.link ? ` · ${m.data.link}` : ""}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="mt-4 rounded-2xl border border-ink-100 p-4">
           <p className="font-semibold">Kullanım geçmişi (kanıt kaydı)</p>

@@ -726,3 +726,6 @@ Maliyet–gelir bağı korunur: sayfa vaatleri D95’te 1/3 maliyet bütçesinde
 
 **Davet ödülü = bir Ücretsiz paket, daha fazlası değil.** Yalnızca davet eden, davet edilen kayıt olup e-postasını doğruladığında bir kez: Ücretsiz paketin aylık hakları kadar istek + tarama + **sayfa** (yeni kredi türü `pages`, 60 gün, tek seferlik bakiye — creditPool). Metinler (fiyatlar, hediye kutusu, hesap, bildirim, rehber, SSS, asistan) güncellendi; yönetim Davetler ekranındaki eski “ikisine de” ifadesi ve aylık sayaç düzeltildi.
 
+## D146 — Kullanıcıya özel yönetici bildirimi (2026-11-14)
+Yönetim → Kullanıcılar → kullanıcı ayrıntısı → “Bildirim gönder”: başlık (≤120), mesaj (≤2000), isteğe bağlı site içi bağlantı. `notifications` tablosuna `admin_message` türüyle yazılır (yeni migration gerekmez; tablo migration 24). Kullanıcı zil simgesindeki kutuda görür; mesaj yazıldığı gibi (çevrilmeden, satır sonlarıyla) gösterilir, bağlantı varsa “Aç”. Bağlantı yalnızca `/` ile başlayan site içi yol olabilir (`lib/notify.ts` INTERNAL_LINK_RE; dış adres, `//`, ters eğik çizgi reddedilir — açık yönlendirme/oltalama önlemi), hem sunucuda hem gösterimde denetlenir. Ayrıntı ekranında gönderilen mesajlar okundu/okunmadı bilgisiyle listelenir. Aynı ekrandaki “Ek kullanım hakkı ver”e sayfa alanı eklendi (D145 sayfa kredisi; migration 38 gerekir).
+

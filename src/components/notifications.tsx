@@ -1,6 +1,7 @@
 "use client";
 import { dateLocale } from "@/i18n/core";
-import { Bell, Gift, Info, ShieldAlert, Users } from "lucide-react";
+import { isSafeInternalLink } from "@/lib/notify";
+import { Bell, Gift, Info, Megaphone, ShieldAlert, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
@@ -76,6 +77,8 @@ export function NotificationBell({ className, align = "left" }: { className?: st
       };
       return { title: d.rule === "cost_40" ? t("Tek Proje maliyet uyarısı") : t("Kötüye kullanım uyarısı (Tek Proje)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
     }
+    // D146: yöneticinin bu kullanıcıya özel mesajı (yazıldığı gibi gösterilir)
+    if (n.kind === "admin_message") { const l = String(d0(n).link ?? ""); return { title: String(d0(n).title || t("Academiana’dan mesaj")), body: String(d0(n).message ?? ""), ...(isSafeInternalLink(l) ? { href: l, cta: t("Aç") } : {}) }; }
     if (n.kind === "admin_warning") return { title: t("Hesabınızla ilgili uyarı"), body: d0(n).message ? String(d0(n).message) : t("Kullanımınız paket kurallarına uygun görünmüyor. Ayrıntı için bizimle iletişime geçin.") };
     if (n.kind === "referral_cap") return { title: t("Davetiniz kaydoldu"), body: t("Davet ettiğiniz bir kişi kaydoldu, ancak bu ayki davet ödülü sınırına ({n}) ulaştığınız için ödül tanımlanmadı. Sınır her ayın başında yenilenir.", { n: n.data.cap ?? 0 }) };
     return { title: t("Bildirim"), body: "" };
@@ -95,13 +98,13 @@ export function NotificationBell({ className, align = "left" }: { className?: st
             {items.length === 0 && <p className="px-4 py-6 text-center text-sm text-ink-400">{t("Henüz bildirim yok.")}</p>}
             {items.map((n) => {
               const x = text(n);
-              const Icon = n.kind.startsWith("coauthor") ? Users : n.kind.startsWith("referral") ? Gift : n.kind === "abuse_alert" || n.kind === "admin_warning" ? ShieldAlert : Info;
+              const Icon = n.kind.startsWith("coauthor") ? Users : n.kind.startsWith("referral") ? Gift : n.kind === "abuse_alert" || n.kind === "admin_warning" ? ShieldAlert : n.kind === "admin_message" ? Megaphone : Info;
               return (
                 <div key={n.id} className={cn("flex gap-3 border-b border-ink-50 px-4 py-3 last:border-0", !n.read_at && "bg-brand-50/40")}>
                   <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-fuchsia-50 text-fuchsia-600"><Icon className="h-4 w-4" /></span>
                   <div className="min-w-0">
                     <p className="text-[13.5px] font-medium text-ink-900">{x.title}</p>
-                    {x.body && <p className="mt-0.5 text-[12.5px] leading-relaxed text-ink-600">{x.body}</p>}
+                    {x.body && <p className="mt-0.5 whitespace-pre-line break-words text-[12.5px] leading-relaxed text-ink-600">{x.body}</p>}
                     {x.href && <a href={x.href} className="mt-1 inline-block text-[12.5px] font-semibold text-brand-700 hover:underline">{x.cta} →</a>}
                     <p className="mt-1 text-[11px] text-ink-400">{when(n.created_at)}</p>
                   </div>

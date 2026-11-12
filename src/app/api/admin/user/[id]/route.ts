@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { userDiscount } from "@/lib/discount-server";
+import { INTERNAL_LINK_RE } from "@/lib/notify";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireAdmin } from "@/lib/auth";
 import { addDays } from "@/lib/admin-users";
@@ -16,7 +17,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
   const db = adminClient();
   const { data: profile } = await db.from("profiles").select("*").eq("id", id).maybeSingle();
   if (!profile) throw new ApiError(404, "Kullanıcı bulunamadı");
-  const [usage, limits, projects, credits, passes, plan, margin, org, purchases] = await Promise.all([
+  const [usage, limits, projects, credits, passes, plan, margin, org, messages, purchases] = await Promise.all([
     usageSummary(id),
     effectiveLimits(id, profile.plan_id),
     db.from("projects").select("id, title, work_type, status, updated_at").eq("user_id", id).order("updated_at", { ascending: false }).limit(20),
@@ -25,6 +26,8 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     db.from("plans").select("name, price_monthly").eq("id", profile.plan_id).maybeSingle(),
     getSetting("billing.margin"),
     db.from("organization_members").select("role, organizations(name, plan_id)").eq("user_id", id).limit(1),
+    // D146: bu kullanıcıya gönderilen yönetici mesajları (okundu bilgisiyle)
+    db.from("notifications").select("id, data, read_at, created_at").eq("user_id", id).eq("kind", "admin_message").order("created_at", { ascending: false }).limit(30),
     // D109: satın alma kayıtları (tablo yoksa boş döner)
     db.from("plan_purchases").select("plan_id, payer_name, payer_phone, amount_try, note, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(20),
   ]);
@@ -41,6 +44,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     plan: plan.data ?? null,
     purchases: purchases.data ?? [],
     discount,
+    messages: messages.data ?? [],
     single,
     money: { revenue_try: plan.data ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, cost_try: Math.round(usage.cost_usd * margin.usd_try), cost_share: revenueUsd ? Math.round((usage.cost_usd / revenueUsd) * 100) : null },
   });
@@ -54,7 +58,12 @@ const Action = z.discriminatedUnion("action", [
     // D109: ödeme WhatsApp’tan alındığı için ödeyen kişinin bilgisi paketle birlikte kaydedilir (Tek Proje’de ad zorunlu)
     purchase: z.object({ payerName: z.string().trim().max(200).default(""), payerPhone: z.string().trim().max(40).default(""), amountTry: z.number().min(0).max(1_000_000).nullable().default(null), note: z.string().trim().max(1000).default("") }).optional(),
   }),
-  z.object({ action: z.literal("grant_credits"), aiRequests: z.number().int().min(0).max(100000).default(0), sourceSearches: z.number().int().min(0).max(100000).default(0), days: z.number().int().min(1).max(365).default(30), note: z.string().max(200).default("") }),
+  z.object({ action: z.literal("grant_credits"), aiRequests: z.number().int().min(0).max(100000).default(0), sourceSearches: z.number().int().min(0).max(100000).default(0), pages: z.number().int().min(0).max(100000).default(0), days: z.number().int().min(1).max(365).default(30), note: z.string().max(200).default("") }),
+  // D146: kullanıcıya özel bildirim (zil simgesindeki kutuya düşer). Bağlantı yalnızca site içi yol olabilir.
+  z.object({
+    action: z.literal("notify"), title: z.string().trim().min(1).max(120), message: z.string().trim().min(1).max(2000),
+    link: z.string().trim().max(300).regex(INTERNAL_LINK_RE, "Bağlantı / ile başlayan site içi bir yol olmalı").or(z.literal("")).default(""),
+  }),
 ]);
 
 /** Yönetici işlemleri: süre uzat / bitiş tarihi / paket ata (süreli) / ek hak ver */
@@ -91,10 +100,16 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
     const rows = [
       ...(b.aiRequests ? [{ user_id: id, kind: "ai_requests", amount: b.aiRequests, reason: `admin:${b.note}`.slice(0, 200), expires_at: expires }] : []),
       ...(b.sourceSearches ? [{ user_id: id, kind: "source_searches", amount: b.sourceSearches, reason: `admin:${b.note}`.slice(0, 200), expires_at: expires }] : []),
+      ...(b.pages ? [{ user_id: id, kind: "pages", amount: b.pages, reason: `admin:${b.note}`.slice(0, 200), expires_at: expires }] : []),
     ];
     if (!rows.length) throw new ApiError(422, "En az bir hak miktarı girin");
     const { error } = await db.from("usage_credits").insert(rows);
     if (error) throw error;
+  }
+  if (b.action === "notify") {
+    const { error } = await db.from("notifications").insert({ user_id: id, kind: "admin_message", data: { title: b.title, message: b.message, ...(b.link ? { link: b.link } : {}), by: admin.user.id } });
+    if (error) throw new ApiError(500, "Bildirim gönderilemedi (migration 24 çalıştırıldı mı?)");
+    return json({ ok: true });
   }
   if (Object.keys(update).length) {
     const { error } = await db.from("profiles").update(update).eq("id", id);

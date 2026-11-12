@@ -3576,4 +3576,7 @@ export const DE: Dict = {
   "İndirim kodum: {code} ({label}; liste fiyatı {list})": "Mein Rabattcode: {code} ({label}; Listenpreis {list})",
   "İndirim kodunuz {code} uygulandı": "Ihr Rabattcode {code} wurde angewendet",
   "İndirim kodunuz: {code} ({label}). İndirimli fiyatlar aşağıda gösterilir ve yükseltme mesajına eklenir.": "Ihr Rabattcode: {code} ({label}). Die reduzierten Preise werden unten angezeigt und der Upgrade-Nachricht hinzugefügt.",
+  // D146: yönetici mesajı
+  "Academiana’dan mesaj": "Nachricht von Academiana",
+  "Aç": "Öffnen",
 };

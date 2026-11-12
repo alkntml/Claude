@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 519 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 520 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -108,6 +108,7 @@ src/lib/
   source-ask.ts          Kaynağa sor (D112); consensus.ts Araştırmalar ne diyor? (D114); autocomplete.ts satır içi öneri (D113, kullanım türü autocomplete) + workspace/inline-suggest.ts
   writing-lang.ts        Çalışmanın yazım dili tr/en/de (D144): writingLang, LANG_NAME, LANG_TAG — arayüz dilinden (Locale) ayrıdır
   discount.ts discount-server.ts  İndirim kodları (D145): indirimli fiyat, geçerlilik; userDiscount, attachDiscount (sosyal giriş); yönetim components/admin/discounts.tsx, uç api/admin/discounts
+  notify.ts              Yönetici mesajı bağlantı denetimi (D146: yalnız site içi yol); bildirim türü admin_message, gönderim admin/user/[id] action notify
   pages.ts               Sayfa hakkı (D145): 1 sayfa = 344 kelime, PAGE_ACTIONS (hak dolunca duran yazım eylemleri), chargedWords; sınır usage.ts assertWithinLimits(..., { writes })
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                core.ts (sözlüksüz çekirdek: Locale tr/en/de, pick, contentLang, AI_LANGUAGE; istemci bunu kullanır), index.ts (core + sözlükler, sunucu; dictFor), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts + de.ts (sözlükler)

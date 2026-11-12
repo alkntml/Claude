@@ -3584,4 +3584,7 @@ export const EN: Record<string, string> = {
   "İndirim kodum: {code} ({label}; liste fiyatı {list})": "My discount code: {code} ({label}; list price {list})",
   "İndirim kodunuz {code} uygulandı": "Your discount code {code} has been applied",
   "İndirim kodunuz: {code} ({label}). İndirimli fiyatlar aşağıda gösterilir ve yükseltme mesajına eklenir.": "Your discount code: {code} ({label}). Discounted prices are shown below and added to the upgrade message.",
+  // D146: yönetici mesajı
+  "Academiana’dan mesaj": "Message from Academiana",
+  "Aç": "Open",
 };

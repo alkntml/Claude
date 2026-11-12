@@ -3716,7 +3716,7 @@ export const EN: Record<string, string> = {
   // D151: manşet
   "Yapay zekâ destekli eksiksiz akademik araştırma ve çalışma alanı": "An AI-assisted, complete academic research and writing workspace",
   "Akademik çalışmanızın tamamı, baştan sona tek bir çalışma alanında.": "Your entire academic work, from start to finish, in one workspace.",
-  "Konu seçiminden kaynak taramasına, yazımdan atıf denetimine ve teslime kadar ihtiyaç duyduğunuz bütün araçlar bir arada. Süreci başından sonuna tek yerden yönetin; tekrarlayan ve zaman alan işleri sistem üstlensin, siz zihninizi araştırmanın kendisine ayırın.": "Every tool you need, from choosing a topic and searching sources to writing, checking citations and submitting. Manage the whole process from one place; let the system take over repetitive, time-consuming tasks while you keep your mind on the research itself.",
+  "Tezinizi, makalenizi ve bilimsel araştırmalarınızı yapay zekâ desteğiyle; doğrulanmış kaynaklara dayalı, her atıfı denetlenmiş ve eksiksiz biçimde yazın.": "Write your thesis, articles and research with AI support: complete, grounded in verified sources, with every citation checked.",
   "Konu ve başlık": "Topic and title",
   "Konu bulma, başlık önerisi": "Topic finder, title suggestions",
   "Problem, amaç, bölüm planı": "Problem, aim, section plan",

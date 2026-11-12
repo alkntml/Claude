@@ -3708,7 +3708,7 @@ export const DE: Dict = {
   // D151: manşet
   "Yapay zekâ destekli eksiksiz akademik araştırma ve çalışma alanı": "Ein KI-gestützter, vollständiger Arbeitsbereich für Forschung und wissenschaftliches Schreiben",
   "Akademik çalışmanızın tamamı, baştan sona tek bir çalışma alanında.": "Ihre gesamte wissenschaftliche Arbeit – von Anfang bis Ende in einem Arbeitsbereich.",
-  "Konu seçiminden kaynak taramasına, yazımdan atıf denetimine ve teslime kadar ihtiyaç duyduğunuz bütün araçlar bir arada. Süreci başından sonuna tek yerden yönetin; tekrarlayan ve zaman alan işleri sistem üstlensin, siz zihninizi araştırmanın kendisine ayırın.": "Alle Werkzeuge, die Sie brauchen – von der Themenwahl und Quellensuche bis zum Schreiben, zur Zitatprüfung und Abgabe. Steuern Sie den gesamten Prozess an einem Ort; wiederkehrende, zeitraubende Aufgaben übernimmt das System, und Sie widmen Ihren Kopf der eigentlichen Forschung.",
+  "Tezinizi, makalenizi ve bilimsel araştırmalarınızı yapay zekâ desteğiyle; doğrulanmış kaynaklara dayalı, her atıfı denetlenmiş ve eksiksiz biçimde yazın.": "Schreiben Sie Abschlussarbeit, Artikel und Forschung mit KI-Unterstützung: vollständig, gestützt auf geprüfte Quellen, jedes Zitat kontrolliert.",
   "Konu ve başlık": "Thema und Titel",
   "Konu bulma, başlık önerisi": "Themenfindung, Titelvorschläge",
   "Problem, amaç, bölüm planı": "Problem, Ziel, Gliederung",

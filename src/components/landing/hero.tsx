@@ -22,7 +22,7 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
             {t("Akademik çalışmanızın tamamı, baştan sona tek bir çalışma alanında.")}
           </h1>
           <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-ink-600 sm:text-xl">
-            {t("Konu seçiminden kaynak taramasına, yazımdan atıf denetimine ve teslime kadar ihtiyaç duyduğunuz bütün araçlar bir arada. Süreci başından sonuna tek yerden yönetin; tekrarlayan ve zaman alan işleri sistem üstlensin, siz zihninizi araştırmanın kendisine ayırın.")}
+            {t("Tezinizi, makalenizi ve bilimsel araştırmalarınızı yapay zekâ desteğiyle; doğrulanmış kaynaklara dayalı, her atıfı denetlenmiş ve eksiksiz biçimde yazın.")}
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-7 font-medium text-white transition hover:bg-brand-700">

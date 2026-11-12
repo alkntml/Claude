@@ -96,7 +96,7 @@ Academiana’nın **Konu bulma** aracı, yazdığınız alanla ilgili OpenAlex�
     category: "Araştırma ve yöntem",
     keywords: ["literatür taraması nasıl yapılır", "literatür taraması örneği", "kaynak tarama", "sistematik derleme"],
     date: "2026-11-02",
-    cta: { text: "OpenAlex, Crossref, PubMed, DergiPark dahil 10’dan fazla veri tabanında aynı anda arayın; kaynaklar otomatik doğrulanır.", href: "/kayit", label: "Kaynak aramaya başla" },
+    cta: { text: "OpenAlex, Crossref, PubMed, DergiPark dahil 16 veri tabanında aynı anda arayın; kaynaklar otomatik doğrulanır.", href: "/kayit", label: "Kaynak aramaya başla" },
     body: `Literatür taraması, konunuzla ilgili mevcut bilgiyi bulmak, değerlendirmek ve sentezlemek demektir. Amaç kaynakları tek tek özetlemek değil, alandaki bilginin bugün nerede durduğunu ve sizin çalışmanızın nereye oturduğunu göstermektir.
 
 ## 1. Anahtar kelimeleri belirleyin
@@ -139,7 +139,7 @@ Literatür bölümünüzün sonunda okuyucu şu soruya cevap bulmalıdır: "Bu �
 
 ## Academiana ile literatür taraması
 
-Academiana, yazdığınız konu için arama stratejisini planlar ve 10’dan fazla veri tabanında aynı anda arama yapar. Bulunan kaynaklar DOI üzerinden doğrulanır; her kaynağın yanında künye, özet veya tam metin düzeyinde mi okunduğu açıkça yazar. Literatür matrisi ile kaynaklarınızı tablo hâlinde karşılaştırabilir, açık erişimli tam metinlerden sayfa numaralı alıntılar yapabilirsiniz.`,
+Academiana, yazdığınız konu için arama stratejisini planlar ve 16 veri tabanında aynı anda arama yapar. Bulunan kaynaklar DOI üzerinden doğrulanır; her kaynağın yanında künye, özet veya tam metin düzeyinde mi okunduğu açıkça yazar. Literatür matrisi ile kaynaklarınızı tablo hâlinde karşılaştırabilir, açık erişimli tam metinlerden sayfa numaralı alıntılar yapabilirsiniz.`,
   },
   {
     slug: "apa-7-atif-kurallari",

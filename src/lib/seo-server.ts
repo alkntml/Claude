@@ -42,7 +42,7 @@ export function buildMeta(m: MetaInput, locale: Locale): Metadata {
     description,
     keywords: m.keywords ? pick(m.keywords, locale) : undefined,
     alternates: {
-      canonical: self, languages: { tr: trPath, en: enPath, ...(hasDe ? { de: dePath } : {}), "x-default": trPath },
+      canonical: self, languages: { tr: trPath, en: enPath, ...(hasDe ? { de: dePath } : {}), "x-default": enPath },
       // Blog sayfalarında RSS beslemesi (D107)
       ...(trPath.startsWith("/blog") ? { types: { "application/rss+xml": [{ url: locale === "tr" ? "/blog/rss.xml" : `/${locale === "de" && hasDe ? "de" : "en"}/blog/rss.xml`, title: `${SITE_NAME} Blog` }] } } : {}),
     },

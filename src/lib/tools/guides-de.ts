@@ -1,6 +1,6 @@
 /**
  * Ücretsiz araç rehberlerinin Almancası (D143). Yapı ve içerik guides.ts’teki Türkçe/İngilizce metinle birebir aynıdır;
- * blog bağlantıları Almanca yazı olmadığı için İngilizce yazılara gider. Metin değişince burası da güncellenmeli.
+ * blog bağlantıları Almanca yazılara gider. Metin değişince burası da güncellenmeli.
  */
 import type { ToolGuide } from "./guides";
 
@@ -17,7 +17,7 @@ export const TOOL_GUIDES_DE: Record<string, ToolGuide> = {
         "Die Anzeige ist keine Abstimmung: Eine einzige belastbare Metaanalyse kann mehr Gewicht haben als viele kleine Querschnittsstudien. Achten Sie deshalb auch auf die Studientypen.",
       ] },
       { h: "Grenzen", p: [
-        "Die Antwort beruht nur auf Abstracts; Volltexte werden nicht gelesen. Die gefundenen Artikel sind Suchergebnisse der Datenbanken, nicht das gesamte Forschungsfeld. Lesen Sie einen Artikel selbst, bevor Sie seine Ergebnisse in Ihrer Arbeit verwenden. Für eine systematische Recherche siehe unseren [Leitfaden zur Literaturübersicht](/en/blog/how-to-write-a-literature-review) (Englisch) und den [Leitfaden zum systematischen Review](/en/blog/systematic-review-meta-analysis-prisma-2020) (Englisch).",
+        "Die Antwort beruht nur auf Abstracts; Volltexte werden nicht gelesen. Die gefundenen Artikel sind Suchergebnisse der Datenbanken, nicht das gesamte Forschungsfeld. Lesen Sie einen Artikel selbst, bevor Sie seine Ergebnisse in Ihrer Arbeit verwenden. Für eine systematische Recherche siehe unseren [Leitfaden zur Literaturübersicht](/de/blog/literaturrecherche-literaturuebersicht-schreiben) und den [Leitfaden zum systematischen Review](/de/blog/systematisches-review-metaanalyse-prisma-2020).",
       ] },
     ],
     faq: [
@@ -39,7 +39,7 @@ export const TOOL_GUIDES_DE: Record<string, ToolGuide> = {
         "**Nicht gefunden / verdächtig:** Kein Datensatz passt. Prüfen Sie die Quelle manuell im Zeitschriftenarchiv, in Google Scholar oder in der jeweiligen nationalen Datenbank.",
       ] },
       { h: "„Nicht gefunden“ heißt nicht immer „erfunden“", p: [
-        "Bücher, Buchkapitel, Abschlussarbeiten, Konferenzbeiträge und manche nationale Zeitschriften sind in diesen Datenbanken möglicherweise gar nicht erfasst. Sie können als „nicht gefunden“ erscheinen; prüfen Sie sie dort, wo sie erschienen sind. Eine ausführliche Methode finden Sie in unserem [Leitfaden zum Erkennen KI-erfundener Quellen](/en/blog/detecting-ai-fabricated-references) (Englisch).",
+        "Bücher, Buchkapitel, Abschlussarbeiten, Konferenzbeiträge und manche nationale Zeitschriften sind in diesen Datenbanken möglicherweise gar nicht erfasst. Sie können als „nicht gefunden“ erscheinen; prüfen Sie sie dort, wo sie erschienen sind. Eine ausführliche Methode finden Sie in unserem [Leitfaden zum Erkennen KI-erfundener Quellen](/de/blog/ki-erfundene-quellen-erkennen).",
       ] },
     ],
     faq: [
@@ -59,7 +59,7 @@ export const TOOL_GUIDES_DE: Record<string, ToolGuide> = {
       ] },
       { h: "Warum der Datensatz der Registrierungsagentur?", p: [
         "Die meisten Fehler im Literaturverzeichnis entstehen durch abgetippte Angaben: falsches Jahr, fehlende Mitautorin, falscher Band. Ein per DOI abgerufener Datensatz ist das, was der Verlag registriert hat. Prüfen Sie dennoch zum Schluss die Autorennamen und die Groß- und Kleinschreibung.",
-        "Ausführliche Stilregeln finden Sie in unserem [APA-7-Zitierleitfaden](/en/blog/apa-7-citation-guide) (Englisch) und unter [Literaturverzeichnis richtig erstellen](/en/blog/how-to-write-a-bibliography-citation-styles) (Englisch).",
+        "Ausführliche Stilregeln finden Sie in unserem [APA-7-Zitierleitfaden](/de/blog/apa-7-zitierregeln) und unter [Literaturverzeichnis richtig erstellen](/de/blog/literaturverzeichnis-erstellen-zitierstile).",
       ] },
     ],
     faq: [
@@ -102,7 +102,7 @@ export const TOOL_GUIDES_DE: Record<string, ToolGuide> = {
         "Das Ergebnis ist die Zahl gültiger Antworten, die in die Analyse eingehen. Geben Sie die erwartete Rücklaufquote ein, nennt Ihnen das Werkzeug auch, wie viele Personen Sie ansprechen müssen: etwa 398 bei einer Stichprobe von 278 und 70 % Rücklauf.",
       ] },
       { h: "Experimentelle Studien brauchen eine Poweranalyse", p: [
-        "Studien, die Gruppen vergleichen oder Zusammenhänge zwischen Variablen untersuchen, nutzen statt Cochran oder Yamane eine Poweranalyse. Wir erklären das mit Rechenbeispielen in unserem [Leitfaden zum Stichprobenumfang](/en/blog/how-to-calculate-sample-size) (Englisch).",
+        "Studien, die Gruppen vergleichen oder Zusammenhänge zwischen Variablen untersuchen, nutzen statt Cochran oder Yamane eine Poweranalyse. Wir erklären das mit Rechenbeispielen in unserem [Leitfaden zum Stichprobenumfang](/de/blog/stichprobengroesse-berechnen).",
       ] },
     ],
     faq: [
@@ -127,7 +127,7 @@ export const TOOL_GUIDES_DE: Record<string, ToolGuide> = {
         "**Unter 0,60:** schwach; prüfen Sie zuerst umgepolte Items und die Dateneingabe",
       ] },
       { h: "Wenn Alpha niedrig ist", p: [
-        "Die häufigste Ursache für ein niedriges Alpha ist ein nicht umgepoltes negativ formuliertes Item; suchen Sie nach einem Item mit negativer Item-Skala-Korrelation. Löschen Sie Items einer adaptierten Skala nicht nur, um Alpha zu erhöhen. Einzelheiten in unserem [Leitfaden zu Cronbachs Alpha](/en/blog/cronbach-alpha-explained) (Englisch).",
+        "Die häufigste Ursache für ein niedriges Alpha ist ein nicht umgepoltes negativ formuliertes Item; suchen Sie nach einem Item mit negativer Item-Skala-Korrelation. Löschen Sie Items einer adaptierten Skala nicht nur, um Alpha zu erhöhen. Einzelheiten in unserem [Leitfaden zu Cronbachs Alpha](/de/blog/cronbachs-alpha-erklaert).",
       ] },
     ],
     faq: [
@@ -147,7 +147,7 @@ export const TOOL_GUIDES_DE: Record<string, ToolGuide> = {
       ] },
       { h: "Ein gutes Likert-Item formulieren", p: [
         "Jedes Item sollte nur eine Aussage enthalten und kurz und klar sein. Negativ formulierte Items werden umgepolt und müssen vor der Analyse umkodiert werden. Wenn Sie eine bestehende Skala verwenden, holen Sie die Erlaubnis der Entwickler:innen ein.",
-        "Mehr dazu in unseren Leitfäden zur [Gestaltung einer Umfrage](/en/blog/how-to-design-a-survey-likert-scale) (Englisch) und zum [Stichprobenumfang](/en/blog/how-to-calculate-sample-size) (Englisch).",
+        "Mehr dazu in unseren Leitfäden zur [Gestaltung einer Umfrage](/de/blog/fragebogen-erstellen-likert-skala) und zum [Stichprobenumfang](/de/blog/stichprobengroesse-berechnen).",
       ] },
       { h: "Antworten kommen analysebereit an", p: [
         "Antworten auf Umfragen, die Sie mit Ihrem Academiana-Konto veröffentlichen, werden zu einer analysebereiten Tabelle mit bereits umkodierten umgepolten Items; laden Sie sie als CSV herunter oder übergeben Sie sie mit einem Klick an die statistische Analyse.",

@@ -91,7 +91,7 @@ Academiana’s **Topic finder** analyses real publication records in OpenAlex fo
     title: "How to Do a Literature Review: A Step-by-Step Guide",
     description: "How to search, screen and synthesise sources for a literature review: keywords, databases, inclusion criteria and thematic writing for theses and papers.",
     keywords: ["how to write a literature review", "literature review steps", "how to find academic sources", "systematic review"],
-    cta: { text: "Search more than 10 databases at once — including OpenAlex, Crossref, PubMed and DergiPark — with automatic source verification.", label: "Start searching sources" },
+    cta: { text: "Search 16 databases at once — including OpenAlex, Crossref, PubMed and DergiPark — with automatic source verification.", label: "Start searching sources" },
     body: `A literature review means finding, evaluating and synthesising existing knowledge on your topic. The goal is not to summarise sources one by one, but to show where knowledge in the field stands today and where your study fits.
 
 ## 1. Define your keywords
@@ -134,7 +134,7 @@ At the end of your review the reader should be able to answer: "Why is this stud
 
 ## Literature reviews with Academiana
 
-Academiana plans a search strategy for your topic and searches more than 10 databases at once. Sources are verified via DOI, and every source shows clearly whether it was read at citation, abstract or full-text level. The literature matrix lets you compare sources in a table, and you can quote open-access full texts with page numbers.`,
+Academiana plans a search strategy for your topic and searches 16 databases at once. Sources are verified via DOI, and every source shows clearly whether it was read at citation, abstract or full-text level. The literature matrix lets you compare sources in a table, and you can quote open-access full texts with page numbers.`,
   },
   "apa-7-atif-kurallari": {
     slug: "apa-7-citation-guide",

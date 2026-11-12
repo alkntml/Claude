@@ -39,10 +39,10 @@ export default async function Home() {
   return (
     <>
       <SiteHeader signedIn={signedIn} />
-      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: pick(PAGE_SEO["/"].title, locale), description: pick(PAGE_SEO["/"].description, locale) }), ...(locale === "en" ? [] : [promoVideoLd()])]} />
+      <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: pick(PAGE_SEO["/"].title, locale), description: pick(PAGE_SEO["/"].description, locale) }), ...(locale === "tr" ? [promoVideoLd()] : [])]} />
       <main>
         <Hero signedIn={signedIn} />
-        {locale !== "en" && <PromoVideo />}
+        {locale === "tr" && <PromoVideo />}
         <CompareSection />
         <TraceDemo />
         <AssuranceSection />

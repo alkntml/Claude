@@ -3,13 +3,13 @@ import { useT } from "@/i18n/client";
 import Link from "@/components/l-link";
 import { Logo } from "./icons";
 
-// Sık aranan rehberler (iç bağlantı): [Türkçe adres, İngilizce adres, başlık]
-const FOOTER_GUIDES: [string, string, string, string?][] = [
-  ["tez-nasil-yazilir", "how-to-write-a-thesis", "Tez nasıl yazılır?"],
-  ["apa-7-atif-kurallari", "apa-7-citation-guide", "APA 7 atıf kuralları"],
-  ["literatur-taramasi-nasil-yapilir", "how-to-write-a-literature-review", "Literatür taraması"],
-  ["intihal-nasil-onlenir", "how-to-avoid-plagiarism", "İntihalden kaçınma"],
-  ["tubitak-2209-a-basvurusu-nasil-hazirlanir", "tubitak-2209-a-research-project-application-guide", "TÜBİTAK 2209-A başvurusu"],
+// Sık aranan rehberler (iç bağlantı): [Türkçe adres, İngilizce adres, başlık, Almanca adres]
+const FOOTER_GUIDES: [string, string, string, string][] = [
+  ["tez-nasil-yazilir", "how-to-write-a-thesis", "Tez nasıl yazılır?", "abschlussarbeit-schreiben-anleitung"],
+  ["apa-7-atif-kurallari", "apa-7-citation-guide", "APA 7 atıf kuralları", "apa-7-zitierregeln"],
+  ["literatur-taramasi-nasil-yapilir", "how-to-write-a-literature-review", "Literatür taraması", "literaturrecherche-literaturuebersicht-schreiben"],
+  ["intihal-nasil-onlenir", "how-to-avoid-plagiarism", "İntihalden kaçınma", "plagiat-vermeiden"],
+  ["tubitak-2209-a-basvurusu-nasil-hazirlanir", "tubitak-2209-a-research-project-application-guide", "TÜBİTAK 2209-A başvurusu", "tubitak-2209-a-antrag-leitfaden"],
 ];
 
 export function SiteFooter() {
@@ -38,7 +38,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold text-ink-800">{t("Rehberler")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-ink-500">
-            {FOOTER_GUIDES.map(([slug, en, label, de]) => <li key={slug}><Link href={locale === "tr" ? `/blog/${slug}` : locale === "de" && de ? `/de/blog/${de}` : `/en/blog/${en}`} className="hover:text-ink-900">{t(label)}</Link></li>)}
+            {FOOTER_GUIDES.map(([slug, en, label, de]) => <li key={slug}><Link href={locale === "tr" ? `/blog/${slug}` : locale === "de" ? `/de/blog/${de}` : `/en/blog/${en}`} className="hover:text-ink-900">{t(label)}</Link></li>)}
           </ul>
         </div>
         <div>

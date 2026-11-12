@@ -3725,7 +3725,4 @@ export const EN: Record<string, string> = {
   "İstatistik, grafik, anket": "Statistics, charts, surveys",
   "Denetim ve teslim": "Review and submission",
   "İddia denetimi, Word/PDF/LaTeX": "Claim audit, Word/PDF/LaTeX",
-  // D152
-  "Aynı akademik işi yaklaşık 20 kat daha hızlı tamamladım.": "I completed the same academic work about 20 times faster.",
-  "Academiana kurucusunun kendi deneyimi": "the Academiana founder’s own experience",
 };

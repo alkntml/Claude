@@ -761,3 +761,4 @@ Manşet ortalandı; eğik ve renkli degrade vurgu kaldırıldı (dik serif, kal�
 
 ## D152 — “20 kat” ifadesi (2026-11-14)
 Site sahibi kendi kullanımında yaklaşık 20 kat hızlandığını beyan etti. Manşet altına kurucunun kendi deneyimi olarak, kişiye bağlı tırnaklı beyan biçiminde eklendi (genel performans garantisi olarak değil). Ölçümlü kullanıcı testi yapılırsa genel ifadeye çevrilebilir.
+Güncelleme: site sahibinin isteğiyle ifade kaldırıldı.

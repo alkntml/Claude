@@ -3717,7 +3717,4 @@ export const DE: Dict = {
   "İstatistik, grafik, anket": "Statistik, Diagramme, Umfragen",
   "Denetim ve teslim": "Prüfung und Abgabe",
   "İddia denetimi, Word/PDF/LaTeX": "Aussagenprüfung, Word/PDF/LaTeX",
-  // D152
-  "Aynı akademik işi yaklaşık 20 kat daha hızlı tamamladım.": "Ich habe dieselbe wissenschaftliche Arbeit etwa 20-mal schneller erledigt.",
-  "Academiana kurucusunun kendi deneyimi": "eigene Erfahrung des Academiana-Gründers",
 };

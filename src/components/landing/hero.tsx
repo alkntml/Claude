@@ -24,6 +24,8 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
           <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-ink-600 sm:text-xl">
             {t("Konu seçiminden kaynak taramasına, yazımdan atıf denetimine ve teslime kadar ihtiyaç duyduğunuz bütün araçlar bir arada. Süreci başından sonuna tek yerden yönetin; tekrarlayan ve zaman alan işleri sistem üstlensin, siz zihninizi araştırmanın kendisine ayırın.")}
           </p>
+          {/* D152: kurucunun kendi deneyimi — kişiye bağlı beyan olarak (genel garanti değil) */}
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] text-ink-700">“{t("Aynı akademik işi yaklaşık 20 kat daha hızlı tamamladım.")}” <span className="text-ink-500">— {t("Academiana kurucusunun kendi deneyimi")}</span></p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-7 font-medium text-white transition hover:bg-brand-700">
               {t("Çalışmaya başla")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />

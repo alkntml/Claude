@@ -24,6 +24,7 @@ import Link from "@/components/l-link";
 import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
 import { ToolCards } from "@/components/tools/tool-cards";
+import { Testimonials } from "@/components/landing/testimonials";
 
 const GUIDES = ["tez-nasil-yazilir", "apa-7-atif-kurallari", "intihal-nasil-onlenir", "literatur-taramasi-nasil-yapilir", "hangi-istatistik-analizi-secilmeli", "yapay-zeka-ile-tez-yazmak-etik-mi"];
 
@@ -72,6 +73,7 @@ export default async function Home() {
         <HowItWorks />
         <SourcesStrip />
         <Principles />
+        <Testimonials />
         <section className="py-20">
           <div className="mx-auto max-w-7xl px-6">
             <FadeIn className="mb-12 text-center">

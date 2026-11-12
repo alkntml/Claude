@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Ana sayfa görüşleri (D147): her kişiden ad, unvan ve görüşün yayımlanması için yazılı izin (e-posta yeterli) sakla
 - [ ] Canlıda dene: Yönetim → Kullanıcılar → bir kullanıcı → “Bildirim gönder”; o hesapla girince zil simgesinde mesaj görünmeli, yönetimde “Okundu” olmalı (D146)
 - [ ] Supabase SQL Editor’de migration 38’i çalıştır (indirim kodları, sayfa hakkı, davet ödülüne sayfa; D145); check_status.sql’de “38” YAPILMIŞ görünmeli
 - [ ] Canlıda dene: Yönetim → İndirim kodları → kod oluştur; çıkış yapıp /kayit?kod=KOD ile yeni hesap aç; Hesap sayfasında indirimli fiyat ve WhatsApp mesajında kod görünmeli (D145)

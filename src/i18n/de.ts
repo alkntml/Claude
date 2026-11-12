@@ -3579,4 +3579,8 @@ export const DE: Dict = {
   // D146: yönetici mesajı
   "Academiana’dan mesaj": "Nachricht von Academiana",
   "Aç": "Öffnen",
+  // D147: görüşler
+  "Akademisyenler ve araştırmacılar ne diyor?": "Was Forschende und Lehrende sagen",
+  "Platformu inceleyen akademisyen ve araştırmacıların görüşleri. Görüşler özgün dilinde ve değiştirilmeden yayımlanmıştır.": "Stimmen von Lehrenden und Forschenden, die die Plattform geprüft haben. Sie werden in der Originalsprache und unverändert veröffentlicht.",
+  "5 üzerinden {n} yıldız": "{n} von 5 Sternen",
 };

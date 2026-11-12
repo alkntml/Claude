@@ -3587,4 +3587,8 @@ export const EN: Record<string, string> = {
   // D146: yönetici mesajı
   "Academiana’dan mesaj": "Message from Academiana",
   "Aç": "Open",
+  // D147: görüşler
+  "Akademisyenler ve araştırmacılar ne diyor?": "What academics and researchers say",
+  "Platformu inceleyen akademisyen ve araştırmacıların görüşleri. Görüşler özgün dilinde ve değiştirilmeden yayımlanmıştır.": "Views of academics and researchers who have reviewed the platform. They are published in their original language and unedited.",
+  "5 üzerinden {n} yıldız": "{n} out of 5 stars",
 };

@@ -206,3 +206,4 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - D144 (2026-11-13): Almanca yazım dili — çalışma Almanca yazılabilir: atıf motoru, tablo/şekil, bölüm başlıkları, Word/PDF/LaTeX, istatistik, grafik, PRISMA, anket, yapay zekâ ve TR↔EN↔DE çeviri/dil denetimi
 - D145 (2026-11-14): İndirim kodları (yönetim modülü, TL/$ karşılıkları, kayıtta kod, indirimli fiyat gösterimi), sayfa hakkı paket kartıyla birebir (yazılan taslak kelimesi / 344), davet ödülü = bir Ücretsiz paket (sayfa dahil); migration 38
 - D146 (2026-11-14): Yönetimden tek bir kullanıcıya bildirim (başlık, mesaj, site içi bağlantı; okundu bilgisi); ek hak verirken sayfa
+- D147 (2026-11-14): Ana sayfada 7 akademisyen/araştırmacı görüşü (özgün dilinde, değiştirilmeden; yorum şeması yok)

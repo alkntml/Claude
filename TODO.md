@@ -1,32 +1,32 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] Canlıda dene (D149): Yeni çalışma → “Mevcut çalışmamı içe aktar” ile kendi Word tezinizi yükleyin; bölümler, kaynakça ve atıflar doğru mu? Çalışma ekranında “İçe aktar” → Zotero (zotero.org/settings/security’den user ID + okuma izinli anahtar), Mendeley .bib, PDF; bir metin seçip “Yapay zekâ ile düzenle”; Proje ayarları → Kaynak tercihleri → “Her seferinde sor” ile izin kartı
+- [x] (2026-11-12) Canlıda dene (D149): Yeni çalışma → “Mevcut çalışmamı içe aktar” ile kendi Word tezinizi yükleyin; bölümler, kaynakça ve atıflar doğru mu? Çalışma ekranında “İçe aktar” → Zotero (zotero.org/settings/security’den user ID + okuma izinli anahtar), Mendeley .bib, PDF; bir metin seçip “Yapay zekâ ile düzenle”; Proje ayarları → Kaynak tercihleri → “Her seferinde sor” ile izin kartı
 - [ ] Ana sayfa görüşleri (D147): her kişiden ad, unvan ve görüşün yayımlanması için yazılı izin (e-posta yeterli) sakla
 - [ ] Canlıda dene: Yönetim → Kullanıcılar → bir kullanıcı → “Bildirim gönder”; o hesapla girince zil simgesinde mesaj görünmeli, yönetimde “Okundu” olmalı (D146)
-- [ ] Supabase SQL Editor’de migration 38’i çalıştır (indirim kodları, sayfa hakkı, davet ödülüne sayfa; D145); check_status.sql’de “38” YAPILMIŞ görünmeli
-- [ ] Canlıda dene: Yönetim → İndirim kodları → kod oluştur; çıkış yapıp /kayit?kod=KOD ile yeni hesap aç; Hesap sayfasında indirimli fiyat ve WhatsApp mesajında kod görünmeli (D145)
+- [x] (2026-11-12) Supabase SQL Editor’de migration 38’i çalıştır (indirim kodları, sayfa hakkı, davet ödülüne sayfa; D145); check_status.sql’de “38” YAPILMIŞ görünmeli
+- [x] (2026-11-12) Canlıda dene: Yönetim → İndirim kodları → kod oluştur; çıkış yapıp /kayit?kod=KOD ile yeni hesap aç; Hesap sayfasında indirimli fiyat ve WhatsApp mesajında kod görünmeli (D145)
 - [ ] Canlıda dene: Ücretsiz hesapla bölüm yazdır; Hesap → “Yapay zekâ ile yazılan sayfa” sayacı artmalı, 5 sayfada yeni taslak durmalı (D145)
 - [ ] Canlıda dene: /de sayfaları, Almanya’dan girişte otomatik Almanca, Almanca arayüzle asistan cevabı (D143)
 - [ ] Canlıda dene: Almanca çalışma oluştur → bölüm yaz, atıf ekle, Word/PDF/LaTeX indir, istatistik ve çeviri (D144)
 - [ ] Canlıda dene: /yardim (Kullanım rehberi) ve çalışma alanında “?” → 15 adımlı rehberli tur (D142)
-- [ ] Supabase SQL Editor’de migration 37’yi çalıştır (gerçek zamanlı ortak yazım kanalı, D140); check_status.sql’de “37” YAPILMIŞ görünmeli
-- [ ] Canlıda dene: iki tarayıcıda (sahip + ortak yazar) aynı bölümü aç; üstte yeşil “Canlı”, diğerinin paragrafında renkli çizgi; farklı paragraflara yazınca metin saniyeler içinde diğer tarafta görünmeli (D140)
-- [ ] Canlıda dene: Araçlar → Literatür haritası → Ağ / Zaman çizelgesi / Konu haritası / Yeni çalışmalar (D141)
+- [x] (2026-11-12) Supabase SQL Editor’de migration 37’yi çalıştır (gerçek zamanlı ortak yazım kanalı, D140); check_status.sql’de “37” YAPILMIŞ görünmeli
+- [x] (2026-11-12) Canlıda dene: iki tarayıcıda (sahip + ortak yazar) aynı bölümü aç; üstte yeşil “Canlı”, diğerinin paragrafında renkli çizgi; farklı paragraflara yazınca metin saniyeler içinde diğer tarafta görünmeli (D140)
+- [x] (2026-11-12) Canlıda dene: Araçlar → Literatür haritası → Ağ / Zaman çizelgesi / Konu haritası / Yeni çalışmalar (D141)
 - [ ] Canlıda dene: Dışa aktar → “LaTeX (.tex + .bib, ZIP)” ve “Overleaf’te aç” (Overleaf hesabıyla); derlenen PDF’in ekran görüntüsü (D136)
 - [ ] (Ertelendi, D136) ORCID ile yayın aktarma ve Zotero canlı eşitleme
-- [ ] Supabase SQL Editor’de migration 36’yı çalıştır (PDF bölümleri, derleme oyları, veri çıkarma, kalite; D132–D134)
+- [x] (2026-11-12) Supabase SQL Editor’de migration 36’yı çalıştır (PDF bölümleri, derleme oyları, veri çıkarma, kalite; D132–D134)
 - [ ] Canlıda dene: Kaynaklar → “Birlikte analiz et” → Karşılaştır; İddia denetimi (Diğer kaynaklarımla da karşılaştır); PRISMA → Protokol’de çift değerlendirici, 5. Veri çıkarma ve kalite, 6. Yöntem metni → Belgeye ekle; yeni yüklenen bir PDF’te “Kaynağa sor → Yöntemi”
 - [ ] (İsteğe bağlı, ücretsiz) Vercel’e `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY` ekle → Redeploy (D129)
 - [ ] Canlıda dene: Kaynak araştırmasında bir arama yap; sonuç çiplerinde PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP görünüyor mu (D129)
 - [ ] Tanıtım videosu seslendirmesi: kaydı gönder; ses videoya eklenip `public/video/academiana-tanitim.mp4` aynı adla değiştirilecek (D127)
-- [ ] Supabase SQL Editor’de migration 35’i çalıştır (PRISMA ve literatür haritası Pro kartında, D128); 34’ten sonra
-- [ ] Supabase SQL Editor’de migration 34’ü çalıştır (paket kartlarında iddia denetimi, PRISMA, literatür haritası; D126). 32 ve 33 yapıldı (kullanıcı onayladı)
+- [x] (2026-11-12) Supabase SQL Editor’de migration 35’i çalıştır (PRISMA ve literatür haritası Pro kartında, D128); 34’ten sonra
+- [x] (2026-11-12) Supabase SQL Editor’de migration 34’ü çalıştır (paket kartlarında iddia denetimi, PRISMA, literatür haritası; D126). 32 ve 33 yapıldı (kullanıcı onayladı)
 - [ ] Canlıda dene: atıflı bir bölümde “İddia denetimi”; Araçlar → Sistematik derleme (PRISMA) ile bir RIS dosyası içe aktar; Araçlar → Literatür haritası (DOI’li kaynaklarla); Kalite sayfasındaki kontrol listesi
 - [ ] Sonraki adım önerisi (rapor): 3–5 pilot akademisyen/kurumla iddia denetimi ve PRISMA modülünü değerlendirt; sonuçları /yontem sayfasında yayımla (sahte vaka çalışması yazılmaz)
-- [ ] Canlıda dene: bir Pro hesabıyla ikinci bir hesabı ortak yazar olarak davet et, iki tarayıcıda aynı bölümü açıp “X bu bölümde” göstergesini ve çakışma penceresini kontrol et (D115)
+- [x] (2026-11-12) Canlıda dene: bir Pro hesabıyla ikinci bir hesabı ortak yazar olarak davet et, iki tarayıcıda aynı bölümü açıp “X bu bölümde” göstergesini ve çakışma penceresini kontrol et (D115)
 - [ ] Canlıda dene: Araçlar → Dil ve çeviri ile atıflı bir paragrafı İngilizceye çevir; Kaynaklar → Sor; /araclar/arastirmalar-ne-diyor (canlı veri tabanı aramaları bulut oturumunda denenemedi)
-- [ ] Supabase SQL Editor’de migration 31’i çalıştır (Tek Proje gözetimi, D109); Kullanım koşullarındaki yeni Tek Proje ve Adil kullanım maddelerini hukukçuya incelet
-- [ ] Google Search Console: alan adını doğrula (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) → Site haritaları → sitemap.xml gönder; Bing Webmaster Tools için de aynısı (D107)
-- [ ] Supabase SQL Editor’de migration 29 ve 30’u çalıştır (D106), sonra check_status.sql ile YAPILMIŞ olduğunu doğrula
+- [x] (2026-11-12) Supabase SQL Editor’de migration 31’i çalıştır (Tek Proje gözetimi, D109); Kullanım koşullarındaki yeni Tek Proje ve Adil kullanım maddelerini hukukçuya incelet
+- [x] (2026-11-12) Google Search Console: alan adını doğrula (NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION) → Site haritaları → sitemap.xml gönder; Bing Webmaster Tools için de aynısı (D107)
+- [x] (2026-11-12) Supabase SQL Editor’de migration 29 ve 30’u çalıştır (D106), sonra check_status.sql ile YAPILMIŞ olduğunu doğrula
 - [ ] Supabase → Authentication → Sign In / Providers → Email → “Confirm email” AÇIK olmalı (davet ödülü e-posta doğrulamasına bağlı; kapalıysa doğrulama anında sayılır)
 - [ ] Hukuki metinler ve satıcı bilgisi (hukukçu); 15 GB depolama vaadi için Supabase planını kontrol et
 - [x] (2026-11-06) Migration 27 (Tek Proje + hesap silme düzeltmesi) ve 28 (%40 maliyet uyarısı) çalıştırıldı; Fiyatlar’da Tek Proje kartı doğrulandı
@@ -39,9 +39,9 @@
 - [ ] Maliyet sağlığı “ortalama istek maliyeti” uyarı verirse Ayarlar → Kârlılık’taki varsayımı güncelle
 - [ ] Asistana “Nereden grafik oluşturabilirim?” gibi bir soru sorup cevabı dene (D93)
 - [ ] Canlıda ERIC, DBLP, DataCite aramalarını dene; Yönetim → Veri kaynağı sağlığı’ndan sonuçları kontrol et (D92)
-- [ ] Supabase SQL Editor’de `20261116000021_tools_analytics.sql` (ücretsiz araç sayacı + ziyaretçi ölçümü, D90)
-- [ ] Supabase SQL Editor’de `supabase/check_status.sql` çalıştır (salt okunur): EKSİK görünen migration’ları sırayla çalıştır. 17 (fiyat artışı) EKSİK görünürse önce Claude’a sor: fiyatlar yönetim panelinden elle değiştirildiyse yanlış EKSİK görünebilir.
-- [ ] Supabase SQL Editor’de `20261115000020_no_work_lock.sql` (çalışma kilidini kaldırma, D81)
+- [x] (2026-11-12) Supabase SQL Editor’de `20261116000021_tools_analytics.sql` (ücretsiz araç sayacı + ziyaretçi ölçümü, D90)
+- [x] (2026-11-12) Supabase SQL Editor’de `supabase/check_status.sql` çalıştır (salt okunur): EKSİK görünen migration’ları sırayla çalıştır. 17 (fiyat artışı) EKSİK görünürse önce Claude’a sor: fiyatlar yönetim panelinden elle değiştirildiyse yanlış EKSİK görünebilir.
+- [x] (2026-11-12) Supabase SQL Editor’de `20261115000020_no_work_lock.sql` (çalışma kilidini kaldırma, D81)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 9’u çalıştır (`20261106000009_plans_whatsapp.sql`: yeni fiyat/limitler, öğrenci indirimi ayarını siler)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 10’u çalıştır (`20261106000010_plan_features.sql`: paket kartlarında özellik listeleri)
 - [x] (2026-11-02) Supabase SQL Editor’de migration 11’i çalıştır (`20261107000011_work_lock.sql`: çalışma kilidi)
@@ -66,7 +66,7 @@
 - [x] (2026-11-02) Supabase → Authentication → URL Configuration: Site URL `https://www.academiana.com.tr`; Redirect URLs `https://www.academiana.com.tr/**`, `https://academiana.com.tr/**` (eski vercel.app satırı bir süre kalsın)
 - [ ] Supabase e-posta şablonlarında (Authentication → Emails) “Akademi AI” geçiyorsa “Academiana” yap
 - [ ] Alan adı yeşile döndükten sonra Vercel env: `REDIRECT_TO_DOMAIN=1` (eski vercel.app adresi yeni adrese yönlenir) + Redeploy
-- [ ] Alan adı yeşile dönünce: Google Search Console’a `https://www.academiana.com.tr` ekle (HTML etiketi yöntemi → kodu Vercel’e `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` olarak gir, Redeploy, Doğrula) → Site haritaları: `sitemap.xml` gönder. İsteğe bağlı: Bing Webmaster (`NEXT_PUBLIC_BING_VERIFICATION`, ya da Search Console’dan içe aktar), Yandex Webmaster (`NEXT_PUBLIC_YANDEX_VERIFICATION`).
+- [x] (2026-11-12) Alan adı yeşile dönünce: Google Search Console’a `https://www.academiana.com.tr` ekle (HTML etiketi yöntemi → kodu Vercel’e `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` olarak gir, Redeploy, Doğrula) → Site haritaları: `sitemap.xml` gönder. İsteğe bağlı: Bing Webmaster (`NEXT_PUBLIC_BING_VERIFICATION`, ya da Search Console’dan içe aktar), Yandex Webmaster (`NEXT_PUBLIC_YANDEX_VERIFICATION`).
 - [x] (2026-11-02) Google ile giriş açılırsa: Google Cloud OAuth “Authorized JavaScript origins”e `https://www.academiana.com.tr`
 - [x] (2026-11-02, kullanıcı “Success” onayladı) Supabase SQL Editor’de migration 8’i çalıştır: `supabase/migrations/20261105000008_grants_surveys.sql` (proje önerisi türü + anket tabloları). Çalıştırılmadan anketler ve TÜBİTAK türü hata verir.
 

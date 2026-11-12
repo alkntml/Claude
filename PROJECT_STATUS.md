@@ -1,11 +1,11 @@
 # Proje Durumu
 
-_Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’inde güncellenir_
+_Son güncelleme: 12 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
 
 ## Canlı ortam
 | Bileşen | Durum | Ayrıntı |
 |---|---|---|
-| Site | ✅ Yayında | https://akademi-ai-umber.vercel.app (Vercel projesi `akademi-ai`, Hobby plan, bölge fra1) |
+| Site | ✅ Yayında | https://www.academiana.com.tr (eski adres akademi-ai-umber.vercel.app; Vercel projesi `akademi-ai`, Hobby plan, bölge fra1) |
 | Veritabanı | ✅ Kuruldu | Supabase `akademi_ai`, Free plan, Frankfurt. `supabase/setup.sql` çalıştırıldı (ilk 4 migration). Migration 7 (`20261104000007_orgs_referrals.sql`) kullanıcı tarafından çalıştırıldı ✅ (Success). Migration 5 (`no_placeholder_claims`) ve 6 (`source_summary`) için kullanıcı “daha önce de çalıştırdım” dedi ama hangisi olduğu net değil — emin olmak için ikisi de tekrar çalıştırılabilir (güvenli: 5 `replace`, 6 `if not exists`) |
 | Kimlik doğrulama | ✅ Çalışıyor | Site URL ve Redirect URL (`/api/auth/callback`) ayarlandı. Sahip kayıt oldu |
 | Yönetici | ✅ | Sahibin hesabı `role = admin`, `plan_id = premium` |

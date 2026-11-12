@@ -36,3 +36,13 @@ describe("iddia denetimi motoru (D119)", () => {
     expect(r.calls).toBe(0);
   });
 });
+
+describe("iddia denetimi ikinci okuma (D150)", () => {
+  beforeEach(() => { calls.length = 0; });
+  it("zayıf sonuç daha geniş metinle yeniden okunur; kaynakta bulunmayan alıntıyla “destekliyor”a çevrilmez", async () => {
+    const chunks = Array.from({ length: 8 }, (_, i) => ({ content: `Section ${i}: anxiety and achievement in students, details.`, page_hint: String(i + 1) }));
+    const r = await auditSources({ planId: "pro", lang: "tr", groups: [{ source: { id: "S2", title: "Kaygı", abstract: null, access_level: "full_text", chunks }, pairs: [{ claimId: "a1", sentence: "Kaygı başarıyı düşürür.", locator: null }, { claimId: "b2", sentence: "Kaygı her öğrencide aynıdır.", locator: null }] }] });
+    expect(calls).toHaveLength(4); // ilk okuma (anahtar kelime + karar) + yalnızca zayıf cümle için ikinci okuma
+    expect(r.results.find((x) => x.claimId === "b2")?.verdict).toBe("partial");
+  });
+});

@@ -115,6 +115,8 @@ export async function buildContext(params: {
   });
   const sourceMap: Record<string, string> = {};
   head.push("\n## KAYNAKLAR (yalnızca bunlara atıf yapabilirsin)");
+  // D150: atıfların denetimde “destekliyor” çıkması için cümle kaynağın söylediğini söylemeli
+  head.push("ATIF DOĞRULUĞU (zorunlu): Bir cümleye yalnızca o cümlenin ANA bilgisini kaynağın özetinde veya okunan metninde açıkça bulduğun kaynakla atıf yap. Sayı, oran, yön, örneklem ve kapsamı kaynaktakiyle aynı yaz; kaynak “ilişkili” diyorsa “etkiler/neden olur” yazma; kaynaktaki temkini (“olabilir”, “işaret etmektedir”) koru; belirli bir örneklemdeki bulguyu genelleştirme. Erişimi “yalnızca künye” olan kaynağa belirli bir bulgu, sayı veya sonuç atfetme (yalnızca konunun ele alındığını belirtmek için kullan). Bir cümlede birden çok bilgi varsa her bilgiyi onu söyleyen kaynağa bağla. Emin değilsen o iddiayı yazma; :::eksik bloğunda bildir.");
   if (!sources.length) head.push("Projede henüz kaynak yok. Kaynak gerektiren kesin iddialar yazma; ihtiyaç duyulan konuları :::eksik bloğunda arama sorgusu olarak bildir.");
   picked.head.forEach((s, idx) => {
     const sid = `S${idx + 1}`;

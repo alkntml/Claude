@@ -16,7 +16,7 @@ export interface SourceInput { id: string; title: string; abstract: string | nul
 export interface PairResult { claimId: string; sourceId: string; verdict: ClaimVerdict; explanation: string; quote: string | null; quotePage: string | null; access: SourceInput["access_level"]; /** Denetim yöntemi sürümü; eski sürüm sonuçları önbellekten kullanılmaz */ av?: number }
 
 /** Karar kuralları değişince artır: önceki denetim sonuçları yeniden değerlendirilir */
-export const AUDIT_VERSION = 3;
+export const AUDIT_VERSION = 4;
 
 /** “Çelişiyor” yalnızca kaynaktan birebir doğrulanmış bir alıntıyla verilebilir; yoksa “desteklenmiyor”a düşer */
 /**
@@ -80,56 +80,73 @@ export async function auditSources(o: { planId: string; lang: Locale; groups: { 
       return pairs.map((p) => ({ ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null,
         explanation: pick({ tr: "Bu kaynağın yalnızca künyesi biliniyor; içeriği okunmadığı için iddia kontrol edilemez.", en: "Only the citation data of this source is known; its content has not been read.", de: "Von dieser Quelle sind nur die bibliografischen Angaben bekannt; ihr Inhalt wurde nicht gelesen, daher kann die Aussage nicht geprüft werden." }, o.lang) }));
     }
-    // 1) Tam metin varsa: her cümle için (cümle dilinde + İngilizce) anahtar kelime → en ilgili parçalar
-    const perClaim = new Map<string, EvidenceChunk[]>();
-    if (source.chunks.length) {
-      let kws: Record<string, string[]> = {};
-      try {
-        const kw = await complete(model, {
-          system: "Her akademik cümle için, kaynağın tam metninde arama yapmaya uygun 5–8 anahtar kelime üret: hem cümlenin dilinde hem İngilizce karşılıklarıyla. Yalnızca JSON.",
-          messages: [{ role: "user", content: pairs.map((p) => `[${p.claimId}] ${p.sentence}`).join("\n") }], maxTokens: 600, effort: "low", jsonSchema: KW_SCHEMA,
-        });
-        await track(kw);
-        kws = Object.fromEntries((JSON.parse(kw.text).items ?? []).map((x: { id: string; keywords: string[] }) => [x.id, x.keywords]));
-      } catch { /* yalnızca cümle kelimeleri kullanılır */ }
-      for (const p of pairs) perClaim.set(p.claimId, rankChunks(source.chunks, [p.sentence, ...(kws[p.claimId] ?? [])], p.locator, 3));
-    }
-    // 2) Ortak malzeme: özet + cümlelerin parçaları (tekrarsız, etiketli)
-    const used = new Map<string, EvidenceChunk & { label: string }>();
-    for (const list of perClaim.values()) for (const c of list) if (!used.has(c.content)) used.set(c.content, { ...c, label: `P${used.size + 1}` });
-    const material = [
-      source.abstract ? `ÖZET:\n${source.abstract.slice(0, 2500)}` : "",
-      ...[...used.values()].map((c) => `${c.label}${c.page ? ` (s. ${c.page})` : ""}:\n${c.content.slice(0, 1400)}`),
-    ].filter(Boolean).join("\n\n");
-    const claimsText = pairs.map((p) => {
-      const labels = (perClaim.get(p.claimId) ?? []).map((c) => used.get(c.content)?.label).filter(Boolean).join(", ");
-      return `[${p.claimId}] ${p.sentence}${p.locator ? ` (atıfta sayfa: ${p.locator})` : ""}${labels ? ` → ilgili parçalar: ${labels}` : ""}`;
-    }).join("\n");
-    const v = await complete(model, {
-      system: `Akademik atıfları denetleyen deneyimli, adil bir danışmansın. Soru şu: “Bu cümleye bu kaynakla atıf yapmak akademik olarak doğru mu?” Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma.
-verdict:
-- "supports": cümlenin ANA bilgisi (bulgu, sayı, yön, örneklem/kapsam) kaynakta var. Başka sözcüklerle anlatım, çeviri, özetleme, kaynakta açıkça tanımlanan şeyin eş anlamlısıyla söylenmesi (ör. “genel nüfus/çok uluslu topluluk örneklemi” → “klinik olmayan örneklem”), küçük ifade farkları ve cümlenin sonunda yazarın kendi yorumunu “düşündürmektedir, olabilir, işaret eder” gibi temkinli dille eklemesi "supports" kalır. Küçük bir not varsa açıklamada belirt ama kararı düşürme.
-- "partial": cümlenin ANA bilgilerinden biri kaynakta yok ya da önemli ölçüde değiştirilmiş: sayı/oran farklı ya da yanlış niteleniyor (ör. kaynak “en fazla %71” diyor, cümle “%71’i” diyor), ilişki nedensellik olarak sunulmuş (kaynak “ilişkili”, cümle “etkiler”), kaynağın belirli bir örneklem için söylediği genelleştirilmiş, ya da kaynaktaki temkinli ifade kesin hâle getirilmiş.
-- "not_supported": kaynak metni cümlenin ana bilgisine hiç değinmiyor.
-- "contradicts": kaynak metni cümlenin tersini ya da onunla bağdaşmayan bir bulguyu AÇIKÇA söylüyor ve bunu alıntılayabiliyorsun (ör. cümle “artırır”, kaynak “anlamlı fark bulunmadı”). “yalnızca, her zaman” gibi aşırı kesinlik ya da kaynağın bir ayrıntıyı belirtmemesi çelişki DEĞİLDİR. Şüphede seçme.
-- "insufficient": yalnızca özet var ve cümlenin konusu özette geçmiyor (tam metin okunmadığı için karar verilemez).
-Küçük ayrıntılar yüzünden "partial" verme; bir danışmanın düzeltme isteyeceği bir sorun yoksa "supports" ver.
-quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN kopyala (yoksa boş).
-explanation: ${AI_LANGUAGE[o.lang]}, TEK kısa cümle (en fazla 30 kelime); “P1, P2, ÖZET” gibi parça etiketlerinden söz etme. "partial" ise neyin düzeltilmesi gerektiğini söyle. Atıfta sayfa verilmişse ve bu sayfa uygun değilse belirt. verdict açıklamanla tutarlı olmalı.
-Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
-      messages: [{ role: "user", content: `KAYNAK: ${source.title}\nERİŞİM: ${source.access_level}\n\nİDDİALAR:\n${claimsText}\n\nKAYNAK METNİ:\n${material}` }],
-      maxTokens: 800 + pairs.length * 350, effort: "low", jsonSchema: VERDICT_SCHEMA,
-    });
-    await track(v);
-    let items: { id: string; verdict: ClaimVerdict; explanation: string; quote: string }[] = [];
-    try { items = JSON.parse(v.text).items ?? []; } catch { /* aşağıda yetersiz sayılır */ }
-    const evidence = [...used.values()];
-    return pairs.map((p) => {
-      const it = items.find((x) => x.id === p.claimId);
-      // Yanıt alınamadıysa sürüm işareti konmaz: sonuç önbelleğe girmez, “Yeniden denetle” bu cümleyi tekrar dener
-      if (!it) return { ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null, explanation: pick({ tr: "Bu cümle için yanıt alınamadı; lütfen yeniden denetleyin.", en: "No answer was received for this sentence; please run the audit again.", de: "Für diesen Satz kam keine Antwort; bitte führen Sie die Prüfung erneut durch." }, o.lang) };
-      const loc = locateQuote(it.quote, source.abstract, evidence);
-      return { ...base, claimId: p.claimId, av: AUDIT_VERSION, verdict: guardVerdict(it.verdict, loc.ok), explanation: cleanExplanation(it.explanation), quote: loc.ok ? it.quote : null, quotePage: loc.page };
+    // D150: önce cümle başına en ilgili 4 parça okunur; “kısmen / desteklemiyor / yetersiz” çıkanlar, doğru parçanın
+    // ilk okumada kaçırılmış olma ihtimaline karşı 9 parçayla yeniden okunur. Yeni karar yalnızca daha iyiyse ve
+    // “destekliyor” ise kaynaktan birebir doğrulanan alıntıyla alınır (ölçüt gevşetilmez).
+    const judge = async (ps: PairInput[], k: number): Promise<PairResult[]> => {
+      // 1) Tam metin varsa: her cümle için (cümle dilinde + İngilizce) anahtar kelime → en ilgili parçalar
+      const perClaim = new Map<string, EvidenceChunk[]>();
+      if (source.chunks.length) {
+        let kws: Record<string, string[]> = {};
+        try {
+          const kw = await complete(model, {
+            system: "Her akademik cümle için, kaynağın tam metninde arama yapmaya uygun 5–8 anahtar kelime üret: hem cümlenin dilinde hem İngilizce karşılıklarıyla. Yalnızca JSON.",
+            messages: [{ role: "user", content: ps.map((p) => `[${p.claimId}] ${p.sentence}`).join("\n") }], maxTokens: 600, effort: "low", jsonSchema: KW_SCHEMA,
+          });
+          await track(kw);
+          kws = Object.fromEntries((JSON.parse(kw.text).items ?? []).map((x: { id: string; keywords: string[] }) => [x.id, x.keywords]));
+        } catch { /* yalnızca cümle kelimeleri kullanılır */ }
+        for (const p of ps) perClaim.set(p.claimId, rankChunks(source.chunks, [p.sentence, ...(kws[p.claimId] ?? [])], p.locator, k));
+      }
+      // 2) Ortak malzeme: özet + cümlelerin parçaları (tekrarsız, etiketli)
+      const used = new Map<string, EvidenceChunk & { label: string }>();
+      for (const list of perClaim.values()) for (const c of list) if (!used.has(c.content)) used.set(c.content, { ...c, label: `P${used.size + 1}` });
+      const material = [
+        source.abstract ? `ÖZET:\n${source.abstract.slice(0, 2500)}` : "",
+        ...[...used.values()].map((c) => `${c.label}${c.page ? ` (s. ${c.page})` : ""}:\n${c.content.slice(0, 1400)}`),
+      ].filter(Boolean).join("\n\n");
+      const claimsText = ps.map((p) => {
+        const labels = (perClaim.get(p.claimId) ?? []).map((c) => used.get(c.content)?.label).filter(Boolean).join(", ");
+        return `[${p.claimId}] ${p.sentence}${p.locator ? ` (atıfta sayfa: ${p.locator})` : ""}${labels ? ` → ilgili parçalar: ${labels}` : ""}`;
+      }).join("\n");
+      const v = await complete(model, {
+        system: `Akademik atıfları denetleyen deneyimli, adil bir danışmansın. Soru şu: “Bu cümleye bu kaynakla atıf yapmak akademik olarak doğru mu?” Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma.
+  verdict:
+  - "supports": cümlenin ANA bilgisi (bulgu, sayı, yön, örneklem/kapsam) kaynakta var. Başka sözcüklerle anlatım, çeviri, özetleme, kaynakta açıkça tanımlanan şeyin eş anlamlısıyla söylenmesi (ör. “genel nüfus/çok uluslu topluluk örneklemi” → “klinik olmayan örneklem”), küçük ifade farkları ve cümlenin sonunda yazarın kendi yorumunu “düşündürmektedir, olabilir, işaret eder” gibi temkinli dille eklemesi "supports" kalır. Küçük bir not varsa açıklamada belirt ama kararı düşürme.
+  - "partial": cümlenin ANA bilgilerinden biri kaynakta yok ya da önemli ölçüde değiştirilmiş: sayı/oran farklı ya da yanlış niteleniyor (ör. kaynak “en fazla %71” diyor, cümle “%71’i” diyor), ilişki nedensellik olarak sunulmuş (kaynak “ilişkili”, cümle “etkiler”), kaynağın belirli bir örneklem için söylediği genelleştirilmiş, ya da kaynaktaki temkinli ifade kesin hâle getirilmiş.
+  - "not_supported": kaynak metni cümlenin ana bilgisine hiç değinmiyor.
+  - "contradicts": kaynak metni cümlenin tersini ya da onunla bağdaşmayan bir bulguyu AÇIKÇA söylüyor ve bunu alıntılayabiliyorsun (ör. cümle “artırır”, kaynak “anlamlı fark bulunmadı”). “yalnızca, her zaman” gibi aşırı kesinlik ya da kaynağın bir ayrıntıyı belirtmemesi çelişki DEĞİLDİR. Şüphede seçme.
+  - "insufficient": yalnızca özet var ve cümlenin konusu özette geçmiyor (tam metin okunmadığı için karar verilemez).
+  Küçük ayrıntılar yüzünden "partial" verme; bir danışmanın düzeltme isteyeceği bir sorun yoksa "supports" ver.
+  quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN kopyala (yoksa boş).
+  explanation: ${AI_LANGUAGE[o.lang]}, TEK kısa cümle (en fazla 30 kelime); “P1, P2, ÖZET” gibi parça etiketlerinden söz etme. "partial" ise neyin düzeltilmesi gerektiğini söyle. Atıfta sayfa verilmişse ve bu sayfa uygun değilse belirt. verdict açıklamanla tutarlı olmalı.
+  Her iddia için bir öğe döndür; id değerini köşeli parantezdeki kimlikle aynı yaz.`,
+        messages: [{ role: "user", content: `KAYNAK: ${source.title}\nERİŞİM: ${source.access_level}\n\nİDDİALAR:\n${claimsText}\n\nKAYNAK METNİ:\n${material}` }],
+        maxTokens: 800 + ps.length * 350, effort: "low", jsonSchema: VERDICT_SCHEMA,
+      });
+      await track(v);
+      let items: { id: string; verdict: ClaimVerdict; explanation: string; quote: string }[] = [];
+      try { items = JSON.parse(v.text).items ?? []; } catch { /* aşağıda yetersiz sayılır */ }
+      const evidence = [...used.values()];
+      return ps.map((p) => {
+        const it = items.find((x) => x.id === p.claimId);
+        // Yanıt alınamadıysa sürüm işareti konmaz: sonuç önbelleğe girmez, “Yeniden denetle” bu cümleyi tekrar dener
+        if (!it) return { ...base, claimId: p.claimId, verdict: "insufficient" as const, quote: null, quotePage: null, explanation: pick({ tr: "Bu cümle için yanıt alınamadı; lütfen yeniden denetleyin.", en: "No answer was received for this sentence; please run the audit again.", de: "Für diesen Satz kam keine Antwort; bitte führen Sie die Prüfung erneut durch." }, o.lang) };
+        const loc = locateQuote(it.quote, source.abstract, evidence);
+        return { ...base, claimId: p.claimId, av: AUDIT_VERSION, verdict: guardVerdict(it.verdict, loc.ok), explanation: cleanExplanation(it.explanation), quote: loc.ok ? it.quote : null, quotePage: loc.page };
+      });
+    };
+    const first = await judge(pairs, 4);
+    const RANK: Record<string, number> = { supports: 3, partial: 2, insufficient: 1, not_supported: 0 };
+    const weak = first.filter((r) => r.av && r.verdict in RANK && r.verdict !== "supports");
+    // İkinci okuma yalnızca ilk okumada görülmemiş parça varsa yapılır
+    if (source.chunks.length <= 4 || !weak.length) return first;
+    const second = await judge(pairs.filter((p) => weak.some((w) => w.claimId === p.claimId)), 9).catch(() => [] as PairResult[]);
+    return first.map((r) => {
+      const s2 = second.find((x) => x.claimId === r.claimId);
+      if (!s2 || !s2.av || !(s2.verdict in RANK) || RANK[s2.verdict] <= RANK[r.verdict]) return r;
+      if (s2.verdict === "supports" && !s2.quote) return r;
+      return s2;
     });
   });
   return { results: results.flat(), usage, cost, calls, model: model.model, provider: model.provider };

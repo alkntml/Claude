@@ -1,6 +1,6 @@
 # Proje Durumu
 
-_Son güncelleme: 12 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
+_Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
 
 ## Canlı ortam
 | Bileşen | Durum | Ayrıntı |
@@ -18,6 +18,11 @@ _Son güncelleme: 12 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Hukuki metinler ve uyum (D154, 13 Kasım 2026)**
+- Yedi hukuki belge üç dilde: /kvkk, /kosullar, /adil-kullanim, /cerez-politikasi, /akademik-durustluk, /mesafeli-sozlesmeler, /gdpr; altbilgide “Gizlilik ve Güvenlik”; /gizlilik → /kvkk
+- Sürümlü kabul kayıtları (migration 39, legal_acceptances), Google/Apple ilk girişte ve yeni sürümde /sozlesme-onayi
+- Hesap → Gizlilik ve Veri Yönetimi; hesap silmede tüm depo dosyaları; satın alma öncesi bilgilendirme; yönetimde hukuki kayıtlar; çerez envanteri ve izin altyapısı; hata kayıtlarında kişisel veri maskeleme
+
 **Akademik süreç**
 - 8 çalışma türü; seviye ve yönteme göre dinamik yol haritası (35 aşama şablonu)
 - Aşama ekleme, silme, yeniden adlandırma, sürükle-bırak sıralama, ilerleme yüzdesi

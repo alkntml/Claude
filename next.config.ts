@@ -51,6 +51,10 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/uzman-destegi", destination: "/", permanent: true },
+      // D154: eski “Güvenlik ve Gizlilik” sayfası KVKK Aydınlatma Metni’ne taşındı; eski bağlantılar boşa çıkmaz
+      { source: "/gizlilik", destination: "/kvkk", permanent: true },
+      { source: "/en/gizlilik", destination: "/en/kvkk", permanent: true },
+      { source: "/de/gizlilik", destination: "/de/kvkk", permanent: true },
       { source: "/en/uzman-destegi", destination: "/en", permanent: true },
     ];
   },

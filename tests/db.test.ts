@@ -716,4 +716,63 @@ describe("anketler", () => {
     // Biçimi bozuk konu kabul edilmez
     await expectError(send(A, "project:x"), /row-level security/);
   });
+
+  it("migration 39: hukuki kabul kayıtları — kayıtta otomatik, kullanıcıya salt okunur, değiştirilemez; hesap silinince tüm veriler gider (D154)", async () => {
+    const D = "d1d1d1d1-0000-4000-8000-000000000039";
+    const E = "e1e1e1e1-0000-4000-8000-000000000039";
+    // E-posta ile kayıt: formdaki kabul meta veride gelir → Kullanım Koşulları “accept”, KVKK “notice”, kaynak e-posta
+    await db.query(`insert into auth.users (id, email, raw_user_meta_data) values ($1, 'd@ornek.com', $2)`, [D, JSON.stringify({ full_name: "Deniz", legal: { terms: "2026-11-13", kvkk: "2026-11-13", gdpr: "2026-11-13", fair_use: "bozuk" } })]);
+    const rows = (await db.query<{ doc: string; version: string; kind: string; source: string }>(`select doc, version, kind, source from public.legal_acceptances where user_id = $1 order by doc`, [D])).rows;
+    expect(rows).toEqual([{ doc: "kvkk", version: "2026-11-13", kind: "notice", source: "email" }, { doc: "terms", version: "2026-11-13", kind: "accept", source: "email" }]);
+    // Google/Apple ile kayıt: meta veride kabul yok → kayıt oluşmaz (ilk girişte onay sayfası)
+    await db.query(`insert into auth.users (id, email, raw_user_meta_data) values ($1, 'e@ornek.com', '{"name":"Ece","avatar_url":"x"}')`, [E]);
+    expect((await db.query(`select 1 from public.legal_acceptances where user_id = $1`, [E])).rows).toHaveLength(0);
+    // Kullanıcı yalnızca kendi kayıtlarını görür; yönetici hepsini; başkası göremez
+    expect(await as(D, `select doc from public.legal_acceptances`)).toHaveLength(2);
+    expect(await as(E, `select doc from public.legal_acceptances`)).toHaveLength(0);
+    expect((await as(ADMIN, `select doc from public.legal_acceptances where user_id = '${D}'`))).toHaveLength(2);
+    // İstemci doğrudan yazamaz, silemez; kimse (sunucu dâhil) değiştiremez
+    await expectError(as(E, `insert into public.legal_acceptances (user_id, doc, version, kind, source) values (auth.uid(), 'terms', '2026-11-13', 'accept', 'google')`), /row-level security/);
+    await as(D, `delete from public.legal_acceptances`);
+    expect((await db.query(`select 1 from public.legal_acceptances where user_id = $1`, [D])).rows).toHaveLength(2);
+    await expectError(db.query(`update public.legal_acceptances set version = '2030-01-01' where user_id = $1`, [D]), /değiştirilemez/);
+    // Kullanıcı güncellemesi RLS nedeniyle hiçbir satıra ulaşmaz (sessizce 0 satır); değer değişmez
+    const before = (await db.query<{ v: string }>(`select string_agg(version || accepted_at::text, ',' order by doc) as v from public.legal_acceptances where user_id = $1`, [D])).rows[0].v;
+    await as(D, `update public.legal_acceptances set version = '2020-01-01'`).catch(() => null);
+    expect((await db.query<{ v: string }>(`select string_agg(version || accepted_at::text, ',' order by doc) as v from public.legal_acceptances where user_id = $1`, [D])).rows[0].v).toBe(before);
+    // Sunucu (service role) onay sayfası kaydı yazabilir; geçersiz belge/sürüm/kaynak reddedilir
+    await db.query(`insert into public.legal_acceptances (user_id, doc, version, kind, source, context) values ($1, 'distance', '2026-11-13', 'notice', 'purchase', '{"plan":"pro"}')`, [E]);
+    await expectError(db.query(`insert into public.legal_acceptances (user_id, doc, version, kind, source) values ($1, 'pazarlama', '2026-11-13', 'accept', 'google')`, [E]), /check/i);
+    await expectError(db.query(`insert into public.legal_acceptances (user_id, doc, version, kind, source) values ($1, 'terms', 'v2', 'accept', 'google')`, [E]), /check/i);
+    await expectError(db.query(`insert into public.legal_acceptances (user_id, doc, version, kind, source) values ($1, 'terms', '2026-11-13', 'accept', 'sms')`, [E]), /check/i);
+
+    // Hesap silme: kullanıcıya bağlı veriler zincirleme silinir; geri bildirim/hata kaydında kişi bağı kopar
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ($1, 'Silinecek', 'thesis', 'master') returning id`, [D])).rows;
+    const [st] = (await db.query<{ id: string }>(`insert into public.project_stages (project_id, user_id, key, title, position) values ($1, $2, 'intro', 'Giriş', 0) returning id`, [p.id, D])).rows;
+    await db.query(`insert into public.stage_revisions (stage_id, project_id, user_id) values ($1, $2, $3)`, [st.id, p.id, D]);
+    await db.query(`insert into public.stage_comments (stage_id, project_id, user_id, body) values ($1, $2, $3, 'not')`, [st.id, p.id, D]);
+    await db.query(`insert into public.sources (project_id, user_id, title, origin) values ($1, $2, 'Kaynak', 'manual')`, [p.id, D]);
+    await db.query(`insert into public.project_memory (project_id, user_id, kind, content) values ($1, $2, 'note', 'hafıza')`, [p.id, D]);
+    await db.query(`insert into public.files (user_id, name, mime_type, size_bytes, storage_path) values ($1, 'a.pdf', 'application/pdf', 1, $2)`, [D, `${D}/a.pdf`]);
+    const [c] = (await db.query<{ id: string }>(`insert into public.ai_conversations (project_id, user_id) values ($1, $2) returning id`, [p.id, D])).rows;
+    await db.query(`insert into public.ai_messages (conversation_id, user_id, role, content) values ($1, $2, 'user', 'merhaba')`, [c.id, D]);
+    await db.query(`insert into public.activity_log (user_id, kind) values ($1, 'ai_output')`, [D]);
+    await db.query(`insert into public.user_devices (user_id, device) values ($1, repeat('a', 64))`, [D]);
+    await db.query(`insert into public.project_invites (project_id, email, role, token, invited_by) values ($1, 'f@ornek.com', 'editor', repeat('i', 40), $2)`, [p.id, D]);
+    await db.query(`insert into public.project_shares (project_id, user_id, token) values ($1, $2, repeat('s', 40))`, [p.id, D]);
+    await db.query(`insert into public.notifications (user_id, kind) values ($1, 'admin_message')`, [D]);
+    await db.query(`insert into public.feedback (user_id, message) values ($1, 'geri bildirim')`, [D]);
+    await db.query(`insert into public.error_logs (user_id, route, message) values ($1, 'test', 'hata')`, [D]);
+    await db.query(`delete from auth.users where id = $1`, [D]);
+    for (const t of ["profiles", "projects", "project_stages", "stage_revisions", "stage_comments", "sources", "project_memory", "files", "ai_conversations", "ai_messages", "activity_log", "user_devices", "project_shares", "notifications", "legal_acceptances"]) {
+      const col = t === "profiles" ? "id" : "user_id";
+      expect((await db.query(`select 1 from public.${t} where ${col} = $1`, [D])).rows, t).toHaveLength(0);
+    }
+    expect((await db.query(`select 1 from public.project_invites where invited_by = $1 or project_id = $2`, [D, p.id])).rows).toHaveLength(0);
+    expect((await db.query(`select user_id from public.feedback where message = 'geri bildirim'`)).rows).toEqual([{ user_id: null }]);
+    expect((await db.query(`select 1 from public.error_logs where user_id = $1`, [D])).rows).toHaveLength(0);
+    await db.query(`delete from auth.users where id = $1`, [E]);
+    expect((await db.query(`select 1 from public.legal_acceptances where user_id = $1`, [E])).rows).toHaveLength(0);
+  });
 });
+

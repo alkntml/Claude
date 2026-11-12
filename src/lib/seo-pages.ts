@@ -123,22 +123,56 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     },
     keywords: { tr: ["Academiana nasıl kullanılır", "yardım"], en: ["how to use Academiana", "help"], de: ["Academiana Anleitung", "Hilfe"] },
   },
-  "/gizlilik": {
-    title: { tr: "Güvenlik ve Gizlilik Politikası | Academiana", en: "Security and Privacy Policy | Academiana", de: "Sicherheits- und Datenschutzrichtlinie | Academiana" },
+  "/kvkk": {
+    title: { tr: "KVKK Aydınlatma Metni | Academiana", en: "KVKK Privacy Notice | Academiana", de: "Datenschutzinformation nach KVKK | Academiana" },
     description: {
-      tr: "Academiana verilerinizi ve akademik çalışmalarınızı nasıl korur: şifreli iletişim, RLS ile izolasyon, Frankfurt’ta saklama, yapay zekâ aktarımı ve haklarınız.",
-      en: "How Academiana protects your data and academic work: encrypted connections, RLS isolation, Frankfurt hosting, AI data transfer and your rights.", de: "Wie Academiana Ihre Daten und Arbeiten schützt: verschlüsselte Verbindungen, Isolation per RLS, Hosting in Frankfurt, KI-Datenübermittlung und Ihre Rechte.",
+      tr: "Academiana’da hangi kişisel verilerin hangi amaçlarla işlendiği, ne kadar saklandığı, kimlere aktarıldığı ve KVKK kapsamındaki haklarınızı nasıl kullanacağınız.",
+      en: "Which personal data Academiana processes and why, how long it is kept, who receives it and how to exercise your rights under Türkiye’s KVKK.", de: "Welche personenbezogenen Daten Academiana zu welchen Zwecken verarbeitet, wie lange sie gespeichert werden, wer sie erhält und Ihre Rechte nach dem KVKK.",
     },
-    keywords: { tr: ["gizlilik politikası", "güvenlik politikası", "KVKK aydınlatma metni"], en: ["privacy policy", "security policy", "data protection"], de: ["Datenschutzerklärung", "Sicherheitsrichtlinie", "Datenschutz"] },
+    keywords: { tr: ["KVKK aydınlatma metni", "kişisel verilerin korunması", "gizlilik politikası"], en: ["KVKK privacy notice", "personal data protection", "privacy policy"], de: ["KVKK Datenschutzinformation", "Datenschutzerklärung", "personenbezogene Daten"] },
   },
+  "/adil-kullanim": {
+    title: { tr: "Adil Kullanım Politikası | Academiana", en: "Fair Use Policy | Academiana", de: "Richtlinie zur fairen Nutzung | Academiana" },
+    description: {
+      tr: "“Sınırsız” ne demek? Tek Proje paketinin kuralları, kötüye kullanım sinyalleri, insan incelemesi, itiraz ve davet programına ilişkin adil kullanım ilkeleri.",
+      en: "What “unlimited” means: Single Project plan rules, abuse signals, human review, objections and the referral programme under our fair use principles.", de: "Was „unbegrenzt“ bedeutet: Regeln des Tarifs „Tek Proje“, Missbrauchssignale, menschliche Prüfung, Einspruch und Einladungsprogramm.",
+    },
+    keywords: { tr: ["adil kullanım politikası", "sınırsız kullanım", "Tek Proje paketi"], en: ["fair use policy", "unlimited plan fair use"], de: ["Fair-Use-Richtlinie", "faire Nutzung"] },
+  },
+  "/cerez-politikasi": {
+    title: { tr: "Çerez ve Cihaz Tanımlayıcıları Politikası | Academiana", en: "Cookie and Device Identifier Policy | Academiana", de: "Cookies und Gerätekennungen | Academiana" },
+    description: {
+      tr: "Academiana hangi çerezleri ve tarayıcı belleğini kullanır: oturum çerezleri, cihaz kimliği, dil tercihi, yerel tercihler. Analitik veya reklam çerezi yoktur.",
+      en: "Which cookies and browser storage Academiana uses: session cookies, device identifier, language preference and local settings. No analytics or ad cookies.", de: "Welche Cookies und welchen Browserspeicher Academiana nutzt: Sitzungscookies, Gerätekennung, Sprache und lokale Einstellungen. Keine Analyse- oder Werbecookies.",
+    },
+    keywords: { tr: ["çerez politikası", "çerezler", "cihaz tanımlayıcısı"], en: ["cookie policy", "cookies", "device identifier"], de: ["Cookie-Richtlinie", "Cookies", "Gerätekennung"] },
+  },
+  "/mesafeli-sozlesmeler": {
+    title: { tr: "Mesafeli Sözleşmeler ve Ön Bilgilendirme | Academiana", en: "Distance Contracts and Pre-Contractual Information", de: "Fernabsatz und vorvertragliche Informationen" },
+    description: {
+      tr: "Academiana paketlerinin satış akışı, paket türleri, fiyat ve ödeme bilgisi, yenileme, hizmetin başlaması, cayma hakkı, iade ve siparişe özel teyit esasları.",
+      en: "How Academiana plans are sold: plan types, price and payment information, renewal, start of service, right of withdrawal, refunds and order confirmation.", de: "Wie Academiana-Tarife verkauft werden: Tarifarten, Preis und Zahlung, Verlängerung, Leistungsbeginn, Widerrufsrecht, Rückerstattung und Bestellbestätigung.",
+    },
+    keywords: { tr: ["mesafeli satış sözleşmesi", "ön bilgilendirme formu", "cayma hakkı"], en: ["distance contract", "pre-contractual information", "right of withdrawal"], de: ["Fernabsatzvertrag", "vorvertragliche Informationen", "Widerrufsrecht"] },
+  },
+  "/gdpr": {
+    title: { tr: "GDPR / Veri Koruma Bildirimi | Academiana", en: "GDPR / Data Protection Notice | Academiana", de: "DSGVO / Datenschutzhinweis | Academiana" },
+    description: {
+      tr: "GDPR kapsamında Academiana’nın işlediği veri kategorileri, hukuki dayanaklar, saklama, uluslararası aktarımlar, güvenlik ve ilgili kişi hakları.",
+      en: "Under the GDPR: the data categories Academiana processes, legal bases, retention, international transfers, security and data subject rights.", de: "Nach der DSGVO: von Academiana verarbeitete Datenkategorien, Rechtsgrundlagen, Speicherdauer, internationale Übermittlungen, Sicherheit und Ihre Rechte.",
+    },
+    keywords: { tr: ["GDPR", "veri koruma bildirimi"], en: ["GDPR notice", "data protection notice", "privacy notice"], de: ["DSGVO", "Datenschutzhinweis"] },
+  },
+
   "/kosullar": {
     title: { tr: "Kullanım Koşulları | Academiana", en: "Terms of Use | Academiana", de: "Nutzungsbedingungen | Academiana" },
     description: {
-      tr: "Academiana kullanım koşulları: hizmetin kapsamı, kullanıcı sorumlulukları, akademik dürüstlük, ödeme, iptal ve hesap kapatma.",
-      en: "Academiana terms of use: scope of the service, user responsibilities, academic integrity, payment, cancellation and account closure.", de: "Nutzungsbedingungen von Academiana: Leistungsumfang, Pflichten der Nutzenden, wissenschaftliche Integrität, Zahlung, Kündigung und Kontoschließung.",
+      tr: "Academiana kullanım koşulları: hizmetin niteliği, hesap güvenliği, paketler ve kullanım hakları, kullanıcı içerikleri, yapay zekâ çıktıları ve sorumluluk.",
+      en: "Academiana terms of use: nature of the service, account security, plans and usage rights, user content, AI outputs and liability.", de: "Nutzungsbedingungen von Academiana: Art der Leistung, Kontosicherheit, Tarife und Nutzungsrechte, Nutzerinhalte, KI-Ausgaben und Haftung.",
     },
-    keywords: { tr: ["kullanım koşulları"], en: ["terms of use"], de: ["Nutzungsbedingungen"] },
+    keywords: { tr: ["kullanım koşulları", "üyelik sözleşmesi"], en: ["terms of use", "terms of service"], de: ["Nutzungsbedingungen", "AGB"] },
   },
+
   "/yontem": {
     title: { tr: "Yöntem ve Şeffaflık: Kaynak ve İddia Doğrulama | Academiana", en: "Method and Transparency: Source and Claim Checks", de: "Methode und Transparenz: Quellen- und Aussagenprüfung" },
     description: {
@@ -158,13 +192,14 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     tagline: { tr: "Misyonumuz ve vizyonumuz", en: "Our mission and vision" },
   },
   "/akademik-durustluk": {
-    title: { tr: "Akademik Dürüstlük İlkeleri — Yapay Zekâyı Sorumlu Kullanım | Academiana", en: "Academic Integrity — Responsible AI Use | Academiana", de: "Wissenschaftliche Integrität — verantwortungsvolle KI | Academiana" },
+    title: { tr: "Akademik Dürüstlük ve Sorumlu Yapay Zekâ Kullanımı | Academiana", en: "Academic Integrity and Responsible AI Use | Academiana", de: "Wissenschaftliche Integrität und verantwortungsvolle KI" },
     description: {
-      tr: "Academiana neden kaynak uydurmaz, veri üretmez ve yazarlığı size bırakır? Yapay zekâyı akademik çalışmada sorumlu ve etik kullanma ilkelerimiz.",
-      en: "Why Academiana never fabricates sources or data and keeps you as the author. Our principles for responsible, ethical AI use in academic work.", de: "Warum Academiana nie Quellen oder Daten erfindet und Sie Autorin bzw. Autor bleiben. Unsere Grundsätze für verantwortungsvolle, ethische KI-Nutzung.",
+      tr: "Kaynakların bulunması ve doğrulanması, erişim seviyesi, iddia denetimi, veri bütünlüğü, intihal ve yapay zekâ kullanımının beyanı: sorumlu kullanım ilkeleri.",
+      en: "Finding and verifying sources, access levels, claim checking, data integrity, plagiarism and declaring AI use: our principles for responsible use.", de: "Quellen finden und verifizieren, Zugriffsstufen, Aussagenprüfung, Datenintegrität, Plagiat und Angabe der KI-Nutzung: Grundsätze verantwortungsvoller Nutzung.",
     },
     keywords: { tr: ["yapay zeka akademik etik", "akademik dürüstlük", "yapay zeka ile tez yazmak etik mi"], en: ["AI academic integrity", "responsible AI in research", "is using AI for thesis ethical"], de: ["KI wissenschaftliche Integrität", "verantwortungsvolle KI Forschung", "ist KI für Abschlussarbeit erlaubt"] },
   },
+
   "/blog": {
     title: { tr: "Blog — Tez, Makale ve Akademik Yazım Rehberleri | Academiana", en: "Blog — Thesis, Research Paper & Academic Writing Guides | Academiana", de: "Blog — Leitfäden für Abschlussarbeit und wissenschaftliches Schreiben | Academiana" },
     description: {

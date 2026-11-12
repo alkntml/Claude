@@ -67,4 +67,8 @@ union all select '37 Gerçek zamanlı ortak yazım kanalı',
 union all select '38 İndirim kodları ve sayfa hakkı',
   case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'discount_codes')
         and exists (select 1 from pg_proc where proname = 'usage_words')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '39 Hukuki belge kabul kayıtları',
+  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'legal_acceptances')
+        and exists (select 1 from pg_trigger where tgname = 'on_auth_user_legal')
        then 'YAPILMIŞ' else 'EKSİK' end;

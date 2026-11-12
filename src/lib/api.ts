@@ -5,6 +5,7 @@ import { localeFromRequest } from "@/i18n/server";
 import { NextResponse } from "next/server";
 import { ZodError, type ZodTypeAny, type output } from "zod";
 import { adminClient } from "@/lib/supabase/admin";
+import { scrubMeta, scrubPII } from "@/lib/pii";
 
 /** İstek kapsamı: oturum açan kullanıcı (requireUser yazar); hata hâlinde harcanan yapay zekâ maliyetini kaydetmek için (D94) */
 export const requestCtx = new AsyncLocalStorage<{ userId?: string }>();
@@ -76,7 +77,8 @@ export function assertSameOrigin(req: Request) {
 export async function logError(route: string, err: unknown, userId?: string | null, meta: Record<string, unknown> = {}) {
   try {
     const e = err instanceof Error ? err : new Error(String(err));
-    await adminClient().from("error_logs").insert({ route, message: e.message.slice(0, 2000), stack: e.stack?.slice(0, 8000), user_id: userId ?? null, meta });
+    // D154: e-posta, telefon, IP ve belirteçler kayda girmeden maskelenir
+    await adminClient().from("error_logs").insert({ route, message: scrubPII(e.message).slice(0, 2000), stack: e.stack ? scrubPII(e.stack).slice(0, 8000) : undefined, user_id: userId ?? null, meta: scrubMeta(meta) });
   } catch {
     console.error("[error_logs]", route, err);
   }

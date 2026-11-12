@@ -5,6 +5,7 @@ import { STYLE_IDS } from "@/lib/citations";
 import { adminClient } from "@/lib/supabase/admin";
 import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 import { buildUserExport } from "@/lib/data-export";
+import { listUserObjects, removeObjects } from "@/lib/account-delete";
 
 export const GET = route("account.get", async (req) => {
   const s = await requireUser();
@@ -34,17 +35,29 @@ export const PATCH = route("account.update", async (req) => {
   return json({ profile: data });
 });
 
-/** Hesabı ve tüm verileri kalıcı olarak siler (dosyalar dahil). */
+/**
+ * Hesabı ve tüm verileri kalıcı olarak siler (D154 doğrulaması):
+ * - Depo: `<user_id>/` altındaki TÜM dosyalar, alt klasörler (ör. Overleaf geçici ZIP’leri) ve 1000’den fazlası dâhil; ayrıca files tablosundaki yollar
+ * - Veritabanı: auth kullanıcısı silinince profiles ve user_id ile bağlı tüm tablolar CASCADE ile silinir
+ *   (çalışmalar, bölümler, sürümler, yorumlar, kaynaklar, notlar, dosya kayıtları, sohbetler, kullanım ve kanıt kayıtları,
+ *   cihaz kimliği özetleri, gönderdiği ortak yazar davetleri, danışman paylaşım bağlantıları, bildirimler, anketler, ödeme kayıtları, kabul kayıtları)
+ * - Kalanlar (kişi bağı koparılır, user_id = null): geri bildirim mesajları, hata kayıtları, ücretsiz araç kullanım sayaçları, veri talebi kaydı
+ * Yedekler: barındırma sağlayıcısının yedeklerindeki kopyalar yedek saklama süresi dolunca silinir (docs/ACCOUNT_DELETION.md).
+ */
 export const DELETE = route("account.delete", async (req) => {
   const s = await requireUser();
   const { confirm } = await parseBody(req, z.object({ confirm: z.string() }));
   if (confirm !== "SİL" && confirm !== "SIL") throw new ApiError(422, "Onay için SİL yazın");
   const db = adminClient();
-  const { data: files } = await db.storage.from("user-files").list(s.user.id, { limit: 1000 });
-  if (files?.length) await db.storage.from("user-files").remove(files.map((f) => `${s.user.id}/${f.name}`));
+  const store = db.storage.from("user-files");
+  const { data: rows } = await db.from("files").select("storage_path").eq("user_id", s.user.id).limit(50000);
+  const listed = await listUserObjects(store, s.user.id);
+  const paths = [...new Set([...listed, ...(rows ?? []).map((r) => r.storage_path as string).filter((p) => typeof p === "string" && p.startsWith(`${s.user.id}/`))])];
+  // Dosyalar silinemezse hesap silinmez (sahipsiz dosya kalmasın); kullanıcı tekrar deneyebilir
+  const removedFiles = await removeObjects(store, paths);
   await db.from("data_requests").insert({ user_id: null, kind: "delete", status: "completed", completed_at: new Date().toISOString() });
   const { error } = await db.auth.admin.deleteUser(s.user.id); // profiles ve bağlı tüm tablolar CASCADE ile silinir
   if (error) throw error;
   await s.supabase.auth.signOut();
-  return json({ ok: true });
+  return json({ ok: true, removedFiles });
 });

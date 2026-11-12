@@ -1,0 +1,662 @@
+ACADEMIANA
+Yasal Metinler Paketi
+KVKK • Kullanım Koşulları • Adil Kullanım • Çerezler • Akademik Dürüstlük • Mesafeli
+Sözleşmeler • GDPR
+
+13 Kasım 2026 | Kaynak: Kullanıcının sağladığı “HUKUK_BILGI_NOTU.md”
+
+Hazırlama ilkesi: Kaynak notta bulunmayan şirket unvanı, kişi adı, adres, vergi/MERSİS numarası,
+KEP/e-posta/telefon, fiyat, KDV oranı, ödeme yöntemi veya doğrulanmamış teknik özellik eklenmemiştir.
+OpenAI'ın canlı ortamda kullanımı da teyit edilmediği için aktif veri alıcısı olarak gösterilmemiştir.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+1
+
+İçindekiler
+• 1. KVKK AYDINLATMA METNİ
+• 2. KULLANIM KOŞULLARI
+• 3. ADİL KULLANIM POLİTİKASI
+• 4. ÇEREZ VE CİHAZ TANIMLAYICILARI POLİTİKASI
+• 5. AKADEMİK DÜRÜSTLÜK VE SORUMLU YAPAY ZEKÂ KULLANIMI
+• 6. MESAFELİ SÖZLEŞMELER VE ÖN BİLGİLENDİRME
+• 7. GDPR / DATA PROTECTION NOTICE
+
+Yayın öncesi kritik tamamlamalar
+• Veri sorumlusu/satıcı gerçek veya tüzel kişi kimliği ve resmî iletişim/tebligat bilgileri
+• KVKK başvuruları için e-posta veya KEP kanalı
+
+Academiana | Yasal metinler — çalışma taslağı
+
+2
+
+1. KVKK AYDINLATMA METNİ
+Academiana | www.academiana.com.tr
+
+Giriş ve veri sorumlusu
+Bu aydınlatma metni, www.academiana.com.tr adresinde sunulan Academiana platformunun kullanımı
+sırasında kişisel verilerin işlenmesine ilişkin bilgi vermek amacıyla hazırlanmıştır. Academiana; akademik
+araştırma ve yazım süreçlerine yardımcı olan, yapay zekâ destekli çevrim içi bir platformdur. Platformun
+işletilmesinden sorumlu gerçek veya tüzel kişinin ticaret unvanı ve tebligat/başvuru adresi, bu taslakta
+doğrulanmış bilgi bulunmadığından belirtilmemiştir. Yayına alınmadan önce veri sorumlusu kimliği ve KVKK
+başvuru kanalı açıkça eklenmelidir.
+
+İşlenen kişisel veri kategorileri
+Platformun mevcut işleyişine göre aşağıdaki veri kategorileri işlenebilir:
+• Kimlik ve iletişim: ad-soyad, e-posta adresi ve kullanıcının isteğe bağlı girdiği kurum bilgisi.
+• Hesap ve kimlik doğrulama: e-posta hesabı, parola doğrulama verisi ve Google/Apple ile girişte ilgili
+sağlayıcıdan alınan ad ve e-posta bilgisi. Parola, Supabase altyapısında geri çözülemeyecek biçimde
+saklanır; platform parolanın açık hâlini görüntülemez.
+• Akademik içerik: çalışmalar, bölümler, sürüm geçmişi, yorumlar, kaynaklar ve notlar.
+• Dosya ve dosya içeriği: PDF, Word, Excel/CSV dosyaları ve bunlardan çıkarılan metinler.
+• Yapay zekâ etkileşimleri: kullanıcının mesajları, asistan yanıtları ve hizmetin sunulması için kullanılan
+çalışma bağlamı.
+• Kullanım ve işlem kayıtları: yapay zekâ çıktılarının tam metni, tarih, çalışma/bölüm adı, kelime sayısı; token,
+maliyet, tarama ve sayfa sayaçları; silme kayıtları.
+• Cihaz ve güvenlik verileri: tarayıcıda oluşturulan rastgele cihaz kimliği, bunun sunucuda tutulan geri
+çözülemeyen özeti ile ilk/son görülme tarihleri.
+• Tek Proje paketi kullanım kayıtları: indirme kelime sayısı, metnin geri elde edilemeyen özeti ve kapak
+bilgileri (yazar, üniversite, bölüm ve danışman adı).
+• Ödeme/paket tanımlama kayıtları: ödeyenin adı, telefon numarası, tutar ve not. Kart bilgisi Academiana
+sistemine girilmez.
+• Davet ve paylaşım verileri: ortak yazar daveti için e-posta; danışman bağlantısı üzerinden erişim ve yorum
+bilgileri.
+• Kurum lisansı verileri: kurum üyeliği, kullanım istatistikleri ve kurum işlem kayıtları.
+• Destek ve teknik kayıtlar: kullanıcının geri bildirim/hata mesajı ve ilgili teknik hata bilgileri.
+• Ziyaret istatistikleri: ziyaret edilen sayfa, yönlendiren site, kampanya etiketi, cihaz türü, arayüz dili ve
+günlük değişen anonim kod.
+• Site içi bildirim ve başvuru kayıtları.
+
+İşleme amaçları
+Kişisel veriler; üyelik oluşturma ve hesabı yönetme, kimlik doğrulama, akademik çalışma alanını ve dosya
+hizmetlerini sunma, yapay zekâ özelliklerini çalıştırma, kaynak arama ve atıf işlevlerini sağlama, istatistiksel
+analiz yapma, ortak yazar ve danışman paylaşımını yürütme, paket ve kullanım haklarını yönetme, ödeme
+sonrasında paketi tanımlama, müşteri desteği sağlama, güvenliği ve kötüye kullanımı önleme, teknik
+sorunları tespit etme, hizmet performansını ölçme ve hukuki yükümlülükleri yerine getirme amaçlarıyla
+işlenir. Veriler satılmaz ve reklam hedeflemesi amacıyla kullanılmaz. Platformda analitik veya reklam amaçlı
+üçüncü taraf çerezleri kullanılmadığı bildirilmiştir.
+
+Verilerin elde edilme yöntemi
+Veriler; kayıt ve giriş ekranları, kullanıcının platforma yazdığı veya yüklediği içerikler, kullanıcı tarafından
+başlatılan paylaşım ve ödeme iletişimi, platformun otomatik olarak oluşturduğu kullanım/güvenlik kayıtları
+ve cihaz belleğinde oluşturulan rastgele cihaz kimliği aracılığıyla elektronik ortamda elde edilir.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+3
+
+Saklama süreleri
+Hesap, akademik içerik, dosyalar, sohbetler, sayaçlar, cihaz kimliği özeti ve bildirimler kural olarak hesap
+silinene kadar tutulur. Ortak yazar daveti 14 gün içinde geçersiz olur; davet kaydı çalışma ile birlikte
+tutulabilir. Danışman paylaşım bağlantısı, kullanıcı bağlantıyı iptal edene kadar erişime açık kalır. Kullanım
+kanıt kayıtları mevcut sistemde hesap silinene kadar tutulmaktadır; metinlerde geçen 12 aylık süre için
+otomatik silme uygulanmadığı bildirilmiştir. Geri bildirim ve hata kayıtları süresiz tutulabilmekte; hesap
+silindiğinde kullanıcıyla bağlantısı koparılmakta, metin içeriği kalabilmektedir. Ziyaret istatistikleri süresiz
+tutulmaktadır. Ödeme kayıtlarının saklanması, uygulanabilir vergi ve muhasebe yükümlülüklerine tabidir. Bu
+sürelerin mevzuata uygun nihai takvimi belirlenmeli ve gerekiyorsa otomatik silme mekanizması
+kurulmalıdır.
+
+Verilerin aktarıldığı alıcı grupları ve yurt dışına aktarım
+Hizmetin sunulması kapsamında veriler; veritabanı, kimlik doğrulama ve dosya depolama hizmetleri için
+Supabase'e; barındırma ve dağıtım hizmetleri için Vercel'e; yapay zekâ özellikleri kullanıldığında Anthropic'e
+(Claude) aktarılabilir. OpenAI entegrasyonu kodda isteğe bağlı olarak bulunmaktadır; canlı ortamda kullanılıp
+kullanılmadığı teyit edilmediğinden bu metin, OpenAI'ı aktif alıcı olarak kabul etmez. Google ve Apple,
+yalnızca ilgili sosyal giriş yöntemi seçildiğinde kimlik doğrulama sürecine dahil olur. Akademik kaynak
+aramalarında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo,
+HAL, Open Library, INSPIRE-HEP ve Unpaywall gibi kaynak servislerine arama terimleri ve DOI gönderilebilir;
+kullanıcı kimliğinin bu arama servislerine gönderilmediği bildirilmiştir. Anahtar tanımlıysa Springer Nature,
+IEEE ve NASA ADS servisleri de kullanılabilir. Kullanıcının talebiyle Overleaf'e LaTeX dosyası aktarılabilir;
+Zotero entegrasyonunda kullanıcının girdiği anahtarın saklanmadığı bildirilmiştir. Ödeme iletişimi WhatsApp
+üzerinden yürütülebilir.
+
+Yurt dışı veri konumları
+Bilgi notuna göre Supabase verileri Frankfurt/Avrupa Birliği bölgesinde, Vercel barındırma sunucuları
+Frankfurt'ta tutulmakta; Vercel'in küresel CDN ağı da kullanılmaktadır. Supabase ve Vercel ABD merkezli
+şirketlerdir. Yapay zekâ özelliği kullanıldığında kullanıcının metni, çalışma bağlamı ve seçilen kaynak/dosya
+parçaları ABD'deki Anthropic'e aktarılır. Akademik veri tabanlarının bir kısmı yurt dışındadır. Bu aktarımların
+her biri için KVKK'nın yurt dışına aktarım hükümlerine uygun hukuki mekanizma kurulmalıdır.
+
+Üçüncü kişilere ve özel nitelikli verilere ilişkin uyarı
+Kullanıcıların yüklediği tez, görüşme dökümü, anket veya diğer belgelerde üçüncü kişilere ait kişisel veriler
+ya da özel nitelikli kişisel veriler bulunabilir. Kullanıcı, bu verileri platforma yüklemek ve işlemek için gerekli
+hukuki yetkiye sahip olduğunu; ilgili kişileri bilgilendirdiğini ve gerekli hukuki şartları sağladığını
+değerlendirmelidir. Araştırma anketlerinde katılımcılara karşı veri sorumlusu, araştırmayı yürüten
+araştırmacı olabilir; Academiana ilgili hizmet bakımından veri işleyen konumunda bulunabilir. Tarafların
+rolleri somut kullanım ve sözleşmeye göre belirlenmelidir. Gereksiz kimlik bilgileri, sağlık verileri ve diğer
+hassas bilgiler platforma yüklenmemelidir.
+
+Otomatik izleme ve insan incelemesi
+Kötüye kullanım ihtimalini belirlemek amacıyla kullanım örüntüleri otomatik olarak izlenebilir ve yöneticiye
+uyarı üretilebilir. Sistem tek başına otomatik askıya alma kararı vermez; uyarı insan tarafından incelenir ve
+karar verilir. İlgili kişi, kendisini etkileyen işleme ilişkin bilgi ve itiraz talebini veri sorumlusuna iletebilir.
+
+İlgili kişinin hakları ve başvuru
+İlgili kişiler, KVKK'nın 11. maddesi kapsamındaki haklarını kullanabilir. Platformda kullanıcılar hesap
+sayfasından verilerini JSON formatında indirebilir, hesaplarını ve hesapla ilişkili verilerini silebilir ve veri talebi
+oluşturabilir. Veri talebine 30 gün içinde ücretsiz yanıt verildiği bildirilmiştir. Başvurunun iletileceği
+e-posta/KEP/posta adresi bilgi notunda bulunmadığından bu taslakta belirtilmemiştir; yayımdan önce
+başvuru kanalı eklenmelidir.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+4
+
+Güncelleme
+Bu metin, platformun fiilî veri işleme faaliyetleri ve mevzuattaki değişiklikler doğrultusunda güncellenebilir.
+Önemli değişiklikler kullanıcıya uygun yöntemle duyurulur. Yeni amaç veya hukuki şart gerektiriyorsa gerekli
+bilgilendirme ve izin süreçleri ayrıca yürütülür.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+5
+
+2. KULLANIM KOŞULLARI
+Academiana | www.academiana.com.tr
+
+Kapsam ve hizmetin niteliği
+Bu koşullar, www.academiana.com.tr üzerinden sunulan Academiana platformunun kullanımını düzenler.
+Academiana; yapay zekâ destekli metin önerisi ve düzenleme, akademik kaynak arama, atıf/kaynakça
+oluşturma, istatistik analizi, anket hazırlama ve toplama, Word/PDF/LaTeX çıktısı, ortak yazarlık, danışmanla
+salt okunur paylaşım, savunma provası, PRISMA sistematik derleme, iddia denetimi ve çeviri gibi akademik
+çalışmaya yardımcı araçlar sunar. Platform bir akademik danışman, üniversite, hakem, yayıncı veya intihal
+tespit kuruluşu yerine geçmez.
+
+Hesap oluşturma ve güvenlik
+Kayıt e-posta ile veya Google/Apple üzerinden yapılabilir. E-posta doğrulaması uygulanır. Kullanıcı doğru ve
+güncel bilgi vermek, hesap güvenliğini korumak ve hesabını başkalarıyla paylaşmamakla yükümlüdür. Hesap
+başkasına devredilemez veya ortak kullanılmak üzere kullandırılamaz. Geçici e-posta adresleriyle davet
+ödülü verilmez. Kullanıcı, hesabında gerçekleşen işlemlerden kendi kusuru ölçüsünde sorumludur.
+
+Paketler, ücretler ve kullanım hakları
+Platformda Ücretsiz paket, aylık ücretli paketler, tek seferlik Tek Proje paketi ve kurum lisansı sunulabilir.
+Paketlerin kapsamı, fiyatı, süresi, kullanım limitleri ve indirme hakları satın alma veya paket tanımlama
+öncesinde kullanıcıya bildirilen güncel paket açıklamasına göre belirlenir. Aylık kullanım hakları; yapay zekâ
+kullanımı, kaynak tarama ve yapay zekâ ile oluşturulan sayfa sayısı üzerinden hesaplanabilir. Sayfa
+hesabında 1 sayfa 344 kelime olarak kabul edilir. Hak dolduğunda yalnızca ilgili özellik durur; çalışma
+silinmez veya kilitlenmez. Kullanıcı çalışmasını görüntüleyebilir, düzenleyebilir ve paketin izin verdiği
+biçimlerde indirebilir. Yapay zekâ tarafından üretilen metin sonradan silinse dahi ilgili kullanım hakkı geri
+yüklenmez.
+
+Kullanıcı içerikleri ve fikrî mülkiyet
+Kullanıcı, platforma yüklediği veya oluşturduğu içerik üzerindeki hakların sahibi olduğunu ya da içeriği
+kullanmak için gerekli izinlere sahip bulunduğunu beyan eder. Kullanıcı; üçüncü kişilerin telif, kişilik, gizlilik
+ve veri koruma haklarını ihlal eden materyalleri yükleyemez. Academiana, kullanıcı içeriğini yalnızca
+hizmetin sunulması, güvenliğin sağlanması ve kullanıcının talep ettiği işlevlerin yerine getirilmesi için teknik
+olarak işleyebilir. Bu hüküm, platformun kullanıcı içeriği üzerinde mülkiyet hakkı kazandığı anlamına gelmez.
+Yapay zekâ çıktılarının hukuki statüsü ve üçüncü kişi hakları, uygulanabilir mevzuat ve somut içeriğe göre
+değerlendirilir; kullanıcı çıktıyı kullanmadan önce kontrol etmekle yükümlüdür.
+
+Paylaşım ve ortak çalışma
+Çalışma sahibi, ortak yazarları “düzenleyebilir” veya “yorum yapabilir” rolleriyle davet edebilir. Ortak
+yazarlar çalışmayı, kaynakları ve yorumları görebilir; çalışma sahibinin özel dosyalarına ve asistan
+sohbetlerine erişemez. Danışman paylaşım bağlantısı, bağlantıya sahip kişilerin giriş yapmadan çalışmayı
+okuyup yorum yazmasına imkân verir. Bu nedenle kullanıcı, bağlantıyı yalnızca erişmesini istediği kişilerle
+paylaşmalı ve ihtiyaç sona erdiğinde iptal etmelidir. Kurum lisansında kurum yöneticisi üye listesini ve
+kullanım istatistiklerini görebilir; kullanıcıların akademik çalışma içeriklerini göremez.
+
+Yapay zekâ ve akademik doğruluk
+Yapay zekâ çıktıları olasılıksal niteliktedir; hata, eksiklik, yanlış yorum veya güncelliğini yitirmiş bilgi
+içerebilir. Kaynak doğrulama, DOI/PMID/arXiv kimlik kontrolü ve iddia denetimi gibi araçlar hata riskini
+azaltmaya yardımcı olur; mutlak doğruluk garantisi vermez. Kaynakların hangi erişim seviyesinde incelendiği
+platformda gösterilebilir. Kullanıcı; kaynak künyesini, sayfa numarasını, doğrudan alıntıyı, istatistiksel sonucu
+ve akademik iddiaları özgün kaynağından doğrulamalıdır. Platform lisanslı bir intihal servisi sunmadığından
+intihal yüzdesi veya intihalsiz olma garantisi vermez.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+6
+
+Yasaklı ve sakıncalı kullanımlar
+Kullanıcı platformu; başkası adına akademik çalışma üretmek veya akademik hileyi kolaylaştırmak, intihal
+yapmak, kaynak/veri/istatistik uydurmak, başkasının hesabını kullanmak, güvenlik önlemlerini aşmak,
+hizmete zarar vermek, hukuka aykırı içerik işlemek veya üçüncü kişilerin haklarını ihlal etmek amacıyla
+kullanamaz. Kullanıcı, kurumunun ve yayıncısının yapay zekâ kullanım kurallarına uymalı; gerekli olduğu
+durumlarda yapay zekâ kullanımını beyan etmelidir.
+
+Yönetim, denetim ve askıya alma
+Hizmet yöneticileri hesapları askıya alabilir, paket tanımlayabilir, site içi bildirim gönderebilir, kullanım
+kayıtlarını ve yapay zekâ çıktı metinlerini inceleyebilir ve kullanıcının talep ettiği veri dışa aktarım işlemlerini
+yürütebilir. Güvenlik ve kötüye kullanım kontrolleri kapsamında otomatik uyarılar üretilebilir; hesap otomatik
+olarak askıya alınmaz. Uyarı insan tarafından incelenir. İnceleme sonucunda sorun olmadığına karar
+verilebilir, kullanıcı uyarılabilir veya hesap askıya alınabilir. Kullanıcı, kararın gerekçesini talep edebilir ve
+itirazını destek kanalına iletebilir. Başvuru kanalı yayımdan önce açıkça belirtilmelidir.
+
+Hizmetin değişmesi ve kesintiler
+Platformun özellikleri, teknik altyapısı ve paket kapsamı geliştirilebilir veya değiştirilebilir. Planlı bakım,
+üçüncü taraf hizmet sağlayıcılar, internet altyapısı, güvenlik olayları veya mücbir sebepler nedeniyle
+hizmette geçici kesinti yaşanabilir. Academiana, makul ölçüde kesintiyi azaltmak ve kullanıcı verilerinin
+güvenliğini sağlamak için gerekli tedbirleri alır. Emredici tüketici ve veri koruma mevzuatından doğan haklar
+saklıdır.
+
+Sorumluluk
+Academiana akademik çalışmaya yardımcı araçlar sunar; akademik başarı, kabul, yayın, mezuniyet, etik
+kurul onayı, belirli bir not veya belirli bir sonuç garantisi vermez. Kullanıcı, çıktıları kendi
+değerlendirmesinden geçirerek kullanır ve kurumunun kurallarına uygunluğunu kontrol eder. Kanunen
+sınırlandırılması mümkün olmayan sorumluluklar, kast veya ağır kusurdan doğan sorumluluklar ve tüketici
+mevzuatından doğan zorunlu haklar saklıdır. Bu koşullar, emredici mevzuatın izin vermediği ölçüde
+kullanıcının haklarını ortadan kaldıracak şekilde yorumlanamaz.
+
+Ücret ve koşul değişiklikleri
+Paket fiyatları ve koşulları değiştirilebilir. Değişiklikler, yeni satın alımlar ve yenilemeler bakımından,
+kullanıcıya önceden bildirilen yürürlük tarihinden itibaren uygulanır. Önceden satın alınmış dönemin veya
+süresiz Tek Proje hakkının kapsamı, emredici mevzuat ve satın alma sırasında bildirilen koşullar saklı kalmak
+üzere geriye dönük olarak daraltılmaz.
+
+Uygulanacak hukuk ve dil
+Kullanım koşullarına Türk hukuku uygulanır. Tüketicinin yerleşim yerindeki emredici yetki ve görev kuralları
+saklıdır. Uyuşmazlıklarda, kanunen görevli tüketici hakem heyetleri ve mahkemeler ile genel görevli/yetkili
+mahkemeler bakımından ilgili mevzuat uygulanır. Platformun Türkçe, İngilizce ve Almanca arayüzleri
+bulunabilir. Bu taslakta bağlayıcı dil tercihi kesinleştirilmediğinden herhangi bir dilin diğerlerine üstün olduğu
+iddia edilmemektedir; yayına alınmadan önce dil hükmü belirlenmelidir.
+
+Yaş ve kabul
+Platform için mevcut durumda yaş sınırı ve yaş doğrulama mekanizması bulunmadığı bildirilmiştir. Bu
+nedenle reşit olmayan kullanıcılar bakımından veli/vasinin izni ve özel veri koruma gereklilikleri ayrıca
+değerlendirilmelidir. Kullanıcı, kayıt veya kullanım sırasında kendisine sunulan güncel koşulları incelemekle
+yükümlüdür.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+7
+
+3. ADİL KULLANIM POLİTİKASI
+Academiana | www.academiana.com.tr
+
+Amaç ve genel ilke
+Bu politika, paketlerin makul ve kişisel kullanımını korumak, platformun sürdürülebilirliğini sağlamak ve
+diğer kullanıcıların hizmete erişimini güvence altına almak için hazırlanmıştır. “Sınırsız” ifadesi, bir kişinin
+kendi akademik çalışması için olağan kullanımını ifade eder; hesap paylaşımı, üçüncü kişiler adına toplu
+üretim veya paket kapsamını aşan farklı çalışmalar için sınırsız kullanım anlamına gelmez.
+
+Tek Proje paketi
+Tek Proje paketi, tanımlama sırasında seçilen tek bir akademik çalışma için geçerlidir ve süre sınırı
+bulunmaz. Sınırsız kullanım yalnızca bu çalışmanın kapsamındaki özellikler için geçerlidir. Çalışma dışındaki
+yapay zekâ kullanımları (örneğin anket yardımcısı veya konu bulma) aylık Ücretsiz paket düzeyindeki
+haklarla sınırlıdır. Pakete bağlı çalışma silinemez ve türü değiştirilemez; ikinci bir çalışma açılamaz.
+
+İhlal sayılabilecek davranışlar
+Aşağıdaki davranışlar Tek Proje paketinin amacıyla bağdaşmaz: çalışmayı tamamlayıp silerek yeni çalışma
+başlatmak veya aynı çalışma üzerine yazarak başka bir konu/çalışma üretmek; çalışmanın konusunu esaslı
+biçimde değiştirmek; paket kapsamında başkaları için çalışma hazırlamak; hesabı başka kişilerle paylaşmak;
+Tek Proje hakkını birden fazla bağımsız akademik çalışma için kullanmak.
+
+Kötüye kullanım sinyalleri
+Sistem, inceleme amacıyla yöneticiye uyarı üretebilir. Uyarı sinyalleri şunları içerebilir: indirmeden sonra
+büyük miktarda içeriğin silinmesi; indirmeler arasında içeriğin büyük ölçüde değişmesi; kapakta yazar,
+üniversite veya danışman bilgisinin değiştirilmesi; çok sayıda cihazdan kullanım; olağan dışı sayıda bölüm
+oluşturulması; çalışmanın konusuyla ilgisiz uzun yapay zekâ metinleri üretilmesi. Maliyet göstergesinin paket
+ücretinin %40'ını aşması yalnızca bilgi amaçlıdır; tek başına kısıtlama sebebi değildir.
+
+İnsan incelemesi ve karar
+Uyarı oluşması hesabın otomatik askıya alınacağı anlamına gelmez. Her uyarı yönetici tarafından incelenir.
+İnceleme sonucunda ihlal olmadığına karar verilebilir, kullanıcıdan açıklama istenebilir veya kullanıcı
+uyarılabilir. İhlalin niteliğine ve ağırlığına göre hesap askıya alınabilir. Kullanıcı, kararın gerekçesini
+öğrenmek ve karara itiraz etmek için platformun destek kanalını kullanabilir. Destek/başvuru iletişim bilgisi
+yayımdan önce açıkça gösterilmelidir.
+
+Ücret iadesi
+Paketin bu politikaya aykırı kullanılması hâlinde, hukuken iade zorunluluğu doğmayan durumlarda ücret
+iadesi yapılmayabilir. Tüketicinin emredici mevzuattan doğan cayma, bedel iadesi ve diğer hakları saklıdır.
+Bu politika, kanunen zorunlu iade veya tüketici haklarını ortadan kaldırmaz.
+
+Davet programı
+Davet ödülü; davet edilen kişinin e-posta adresini doğrulaması koşuluyla tanımlanır. Davet eden kişinin
+cihazından oluşturulan hesaplara ve geçici e-posta adreslerine ödül verilmez. Bu kontroller, davet
+programının kötüye kullanımını önleme amacıyla uygulanır.
+
+Güncelleme
+Adil kullanım ölçütleri, teknik ve operasyonel ihtiyaçlar doğrultusunda güncellenebilir. Kullanıcıların haklarını
+önemli ölçüde etkileyen değişiklikler uygun şekilde duyurulur.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+8
+
+4. ÇEREZ VE CİHAZ TANIMLAYICILARI POLİTİKASI
+Academiana | www.academiana.com.tr
+
+Kapsam
+Bu politika, Academiana web sitesinde çerezler, tarayıcı belleği ve benzeri teknolojilerin hangi amaçlarla
+kullanıldığını açıklar. Çerezler ve benzeri teknolojiler, oturumun sürdürülmesi, tercihlerin hatırlanması ve
+kötüye kullanımın önlenmesi gibi amaçlarla kullanılabilir.
+
+Kullanılan teknolojiler
+• Supabase oturum çerezleri: Kullanıcının oturumunu açık tutmak ve kimlik doğrulamayı sürdürmek için
+kullanılır. Birinci taraf ve hizmetin çalışması için zorunludur; süresi oturum ve yenileme mekanizmasına
+bağlıdır.
+• acd_did çerezi ve tarayıcı belleği: Kötüye kullanımı önlemek (davet ödülü suistimali ve hesap paylaşımını
+tespit etmek) amacıyla rastgele cihaz kimliği tutar. Sunucuda bu kimliğin geri çözülemeyen özeti ve ilk/son
+görülme tarihleri saklanır. Süresi 400 gündür. Reklam amacıyla kullanılmaz.
+• lang çerezi: Arayüz dilini hatırlamak için kullanılır; birinci taraf işlevsel çerezdir ve 1 yıl saklanır.
+• localStorage: Gece modu, rehberli tur durumu ve çevrimdışı taslak yedeği gibi tercihleri kullanıcının
+cihazında tutabilir. Bu veriler yalnızca kullanıcının cihazındaki tarayıcı belleğinde saklanır.
+• PWA servis çalışanı: Sitenin çevrimdışı açılabilmesine yardımcı olur.
+
+Analitik ve reklam teknolojileri
+Bilgi notuna göre platformda analitik, reklam ve üçüncü taraf reklam çerezi bulunmamaktadır. Ziyaret sayımı
+çerezsiz yürütülür. IP adresi ve tarayıcı bilgisi yalnızca günlük değişen geri çözülemeyen kodu üretmek için
+anlık kullanılır; saklanmaz ve günler arasında aynı kişinin izlenmesine imkân verecek biçimde tutulmaz.
+Tarayıcı Do Not Track (DNT) veya Global Privacy Control (GPC) sinyali gönderiyorsa ziyaret sayımı yapılmaz.
+
+Cihaz tanımlayıcısı ve tercih yönetimi
+Cihaz tanımlayıcısı reklam veya kullanıcı profili oluşturmak için değil, güvenlik ve kötüye kullanımı önlemek
+amacıyla kullanılmaktadır. Bununla birlikte cihaz tanımlayıcısının hukuken zorunlu teknoloji sayılıp
+sayılmadığı ve önceden izin gerektirip gerektirmediği somut teknik yapı ve mevzuat bakımından ayrıca
+değerlendirilmelidir. Kullanıcı tarayıcı ayarlarından çerezleri silebilir veya engelleyebilir; ancak zorunlu
+oturum çerezlerinin engellenmesi giriş ve bazı platform özelliklerinin çalışmasını etkileyebilir.
+
+Üçüncü taraf bağlantılar
+Kullanıcı tarafından başlatılan Google veya Apple ile giriş, Overleaf/Zotero bağlantısı ya da WhatsApp
+üzerinden ödeme iletişimi gibi işlemlerde ilgili üçüncü tarafların kendi çerez ve gizlilik politikaları
+uygulanabilir. Academiana, üçüncü tarafların kendi ortamlarındaki veri işleme faaliyetlerini yönetmez.
+
+Politika değişiklikleri
+Yeni bir çerez veya benzeri teknoloji kullanıma alınırsa bu politika güncellenir. Hukuken önceden izin
+alınması gereken bir teknoloji devreye alınırsa, gerekli izin mekanizması teknoloji etkinleştirilmeden önce
+sunulur.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+9
+
+5. AKADEMİK DÜRÜSTLÜK VE SORUMLU YAPAY
+ZEKÂ KULLANIMI
+Academiana | www.academiana.com.tr
+
+Amaç ve temel ilke
+Academiana, akademik araştırma ve yazım süreçlerini destekleyen bir araçtır. Platform, kullanıcının yerine
+akademik sorumluluk üstlenmez. Araştırma sorusu, yöntem, veri, analiz, yorum, kaynak seçimi ve nihai
+metnin doğruluğundan kullanıcı sorumludur. Kullanıcı kendi üniversitesinin, enstitüsünün, dergisinin, fon
+sağlayıcısının ve etik kurulunun kurallarına uymalıdır.
+
+Kaynakların bulunması ve doğrulanması
+Platformun kaynakları akademik veri tabanlarından getirilecek şekilde tasarlanmıştır. Yapay zekâ, projeye
+eklenmiş kaynaklara dayanarak atıf yapabilir. Kaynak, yazar, DOI, istatistik veya bulgu uydurmamak tasarım
+ilkesidir; desteklenemeyen bölümlerde “[KAYNAK GEREKLİ]”, veri gerektiren yerlerde “[VERİ GİRİLECEK]”
+uyarıları kullanılabilir. Buna rağmen yapay zekânın hata yapma olasılığı sıfır değildir. Kullanıcı her kaynağın
+künyesini ve ilgili içeriği özgün kaynaktan kontrol etmelidir.
+
+Erişim seviyesinin gösterilmesi
+Kaynaklar için yalnızca bibliyografik kaydın mı, özetin mi yoksa tam metnin mi incelendiği gösterilebilir.
+Sayfa numarası ve doğrudan alıntı, yalnızca tam metni okunmuş kaynaklarda kullanılacak şekilde
+tasarlanmıştır. Kullanıcı, doğrudan alıntıları ve sayfa numaralarını kaynağın kendisinden doğrulamalıdır.
+
+Kimlik doğrulama ve iddia denetimi
+DOI kayıtları Crossref ve DataCite; PMID kayıtları Europe PMC; arXiv kimlikleri arXiv üzerinden doğrulanabilir.
+Doğrulanamayan kayıt uyarıyla gösterilir. Kaynakça denetimi, kayıtların gerçekten var olup olmadığını
+kontrol etmeye yardımcı olur. İddia denetimi, atıflı bir cümlenin kaynak tarafından desteklenip
+desteklenmediğini “destekliyor”, “kısmen”, “desteklemiyor” veya “çelişiyor” şeklinde sınıflandırabilir. Bu
+kontroller yardımcı niteliktedir; nihai akademik değerlendirme yerine geçmez.
+
+İstatistiksel analiz ve veri bütünlüğü
+Platformdaki istatistiksel hesaplamalar kullanıcının sağladığı veri üzerinden yapılır; yapay zekâ sonuçları
+yorumlamaya yardımcı olur. Kullanıcı veri setinin doğruluğunu, değişken tanımlarını, analiz varsayımlarını,
+örneklem özelliklerini ve raporlanan sonuçları kontrol etmelidir. Veri uydurmak, sonuçları çarpıtmak,
+istenmeyen bulguları gizlemek veya analizleri gerçeğe aykırı biçimde sunmak yasaktır.
+
+İntihal ve özgünlük
+Platform lisanslı bir intihal tespit hizmeti sunmamaktadır ve intihal yüzdesi üretmez. Kaynakça kontrolü veya
+iddia denetimi, intihal taraması olarak değerlendirilmemelidir. Kullanıcı alıntı, paraphrase, kaynak gösterme
+ve özgün katkı kurallarına uymalıdır. Yapay zekâ ile oluşturulan metnin özgünlük veya intihalsizlik garantisi
+bulunmaz.
+
+Yapay zekâ kullanımının beyanı
+Kullanıcı, kurumunun veya yayıncısının gerektirdiği hâllerde yapay zekâ kullanımını uygun biçimde beyan
+etmelidir. Yapay zekâ tarafından oluşturulan veya düzenlenen metin, kullanıcının kontrolü ve sorumluluğu
+olmaksızın kendi özgün akademik katkısıymış gibi sunulmamalıdır. Yapay zekâ kullanımı konusunda kurum
+politikası belirsizse kullanıcı ilgili kurumdan yazılı açıklama almalıdır.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+10
+
+Kabul edilemez akademik davranışlar
+Başkasına ait çalışmayı kendi çalışması gibi sunmak, başkası adına tez veya makale üretmek, kaynak veya
+veri uydurmak, sahte katılımcı yanıtları oluşturmak, analiz sonuçlarını değiştirmek, atıfları gerçeğe aykırı
+göstermek, etik kurul/onam gerekliliklerini atlamak ve akademik değerlendirmeyi yanıltmak platformun
+amaçlarıyla bağdaşmaz.
+
+Kalite puanı
+Platformun kalite puanı yönteminin /yontem sayfasında açıklandığı bildirilmiştir. Yapay zekâ bulguları kalite
+puanını etkilemez. Kalite puanı, akademik kabul veya bilimsel geçerlilik garantisi olarak yorumlanmamalıdır.
+
+Kişisel ve hassas araştırma verileri
+Kullanıcı, anket veya araştırma verilerine üçüncü kişilerin kimlik bilgilerini, sağlık verilerini veya diğer özel
+nitelikli verileri eklemeden önce gerekli etik kurul, aydınlatma, açık rıza ve veri güvenliği koşullarını
+sağlamalıdır. Araştırma katılımcılarının verileri mümkün olduğunca anonimleştirilmeli veya kimlikten
+arındırılmalıdır. Academiana'nın araştırmacıya örnek onam metni önermesi, araştırmacının hukuki ve etik
+sorumluluğunu ortadan kaldırmaz.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+11
+
+6. MESAFELİ SÖZLEŞMELER VE ÖN
+BİLGİLENDİRME
+Academiana | www.academiana.com.tr
+
+Önemli kapsam notu
+Academiana'da mevcut satış akışı, fiyat veya uygulama içindeki “Yükselt” düğmesinden WhatsApp'ta paket
+adı ve varsa indirim kodu bulunan hazır mesaj açılması; ödemenin platform dışında alınması ve paketin
+yönetici tarafından manuel tanımlanması şeklindedir. Platformda çevrim içi ödeme sayfası bulunmadığı, kart
+bilgilerinin sisteme alınmadığı bildirilmiştir. Bu belge, mevcut akışa göre genel ön bilgilendirme ve sözleşme
+esaslarını düzenleyen taslaktır. Satıcı kimliği, iletişim/başvuru bilgileri, somut fiyat, ödeme yöntemi, KDV,
+fatura ve iade şartları doğrulanmadığı için bu bilgiler uydurulmamıştır.
+
+Hizmetin konusu
+Academiana, akademik araştırma ve yazım süreçlerine yardımcı olan dijital platform erişimi ve ilgili yazılım
+özelliklerini sunar. Hizmet; yapay zekâ destekli metin önerisi ve düzenleme, akademik kaynak arama,
+atıf/kaynakça, istatistik analizi, anket araçları, dosya çıktıları ve iş birliği özelliklerini içerebilir. Hizmetin
+kapsamı satın alınan paketin güncel açıklamasına göre belirlenir.
+
+Satış ve sözleşmenin kurulması
+Kullanıcı paket seçimini fiyatlar sayfasında veya uygulama içinde yapar ve WhatsApp üzerinden iletişim
+başlatır. Paket, ödeme ve tanımlama ayrıntıları kullanıcıyla ayrıca teyit edilir. Ödeme sonrasında yönetici
+paketi sistemde tanımlar ve hizmet başlar. Sözleşmenin kurulduğu an, satıcı kimliği, paket, fiyat, ödeme ve
+tanımlama bilgileri kullanıcıya kalıcı veri saklayıcısıyla teyit edilerek kayıt altına alınmalıdır. Bu teyit adımı
+mevcut akışta bulunmuyorsa devreye alınmalıdır.
+
+Paket türleri
+Platformda Ücretsiz paket, aylık ücretli paketler, tek seferlik ve tek bir çalışma için süresiz Tek Proje paketi
+ve kurum lisansı bulunabilir. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim
+kodları, davet programı ödülleri ve en az üç kişilik Akademik Ekip İndirimi (%30) uygulanabilir. İndirimin
+kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilmelidir.
+
+Fiyat, vergi ve ödeme
+Ödenecek toplam bedel, varsa vergiler ve indirimler, ödeme yöntemi ve ödeme zamanı işlem öncesinde
+kullanıcıya açıkça bildirilmelidir. Mevcut bilgi notunda güncel paket fiyatları, KDV'nin fiyata dahil olup
+olmadığı, ödeme yöntemi (havale/EFT veya ödeme bağlantısı), fatura/e-arşiv düzeni ve satıcı bilgileri
+bulunmamaktadır. Bu nedenle bu taslakta tutar veya ödeme yöntemi belirtilmemiştir. Her satışta bu bilgiler
+yazılı olarak teyit edilmeden sözleşme tamamlanmış sayılmamalıdır.
+
+Aylık paketlerin yenilenmesi
+Aylık paketlerde otomatik yenileme bulunmamaktadır. Dönem sonunda devam etmek isteyen kullanıcı
+yenilemeyi kendisi başlatır. Kullanıcıdan ayrıca onay alınmadan yeni dönem ücreti tahsil edilmez.
+
+Hizmetin başlama zamanı ve dijital hizmet
+Ödeme sonrasında paket yönetici tarafından tanımlandığında hizmetin başladığı bildirilmiştir. Dijital hizmetin
+hemen başlatılması, cayma hakkının kapsamı ve olası istisnalar bakımından tüketici mevzuatındaki koşullar
+somut sözleşme türüne göre değerlendirilmelidir. Kullanıcıdan, gerekiyorsa hizmetin cayma süresi dolmadan
+başlatılmasına ilişkin ayrı ve açık talep/onay alınmalı; bunun hukuki sonuçları ayrıca açıklanmalıdır. Sadece
+genel kullanım koşullarının kabulü, tek başına geçerli bir feragat veya istisna oluşturduğu varsayımıyla
+kullanılmamalıdır.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+12
+
+Cayma hakkı ve iade
+Tüketicinin cayma hakkı ve dijital hizmetlerde uygulanabilecek istisnalar, hizmetin niteliğine, ifanın başlayıp
+başlamadığına, kullanıcının önceden verdiği açık talep/onaya ve yürürlükteki mevzuata göre belirlenir. Bu
+bilgi notunda mevcut bir cayma hakkı bilgilendirmesi, iade politikası veya hizmetin hemen başlatılmasına
+ilişkin ayrı onay bulunmadığı belirtilmiştir. Bu nedenle burada kesin bir cayma süresi veya “hiçbir koşulda
+iade yapılmaz” hükmü kurulmamaktadır. Satıcı, işlem öncesinde tüketiciye uygulanacak cayma/iade
+koşullarını açıkça bildirmeli ve zorunlu tüketici haklarını saklı tutmalıdır.
+
+Tek Proje paketi
+Tek Proje paketi, tanımlama sırasında seçilen tek bir çalışma için geçerlidir ve süre sınırı bulunmaz. Paketin
+çalışma dışındaki yapay zekâ kullanımı, çalışma silme/değiştirme ve ikinci çalışma açma bakımından
+sınırlamaları Adil Kullanım Politikası'nda açıklanır. Kullanıcı satın almadan önce bu sınırlamaları incelemelidir.
+
+Kurum lisansı
+Kurum lisansı, kurumla yapılacak ayrı anlaşmanın şartlarına göre sunulabilir. Kurum yöneticisinin üye listesi
+ve kullanım istatistiklerini görebildiği; kullanıcıların akademik çalışma içeriğini göremediği bildirilmiştir.
+Kurum lisansına özgü fiyat, süre, kullanıcı sayısı, destek seviyesi ve veri işleme hükümleri ayrıca yazılı olarak
+belirlenmelidir.
+
+Şikâyet ve başvuru
+Kullanıcı, satın alma veya hizmetle ilgili sorunlarını platformun destek kanalı üzerinden bildirebilir. Resmî
+satıcı iletişim bilgileri ve başvuru adresi bilgi notunda bulunmadığından bu taslakta yer almamaktadır.
+Yayımdan önce satıcının unvanı, adresi, e-posta/telefon bilgileri ve uygulanabilir tüketici başvuru yolları
+eklenmelidir.
+
+Siparişe özel teyit
+Her satın alma işleminde en azından satıcı bilgisi, kullanıcı bilgisi, paket adı, hizmet kapsamı, süre, limitler,
+toplam bedel, vergiler, ödeme yöntemi, hizmetin başlama zamanı, otomatik yenileme olup olmadığı ve
+uygulanacak cayma/iade şartları kullanıcıya işlemden önce sunulmalı; sipariş özeti ve sözleşme kalıcı veri
+saklayıcısıyla kullanıcıya iletilmelidir.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+13
+
+7. GDPR / DATA PROTECTION NOTICE
+Academiana | www.academiana.com.tr
+
+Scope and controller
+This notice describes the personal data processing associated with Academiana, an AI-assisted academic
+research and writing platform available at www.academiana.com.tr. The platform is accessible to users in
+Türkiye and may also be accessed from other countries. The identity and postal/contact details of the
+natural or legal person operating Academiana have not been provided in the source information and are
+therefore intentionally not stated in this draft. They must be added before publication. Whether GDPR Article
+3(2) applies to the platform's activities and whether an EU representative is required under Article 27 must
+be assessed based on the actual targeting and monitoring of individuals in the EU.
+
+Categories of personal data
+Depending on how the service is used, Academiana may process: account and contact data (name, email
+address and optional institution); authentication data (password verification data or name/email received
+through Google or Apple sign-in); academic workspace content (projects, sections, version history,
+comments, references and notes); uploaded files and extracted text; AI prompts and responses; usage
+evidence records including the full text of AI outputs, timestamps, project/section names and word counts;
+usage counters (tokens, cost, searches and pages); a randomly generated device identifier and its
+non-reversible server-side hash; limited download evidence for the One Project plan, including word count, a
+non-reversible content hash and cover details; payment and plan-assignment information (payer name,
+phone number, amount and note); collaborator invitation email addresses; advisor-link access and
+comments; institutional membership and usage statistics; support messages and technical error data; daily
+changing, non-identifying visit statistics; and in-app notifications and data-subject request records.
+
+Purposes and legal bases
+Personal data is processed to create and administer accounts, authenticate users, provide the academic
+workspace and file functions, deliver AI features, search academic sources, manage references, provide
+statistical and survey tools, enable collaboration and advisor sharing, administer plans and usage limits,
+assign paid plans, provide support, prevent abuse, maintain platform security, troubleshoot errors, measure
+service performance and comply with legal obligations. The likely GDPR legal bases may include
+performance of a contract (Article 6(1)(b)) for account and requested services; legitimate interests (Article
+6(1)(f)) for proportionate security, abuse prevention and service statistics; and compliance with a legal
+obligation (Article 6(1)(c)) for records required by law. These bases require a documented, purpose-specific
+assessment by the controller. Consent will be relied upon only where it is genuinely required and validly
+obtained.
+
+Retention
+Account data, academic content, files, AI conversations, usage counters, device identifier hashes and in-app
+notifications are generally retained until the account is deleted. Collaborator invitations expire after 14 days,
+although the invitation record may remain with the project. Advisor sharing remains available until the user
+revokes the link. Full-text AI usage evidence is currently retained until account deletion; although a
+12-month period is mentioned in existing wording, automatic deletion is not currently implemented.
+Feedback and error records may be retained indefinitely, with the user link removed after account deletion
+while the text may remain. Visit statistics are retained indefinitely. Payment records may be subject to
+statutory accounting and tax retention requirements. A compliant retention schedule and automated
+deletion rules should be established and documented.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+14
+
+Recipients and international transfers
+Service providers and recipients may include Supabase for database, authentication and file storage; Vercel
+for hosting and content delivery; Anthropic for AI processing when an AI feature is used; and Google or Apple
+when the user chooses the relevant sign-in method. OpenAI is present as an optional integration in the code,
+but its live use has not been confirmed and it is not treated as an active recipient in this draft. Academic
+search services may receive search terms and DOI identifiers, without the user's account identity, including
+OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open
+Library, INSPIRE-HEP and Unpaywall; Springer Nature, IEEE and NASA ADS may also be used where API
+credentials are configured. At the user's request, LaTeX files may be sent to Overleaf and user-initiated
+payment communications may take place through WhatsApp.
+
+Data locations and transfer safeguards
+According to the supplied technical information, Supabase data is hosted in Frankfurt, within the EU, and
+Vercel hosting is also located in Frankfurt, while Vercel uses a global CDN. Supabase and Vercel are
+US-based companies. When an AI feature is used, the user's prompt, relevant workspace context and
+selected source/file excerpts are transferred to Anthropic in the United States. Some academic search
+services are also located outside the user's country. The controller must identify and document an
+appropriate transfer mechanism for each restricted transfer, such as applicable adequacy arrangements or
+Standard Contractual Clauses with supplementary measures where required. Provider Data Processing
+Agreements, sub-processors, transfer impact assessments and actual service configurations must be
+verified before publication.
+
+Special-category and third-party data
+Users may upload research materials containing personal data about third parties, including interview
+transcripts, survey responses or health-related information. The user or research institution may act as
+controller for the research activity, while Academiana may act as processor for the platform service,
+depending on the facts and contractual arrangements. Users must ensure a valid legal basis, appropriate
+notices, any required explicit consent, ethics approval and suitable safeguards before uploading such
+information. Data should be minimised and anonymised or pseudonymised where possible.
+
+Automated monitoring
+The platform may automatically detect usage patterns that could indicate abuse and generate an alert for
+human review. The system does not automatically suspend an account; a human administrator reviews the
+alert and decides whether no action, a warning or suspension is appropriate. Data subjects may exercise
+applicable rights in relation to this processing, including the right to object where the legal conditions are
+met.
+
+Security
+The supplied technical information describes HTTPS, HSTS, Content Security Policy, user-data isolation with
+automated tests, CSRF and SSRF protections, server-side secret management, time-limited file links,
+dependency security scanning and more than 500 automated tests. It also identifies the absence of
+two-factor authentication, a written personal data breach procedure and an independent security test.
+Security measures should be reviewed regularly and brought into line with GDPR Article 32. A personal data
+breach response process should enable assessment and, where required, notification to the supervisory
+authority within 72 hours after becoming aware of the breach, and communication to affected individuals
+where the legal threshold is met.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+15
+
+Data subject rights
+Subject to the conditions and limitations in the GDPR, individuals may request access, rectification, erasure,
+restriction, portability and may object to processing based on legitimate interests. Users can currently
+download their data in JSON format, delete their account and associated account data, and submit a data
+request through the platform. The supplied information states that data requests are answered free of
+charge within 30 days. The controller's contact details and the channel for exercising rights have not been
+supplied and must be added before publication. Individuals may also lodge a complaint with a competent
+data protection supervisory authority, in particular in the EU Member State of their habitual residence, place
+of work or alleged infringement.
+
+Institutional customers
+For institutional licences, Academiana may act as a processor on behalf of the institution, depending on the
+actual purposes and means of processing. A written Data Processing Agreement should define the subject
+matter, duration, nature and purpose of processing, data categories, data-subject categories, security
+measures, sub-processors, assistance obligations, deletion/return of data and audit arrangements.
+
+Children
+The platform currently has no age limit and does not perform age verification, according to the supplied
+information. The controller should assess whether the service is likely to be offered to children and
+implement appropriate age-related safeguards and parental authorisation processes where required by
+applicable law.
+
+Changes
+This notice may be updated to reflect changes in processing activities, service providers or applicable law.
+Material changes will be communicated through an appropriate channel. The controller's identity and
+contact details, EU representative details if required, and any applicable supervisory authority information
+must be completed before this notice is published as a final legal notice.
+
+Academiana | Yasal metinler — çalışma taslağı
+
+16
+
+Academiana | Yasal metinler — çalışma taslağı
+
+17
+
+

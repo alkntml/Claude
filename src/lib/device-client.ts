@@ -3,6 +3,8 @@
  * içermez. Tarayıcı belleği ve çerezde saklanır (biri silinirse diğerinden geri yüklenir). Sunucuya yalnızca
  * SHA-256 özeti gönderilir.
  */
+import { hasConsent, readConsent } from "@/lib/consent";
+
 const KEY = "acd_did";
 
 function readCookie(): string | null {
@@ -12,6 +14,8 @@ function readCookie(): string | null {
 
 export function deviceId(): string | null {
   if (typeof window === "undefined") return null;
+  // D154: hukukçu cihaz kimliği için önceden izin gerektiğine karar verirse (SECURITY_REQUIRES_CONSENT) izin olmadan oluşturulmaz
+  if (!hasConsent("security", readConsent())) return null;
   let id: string | null = null;
   try { id = localStorage.getItem(KEY); } catch { /* yok say */ }
   if (!id || !/^[0-9a-f-]{36}$/.test(id)) id = readCookie();

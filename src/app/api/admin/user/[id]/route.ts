@@ -17,7 +17,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
   const db = adminClient();
   const { data: profile } = await db.from("profiles").select("*").eq("id", id).maybeSingle();
   if (!profile) throw new ApiError(404, "Kullanıcı bulunamadı");
-  const [usage, limits, projects, credits, passes, plan, margin, org, messages, purchases] = await Promise.all([
+  const [usage, limits, projects, credits, passes, plan, margin, org, messages, purchases, legal, requests] = await Promise.all([
     usageSummary(id),
     effectiveLimits(id, profile.plan_id),
     db.from("projects").select("id, title, work_type, status, updated_at").eq("user_id", id).order("updated_at", { ascending: false }).limit(20),
@@ -30,6 +30,9 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     db.from("notifications").select("id, data, read_at, created_at").eq("user_id", id).eq("kind", "admin_message").order("created_at", { ascending: false }).limit(30),
     // D109: satın alma kayıtları (tablo yoksa boş döner)
     db.from("plan_purchases").select("plan_id, payer_name, payer_phone, amount_try, note, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(20),
+    // D154: hukuki belge kabulleri ve bilgilendirmeler (tablo yoksa — migration 39 öncesi — boş) + KVKK veri talepleri
+    db.from("legal_acceptances").select("doc, version, kind, source, context, accepted_at").eq("user_id", id).order("accepted_at", { ascending: false }).limit(50).then((r) => r.data ?? [], () => []),
+    db.from("data_requests").select("kind, status, created_at, completed_at").eq("user_id", id).order("created_at", { ascending: false }).limit(20).then((r) => r.data ?? [], () => []),
   ]);
   // Tek Proje (D104): paket atandığından beri toplam maliyet ve %40 sınırı
   const single = profile.plan_id === "single"
@@ -43,6 +46,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     projects: projects.data ?? [], credits: credits.data ?? [], passes: passes.data ?? [], org: org.data?.[0] ?? null,
     plan: plan.data ?? null,
     purchases: purchases.data ?? [],
+    legal, requests,
     discount,
     messages: messages.data ?? [],
     single,

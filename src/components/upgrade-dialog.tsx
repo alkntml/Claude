@@ -9,6 +9,7 @@ import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
 import { PLAN_RANK, whatsappLink, isOneTimePlan } from "@/lib/pricing";
 import { usePrice } from "@/components/price-context";
 import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
+import Link from "@/components/l-link";
 
 interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
 interface PlansData { current: string; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
@@ -36,6 +37,9 @@ export function UpgradeDialogHost() {
   const [req, setReq] = useState<UpgradeRequest | null>(null);
   const [data, setData] = useState<PlansData | null>(null);
   const [failed, setFailed] = useState(false);
+  // D154: satın alma öncesi bilgilendirme — Mesafeli Sözleşmeler ve Ön Bilgilendirme + Adil Kullanım okunmadan WhatsApp’a geçilmez
+  const [ack, setAck] = useState(false);
+  const [ackError, setAckError] = useState(false);
 
   const load = useCallback(async () => {
     if (data) return;
@@ -54,7 +58,11 @@ export function UpgradeDialogHost() {
 
   if (!req) return null;
   const workLocked = req.code === "work_locked";
-  const close = () => setReq(null);
+  const close = () => { setReq(null); setAck(false); setAckError(false); };
+  /** Bilgilendirmenin okunduğu kaydı (satın alma öncesi); bekletmez, WhatsApp hemen açılır */
+  const recordAck = (plan: string) => {
+    void fetch("/api/legal/accept", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notice: ["distance", "fair_use"], purpose: "purchase", plan }) }).catch(() => {});
+  };
   const currentRank = PLAN_RANK[data?.current ?? "free"] ?? 0;
   const minRank = req.plan ? PLAN_RANK[req.plan] ?? 0 : 0;
   const options = (data?.plans ?? []).filter((p) => (PLAN_RANK[p.id] ?? 0) > currentRank && (PLAN_RANK[p.id] ?? 0) >= minRank && p.price_monthly > 0);
@@ -100,6 +108,13 @@ export function UpgradeDialogHost() {
           </div>
         )}
         {options.length > 0 && (
+          <label className={cn("flex items-start gap-2.5 rounded-xl border p-3 text-[13px] text-ink-700", ackError && !ack ? "border-rose-300 bg-rose-50" : "border-ink-100")}>
+            <input type="checkbox" checked={ack} onChange={(e) => { setAck(e.target.checked); setAckError(false); }} className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
+            <span>{t("Okudum:")} <Link href="/mesafeli-sozlesmeler" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link> {t("ve")} <Link href="/adil-kullanim" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Adil Kullanım Politikası")}</Link>. {t("Fiyat, ödeme yöntemi ve paket ayrıntıları WhatsApp’ta size ayrıca yazılı olarak teyit edilir.")}</span>
+          </label>
+        )}
+        {ackError && !ack && <p className="text-sm text-rose-700">{t("WhatsApp’a geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.")}</p>}
+        {options.length > 0 && (
           <div className={cn("grid gap-3", options.length > 1 && "sm:grid-cols-2", options.length > 2 && "lg:grid-cols-3")}>
             {options.map((p) => (
               <div key={p.id} className={cn("flex flex-col rounded-2xl border p-4", req.target === p.id ? "border-brand-400 ring-2 ring-brand-200" : "border-ink-100")}>
@@ -109,7 +124,7 @@ export function UpgradeDialogHost() {
                 <ul className="mt-3 flex-1 space-y-1.5 text-[13px] text-ink-600">
                   {lines(p).map((l) => <li key={l} className="flex items-start gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />{l}</li>)}
                 </ul>
-                <a href={href(p)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">
+                <a href={href(p)} target="_blank" rel="noopener noreferrer" aria-disabled={!ack} onClick={(e) => { if (!ack) { e.preventDefault(); setAckError(true); return; } recordAck(p.id); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800", !ack && "opacity-50")}>
                   <MessageCircle className="h-4 w-4" /> {t("WhatsApp ile yükselt")}
                 </a>
               </div>

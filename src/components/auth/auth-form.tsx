@@ -10,6 +10,7 @@ import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { createBrowser } from "@/lib/supabase/browser";
 import { normalizeCode } from "@/lib/discount";
+import { signupAcceptanceMeta } from "@/lib/legal/docs";
 
 type OAuthProvider = "google" | "apple";
 
@@ -59,7 +60,7 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
 
   async function oauth(provider: OAuthProvider) {
     setError(null);
-    if (mode === "signup" && !consent) { setError(t("Devam etmek için aydınlatma metnini onaylayın.")); return; }
+    // D154: Google/Apple ile ilk girişte Kullanım Koşulları kabulü giriş sonrasında onay sayfasında alınır ve kaydedilir
     setOauthBusy(provider);
     const kod = mode === "signup" ? normalizeCode(discount) : "";
     const q = new URLSearchParams({ next: safeNext, ...(ref ? { ref } : {}), ...(kod ? { kod } : {}) });
@@ -79,9 +80,9 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
     try {
       if (mode === "signup") {
         if (password.length < 8) throw new Error(t("Şifre en az 8 karakter olmalıdır."));
-        if (!consent) throw new Error(t("Devam etmek için aydınlatma metnini onaylayın."));
+        if (!consent) throw new Error(t("Devam etmek için Kullanım Koşulları’nı kabul edin."));
         const did = ref ? await deviceHash().catch(() => null) : null;
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, ...(ref ? { ref } : {}), ...(ref && did ? { did } : {}), ...(normalizeCode(discount) ? { discount: normalizeCode(discount) } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, legal: signupAcceptanceMeta(), ...(ref ? { ref } : {}), ...(ref && did ? { did } : {}), ...(normalizeCode(discount) ? { discount: normalizeCode(discount) } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
         if (error) throw error;
         if (!data.session) { setSent(true); return; }
       } else {
@@ -127,8 +128,7 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
                       <AppleIcon /> {oauthBusy === "apple" ? t("Yönlendiriliyor…") : t("Apple ile devam et")}
                     </button>
                   )}
-                  {mode === "login" && <p className="text-center text-[12px] leading-snug text-ink-400">{t("Google veya Apple ile ilk kez girişte hesabınız oluşturulur ve KVKK aydınlatma metni ile kullanım koşullarını kabul etmiş olursunuz.")}</p>}
-                  {mode === "signup" && <p className="text-center text-[12px] text-ink-400">{t("Önce aşağıdaki onay kutusunu işaretleyin.")}</p>}
+                  <p className="text-center text-[12px] leading-snug text-ink-400">{t("Google veya Apple ile ilk girişte, devam etmeden önce Kullanım Koşulları’nı onaylamanız istenir.")}</p>
                   <div className="flex items-center gap-3 pt-2 text-xs text-ink-400"><span className="h-px flex-1 bg-ink-100" />{t("veya e-posta ile")}<span className="h-px flex-1 bg-ink-100" /></div>
                 </div>
               )}
@@ -152,10 +152,14 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
                   </div>
                 </div>
                 {mode === "signup" && (
-                  <label className="flex items-start gap-2.5 text-[13px] text-ink-600">
-                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-ink-300 text-brand-600" />
-                    <span><Link href="/gizlilik" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("güvenlik ve gizlilik politikasını")}</Link> {t("ve")} <Link href="/kosullar" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("kullanım koşullarını")}</Link> {t("okudum, kabul ediyorum.")}</span>
-                  </label>
+                  <div className="space-y-2">
+                    {/* D154: sözleşme kabulü ayrı ve zorunlu; KVKK aydınlatması yalnızca bilgilendirme (onay/rıza kutusu değildir) */}
+                    <label className="flex items-start gap-2.5 text-[13px] text-ink-600">
+                      <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} required className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
+                      <span><Link href="/kosullar" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("Kullanım Koşulları")}</Link>{t("’nı okudum ve kabul ediyorum.")}</span>
+                    </label>
+                    <p className="text-[12px] leading-snug text-ink-400">{t("Kişisel verilerinizin işlenmesi hakkında bilgi:")} <Link href="/kvkk" className="text-brand-600 underline-offset-2 hover:underline" target="_blank">{t("KVKK Aydınlatma Metni")}</Link> · <Link href="/adil-kullanim" className="underline-offset-2 hover:underline" target="_blank">{t("Adil Kullanım Politikası")}</Link> · <Link href="/cerez-politikasi" className="underline-offset-2 hover:underline" target="_blank">{t("Çerez Politikası")}</Link></p>
+                  </div>
                 )}
                 {error && <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</motion.p>}
                 <Button type="submit" size="lg" className="w-full" loading={loading}>{mode === "login" ? t("Giriş yap") : t("Hesap oluştur")}</Button>

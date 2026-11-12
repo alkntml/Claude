@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { loadProjectBundle } from "@/lib/projects";
 import { displayName, hasMembers, projectAccessOrNull } from "@/lib/project-access";
+import { requireLegalAcceptance } from "@/lib/legal/server";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
   const { id } = await params;
   const { bolum } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  await requireLegalAcceptance(s, `/proje/${id}${bolum ? `?bolum=${encodeURIComponent(bolum)}` : ""}`);
   // Sahip veya ortak yazar (D115). Dosyalar kişiseldir: ortak yazar sahibin dosyalarını görmez.
   const access = await projectAccessOrNull(s, id);
   if (!access) notFound();

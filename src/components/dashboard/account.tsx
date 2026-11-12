@@ -1,11 +1,11 @@
 "use client";
 import { useT } from "@/i18n/client";
-import { CheckCircle2, CreditCard, Download, MessageCircle, ShieldAlert, Trash2, UserRound, Users } from "lucide-react";
+import { CheckCircle2, CreditCard, MessageCircle, UserRound, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
-import { Badge, Modal } from "@/components/ui/primitives";
+import { Badge } from "@/components/ui/primitives";
 import { UsageMeter } from "@/components/ui/charts";
 import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
 import { useToast } from "@/components/ui/toast";
@@ -15,6 +15,8 @@ import { TEAM_DISCOUNT, whatsappLink, isOneTimePlan } from "@/lib/pricing";
 import { memberCode } from "@/lib/member";
 import { usePrice } from "@/components/price-context";
 import { GrowthSection } from "./growth";
+import Link from "@/components/l-link";
+import { PrivacySection } from "./privacy";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function AccountView({ profile, usage, limits, plans, locked, discount }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean; discount?: DiscountCode | null }) {
@@ -27,18 +29,12 @@ export function AccountView({ profile, usage, limits, plans, locked, discount }:
   const [inst, setInst] = useState(profile.institution ?? "");
   const [style, setStyle] = useState(profile.default_citation_style);
   const [saving, setSaving] = useState(false);
-  const [delOpen, setDelOpen] = useState(false);
-  const [confirm, setConfirm] = useState("");
   const teamHref = whatsappLink(t("Merhaba, Academiana Akademik Ekip İndirimi (%{p}) hakkında bilgi almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket: \nÜye no: {no}\nHesap e-postam: {email}", { p: TEAM_DISCOUNT.percent, email: profile.email ?? "", no: memberCode(profile.member_no) }));
 
   async function save() {
     setSaving(true);
     try { await api("/api/account", { method: "PATCH", json: { fullName: name, institution: inst, defaultCitationStyle: style } }); toast({ tone: "success", title: t("Profil güncellendi") }); router.refresh(); }
     catch (e) { toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); } finally { setSaving(false); }
-  }
-  async function deleteAccount() {
-    try { await api("/api/account", { method: "DELETE", json: { confirm } }); window.location.href = "/"; }
-    catch (e) { toast({ tone: "error", title: t("Hesap silinemedi"), detail: (e as Error).message }); }
   }
 
   const rows: [string, number, number | null | undefined][] = [
@@ -75,6 +71,7 @@ export function AccountView({ profile, usage, limits, plans, locked, discount }:
               <div className={cn("mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm", soon ? "bg-amber-50 text-amber-900" : "bg-ink-50 text-ink-600")}>
                 <span>{t("Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).", { date: end.toLocaleDateString(dl), n: Math.max(0, left) })}</span>
                 {soon && <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nÜye no: {no}\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "", no: memberCode(profile.member_no) }))}>{t("Süreyi uzat")}</a>}
+                {soon && <Link href="/mesafeli-sozlesmeler" target="_blank" className="text-xs text-amber-800 underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link>}
               </div>
             );
           })()}
@@ -121,22 +118,7 @@ export function AccountView({ profile, usage, limits, plans, locked, discount }:
         </div>
       </section>
 
-      <section className="card p-6">
-        <h2 className="flex items-center gap-2 font-semibold"><ShieldAlert className="h-4 w-4" /> {t("Verilerim (KVKK / GDPR)")}</h2>
-        <p className="mt-1 text-sm text-ink-500">{t("Tüm projelerinizi, bölümlerinizi, kaynaklarınızı, sohbetlerinizi ve kullanım kayıtlarınızı taşınabilir JSON biçiminde indirebilir veya hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz.")}</p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {locked
-            // Kilitliyken anında indirme yerine KVKK talebi: yasal süre içinde ücretsiz yanıtlanır (D50)
-            ? <Button variant="secondary" onClick={async () => { try { await api("/api/account/data-request", { method: "POST" }); toast({ tone: "success", title: t("Veri talebiniz alındı"), detail: t("KVKK kapsamındaki talebiniz yasal süre (30 gün) içinde ücretsiz olarak e-posta adresinize iletilecektir.") }); } catch (e) { toast({ tone: "error", title: t("Talep oluşturulamadı"), detail: (e as Error).message }); } }}><Download className="h-4 w-4" /> {t("Veri talebi oluştur (KVKK)")}</Button>
-            : <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi indir")}</a>}
-          <Button variant="danger" onClick={() => setDelOpen(true)}><Trash2 className="h-4 w-4" /> {t("Hesabımı sil")}</Button>
-        </div>
-      </section>
-
-      <Modal open={delOpen} onClose={() => setDelOpen(false)} title={t("Hesabı kalıcı olarak sil")} footer={<><Button variant="ghost" onClick={() => setDelOpen(false)}>{t("Vazgeç")}</Button><Button variant="danger" disabled={confirm !== "SİL"} onClick={deleteAccount}>{t("Kalıcı olarak sil")}</Button></>}>
-        <p className="text-sm text-ink-600">{t("Tüm projeleriniz, dosyalarınız, kaynaklarınız ve sohbetleriniz geri alınamaz şekilde silinecek. Onaylamak için ")}<b>SİL</b> {t("yazın.")}</p>
-        <input className="input mt-3" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
-      </Modal>
+      <PrivacySection locked={locked} />
     </div>
   );
 }

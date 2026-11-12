@@ -8,6 +8,7 @@ import { memberCode } from "@/lib/member";
 import { grantReferralReward } from "@/lib/growth";
 import { deviceFromCookie, recordDevice } from "@/lib/devices";
 import { watchDevices } from "@/lib/single-watch";
+import { requireLegalAcceptance } from "@/lib/legal/server";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!isSupabaseConfigured()) redirect("/kurulum");
   const s = await getSession();
   if (!s) redirect("/giris");
+  // D154: zorunlu hukuki belgenin güncel sürümü kabul edilmediyse (Google/Apple ile ilk giriş, yeni sürüm) onay sayfasına
+  await requireLegalAcceptance(s);
   // Davet ödülü (D55): davet edilen kişi e-postasını doğruladıysa, hangi sayfayı açarsa açsın ikisine de otomatik tanımlanır
   const pr = s.profile as { referred_by?: string | null; referral_rewarded_at?: string | null };
   if (pr.referred_by && !pr.referral_rewarded_at) {

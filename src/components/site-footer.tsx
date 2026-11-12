@@ -2,6 +2,7 @@
 import { useT } from "@/i18n/client";
 import Link from "@/components/l-link";
 import { Logo } from "./icons";
+import { LEGAL_DOCS } from "@/lib/legal/docs";
 
 // Sık aranan rehberler (iç bağlantı): [Türkçe adres, İngilizce adres, başlık, Almanca adres]
 const FOOTER_GUIDES: [string, string, string, string][] = [
@@ -43,11 +44,9 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="text-sm font-semibold text-ink-800">{t("Yasal")}</h4>
+          <h4 className="text-sm font-semibold text-ink-800">{t("Gizlilik ve Güvenlik")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-ink-500">
-            <li><Link href="/gizlilik" className="hover:text-ink-900">{t("Güvenlik ve Gizlilik")}</Link></li>
-            <li><Link href="/kosullar" className="hover:text-ink-900">{t("Kullanım koşulları")}</Link></li>
-            <li><Link href="/akademik-durustluk" className="hover:text-ink-900">{t("Akademik dürüstlük ilkeleri")}</Link></li>
+            {LEGAL_DOCS.map((d) => <li key={d.id}><Link href={d.path} className="hover:text-ink-900">{t(d.label)}</Link></li>)}
             <li><Link href="/yontem" className="hover:text-ink-900">{t("Yöntem ve şeffaflık")}</Link></li>
           </ul>
         </div>

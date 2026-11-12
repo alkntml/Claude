@@ -7,12 +7,14 @@ import { adminClient } from "@/lib/supabase/admin";
 export const GET = route("admin.locks", async () => {
   await requireAdmin();
   const db = adminClient();
-  const [passes, requests, locked] = await Promise.all([
+  const [passes, requests, locked, recent] = await Promise.all([
     db.from("download_passes").select("id, user_id, project_id, expires_at, note, created_at").order("created_at", { ascending: false }).limit(50),
     db.from("data_requests").select("id, user_id, kind, status, created_at").eq("status", "pending").order("created_at").limit(100),
     db.from("profiles").select("id, email, plan_id").eq("work_locked", true).order("created_at", { ascending: false }).limit(100),
+    // D154: tamamlanan veri talepleri ve hesap silmeler (silinen hesapta kişi bağı yoktur: user_id = null)
+    db.from("data_requests").select("id, user_id, kind, status, created_at, completed_at").neq("status", "pending").order("created_at", { ascending: false }).limit(50),
   ]);
-  const userIds = [...new Set([...(passes.data ?? []).map((p) => p.user_id), ...(requests.data ?? []).map((r) => r.user_id).filter(Boolean)])];
+  const userIds = [...new Set([...(passes.data ?? []).map((p) => p.user_id), ...[...(requests.data ?? []), ...(recent.data ?? [])].map((r) => r.user_id).filter(Boolean)])];
   const projectIds = [...new Set((passes.data ?? []).map((p) => p.project_id))];
   const [{ data: users }, { data: projects }] = await Promise.all([
     userIds.length ? db.from("profiles").select("id, email").in("id", userIds) : Promise.resolve({ data: [] as { id: string; email: string }[] }),
@@ -24,6 +26,7 @@ export const GET = route("admin.locks", async () => {
     passes: (passes.data ?? []).map((p) => ({ ...p, email: email[p.user_id] ?? null, title: title[p.project_id] ?? null })),
     requests: (requests.data ?? []).map((r) => ({ ...r, email: r.user_id ? email[r.user_id] ?? null : null })),
     locked: locked.data ?? [],
+    recent: (recent.data ?? []).map((r) => ({ ...r, email: r.user_id ? email[r.user_id] ?? null : null })),
   });
 });
 

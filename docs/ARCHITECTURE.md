@@ -168,6 +168,9 @@ src/lib/
   import/whole.ts import/work.ts  Tüm çalışmayı içe aktarma (D149): splitIntoSections, textToNodes (PDF/TXT), analyzeWork (Haiku künye), buildSeeds; import/server.ts addReferenceLines + docxToNodes (Word içe aktarmayla ortak); arayüz workspace/import-hub.tsx (İçe aktar merkezi), sihirbazda “Mevcut çalışmamı içe aktar”
   sources/zotero.ts sources/import-refs.ts  Zotero Web API (anahtar saklanmaz) + BibTeX/RIS/CSL-JSON içe aktarma ortak işlevi
   pages.ts               Sayfa hakkı (D145): 1 sayfa = 344 kelime, PAGE_ACTIONS (hak dolunca duran yazım eylemleri), chargedWords; sınır usage.ts assertWithinLimits(..., { writes })
+  legal/                 Hukuki metinler (D154): docs.ts (adres, başlık, sürüm, kabul kuralı), content-tr/en/de.ts (metinler), server.ts (requireLegalAcceptance, recordLegal); sayfalar components/legal/legal-page.tsx, onay /sozlesme-onayi (components/auth/consent-form.tsx), uç api/legal/accept
+  consent.ts             Çerez/tarayıcı belleği envanteri ve izin altyapısı (D154); components/consent/consent.tsx (ConsentBanner, ConsentGate)
+  account-delete.ts pii.ts  Hesap silmede depo dosyalarının tamamı (D154, docs/ACCOUNT_DELETION.md); hata kayıtlarında kişisel veri maskeleme
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
 src/i18n/                core.ts (sözlüksüz çekirdek: Locale tr/en/de, pick, contentLang, AI_LANGUAGE; istemci bunu kullanır), index.ts (core + sözlükler, sunucu; dictFor), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts + de.ts (sözlükler)
 supabase/migrations/     Sıralı SQL migration'ları

@@ -311,6 +311,11 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
                 <input className="input !py-1.5" placeholder="Not (ör. hangi tez için)" value={pur.note} onChange={(e) => setPur({ ...pur, note: e.target.value })} />
               </div>
               {d.purchases?.length > 0 && <div className="mt-2 space-y-0.5">{d.purchases.map((x: any, i: number) => <p key={i} className="text-[12px] text-ink-500">{new Date(x.created_at).toLocaleDateString("tr-TR")} · {x.plan_id} · {x.payer_name || "—"}{x.payer_phone ? ` · ${x.payer_phone}` : ""}{x.amount_try != null ? ` · ${Number(x.amount_try).toLocaleString("tr-TR")} TL` : ""}{x.note ? ` · ${x.note}` : ""}</p>)}</div>}
+              {/* D154: hukuki belge kabulleri (sürüm, tarih, kaynak) ve KVKK talepleri */}
+              <p className="mt-3 text-xs text-ink-500">Hukuki kayıtlar (kabul edilen belge sürümleri)</p>
+              {(d.legal ?? []).length === 0 ? <p className="text-[12px] text-ink-400">Kayıt yok (Google/Apple kullanıcıları ilk girişte onay sayfasında kabul eder).</p>
+                : <div className="mt-1 space-y-0.5">{d.legal.map((x: any, i: number) => <p key={i} className="text-[12px] text-ink-500">{new Date(x.accepted_at).toLocaleString("tr-TR")} · {x.doc} · sürüm {x.version} · {x.kind === "accept" ? "kabul" : "bilgilendirme"} · {x.source}{x.context?.plan ? ` · paket: ${x.context.plan}` : ""}</p>)}</div>}
+              {(d.requests ?? []).length > 0 && <div className="mt-1 space-y-0.5">{d.requests.map((x: any, i: number) => <p key={i} className="text-[12px] text-ink-500">KVKK talebi · {x.kind === "export" ? "veri" : x.kind} · {x.status === "pending" ? "bekliyor" : "tamamlandı"} · {new Date(x.created_at).toLocaleDateString("tr-TR")}</p>)}</div>}
               <p className="mt-3 text-xs text-ink-500">Ek gün ver (bitiş tarihinden, süresi geçtiyse bugünden itibaren)</p>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {d.profile.plan_id === "single" && <span className="text-[12px] text-ink-500">Tek Proje süresizdir; süre değiştirilemez.</span>}
@@ -669,7 +674,7 @@ function HelpTab() {
 /** Çalışma kilidi (D50): 100 TL indirme hakkı tanımlama, kilitli kullanıcılar, bekleyen KVKK veri talepleri */
 function LocksTab() {
   const toast = useToast();
-  const [data, setData] = useState<{ passes: any[]; requests: any[]; locked: any[] } | null>(null);
+  const [data, setData] = useState<{ passes: any[]; requests: any[]; locked: any[]; recent?: any[] } | null>(null);
   const [projectId, setProjectId] = useState("");
   const [days, setDays] = useState(7);
   const [note, setNote] = useState("");
@@ -716,6 +721,12 @@ function LocksTab() {
               <Button size="sm" variant="secondary" onClick={async () => { await api("/api/admin/locks", { method: "PATCH", json: { requestId: r.id } }); load(); }}>Tamamlandı</Button>
             </div>
           ))}
+        </div>
+        <div className="card p-5">
+          <h3 className="font-semibold">Son veri talepleri ve hesap silmeler</h3>
+          <p className="mt-1 text-sm text-ink-500">Hesap silme anında yapılır; silinen hesabın kaydında kişi bilgisi tutulmaz.</p>
+          {(data?.recent ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Kayıt yok.</p>}
+          {(data?.recent ?? []).map((r) => <p key={r.id} className="border-t border-ink-50 py-1.5 text-[13px]">{r.kind === "delete" ? "Hesap silme" : "Veri dışa aktarma"} · {r.email ?? (r.user_id ? r.user_id : "silinmiş hesap")} · {new Date(r.completed_at ?? r.created_at).toLocaleString("tr-TR")}</p>)}
         </div>
         <div className="card p-5">
           <div className="flex items-center justify-between"><h3 className="font-semibold">Kilitli kullanıcılar</h3><Button size="sm" variant="ghost" onClick={load}><RefreshCw className="h-3.5 w-3.5" /></Button></div>

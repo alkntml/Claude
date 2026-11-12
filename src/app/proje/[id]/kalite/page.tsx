@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { QualityView } from "@/components/workspace/quality";
 import { getSession } from "@/lib/auth";
 import { projectAccessOrNull } from "@/lib/project-access";
+import { requireLegalAcceptance } from "@/lib/legal/server";
 import { buildChecklist } from "@/lib/quality/checklist";
 import type { JSONNode } from "@/lib/editor/doc";
 import { stageDef } from "@/lib/workflows";
@@ -19,6 +20,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   if (!s) redirect("/giris");
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  await requireLegalAcceptance(s, `/proje/${id}/kalite`);
   // Sahip veya ortak yazar (D115)
   const acc = await projectAccessOrNull(s, id);
   if (!acc) notFound();

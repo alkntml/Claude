@@ -11,7 +11,7 @@ describe("D153: yeni TÜBİTAK programları", () => {
     }
   });
   it("yarışmalarda bütçe bölümü çıkar, araştırma desteklerinde kalır", () => {
-    const has = (program: string) => JSON.stringify(buildRoadmap({ workType: "grant_proposal", level: "undergraduate", program } as Parameters<typeof buildRoadmap>[0])).includes("grant_budget");
+    const has = (program: string) => JSON.stringify(buildRoadmap({ workType: "grant_proposal", level: "undergraduate", program } as unknown as Parameters<typeof buildRoadmap>[0])).includes("grant_budget");
     expect(has("tubitak_2204a")).toBe(false);
     expect(has("tubitak_2242")).toBe(false);
     expect(has("tubitak_1002a")).toBe(true);

@@ -32,7 +32,8 @@ export default async function Faq() {
       <p className="!mt-12 text-sm text-ink-500">
         {t("Daha fazlası için:")}{" "}
         <Link href="/akademik-durustluk" className="text-brand-700 hover:underline">{t("Akademik dürüstlük ilkeleri")}</Link>{" · "}
-        <Link href="/gizlilik" className="text-brand-700 hover:underline">{t("Gizlilik ve KVKK")}</Link>{" · "}
+        <Link href="/kvkk" className="text-brand-700 hover:underline">{t("KVKK Aydınlatma Metni")}</Link>{" · "}
+        <Link href="/cerez-politikasi" className="text-brand-700 hover:underline">{t("Çerez Politikası")}</Link>{" · "}
         <Link href="/kosullar" className="text-brand-700 hover:underline">{t("Kullanım koşulları")}</Link>
       </p>
     </StaticPage>

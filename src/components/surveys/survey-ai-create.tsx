@@ -40,7 +40,7 @@ export function SurveyAiCreate({ projects, projectId, setProjectId }: { projects
   async function generate() {
     setBusy(true);
     try {
-      const r = await api<{ survey: { id: string }; notes: string[] }>("/api/surveys/ai", { method: "POST", json: { purpose, audience, variables, length, demographics, openEnded, consent, lang: locale === "en" ? "en" : "tr", projectId: projectId || null } });
+      const r = await api<{ survey: { id: string }; notes: string[] }>("/api/surveys/ai", { method: "POST", json: { purpose, audience, variables, length, demographics, openEnded, consent, lang: locale, projectId: projectId || null } });
       try { sessionStorage.setItem(`survey-ai-notes:${r.survey.id}`, JSON.stringify(r.notes ?? [])); } catch { /* gizli pencere */ }
       toast({ tone: "success", title: t("Anket taslağınız hazır"), detail: t("Soruları inceleyip dilediğiniz gibi düzenleyebilirsiniz.") });
       router.push(`/anketler/${r.survey.id}`);

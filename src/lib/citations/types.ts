@@ -46,7 +46,8 @@ export interface Seg {
 }
 export type Rich = Seg[];
 
-export type CiteLocale = "tr" | "en";
+/** Kaynakça dili = çalışmanın yazım dili (D144: Almanca eklendi) */
+export type CiteLocale = "tr" | "en" | "de";
 
 export interface InTextOptions {
   locator?: string | null;     // sayfa: "12" veya "12-14"

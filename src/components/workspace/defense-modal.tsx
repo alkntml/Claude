@@ -7,6 +7,7 @@ import { Badge, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
+import { LANG_TAG, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Q { q: string; category: string; why: string }
@@ -25,7 +26,7 @@ function useDictation(language: string, onText: (s: string) => void) {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { toast({ tone: "warning", title: t("Tarayıcınız sesle yazmayı desteklemiyor"), detail: t("Chrome, Edge veya Safari’nin güncel sürümünü deneyin.") }); return; }
     const r = new SR();
-    r.lang = language === "en" ? "en-US" : "tr-TR";
+    r.lang = LANG_TAG[writingLang(language)];
     r.continuous = true;
     r.interimResults = false;
     r.onresult = (e: any) => { let s = ""; for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) s += e.results[i][0].transcript; if (s.trim()) onText(s.trim()); };

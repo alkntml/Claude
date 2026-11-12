@@ -113,7 +113,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   }
 
   if (notes.length) {
-    doc.moveDown().font("b").fontSize(12).text(d.language === "tr" ? "Notlar" : "Notes").moveDown(0.4);
+    doc.moveDown().font("b").fontSize(12).text(d.language === "tr" ? "Notlar" : d.language === "de" ? "Anmerkungen" : "Notes").moveDown(0.4);
     notes.forEach((n, k) => doc.font("r").fontSize(9.5).text(`${k + 1}. ${n}`, { lineGap: 2 }));
   }
 
@@ -140,7 +140,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     if (k % tocPerPage === 0) {
       doc.switchToPage(pageIdx);
       doc.x = left; doc.y = M.top;
-      if (k === 0) doc.font("b").fontSize(15).text(d.language === "tr" ? "İçindekiler" : "Contents").moveDown();
+      if (k === 0) doc.font("b").fontSize(15).text(d.language === "tr" ? "İçindekiler" : d.language === "de" ? "Inhaltsverzeichnis" : "Contents").moveDown();
     }
     const indent = (t.level - 1) * 16;
     const label = `${t.number ? `${t.number}  ` : ""}${t.text}`;

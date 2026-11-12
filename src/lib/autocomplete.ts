@@ -24,13 +24,12 @@ export function sanitizeSuggestion(raw: string, before: string): string {
   return needsSpace ? ` ${s}` : s;
 }
 
-export async function suggestContinuation(o: { planId: string; before: string; stageTitle: string; focusTitle?: string | null; projectTitle: string; lang: "tr" | "en" }) {
+export async function suggestContinuation(o: { planId: string; before: string; stageTitle: string; focusTitle?: string | null; projectTitle: string; lang: "tr" | "en" | "de" }) {
   const model = await resolveModel(o.planId, "fast");
-  const L = o.lang === "en";
   const system = `Sen akademik yazımda öğrencinin cümlesini tamamlayan bir yazım yardımcısısın. Verilen metnin hemen devamını yaz.
 KURALLAR:
 - En fazla BİR cümle (en fazla 25 kelime). Metin cümle ortasında bitiyorsa yalnızca o cümleyi tamamla.
-- ${L ? "İngilizce" : "Türkçe"}, akademik, nesnel ve metnin üslubuyla uyumlu yaz.
+- ${o.lang === "en" ? "İngilizce" : o.lang === "de" ? "Almanca" : "Türkçe"}, akademik, nesnel ve metnin üslubuyla uyumlu yaz.
 - Kaynak gerektiren hiçbir şey yazma: sayı, yüzde, yıl, kişi veya kurum adı, istatistik, araştırma bulgusu, atıf YOK. Öğrencinin kendi argümanını, geçiş ifadesini veya yöntem anlatımını sürdür.
 - Yalnızca devam metnini yaz; tırnak, açıklama veya önceki metni tekrar etme. Uygun bir devam yoksa boş yanıt ver.`;
   const user = `ÇALIŞMA: ${o.projectTitle}\nBÖLÜM: ${o.stageTitle}${o.focusTitle ? ` › ${o.focusTitle}` : ""}\n\nMETİN:\n${o.before.slice(-1500)}`;

@@ -31,7 +31,7 @@ export const POST = route<Ctx>("review.extract", async (req, { params }) => {
   const { data: srcs } = srcIds.length ? await acc.db.from("sources").select("id, abstract, access_level").in("id", srcIds).eq("user_id", acc.ownerId) : { data: [] as any[] };
   const full = (srcs ?? []).filter((x: any) => x.access_level === "full_text").map((x: any) => x.id);
   const chunks = await loadChunks(acc.db, { sourceIds: full, userId: acc.ownerId, limit: 6000 });
-  const lang = acc.project.language === "en" ? "en" : localeFromRequest(req);
+  const lang = acc.project.language === "en" || acc.project.language === "de" ? acc.project.language : localeFromRequest(req);
   const out: { id: string; extraction: any }[] = [];
   let cost = 0; const usage = { input: 0, output: 0 }; let model: string | null = null; let provider: string | null = null; let calls = 0;
   for (const r of recs as any[]) {

@@ -1,6 +1,7 @@
 import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
 import { spentError } from "@/lib/ai/spent";
+import { LANG_NAME, writingLang } from "@/lib/writing-lang";
 
 /* Savunma provası: çalışmanın kendi metnine dayanan jüri soruları ve cevap değerlendirmesi */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -16,7 +17,7 @@ export function workText(stages: any[], budget = 50_000): string {
   return ordered.map((s) => `### ${s.title}\n${String(s.content_text).slice(0, per)}`).join("\n\n");
 }
 
-const LANG = (p: any) => (p.language === "en" ? "English" : "Türkçe");
+const LANG = (p: any) => LANG_NAME[writingLang(p.language)];
 
 const Q_SCHEMA = {
   type: "object", additionalProperties: false, required: ["questions"],

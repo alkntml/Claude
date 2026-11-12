@@ -6,6 +6,7 @@ import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
 import { spentError } from "@/lib/ai/spent";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { resolveFormat } from "./format";
+import { LANG_NAME, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Slide { title: string; bullets: string[]; notes: string }
@@ -40,7 +41,7 @@ export async function generateDeck(params: { planId: string; project: any; stage
   const cited = order.map((id) => sources.find((x) => x.id === id)).filter(Boolean).slice(0, 40);
   const sourceMap: Record<string, string> = {};
   const list = cited.map((s: any, i: number) => { sourceMap[`S${i + 1}`] = s.id; const fam = (s.authors ?? [])[0]?.family ?? (s.authors ?? [])[0]?.literal ?? "?"; return `S${i + 1}: ${fam} (${s.year ?? "t.y."}) ${s.title}`; }).join("\n");
-  const lang = project.language === "en" ? "English" : "Türkçe";
+  const lang = LANG_NAME[writingLang(project.language)];
 
   const model = await resolveModel(params.planId, "balanced"); // orta: sunum metni
   const res = await complete(model, {
@@ -77,7 +78,7 @@ export function resolveMarkers(text: string, map: Record<string, string>, engine
 
 export async function renderPptx(params: { deck: Deck; sourceMap: Record<string, string>; project: any; items: CitationItem[]; authorName: string }): Promise<Buffer> {
   const { deck, project } = params;
-  const locale = project.language === "en" ? "en" : "tr";
+  const locale = writingLang(project.language);
   const engine = new CitationEngine(project.citation_style as CitationStyleId, params.items, { locale });
   const fmt = resolveFormat(project.context?.format);
   const used = new Set<string>();

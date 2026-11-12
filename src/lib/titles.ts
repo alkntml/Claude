@@ -2,6 +2,7 @@ import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
 import { readBlueprint } from "@/lib/blueprint";
 import { GRANT_PROGRAMS, LEVEL_LABELS, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
+import { LANG_NAME, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface TitleIdea { title: string; note: string }
@@ -29,7 +30,7 @@ export async function suggestTitles(params: { planId: string; project: any; hint
   ].filter(Boolean).join("\n");
   const model = await resolveModel(params.planId, "balanced");
   const res = await complete(model, {
-    system: `Akademik danışmansın; öğrenciye çalışma başlığı öneriyorsun. Dil: ${p.language === "en" ? "English" : "Türkçe"}.
+    system: `Akademik danışmansın; öğrenciye çalışma başlığı öneriyorsun. Dil: ${LANG_NAME[writingLang(p.language)]}.
 KURALLAR:
 - 5 farklı başlık öner: değişkenleri/kavramları, örneklemi veya bağlamı ve (uygunsa) yöntemi açıkça yansıtsın; 8–20 kelime; akademik ve nesnel.
 - Başlıklar birbirinden anlamlı biçimde farklı olsun (ör. ilişkisel, karşılaştırmalı, belirli bir örneklemle daraltılmış, yöntemi öne çıkaran).

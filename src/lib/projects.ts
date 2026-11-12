@@ -6,6 +6,7 @@ import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export { sourceRowToItemClient as sourceRowToItem } from "@/lib/sources/row";
 import { sourceRowToItemClient as sourceRowToItem } from "@/lib/sources/row";
+import { writingLang } from "@/lib/writing-lang";
 
 export interface ProjectBundle {
   project: any;
@@ -28,7 +29,7 @@ export async function loadProjectBundle(db: SupabaseClient, projectId: string, u
 export function engineFor(project: any, stages: any[], sources: any[]): CitationEngine {
   const order = citedIdsInOrder(stages.map((s) => s.content as JSONNode));
   return new CitationEngine(project.citation_style as CitationStyleId, sources.map(sourceRowToItem), {
-    locale: (project.language === "en" ? "en" : "tr") as CiteLocale,
+    locale: writingLang(project.language) as CiteLocale,
     citedOrder: order,
   });
 }

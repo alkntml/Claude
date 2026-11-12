@@ -13,6 +13,7 @@ import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 import { agreement, APPRAISAL_ITEMS, appraisalSummary, characteristicsMarkdown, EMPTY_PROTOCOL, EXTRACTION_FIELDS, EXTRACTION_LABELS, methodsMarkdown, prismaCounts, prismaSvg, reviewCsv, type Appraisal, type AppraisalAnswer, type Extraction, type ReviewProtocol, type ReviewRecord, type ReviewStage, type VoteDecision, type VotePhase } from "@/lib/prisma";
 import { svgToPng } from "@/lib/svg-png";
+import { writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Tab = "protocol" | "collect" | "screen" | "eligibility" | "extract" | "diagram";
@@ -43,7 +44,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
   const [busy, setBusy] = useState<string | null>(null);
   const [me, setMe] = useState("");
   const [upgraded, setUpgraded] = useState(true);
-  const lang = language === "en" ? "en" : "tr";
+  const lang = writingLang(language);
 
   const load = useCallback(async () => {
     try {
@@ -322,13 +323,13 @@ function Eligibility({ projectId, records, reasons, decide, onSourcesAdded, dual
   );
 }
 
-function Diagram({ counts, lang, records, protocol, onInsertFigure, onInsertMarkdown }: { counts: ReturnType<typeof prismaCounts>; lang: "tr" | "en"; records: ReviewRecord[]; protocol: ReviewProtocol; onInsertFigure?: (f: { title: string; src: string; alt: string; note: string }) => void; onInsertMarkdown?: (md: string, map: Record<string, string>) => void }) {
+function Diagram({ counts, lang, records, protocol, onInsertFigure, onInsertMarkdown }: { counts: ReturnType<typeof prismaCounts>; lang: "tr" | "en" | "de"; records: ReviewRecord[]; protocol: ReviewProtocol; onInsertFigure?: (f: { title: string; src: string; alt: string; note: string }) => void; onInsertMarkdown?: (md: string, map: Record<string, string>) => void }) {
   const { t } = useT();
   const toast = useToast();
   const { svg, width, height } = useMemo(() => prismaSvg(counts, lang), [counts, lang]);
   const [busy, setBusy] = useState(false);
-  const title = lang === "en" ? "PRISMA 2020 flow diagram" : "PRISMA 2020 akış şeması";
-  const note = lang === "en" ? "Adapted from Page et al. (2021), The PRISMA 2020 statement." : "Page vd. (2021), PRISMA 2020 bildirgesinden uyarlanmıştır.";
+  const title = lang === "en" ? "PRISMA 2020 flow diagram" : lang === "de" ? "PRISMA-2020-Flussdiagramm" : "PRISMA 2020 akış şeması";
+  const note = lang === "en" ? "Adapted from Page et al. (2021), The PRISMA 2020 statement." : lang === "de" ? "Adaptiert nach Page et al. (2021), The PRISMA 2020 statement." : "Page vd. (2021), PRISMA 2020 bildirgesinden uyarlanmıştır.";
   const methods = useMemo(() => {
     const inc = records.filter((r) => r.stage === "included" && r.source_id);
     const map = Object.fromEntries(inc.map((r, i) => [`S${i + 1}`, r.source_id!]));
@@ -407,7 +408,7 @@ const ANSWERS: [AppraisalAnswer, string][] = [["yes", "Evet"], ["no", "Hayır"],
 const RISK: Record<string, [string, string]> = { low: ["Düşük yanlılık riski", "bg-emerald-50 text-emerald-700"], moderate: ["Orta yanlılık riski", "bg-amber-50 text-amber-800"], high: ["Yüksek yanlılık riski", "bg-rose-50 text-rose-700"] };
 
 function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMarkdown, sourceTitle }: {
-  projectId: string; records: ReviewRecord[]; setRecords: React.Dispatch<React.SetStateAction<ReviewRecord[]>>; lang: "tr" | "en"; upgraded: boolean;
+  projectId: string; records: ReviewRecord[]; setRecords: React.Dispatch<React.SetStateAction<ReviewRecord[]>>; lang: "tr" | "en" | "de"; upgraded: boolean;
   onInsertMarkdown?: (md: string, map: Record<string, string>) => void; sourceTitle: (r: ReviewRecord) => string;
 }) {
   const { t } = useT();

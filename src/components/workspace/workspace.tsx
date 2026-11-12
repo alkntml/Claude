@@ -60,6 +60,7 @@ import type { LanguageTab } from "./language-modal";
 
 
 import { completion, nextStage, shouldWaitFor, WRITE_LAST } from "@/lib/workflows/order";
+import { writingLang } from "@/lib/writing-lang";
 
 // Açılır pencereler yalnızca gerektiğinde yüklenir (çalışma alanının ilk açılışı hızlansın)
 const FixClaimsModal = dynamic(() => import("./fix-claims").then((m) => m.FixClaimsModal), { ssr: false });
@@ -163,7 +164,7 @@ export function Workspace(props: Props) {
   // --- Atıf motoru (stil değişince tüm metin anında yeni stile döner)
   const citedOrder = useMemo(() => citedIdsInOrder(stages.map((s) => s.content as JSONNode)), [stages]);
   const engine = useMemo(
-    () => new CitationEngine(project.citation_style as CitationStyleId, sources.map(sourceRowToItemClient), { locale: project.language === "en" ? "en" : "tr", citedOrder }),
+    () => new CitationEngine(project.citation_style as CitationStyleId, sources.map(sourceRowToItemClient), { locale: writingLang(project.language), citedOrder }),
     [project.citation_style, project.language, sources, citedOrder],
   );
   const citedSet = useMemo(() => new Set(citedOrder), [citedOrder]);
@@ -736,7 +737,7 @@ export function Workspace(props: Props) {
   // Dışa aktarmada başlık güncel stile göre yeniden biçimlenir.
   function insertFigure(f: { title: string; src: string; alt: string; note: string }) {
     if (!editor || isBibliography) return;
-    const lang = project.language === "en" ? "en" : "tr";
+    const lang = writingLang(project.language);
     const fmt = formatCaption(project.citation_style, "figure", nextFigureNo, f.title, lang);
     const cap = captionNodes(fmt);
     const fig = { type: "figure", attrs: { src: f.src, alt: f.alt } };
@@ -1031,7 +1032,7 @@ export function Workspace(props: Props) {
           return (
             <Reorder.Item key={s.id} value={s} data-tour={s.key === "references" ? "stage-references" : undefined} className="group/item relative" whileDrag={{ scale: 1.02, boxShadow: "0 12px 30px -10px rgb(21 24 41 / 0.25)" }}>
               {/* Ana bölüm başlığı (ör. “1 GİRİŞ”): gruptaki ilk aşamanın üstünde */}
-              {(() => { const g = chapterGroup(s.key); const prev = stages[i - 1]; if (!g || (prev && chapterGroup(prev.key)?.id === g.id)) return null; const major = (prefixes[s.id] ?? "").split(".")[0]; return <p className="px-2 pb-0.5 pt-2 text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">{major ? `${major} ` : ""}{g.title[project.language === "en" ? "en" : "tr"]}</p>; })()}
+              {(() => { const g = chapterGroup(s.key); const prev = stages[i - 1]; if (!g || (prev && chapterGroup(prev.key)?.id === g.id)) return null; const major = (prefixes[s.id] ?? "").split(".")[0]; return <p className="px-2 pb-0.5 pt-2 text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">{major ? `${major} ` : ""}{g.title[writingLang(project.language)]}</p>; })()}
               <div className={cn("group relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-2.5 transition-colors lg:py-2", sel && focus == null ? "bg-white shadow-sm ring-1 ring-ink-100" : sel ? "bg-white/70" : "hover:bg-white/70")} onClick={() => selectStage(s.id)}>
               <GripVertical className="hidden h-3.5 w-3.5 shrink-0 cursor-grab text-ink-200 opacity-0 transition group-hover:opacity-100 lg:block" />
               <span title={t("Adım {n}", { n: i + 1 })} className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
@@ -1111,7 +1112,7 @@ export function Workspace(props: Props) {
             {active && (
               <div className="mx-auto max-w-[780px] px-4 pb-10 pt-4 sm:px-10 sm:pt-6">
                 {isBibliography ? (
-                  <BibliographyView engine={engine} sources={sources} citedOrder={citedOrder} title={engine.meta.bibliographyTitle[project.language === "en" ? "en" : "tr"]} stages={stages} onJump={jumpToCitation} />
+                  <BibliographyView engine={engine} sources={sources} citedOrder={citedOrder} title={engine.meta.bibliographyTitle[writingLang(project.language)]} stages={stages} onJump={jumpToCitation} />
                 ) : (
                   <>
                     {placeholderCount > 0 && (
@@ -1500,7 +1501,7 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
           <div><label className="label">{t("Anahtar kelimeler")}</label><input className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} /></div>
           <div className="grid grid-cols-2 gap-2">
             <div><label className="label">{t("Disiplin")}</label><input className="input" value={discipline} onChange={(e) => setDiscipline(e.target.value)} /></div>
-            <div><label className="label">{t("Dil")}</label><select className="input" value={language} onChange={(e) => setLanguage(e.target.value)}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option></select></div>
+            <div><label className="label">{t("Dil")}</label><select className="input" value={language} onChange={(e) => setLanguage(e.target.value)}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option><option value="de">{t("Almanca")}</option></select></div>
           </div>
         </div>
         <div className="space-y-4">

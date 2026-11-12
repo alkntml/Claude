@@ -2,7 +2,6 @@ import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { localeFromRequest } from "@/i18n/server";
-import { contentLang } from "@/i18n/core";
 import { extract, kindOf } from "@/lib/files/extract";
 import { buildChart, type ChartSpec } from "@/lib/stats/charts";
 import { assertFeature } from "@/lib/usage";
@@ -26,7 +25,7 @@ export const POST = route<Ctx>("file.chart", async (req, { params }) => {
   const s = await requireUser();
   assertFeature(s.profile.plan_id, "stats");
   const { id } = await params;
-  const b = await parseBody(req, z.object({ spec: Spec, language: z.enum(["tr", "en"]).optional() }));
+  const b = await parseBody(req, z.object({ spec: Spec, language: z.enum(["tr", "en", "de"]).optional() }));
   const { data: f } = await s.supabase.from("files").select("*").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!f) throw new ApiError(404, "Dosya bulunamadı");
   const kind = kindOf(f.mime_type, f.name);
@@ -35,7 +34,7 @@ export const POST = route<Ctx>("file.chart", async (req, { params }) => {
   if (error || !blob) throw new ApiError(500, "Dosya okunamadı");
   const ex = await extract(kind, Buffer.from(await blob.arrayBuffer()));
   try {
-    return json({ chart: buildChart(ex.rows ?? [], b.spec as ChartSpec, b.language ?? contentLang(localeFromRequest(req))) });
+    return json({ chart: buildChart(ex.rows ?? [], b.spec as ChartSpec, b.language ?? localeFromRequest(req)) });
   } catch (e) {
     throw new ApiError(422, e instanceof Error ? e.message : "Grafik oluşturulamadı");
   }

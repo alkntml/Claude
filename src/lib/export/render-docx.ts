@@ -47,7 +47,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
 
   // İçindekiler: girişler dosyaya hazır yazılır (Word alan güncellemesi yapmasa, Mac Word / Pages / Google Dokümanlar’da da
   // görünür). Her giriş başlığa bağlantılıdır; sayfa numaraları PAGEREF alanıyla Word açılışta güncellenir.
-  body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: d.language === "tr" ? "İÇİNDEKİLER" : "CONTENTS", font, bold: true, size: 28 })] }));
+  body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: d.language === "tr" ? "İÇİNDEKİLER" : d.language === "de" ? "INHALTSVERZEICHNIS" : "CONTENTS", font, bold: true, size: 28 })] }));
   const textWidth = Math.round((21 - f.margins.left - f.margins.right) * CM);
   const tocEntry = (anchor: string, text: string, level: number) => new Paragraph({
     tabStops: [{ type: TabStopType.RIGHT, position: textWidth, leader: LeaderType.DOT }],
@@ -55,7 +55,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
     spacing: { line: 300, after: 60 },
     children: [new InternalHyperlink({ anchor, children: [new TextRun({ text, font, size, bold: level === 1 }), new TextRun({ text: "\t", font, size })] }), new PageReference(anchor, { hyperlink: true })],
   });
-  d.toc.forEach((t, k) => body.push(tocEntry(`_Toc${k + 1}`, `${t.number ? `${t.number} ` : ""}${t.level === 1 && f.chapterTitleUppercase ? t.text.toLocaleUpperCase(d.language === "tr" ? "tr" : "en") : t.text}`, t.level)));
+  d.toc.forEach((t, k) => body.push(tocEntry(`_Toc${k + 1}`, `${t.number ? `${t.number} ` : ""}${t.level === 1 && f.chapterTitleUppercase ? t.text.toLocaleUpperCase(d.language) : t.text}`, t.level)));
   if (d.bibliography.length) body.push(tocEntry("_TocBib", d.bibliographyTitle, 1));
   body.push(new Paragraph({ children: [new PageBreak()] }));
   let tocIdx = 0;
@@ -66,7 +66,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       if (b.level === 1 && !firstChapter && f.chapterOnNewPage) body.push(new Paragraph({ children: [new PageBreak()] }));
       if (b.level === 1) firstChapter = false;
       const htext = b.runs.map((r) => r.text).join("");
-      const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language === "tr" ? "tr" : "en") : htext;
+      const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language) : htext;
       const hrun = new TextRun({ text: `${b.number ? `${b.number} ` : ""}${shown}`, bold: true, font, size: b.level === 1 ? Math.max(size, 28) : size, color: "000000" });
       // İçindekiler girişleri (model.toc) başlıklarla birebir aynı sırada
       const anchor = `_Toc${++tocIdx}`;

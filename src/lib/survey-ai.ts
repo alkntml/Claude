@@ -30,7 +30,7 @@ const FORMAT = `SORU BİÇİMİ (her soruda tüm alanlar bulunur; türe uymayanl
 - points: Likert derecesi (5 veya 7).
 - help: katılımcıya kısa açıklama (gerekmiyorsa "").`;
 
-const RULES = (lang: "tr" | "en") => `Bilimsel anket tasarımı uzmanısın. Anket dili: ${lang === "en" ? "English" : "Türkçe"}.
+const RULES = (lang: "tr" | "en" | "de" | "de") => `Bilimsel anket tasarımı uzmanısın. Anket dili: ${lang === "en" ? "English" : lang === "de" ? "Deutsch (Sie-Form)" : "Türkçe"}.
 TEMEL KURALLAR:
 - Maddeler açık, tek yargılı (bir maddede tek şey), yönlendirmesiz, yargısız ve hedef kitlenin anlayacağı dilde olsun. Çift olumsuzluk ve teknik jargon kullanma.
 - Seçenekler birbirini dışlasın ve olası cevapları kapsasın; gerekiyorsa "Diğer" ve "Belirtmek istemiyorum" ekle.
@@ -54,7 +54,7 @@ async function run(planId: string, system: string, user: string, schema: Record<
 
 export interface SurveyBrief {
   purpose: string; audience: string; variables: string; length: "short" | "medium" | "long";
-  demographics: boolean; openEnded: boolean; consent: boolean; lang: "tr" | "en";
+  demographics: boolean; openEnded: boolean; consent: boolean; lang: "tr" | "en" | "de";
   project?: { title: string; topic?: string | null; keywords?: string[] | null; discipline?: string | null; memory?: string[] } | null;
 }
 
@@ -93,7 +93,7 @@ ${FORMAT}`, info, schema, 12000);
 }
 
 /** Serbest talimatla tüm anketi düzenler (ör. “daha kısa yap”, “ters madde ekle”, “lise öğrencilerine uyarla”) */
-export async function reviseSurvey(planId: string, p: { questions: Question[]; instruction: string; lang: "tr" | "en"; title: string }) {
+export async function reviseSurvey(planId: string, p: { questions: Question[]; instruction: string; lang: "tr" | "en" | "de"; title: string }) {
   const schema = {
     type: "object", additionalProperties: false, required: ["questions", "changes"],
     properties: { questions: { type: "array", items: Q_SCHEMA }, changes: { type: "array", items: { type: "string" } } },
@@ -110,7 +110,7 @@ ${FORMAT}`, `Anket başlığı: ${p.title}\nTalimat: ${p.instruction}\n\nMevcut 
 }
 
 /** Tek soruyu iyileştirir; boş bir Likert bloğu için yönergeye uygun maddeler yazar */
-export async function improveQuestion(planId: string, p: { question: Question; context: string; instruction?: string; lang: "tr" | "en" }) {
+export async function improveQuestion(planId: string, p: { question: Question; context: string; instruction?: string; lang: "tr" | "en" | "de" }) {
   const schema = { type: "object", additionalProperties: false, required: ["question", "note"], properties: { question: Q_SCHEMA, note: { type: "string" } } };
   const out = await run(planId, `${RULES(p.lang)}
 GÖREV: Verilen tek soruyu iyileştir. Türünü ve code’unu koru. Likert ise maddeleri netleştir; maddesi yoksa veya çok azsa yönergeye/başlığa uygun 5–8 madde yaz (uygunsa 1–2 ters madde). Seçimli soruda seçenekleri kapsayıcı ve birbirini dışlayan hâle getir.
@@ -124,7 +124,7 @@ ${FORMAT}`, `Anketin konusu: ${p.context}\n${p.instruction ? `Araştırmacının
 export interface ReviewIssue { question: number; item: number; kind: string; problem: string; suggestion: string; replacement: string }
 
 /** Uzman gözüyle inceleme: yönlendirici, çift yargılı, belirsiz ifade vb. + önerilen yeni ifade */
-export async function reviewSurvey(planId: string, p: { questions: Question[]; lang: "tr" | "en"; title: string }) {
+export async function reviewSurvey(planId: string, p: { questions: Question[]; lang: "tr" | "en" | "de"; title: string }) {
   const schema = {
     type: "object", additionalProperties: false, required: ["summary", "issues"],
     properties: {

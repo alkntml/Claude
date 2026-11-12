@@ -13,7 +13,7 @@ const PatchSchema = z.object({
   title: z.string().trim().min(1).max(300).optional(),
   status: z.enum(["active", "completed", "archived"]).optional(),
   citationStyle: z.enum(STYLE_IDS as [string, ...string[]]).optional(),
-  language: z.enum(["tr", "en"]).optional(),
+  language: z.enum(["tr", "en", "de"]).optional(),
   discipline: z.string().max(200).optional(),
   academicLevel: z.enum(["bachelor", "master", "doctorate", "postdoc", "other"]).optional(),
   topic: z.string().max(4000).optional(),

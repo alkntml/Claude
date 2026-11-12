@@ -26,8 +26,8 @@ export const FAQ: FaqGroup[] = [
         id: "kimler",
         q: { tr: "Kimler için uygun?", en: "Who is it for?" },
         a: {
-          tr: "Lisans bitirme projesi ve ödev yazan öğrenciler, yüksek lisans ve doktora öğrencileri, dergiye makale hazırlayan araştırmacılar ve akademisyenler için. Türkçe ve İngilizce çalışmaları destekler; Türk üniversitelerinin tez düzenine ve YÖK tez künyesine özel ayarları vardır.",
-          en: "Undergraduate students writing capstone projects, master’s and doctoral students, and researchers or academics preparing journal articles. It supports Turkish and English work and has settings specific to Turkish university thesis formats.",
+          tr: "Lisans bitirme projesi ve ödev yazan öğrenciler, yüksek lisans ve doktora öğrencileri, dergiye makale hazırlayan araştırmacılar ve akademisyenler için. Türkçe, İngilizce ve Almanca çalışmaları destekler; Türk üniversitelerinin tez düzenine ve YÖK tez künyesine özel ayarları vardır.",
+          en: "Undergraduate students writing capstone projects, master’s and doctoral students, and researchers or academics preparing journal articles. It supports work in Turkish, English and German and has settings specific to Turkish university thesis formats.",
         },
       },
       {
@@ -204,18 +204,18 @@ export const FAQ: FaqGroup[] = [
       },
       {
         id: "dil",
-        q: { tr: "İngilizce tez veya makale yazabilir miyim?", en: "Can I write in English?" },
+        q: { tr: "İngilizce veya Almanca tez ya da makale yazabilir miyim?", en: "Can I write in English or German?" },
         a: {
-          tr: "Evet. Her çalışmanın dili ayrı seçilir (Türkçe veya İngilizce); asistan o dilde yazar, atıf terimleri (vd./et al., s./p.) dile göre ayarlanır. Türkçe çalışmalar için “Özet ve Abstract” özelliği Türkçe özetin akademik İngilizce karşılığını hazırlar. Arayüz de Türkçe ve İngilizce kullanılabilir.",
-          en: "Yes. Each work has its own language (Turkish or English); the assistant writes in that language and citation terms (vd./et al., s./p.) adapt. For Turkish works, “Turkish & English abstract” prepares the academic English version of the abstract. The interface is available in Turkish and English too.",
+          tr: "Evet. Her çalışmanın dili ayrı seçilir (Türkçe, İngilizce veya Almanca); asistan o dilde yazar, atıf terimleri (vd./et al./et al., s./p./S.) ve tablo/şekil etiketleri dile göre ayarlanır; Word, PDF ve LaTeX çıktısı da o dilde hazırlanır. Türkçe çalışmalarda “Özet ve Abstract” Türkçe özetin akademik İngilizce karşılığını, Almanca çalışmalarda Zusammenfassung ile İngilizce Abstract’ı hazırlar. Arayüz Türkçe, İngilizce ve Almanca kullanılabilir.",
+          en: "Yes. Each work has its own language (Turkish, English or German); the assistant writes in that language, and citation terms (vd./et al., s./p./S.) and table and figure labels adapt; Word, PDF and LaTeX exports are prepared in that language too. For Turkish works, “Turkish & English abstract” prepares the academic English version of the abstract; for German works it prepares a Zusammenfassung and an English abstract. The interface is available in Turkish, English and German.",
         },
       },
       {
         id: "ceviri",
         q: { tr: "Türkçe metnimi akademik İngilizceye çevirebilir miyim? Atıflarım bozulur mu?", en: "Can I translate my Turkish text into academic English? Will my citations break?" },
         a: {
-          tr: "Evet. Çalışma alanında **Araçlar → Dil ve çeviri** (veya metni seçince çıkan balondaki **Çevir**) bir bölümü, alt başlığı ya da seçili metni Türkçe ↔ İngilizce akademik dile çevirir. Atıflar, dipnotlar, şekiller, tablolar ve başlık düzeyleri olduğu gibi korunur; ondalık ve istatistik gösterimi (Ort./SS ↔ M/SD) hedef dile uyarlanır, sayılar değişmez. Amerikan veya İngiliz İngilizcesi seçilebilir. **Terim sözlüğü** alanınıza özgü karşılıkları (ör. öz yeterlik → self-efficacy) her çeviride aynı tutar. Çeviri öncesi hâl sürüm geçmişinde saklanır. **Dil denetimi** sekmesi de yazım, dil bilgisi, noktalama ve akademik üslup hatalarını tek tek önerir; isterseniz tek tıkla uygularsınız. Çeviri ve denetim aylık yapay zekâ hakkından düşer.",
-          en: "Yes. In the workspace, **Tools → Language & translation** (or **Translate** in the bubble that appears when you select text) translates a section, a subheading or a selection between Turkish and academic English. Citations, footnotes, figures, tables and heading levels are preserved; decimal and statistical notation (Ort./SS ↔ M/SD) is adapted, numbers never change. You can choose American or British English. The **Glossary** keeps your field’s equivalents (e.g. öz yeterlik → self-efficacy) consistent. The pre-translation version is kept in the history. The **Language check** tab suggests spelling, grammar, punctuation and academic tone fixes one by one, which you can apply in one click. Translation and checks count towards your monthly AI allowance.",
+          tr: "Evet. Çalışma alanında **Araçlar → Dil ve çeviri** (veya metni seçince çıkan balondaki **Çevir**) bir bölümü, alt başlığı ya da seçili metni Türkçe, İngilizce ve Almanca arasında akademik dile çevirir. Atıflar, dipnotlar, şekiller, tablolar ve başlık düzeyleri olduğu gibi korunur; ondalık ve istatistik gösterimi (Ort./SS ↔ M/SD) hedef dile uyarlanır, sayılar değişmez. Amerikan veya İngiliz İngilizcesi seçilebilir. **Terim sözlüğü** alanınıza özgü karşılıkları (ör. öz yeterlik → self-efficacy) her çeviride aynı tutar. Çeviri öncesi hâl sürüm geçmişinde saklanır. **Dil denetimi** sekmesi de yazım, dil bilgisi, noktalama ve akademik üslup hatalarını tek tek önerir; isterseniz tek tıkla uygularsınız. Çeviri ve denetim aylık yapay zekâ hakkından düşer.",
+          en: "Yes. In the workspace, **Tools → Language & translation** (or **Translate** in the bubble that appears when you select text) translates a section, a subheading or a selection between Turkish, English and German in academic style. Citations, footnotes, figures, tables and heading levels are preserved; decimal and statistical notation (Ort./SS ↔ M/SD) is adapted, numbers never change. You can choose American or British English. The **Glossary** keeps your field’s equivalents (e.g. öz yeterlik → self-efficacy) consistent. The pre-translation version is kept in the history. The **Language check** tab suggests spelling, grammar, punctuation and academic tone fixes one by one, which you can apply in one click. Translation and checks count towards your monthly AI allowance.",
         },
       },
       {

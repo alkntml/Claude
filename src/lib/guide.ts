@@ -269,7 +269,7 @@ export const GUIDE: GuideChapter[] = [
         s("“Cevaplar” → CSV / kod kitabı veya “Cevapları çalışmaya veri dosyası olarak aktar” ile analize geçin.", "“Responses” → CSV / codebook or “Send responses to a work as a data file” to analyse them."),
       ] },
       { id: "dil", title: s("Dil ve çeviri", "Language and translation"), where: s("“Araçlar” → “Dil ve çeviri” veya seçim menüsü", "“Tools” → “Language and translation” or the selection menu"), steps: [
-        s("“Çeviri”: Türkçe ↔ İngilizce akademik çeviri (Amerikan/İngiliz İngilizcesi); atıf, dipnot ve şekiller korunur.", "“Translation”: academic Turkish ↔ English (US/UK); citations, footnotes and figures are preserved."),
+        s("“Çeviri”: Türkçe, İngilizce ve Almanca arasında akademik çeviri (Amerikan/İngiliz İngilizcesi); atıf, dipnot ve şekiller korunur.", "“Translation”: academic translation between Turkish, English and German (US/UK English); citations, footnotes and figures are preserved."),
         s("“Dil denetimi”: yazım, dil bilgisi, noktalama ve üslup önerileri; “Uygula” / “Tümünü uygula”.", "“Language check”: spelling, grammar, punctuation and style suggestions; “Apply” / “Apply all”."),
         s("“Terim sözlüğü”: çalışmanıza özel terim karşılıklarını kaydedin; çeviriler buna uyar.", "“Glossary”: save your own term pairs; translations follow them."),
       ] },

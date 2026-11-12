@@ -122,7 +122,7 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 
 - D92: Semantic Scholar yeniden deneme + bekleme süresi, tüm aramalarda sağlık kaydı (son hata); yeni veri tabanları ERIC, DBLP, DataCite
 - D142 (2026-11-08): Kullanım rehberi (/yardim: hızlı başlangıç + 10 bölüm, 58 konu, arama) ve 15 adımlı rehberli tur
-- D143 (2026-11-08): Almanca dil desteği: tüm arayüz, SSS, rehber, araç rehberleri, örnekler, yasal sayfalar ve SEO; /de adresleri; DE/AT/CH/LI ziyaretçileri otomatik Almanca. 34 blog yazısının Almancası eklendi (2026-11-12); Almanca yazım dili henüz yok
+- D143 (2026-11-08): Almanca dil desteği: tüm arayüz, SSS, rehber, araç rehberleri, örnekler, yasal sayfalar ve SEO; /de adresleri; DE/AT/CH/LI ziyaretçileri otomatik Almanca. 34 blog yazısının Almancası eklendi (2026-11-12)
 - D140–D141 (2026-11-08): Gerçek zamanlı ortak yazım (Supabase Realtime, migration 37, paragraf düzeyinde otomatik birleştirme, canlı paragraf işaretleri), Bul ve değiştir; literatür ağı (ortak kaynakça + birlikte atıf, kümeler, zaman çizelgesi, konu haritası, yeni çalışmalar, boşluk analizi)
 - D139 (2026-11-07): İddia denetimi kalibrasyonu: aşırı “kısmen” kararları azaltıldı, gerçek sayfa numarası, “karar verilemedi” önbelleğe girmez
 - D138 (2026-11-07): İddia denetimi: “çelişiyor” kararı yalnızca doğrulanmış alıntıyla; gerekçe karardan önce; eski kararlar yeniden değerlendirilir
@@ -202,3 +202,5 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - Veritabanı: yeni migration’ın SQL’i sohbette verilir; kullanıcı Supabase → SQL Editor → **+ New query** → yapıştır → **Run** yapar (Save gerekmez).
 - Claude’un oturumundan canlı siteye ve akademik API’lere ağ erişimi yok; canlı doğrulama kullanıcının ekran görüntüleriyle.
 - Kullanıcı bağlam penceresi dolmadan “yedekle” diyebilir: bu dosyalar (PROJECT_STATUS, TODO, DECISIONS, CLAUDE.md) güncellenip commit edilir.
+
+- D144 (2026-11-13): Almanca yazım dili — çalışma Almanca yazılabilir: atıf motoru, tablo/şekil, bölüm başlıkları, Word/PDF/LaTeX, istatistik, grafik, PRISMA, anket, yapay zekâ ve TR↔EN↔DE çeviri/dil denetimi

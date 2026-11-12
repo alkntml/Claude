@@ -18,7 +18,7 @@ const KIND: Record<string, string> = { leading: "Yönlendirici", double_barreled
  * inceleme + önerilen ifadeyi tek tıkla uygulama, kural tabanlı hızlı kontrol ve tahmini süre.
  */
 export function SurveyAiPanel({ surveyId, qs, locked, lang, consent, description, onReplace }: {
-  surveyId: string; qs: Question[]; locked: boolean; lang: "tr" | "en"; consent: string; description: string;
+  surveyId: string; qs: Question[]; locked: boolean; lang: "tr" | "en" | "de"; consent: string; description: string;
   /** Soruları değiştirir (düzenleyici “kaydedilmedi” olarak işaretler ve kartları yeniler) */
   onReplace: (next: Question[]) => void;
 }) {

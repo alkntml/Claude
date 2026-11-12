@@ -6,6 +6,8 @@ import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocal
 import { formatCaption, noteLabel, parseCaption, parseNote, type ParsedCaption } from "@/lib/citations/captions";
 import { citedIdsInOrder, citationAttrs, type JSONNode } from "@/lib/editor/doc";
 import { stageDef } from "@/lib/workflows";
+import { dictFor } from "@/i18n";
+import { LANG_TAG } from "@/lib/writing-lang";
 import { chapterGroup, sameHeading, sectionTitle, UNNUMBERED } from "@/lib/workflows/structure";
 
 export interface Run {
@@ -82,13 +84,16 @@ export function buildExportDoc(params: {
   options?: { numberHeadings?: boolean; onlyStageIds?: string[]; latexCitations?: boolean };
 }): ExportDoc {
   const { project, stages } = params;
-  const locale: CiteLocale = project.language === "en" ? "en" : "tr";
+  const locale: CiteLocale = project.language === "en" || project.language === "de" ? project.language : "tr";
   const ordered = [...stages].sort((a, b) => a.position - b.position);
   const only = params.options?.onlyStageIds?.length ? new Set(params.options.onlyStageIds) : null;
   // Kaynakça yalnızca aktarılan bölümlerde atıf yapılan kaynakları içerir
   const order = citedIdsInOrder(ordered.filter((s) => !only || only.has(s.id)).map((s) => s.content as JSONNode));
   const engine = new CitationEngine(project.citation_style as CitationStyleId, params.engineItems, { locale, citedOrder: order });
   const doNumber = params.options?.numberHeadings ?? true;
+  // Kullanıcının değiştirmediği aşama adları (sözlükte karşılığı olan Türkçe adlar) çalışmanın diline çevrilir
+  const dict = dictFor(locale);
+  const tl = (x: string) => (dict && dict[x]) || x;
   const firstSeen = new Set<string>();
 
   const blocks: Block[] = [];
@@ -204,7 +209,7 @@ export function buildExportDoc(params: {
     const hasText = (st.content_text ?? "").trim().length > 0;
     if (!hasText) continue;
     const def = stageDef(st.key);
-    const title = sectionTitle(st.key, st.title, def?.title, locale);
+    const title = tl(sectionTitle(st.key, st.title, def?.title, locale));
     const group = chapterGroup(st.key);
     const skipTitle = [st.title, def?.title ?? "", title].find((x) => x) ?? "";
     const b0 = blocks.length, t0 = toc.length;
@@ -215,7 +220,7 @@ export function buildExportDoc(params: {
       else headingCtx = { shift: 0, skipTitle, seen: 0 }; // başlıksız açılış metni (Giriş’in ilk kısmı)
     } else {
       currentGroup = null;
-      startChapter([{ text: title || st.title }], !UNNUMBERED.has(st.key));
+      startChapter([{ text: title || tl(st.title) }], !UNNUMBERED.has(st.key));
       headingCtx = { shift: 0, skipTitle, seen: 0 };
     }
     if (doc) visit(doc);
@@ -237,7 +242,7 @@ export function buildExportDoc(params: {
     author: params.authorName,
     institution: project.context?.university ?? "",
     subtitle: project.context?.subtitle ?? "",
-    date: new Date().toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", { year: "numeric", month: "long" }),
+    date: new Date().toLocaleDateString(LANG_TAG[locale], { year: "numeric", month: "long" }),
     language: locale,
     styleLabel: meta.label,
     numberHeadings: doNumber,

@@ -1,4 +1,7 @@
 /** Asistan eylemleri: her biri kullanıcının mesajına eklenen açık bir görev tanımıdır. */
+/** D144: Almanca çalışmada “Özet ve Abstract”: Almanca Zusammenfassung + İngilizce Abstract */
+export const ABSTRACT_INSTRUCTION_DE = "DİĞER BÖLÜMLERİN DURUMU kısmındaki çalışma metnine dayanarak (1) akademik Almanca bir Zusammenfassung yaz: 150–250 kelime, tek paragraf, amaç–yöntem–bulgular–sonuç sırasıyla; ardından 'Schlüsselwörter:' satırına 3–5 kavram. (2) Aynı içeriğin akademik İngilizce karşılığını yaz: 'Abstract' başlığı ve 'Keywords:' satırı. Metinde olmayan bulgu, sayı veya yöntem ayrıntısı EKLEME; bulgular henüz yazılmamışsa [VERİ GİRİLECEK] kullan. Özette kaynak gösterme. Her ikisini tek bir :::taslak bloğunda ## Zusammenfassung ve ## Abstract başlıklarıyla ver.";
+
 export const ASSISTANT_ACTIONS = {
   chat: { label: "Sohbet", instruction: "" },
   outline: { label: "Alt başlık öner", instruction: "Bu bölüm için yalnızca alt başlık önerisi yap; bölüm metni yazma. Önerileri tek bir :::taslak bloğu içinde, her satıra bir alt başlık olacak biçimde ver; numara veya açıklama ekleme. :::eksik ve :::hafiza blokları kullanma." },

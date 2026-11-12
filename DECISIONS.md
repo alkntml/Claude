@@ -707,3 +707,13 @@ Bilinen sınır: akış hiç başlamadan API hatası verirse (ör. aşırı yük
 - Yapay zekâ cevap dili `AI_LANGUAGE[locale]`; yalnızca TR/EN olan motor çıktıları (APA istatistik, grafik, PRISMA şeması, anket şablonu, örnek sayfadaki tablolar) Almancada İngilizce (`contentLang`). Yazım dili (project.language) hâlâ tr/en; Almanca yazım dili ayrı bir adım.
 - Blog: 34 yazının Almancası `lib/blog/de-1..5.ts` (Almanca adresler, ≤60 başlık, ≤160 açıklama; iç bağlantılar /de/blog). Araç rehberleri ve altbilgi Almanca yazılara bağlanır.
 - SEO (2026-11-12): hreflang x-default artık İngilizce sayfa (küresel ziyaretçi için); robots /de/ açık, /de/giris kapalı; PWA manifest ziyaretçi dilinde; Türkçe tanıtım videosu yalnızca Türkçe sayfada.
+
+### D144 — Almanca yazım dili (project.language = de)
+- Çalışmanın yazım dili artık `tr | en | de` (`lib/writing-lang.ts`: writingLang, LANG_NAME, LANG_TAG). Veritabanı değişikliği yok (sütun serbest metin); API şemaları de kabul eder.
+- Atıf motoru (CiteLocale de): DGPs/APA’nın Almanca uygulaması — S., o. J., Hrsg., Aufl., „Zugriff am“, Almanca ay adları, Literaturverzeichnis; Harvard “In: … (Hrsg.)”, MLA/IEEE “S.”. ISNAD’da Almanca başlıklar özgün büyük/küçük harfiyle kalır (isGermanTitle).
+- Tablo/şekil: Tabelle, Abbildung (IEEE/MLA: Abb.), Anmerkung; Almanca başlıklar da ayrıştırılır. Bölüm başlıkları (EINLEITUNG, METHODE, Problemstellung …) ve dışa aktarma etiketleri (Inhaltsverzeichnis, Betreuung) Almanca; Word/PDF/Markdown/LaTeX (babel ngerman, biblatex ngerman-apa, csquotes german).
+- Yapay zekâ: bağlamda “ALMANCA YAZIM” kuralı; Özet eylemi Almanca çalışmada Zusammenfassung + English Abstract (ABSTRACT_INSTRUCTION_DE). Başlık, kurgu, savunma, sunum, hafıza, otomatik tamamlama Almanca.
+- İstatistik (APA raporları) ve grafikler Almanca; PRISMA şeması, yöntem metni, veri çıkarma/kalite etiketleri Almanca; anket Likert ifadeleri ve onam şablonu Almanca.
+- Dil ve çeviri: TR ↔ EN ↔ DE (kaynak ve hedef seçilir), Almanca dil denetimi (Duden), terim sözlüğüne isteğe bağlı Almanca sütun (satır en az iki dilde dolu). detectLang Almancayı tanır.
+- Düzeltilen hata: Almanca arayüzde Konu bulma isteği (dil = de) sunucuda reddediliyordu.
+- Kullanıcının değiştirmediği aşama adları dışa aktarmada çalışmanın diline çevrilir (EN için de geçerli; önceden Türkçe kalıyordu).

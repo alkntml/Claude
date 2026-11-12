@@ -1,6 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
 - [ ] Canlıda dene: /de sayfaları, Almanya’dan girişte otomatik Almanca, Almanca arayüzle asistan cevabı (D143)
-- [ ] İsteğe bağlı: Almanca yazım dili (project.language = de; atıf motoru, istatistik, grafik çıktıları) — D143
+- [ ] Canlıda dene: Almanca çalışma oluştur → bölüm yaz, atıf ekle, Word/PDF/LaTeX indir, istatistik ve çeviri (D144)
 - [ ] Canlıda dene: /yardim (Kullanım rehberi) ve çalışma alanında “?” → 15 adımlı rehberli tur (D142)
 - [ ] Supabase SQL Editor’de migration 37’yi çalıştır (gerçek zamanlı ortak yazım kanalı, D140); check_status.sql’de “37” YAPILMIŞ görünmeli
 - [ ] Canlıda dene: iki tarayıcıda (sahip + ortak yazar) aynı bölümü aç; üstte yeşil “Canlı”, diğerinin paragrafında renkli çizgi; farklı paragraflara yazınca metin saniyeler içinde diğer tarafta görünmeli (D140)

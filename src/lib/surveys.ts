@@ -14,6 +14,11 @@ export const LIKERT_PRESETS = {
     5: ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"],
     7: ["Strongly disagree", "Disagree", "Somewhat disagree", "Neutral", "Somewhat agree", "Agree", "Strongly agree"],
   },
+  // D144: Almanca (yaygın Likert ifadeleri)
+  de: {
+    5: ["Stimme überhaupt nicht zu", "Stimme eher nicht zu", "Teils/teils", "Stimme eher zu", "Stimme voll und ganz zu"],
+    7: ["Stimme überhaupt nicht zu", "Stimme nicht zu", "Stimme eher nicht zu", "Teils/teils", "Stimme eher zu", "Stimme zu", "Stimme voll und ganz zu"],
+  },
 } as const;
 
 const Code = z.string().trim().min(1).max(40).regex(/^[\p{L}\p{N}_ .-]+$/u, "Değişken adında yalnızca harf, rakam, boşluk, nokta, tire ve alt çizgi kullanılabilir");
@@ -184,7 +189,7 @@ export function safeCode(raw: unknown, fallback: string): string {
  * sayıları sınırlanır, Likert etiketleri hazır kalıptan gelir, değişken adları benzersizleştirilir.
  * `keepIds` verilirse aynı sıradaki mevcut soruların kimlikleri korunur (düzenlemede veri bağı kopmasın).
  */
-export function fromAiQuestions(raw: AiQuestion[], lang: "tr" | "en", keepIds: string[] = []): Question[] {
+export function fromAiQuestions(raw: AiQuestion[], lang: "tr" | "en" | "de", keepIds: string[] = []): Question[] {
   const out: Question[] = [];
   const used = new Set<string>();
   const reserve = (cols: string[]) => cols.forEach((c) => used.add(c.toLocaleLowerCase("tr")));

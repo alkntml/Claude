@@ -48,7 +48,9 @@ export interface QualityReport {
 
 const INFORMAL_TR = ["bence", "sanırım", "galiba", "çok çok", "süper", "harika", "berbat", "kesinlikle herkes", "hiç kimse", "aslında", "yani", "falan", "filan", "baya", "bayağı", "şey"];
 const INFORMAL_EN = ["i think", "i believe", "a lot of", "lots of", "really", "very very", "stuff", "things like", "kind of", "sort of", "obviously", "everybody knows"];
-const OVERCLAIM = ["kanıtlamıştır", "kesin olarak", "şüphesiz", "tartışmasız", "proves that", "undoubtedly", "it is certain"];
+/** Almanca günlük dil kalıpları (D144) */
+const INFORMAL_DE = ["ich denke", "ich glaube", "meiner meinung nach", "irgendwie", "jede menge", "jeder weiß", "total wichtig", "ziemlich viel"];
+const OVERCLAIM = ["kanıtlamıştır", "kesin olarak", "şüphesiz", "tartışmasız", "proves that", "undoubtedly", "it is certain", "beweist eindeutig", "zweifellos", "unbestreitbar", "zweifelsfrei"];
 
 function ngrams(words: string[], n: number): string[] {
   const out: string[] = [];
@@ -59,11 +61,11 @@ function ngrams(words: string[], n: number): string[] {
 let counter = 0;
 const nid = (p: string) => `${p}-${++counter}`;
 
-export function runQualityChecks(stages: StageInput[], sources: SourceInput[], opts: { language?: "tr" | "en"; uiLocale?: Locale } = {}): QualityReport {
+export function runQualityChecks(stages: StageInput[], sources: SourceInput[], opts: { language?: "tr" | "en" | "de"; uiLocale?: Locale } = {}): QualityReport {
   counter = 0;
   const T = makeT(opts.uiLocale ?? "tr");
   const issues: QualityIssue[] = [];
-  const informal = opts.language === "en" ? INFORMAL_EN : [...INFORMAL_TR, ...INFORMAL_EN];
+  const informal = opts.language === "en" ? INFORMAL_EN : opts.language === "de" ? INFORMAL_DE : [...INFORMAL_TR, ...INFORMAL_EN];
   const writable = stages.filter((s) => !s.generated);
 
   // --- Yapı: eksik / çok kısa bölümler

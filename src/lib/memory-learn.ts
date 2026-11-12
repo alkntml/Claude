@@ -7,6 +7,7 @@ import "server-only";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
 import { spentError } from "@/lib/ai/spent";
 import { fold } from "@/lib/import/references";
+import { LANG_NAME, writingLang } from "@/lib/writing-lang";
 
 const KINDS = ["fact", "decision", "concept", "variable", "question", "hypothesis", "note"] as const;
 export type MemoryKind = (typeof KINDS)[number];
@@ -32,7 +33,7 @@ export async function learnFromDocument(params: {
 }) {
   const max = params.max ?? 20;
   const model = await resolveModel(params.planId, "balanced");
-  const lang = params.project.language === "en" ? "English" : "Türkçe";
+  const lang = LANG_NAME[writingLang(params.project.language)];
   const system = `Akademik bir çalışmanın proje hafızasını dolduran titiz bir araştırma asistanısın. Sana verilen belgeyi oku ve bu çalışmada (“${params.project.title}”${params.project.topic ? `, konu: ${params.project.topic}` : ""}) sonraki yazımlarda hatırlanması gereken bilgileri en fazla ${max} kısa kayıt olarak çıkar.
 KURALLAR:
 - YALNIZCA belgede açıkça yazan bilgileri al. Yorum, çıkarım, değerlendirme veya belgede olmayan bilgi EKLEME. Sayıları, ölçek adlarını, madde sayılarını, örneklem büyüklüklerini, güvenirlik katsayılarını ve yazar–yıl bilgilerini belgedeki gibi aktar.

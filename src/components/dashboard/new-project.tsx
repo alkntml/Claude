@@ -28,7 +28,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [title, setTitle] = useState("");
   const [topic, setTopic] = useState(() => (params.get("konu") ?? "").slice(0, 4000));
   const [keywords, setKeywords] = useState("");
-  const [language, setLanguage] = useState<"tr" | "en">(locale === "tr" ? "tr" : "en");
+  const [language, setLanguage] = useState<"tr" | "en" | "de">(locale);
   const [style, setStyle] = useState(defaultStyle);
   const [university, setUniversity] = useState("");
   const [program, setProgram] = useState<GrantProgram>("tubitak_2209a");
@@ -124,7 +124,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                 <div><label className="label" htmlFor="title">{t("Çalışma başlığı (geçici)")}</label><input id="title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("Boş bırakılırsa konudan oluşturulur")} /></div>
                 <div><label className="label" htmlFor="kw">{t("Anahtar kelimeler (virgülle ayırın)")}</label><input id="kw" className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder={t("ilişki odaklı OKB, ebeveyn tutumları, beş faktör kişilik")} /></div>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div><label className="label" htmlFor="lang">{t("Yazım dili")}</label><select id="lang" className="input" value={language} onChange={(e) => setLanguage(e.target.value as "tr" | "en")}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option></select></div>
+                  <div><label className="label" htmlFor="lang">{t("Yazım dili")}</label><select id="lang" className="input" value={language} onChange={(e) => setLanguage(e.target.value as "tr" | "en" | "de")}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option><option value="de">{t("Almanca")}</option></select></div>
                   <div><label className="label" htmlFor="style">{t("Atıf stili")}</label><select id="style" className="input" value={style} onChange={(e) => setStyle(e.target.value)}>{STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}</select><p className="mt-1.5 text-xs text-ink-400">{t("Sonradan değiştirdiğinizde tüm atıflar otomatik dönüşür.")}</p></div>
                 </div>
               </div>

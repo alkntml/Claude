@@ -14,8 +14,9 @@ import { detectLang } from "@/lib/editor/translate-doc";
 import { DocPreview } from "./editor";
 
 export type LanguageTab = "translate" | "proofread" | "glossary";
-type Lang = "tr" | "en";
-interface Gloss { tr: string; en: string }
+type Lang = "tr" | "en" | "de";
+interface Gloss { tr: string; en: string; de?: string }
+const LANG_LABEL: Record<Lang, string> = { tr: "Türkçe", en: "İngilizce", de: "Almanca" };
 interface Issue { block: number; original: string; suggestion: string; category: string; reason: string; context: string }
 
 const CAT: Record<string, { label: string; tone: string }> = {
@@ -71,7 +72,12 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
   const detected = useMemo(() => detectLang(scopeText), [scopeText]);
   const [from, setFrom] = useState<Lang>(detected);
   useEffect(() => setFrom(detected), [detected]);
-  const to: Lang = from === "tr" ? "en" : "tr";
+  // Hedef dil: varsayılan olarak çalışmanın dili; kaynakla aynıysa Türkçe ↔ İngilizce
+  const pl: Lang = projectLanguage === "en" || projectLanguage === "de" ? projectLanguage : "tr";
+  const defaultTo = (f: Lang): Lang => (pl !== f ? pl : f === "tr" ? "en" : "tr");
+  const [to, setTo] = useState<Lang>(defaultTo(detected));
+  useEffect(() => setTo((cur) => (cur === from ? defaultTo(from) : cur)), [from]); // eslint-disable-line react-hooks/exhaustive-deps
+  const showDe = pl === "de" || from === "de" || to === "de" || initialGlossary.some((g) => g.de);
   const [variant, setVariant] = useState<"us" | "uk">("us");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ doc: JSONNode; missing: { citations: number; footnotes: number; figures: number }; terms: Gloss[]; words: number } | null>(null);
@@ -97,7 +103,8 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
     finally { setBusy(false); }
   }
   async function saveGlossary(next: Gloss[]) {
-    const clean = next.map((g) => ({ tr: g.tr.trim(), en: g.en.trim() })).filter((g) => g.tr && g.en).slice(0, 300);
+    // Bir satır en az iki dilde dolu olmalı; Almanca sütun isteğe bağlıdır (D144)
+    const clean = next.map((g) => ({ tr: g.tr.trim(), en: g.en.trim(), ...(g.de?.trim() ? { de: g.de.trim() } : {}) })).filter((g) => [g.tr, g.en, g.de].filter(Boolean).length >= 2).slice(0, 300);
     setSavingGloss(true);
     try { await api(`/api/projects/${projectId}`, { method: "PATCH", json: { context: { glossary: clean } } }); setGloss(clean); onGlossarySaved(clean); toast({ tone: "success", title: t("Terim sözlüğü kaydedildi") }); }
     catch (e) { toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); }
@@ -116,7 +123,7 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
     else chain.insertContentAt(editor.state.doc.content.size, content).run();
     // Önerilen terimler sözlüğe eklenir
     const add = result.terms.filter((_, i) => pickedTerms.has(i));
-    if (add.length) await saveGlossary([...gloss, ...add.filter((a) => !gloss.some((g) => g.tr.toLocaleLowerCase("tr") === a.tr.toLocaleLowerCase("tr")))]);
+    if (add.length) await saveGlossary([...gloss, ...add.filter((a) => !gloss.some((g) => (g[from] ?? "").toLocaleLowerCase(from) === (a[from] ?? "").toLocaleLowerCase(from)))]);
     toast({ tone: "success", title: mode === "replace" ? t("Çeviri yerleştirildi") : t("Çeviri eklendi"), detail: mode === "replace" ? t("Önceki hâli Sürümler sekmesinde duruyor.") : undefined });
     onClose();
   }
@@ -173,9 +180,12 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
             {scopePicker}
             <div className="flex flex-wrap items-center gap-2 text-[13px]">
               <span className="text-ink-500">{t("Yön:")}</span>
-              <select className="input !w-auto !py-1.5" value={from} onChange={(e) => { setFrom(e.target.value as Lang); setResult(null); }}>
-                <option value="tr">{t("Türkçe → İngilizce")}</option>
-                <option value="en">{t("İngilizce → Türkçe")}</option>
+              <select className="input !w-auto !py-1.5" value={from} aria-label={t("Kaynak dil")} onChange={(e) => { setFrom(e.target.value as Lang); setResult(null); }}>
+                {(["tr", "en", "de"] as Lang[]).map((l) => <option key={l} value={l}>{t(LANG_LABEL[l])}</option>)}
+              </select>
+              <span className="text-ink-400">→</span>
+              <select className="input !w-auto !py-1.5" value={to} aria-label={t("Hedef dil")} onChange={(e) => { setTo(e.target.value as Lang); setResult(null); }}>
+                {(["tr", "en", "de"] as Lang[]).filter((l) => l !== from).map((l) => <option key={l} value={l}>{t(LANG_LABEL[l])}</option>)}
               </select>
               {to === "en" && (
                 <select className="input !w-auto !py-1.5" value={variant} onChange={(e) => setVariant(e.target.value as "us" | "uk")} aria-label={t("İngilizce türü")}>
@@ -183,7 +193,7 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
                   <option value="uk">{t("İngiliz İngilizcesi")}</option>
                 </select>
               )}
-              {from !== detected && <span className="text-[12px] text-amber-700">{t("Metin {l} görünüyor; yönü kontrol edin.", { l: detected === "tr" ? t("Türkçe") : t("İngilizce") })}</span>}
+              {from !== detected && <span className="text-[12px] text-amber-700">{t("Metin {l} görünüyor; yönü kontrol edin.", { l: t(LANG_LABEL[detected]) })}</span>}
             </div>
             <ul className="space-y-1 rounded-xl bg-ink-50 p-3 text-[12.5px] text-ink-600">
               <li>{t("Atıflar, dipnotlar, şekiller, tablolar ve başlık düzeyleri korunur; içerik eklenmez veya özetlenmez.")}</li>
@@ -205,7 +215,7 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
                       {result.terms.map((g, i) => (
                         <label key={i} className={cn("flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px]", pickedTerms.has(i) ? "border-emerald-300 bg-emerald-50 text-emerald-800" : "border-ink-200 text-ink-500")}>
                           <input type="checkbox" className="sr-only" checked={pickedTerms.has(i)} onChange={() => { const n = new Set(pickedTerms); if (n.has(i)) n.delete(i); else n.add(i); setPickedTerms(n); }} />
-                          {pickedTerms.has(i) && <Check className="h-3 w-3" />}{g.tr} → {g.en}
+                          {pickedTerms.has(i) && <Check className="h-3 w-3" />}{g[from]} → {g[to]}
                         </label>
                       ))}
                     </div>
@@ -225,7 +235,7 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
         {tab === "proofread" && (
           <div className="space-y-4">
             {scopePicker}
-            <p className="text-[12.5px] text-ink-500">{detected === "en" ? t("İngilizce metin: dil bilgisi, article, zaman tutarlılığı, akademik üslup ve Türkçeden aktarma kaynaklı yapılar denetlenir.") : t("Türkçe metin: TDK yazımı (de/da, ki, mi), noktalama, anlatım bozuklukları ve akademik üslup denetlenir.")}</p>
+            <p className="text-[12.5px] text-ink-500">{detected === "en" ? t("İngilizce metin: dil bilgisi, article, zaman tutarlılığı, akademik üslup ve Türkçeden aktarma kaynaklı yapılar denetlenir.") : detected === "de" ? t("Almanca metin: Duden yazımı, büyük harf ve virgül kuralları, çekim ve uyum, akademik üslup denetlenir.") : t("Türkçe metin: TDK yazımı (de/da, ki, mi), noktalama, anlatım bozuklukları ve akademik üslup denetlenir.")}</p>
             {!issues && <Button onClick={check} loading={busy} disabled={empty}><SpellCheck2 className="h-4 w-4" /> {busy ? t("Denetleniyor…") : t("Denetle")}</Button>}
             {issues && issues.length === 0 && <p className="rounded-xl bg-emerald-50 p-4 text-[13.5px] text-emerald-800">{t("Belirgin bir dil hatası bulunamadı.")}</p>}
             {issues && issues.length > 0 && (
@@ -265,18 +275,19 @@ export function LanguageModal({ open, onClose, editor, projectId, projectLanguag
             <div className="max-h-[45vh] space-y-1.5 overflow-y-auto pr-1">
               {gloss.length === 0 && <p className="rounded-xl bg-ink-50 p-4 text-center text-[13px] text-ink-400">{t("Henüz terim yok. Çeviri yaptığınızda önerilen terimleri tek tıkla ekleyebilirsiniz.")}</p>}
               {gloss.map((g, i) => (
-                <div key={i} className="grid grid-cols-[1fr_1fr_auto] items-center gap-2">
+                <div key={i} className={cn("grid items-center gap-2", showDe ? "grid-cols-[1fr_1fr_1fr_auto]" : "grid-cols-[1fr_1fr_auto]")}>
                   <input className="input !py-1.5" value={g.tr} placeholder={t("Türkçe terim")} onChange={(e) => setGloss(gloss.map((x, k) => (k === i ? { ...x, tr: e.target.value } : x)))} />
                   <input className="input !py-1.5" value={g.en} placeholder={t("İngilizce karşılığı")} onChange={(e) => setGloss(gloss.map((x, k) => (k === i ? { ...x, en: e.target.value } : x)))} />
+                  {showDe && <input className="input !py-1.5" value={g.de ?? ""} placeholder={t("Almanca karşılığı")} onChange={(e) => setGloss(gloss.map((x, k) => (k === i ? { ...x, de: e.target.value } : x)))} />}
                   <button type="button" onClick={() => setGloss(gloss.filter((_, k) => k !== i))} className="rounded-lg p-2 text-ink-400 hover:bg-rose-50 hover:text-rose-600" aria-label={t("Sil")}><Trash2 className="h-4 w-4" /></button>
                 </div>
               ))}
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="secondary" size="sm" onClick={() => setGloss([...gloss, { tr: "", en: "" }])}><Plus className="h-4 w-4" /> {t("Terim ekle")}</Button>
+              <Button variant="secondary" size="sm" onClick={() => setGloss([...gloss, { tr: "", en: "", ...(showDe ? { de: "" } : {}) }])}><Plus className="h-4 w-4" /> {t("Terim ekle")}</Button>
               <Button size="sm" loading={savingGloss} onClick={() => saveGlossary(gloss)}>{t("Kaydet")}</Button>
             </div>
-            <p className="text-[12px] text-ink-400">{t("Sözlük bu çalışmaya özeldir; ortak yazarlar da aynı sözlüğü kullanır.")} {projectLanguage === "en" ? t("Çalışma dili İngilizce.") : ""}</p>
+            <p className="text-[12px] text-ink-400">{t("Sözlük bu çalışmaya özeldir; ortak yazarlar da aynı sözlüğü kullanır.")} {projectLanguage === "en" ? t("Çalışma dili İngilizce.") : projectLanguage === "de" ? t("Çalışma dili Almanca. Bir terim satırı en az iki dilde dolu olmalı.") : ""}</p>
           </div>
         )}
       </div>

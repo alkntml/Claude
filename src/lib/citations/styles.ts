@@ -5,16 +5,16 @@ import {
 } from "./util";
 
 export const STYLES: Record<CitationStyleId, StyleMeta> = {
-  apa7: { id: "apa7", label: "APA 7", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References" }, description: "American Psychological Association, 7. baskı" },
-  isnad: { id: "isnad", label: "ISNAD 2 (metin içi)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Bibliography" }, description: "İSNAD Atıf Sistemi, 2. edisyon, metin içi atıf (yazar-tarih)" },
-  apa6: { id: "apa6", label: "APA 6", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References" }, description: "American Psychological Association, 6. baskı" },
-  chicago: { id: "chicago", label: "Chicago (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References" }, description: "Chicago Manual of Style 17, yazar-tarih sistemi" },
-  turabian: { id: "turabian", label: "Turabian (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Reference List" }, description: "Turabian 9, yazar-tarih (reference list) sistemi" },
-  harvard: { id: "harvard", label: "Harvard", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Reference list" }, description: "Harvard (Cite Them Right) sistemi" },
-  mla: { id: "mla", label: "MLA 9", family: "author-page", bibliographyTitle: { tr: "Kaynakça", en: "Works Cited" }, description: "Modern Language Association, 9. baskı" },
-  vancouver: { id: "vancouver", label: "Vancouver", family: "numeric", bibliographyTitle: { tr: "Kaynaklar", en: "References" }, description: "ICMJE / NLM Vancouver sistemi" },
-  ieee: { id: "ieee", label: "IEEE", family: "numeric", bibliographyTitle: { tr: "Kaynaklar", en: "References" }, description: "Institute of Electrical and Electronics Engineers" },
-  ama: { id: "ama", label: "AMA 11", family: "numeric", bibliographyTitle: { tr: "Kaynaklar", en: "References" }, description: "American Medical Association, 11. baskı" },
+  apa7: { id: "apa7", label: "APA 7", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References", de: "Literaturverzeichnis" }, description: "American Psychological Association, 7. baskı" },
+  isnad: { id: "isnad", label: "ISNAD 2 (metin içi)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Bibliography", de: "Literaturverzeichnis" }, description: "İSNAD Atıf Sistemi, 2. edisyon, metin içi atıf (yazar-tarih)" },
+  apa6: { id: "apa6", label: "APA 6", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References", de: "Literaturverzeichnis" }, description: "American Psychological Association, 6. baskı" },
+  chicago: { id: "chicago", label: "Chicago (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References", de: "Literaturverzeichnis" }, description: "Chicago Manual of Style 17, yazar-tarih sistemi" },
+  turabian: { id: "turabian", label: "Turabian (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Reference List", de: "Literaturverzeichnis" }, description: "Turabian 9, yazar-tarih (reference list) sistemi" },
+  harvard: { id: "harvard", label: "Harvard", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Reference list", de: "Literaturverzeichnis" }, description: "Harvard (Cite Them Right) sistemi" },
+  mla: { id: "mla", label: "MLA 9", family: "author-page", bibliographyTitle: { tr: "Kaynakça", en: "Works Cited", de: "Zitierte Werke" }, description: "Modern Language Association, 9. baskı" },
+  vancouver: { id: "vancouver", label: "Vancouver", family: "numeric", bibliographyTitle: { tr: "Kaynaklar", en: "References", de: "Literaturverzeichnis" }, description: "ICMJE / NLM Vancouver sistemi" },
+  ieee: { id: "ieee", label: "IEEE", family: "numeric", bibliographyTitle: { tr: "Kaynaklar", en: "References", de: "Literaturverzeichnis" }, description: "Institute of Electrical and Electronics Engineers" },
+  ama: { id: "ama", label: "AMA 11", family: "numeric", bibliographyTitle: { tr: "Kaynaklar", en: "References", de: "Literaturverzeichnis" }, description: "American Medical Association, 11. baskı" },
 };
 
 export const STYLE_IDS = Object.keys(STYLES) as CitationStyleId[];
@@ -28,10 +28,13 @@ interface Terms {
 const TERMS: Record<CiteLocale, Terms> = {
   en: { and: "and", amp: "&", etal: "et al.", p: "p.", pp: "pp.", nd: "n.d.", ed: "Ed.", eds: "Eds.", editionSuffix: "ed.", in: "In", retrieved: "Retrieved from", availableAt: "Available at:", accessed: "Accessed", thesisDoctoral: "Doctoral dissertation", thesisMaster: "Master's thesis", preprint: "Preprint", thesisNo: "Publication No.", thesisArt: "Proficiency in art thesis", yokArchive: "YÖK National Thesis Center" },
   tr: { and: "ve", amp: "&", etal: "vd.", p: "s.", pp: "ss.", nd: "t.y.", ed: "Ed.", eds: "Ed.", editionSuffix: "bs.", in: "İçinde", retrieved: "Erişim adresi:", availableAt: "Erişim adresi:", accessed: "Erişim tarihi:", thesisDoctoral: "Doktora tezi", thesisMaster: "Yüksek lisans tezi", preprint: "Ön baskı", thesisNo: "Tez No.", thesisArt: "Sanatta yeterlik tezi", yokArchive: "YÖK Ulusal Tez Merkezi" },
+  // Almanca: DGPs/APA’nın Almanca uygulaması (S., Hrsg., Aufl., o. J.)
+  de: { and: "und", amp: "&", etal: "et al.", p: "S.", pp: "S.", nd: "o. J.", ed: "Hrsg.", eds: "Hrsg.", editionSuffix: "Aufl.", in: "In", retrieved: "Abgerufen von", availableAt: "Verfügbar unter:", accessed: "Zugriff am", thesisDoctoral: "Dissertation", thesisMaster: "Masterarbeit", preprint: "Preprint", thesisNo: "Publikationsnr.", thesisArt: "Künstlerische Doktorarbeit (Sanatta yeterlik)", yokArchive: "Nationales Thesenzentrum des YÖK" },
 };
 
 const MONTHS: Record<CiteLocale, string[]> = {
   en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  de: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
   tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
 };
 
@@ -149,9 +152,17 @@ export function titleLang(title: string, fallback: "tr" | "en" = "tr"): "tr" | "
   return fallback;
 }
 
+/** Almanca başlık mı? (ä/ß veya sık Almanca kelimeler) — Almancada başlık büyük harf kuralı uygulanmaz */
+export function isGermanTitle(title: string): boolean {
+  if (/[çğışÇĞİŞ]/.test(title)) return false;
+  return /[äßÄ]/.test(title) || ((title.match(/(^|\s)(und|der|die|das|für|mit|von|zur|zum|im|eine?|über|bei|zwischen)(\s|$)/gi) ?? []).length >= 1 && !/(^|\s)(the|of|and)(\s|$)/i.test(title));
+}
+
 export function isnadTitleCase(title: string, locale: CiteLocale = "tr"): string {
+  // D144: Almanca başlıklarda adlar zaten büyük harfle yazılır; İngilizce tarzı başlık düzeni yanlış olur
+  if (isGermanTitle(title)) return clean(title);
   // Büyük harf dönüşümü başlığın diline göre: İngilizce başlıkta “i” → “I” (İ değil); belirsizse kaynakça dili
-  const loc = titleLang(title, locale === "tr" ? "tr" : "en");
+  const loc = titleLang(title, locale === "tr" ? "tr" : "en"); // Almanca büyük/küçük harf kuralı İngilizceyle aynı (i → I)
   let s = clean(title);
   const letters = s.replace(/[^\p{L}]/gu, "");
   // Tamamı büyük harfli başlık: kelimeler küçültülür; rakam içeren kısaltmalar (COVID-19) korunur
@@ -416,7 +427,7 @@ export class CitationEngine {
   private fmtDate(iso: string): string {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return iso;
-    return `${d.getUTCDate()} ${MONTHS[this.locale][d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+    return `${d.getUTCDate()}${this.locale === "de" ? "." : ""} ${MONTHS[this.locale][d.getUTCMonth()]} ${d.getUTCFullYear()}`;
   }
 
   private editorsText(it: CitationItem, mode: "apa" | "chicago"): string {
@@ -551,7 +562,7 @@ export class CitationEngine {
         const eds = (it.editors ?? []).map(nameGivenFamily);
         out.push(t(`${this.tm.in} `));
         if (it.containerTitle) out.push(i(clean(it.containerTitle)));
-        if (eds.length) out.push(t(`, ${this.locale === "tr" ? "ed." : "edited by"} ${eds.join(", ")}`));
+        if (eds.length) out.push(t(`, ${this.locale === "tr" ? "ed." : this.locale === "de" ? "hrsg. von" : "edited by"} ${eds.join(", ")}`));
         if (it.pages) out.push(t(`, ${pageRange(it.pages)}`));
         out.push(t(". "));
         out.push(t(placePub(it)));
@@ -589,7 +600,7 @@ export class CitationEngine {
       const pp = [place && pub ? `${place}: ${pub}` : place || pub].filter(Boolean)[0];
       return `${pp ? `${pp}, ` : ""}${year}.`;
     };
-    const ed = this.locale === "tr" ? "ed." : "ed.";
+    const ed = this.locale === "de" ? "hrsg. v." : "ed.";
 
     switch (it.type) {
       case "article-journal": {
@@ -617,11 +628,11 @@ export class CitationEngine {
       case "webpage": {
         if (it.containerTitle) out.push(t(`${clean(it.containerTitle)}. `));
         if (it.year) out.push(t(`${year}. `));
-        if (it.accessed) out.push(t(`${this.locale === "tr" ? "Erişim" : "Accessed"} ${this.fmtDate(it.accessed)}. `));
+        if (it.accessed) out.push(t(`${this.locale === "tr" ? "Erişim" : this.locale === "de" ? "Zugriff am" : "Accessed"} ${this.fmtDate(it.accessed)}. `));
         break;
       }
       default:
-        if (it.edition) out.push(t(`${clean(it.edition)}. ${this.locale === "tr" ? "Baskı" : "ed"}. `));
+        if (it.edition) out.push(t(`${clean(it.edition)}. ${this.locale === "tr" ? "Baskı" : this.locale === "de" ? "Aufl" : "ed"}. `));
         out.push(t(`${placePubYear()} `));
     }
     const doi = normalizeDoi(it.doi);
@@ -653,8 +664,8 @@ export class CitationEngine {
         break;
       case "chapter": {
         const eds = (it.editors ?? []).map((e) => nameFamilyInitials(e, { space: false }));
-        out.push(t(`, ${this.tm.in} `));
-        if (eds.length) out.push(t(`${eds.join(` ${this.tm.and} `)} (${eds.length > 1 ? "eds." : "ed."}) `));
+        out.push(t(`, ${this.tm.in}${this.locale === "de" ? ":" : ""} `));
+        if (eds.length) out.push(t(`${eds.join(` ${this.tm.and} `)} (${this.locale === "de" ? "Hrsg." : eds.length > 1 ? "eds." : "ed."}) `));
         if (it.containerTitle) out.push(i(clean(it.containerTitle)));
         out.push(t(". "));
         out.push(t(placePub(it)));
@@ -691,7 +702,7 @@ export class CitationEngine {
     if (it.issue) container.push(`no. ${clean(it.issue)}`);
     if (it.type !== "article-journal" && it.publisher) container.push(clean(it.publisher));
     container.push(it.year ? String(it.year) : this.tm.nd);
-    if (it.pages) container.push(`${/[-–]/.test(it.pages) ? "pp." : "p."} ${pageRange(it.pages)}`);
+    if (it.pages) container.push(`${this.locale === "de" ? "S." : /[-–]/.test(it.pages) ? "pp." : "p."} ${pageRange(it.pages)}`);
     const doi = normalizeDoi(it.doi);
     if (doi) container.push(doiUrl(doi));
     else if (it.url) container.push(it.url.replace(/^https?:\/\//, ""));
@@ -727,7 +738,7 @@ export class CitationEngine {
       case "chapter": {
         out.push(t(`${title}. ${this.tm.in}: `));
         const eds = (it.editors ?? []).map((e) => nameFamilyInitials(e, { dots: false, space: false, comma: false }));
-        if (eds.length) out.push(t(`${eds.join(", ")}, ${this.locale === "tr" ? "editörler" : eds.length > 1 ? "editors" : "editor"}. `));
+        if (eds.length) out.push(t(`${eds.join(", ")}, ${this.locale === "tr" ? "editörler" : this.locale === "de" ? "Hrsg" : eds.length > 1 ? "editors" : "editor"}. `));
         if (it.containerTitle) out.push(ama ? i(clean(it.containerTitle)) : t(clean(it.containerTitle)), t(". "));
         out.push(t(`${placePub(it, true)}${it.year ?? this.tm.nd}${it.pages ? `. p. ${pageRange(it.pages, "-")}` : ""}. `));
         break;
@@ -751,16 +762,16 @@ export class CitationEngine {
     const title = stripEndPunct(it.title);
     const out: Rich = [];
     if (authors) out.push(t(`${authors}, `));
-    const month = it.month ? `${MONTHS.en[it.month - 1].slice(0, 3)}. ` : "";
+    const month = it.month ? `${MONTHS[this.locale === "de" ? "de" : "en"][it.month - 1].slice(0, 3)}. ` : "";
     switch (it.type) {
       case "article-journal":
       case "paper-conference": {
         out.push(t(`“${title},” `));
-        if (it.containerTitle) out.push(t(it.type === "paper-conference" ? `${this.locale === "tr" ? "" : "in "}` : ""), i(clean(it.containerTitle)), t(", "));
+        if (it.containerTitle) out.push(t(it.type === "paper-conference" ? `${this.locale === "tr" ? "" : this.locale === "de" ? "in: " : "in "}` : ""), i(clean(it.containerTitle)), t(", "));
         const bits: string[] = [];
         if (it.volume) bits.push(`vol. ${clean(it.volume)}`);
         if (it.issue) bits.push(`no. ${clean(it.issue)}`);
-        if (it.pages) bits.push(`${/[-–]/.test(it.pages) ? "pp." : "p."} ${pageRange(it.pages)}`);
+        if (it.pages) bits.push(`${this.locale === "de" ? "S." : /[-–]/.test(it.pages) ? "pp." : "p."} ${pageRange(it.pages)}`);
         bits.push(`${month}${it.year ?? this.tm.nd}`);
         out.push(t(bits.join(", ")));
         break;
@@ -768,14 +779,14 @@ export class CitationEngine {
       case "chapter":
         out.push(t(`“${title},” in `));
         if (it.containerTitle) out.push(i(clean(it.containerTitle)));
-        out.push(t(`, ${placePub(it, false, true)}${it.year ?? this.tm.nd}${it.pages ? `, pp. ${pageRange(it.pages)}` : ""}`));
+        out.push(t(`, ${placePub(it, false, true)}${it.year ?? this.tm.nd}${it.pages ? `, ${this.locale === "de" ? "S." : "pp."} ${pageRange(it.pages)}` : ""}`));
         break;
       case "thesis":
         out.push(t(`“${title},” ${this.thesisLabel(it)}, ${clean(it.institution ?? it.publisher)}, ${it.year ?? this.tm.nd}`));
         break;
       default:
         out.push(i(title), t(". "));
-        if (it.edition) out.push(t(`${clean(it.edition)} ${this.tm.editionSuffix} `));
+        if (it.edition) out.push(t(`${clean(it.edition)}${this.locale === "de" ? "." : ""} ${this.tm.editionSuffix} `));
         out.push(t(`${placePub(it, false, true)}${it.year ?? this.tm.nd}`));
     }
     const link = this.link(it, "ieee");

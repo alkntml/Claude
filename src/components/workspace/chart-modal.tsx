@@ -11,6 +11,7 @@ import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 import { renderChartSvg } from "@/lib/charts/svg";
 import type { ChartData, ErrorKind } from "@/lib/stats/charts";
+import { writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Kind = "bar_means" | "bar_freq" | "line_means" | "histogram" | "scatter" | "box";
@@ -40,7 +41,7 @@ export function ChartModal({ open, onClose, files, language, figureNo, style, on
   const [chart, setChart] = useState<ChartData | null>(null);
   const [title, setTitle] = useState("");
   const [inserting, setInserting] = useState(false);
-  const lang = language === "en" ? "en" : "tr";
+  const lang = writingLang(language);
 
   useEffect(() => {
     if (!open || !fileId) return;
@@ -105,9 +106,9 @@ export function ChartModal({ open, onClose, files, language, figureNo, style, on
       ) : chart ? (
         <div className="space-y-3">
           <label className="block"><span className="label">{t("Şekil başlığı")}</span><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-          <CaptionPreview fmt={formatCaption(style, "figure", figureNo, title, lang === "en" ? "en" : "tr")} />
+          <CaptionPreview fmt={formatCaption(style, "figure", figureNo, title, lang)} />
           <div className="overflow-hidden rounded-xl border border-ink-100 bg-white" dangerouslySetInnerHTML={{ __html: svg.replace(/width="900" height="560"/, 'width="100%" style="height:auto;display:block"') }} />
-          <p className="text-[12.5px] text-ink-500">{(() => { const nl = noteLabel(style, lang === "en" ? "en" : "tr"); return nl.italic ? <i>{nl.text}</i> : nl.text; })()} {chart.note}</p>
+          <p className="text-[12.5px] text-ink-500">{(() => { const nl = noteLabel(style, lang); return nl.italic ? <i>{nl.text}</i> : nl.text; })()} {chart.note}</p>
         </div>
       ) : (
         <div className="space-y-4">

@@ -24,9 +24,9 @@ export const POST = route<Ctx>("surveys.ai", async (req, { params }) => {
   assertFeature(s.profile.plan_id, "surveys");
   const { id } = await params;
   const b = await parseBody(req, z.discriminatedUnion("mode", [
-    z.object({ mode: z.literal("revise"), instruction: z.string().trim().min(3).max(1000), questions: Draft, lang: z.enum(["tr", "en"]).default("tr") }),
-    z.object({ mode: z.literal("improve"), question: z.unknown(), instruction: z.string().trim().max(500).optional(), lang: z.enum(["tr", "en"]).default("tr") }),
-    z.object({ mode: z.literal("review"), questions: Draft, lang: z.enum(["tr", "en"]).default("tr") }),
+    z.object({ mode: z.literal("revise"), instruction: z.string().trim().min(3).max(1000), questions: Draft, lang: z.enum(["tr", "en", "de"]).default("tr") }),
+    z.object({ mode: z.literal("improve"), question: z.unknown(), instruction: z.string().trim().max(500).optional(), lang: z.enum(["tr", "en", "de"]).default("tr") }),
+    z.object({ mode: z.literal("review"), questions: Draft, lang: z.enum(["tr", "en", "de"]).default("tr") }),
   ]));
   const { data: survey } = await s.supabase.from("surveys").select("id, title, description, response_count, project_id").eq("id", id).eq("user_id", s.user.id).maybeSingle();
   if (!survey) throw new ApiError(404, "Anket bulunamadı");

@@ -15,8 +15,8 @@ type Ctx = { params: Promise<{ id: string }> };
 
 const Doc = z.object({ type: z.literal("doc"), content: z.array(z.any()).max(5000) }).passthrough();
 const Body = z.discriminatedUnion("mode", [
-  z.object({ mode: z.literal("translate"), doc: Doc, from: z.enum(["tr", "en"]), to: z.enum(["tr", "en"]), variant: z.enum(["us", "uk"]).default("us"), stageTitle: z.string().max(300).optional() }),
-  z.object({ mode: z.literal("proofread"), doc: Doc, lang: z.enum(["tr", "en"]), variant: z.enum(["us", "uk"]).default("us") }),
+  z.object({ mode: z.literal("translate"), doc: Doc, from: z.enum(["tr", "en", "de"]), to: z.enum(["tr", "en", "de"]), variant: z.enum(["us", "uk"]).default("us"), stageTitle: z.string().max(300).optional() }),
+  z.object({ mode: z.literal("proofread"), doc: Doc, lang: z.enum(["tr", "en", "de"]), variant: z.enum(["us", "uk"]).default("us") }),
 ]);
 
 /** Dil ve çeviri (D111): seçili metin, alt başlık veya bölüm; projenin terim sözlüğü (context.glossary) kullanılır */

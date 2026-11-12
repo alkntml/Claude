@@ -29,7 +29,7 @@ export const POST = route<Ctx>("source.ask", async (req, { params }) => {
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   const chunks = src.access_level === "full_text" ? await loadChunks(access.db, { sourceIds: [id], userId: access.ownerId, limit: 2000 }) : [];
   const authors = (Array.isArray(src.authors) ? src.authors : []).slice(0, 3).map((a: { family?: string; literal?: string }) => a.family ?? a.literal ?? "").filter(Boolean).join(", ") + ((src.authors?.length ?? 0) > 3 ? " vd." : "");
-  const lang = project.language === "en" ? "en" : localeFromRequest(req);
+  const lang = project.language === "en" || project.language === "de" ? project.language : localeFromRequest(req);
   const r = await askSource({
     planId: s.profile.plan_id, question: b.question, preset: b.preset, history: b.history, lang,
     source: { title: src.title, authors, year: src.year, container: src.container_title, abstract: src.abstract, access_level: src.access_level },

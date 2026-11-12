@@ -23,24 +23,24 @@ async function lookup(items: string[], tool: "bibliography" | "convert"): Promis
   return j.records ?? [];
 }
 
-function LangPicker({ value, onChange }: { value: "tr" | "en"; onChange: (v: "tr" | "en") => void }) {
+function LangPicker({ value, onChange }: { value: "tr" | "en" | "de"; onChange: (v: "tr" | "en" | "de") => void }) {
   const { t } = useT();
   return (
     <label className="block"><span className="label">{t("Kaynakça dili")}</span>
-      <select className="input" value={value} onChange={(e) => onChange(e.target.value as "tr" | "en")}><option value="tr">{t("Türkçe (ve, vd., erişim)")}</option><option value="en">{t("İngilizce (and, et al.)")}</option></select>
+      <select className="input" value={value} onChange={(e) => onChange(e.target.value as "tr" | "en" | "de")}><option value="tr">{t("Türkçe (ve, vd., erişim)")}</option><option value="en">{t("İngilizce (and, et al.)")}</option><option value="de">{t("Almanca (und, et al., S.)")}</option></select>
     </label>
   );
 }
 
 /** Kaynakça oluşturucu (D90): DOI/başlık → kayıt otoritesi; elle giriş. Yapay zekâ yok. */
 export function BibliographyTool() {
-  const { t } = useT();
+  const { t, locale: locale0 } = useT();
   const ping = useToolPing("bibliography");
   const [mode, setMode] = useState<"auto" | "manual">("auto");
   const [text, setText] = useState("");
   const [items, setItems] = useState<CitationItem[]>([]);
   const [style, setStyle] = useState<CitationStyleId>("apa7");
-  const [lang, setLang] = useState<"tr" | "en">("tr");
+  const [lang, setLang] = useState<"tr" | "en" | "de">(locale0);
   const [busy, setBusy] = useState(false);
   const [missing, setMissing] = useState<string[]>([]);
   const [error, setError] = useState("");
@@ -107,12 +107,12 @@ export function BibliographyTool() {
 
 /** Atıf stili dönüştürücü (D90): yapıştırılan kaynakça veya BibTeX/RIS → seçilen stil. Yapay zekâ yok. */
 export function ConvertTool() {
-  const { t } = useT();
+  const { t, locale: locale0 } = useT();
   const ping = useToolPing("convert");
   const [text, setText] = useState("");
   const [items, setItems] = useState<CitationItem[]>([]);
   const [style, setStyle] = useState<CitationStyleId>("isnad");
-  const [lang, setLang] = useState<"tr" | "en">("tr");
+  const [lang, setLang] = useState<"tr" | "en" | "de">(locale0);
   const [complete, setComplete] = useState(true);
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");

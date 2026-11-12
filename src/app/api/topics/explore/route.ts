@@ -11,7 +11,7 @@ export const maxDuration = 60;
 export const POST = route("topics.explore", async (req) => {
   const s = await requireUser();
   assertFeature(s.profile.plan_id, "topics");
-  const b = await parseBody(req, z.object({ query: z.string().trim().min(3).max(200), ideas: z.boolean().default(true), level: z.string().max(60).default(""), discipline: z.string().max(200).default(""), language: z.enum(["tr", "en"]).default("tr") }));
+  const b = await parseBody(req, z.object({ query: z.string().trim().min(3).max(200), ideas: z.boolean().default(true), level: z.string().max(60).default(""), discipline: z.string().max(200).default(""), language: z.enum(["tr", "en", "de"]).default("tr") }));
   await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
   const offS = await singleScope(s, "source_search", null);
   let data;

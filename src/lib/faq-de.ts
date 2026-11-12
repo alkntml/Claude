@@ -19,7 +19,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   kimler: {
     q: "Für wen ist es geeignet?",
-    a: "Für Studierende, die eine Bachelorarbeit oder ein Abschlussprojekt schreiben, für Master- und Promotionsstudierende sowie für Forschende und Lehrende, die Zeitschriftenartikel vorbereiten. Unterstützt werden Arbeiten auf Türkisch und Englisch; für die Formatvorgaben türkischer Hochschulen gibt es eigene Einstellungen. Die Oberfläche ist auf Türkisch, Englisch und Deutsch verfügbar.",
+    a: "Für Studierende, die eine Bachelorarbeit oder ein Abschlussprojekt schreiben, für Master- und Promotionsstudierende sowie für Forschende und Lehrende, die Zeitschriftenartikel vorbereiten. Unterstützt werden Arbeiten auf Türkisch, Englisch und Deutsch; für die Formatvorgaben türkischer Hochschulen gibt es eigene Einstellungen. Die Oberfläche ist auf Türkisch, Englisch und Deutsch verfügbar.",
   },
   "tamamen-yazar-mi": {
     q: "Schreibt die KI meine ganze Abschlussarbeit oder meinen Artikel?",
@@ -102,12 +102,12 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
     a: "Der Assistent erfindet nie Daten, Zahlen oder Ergebnisse. Wenn Sie Ihre eigenen Daten (CSV oder Excel) hochladen, führt die **Statistische Analyse** t-Tests, ANOVA, Korrelation, Regression, Chi-Quadrat, Cronbachs Alpha, Mann-Whitney und Kruskal-Wallis mit echten Berechnungen auf dem Server aus (dieselben Formeln wie in SPSS) und fügt das Ergebnis als APA-7-Tabelle und -Satz ein. Anschließend hilft Ihnen der Assistent, diese echten Ergebnisse zu interpretieren.",
   },
   dil: {
-    q: "Kann ich auf Englisch schreiben?",
-    a: "Ja. Jede Arbeit hat eine eigene Sprache (Türkisch oder Englisch); der Assistent schreibt in dieser Sprache, und Zitierbegriffe (vd./et al., s./p.) passen sich an. Bei türkischen Arbeiten erstellt „Abstract auf Türkisch und Englisch“ die wissenschaftliche englische Fassung des Abstracts. Die Oberfläche ist auf Türkisch, Englisch und Deutsch verfügbar.",
+    q: "Kann ich meine Abschlussarbeit oder meinen Artikel auf Englisch oder Deutsch schreiben?",
+    a: "Ja. Jede Arbeit hat eine eigene Sprache (Türkisch, Englisch oder Deutsch); der Assistent schreibt in dieser Sprache, Zitierbegriffe (vd./et al./et al., s./p./S.) sowie Tabellen- und Abbildungsbeschriftungen passen sich an, und auch der Export als Word, PDF und LaTeX erfolgt in dieser Sprache. Bei türkischen Arbeiten erstellt „Abstract auf Türkisch und Englisch“ die wissenschaftliche englische Fassung, bei deutschen Arbeiten eine Zusammenfassung und ein englisches Abstract. Die Oberfläche ist auf Türkisch, Englisch und Deutsch verfügbar.",
   },
   ceviri: {
     q: "Kann ich meinen türkischen Text ins wissenschaftliche Englisch übersetzen? Gehen meine Zitate dabei kaputt?",
-    a: "Ja. Im Arbeitsbereich übersetzt **Werkzeuge → Sprache & Übersetzung** (oder **Übersetzen** in der Blase, die beim Markieren von Text erscheint) einen Abschnitt, eine Unterüberschrift oder eine Auswahl zwischen Türkisch und wissenschaftlichem Englisch. Zitate, Fußnoten, Abbildungen, Tabellen und Überschriftenebenen bleiben erhalten; Dezimal- und Statistiknotation (Ort./SS ↔ M/SD) wird angepasst, Zahlen ändern sich nie. Sie können amerikanisches oder britisches Englisch wählen. Das **Glossar** hält die Entsprechungen Ihres Fachgebiets (z. B. öz yeterlik → self-efficacy) einheitlich. Die Fassung vor der Übersetzung bleibt im Verlauf erhalten. Der Tab **Sprachprüfung** schlägt Korrekturen zu Rechtschreibung, Grammatik, Zeichensetzung und wissenschaftlichem Ton einzeln vor, die Sie mit einem Klick übernehmen können. Übersetzung und Prüfungen werden Ihrem monatlichen KI-Kontingent angerechnet.",
+    a: "Ja. Im Arbeitsbereich übersetzt **Werkzeuge → Sprache & Übersetzung** (oder **Übersetzen** in der Blase, die beim Markieren von Text erscheint) einen Abschnitt, eine Unterüberschrift oder eine Auswahl wissenschaftlich zwischen Türkisch, Englisch und Deutsch. Zitate, Fußnoten, Abbildungen, Tabellen und Überschriftenebenen bleiben erhalten; Dezimal- und Statistiknotation (Ort./SS ↔ M/SD) wird angepasst, Zahlen ändern sich nie. Sie können amerikanisches oder britisches Englisch wählen. Das **Glossar** hält die Entsprechungen Ihres Fachgebiets (z. B. öz yeterlik → self-efficacy) einheitlich. Die Fassung vor der Übersetzung bleibt im Verlauf erhalten. Der Tab **Sprachprüfung** schlägt Korrekturen zu Rechtschreibung, Grammatik, Zeichensetzung und wissenschaftlichem Ton einzeln vor, die Sie mit einem Klick übernehmen können. Übersetzung und Prüfungen werden Ihrem monatlichen KI-Kontingent angerechnet.",
   },
   "kaynaga-sor": {
     q: "Kann ich Fragen zu einem bestimmten Artikel stellen (Methode, Stichprobe, Ergebnisse)?",

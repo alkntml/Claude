@@ -14,6 +14,7 @@ import { PHASES, shouldWarnOnce, streamChat, type ChatPhase } from "@/lib/ai/cha
 import type { StageDef } from "@/lib/workflows";
 import { Markdown, parseAnswer } from "./markdown";
 import { analyzeRepetition, isRepetitive } from "@/lib/quality/repetition";
+import { LANG_TAG, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[]; phase?: ChatPhase; phasesSeen?: ChatPhase[] }
@@ -190,7 +191,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) { toast({ tone: "warning", title: t("Tarayıcınız sesle yazmayı desteklemiyor"), detail: t("Chrome, Edge veya Safari’nin güncel sürümünü deneyin.") }); return; }
     const r = new SR();
-    r.lang = language === "en" ? "en-US" : "tr-TR";
+    r.lang = LANG_TAG[writingLang(language)];
     r.continuous = true;
     r.interimResults = false;
     r.onresult = (e: any) => {

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { AiSpentError, ApiError, assertDeleted, json, logError, parseBody, recordAiSpent, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { buildContext, extractGaps, extractMemory } from "@/lib/ai/context";
-import { ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
+import { ABSTRACT_INSTRUCTION_DE, ACTION_EFFORT, ACTION_TIER, ASSISTANT_ACTIONS, OUTPUT_PROTOCOL, type AssistantAction } from "@/lib/ai/prompts";
 import { compactHistory, HISTORY_LIMIT } from "@/lib/ai/history";
 import { readBlueprint } from "@/lib/blueprint";
 import { logAiOutput } from "@/lib/activity";
@@ -21,6 +21,7 @@ import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { addSourcesToProject, executeSearch, providerHealthMeta, focusOf, ingestWithBudget, minSourcesFor, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput, researchGate } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
 import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining } from "@/lib/usage";
+import { writingLang } from "@/lib/writing-lang";
 
 export const maxDuration = 300;
 
@@ -138,7 +139,7 @@ export const POST = route("ai.chat", async (req) => {
 
   const action = ASSISTANT_ACTIONS[b.action];
   const userContent = [
-    action.instruction && `GÖREV: ${action.instruction}`,
+    action.instruction && `GÖREV: ${b.action === "abstract" && writingLang(bundle.project.language) === "de" ? ABSTRACT_INSTRUCTION_DE : action.instruction}`,
     b.selection && `SEÇİLİ METİN:\n"""\n${b.selection}\n"""`,
     b.message,
   ].filter(Boolean).join("\n\n");

@@ -1,5 +1,4 @@
 "use client";
-import { contentLang } from "@/i18n/core";
 import { ArrowDown, ArrowUp, Check, Copy, Download, ExternalLink, FileSpreadsheet, Loader2, Plus, Save, Share2, Sparkles, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,7 +25,7 @@ const TYPES: { id: QType; label: string }[] = [
 
 const DEFAULT_CONSENT_TR = "Bu araştırma [ARAŞTIRMACI ADI] tarafından [KURUM] bünyesinde [AMAÇ] amacıyla yürütülmektedir. Anketi doldurmak yaklaşık [SÜRE] dakika sürer. Katılım tamamen gönüllüdür; istediğiniz an bırakabilirsiniz. Ad, e-posta veya IP adresi gibi kimliğinizi belirleyen hiçbir bilgi toplanmaz. Cevaplar yalnızca bilimsel amaçla, toplu olarak analiz edilecektir. Sorularınız için: [E-POSTA]";
 
-function blank(type: QType, n: number, lang: "tr" | "en"): Question {
+function blank(type: QType, n: number, lang: "tr" | "en" | "de"): Question {
   const id = newId();
   const base = { id, code: type === "likert" ? `L${n}_` : `S${n}`, title: "", help: "", required: type !== "info" };
   switch (type) {
@@ -43,7 +42,7 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   const { t, locale } = useT();
   const toast = useToast();
   const router = useRouter();
-  const lang = contentLang(locale);
+  const lang = locale; // anket dili = arayüz dili (TR/EN/DE)
   const [s, setS] = useState<any>(initial);
   const [qs, setQs] = useState<Question[]>(initial.questions ?? []);
   const [dirty, setDirty] = useState(false);
@@ -79,8 +78,8 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   const add = (type: QType) => { setQs((l) => [...l, blank(type, l.length + 1, lang)]); setDirty(true); };
   function addDemographics() {
     const n = qs.length;
-    const g: Question = { id: newId(), code: "Cinsiyet", title: lang === "tr" ? "Cinsiyetiniz" : "Gender", help: "", required: true, type: "single", options: lang === "tr" ? ["Kadın", "Erkek", "Belirtmek istemiyorum"] : ["Female", "Male", "Prefer not to say"] };
-    const a: Question = { id: newId(), code: "Yas", title: lang === "tr" ? "Yaşınız" : "Age", help: "", required: true, type: "number", min: 15, max: 100 };
+    const g: Question = { id: newId(), code: "Cinsiyet", title: lang === "tr" ? "Cinsiyetiniz" : lang === "de" ? "Geschlecht" : "Gender", help: "", required: true, type: "single", options: lang === "tr" ? ["Kadın", "Erkek", "Belirtmek istemiyorum"] : lang === "de" ? ["Weiblich", "Männlich", "Divers", "Keine Angabe"] : ["Female", "Male", "Prefer not to say"] };
+    const a: Question = { id: newId(), code: "Yas", title: lang === "tr" ? "Yaşınız" : lang === "de" ? "Alter" : "Age", help: "", required: true, type: "number", min: 15, max: 100 };
     if (qs.some((q) => q.code === "Cinsiyet" || q.code === "Yas")) { toast({ tone: "info", title: t("Demografik sorular zaten ekli") }); return; }
     setQs((l) => [...l.slice(0, n), g, a]); setDirty(true);
   }
@@ -177,7 +176,7 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
           <label className="block">
             <span className="label">{t("Bilgilendirilmiş onam metni")}</span>
             <textarea className="input min-h-[140px]" value={s.consent} onChange={(e) => setField("consent", e.target.value)} placeholder={t("Boş bırakılırsa onam adımı gösterilmez.")} />
-            {!s.consent && <button type="button" className="mt-1 text-xs text-brand-700 hover:underline" onClick={() => setField("consent", lang === "tr" ? DEFAULT_CONSENT_TR : "This research is conducted by [RESEARCHER] at [INSTITUTION] for [PURPOSE]. It takes about [TIME] minutes. Participation is voluntary and you may stop at any time. No identifying information (name, email or IP address) is collected. Responses will be analysed only in aggregate for scientific purposes. Contact: [EMAIL]")}>{t("Örnek onam metni ekle")}</button>}
+            {!s.consent && <button type="button" className="mt-1 text-xs text-brand-700 hover:underline" onClick={() => setField("consent", lang === "tr" ? DEFAULT_CONSENT_TR : lang === "de" ? "Diese Studie wird von [FORSCHENDE] an [INSTITUTION] zum Zweck [ZWECK] durchgeführt. Die Teilnahme dauert etwa [DAUER] Minuten. Sie ist freiwillig und kann jederzeit ohne Nachteile abgebrochen werden. Es werden keine identifizierenden Angaben (Name, E-Mail- oder IP-Adresse) erhoben. Die Antworten werden ausschließlich zu wissenschaftlichen Zwecken und nur zusammengefasst ausgewertet. Kontakt: [E-MAIL]" : "This research is conducted by [RESEARCHER] at [INSTITUTION] for [PURPOSE]. It takes about [TIME] minutes. Participation is voluntary and you may stop at any time. No identifying information (name, email or IP address) is collected. Responses will be analysed only in aggregate for scientific purposes. Contact: [EMAIL]")}>{t("Örnek onam metni ekle")}</button>}
           </label>
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="block"><span className="label">{t("En fazla cevap (isteğe bağlı)")}</span><input className="input" inputMode="numeric" value={s.max_responses ?? ""} onChange={(e) => setField("max_responses", e.target.value ? Math.max(1, Math.min(100000, Number(e.target.value.replace(/\D/g, "")) || 1)) : null)} /></label>
@@ -197,7 +196,7 @@ export function SurveyEditor({ initial, projects }: { initial: any; projects: { 
   );
 }
 
-function QuestionCard({ q, i, n, locked, lang, improving, onImprove, onChange, onMove, onDelete }: { q: Question; i: number; n: number; locked: boolean; lang: "tr" | "en"; improving: boolean; onImprove: () => void; onChange: (p: Partial<Question>) => void; onMove: (d: number) => void; onDelete: () => void }) {
+function QuestionCard({ q, i, n, locked, lang, improving, onImprove, onChange, onMove, onDelete }: { q: Question; i: number; n: number; locked: boolean; lang: "tr" | "en" | "de"; improving: boolean; onImprove: () => void; onChange: (p: Partial<Question>) => void; onMove: (d: number) => void; onDelete: () => void }) {
   const { t } = useT();
   const lines = (s: string) => s.split("\n").map((x) => x.trim()).filter(Boolean);
   return (

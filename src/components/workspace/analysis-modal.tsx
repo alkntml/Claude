@@ -8,6 +8,7 @@ import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 import { reportToMarkdown, type AnalysisReport } from "@/lib/stats/apa";
 import { Markdown } from "./markdown";
+import { writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Kind = "describe" | "ttest_ind" | "ttest_paired" | "ttest_one" | "anova" | "mannwhitney" | "kruskal" | "correlation" | "regression" | "chisquare" | "alpha";
@@ -35,7 +36,7 @@ export function AnalysisModal({ open, onClose, files, language, tableNo, style, 
   const [sel, setSel] = useState<Record<string, any>>({});
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<AnalysisReport | null>(null);
-  const lang = language === "en" ? "en" : "tr";
+  const lang = writingLang(language);
 
   useEffect(() => {
     if (!open || !fileId) return;
@@ -85,7 +86,7 @@ export function AnalysisModal({ open, onClose, files, language, tableNo, style, 
     finally { setBusy(false); }
   }
   // D106: tablo başlığı, not etiketi ve tablo göndermesi çalışmanın atıf stiline göre (tablo başlığı her stilde üstte)
-  const md = report ? reportToMarkdown(report, tableNo, lang === "en" ? "en" : "tr", style) : "";
+  const md = report ? reportToMarkdown(report, tableNo, lang, style) : "";
 
   return (
     <Modal open={open} onClose={onClose} title={t("İstatistik analizi")} wide footer={report ? <>

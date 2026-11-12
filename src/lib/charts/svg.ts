@@ -25,11 +25,11 @@ export function niceTicks(min: number, max: number, target = 5, minStep = 0): nu
   return out;
 }
 
-function fmt(v: number, locale: "tr" | "en"): string {
+function fmt(v: number, locale: "tr" | "en" | "de"): string {
   const abs = Math.abs(v);
   const d = abs >= 100 ? 0 : abs >= 10 ? 1 : 2;
   const str = d > 0 ? v.toFixed(d).replace(/\.?0+$/, "") : v.toFixed(0);
-  return locale === "tr" ? str.replace(".", ",") : str;
+  return locale === "en" ? str : str.replace(".", ",");
 }
 
 /** Kaba metin genişliği tahmini (DOM olmadan yerleşim için) */
@@ -45,7 +45,7 @@ function marker(kind: (typeof MARK)[number], x: number, y: number, r = 5): strin
   return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="#000" stroke-width="1.4"/>`;
 }
 
-export function renderChartSvg(d: ChartData, opts: { width?: number; height?: number; locale?: "tr" | "en" } = {}): string {
+export function renderChartSvg(d: ChartData, opts: { width?: number; height?: number; locale?: "tr" | "en" | "de" } = {}): string {
   const W = opts.width ?? 900, H = opts.height ?? 560, loc = opts.locale ?? "tr";
   const fs = 17;
   const multi = d.series.length > 1;

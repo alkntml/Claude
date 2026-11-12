@@ -50,7 +50,7 @@ export function CopyButton({ html, text, label }: { html: string; text: string; 
 }
 
 /** Seçilen stilde kaynakça + her kaynağın metin içi atıf örneği */
-export function Bibliography({ items, style, locale, onRemove }: { items: CitationItem[]; style: CitationStyleId; locale: "tr" | "en"; onRemove?: (id: string) => void }) {
+export function Bibliography({ items, style, locale, onRemove }: { items: CitationItem[]; style: CitationStyleId; locale: "tr" | "en" | "de"; onRemove?: (id: string) => void }) {
   const { t } = useT();
   const engine = useMemo(() => new CitationEngine(style, items, { locale, citedOrder: items.map((i) => i.id) }), [items, style, locale]);
   const entries = engine.bibliography();

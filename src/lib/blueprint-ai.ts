@@ -23,7 +23,7 @@ function projectInfo(p: any) {
   ].filter(Boolean).join("\n");
 }
 
-const RULES = (lang: string) => `Deneyimli bir akademik danışmansın; öğrencinin çalışmasını yazmaya başlamadan önce birlikte kurgusunu (araştırma planını) çıkarıyorsunuz. Dil: ${lang === "en" ? "English" : "Türkçe"}.
+const RULES = (lang: string) => `Deneyimli bir akademik danışmansın; öğrencinin çalışmasını yazmaya başlamadan önce birlikte kurgusunu (araştırma planını) çıkarıyorsunuz. Dil: ${lang === "en" ? "English" : lang === "de" ? "Deutsch" : "Türkçe"}.
 KURALLAR:
 - Bu bir PLANDIR: bulgu, sonuç, istatistik, kaynak, yazar adı veya DOI yazma; "literatürde … bulunmuştur" gibi kaynak gerektiren iddia kurma.
 - Bilinmeyen somut bilgiyi (il, okul, kurum adı, kesin örneklem sayısı) uydurma; "örn. yaklaşık … katılımcı (güç analiziyle belirlenecek)" gibi öneri diliyle yaz.

@@ -71,11 +71,11 @@ export function resolveFormat(raw: Partial<DocFormat> | null | undefined): DocFo
 }
 
 /** Kapak satırları (Türk tezlerinde yaygın düzen). Boş alanlar atlanır. */
-export function coverLines(f: DocFormat, d: { title: string; subtitle: string; author: string; date: string; language: "tr" | "en" }) {
+export function coverLines(f: DocFormat, d: { title: string; subtitle: string; author: string; date: string; language: "tr" | "en" | "de" }) {
   const c = f.cover;
-  const up = (s?: string) => (s ? (d.language === "tr" ? s.toLocaleUpperCase("tr") : s.toUpperCase()) : "");
+  const up = (s?: string) => (s ? (d.language === "tr" ? s.toLocaleUpperCase("tr") : s.toLocaleUpperCase(d.language)) : "");
   const top = [c.showTC && d.language === "tr" ? "T.C." : "", up(c.university), up(c.institute), up(c.department), up(c.programme)].filter(Boolean);
-  const advisorLabel = d.language === "tr" ? "Danışman" : "Supervisor";
+  const advisorLabel = d.language === "tr" ? "Danışman" : d.language === "de" ? "Betreuung" : "Supervisor";
   return {
     top,
     title: f.chapterTitleUppercase ? up(d.title) : d.title,

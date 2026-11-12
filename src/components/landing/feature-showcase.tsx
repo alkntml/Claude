@@ -145,7 +145,7 @@ function QualityVisual() {
           {[[true, "Bütün bölümler yazıldı"], [true, "Her kaynağa metinde atıf var"], [true, "Tablo ve şekil başlıkları stile uygun"], [false, "2 kaynağın künyesi eksik"]].map(([ok, l]) => <li key={l as string} className="flex items-center gap-1.5">{ok ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-100 text-[9px] font-bold text-amber-700">!</span>}{t(l as string)}</li>)}
         </ul>
       </div>
-      <div className="mt-4 flex flex-wrap gap-1.5">{[[FileDown, "Word"], [FileDown, "PDF"], [Code2, "LaTeX / Overleaf"], [Layers, "Savunma sunumu (.pptx)"], [Languages, "TR ↔ EN çeviri"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="inline-flex items-center gap-1.5 rounded-xl border border-ink-100 px-2.5 py-1.5 text-[11px] font-medium text-ink-700"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}</div>
+      <div className="mt-4 flex flex-wrap gap-1.5">{[[FileDown, "Word"], [FileDown, "PDF"], [Code2, "LaTeX / Overleaf"], [Layers, "Savunma sunumu (.pptx)"], [Languages, "TR ↔ EN ↔ DE çeviri"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="inline-flex items-center gap-1.5 rounded-xl border border-ink-100 px-2.5 py-1.5 text-[11px] font-medium text-ink-700"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}</div>
     </Frame>
   );
 }
@@ -191,7 +191,7 @@ const CATEGORIES: Category[] = [
   ] },
   { id: "teslim", icon: FileCheck2, title: "Kalite, dil ve teslim", lead: "Teslim etmeden önce eksikleri görün; çalışmanızı istediğiniz biçimde ve dilde çıkarın.", Visual: QualityVisual, features: [
     { icon: FileCheck2, title: "Şeffaf kalite puanı ve kontrol listesi", text: "Puan sabit ve herkese açık bir formülle hesaplanır; teslim öncesi liste eksik künyeden tablo başlığına kadar her şeyi gösterir." },
-    { icon: Languages, title: "Dil denetimi ve akademik çeviri", text: "Türkçe ↔ İngilizce çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
+    { icon: Languages, title: "Dil denetimi ve akademik çeviri", text: "Türkçe, İngilizce ve Almanca arasında çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
     { icon: FileDown, title: "Word ve PDF çıktısı", text: "Kapak, içindekiler, numaralandırma ve kaynakça hazır; kurum biçim şablonları." },
     { icon: Code2, title: "LaTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır." },
     { icon: Globe2, title: "Dergi önerisi ve hakem yanıtı", text: "Çalışmanıza uygun dergiler, ön yazı ve hakem yorumlarına madde madde cevap.", plan: "journals" },

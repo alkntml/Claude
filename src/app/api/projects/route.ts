@@ -16,7 +16,7 @@ const CreateSchema = z.object({
   level: z.enum(["bachelor", "master", "doctorate", "postdoc", "other"]).default("master"),
   methodology: z.enum(["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"]).default("quantitative"),
   discipline: z.string().max(200).default(""),
-  language: z.enum(["tr", "en"]).default("tr"),
+  language: z.enum(["tr", "en", "de"]).default("tr"),
   citationStyle: z.enum(STYLE_IDS as [string, ...string[]]).default("apa7"),
   topic: z.string().max(4000).default(""),
   keywords: z.array(z.string().max(80)).max(20).default([]),

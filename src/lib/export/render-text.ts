@@ -20,7 +20,7 @@ export function toMarkdown(d: ExportDoc): string {
   const out: string[] = [`# ${d.title}`, ""];
   if (d.subtitle) out.push(`*${d.subtitle}*`, "");
   out.push([d.author, d.institution, d.date].filter(Boolean).join(" · "), "");
-  out.push(d.language === "tr" ? "## İçindekiler" : "## Contents", "");
+  out.push(d.language === "tr" ? "## İçindekiler" : d.language === "de" ? "## Inhaltsverzeichnis" : "## Contents", "");
   for (const t of d.toc) out.push(`${"  ".repeat(t.level - 1)}- ${t.number ? `${t.number} ` : ""}${t.text}`);
   out.push("");
   for (const b of d.blocks) {

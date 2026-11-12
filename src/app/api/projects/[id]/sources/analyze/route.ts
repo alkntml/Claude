@@ -38,7 +38,7 @@ export const POST = route<Ctx>("sources.analyze", async (req, { params }) => {
   const ordered = b.sourceIds.map((sid) => (rows ?? []).find((r: any) => r.id === sid)).filter(Boolean) as any[];
   const authorsOf = (a: any[]) => (Array.isArray(a) ? a : []).slice(0, 2).map((x) => x.family ?? x.literal ?? "").filter(Boolean).join(" & ") + ((a?.length ?? 0) > 2 ? " vd." : "");
   const r = await analyzeSources({
-    planId: s.profile.plan_id, lang: acc.project.language === "en" ? "en" : localeFromRequest(req), mode: b.mode, question: b.question,
+    planId: s.profile.plan_id, lang: acc.project.language === "en" || acc.project.language === "de" ? acc.project.language : localeFromRequest(req), mode: b.mode, question: b.question,
     project: { title: acc.project.title, topic: acc.project.topic },
     sources: ordered.map((x) => ({ id: x.id, title: x.title, authors: authorsOf(x.authors), year: x.year, abstract: x.abstract, access_level: x.access_level, chunks: chunks.filter((c) => c.source_id === x.id) })),
   });

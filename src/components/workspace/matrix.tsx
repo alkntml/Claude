@@ -45,7 +45,7 @@ export function MatrixModal({ open, onClose, projectId, sources, setSources, lan
   }
 
   function csv() {
-    const sep = language === "en" ? "," : ";";
+    const sep = language === "en" ? "," : ";"; // Türkçe ve Almanca Excel ondalık virgül kullanır
     const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const head = [t("Kaynak"), t("Başlık"), ...COLS.map(([, l]) => t(l)), t("Erişim")];
     const rows = sources.map((s) => [authorYear(s, t("t.y.")), s.title, ...COLS.map(([k]) => s.summary?.[k] ?? ""), t(s.access_level === "full_text" ? "Tam metin okundu" : s.access_level === "abstract" ? "Özet okundu" : "Yalnızca künye")]);

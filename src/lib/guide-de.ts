@@ -224,7 +224,7 @@ export const GUIDE_DE: Record<string, string> = {
   "“Cevaplar” → CSV / kod kitabı veya “Cevapları çalışmaya veri dosyası olarak aktar” ile analize geçin.": "„Antworten“ → CSV / Codebuch oder „Antworten als Datendatei an eine Arbeit senden“, um sie auszuwerten.",
   "Dil ve çeviri": "Sprache und Übersetzung",
   "“Araçlar” → “Dil ve çeviri” veya seçim menüsü": "„Werkzeuge“ → „Sprache & Übersetzung“ oder das Auswahlmenü",
-  "“Çeviri”: Türkçe ↔ İngilizce akademik çeviri (Amerikan/İngiliz İngilizcesi); atıf, dipnot ve şekiller korunur.": "„Übersetzung“: akademisch Türkisch ↔ Englisch (US/UK); Zitate, Fußnoten und Abbildungen bleiben erhalten.",
+  "“Çeviri”: Türkçe, İngilizce ve Almanca arasında akademik çeviri (Amerikan/İngiliz İngilizcesi); atıf, dipnot ve şekiller korunur.": "„Übersetzung“: wissenschaftliche Übersetzung zwischen Türkisch, Englisch und Deutsch (US-/UK-Englisch); Zitate, Fußnoten und Abbildungen bleiben erhalten.",
   "“Dil denetimi”: yazım, dil bilgisi, noktalama ve üslup önerileri; “Uygula” / “Tümünü uygula”.": "„Sprachprüfung“: Vorschläge zu Rechtschreibung, Grammatik, Zeichensetzung und Stil; „Übernehmen“ / „Alle übernehmen“.",
   "“Terim sözlüğü”: çalışmanıza özel terim karşılıklarını kaydedin; çeviriler buna uyar.": "„Glossar“: Speichern Sie eigene Begriffspaare; Übersetzungen halten sich daran.",
   "Birlikte çalışma": "Zusammenarbeiten",

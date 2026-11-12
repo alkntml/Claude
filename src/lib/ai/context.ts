@@ -7,6 +7,7 @@ import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition"
 import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
 import { GRANT_PROGRAMS, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
+import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ACCESS_TR = { metadata: "yalnızca künye", abstract: "özet okundu", full_text: "tam metin okundu" } as const;
@@ -89,7 +90,9 @@ export async function buildContext(params: {
   head.push(`Başlık: ${project.title}`);
   head.push(`Çalışma türü: ${project.work_type} · Seviye: ${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level} · Disiplin: ${project.discipline || "belirtilmedi"}`);
   if (ctx.methodology) head.push(`Yöntem yaklaşımı: ${METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology}`);
-  head.push(`Çalışma dili: ${project.language === "en" ? "İngilizce" : "Türkçe"} · Atıf stili: ${project.citation_style}`);
+  head.push(`Çalışma dili: ${LANG_NAME_TR[writingLang(project.language)]} · Atıf stili: ${project.citation_style}`);
+  // D144: Almanca yazım — akademik Almanca kuralları; sistem işaretleri ve özet biçimi
+  if (writingLang(project.language) === "de") head.push("ALMANCA YAZIM: Taslakların tamamını akademik Almancayla (wissenschaftliches Deutsch) yaz: nesnel üslup, birinci tekil şahıs yerine edilgen veya “in der vorliegenden Arbeit” yapıları, doğru büyük harf ve virgül kuralları, yerleşik Almanca terimler. Sistem işaretlerini ([[kaynak:S1]], [KAYNAK GEREKLİ], [VERİ GİRİLECEK], :::taslak) asla çevirme, aynen kullan. Özet istendiğinde Türkçe Özet yerine “## Zusammenfassung” (Almanca, 150–250 kelime) ve “Schlüsselwörter:” satırı, ardından “## Abstract” ve “Keywords:” yaz.");
   if (project.topic) head.push(`Araştırma konusu: ${project.topic}`);
   if (project.keywords?.length) head.push(`Anahtar kelimeler: ${project.keywords.join(", ")}`);
   if (ctx.university) head.push(`Üniversite / kılavuz: ${ctx.university}`);

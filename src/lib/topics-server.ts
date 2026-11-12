@@ -52,7 +52,7 @@ const SCHEMA = {
 };
 
 /** Verilere dayalı tez konusu önerileri; gerekçeler yalnızca verilen sayılara ve başlıklara dayanır */
-export async function suggestTopics(params: { planId: string; data: TopicExploration; level: string; discipline: string; language: "tr" | "en" }) {
+export async function suggestTopics(params: { planId: string; data: TopicExploration; level: string; discipline: string; language: "tr" | "en" | "de" }) {
   const d = params.data;
   const facts = [
     `Arama: "${d.query}" · Toplam kayıt (son 12 yıl): ${d.total}`,
@@ -64,7 +64,7 @@ export async function suggestTopics(params: { planId: string; data: TopicExplora
   ].join("\n");
   const model = await resolveModel(params.planId, "balanced");
   const res = await complete(model, {
-    system: `Akademik danışmansın; öğrenciye tez konusu öneriyorsun. Dil: ${params.language === "en" ? "English" : "Türkçe"}.
+    system: `Akademik danışmansın; öğrenciye tez konusu öneriyorsun. Dil: ${params.language === "en" ? "English" : params.language === "de" ? "Deutsch" : "Türkçe"}.
 KURALLAR:
 - Yalnızca verilen VERİLERE dayan. Gerekçede yalnızca verilerdeki sayıları ve alt konu adlarını kullan; yeni sayı, istatistik, yazar, kaynak veya makale adı UYDURMA.
 - 5 öneri ver. Her biri: "title" (tez başlığı taslağı), "question" (ana araştırma sorusu), "rationale" (verilere dayalı gerekçe: ör. hangi alt konu yükseliyor, Türkiye'de ne kadar çalışılmış), "method" (uygun yöntem önerisi), "scope" (örneklem/bağlam ve uygulanabilirlik notu).

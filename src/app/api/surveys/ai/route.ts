@@ -21,7 +21,7 @@ export const POST = route("surveys.ai.generate", async (req) => {
     demographics: z.boolean().default(true),
     openEnded: z.boolean().default(false),
     consent: z.boolean().default(true),
-    lang: z.enum(["tr", "en"]).default("tr"),
+    lang: z.enum(["tr", "en", "de"]).default("tr"),
     projectId: z.string().uuid().nullable().optional(),
   }));
   let project = null;

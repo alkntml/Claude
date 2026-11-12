@@ -132,11 +132,15 @@ export function proofreadBlocks(doc: JSONNode | null | undefined): string[] {
   return out;
 }
 
-/** Metnin dilini kaba ama güvenilir biçimde tahmin eder: Türkçe harfler ve sık kelimeler */
-export function detectLang(text: string): "tr" | "en" {
+/** Metnin dilini kaba ama güvenilir biçimde tahmin eder: dile özgü harfler ve sık kelimeler (Türkçe, İngilizce, Almanca) */
+export function detectLang(text: string): "tr" | "en" | "de" {
   const t = ` ${text.toLocaleLowerCase("tr").slice(0, 4000)} `;
-  const trChars = (t.match(/[ğüşıöç]/g) ?? []).length;
+  const trChars = (t.match(/[ğşıç]/g) ?? []).length;
+  const deChars = (t.match(/[äß]/g) ?? []).length;
   const trWords = (t.match(/\s(ve|bir|bu|ile|için|olarak|olan|da|de|ki|çalışma|araştırma)\s/g) ?? []).length;
   const enWords = (t.match(/\s(the|and|of|to|in|is|that|for|with|was|were|this|study)\s/g) ?? []).length;
-  return trChars * 0.5 + trWords >= enWords ? "tr" : "en";
+  const deWords = (t.match(/\s(und|der|die|das|ist|nicht|mit|von|zu|den|wird|werden|eine|einer|auf|sich|dass|studie)\s/g) ?? []).length;
+  const tr = trChars * 0.5 + trWords, de = deChars * 0.5 + deWords;
+  if (de > tr && de > enWords) return "de";
+  return tr >= enWords ? "tr" : "en";
 }

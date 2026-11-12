@@ -5,14 +5,14 @@
  * Aşama adları (“Araştırma probleminin tanımlanması” gibi iş adları) belgeye akademik başlık olarak geçer
  * (“Problem Durumu”). Ayrıca alt başlık bütçesi ve yinelenen başlık tespiti burada. Saf modül.
  */
-type L2 = { tr: string; en: string };
+type L2 = { tr: string; en: string; de: string };
 
 export interface ChapterGroup { id: string; title: L2 }
 
 const G = {
-  intro: { id: "intro", title: { tr: "GİRİŞ", en: "INTRODUCTION" } },
-  theory: { id: "theory", title: { tr: "KURAMSAL ÇERÇEVE VE İLGİLİ ARAŞTIRMALAR", en: "THEORETICAL FRAMEWORK AND RELATED RESEARCH" } },
-  method: { id: "method", title: { tr: "YÖNTEM", en: "METHOD" } },
+  intro: { id: "intro", title: { tr: "GİRİŞ", en: "INTRODUCTION", de: "EINLEITUNG" } },
+  theory: { id: "theory", title: { tr: "KURAMSAL ÇERÇEVE VE İLGİLİ ARAŞTIRMALAR", en: "THEORETICAL FRAMEWORK AND RELATED RESEARCH", de: "THEORETISCHER RAHMEN UND FORSCHUNGSSTAND" } },
+  method: { id: "method", title: { tr: "YÖNTEM", en: "METHOD", de: "METHODE" } },
 } satisfies Record<string, ChapterGroup>;
 
 /** Aşama → ana bölüm grubu. Listede olmayan aşamalar kendi başına ana bölümdür. */
@@ -26,28 +26,28 @@ const GROUP_OF: Record<string, ChapterGroup> = {
 
 /** Belgede kullanılan akademik başlıklar (kullanıcı aşamanın adını değiştirmediyse) */
 const DOC_TITLE: Record<string, L2> = {
-  topic: { tr: "", en: "" }, // Giriş’in açılış metni: ayrı başlık almaz
-  problem: { tr: "Problem Durumu", en: "Problem Statement" },
-  purpose: { tr: "Araştırmanın Amacı ve Önemi", en: "Purpose and Significance of the Study" },
-  questions: { tr: "Araştırma Soruları ve Hipotezler", en: "Research Questions and Hypotheses" },
-  concepts: { tr: "Temel Kavramlar", en: "Key Concepts" },
-  theory: { tr: "Kuramsal Çerçeve", en: "Theoretical Framework" },
-  literature: { tr: "İlgili Araştırmalar", en: "Related Research" },
-  gaps: { tr: "Alanyazındaki Boşluk", en: "Gap in the Literature" },
-  method: { tr: "Araştırma Modeli", en: "Research Design" },
-  sample: { tr: "Evren ve Örneklem", en: "Population and Sample" },
-  participants: { tr: "Çalışma Grubu", en: "Participants" },
-  instruments: { tr: "Veri Toplama Araçları", en: "Data Collection Instruments" },
-  analysis: { tr: "Verilerin Analizi", en: "Data Analysis" },
-  design_development: { tr: "Tasarım ve Geliştirme Süreci", en: "Design and Development" },
-  testing: { tr: "Test ve Değerlendirme", en: "Testing and Evaluation" },
-  findings: { tr: "BULGULAR", en: "FINDINGS" },
-  discussion: { tr: "TARTIŞMA", en: "DISCUSSION" },
-  conclusion: { tr: "SONUÇ VE ÖNERİLER", en: "CONCLUSION AND RECOMMENDATIONS" },
-  appendices: { tr: "EKLER", en: "APPENDICES" },
-  review_protocol: { tr: "Tarama Protokolü", en: "Review Protocol" },
-  search_strategy: { tr: "Arama Stratejisi", en: "Search Strategy" },
-  source_screening: { tr: "Kaynakların Taranması ve Seçimi", en: "Screening and Selection" },
+  topic: { tr: "", en: "", de: "" }, // Giriş’in açılış metni: ayrı başlık almaz
+  problem: { tr: "Problem Durumu", en: "Problem Statement", de: "Problemstellung" },
+  purpose: { tr: "Araştırmanın Amacı ve Önemi", en: "Purpose and Significance of the Study", de: "Zielsetzung und Relevanz der Studie" },
+  questions: { tr: "Araştırma Soruları ve Hipotezler", en: "Research Questions and Hypotheses", de: "Forschungsfragen und Hypothesen" },
+  concepts: { tr: "Temel Kavramlar", en: "Key Concepts", de: "Zentrale Begriffe" },
+  theory: { tr: "Kuramsal Çerçeve", en: "Theoretical Framework", de: "Theoretischer Rahmen" },
+  literature: { tr: "İlgili Araştırmalar", en: "Related Research", de: "Forschungsstand" },
+  gaps: { tr: "Alanyazındaki Boşluk", en: "Gap in the Literature", de: "Forschungslücke" },
+  method: { tr: "Araştırma Modeli", en: "Research Design", de: "Forschungsdesign" },
+  sample: { tr: "Evren ve Örneklem", en: "Population and Sample", de: "Grundgesamtheit und Stichprobe" },
+  participants: { tr: "Çalışma Grubu", en: "Participants", de: "Teilnehmende" },
+  instruments: { tr: "Veri Toplama Araçları", en: "Data Collection Instruments", de: "Erhebungsinstrumente" },
+  analysis: { tr: "Verilerin Analizi", en: "Data Analysis", de: "Datenauswertung" },
+  design_development: { tr: "Tasarım ve Geliştirme Süreci", en: "Design and Development", de: "Gestaltungs- und Entwicklungsprozess" },
+  testing: { tr: "Test ve Değerlendirme", en: "Testing and Evaluation", de: "Test und Evaluation" },
+  findings: { tr: "BULGULAR", en: "FINDINGS", de: "ERGEBNISSE" },
+  discussion: { tr: "TARTIŞMA", en: "DISCUSSION", de: "DISKUSSION" },
+  conclusion: { tr: "SONUÇ VE ÖNERİLER", en: "CONCLUSION AND RECOMMENDATIONS", de: "FAZIT UND EMPFEHLUNGEN" },
+  appendices: { tr: "EKLER", en: "APPENDICES", de: "ANHANG" },
+  review_protocol: { tr: "Tarama Protokolü", en: "Review Protocol", de: "Review-Protokoll" },
+  search_strategy: { tr: "Arama Stratejisi", en: "Search Strategy", de: "Suchstrategie" },
+  source_screening: { tr: "Kaynakların Taranması ve Seçimi", en: "Screening and Selection", de: "Screening und Auswahl der Quellen" },
 };
 
 /** Numarasız ön/son kısımlar (bölüm numarası almaz) */
@@ -61,7 +61,7 @@ export function chapterGroup(stageKey: string): ChapterGroup | null {
  * Aşamanın belgedeki başlığı: kullanıcı aşama adını değiştirmediyse akademik karşılığı, değiştirdiyse kendi adı.
  * Boş dize: başlıksız (ör. Giriş’in açılış metni).
  */
-export function sectionTitle(stageKey: string, stageTitle: string, defaultTitle: string | undefined, locale: "tr" | "en"): string {
+export function sectionTitle(stageKey: string, stageTitle: string, defaultTitle: string | undefined, locale: "tr" | "en" | "de"): string {
   const renamed = defaultTitle && norm(stageTitle) !== norm(defaultTitle);
   if (renamed) return stageTitle;
   const d = DOC_TITLE[stageKey];

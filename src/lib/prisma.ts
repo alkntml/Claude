@@ -108,9 +108,13 @@ export const PRISMA_LABELS = {
     identified: "Records identified", removed: "Records removed before screening:", dup: "Duplicate records", screened: "Records screened", excluded: "Records excluded",
     sought: "Reports sought for retrieval", notRet: "Reports not retrieved", assessed: "Reports assessed for eligibility", exReasons: "Reports excluded:",
     included: "Studies included in review", pending: "Awaiting decision" },
+  de: { title: "Identifikation neuer Studien über Datenbanken und Register", ident: "Identifikation", screen: "Screening", incl: "Eingeschlossen",
+    identified: "Identifizierte Datensätze", removed: "Vor dem Screening entfernte Datensätze:", dup: "Dubletten", screened: "Gescreente Datensätze", excluded: "Ausgeschlossene Datensätze",
+    sought: "Zur Beschaffung gesuchte Berichte", notRet: "Nicht beschaffte Berichte", assessed: "Auf Eignung geprüfte Berichte", exReasons: "Ausgeschlossene Berichte:",
+    included: "In das Review eingeschlossene Studien", pending: "Entscheidung ausstehend" },
 };
 
-export function prismaSvg(c: PrismaCounts, lang: "tr" | "en" = "tr"): { svg: string; width: number; height: number } {
+export function prismaSvg(c: PrismaCounts, lang: "tr" | "en" | "de" = "tr"): { svg: string; width: number; height: number } {
   const L = PRISMA_LABELS[lang];
   const W = 900, LX = 70, LW = 380, RX = 500, RW = 360;
   const origins = Object.entries(c.byOrigin).sort((a, b) => b[1] - a[1]);
@@ -241,26 +245,26 @@ export function kappaLabel(k: number): string {
 /* --- Veri çıkarma ve kalite (yanlılık riski) değerlendirmesi --- */
 export const EXTRACTION_FIELDS = ["design", "country", "sample", "intervention", "outcomes", "findings"] as const;
 export type ExtractionField = (typeof EXTRACTION_FIELDS)[number];
-export const EXTRACTION_LABELS: Record<ExtractionField, { tr: string; en: string }> = {
-  design: { tr: "Araştırma deseni", en: "Study design" },
-  country: { tr: "Ülke / bağlam", en: "Country / setting" },
-  sample: { tr: "Örneklem (n, özellikler)", en: "Sample (n, characteristics)" },
-  intervention: { tr: "Müdahale / değişkenler", en: "Intervention / variables" },
-  outcomes: { tr: "Sonuç ölçümleri / araçlar", en: "Outcomes / instruments" },
-  findings: { tr: "Temel bulgular", en: "Key findings" },
+export const EXTRACTION_LABELS: Record<ExtractionField, { tr: string; en: string; de: string }> = {
+  design: { tr: "Araştırma deseni", en: "Study design", de: "Studiendesign" },
+  country: { tr: "Ülke / bağlam", en: "Country / setting", de: "Land / Setting" },
+  sample: { tr: "Örneklem (n, özellikler)", en: "Sample (n, characteristics)", de: "Stichprobe (n, Merkmale)" },
+  intervention: { tr: "Müdahale / değişkenler", en: "Intervention / variables", de: "Intervention / Variablen" },
+  outcomes: { tr: "Sonuç ölçümleri / araçlar", en: "Outcomes / instruments", de: "Endpunkte / Instrumente" },
+  findings: { tr: "Temel bulgular", en: "Key findings", de: "Zentrale Ergebnisse" },
 };
 export interface ExtractionCell { value: string; quote?: string | null; page?: string | null; edited?: boolean }
 export type Extraction = Partial<Record<ExtractionField, ExtractionCell>> & { basedOn?: "full_text" | "abstract" | "metadata"; at?: string };
 
 /** Genel amaçlı kalite değerlendirme ölçütleri (JBI ve CASP kontrol listelerinin ortak maddelerinden sadeleştirildi) */
 export const APPRAISAL_ITEMS = [
-  { id: "aim", tr: "Amaç veya araştırma sorusu açıkça belirtilmiş", en: "Aim or research question clearly stated" },
-  { id: "design", tr: "Desen araştırma sorusuna uygun", en: "Design appropriate to the question" },
-  { id: "sampling", tr: "Örneklem ve seçim yöntemi uygun ve açıklanmış", en: "Sample and selection appropriate and described" },
-  { id: "measures", tr: "Ölçümler geçerli ve güvenilir", en: "Measures valid and reliable" },
-  { id: "analysis", tr: "Analiz uygun ve yeterince raporlanmış", en: "Analysis appropriate and adequately reported" },
-  { id: "confounding", tr: "Karıştırıcı etkenler / yanlılıklar ele alınmış", en: "Confounders / biases addressed" },
-  { id: "findings", tr: "Bulgular verilerle desteklenmiş, sınırlılıklar belirtilmiş", en: "Findings supported by data, limitations stated" },
+  { id: "aim", tr: "Amaç veya araştırma sorusu açıkça belirtilmiş", en: "Aim or research question clearly stated", de: "Ziel oder Forschungsfrage klar formuliert" },
+  { id: "design", tr: "Desen araştırma sorusuna uygun", en: "Design appropriate to the question", de: "Design passend zur Fragestellung" },
+  { id: "sampling", tr: "Örneklem ve seçim yöntemi uygun ve açıklanmış", en: "Sample and selection appropriate and described", de: "Stichprobe und Auswahl angemessen und beschrieben" },
+  { id: "measures", tr: "Ölçümler geçerli ve güvenilir", en: "Measures valid and reliable", de: "Messungen valide und reliabel" },
+  { id: "analysis", tr: "Analiz uygun ve yeterince raporlanmış", en: "Analysis appropriate and adequately reported", de: "Analyse angemessen und ausreichend berichtet" },
+  { id: "confounding", tr: "Karıştırıcı etkenler / yanlılıklar ele alınmış", en: "Confounders / biases addressed", de: "Störfaktoren / Verzerrungen berücksichtigt" },
+  { id: "findings", tr: "Bulgular verilerle desteklenmiş, sınırlılıklar belirtilmiş", en: "Findings supported by data, limitations stated", de: "Ergebnisse durch Daten gestützt, Limitationen benannt" },
 ] as const;
 export type AppraisalAnswer = "yes" | "no" | "unclear" | "na";
 export interface Appraisal { answers: Partial<Record<(typeof APPRAISAL_ITEMS)[number]["id"], AppraisalAnswer>>; note?: string; at?: string }
@@ -275,13 +279,14 @@ export function appraisalSummary(a: Appraisal | null | undefined): { yes: number
 }
 
 /* --- Yöntem bölümü metni (yapay zekâsız, kararlardan) --- */
-const fmtDate = (d: string, lang: "tr" | "en") => { const x = new Date(d); return Number.isNaN(+x) ? d : x.toLocaleDateString(lang === "en" ? "en-GB" : "tr-TR", { day: "numeric", month: "long", year: "numeric" }); };
+const fmtDate = (d: string, lang: "tr" | "en" | "de") => { const x = new Date(d); return Number.isNaN(+x) ? d : x.toLocaleDateString(lang === "en" ? "en-GB" : lang === "de" ? "de-DE" : "tr-TR", { day: "numeric", month: "long", year: "numeric" }); };
 
 /**
  * PRISMA 2020’ye uygun yöntem ve sonuç paragrafları + arama stratejisi tablosu (Markdown). Sayılar kararlardan
  * hesaplanır; dahil edilen çalışmalar kaynaklarda ise [[kaynak:Sx]] ile atıf yapılır (sourceLabels).
  */
-export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCounts; lang: "tr" | "en"; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[] }): string {
+export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCounts; lang: "tr" | "en" | "de"; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[] }): string {
+  if (o.lang === "de") return methodsMarkdownDe(o);
   const { protocol: p, counts: c, lang } = o;
   const en = lang === "en";
   const dbs = [...new Set(p.searches.map((s) => s.database))];
@@ -319,13 +324,44 @@ export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCou
   return out.join("\n\n");
 }
 
+/** Almanca yöntem ve sonuç metni (D144; PRISMA 2020 terminolojisinin Almanca karşılıkları) */
+function methodsMarkdownDe(o: { protocol: ReviewProtocol; counts: PrismaCounts; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[] }): string {
+  const { protocol: p, counts: c } = o;
+  const dbs = [...new Set(p.searches.map((s) => s.database))];
+  const dates = p.searches.map((s) => s.date).filter(Boolean).sort();
+  const lastDate = dates.length ? fmtDate(dates[dates.length - 1], "de") : null;
+  const out: string[] = [];
+  out.push("### Suchstrategie und Studienauswahl");
+  out.push(`Dieses systematische Review wurde gemäß dem PRISMA-2020-Statement durchgeführt und berichtet.${p.question ? ` Die Fragestellung des Reviews lautete: ${p.question}` : ""} ${dbs.length ? `Durchsucht wurde${dbs.length > 1 ? "n die Datenbanken" : " die Datenbank"} ${dbs.join(", ")}${lastDate ? ` (letzte Suche: ${lastDate})` : ""}.` : ""} Die für jede Datenbank verwendeten Suchstrings sind in Tabelle 1 aufgeführt.`);
+  if (p.inclusion.length || p.exclusion.length) {
+    out.push("Studien wurden eingeschlossen, wenn sie die folgenden Einschlusskriterien erfüllten:");
+    if (p.inclusion.length) out.push(p.inclusion.map((x) => `- ${x}`).join("\n"));
+    if (p.exclusion.length) { out.push("Aus folgenden Gründen wurden Studien ausgeschlossen:"); out.push(p.exclusion.map((x) => `- ${x}`).join("\n")); }
+  }
+  const ag = o.agreement;
+  const dual = ag && ag.n > 0 && ag.kappa != null;
+  out.push(`Dubletten wurden vor dem Screening entfernt. Titel und Abstracts wurden${dual ? " von zwei Personen unabhängig voneinander" : ""} anhand der Eignungskriterien gescreent; anschließend wurden die Volltexte potenziell geeigneter Berichte geprüft.${dual ? ` Die Übereinstimmung der Gutachtenden im Titel-/Abstract-Screening betrug ${Math.round((ag!.observed ?? 0) * 100)} % (Cohens κ = ${ag!.kappa!.toFixed(2).replace(".", ",")}); Unstimmigkeiten wurden durch Diskussion geklärt.` : ""} Ein KI-Werkzeug wurde ausschließlich für Vorschläge zu Screening-Entscheidungen eingesetzt; alle Entscheidungen traf das Review-Team.`);
+  if (o.extracted) out.push("Die Daten der eingeschlossenen Studien wurden mit einem standardisierten Formular extrahiert (Design, Setting, Stichprobe, Variablen, Endpunkte und zentrale Ergebnisse).");
+  if (o.appraised) out.push("Die methodische Qualität der eingeschlossenen Studien wurde mit einer siebenteiligen, aus den JBI- und CASP-Instrumenten adaptierten Checkliste bewertet.");
+  out.push("### Ergebnisse des Auswahlprozesses");
+  const reasons = Object.entries(c.excludedEligibility).sort((a, b) => b[1] - a[1]).map(([r, n]) => `${r} (n = ${n})`).join("; ");
+  const cites = o.includedLabels?.length ? ` [[kaynak:${o.includedLabels.join(",")}]]` : "";
+  out.push(`Die Suchen ergaben ${c.identified} Datensätze. Nach Entfernung von ${c.duplicates} Dubletten wurden ${c.screened} Datensätze anhand von Titel und Abstract gescreent und ${c.excludedScreening} ausgeschlossen. Von ${c.sought} zur Beschaffung gesuchten Berichten waren ${c.notRetrieved} nicht verfügbar; ${c.assessed} Volltexte wurden auf Eignung geprüft und ${c.excludedEligibilityTotal} ausgeschlossen${reasons ? ` (${reasons})` : ""}. Insgesamt wurden ${c.included} Studien in das Review eingeschlossen${cites} (Abbildung 1).`);
+  if (c.pendingScreening || c.pendingEligibility) out.push(`*Anmerkung: Für ${c.pendingScreening + c.pendingEligibility} Datensätze steht die Entscheidung noch aus; aktualisieren Sie diesen Text nach Abschluss des Screenings.*`);
+  if (p.searches.length) {
+    out.push("*Tabelle 1. Suchstrategie*");
+    out.push(["| Datenbank | Suchstring | Datum | Treffer |", "|---|---|---|---|", ...p.searches.map((s) => `| ${s.database.replace(/\|/g, "/")} | ${s.query.replace(/\|/g, "/") || "-"} | ${s.date} | ${s.results || "-"} |`)].join("\n"));
+  }
+  return out.join("\n\n");
+}
+
 /** Dahil edilen çalışmaların özellikleri tablosu (Markdown): veri çıkarma alanları + kalite */
-export function characteristicsMarkdown(rows: { label: string | null; title: string; year?: number | null; extraction?: Extraction | null; appraisal?: Appraisal | null }[], lang: "tr" | "en"): string {
-  const en = lang === "en";
+export function characteristicsMarkdown(rows: { label: string | null; title: string; year?: number | null; extraction?: Extraction | null; appraisal?: Appraisal | null }[], lang: "tr" | "en" | "de"): string {
+  const en = lang === "en", de = lang === "de";
   const fields: ExtractionField[] = ["design", "country", "sample", "outcomes", "findings"];
-  const riskLabel = (r: string | null) => (r === "low" ? (en ? "Low" : "Düşük") : r === "moderate" ? (en ? "Moderate" : "Orta") : r === "high" ? (en ? "High" : "Yüksek") : "-");
-  const head = `| ${en ? "Study" : "Çalışma"} | ${fields.map((f) => EXTRACTION_LABELS[f][lang]).join(" | ")} | ${en ? "Risk of bias" : "Yanlılık riski"} |`;
+  const riskLabel = (r: string | null) => (r === "low" ? (en ? "Low" : de ? "Niedrig" : "Düşük") : r === "moderate" ? (en ? "Moderate" : de ? "Mittel" : "Orta") : r === "high" ? (en ? "High" : de ? "Hoch" : "Yüksek") : "-");
+  const head = `| ${en ? "Study" : de ? "Studie" : "Çalışma"} | ${fields.map((f) => EXTRACTION_LABELS[f][lang]).join(" | ")} | ${en ? "Risk of bias" : de ? "Verzerrungsrisiko" : "Yanlılık riski"} |`;
   const clean = (s?: string) => (s ?? "-").replace(/\|/g, "/").replace(/\n/g, " ") || "-";
   const lines = rows.map((r) => `| ${r.label ? `[[kaynak:${r.label}|anlatı]]` : clean(`${r.title.slice(0, 60)}${r.year ? ` (${r.year})` : ""}`)} | ${fields.map((f) => clean(r.extraction?.[f]?.value)).join(" | ")} | ${riskLabel(appraisalSummary(r.appraisal).risk)} |`);
-  return [en ? "*Table 2. Characteristics of the included studies*" : "*Tablo 2. Dahil edilen çalışmaların özellikleri*", [head, `|${"---|".repeat(fields.length + 2)}`, ...lines].join("\n")].join("\n\n");
+  return [en ? "*Table 2. Characteristics of the included studies*" : de ? "*Tabelle 2. Merkmale der eingeschlossenen Studien*" : "*Tablo 2. Dahil edilen çalışmaların özellikleri*", [head, `|${"---|".repeat(fields.length + 2)}`, ...lines].join("\n")].join("\n\n");
 }

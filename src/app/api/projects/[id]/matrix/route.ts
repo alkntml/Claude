@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { projectAccess } from "@/lib/project-access";
 import { complete, estimateCost, isProviderConfigured, resolveModel } from "@/lib/ai/registry";
 import { assertFeature, assertWithinLimits, recordUsage } from "@/lib/usage";
+import { LANG_NAME, writingLang } from "@/lib/writing-lang";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 120;
@@ -48,7 +49,7 @@ export const POST = route<Ctx>("project.matrix", async (req, { params }) => {
       const seen = new Set<number>();
       material += "\n\nTAM METİNDEN PARÇALAR:\n" + picked.filter((c) => !seen.has(c.chunk_index) && seen.add(c.chunk_index)).map((c) => `[${c.page_hint ?? "-"}] ${c.content.slice(0, 1400)}`).join("\n\n");
     }
-    const lang = project.language === "en" ? "English" : "Türkçe";
+    const lang = LANG_NAME[writingLang(project.language)];
     const res = await complete(model, {
       system: `Akademik literatür matrisi hazırlayan titiz bir araştırmacısın. YALNIZCA verilen metne dayan; metinde açıkça olmayan bilgi için ilgili alanı boş bırak (""). Sayı, örneklem büyüklüğü veya bulgu UYDURMA. Her alan en fazla 2 kısa cümle, ${lang}.
 purpose: çalışmanın amacı · method: desen/yöntem/analiz · sample: örneklem/katılımcılar (sayı ve özellikler) · findings: temel bulgular · relevance: "${project.title}" çalışmasıyla ilişkisi (yalnızca metinden çıkarılabiliyorsa).`,

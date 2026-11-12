@@ -18,7 +18,7 @@ import type { CitationStyleId } from "./types";
 export type CaptionKind = "table" | "figure";
 export interface CaptionRun { text: string; bold?: boolean; italic?: boolean }
 export interface CaptionFormat { position: "above" | "below"; align: "left" | "center"; lines: CaptionRun[][] }
-type Lang = "tr" | "en";
+type Lang = "tr" | "en" | "de";
 
 const ABOVE_FIGURE = new Set<string>(["apa7"]);
 
@@ -39,11 +39,12 @@ export function fromRoman(s: string): number {
   return total;
 }
 
-const up = (s: string, lang: Lang) => s.toLocaleUpperCase(lang === "tr" ? "tr" : "en");
+const up = (s: string, lang: Lang) => s.toLocaleUpperCase(lang === "tr" ? "tr" : lang);
 
 /** Metin içinde tabloya/şekle gönderme: “Tablo 1”, IEEE’de “Tablo I”, MLA/IEEE İngilizcede “Fig. 1” */
 export function captionRef(style: CitationStyleId | string, kind: CaptionKind, no: number, lang: Lang): string {
-  if (kind === "table") return `${lang === "tr" ? "Tablo" : "Table"} ${style === "ieee" ? toRoman(no) : no}`;
+  if (kind === "table") return `${lang === "tr" ? "Tablo" : lang === "de" ? "Tabelle" : "Table"} ${style === "ieee" ? toRoman(no) : no}`;
+  if (lang === "de") return `${style === "mla" || style === "ieee" ? "Abb." : "Abbildung"} ${no}`;
   return `${lang === "tr" ? "Şekil" : style === "mla" || style === "ieee" ? "Fig." : "Figure"} ${no}`;
 }
 
@@ -79,19 +80,20 @@ export function formatCaption(style: CitationStyleId | string, kind: CaptionKind
 
 /** Tablo/şekil notunun etiketi: APA’da “Not.” (italik), diğerlerinde “Not:” */
 export function noteLabel(style: CitationStyleId | string, lang: Lang): CaptionRun {
-  return style === "apa7" || style === "apa6" ? { text: lang === "tr" ? "Not." : "Note.", italic: true } : { text: lang === "tr" ? "Not:" : "Note:" };
+  const w = lang === "tr" ? "Not" : lang === "de" ? "Anmerkung" : "Note";
+  return style === "apa7" || style === "apa6" ? { text: `${w}.`, italic: true } : { text: `${w}:` };
 }
 
 export interface ParsedCaption { kind: CaptionKind; no: number; title: string; labelOnly: boolean }
 
-// “Tablo 1. Başlık”, “Tablo 1: Başlık”, “Tablo 1” (APA 7 etiket satırı), “TABLO I”, “Şekil 2.”, “Fig. 3.”
+// “Tablo 1. Başlık”, “Tabelle 1. Titel”, “Tablo 1: Başlık”, “Tablo 1” (APA 7 etiket satırı), “TABLO I”, “Şekil 2.”, “Fig. 3.”
 // Etiketten sonra yalnızca nokta/iki nokta veya satır sonu gelebilir: “Tablo 1’de görüldüğü gibi” başlık sayılmaz.
-const CAPTION_RE = /^\s*(Tablo|Table|TABLO|TABLE|Şekil|ŞEKİL|Figure|FIGURE|Fig\.|FIG\.)\s+(\d{1,3}|[IVXLC]{1,7})\s*(?:([.:])\s*(.*)|)$/s;
+const CAPTION_RE = /^\s*(Tablo|Table|TABLO|TABLE|Tabelle|TABELLE|Şekil|ŞEKİL|Figure|FIGURE|Fig\.|FIG\.|Abbildung|ABBILDUNG|Abb\.|ABB\.)\s+(\d{1,3}|[IVXLC]{1,7})\s*(?:([.:])\s*(.*)|)$/s;
 
 export function parseCaption(text: string): ParsedCaption | null {
   const m = text.replace(/\s+/g, " ").trim().match(CAPTION_RE);
   if (!m) return null;
-  const kind: CaptionKind = /^(Tablo|Table|TABLO|TABLE)$/.test(m[1]) ? "table" : "figure";
+  const kind: CaptionKind = /^(Tablo|Table|TABLO|TABLE|Tabelle|TABELLE)$/.test(m[1]) ? "table" : "figure";
   const no = /^\d+$/.test(m[2]) ? Number(m[2]) : fromRoman(m[2]);
   if (!no) return null;
   const title = (m[4] ?? "").trim();
@@ -111,7 +113,7 @@ export function maxCaptionNo(text: string, kind: CaptionKind): number {
 
 /** Notun başlangıcı: “Not.”, “Not:”, “Note.”, “Note:” → etiket ve kalan metin */
 export function parseNote(text: string): string | null {
-  const m = text.trim().match(/^(Not|Note)\s*[.:]\s*(.*)$/s);
+  const m = text.trim().match(/^(Not|Note|Anmerkung)\s*[.:]\s*(.*)$/s);
   return m ? m[2] : null;
 }
 

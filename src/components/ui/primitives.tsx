@@ -9,7 +9,7 @@ import { cn } from "./cn";
 export function Badge({ tone = "ink", children, className }: { tone?: "ink" | "brand" | "green" | "amber" | "red" | "violet"; children: React.ReactNode; className?: string }) {
   const tones = {
     ink: "bg-ink-100 text-ink-600",
-    brand: "bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100",
+    brand: "bg-brand-50 text-brand-700",
     green: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-100",
     amber: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-100",
     red: "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-100",
@@ -61,10 +61,10 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <motion.div className="absolute inset-0 bg-ink-950/40 backdrop-blur-sm" onClick={onClose} />
+          <motion.div className="absolute inset-0 bg-ink-950/25" onClick={onClose} />
           <motion.div
             role="dialog" aria-modal="true" aria-label={title}
-            className={cn("relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl", wide ? "sm:max-w-4xl" : "sm:max-w-lg")}
+            className={cn("relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-2xl border border-ink-200/70 bg-white shadow-xl sm:rounded-2xl", wide ? "sm:max-w-4xl" : "sm:max-w-lg")}
             initial={{ y: 40, opacity: 0, scale: 0.98 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 30, opacity: 0, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
           >
@@ -84,10 +84,10 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
 
 export function Tabs<T extends string>({ tabs, value, onChange, className, compact }: { tabs: { id: T; label: string; icon?: React.ReactNode; count?: number }[]; value: T; onChange: (v: T) => void; className?: string; compact?: boolean }) {
   return (
-    <div className={cn("relative flex gap-1 rounded-xl bg-ink-100/70 p-1", className)} role="tablist">
+    <div className={cn("relative flex gap-0.5", className)} role="tablist">
       {tabs.map((t) => (
-        <button key={t.id} role="tab" aria-selected={value === t.id} aria-label={t.label} title={t.label} onClick={() => onChange(t.id)} className={cn("relative z-10 flex items-center justify-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-[13px] font-medium transition-colors", compact ? (value === t.id ? "flex-[2.2]" : "flex-1") : "flex-1", value === t.id ? "text-ink-900" : "text-ink-500 hover:text-ink-800")}>
-          {value === t.id && <motion.span layoutId={`tab-${tabs.map((x) => x.id).join("")}`} className="absolute inset-0 -z-10 rounded-[10px] bg-white shadow-sm" transition={{ type: "spring", stiffness: 500, damping: 38 }} />}
+        <button key={t.id} role="tab" aria-selected={value === t.id} aria-label={t.label} title={t.label} onClick={() => onChange(t.id)} className={cn("relative z-10 flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors", compact ? (value === t.id ? "flex-[2.2]" : "flex-1") : "flex-1", value === t.id ? "text-ink-900" : "text-ink-500 hover:bg-ink-50 hover:text-ink-800")}>
+          {value === t.id && <motion.span layoutId={`tab-${tabs.map((x) => x.id).join("")}`} className="absolute inset-0 -z-10 rounded-lg bg-ink-100" transition={{ type: "spring", stiffness: 500, damping: 38 }} />}
           {t.icon}
           {(!compact || value === t.id) && <span className="truncate">{t.label}</span>}
           {t.count !== undefined && t.count > 0 && <span className="rounded-full bg-ink-200/80 px-1.5 text-[10px] text-ink-600">{t.count}</span>}

@@ -1,6 +1,6 @@
 /* Academiana servis çalışanı: yalnızca uygulama kabuğu ve çevrimdışı sayfa.
  * Kullanıcı verisi ve API yanıtları ÖNBELLEĞE ALINMAZ (gizlilik ve güncellik için). */
-const VERSION = "academiana-v5";
+const VERSION = "academiana-v6";
 const SHELL = ["/offline", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/apple-touch-icon.png"];
 
 self.addEventListener("install", (e) => {

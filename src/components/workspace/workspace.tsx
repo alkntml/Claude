@@ -20,7 +20,7 @@ import { createPortal } from "react-dom";
 import type { Editor } from "@tiptap/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
-import { Badge, Modal, ProgressRing, Tabs } from "@/components/ui/primitives";
+import { Badge, Modal, Tabs } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { CitationEngine, STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
@@ -31,7 +31,7 @@ import { sourceRowToItemClient } from "@/lib/sources/row";
 import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 import { AssistantPanel } from "./assistant";
 import { CitationContext } from "./citation-context";
-import { AcademicEditor, Toolbar, useAcademicEditor } from "./editor";
+import { AcademicEditor, SuggestSwitch, Toolbar, useAcademicEditor } from "./editor";
 import { applyDocPatch, cursorBlock, REMOTE_META, RemotePeers, setPeerMarks } from "./collab-ext";
 import { useLiveCollab, type LiveDocMsg, type LiveSavedMsg } from "./live-collab";
 import { FindReplace } from "./find-replace";
@@ -1004,23 +1004,25 @@ export function Workspace(props: Props) {
     await setFullDoc(removeSection(fullDoc(), focused.index), t("Alt başlık silindi"), null);
   }
 
+  const toggleSuggest = () => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); };
   const done = completion(stages);
   const nextId = nextStage(stages)?.id;
   const waitFor = active && !isBibliography && active.status !== "done" ? shouldWaitFor(stages, active) : undefined;
   const Nav = (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-3 border-b border-ink-100 px-4 py-3.5">
-        <div className="relative flex items-center justify-center"><ProgressRing value={progress} size={40} /><span className="absolute text-[10px] font-semibold">{progress}%</span></div>
-        <div className="min-w-0"><p className="text-[11px] font-medium uppercase tracking-wider text-ink-400">{t("Yol haritası")}</p><p className="truncate text-[13px] text-ink-600">{t(wt?.title ?? "")} · {t(LEVEL_LABELS[project.academic_level as AcademicLevel])}</p></div>
+      <div className="border-b border-ink-100 px-4 pb-3 pt-3.5">
+        <div className="flex items-baseline justify-between gap-2"><p className="text-[14px] font-semibold text-ink-900">{t("Yol haritası")}</p><span className="text-[12px] tabular-nums text-ink-400">%{progress}</span></div>
+        <p className="mt-0.5 truncate text-[12.5px] text-ink-500">{t(wt?.title ?? "")} · {t(LEVEL_LABELS[project.academic_level as AcademicLevel])}</p>
+        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-ink-100"><div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${progress}%` }} /></div>
       </div>
       <div data-tour="goal"><GoalWidget project={project} stages={stages} onOpen={() => setGoalOpen(true)} /></div>
       <div className="space-y-1.5 px-3 pt-2">
-        <button data-tour="blueprint" onClick={() => setBpOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", bpApproved ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
-          <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", bpApproved ? "bg-emerald-500 text-white" : "bg-brand-600 text-white")}>{bpApproved ? <Check className="h-3 w-3" /> : <Compass className="h-3 w-3" />}</span>
+        <button data-tour="blueprint" onClick={() => setBpOpen(true)} className={cn("flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] transition", bpApproved ? "text-ink-600 hover:bg-ink-50" : "bg-brand-50/70 text-brand-800 hover:bg-brand-50")}>
+          <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full", bpApproved ? "bg-emerald-50 text-emerald-600" : "bg-brand-600 text-white")}>{bpApproved ? <Check className="h-3 w-3" /> : <Compass className="h-3 w-3" />}</span>
           <span className="min-w-0 flex-1"><span className="block font-medium">{bpApproved ? t("Kurgu onaylandı") : project.context?.blueprint ? t("Kurgu taslağı: onayla") : t("Başlangıç: Kurguyu oluştur")}</span><span className="block truncate text-[11.5px] opacity-80">{t("Problem, amaç, yöntem ve bölüm planı")}</span></span>
         </button>
-        <button onClick={() => setTitleOpen(true)} className={cn("flex w-full items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-[13px] transition", project.context?.titleChosen ? "border-emerald-100 bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50" : "border-brand-200 bg-brand-50 text-brand-800 hover:bg-brand-100")}>
-          <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full", project.context?.titleChosen ? "bg-emerald-500 text-white" : "bg-brand-600 text-white")}>{project.context?.titleChosen ? <Check className="h-3 w-3" /> : <Wand2 className="h-3 w-3" />}</span>
+        <button onClick={() => setTitleOpen(true)} className={cn("flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] transition", project.context?.titleChosen ? "text-ink-600 hover:bg-ink-50" : "bg-brand-50/70 text-brand-800 hover:bg-brand-50")}>
+          <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full", project.context?.titleChosen ? "bg-emerald-50 text-emerald-600" : "bg-brand-600 text-white")}>{project.context?.titleChosen ? <Check className="h-3 w-3" /> : <Wand2 className="h-3 w-3" />}</span>
           <span className="min-w-0 flex-1"><span className="block font-medium">{project.context?.titleChosen ? t("Başlık seçildi") : t("Adım 1: Başlık seç")}</span><span className="block truncate text-[11.5px] opacity-80">{project.title}</span></span>
         </button>
         <p className="px-1 text-[11.5px] text-ink-500">{t("{d}/{n} bölüm tamamlandı", { d: done.done, n: done.total })}</p>
@@ -1032,12 +1034,12 @@ export function Workspace(props: Props) {
           return (
             <Reorder.Item key={s.id} value={s} data-tour={s.key === "references" ? "stage-references" : undefined} className="group/item relative" whileDrag={{ scale: 1.02, boxShadow: "0 12px 30px -10px rgb(21 24 41 / 0.25)" }}>
               {/* Ana bölüm başlığı (ör. “1 GİRİŞ”): gruptaki ilk aşamanın üstünde */}
-              {(() => { const g = chapterGroup(s.key); const prev = stages[i - 1]; if (!g || (prev && chapterGroup(prev.key)?.id === g.id)) return null; const major = (prefixes[s.id] ?? "").split(".")[0]; return <p className="px-2 pb-0.5 pt-2 text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">{major ? `${major} ` : ""}{g.title[writingLang(project.language)]}</p>; })()}
-              <div className={cn("group relative flex cursor-pointer items-center gap-2 rounded-xl px-2 py-2.5 transition-colors lg:py-2", sel && focus == null ? "bg-white shadow-sm ring-1 ring-ink-100" : sel ? "bg-white/70" : "hover:bg-white/70")} onClick={() => selectStage(s.id)}>
+              {(() => { const g = chapterGroup(s.key); const prev = stages[i - 1]; if (!g || (prev && chapterGroup(prev.key)?.id === g.id)) return null; const major = (prefixes[s.id] ?? "").split(".")[0]; return <p className="px-2 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wide text-ink-400">{major ? `${major} ` : ""}{g.title[writingLang(project.language)]}</p>; })()}
+              <div className={cn("group relative flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 transition-colors lg:py-1.5", sel && focus == null ? "bg-ink-100/80" : sel ? "bg-ink-50" : "hover:bg-ink-50")} onClick={() => selectStage(s.id)}>
               <GripVertical className="hidden h-3.5 w-3.5 shrink-0 cursor-grab text-ink-200 opacity-0 transition group-hover:opacity-100 lg:block" />
-              <span title={t("Adım {n}", { n: i + 1 })} className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold lg:h-6 lg:w-6 lg:text-[10.5px]", s.status === "done" ? "bg-emerald-500 text-white" : sel ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
+              <span title={t("Adım {n}", { n: i + 1 })} className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10.5px] font-semibold lg:h-5 lg:w-5 lg:text-[10px]", s.status === "done" ? "bg-emerald-50 text-emerald-600" : sel ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
-                <span className={cn("block truncate text-[14px] leading-tight lg:text-[13px]", sel ? "font-semibold text-ink-900" : "text-ink-700")}>{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
+                <span className={cn("block truncate text-[14px] leading-tight lg:text-[13.5px]", sel ? "font-medium text-ink-900" : "text-ink-600")}>{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
                 <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
               </span>
               {present.some((p) => p.stageId === s.id) && <span className="flex -space-x-1" title={t("Bu bölümde: {n}", { n: present.filter((p) => p.stageId === s.id).map((p) => p.name).join(", ") })}>{present.filter((p) => p.stageId === s.id).slice(0, 2).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>}
@@ -1050,7 +1052,7 @@ export function Workspace(props: Props) {
                     const on = sel && focus === sec.index;
                     return (
                       <li key={sec.index} className="group/sec relative">
-                        <button onClick={() => selectStage(s.id, sec.index)} style={{ paddingLeft: `${(sec.level - 2) * 12 + 8}px` }} className={cn("flex w-full items-baseline gap-1.5 rounded-lg py-1.5 pr-8 text-left text-[12.5px] transition", on ? "bg-white font-semibold text-ink-900 shadow-sm ring-1 ring-ink-100" : "text-ink-600 hover:bg-white/70")}>
+                        <button onClick={() => selectStage(s.id, sec.index)} style={{ paddingLeft: `${(sec.level - 2) * 12 + 8}px` }} className={cn("flex w-full items-baseline gap-1.5 rounded-lg py-1.5 pr-8 text-left text-[12.5px] transition", on ? "bg-ink-100/80 font-medium text-ink-900" : "text-ink-500 hover:bg-ink-50 hover:text-ink-800")}>
                           {sec.number && <span className="shrink-0 font-mono text-[11px] text-ink-400">{sec.number}</span>}
                           <span className="min-w-0 flex-1 truncate">{sec.text || t("(adsız alt başlık)")}</span>
                           <span className="shrink-0 text-[10.5px] text-ink-300">{sec.words ? sec.words.toLocaleString(dl) : "—"}</span>
@@ -1065,7 +1067,7 @@ export function Workspace(props: Props) {
           );
         })}
       </Reorder.Group>
-      <div className="border-t border-ink-100 p-2"><button onClick={() => setAddStage(true)} className="flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-[13px] font-medium text-ink-500 transition hover:bg-white hover:text-ink-900"><Plus className="h-4 w-4" /> {t("Bölüm ekle")}</button></div>
+      <div className="border-t border-ink-100 p-2"><button onClick={() => setAddStage(true)} className="flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-[13px] font-medium text-ink-500 transition hover:bg-ink-50 hover:text-ink-900"><Plus className="h-4 w-4" /> {t("Bölüm ekle")}</button></div>
     </div>
   );
 
@@ -1106,7 +1108,7 @@ export function Workspace(props: Props) {
         </header>
 
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)_420px] xl:grid-cols-[280px_minmax(0,1fr)_460px]">
-          <aside data-tour="nav" className={cn("min-h-0 border-r border-ink-100 bg-ink-50/50", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
+          <aside data-tour="nav" className={cn("min-h-0 border-r border-ink-200/70 bg-white", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
 
           <section className={cn("min-h-0 overflow-y-auto", mobilePane === "editor" ? "block" : "hidden lg:block")}>
             {active && (
@@ -1133,27 +1135,28 @@ export function Workspace(props: Props) {
                           <button onClick={() => selectStage(active.id, null)} className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-2.5 py-1 text-xs font-medium text-ink-600 transition hover:border-ink-300 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" /> {chapterNumber ? `${chapterNumber} ` : ""}{active.title}</button>
                           <Badge tone="brand">{focused.number || t("Alt başlık")}</Badge>
                           <span className="text-xs text-ink-400">{t("{n} kelime", { n: focused.words })}</span>
-                          <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100"><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
-                          {canEdit && <button onClick={() => openTool("claims")} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800 transition hover:bg-emerald-100"><ShieldCheck className="h-3.5 w-3.5" /> {t("İddia denetimi")}</button>}
+                          <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-ink-500 transition hover:bg-ink-100 hover:text-ink-900"><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
+                          {canEdit && <button onClick={() => openTool("claims")} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-ink-500 transition hover:bg-ink-100 hover:text-ink-900"><ShieldCheck className="h-3.5 w-3.5" /> {t("İddia denetimi")}</button>}
+                          {canEdit && <SuggestSwitch on={autoSuggest} onToggle={toggleSuggest} />}
                           <button onClick={removeFocused} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
                         </div>
-                        <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Alt başlık")} />
+                        <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-semibold leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[26px]" aria-label={t("Alt başlık")} />
                         <p className="mt-1 text-[13px] text-ink-500">{t("Yalnızca bu alt başlığın metni açık. Yazdıklarınız çalışmada bu başlığın altına kaydedilir; indirirken tüm çalışma tek belge olarak aktarılır.")}</p>
                       </div>
                     ) : (
                     <div className="mb-3 sm:mb-5">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge tone="brand">{t("Adım {n}", { n: activeIndex + 1 })}</Badge>
-                        {chapterNumber && <Badge>{t("Belgede {n}", { n: chapterNumber })}</Badge>}
+                        <span className="text-xs font-medium text-ink-400">{t("Adım {n}", { n: activeIndex + 1 })}{chapterNumber ? ` · ${t("Belgede {n}", { n: chapterNumber })}` : ""}</span>
                         <StatusPicker value={active.status} onChange={(v) => patchStage(active.id, { status: v })} />
                         <span className="text-xs text-ink-400">{t("{n} kelime", { n: active.word_count ?? 0 })}</span>
-                        <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-lg border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100" title={t("Word belgesini kaynakları ve atıflarıyla bu bölüme aktar")}><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
-                        {canEdit && <button onClick={() => openTool("claims")} className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800 transition hover:bg-emerald-100" title={t("Atıflı her cümle kaynağında gerçekten destekleniyor mu?")}><ShieldCheck className="h-3.5 w-3.5" /> {t("İddia denetimi")}</button>}
+                        <button onClick={() => { flush(); setImportOpen(true); }} className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-ink-500 transition hover:bg-ink-100 hover:text-ink-900" title={t("Word belgesini kaynakları ve atıflarıyla bu bölüme aktar")}><Upload className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>
+                        {canEdit && <button onClick={() => openTool("claims")} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-ink-500 transition hover:bg-ink-100 hover:text-ink-900" title={t("Atıflı her cümle kaynağında gerçekten destekleniyor mu?")}><ShieldCheck className="h-3.5 w-3.5" /> {t("İddia denetimi")}</button>}
+                        {canEdit && <SuggestSwitch on={autoSuggest} onToggle={toggleSuggest} />}
                         <span>{active.status === "done"
                           ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")} · {t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                           : <Button size="sm" variant="secondary" onClick={startComplete} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
                       </div>
-                      <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-medium leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[32px]" aria-label={t("Bölüm başlığı")} />
+                      <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-semibold leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Bölüm başlığı")} />
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
                     )}
@@ -1165,7 +1168,7 @@ export function Workspace(props: Props) {
                       </div>
                     )}
                     <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-white via-white to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
-                      <Toolbar editor={editor} onFind={() => setFindOpen((v) => !v)} findOn={findOpen} onFootnote={() => setFootnote("")} suggestOn={autoSuggest} onToggleSuggest={() => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); }} />
+                      <Toolbar editor={editor} onFind={() => setFindOpen((v) => !v)} findOn={findOpen} onFootnote={() => setFootnote("")} />
                       {findOpen && <FindBar key={`${activeId}-${focus ?? "all"}`} editor={editor} canEdit={canEdit} onClose={() => { setFindOpen(false); editor?.commands.focus(); }} scopeLabel={focused ? t("Arama yalnızca açık alt başlıkta: {n} {t}", { n: focused.number, t: focused.text }) : t("Arama yalnızca açık bölümde: {t}", { t: active?.title ?? "" })} />}
                     </div>
                     <AcademicEditor editor={editor} chapter={chapterNumber} />
@@ -1185,7 +1188,7 @@ export function Workspace(props: Props) {
             )}
           </section>
 
-          <aside className={cn("min-h-0 min-w-0 flex-col border-l border-ink-100 bg-white/60", mobilePane === "panel" ? "flex" : "hidden lg:flex")}>
+          <aside className={cn("min-h-0 min-w-0 flex-col border-l border-ink-200/70 bg-white", mobilePane === "panel" ? "flex" : "hidden lg:flex")}>
             <div className={cn("border-b border-ink-100 p-2 sm:p-2.5", !isMore && "hidden lg:block")}>
               <div className="hidden lg:block" data-tour="panel-tabs">
                 <Tabs compact value={tab} onChange={setTab} tabs={[

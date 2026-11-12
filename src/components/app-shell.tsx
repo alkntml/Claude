@@ -3,7 +3,7 @@ import { deviceId } from "@/lib/device-client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, Building2, ClipboardList, Gift, Lock, Compass, FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket } from "lucide-react";
+import { BookOpen, Building2, ClipboardList, Gift, Lock, Compass, FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -36,6 +36,7 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
   const router = useRouter();
   const toast = useToast();
   const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState(false);
   const [fb, setFb] = useState(false);
   const [msg, setMsg] = useState("");
   const [sending, setSending] = useState(false);
@@ -73,41 +74,57 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
     deviceHash().then((d) => d && api("/api/account/device", { method: "POST", json: { d } })).then(() => { try { localStorage.setItem("acd_dev_sent", today); } catch { /* yok say */ } }).catch(() => {});
   }, []);
 
+  // D148: sade kenar menüsü — üstte kullanıcı (açılır menü: ayarlar, dil, tema, çıkış), “Yeni” bağlantısı, düz menü satırları
+  const initial = (user.name || user.email).slice(0, 1).toLocaleUpperCase("tr");
+  const paid = user.plan !== "free";
   const Side = (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between px-5 pb-6 pt-6"><Link href="/panel"><Logo /></Link><NotificationBell className="hidden lg:block" /></div>
+      <div className="relative flex items-center gap-2 px-3 pb-2 pt-4">
+        <button onClick={() => setMenu((v) => !v)} className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition hover:bg-ink-100" aria-expanded={menu}>
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[12.5px] font-semibold text-white">{initial}</span>
+          <span className="truncate text-[14.5px] font-semibold text-ink-900">{user.name || user.email}</span>
+        </button>
+        <NotificationBell className="hidden lg:block" />
+        {menu && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setMenu(false)} />
+            <div className="absolute left-3 right-3 top-14 z-50 rounded-xl border border-ink-200/80 bg-white p-1.5 shadow-xl">
+              <div className="px-2.5 pb-2 pt-1.5">
+                <p className="truncate text-[13px] text-ink-500">{user.email}</p>
+                <p className="text-[12px] capitalize text-ink-400">{t("{plan} paket", { plan: user.plan })}{user.memberNo ? <span className="normal-case"> · {user.memberNo}</span> : null}</p>
+              </div>
+              <Link href="/hesap" onClick={() => { setMenu(false); setOpen(false); }} className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] text-ink-700 hover:bg-ink-50"><Settings2 className="h-4 w-4 text-ink-500" /> {t("Hesap ve abonelik")}</Link>
+              <div className="flex items-center justify-between px-2.5 py-1.5"><LanguageSwitch /><ThemeToggle /></div>
+              <div className="my-1 h-px bg-ink-100" />
+              <button onClick={logout} className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] text-ink-700 hover:bg-ink-50"><LogOut className="h-4 w-4 text-ink-500" /> {t("Çıkış yap")}</button>
+            </div>
+          </>
+        )}
+      </div>
       <div className="px-3">
-        <Link href="/yeni" className="group mb-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_24px_-10px_rgb(79_70_229/0.8)] transition hover:-translate-y-px">
-          <Plus className="h-4 w-4 transition group-hover:rotate-90" /> {t("Yeni çalışma")}
+        <Link href="/yeni" onClick={() => setOpen(false)} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] font-medium text-brand-600 transition hover:bg-brand-50">
+          <Plus className="h-[18px] w-[18px] rounded-full border-[1.5px] border-current p-[1px]" /> {t("Yeni çalışma")}
         </Link>
-        <nav className="space-y-0.5">
+        <nav className="space-y-px">
           {nav.map((n) => {
             const active = path === n.href || path.startsWith(`${n.href}/`);
             return (
-              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className={cn("relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors", active ? "text-ink-900" : "text-ink-500 hover:text-ink-900")}>
-                {active && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-lg bg-ink-100" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
-                <n.icon className="relative h-[18px] w-[18px]" />
-                <span className="relative">{t(n.label)}</span>
+              <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] transition-colors", active ? "bg-ink-100 font-medium text-ink-900" : "text-ink-700 hover:bg-ink-50 hover:text-ink-900")}>
+                <n.icon className="h-[18px] w-[18px] shrink-0 text-ink-500" strokeWidth={1.75} />
+                <span className="truncate">{t(n.label)}</span>
               </Link>
             );
           })}
         </nav>
       </div>
-      <div className="mt-auto space-y-2 p-3">
-        <div className="flex items-center justify-between px-3"><LanguageSwitch /><ThemeToggle /></div>
+      <div className="mt-auto space-y-px px-3 pb-3">
         <InstallApp />
-        <button onClick={() => { setOpen(false); window.dispatchEvent(new Event("academiana:gift")); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-fuchsia-700 transition hover:bg-white"><Gift className="h-[18px] w-[18px]" /> {t("Davet et, kazan")}</button>
-        <Link href="/yardim" onClick={() => setOpen(false)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-500 transition hover:bg-white hover:text-ink-900"><BookOpen className="h-[18px] w-[18px]" /> {t("Kullanım rehberi")}</Link>
-        <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-ink-500 transition hover:bg-white hover:text-ink-900"><MessageSquarePlus className="h-[18px] w-[18px]" /> {t("Geri bildirim")}</button>
-        <div className="flex items-center gap-3 rounded-2xl border border-ink-100 bg-white p-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-ink-800 to-ink-950 text-sm font-semibold text-white">{(user.name || user.email).slice(0, 1).toLocaleUpperCase("tr")}</div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-ink-900">{user.name || user.email}</p>
-            <p className="text-xs capitalize text-ink-400">{t("{plan} paket", { plan: user.plan })}{user.memberNo ? <span className="normal-case"> · {user.memberNo}</span> : null}</p>
-          </div>
-          <Link href="/hesap" className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Ayarlar")}><Settings2 className="h-4 w-4" /></Link>
-          <button onClick={logout} className="rounded-lg p-1.5 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Çıkış yap")}><LogOut className="h-4 w-4" /></button>
-        </div>
+        <button onClick={() => { setOpen(false); window.dispatchEvent(new Event("academiana:gift")); }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] text-ink-700 transition hover:bg-ink-50"><Gift className="h-[18px] w-[18px] text-ink-500" strokeWidth={1.75} /> {t("Davet et, kazan")}</button>
+        <Link href="/yardim" onClick={() => setOpen(false)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] text-ink-700 transition hover:bg-ink-50"><BookOpen className="h-[18px] w-[18px] text-ink-500" strokeWidth={1.75} /> {t("Kullanım rehberi")}</Link>
+        <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] text-ink-700 transition hover:bg-ink-50"><MessageSquarePlus className="h-[18px] w-[18px] text-ink-500" strokeWidth={1.75} /> {t("Geri bildirim")}</button>
+        {user.plan !== "premium" && user.plan !== "single" && (
+          <button onClick={() => { setOpen(false); openUpgrade({}); }} className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-3 py-2.5 text-[14px] font-medium text-white transition hover:bg-brand-700"><Zap className="h-4 w-4" /> {paid ? t("Paketi yükselt") : t("Paketleri gör")}</button>
+        )}
       </div>
     </div>
   );
@@ -126,7 +143,7 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
         {open && (
           <>
             <motion.div className="fixed inset-0 z-40 bg-ink-950/30 backdrop-blur-sm lg:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} />
-            <motion.aside className="fixed inset-y-0 left-0 z-50 w-72 bg-ink-50 shadow-2xl lg:hidden" initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ type: "spring", stiffness: 380, damping: 36 }}>
+            <motion.aside className="fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl lg:hidden" initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ type: "spring", stiffness: 380, damping: 36 }}>
               <button onClick={() => setOpen(false)} className="absolute right-3 top-5 rounded-lg p-1.5" aria-label={t("Kapat")}><X className="h-5 w-5" /></button>
               {Side}
             </motion.aside>

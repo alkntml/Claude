@@ -3591,4 +3591,10 @@ export const EN: Record<string, string> = {
   "Akademisyenler ve araştırmacılar ne diyor?": "What academics and researchers say",
   "Platformu inceleyen akademisyen ve araştırmacıların görüşleri. Görüşler özgün dilinde ve değiştirilmeden yayımlanmıştır.": "Views of academics and researchers who have reviewed the platform. They are published in their original language and unedited.",
   "5 üzerinden {n} yıldız": "{n} out of 5 stars",
+  // D148: araç çubuğu
+  "Metin biçimi": "Text style",
+  "Otomatik tamamlama": "Autocomplete",
+  // D148: kenar menüsü
+  "Paketi yükselt": "Upgrade plan",
+  "Paketleri gör": "See plans",
 };

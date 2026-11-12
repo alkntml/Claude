@@ -3583,4 +3583,10 @@ export const DE: Dict = {
   "Akademisyenler ve araştırmacılar ne diyor?": "Was Forschende und Lehrende sagen",
   "Platformu inceleyen akademisyen ve araştırmacıların görüşleri. Görüşler özgün dilinde ve değiştirilmeden yayımlanmıştır.": "Stimmen von Lehrenden und Forschenden, die die Plattform geprüft haben. Sie werden in der Originalsprache und unverändert veröffentlicht.",
   "5 üzerinden {n} yıldız": "{n} von 5 Sternen",
+  // D148: araç çubuğu
+  "Metin biçimi": "Textformat",
+  "Otomatik tamamlama": "Autovervollständigung",
+  // D148: kenar menüsü
+  "Paketi yükselt": "Tarif upgraden",
+  "Paketleri gör": "Tarife ansehen",
 };

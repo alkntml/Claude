@@ -741,4 +741,5 @@ Kullanıcı, rakip bir yazım uygulamasının ekranlarını örnek gösterip “
 - Araç çubuğu: kart/gölge yerine düz satır, alt çizgiyle ayrılır; etkin düğme açık indigo zemin.
 - Uygulama içinde (.app-ui: AppShell ve çalışma alanı) serif başlıklar sade yazı tipine döner; logo yazısı (.wordmark) ve tanıtım sayfası serif başlıkları korunur.
 - Gece modunda beyaz degradeler (from/via/to-white) koyu yüzeye döner. Servis çalışanı sürümü v5.
+- D148 ek (2. tur, kullanıcı “hâlâ aynı” dedi): yerleşim de sadeleşti — kenar menüsü üstte kullanıcı adı + açılır menü (hesap, dil, tema, çıkış), “Yeni çalışma” indigo bağlantı, düz menü satırları, altta “Paketi yükselt”; çalışma alanında yol haritası ince ilerleme çubuğu, bölüm listesi gölgesiz/açık gri seçili, rozetler sade metin; araç çubuğunda metin biçimi açılır listesi (Metin/Alt başlık 1–3) ve üst satırda “Otomatik tamamlama” anahtarı; asistan panelinde kabarcıksız yanıt, açık gri kullanıcı mesajı, tek tip kısayol düğmeleri; sekmeler ve pencereler düz; kontrol panelinde sakin başlık, tek kartta istatistik satırı, düz proje kartları. Servis çalışanı v6.
 

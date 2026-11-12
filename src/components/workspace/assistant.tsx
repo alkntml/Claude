@@ -226,13 +226,13 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
   }
 
   const dataFiles = files.filter((f) => /csv|sheet/.test(f.mime_type) || /\.(csv|xlsx)$/i.test(f.name));
-  const chip = "shrink-0 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition disabled:opacity-50 lg:px-2.5 lg:py-1 lg:text-[12px]";
+  const chip = "shrink-0 rounded-lg border px-3 py-1.5 text-[12.5px] font-medium transition disabled:opacity-50 lg:px-2.5 lg:py-1 lg:text-[12.5px]";
 
   return (
     <div className="flex h-full flex-col">
       <div ref={scroller} className="flex-1 space-y-4 overflow-y-auto px-3 pb-4 pt-3 sm:px-4">
         {def && (
-          <div className="overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/80 to-white">
+          <div className="overflow-hidden rounded-xl border border-ink-200/80 bg-white">
             <button onClick={() => setGuideOpen((o) => !o)} className="flex w-full items-center gap-2 px-4 py-3 text-left">
               <BookOpen className="h-4 w-4 text-brand-600" />
               <span className="flex-1 text-sm font-semibold text-ink-900">{t("Bu bölümün rehberi")}</span>
@@ -270,7 +270,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
         {msgs.map((m) => (
           <motion.div key={m.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
             {m.role === "user" ? (
-              <div className="max-w-[88%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-ink-900 px-3.5 py-2.5 text-[14px] text-white sm:text-[13.5px]">{m.content.length > 1200 ? `${m.content.slice(0, 1200)}…` : m.content}</div>
+              <div className="max-w-[88%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-ink-100 px-3.5 py-2.5 text-[14px] text-ink-900 sm:text-[14px]">{m.content.length > 1200 ? `${m.content.slice(0, 1200)}…` : m.content}</div>
             ) : (
               <AssistantBubble msg={m} streaming={busy && m === msgs[msgs.length - 1]} onInsert={onInsert} onUpdateDraft={() => send(t("Yeni eklenen kaynakları kullanarak az önceki taslağı güncelle; önceki taslakta eksik kalan konuları bu kaynaklarla destekle."), "draft")} onReduce={(text) => send(t("Tekrarları azalt"), "reduce_repetition", undefined, text)} busy={busy} />
             )}
@@ -288,19 +288,19 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
         <div className="no-scrollbar -mx-2.5 mb-2 flex gap-1.5 overflow-x-auto px-2.5 sm:-mx-3 sm:px-3">
           {/* Aşamaya özel kısayollar (D75) */}
           {/* Alt başlık oluştur (D83): her bölümde ve alt başlıkta; sayı sorulur, sonra her birine ayrı girilir */}
-          {onOpenOutline && <button disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-brand-600 bg-brand-600 text-white hover:bg-brand-700")}><ListOrdered className="h-3.5 w-3.5" /> {focus ? t("Alt-alt başlık oluştur") : t("Alt başlık oluştur")}</button>}
+          {onOpenOutline && <button disabled={busy} onClick={onOpenOutline} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}><ListOrdered className="h-3.5 w-3.5" /> {focus ? t("Alt-alt başlık oluştur") : t("Alt başlık oluştur")}</button>}
           {quickActions(stage?.key, { lowSources, hasData: dataFiles.length > 0, longSection: targetWords >= 1500 || LONG_STAGES.has(stage?.key ?? "") }).map((q) => {
             if (q === "outline") return null;
-            if (q === "analysis") return onOpenAnalysis ? <button key={q} disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button> : null;
-            if (q === "research") return <button key={q} onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-300 bg-white text-ink-800 hover:border-ink-400")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>;
+            if (q === "analysis") return onOpenAnalysis ? <button key={q} disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button> : null;
+            if (q === "research") return <button key={q} onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>;
             // Bulgu yorumlama yalnızca kullanıcı verisi gereken bölümde veya veri dosyası varken
             if (q === "interpret" && !def?.requiresUserData && !dataFiles.length) return null;
-            return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-ink-900 bg-ink-900 text-white hover:bg-ink-800" : "border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
+            return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-brand-600 bg-brand-600 text-white hover:bg-brand-700" : "border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
           })}
           {onOpenImport && <button disabled={busy} onClick={onOpenImport} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}><FilePlus2 className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>}
           {input.trim().length > 20 && <button disabled={busy} onClick={() => send(input, "from_notes")} className={cn(chip, "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100")}>{t(ASSISTANT_ACTIONS.from_notes.label)}</button>}
         </div>
-        <div className="flex items-end gap-1.5 rounded-2xl border border-ink-200 bg-white p-1.5 shadow-sm transition focus-within:border-brand-300 focus-within:ring-4 focus-within:ring-brand-100">
+        <div className="flex items-end gap-1.5 rounded-2xl border border-ink-200 bg-white p-2 transition focus-within:border-ink-300 focus-within:shadow-sm">
           {dataFiles.length > 0 && (
             <div className="relative shrink-0">
               <button onClick={() => setDataOpen((o) => !o)} className="flex h-9 w-9 items-center justify-center rounded-xl text-ink-500 hover:bg-ink-100" title={t("Veri dosyası ekle")} aria-label={t("Veri dosyası ekle")}><Database className="h-4 w-4" /></button>
@@ -380,9 +380,9 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, bu
       {research}
       {parsed.parts.map((p, i) =>
         p.kind === "text" ? (
-          <div key={i} className="rounded-2xl rounded-tl-md border border-ink-100 bg-white px-3.5 py-3 text-ink-700"><Markdown text={p.text} sourceMap={msg.sourceMap} /></div>
+          <div key={i} className="px-0.5 py-1 text-[14.5px] leading-relaxed text-ink-800"><Markdown text={p.text} sourceMap={msg.sourceMap} /></div>
         ) : (
-          <div key={i} className="overflow-hidden rounded-2xl border border-brand-200 bg-white shadow-[0_10px_30px_-18px_rgb(79_70_229/0.5)]">
+          <div key={i} className="overflow-hidden rounded-xl border border-ink-200/80 bg-white">
             <div className="flex items-center justify-between gap-2 border-b border-brand-100 bg-brand-50/70 px-3.5 py-2">
               <span className="text-[12px] font-semibold text-brand-700">{t("Taslak metin")}</span>
               {(p.complete || !streaming) && <button onClick={() => { navigator.clipboard.writeText(p.text); toast({ tone: "success", title: t("Kopyalandı") }); }} className="rounded-lg p-1.5 text-ink-500 hover:bg-white" title={t("Kopyala")} aria-label={t("Kopyala")}><ClipboardCopy className="h-3.5 w-3.5" /></button>}

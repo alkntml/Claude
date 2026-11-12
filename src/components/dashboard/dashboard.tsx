@@ -57,10 +57,10 @@ export function Dashboard(p: Props) {
       <motion.div variants={item} className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-ink-400">{new Date().toLocaleDateString(dl, { weekday: "long", day: "numeric", month: "long" })}</p>
-          <h1 className="mt-1 font-serif text-[34px] font-medium tracking-tight text-ink-950">{greet}{p.name ? `, ${p.name}` : ""}.</h1>
+          <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-ink-950">{greet}{p.name ? `, ${p.name}` : ""}.</h1>
           <p className="mt-1 text-ink-500">{active.length ? t("{n} devam eden çalışmanız var.", { n: active.length }) : t("İlk akademik çalışmanızı başlatın.")}</p>
         </div>
-        <Link href="/yeni" className="inline-flex items-center gap-2 rounded-2xl bg-ink-900 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-ink-900/20 transition hover:-translate-y-0.5"><Plus className="h-4 w-4" /> {t("Yeni çalışma")}</Link>
+        <Link href="/yeni" className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"><Plus className="h-4 w-4" /> {t("Yeni çalışma")}</Link>
       </motion.div>
 
       {(() => {
@@ -86,18 +86,16 @@ export function Dashboard(p: Props) {
 
       <motion.div variants={item}><TaskStart defaultOpen={projects.length <= 1} /></motion.div>
 
-      <motion.div variants={item} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <motion.div variants={item} className="card grid grid-cols-2 divide-ink-100 overflow-hidden lg:grid-cols-4 lg:divide-x">
         {[
           { label: "Devam eden", value: active.length, icon: Clock3, tone: "from-brand-500 to-indigo-500" },
           { label: "Tamamlanan", value: done.length, icon: CheckCircle2, tone: "from-emerald-500 to-teal-500" },
           { label: "Kayıtlı kaynak", value: p.sourcesCount, icon: BookMarked, tone: "from-amber-500 to-orange-500" },
           { label: "Bu ay AI isteği", value: p.usage?.ai_requests ?? 0, icon: Sparkles, tone: "from-fuchsia-500 to-violet-500" },
         ].map((s) => (
-          <div key={s.label} className="card group relative overflow-hidden p-5 transition hover:-translate-y-0.5">
-            <div className={`absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gradient-to-br ${s.tone} opacity-10 blur-xl transition group-hover:opacity-25`} />
-            <s.icon className="h-5 w-5 text-ink-400" />
-            <p className="mt-3 text-3xl font-semibold tracking-tight text-ink-900">{s.value}</p>
-            <p className="text-sm text-ink-500">{t(s.label)}</p>
+          <div key={s.label} className="flex items-center gap-3 px-5 py-4">
+            <s.icon className="h-[18px] w-[18px] shrink-0 text-ink-400" strokeWidth={1.75} />
+            <div><p className="text-[22px] font-semibold leading-tight tracking-tight text-ink-900">{s.value}</p><p className="text-[13px] text-ink-500">{t(s.label)}</p></div>
           </div>
         ))}
       </motion.div>
@@ -113,9 +111,9 @@ export function Dashboard(p: Props) {
                 const wt = WORK_TYPES.find((w) => w.id === pr.work_type);
                 const Icon = WORK_ICONS[wt?.icon ?? "FileText"] ?? FileText;
                 return (
-                  <Link key={pr.id} href={`/proje/${pr.id}`} className="card group flex flex-col p-5 transition duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-glow">
+                  <Link key={pr.id} href={`/proje/${pr.id}`} className="card group flex flex-col p-5 transition hover:border-ink-300">
                     <div className="flex items-start justify-between">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><Icon className="h-5 w-5" /></span>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-ink-200 bg-ink-50 text-ink-600"><Icon className="h-[18px] w-[18px]" strokeWidth={1.75} /></span>
                       <div className="relative flex items-center justify-center">
                         <ProgressRing value={pr.progress} />
                         <span className="absolute text-[11px] font-semibold text-ink-700">{pr.progress}%</span>

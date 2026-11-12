@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Canlıda dene (D149): Yeni çalışma → “Mevcut çalışmamı içe aktar” ile kendi Word tezinizi yükleyin; bölümler, kaynakça ve atıflar doğru mu? Çalışma ekranında “İçe aktar” → Zotero (zotero.org/settings/security’den user ID + okuma izinli anahtar), Mendeley .bib, PDF; bir metin seçip “Yapay zekâ ile düzenle”; Proje ayarları → Kaynak tercihleri → “Her seferinde sor” ile izin kartı
 - [ ] Ana sayfa görüşleri (D147): her kişiden ad, unvan ve görüşün yayımlanması için yazılı izin (e-posta yeterli) sakla
 - [ ] Canlıda dene: Yönetim → Kullanıcılar → bir kullanıcı → “Bildirim gönder”; o hesapla girince zil simgesinde mesaj görünmeli, yönetimde “Okundu” olmalı (D146)
 - [ ] Supabase SQL Editor’de migration 38’i çalıştır (indirim kodları, sayfa hakkı, davet ödülüne sayfa; D145); check_status.sql’de “38” YAPILMIŞ görünmeli

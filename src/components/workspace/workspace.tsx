@@ -11,6 +11,7 @@ import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
   ArrowLeft, ShieldCheck, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
+  FileUp,
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -32,6 +33,9 @@ import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, WORK_TYPES, type
 import { AssistantPanel } from "./assistant";
 import { CitationContext } from "./citation-context";
 import { AcademicEditor, SuggestSwitch, Toolbar, useAcademicEditor } from "./editor";
+import { ResearchPrefsForm } from "@/components/research-prefs-form";
+import { ImportHub } from "./import-hub";
+import { readResearchPrefs } from "@/lib/research-prefs";
 import { applyDocPatch, cursorBlock, REMOTE_META, RemotePeers, setPeerMarks } from "./collab-ext";
 import { useLiveCollab, type LiveDocMsg, type LiveSavedMsg } from "./live-collab";
 import { FindReplace } from "./find-replace";
@@ -634,6 +638,8 @@ export function Workspace(props: Props) {
   useEffect(() => {
     let laterBp = false, later = false;
     try { laterBp = !!localStorage.getItem(`akademi:blueprint-later:${project.id}`); later = !!localStorage.getItem(`akademi:title-later:${project.id}`); } catch { /* yok */ }
+    // D149: sihirbazda “Standart bölümler”, “Serbest” seçildiyse veya çalışma içe aktarıldıysa kurgu penceresi kendiliğinden açılmaz
+    if (["standard", "free", "imported"].includes(project.context?.structure)) laterBp = true;
     const empty = !stages.some((x) => (x.word_count ?? 0) > 0);
     if (!bpApproved && empty && !laterBp) { setBpOpen(true); return; }
     if (project.context?.titleChosen) return;
@@ -983,6 +989,7 @@ export function Workspace(props: Props) {
   }
   /** Word’den içe aktar (D87): açık bölüme ya da alt başlığa yerleştirir; kaynaklar ve atıflar sunucuda hazırlanır */
   const [importOpen, setImportOpen] = useState(false);
+  const [hubOpen, setHubOpen] = useState(false);
   // Dil ve çeviri (D111): sekme ve açılırken seçili aralık
   const [consensusOpen, setConsensusOpen] = useState(false);
   const [claimsOpen, setClaimsOpen] = useState(false);
@@ -1100,6 +1107,7 @@ export function Workspace(props: Props) {
           {isLive && <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11.5px] font-medium text-emerald-700 sm:inline-flex" title={t("Ortak yazarlarla gerçek zamanlı bağlantı açık: değişiklikler anında görünür ve birleşir.")}><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>{t("Canlı")}</span>}
           <span data-tour="coauthors" className="flex"><CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} /></span>
           {isOwner && <span data-tour="share" className="flex"><ShareButton projectId={project.id} /></span>}
+          {canEdit && <button onClick={() => { flush(); setHubOpen(true); }} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex"><FileUp className="h-4 w-4" /> {t("İçe aktar")}</button>}
           {canEdit && <span data-tour="tools" className="flex"><ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} /></span>}
           <span data-tour="export"><ExportMenu onExport={exportAs} stages={stages.filter((x) => x.key !== "references").map((x) => ({ id: x.id, title: x.title, prefix: prefixes[x.id] ?? "", words: x.word_count ?? 0 }))} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
           <MobileMenu isOwner={isOwner} canEdit={canEdit} coauthors={<CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} variant="row" onCountChange={(n) => setCollaborative(n > 0)} />} projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
@@ -1210,7 +1218,7 @@ export function Workspace(props: Props) {
             <div className="min-h-0 flex-1">
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
-                  {tab === "assistant" && <AssistantPanel projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text, index: focused.index } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
+                  {tab === "assistant" && <AssistantPanel researchPrefs={project.context?.research} projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text, index: focused.index } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} />}
                   {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={canEdit ? applyComment : undefined} isOwner={isOwner} />}
@@ -1265,6 +1273,9 @@ export function Workspace(props: Props) {
       </Modal>
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { const n = [...stages]; n.splice(activeIndex + 1, 0, st); const fixed = academicOrder(n); setStages((fixed ?? n).map((x, i) => ({ ...x, position: i }))); if (fixed) api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: fixed.map((x) => x.id) } }).catch(() => {}); setAddStage(false); }} />
+      <ImportHub open={hubOpen} onClose={() => setHubOpen(false)} projectId={project.id} onWordToSection={() => setImportOpen(true)}
+        onStages={(rows) => { setStages(rows); if (!activeId && rows[0]) selectStage(rows[0].id); }}
+        onSources={(rows) => setSources((l) => [...l, ...rows.filter((x) => x && !l.some((y) => y.id === x.id))])} />
       {active && !isBibliography && importOpen && <ImportDocModal open={importOpen} onClose={() => setImportOpen(false)} projectId={project.id} target={focused ? `${focused.number ? `${focused.number} ` : ""}${focused.text}` : `${chapterNumber ? `${chapterNumber} ` : ""}${active.title}`} base={focused ? Math.min(maxLevel, focused.level + 1) : 2} max={maxLevel} dropTitle={focused ? focused.text : active.title} onImported={applyImport} />}
       {active && !isBibliography && subOpen && <SubheadingModal open={subOpen} onClose={() => setSubOpen(false)} projectId={project.id} stage={{ id: active.id, title: active.title }} parent={subParent} suggested={focused ? 3 : Math.max(2, subheadingBudget(active.key, targetOf(active.id)) || 3)} existing={subSiblings} onCreate={createSubheadings} />}
       <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
@@ -1525,6 +1536,10 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
                 <Button size="sm" onClick={applySuggestion}>{t("Öneriyi uygula")}</Button>
               </div>
             )}
+          </div>
+          <div className="rounded-2xl border border-ink-100 p-4">
+            <p className="font-medium text-ink-900">{t("Kaynak tercihleri")}</p>
+            <ResearchPrefsForm value={readResearchPrefs(project.context)} onChange={(v) => patch({ context: { research: v } })} />
           </div>
           <div className="rounded-2xl border border-ink-100 p-4">
             <p className="font-medium text-ink-900">{t("Proje durumu")}</p>

@@ -22,6 +22,7 @@ import { addSourcesToProject, executeSearch, providerHealthMeta, focusOf, ingest
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
 import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining, wordsRemaining } from "@/lib/usage";
 import { chargedWords, countWords, PAGE_ACTIONS } from "@/lib/pages";
+import { filterByPrefs, readResearchPrefs } from "@/lib/research-prefs";
 import { writingLang } from "@/lib/writing-lang";
 
 export const maxDuration = 300;
@@ -35,6 +36,8 @@ const Schema = z.object({
   selection: z.string().max(30000).optional(),
   /** Odaklanılan alt başlığın belgedeki sırası (hedef uzunluğu alt başlığa bölmek için, D97) */
   focusIndex: z.number().int().min(0).max(5000).nullable().optional(),
+  /** D149: “her seferinde sor” modunda kullanıcının kararı (izin kartından yeniden gönderim) */
+  research: z.enum(["allow", "skip"]).optional(),
 });
 
 /** Yazımdan önce açık erişimli tam metin okumanın yapıldığı eylemler (soru/cevapta beklenmez) */
@@ -133,7 +136,12 @@ export const POST = route("ai.chat", async (req) => {
   const focus = focusOf(b.message, stageHeads);
   const focusKey = `${stage?.id ?? "genel"}|${focus.toLocaleLowerCase("tr")}`;
   const recentlySearchedFocus = (history ?? []).some((m) => m.role === "assistant" && (m.meta as { research?: { focusKey?: string } } | null)?.research?.focusKey === focusKey && Date.now() - new Date(m.created_at as string).getTime() < RESEARCH_COOLDOWN_MS);
-  const gate = researchGate({ action: b.action, message: b.message, recentlySearchedFocus });
+  // D149: çalışmanın araştırma tercihleri — kapalıysa yalnızca açık istekte, “sor” modunda kullanıcı kararıyla
+  const prefs = readResearchPrefs(bundle.project.context);
+  let gate = researchGate({ action: b.action, message: b.message, recentlySearchedFocus });
+  if (gate === "planner" && (prefs.mode === "off" || b.research === "skip")) gate = "skip";
+  if (b.research === "skip" && gate === "force") gate = "skip";
+  const askFirst = prefs.mode === "ask" && gate === "planner" && b.research !== "allow";
   let searchedQueries: string[] = [];
   let searchProviders: Awaited<ReturnType<typeof executeSearch>>["providers"] = [];
 
@@ -150,9 +158,12 @@ export const POST = route("ai.chat", async (req) => {
   // Sistem talimatı her istekte aynıdır (önbellek, D78); bölüme özel talimat değişken bağlama girer
   const system = [sysSetting.text, OUTPUT_PROTOCOL, `KULLANIM SORULARI (önemli): Kullanıcı bir işi nasıl veya nerede yapacağını sorarsa ya da grafik, şekil, istatistik analizi, anket, dışa aktarma, içe aktarma, paylaşma gibi platformdaki bir araçla yapılan bir iş isterse ÖNCE bunun Academiana içinde nasıl yapılacağını aşağıdaki rehberden adım adım, düğme adlarıyla anlat (ör. “Üstte Araçlar → Grafik oluştur → …”). SPSS, Excel, jamovi, R, Canva gibi dış programları kullanıcı açıkça istemedikçe ÖNERME. Rehberde olmayan menü veya düğme adı uydurma.\n\n${APP_GUIDE_SHORT}`].filter(Boolean).join("\n\n");
   // Geçmişteki eski taslaklar kısa notla özetlenir; bölümün güncel metni zaten bağlamda (D78)
-  const messages = [...compactHistory((history ?? []).reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: userContent }];
+  // İzin kartından yeniden gönderimde (D149) kullanıcı mesajı zaten kayıtlı: geçmişte ikinci kez yer almasın
+  const past = (history ?? []).slice().reverse();
+  if (b.research && past.length && past[past.length - 1].role === "user" && past[past.length - 1].content === b.message) past.pop();
+  const messages = [...compactHistory(past.map((m) => ({ role: m.role as "user" | "assistant", content: m.content as string }))), { role: "user" as const, content: userContent }];
 
-  await s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "user", content: b.message, meta: { action: b.action, hasSelection: !!b.selection } });
+  if (!b.research) await s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "user", content: b.message, meta: { action: b.action, hasSelection: !!b.selection } });
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -172,6 +183,14 @@ export const POST = route("ai.chat", async (req) => {
             focus, force: gate === "force", scopeLow: bundle.sources.length < minSourcesFor(bundle.project.work_type, bundle.project.academic_level),
           });
           let queries: string[] = [];
+          // D149: “her seferinde sor” — tarama gerekiyorsa önce kullanıcıya sorulur; yazım bu turda yapılmaz
+          if (askFirst && planned.plan.needsSearch && planned.plan.queries.length) {
+            await recordResearchUsage(s.user.id, planned, [], { countAsRequest: false });
+            controller.enqueue(sse("research_permission", { queries: planned.plan.queries.map((q) => q.query) }));
+            controller.enqueue(sse("done", { awaitingPermission: true }));
+            controller.close();
+            return;
+          }
           if (planned.plan.needsSearch && planned.plan.queries.length && bundle.sources.length < MAX_PROJECT_SOURCES) {
             try {
               await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
@@ -181,7 +200,8 @@ export const POST = route("ai.chat", async (req) => {
               queries = planned.plan.queries.map((q) => q.query);
               controller.enqueue(sse("phase", { phase: "search" }));
               controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
-              const { results, providers } = await executeSearch(planned.plan.queries, { limitPerQuery: 8 });
+              const { results: rawResults, providers } = await executeSearch(planned.plan.queries, { limitPerQuery: 8, yearFrom: prefs.yearFrom ?? undefined });
+              const results = filterByPrefs(rawResults, prefs);
               searchProviders = providers;
               const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
               const picks = pickForAutoAdd(results, existing, Math.min(8, MAX_PROJECT_SOURCES - bundle.sources.length));
@@ -315,14 +335,17 @@ export const POST = route("ai.chat", async (req) => {
         let gapAdded = 0;
         let gaps = extractGaps(answer);
         // Eksik konu araması yalnızca yazım eylemlerinde veya açık istekte (soru/cevapta yapılmaz)
-        if (gaps.length && (READ_ACTIONS.has(b.action) || gate === "force") && !recentlySearchedFocus) {
+        // D149: tarama kapalıysa veya “sor” modunda izin verilmediyse eksik konu araması da yapılmaz (açık istek hariç)
+        const gapAllowed = gate === "force" || (prefs.mode === "auto" && b.research !== "skip") || (prefs.mode === "ask" && b.research === "allow");
+        if (gaps.length && gapAllowed && (READ_ACTIONS.has(b.action) || gate === "force") && !recentlySearchedFocus) {
           try {
             await assertWithinLimits(s.user.id, s.profile.plan_id, "source_search");
             const leftGap = await searchesRemaining(s.user.id, s.profile.plan_id);
             if (leftGap != null) gaps = gaps.slice(0, Math.max(1, leftGap));
             controller.enqueue(sse("phase", { phase: "gaps" }));
             controller.enqueue(sse("status", { text: T("Taslakta kaynağı eksik kalan konular aranıyor: {q}", { q: gaps.join(" · ") }) }));
-            const { results, providers: gapProviders } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8 });
+            const { results: gapRaw, providers: gapProviders } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8, yearFrom: prefs.yearFrom ?? undefined });
+            const results = filterByPrefs(gapRaw, prefs);
             const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
             const picks = pickForAutoAdd(results, existing, 6);
             if (picks.length) {

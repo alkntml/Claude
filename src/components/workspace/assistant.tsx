@@ -17,7 +17,7 @@ import { analyzeRepetition, isRepetitive } from "@/lib/quality/repetition";
 import { LANG_TAG, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[]; phase?: ChatPhase; phasesSeen?: ChatPhase[] }
+interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[]; phase?: ChatPhase; phasesSeen?: ChatPhase[]; permission?: { queries: string[]; retry: { text: string; action: AssistantAction; extra?: string; sel?: string } } }
 
 interface Props {
   projectId: string;
@@ -33,6 +33,8 @@ interface Props {
   onOpenOutline?: () => void;
   /** Editörde açık olan alt başlık (D83): yazım istekleri yalnızca bu alt başlık için yapılır */
   focus?: { number: string; title: string; index?: number } | null;
+  /** D149: çalışmanın araştırma tercihleri (“her zaman izin ver” modu değiştirirken diğer ayarlar korunur) */
+  researchPrefs?: Record<string, unknown>;
   /** Word’den içe aktar penceresi (D87) */
   onOpenImport?: () => void;
   /** Projede kapsam için yeterli kaynak yok (literatür kısayolu her bölümde görünür) */
@@ -71,7 +73,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport }: Props) {
+export function AssistantPanel({ researchPrefs, projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -118,13 +120,15 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [input]);
 
-  const send = useCallback(async (text: string, action: AssistantAction = "chat", extra?: string, selOverride?: string) => {
+  const send = useCallback(async (text: string, action: AssistantAction = "chat", extra?: string, selOverride?: string, research?: "allow" | "skip") => {
     if (!text.trim() || busy) return;
     const sel = selOverride ?? selection;
     const useSel = selOverride !== undefined || SELECTION_ACTIONS.includes(action) || (action === "chat" && sel.length > 0 && sel.length < 30000);
     const userMsg: Msg = { id: `u${Date.now()}`, role: "user", content: text, sourceMap: {} };
     const aiMsg: Msg = { id: `a${Date.now()}`, role: "assistant", content: "", sourceMap: {} };
-    setMsgs((m) => [...m, userMsg, aiMsg]);
+    // D149: izin kartından devam — kullanıcı mesajı zaten görünüyor; izin kartı yanıtla değişir
+    if (research) setMsgs((m) => [...m.filter((x) => !x.permission), aiMsg]);
+    else setMsgs((m) => [...m, userMsg, aiMsg]);
     setInput("");
     setBusy(true);
     setGuideOpen(false);
@@ -132,7 +136,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
     const patch = (fn: (x: Msg) => Msg) => setMsgs((m) => m.map((x) => (x.id === aiMsg.id ? fn(x) : x)));
     try {
       await streamChat(
-        { projectId, stageId: stage?.id ?? null, conversationId, message: [text, extra, focusNote(action, useSel)].filter(Boolean).join("\n\n"), action, selection: useSel ? sel : undefined, focusIndex: focus && !useSel ? focus.index ?? null : null },
+        { projectId, stageId: stage?.id ?? null, conversationId, message: [text, extra, focusNote(action, useSel)].filter(Boolean).join("\n\n"), action, selection: useSel ? sel : undefined, focusIndex: focus && !useSel ? focus.index ?? null : null, ...(research ? { research } : {}) },
         abort.current.signal,
         (event, data) => {
           // Yanıt başladıktan sonra gelen durum mesajları (eksik konu araması) yanıtın altında gösterilir
@@ -143,6 +147,7 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
             patch((x) => ({ ...x, added: data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
           }
           else if (event === "fulltext_read") onSourcesAdded(data.sources);
+          else if (event === "research_permission") patch((x) => ({ ...x, permission: { queries: data.queries ?? [], retry: { text, action, extra, sel: selOverride } } }));
           else if (event === "gap_sources") {
             onSourcesAdded(data.sources);
             patch((x) => ({ ...x, gapAdded: data.sources.map((r: any) => ({ title: r.title, verified: r.verified, year: r.year })) }));
@@ -272,7 +277,12 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
             {m.role === "user" ? (
               <div className="max-w-[88%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-ink-100 px-3.5 py-2.5 text-[14px] text-ink-900 sm:text-[14px]">{m.content.length > 1200 ? `${m.content.slice(0, 1200)}…` : m.content}</div>
             ) : (
-              <AssistantBubble msg={m} streaming={busy && m === msgs[msgs.length - 1]} onInsert={onInsert} onUpdateDraft={() => send(t("Yeni eklenen kaynakları kullanarak az önceki taslağı güncelle; önceki taslakta eksik kalan konuları bu kaynaklarla destekle."), "draft")} onReduce={(text) => send(t("Tekrarları azalt"), "reduce_repetition", undefined, text)} busy={busy} />
+              <AssistantBubble msg={m} streaming={busy && m === msgs[msgs.length - 1]} onInsert={onInsert} onUpdateDraft={() => send(t("Yeni eklenen kaynakları kullanarak az önceki taslağı güncelle; önceki taslakta eksik kalan konuları bu kaynaklarla destekle."), "draft")} onReduce={(text) => send(t("Tekrarları azalt"), "reduce_repetition", undefined, text)} busy={busy}
+                onPermission={async (choice) => {
+                  const rt = m.permission?.retry; if (!rt) return;
+                  if (choice === "always") await api(`/api/projects/${projectId}`, { method: "PATCH", json: { context: { research: { ...(researchPrefs ?? {}), mode: "auto" } } } }).catch(() => {});
+                  send(rt.text, rt.action, rt.extra, rt.sel, choice === "skip" ? "skip" : "allow");
+                }} />
             )}
           </motion.div>
         ))}
@@ -355,7 +365,7 @@ function RepetitionNote({ text, busy, onReduce }: { text: string; busy: boolean;
   );
 }
 
-function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, busy }: { msg: Msg; streaming: boolean; onInsert: Props["onInsert"]; onUpdateDraft: () => void; onReduce: (text: string) => void; busy: boolean }) {
+function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, busy, onPermission }: { msg: Msg; streaming: boolean; onInsert: Props["onInsert"]; onUpdateDraft: () => void; onReduce: (text: string) => void; busy: boolean; onPermission: (choice: "skip" | "once" | "always") => void }) {
   const { t } = useT();
   const toast = useToast();
   if (msg.error) return <div className="max-w-[92%] rounded-2xl rounded-bl-md border border-rose-100 bg-rose-50 px-3.5 py-2.5 text-[13.5px] text-rose-700"><TriangleAlert className="mr-1.5 inline h-4 w-4" />{msg.content}</div>;
@@ -371,6 +381,21 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, bu
       {msg.added && msg.added.length > 0 && <AddedList items={msg.added} title={t("{n} kaynak projeye eklendi (Kaynaklar sekmesinden çıkarabilirsiniz):", { n: msg.added.length })} />}
     </div>
   ) : null;
+  // D149: “her seferinde sor” modunda tarama izni
+  if (msg.permission) return (
+    <div className="w-full max-w-[96%] space-y-2.5">
+      {research}
+      <div className="rounded-xl border border-ink-200/80 bg-white p-3.5">
+        <p className="text-[13.5px] font-medium text-ink-900">{t("Akademik veri tabanlarında arama yapılsın mı?")}</p>
+        {msg.permission.queries.length > 0 && <ul className="mt-1.5 space-y-0.5 text-[12.5px] text-ink-500">{msg.permission.queries.map((q) => <li key={q} className="flex items-center gap-1.5"><SearchCheck className="h-3.5 w-3.5 shrink-0 text-ink-400" /><span className="truncate">{q}</span></li>)}</ul>}
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <button disabled={busy} onClick={() => onPermission("skip")} className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-ink-600 hover:bg-ink-100">{t("Atla")}</button>
+          <button disabled={busy} onClick={() => onPermission("always")} className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-ink-700 hover:bg-ink-100">{t("Her zaman izin ver")}</button>
+          <button disabled={busy} onClick={() => onPermission("once")} className="rounded-lg bg-brand-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-brand-700">{t("Bu sefer izin ver")}</button>
+        </div>
+      </div>
+    </div>
+  );
   if (!msg.content && streaming) return <div className="w-full max-w-[96%] space-y-2.5">{research}<div className="inline-block rounded-2xl rounded-bl-md border border-ink-100 bg-white px-4 py-3"><Dots /></div></div>;
   const parsed = parseAnswer(msg.content);
   const hasDraft = parsed.parts.some((p) => p.kind === "draft");

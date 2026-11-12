@@ -1,7 +1,7 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, FileUp, LayoutList, Loader2, PenLine, Sparkles } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { WORK_ICONS } from "@/components/icons";
@@ -9,10 +9,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
-import { api } from "@/lib/client";
+import { api, handlePlanError } from "@/lib/client";
+import { ResearchPrefsForm } from "@/components/research-prefs-form";
+import { DEFAULT_RESEARCH_PREFS, promptStrength, type ResearchPrefs } from "@/lib/research-prefs";
 import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram, LEVEL_LABELS, METHODOLOGY_LABELS, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
 
-const STEPS = ["Çalışma türü", "Akademik profil", "Araştırma bilgileri"];
+const STEPS = ["Çalışma türü", "Akademik profil", "Araştırma bilgileri", "Kaynak tercihleri", "Yapı"];
+const LAST = STEPS.length - 1;
 
 export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const { t, locale } = useT();
@@ -33,6 +36,12 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [university, setUniversity] = useState("");
   const [program, setProgram] = useState<GrantProgram>("tubitak_2209a");
   const [loading, setLoading] = useState(false);
+  const [prefs, setPrefs] = useState<ResearchPrefs>(DEFAULT_RESEARCH_PREFS);
+  const [structure, setStructure] = useState<"standard" | "smart" | "free">("smart");
+  // D149: “Mevcut çalışmamı içe aktar”
+  const [importing, setImporting] = useState<null | "upload" | "analyze">(null);
+  const [importErr, setImportErr] = useState<string | null>(null);
+  const strength = promptStrength(topic);
 
   const wt = WORK_TYPES.find((w) => w.id === workType)!;
   const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology, program }), [workType, level, methodology, program]);
@@ -43,13 +52,30 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
     try {
       const { project } = await api<{ project: { id: string } }>("/api/projects", {
         method: "POST",
-        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology, discipline, language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, ...(workType === "grant_proposal" ? { program } : {}) },
+        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology, discipline, language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, research: prefs, structure, ...(workType === "grant_proposal" ? { program } : {}) },
       });
       router.push(`/proje/${project.id}`);
     } catch (e) {
       toast({ tone: "error", title: t("Çalışma oluşturulamadı"), detail: t((e as Error).message) });
       setLoading(false);
     }
+  }
+
+  async function importWork(file: File) {
+    setImportErr(null);
+    setImporting("upload");
+    const timer = setTimeout(() => setImporting("analyze"), 1500);
+    try {
+      const fd = new FormData(); fd.append("file", file);
+      const res = await fetch("/api/projects/import", { method: "POST", body: fd });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) { handlePlanError(res.status, j); throw new Error(j.error ?? t("İçe aktarılamadı")); }
+      toast({ tone: "success", title: t("Çalışmanız içe aktarıldı"), detail: t("{s} bölüm · {r} kaynak · {l} atıf bağlandı", { s: j.report.sections, r: j.report.refsAdded, l: j.report.linked }) });
+      router.push(`/proje/${j.project.id}`);
+    } catch (e) {
+      setImportErr(t((e as Error).message));
+      setImporting(null);
+    } finally { clearTimeout(timer); }
   }
 
   return (
@@ -72,7 +98,17 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
             {step === 0 && (
               <>
                 <h1 className="font-serif text-3xl font-medium tracking-tight">{t("Bugün hangi akademik çalışmayı hazırlamak istiyorsunuz?")}</h1>
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <label className={cn("mt-6 flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed p-4 transition", importing ? "border-brand-300 bg-brand-50/60" : "border-ink-300 hover:border-brand-300 hover:bg-brand-50/40")}>
+                  <input type="file" accept=".docx,.pdf,.txt,.md" className="hidden" disabled={!!importing} onChange={(e) => { const f = e.target.files?.[0]; if (f) importWork(f); e.target.value = ""; }} />
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">{importing ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileUp className="h-5 w-5" />}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-semibold text-ink-900">{t("Mevcut çalışmamı içe aktar")}</span>
+                    <span className="mt-0.5 block text-[13px] leading-snug text-ink-500">{importing === "upload" ? t("Dosya yükleniyor…") : importing === "analyze" ? t("Yapay zekâ çalışmanızı analiz ediyor; bölümler, kaynaklar ve atıflar hazırlanıyor… Büyük belgelerde bir dakika sürebilir.") : t("Word (.docx), PDF veya metin dosyası. Yapay zekâ türünü ve konusunu çıkarır, bölümlere ayırır, kaynakçayı ekler, atıfları bağlar ve çalışma ekranını açar. Metniniz yeniden yazılmaz.")}</span>
+                  </span>
+                </label>
+                {importErr && <p className="mt-2 rounded-lg bg-rose-50 px-3 py-2 text-[13px] text-rose-700">{importErr}</p>}
+                <div className="mt-6 flex items-center gap-3 text-[12px] text-ink-400"><span className="h-px flex-1 bg-ink-100" />{t("veya yeni bir çalışma başlatın")}<span className="h-px flex-1 bg-ink-100" /></div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {WORK_TYPES.map((w) => {
                     const Icon = WORK_ICONS[w.icon];
                     const sel = w.id === workType;
@@ -120,12 +156,48 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
             {step === 2 && (
               <div className="space-y-5">
                 <h1 className="font-serif text-3xl font-medium tracking-tight">{t("Araştırmanızı tanımlayın")}</h1>
-                <div><label className="label" htmlFor="topic">{t("Araştırma konusu")}</label><textarea id="topic" className="input min-h-[110px]" placeholder={t("ör. Kişilik özellikleri, ebeveyn tutumları ve ilişki odaklı obsesif kompulsif belirtiler arasındaki ilişkinin incelenmesi")} value={topic} onChange={(e) => setTopic(e.target.value)} /><p className="mt-1.5 text-xs text-ink-400">{t("Konu henüz net değilse boş bırakabilirsiniz. İlk aşamadaki asistan konuyu belirlemenize yardım eder.")}</p></div>
+                <div><label className="label" htmlFor="topic">{t("Araştırma konusu")}</label><textarea id="topic" className="input min-h-[110px]" placeholder={t("ör. Kişilik özellikleri, ebeveyn tutumları ve ilişki odaklı obsesif kompulsif belirtiler arasındaki ilişkinin incelenmesi")} value={topic} onChange={(e) => setTopic(e.target.value)} />
+                  {strength.level === "empty" ? <p className="mt-1.5 text-xs text-ink-400">{t("Konu henüz net değilse boş bırakabilirsiniz. İlk aşamadaki asistan konuyu belirlemenize yardım eder.")}</p> : (
+                    <div className="mt-2">
+                      <div className="flex gap-1">{[0, 1, 2].map((i) => <span key={i} className={cn("h-1 flex-1 rounded-full", i < (strength.level === "strong" ? 3 : strength.level === "medium" ? 2 : 1) ? (strength.level === "strong" ? "bg-emerald-500" : strength.level === "medium" ? "bg-amber-400" : "bg-rose-400") : "bg-ink-100")} />)}</div>
+                      <p className="mt-1.5 text-[13px] text-ink-500"><b className="text-ink-800">{strength.level === "strong" ? t("Güçlü konu tanımı") : strength.level === "medium" ? t("Orta konu tanımı") : t("Zayıf konu tanımı")}:</b> {strength.level === "strong" ? t("Yapay zekâ bölümleri bu bağlamla daha isabetli yazar.") : t("Daha isabetli üretim için şunları ekleyin: {x}", { x: strength.missing.map((m) => t({ length: "biraz daha ayrıntı", relation: "incelenen ilişki veya etki", context: "örneklem/bağlam (kimlerde, nerede)", method: "yöntem (ör. anket, görüşme)" }[m])).join(", ") })}</p>
+                    </div>
+                  )}
+                </div>
                 <div><label className="label" htmlFor="title">{t("Çalışma başlığı (geçici)")}</label><input id="title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("Boş bırakılırsa konudan oluşturulur")} /></div>
                 <div><label className="label" htmlFor="kw">{t("Anahtar kelimeler (virgülle ayırın)")}</label><input id="kw" className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder={t("ilişki odaklı OKB, ebeveyn tutumları, beş faktör kişilik")} /></div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div><label className="label" htmlFor="lang">{t("Yazım dili")}</label><select id="lang" className="input" value={language} onChange={(e) => setLanguage(e.target.value as "tr" | "en" | "de")}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option><option value="de">{t("Almanca")}</option></select></div>
-                  <div><label className="label" htmlFor="style">{t("Atıf stili")}</label><select id="style" className="input" value={style} onChange={(e) => setStyle(e.target.value)}>{STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}</select><p className="mt-1.5 text-xs text-ink-400">{t("Sonradan değiştirdiğinizde tüm atıflar otomatik dönüşür.")}</p></div>
+                </div>
+              </div>
+            )}
+            {step === 3 && (
+              <div className="space-y-5">
+                <h1 className="font-serif text-3xl font-medium tracking-tight">{t("Atıf ve kaynak tercihlerinizi ayarlayalım")}</h1>
+                <div className="card p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-3">
+                    <p className="text-[14px] font-medium text-ink-900">{t("Atıf stili")}</p>
+                    <select id="style" className="input !w-auto min-w-[220px]" value={style} onChange={(e) => setStyle(e.target.value)}>{STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}</select>
+                  </div>
+                  <div className="border-t border-ink-100"><ResearchPrefsForm value={prefs} onChange={setPrefs} /></div>
+                </div>
+                <p className="text-xs text-ink-400">{t("Bu tercihleri sonradan Proje ayarları’ndan değiştirebilirsiniz. Kendi kaynaklarınızı (PDF, Zotero, Mendeley, .bib/.ris) çalışma ekranındaki “İçe aktar” düğmesiyle istediğiniz an ekleyebilirsiniz.")}</p>
+              </div>
+            )}
+            {step === 4 && (
+              <div className="space-y-5">
+                <h1 className="font-serif text-3xl font-medium tracking-tight">{t("Çalışmanızı nasıl yapılandırmak istersiniz?")}</h1>
+                <div className="space-y-2.5">
+                  {([
+                    { id: "standard", icon: LayoutList, title: "Standart bölümler", desc: "Seçtiğiniz türün akademik bölüm düzeni (ör. Giriş, Yöntem, Bulgular, Tartışma)." },
+                    { id: "smart", icon: Sparkles, title: "Akıllı bölüm planı", desc: "Yapay zekâ konunuza göre problem, amaç, yöntem ve bölüm planını hedef uzunluklarıyla önerir; onayladığınız plana göre yazılır." },
+                    { id: "free", icon: PenLine, title: "Serbest", desc: "Tek bir metin bölümüyle başlayın; alt başlıkları kendiniz ekleyin." },
+                  ] as const).map((o) => (
+                    <button key={o.id} type="button" onClick={() => setStructure(o.id)} className={cn("flex w-full items-start gap-3 rounded-xl border p-4 text-left transition", structure === o.id ? "border-brand-500 ring-2 ring-brand-100" : "border-ink-200 hover:border-ink-300 hover:bg-ink-50")}>
+                      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", structure === o.id ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-600")}><o.icon className="h-5 w-5" /></span>
+                      <span><span className="block font-semibold text-ink-900">{t(o.title)}</span><span className="mt-0.5 block text-[13px] text-ink-500">{t(o.desc)}</span></span>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
@@ -134,7 +206,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
 
         <div className="mt-10 flex items-center justify-between">
           <Button variant="ghost" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}><ArrowLeft className="h-4 w-4" /> {t("Geri")}</Button>
-          {step < 2 ? <Button onClick={() => setStep((s) => s + 1)}>{t("Devam")} <ArrowRight className="h-4 w-4" /></Button> : <Button size="lg" onClick={create} loading={loading}>{t("Çalışma alanını oluştur")}</Button>}
+          {step < LAST ? <Button onClick={() => setStep((s) => s + 1)}>{t("Devam")} <ArrowRight className="h-4 w-4" /></Button> : <Button size="lg" onClick={create} loading={loading}>{t("Yazmaya başla")}</Button>}
         </div>
       </div>
 
@@ -146,7 +218,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
           </div>
           <ol className="max-h-[60vh] space-y-0.5 overflow-y-auto p-3">
             <AnimatePresence initial={false}>
-              {roadmap.map((r, i) => (
+              {(structure === "free" ? [{ key: "custom_text", title: "Metin" }, ...roadmap.filter((x) => x.key === "references")] : roadmap).map((r, i) => (
                 <motion.li key={r.key} layout initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, height: 0 }} className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-sm">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-100 text-[11px] font-medium text-ink-600">{i + 1}</span>
                   <span className="text-ink-700">{t(r.title)}</span>

@@ -208,3 +208,4 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - D146 (2026-11-14): Yönetimden tek bir kullanıcıya bildirim (başlık, mesaj, site içi bağlantı; okundu bilgisi); ek hak verirken sayfa
 - D147 (2026-11-14): Ana sayfada 7 akademisyen/araştırmacı görüşü (özgün dilinde, değiştirilmeden; yorum şeması yok)
 - D148 (2026-11-14): Sade ve zarif arayüz — nötr griler, indigo vurgu, editörde Inter ve bağlantı biçimli atıflar, düz araç çubuğu, çerçevesiz üst düğmeler
+- D149 (2026-11-14): Seçim menüsünde “Yapay zekâ ile düzenle” (14 eylem), kaynak tercihleri + izin kartı, 5 adımlı sihirbaz (istem gücü, yapı seçimi), “Mevcut çalışmamı içe aktar” (yapay zekâ künye analizi + bölümlere ayırma), İçe aktarma merkezi (tüm çalışma, PDF, Zotero API, Mendeley dosya, DOI, bib/ris)

@@ -1,14 +1,16 @@
-import { pick } from "@/i18n/core";
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { assertProjectQuota } from "@/lib/usage";
 import { assertCanCreateProject } from "@/lib/single-project";
-import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram } from "@/lib/workflows";
+
 import { STYLE_IDS } from "@/lib/citations";
-import { translate } from "@/i18n";
+import { GRANT_PROGRAMS, type GrantProgram } from "@/lib/workflows";
+import { createProject } from "@/lib/project-create";
+import { readResearchPrefs } from "@/lib/research-prefs";
+
 import { localeFromRequest } from "@/i18n/server";
-import { adminClient } from "@/lib/supabase/admin";
+
 
 const CreateSchema = z.object({
   title: z.string().trim().min(1).max(300),
@@ -23,6 +25,9 @@ const CreateSchema = z.object({
   university: z.string().max(300).optional(),
   targetJournal: z.string().max(300).optional(),
   program: z.enum(GRANT_PROGRAMS.map((p) => p.id) as [GrantProgram, ...GrantProgram[]]).optional(),
+  /** D149: sihirbazdaki kaynak tercihleri ve bölüm yapısı */
+  research: z.object({ mode: z.enum(["auto", "ask", "off"]), yearFrom: z.number().int().min(1900).max(2100).nullable(), minCitations: z.number().int().min(0).max(100000), preprints: z.boolean() }).optional(),
+  structure: z.enum(["standard", "smart", "free"]).default("smart"),
 });
 
 export const GET = route("projects.list", async (req) => {
@@ -49,35 +54,6 @@ export const POST = route("projects.create", async (req) => {
   await assertCanCreateProject(s);
   await assertProjectQuota(s.user.id, s.profile.plan_id);
 
-  // Proje yalnızca sunucuda, kota kontrolünden sonra oluşturulur (kullanıcının doğrudan ekleme yetkisi yok; D51)
-  const { data: project, error } = await adminClient()
-    .from("projects")
-    .insert({
-      user_id: s.user.id,
-      title: body.title,
-      work_type: body.workType,
-      academic_level: body.level,
-      discipline: body.discipline,
-      language: body.language,
-      citation_style: body.citationStyle,
-      topic: body.topic,
-      keywords: body.keywords,
-      context: { methodology: body.methodology, university: body.university, targetJournal: body.targetJournal, ...(body.workType === "grant_proposal" ? { program: body.program ?? "other" } : {}) },
-    })
-    .select()
-    .single();
-  if (error || !project) throw error ?? new Error("Proje oluşturulamadı");
-
-  const roadmap = buildRoadmap({ workType: body.workType, level: body.level, methodology: body.methodology, program: body.program });
-  const { error: stErr } = await s.supabase.from("project_stages").insert(
-    roadmap.map((st, idx) => ({ project_id: project.id, user_id: s.user.id, key: st.key, title: translate(uiLocale, st.title), description: translate(uiLocale, st.description), position: idx })),
-  );
-  if (stErr) {
-    await s.supabase.from("projects").delete().eq("id", project.id);
-    throw stErr;
-  }
-  if (body.topic) {
-    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `${pick({ tr: "Araştırma konusu", en: "Research topic", de: "Forschungsthema" }, uiLocale)}: ${body.topic}`, source: "user", pinned: true });
-  }
+  const project = await createProject(s, { ...body, research: body.research ? readResearchPrefs({ research: body.research }) : undefined }, uiLocale);
   return json({ project }, 201);
 });

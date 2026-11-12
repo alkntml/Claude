@@ -25,6 +25,22 @@ export const ASSISTANT_ACTIONS = {
   fix_claim: { label: "Kaynakla düzelt", instruction: "Verilen paragraftaki [KAYNAK GEREKLİ] işaretli iddiaları KAYNAKLAR listesindeki uygun çalışmalarla destekle ve işareti kaldır. Uygun kaynak yoksa o iddiayı kaynak gerektirmeyecek biçimde yumuşat veya çıkar. Paragraftaki mevcut atıfları ve anlamı koru. Yalnızca düzeltilmiş paragrafı tek bir :::taslak bloğunda ver." },
   reduce_repetition: { label: "Tekrarları azalt", instruction: "Metindeki tekrarları gider: aynı fikri yeniden anlatan cümleleri birleştir veya çıkar; tekrar eden kalıp ifadeleri ve aynı geçiş ifadesiyle başlayan cümleleri çeşitlendir; her paragrafın yeni bir bilgi eklemesini sağla. Anlamı, bilimsel içeriği, başlıkları ve tüm [[kaynak:…]] atıflarını (sayfa bilgileriyle) aynen koru; yeni bilgi veya kaynak ekleme. Sonucu tek bir :::taslak bloğunda ver; blok dışında neleri değiştirdiğini en fazla 4 maddeyle yaz." },
   reviewer_response: { label: "Hakem yorumlarına cevap", instruction: "SEÇİLİ METİN olarak verilen editör ve hakem yorumlarına, çalışmanın mevcut hâline (ÜZERİNDE ÇALIŞILAN BÖLÜM ve DİĞER BÖLÜMLERİN DURUMU) dayanarak editöre hitaben, madde madde bir cevap mektubu (response to reviewers) hazırla. Kısa bir teşekkür paragrafıyla başla; sonra her hakem ve her yorum için sırasıyla: **Yorum** (kısaltılmış alıntı), **Yanıt** (nazik, somut, gerekçeli), **Yapılan değişiklik** (hangi bölümde ne değişti). Haklı yorumları kabul et; katılmadığın yorumu bilimsel gerekçeyle ve saygılı biçimde açıkla. Metinde henüz yapılmamış bir değişikliği yapılmış gibi YAZMA: [YAPILACAK: …] ile işaretle. Sayfa ve satır numarası uydurma, [s. __] bırak. Yeni kaynak gerekiyorsa yalnızca KAYNAKLAR listesindekileri kullan; uygun kaynak yoksa bunu belirt. Yorumlar hangi dildeyse mektubu o dilde yaz. Mektubu tek bir :::taslak bloğunda ver; blok dışında, metinde yapılması gereken en önemli 3–6 değişikliği öncelik sırasıyla madde madde yaz." },
+  // D149: seçim menüsü — yazıyı güçlendir, akademik üslup, dönüştür (seçili metin üzerinde çalışır)
+  fluency: { label: "Akıcılığı artır", instruction: "Seçili metnin akıcılığını artır: cümle geçişlerini, bağlaçları ve ritmi iyileştir; anlamı değiştirme. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  rephrase: { label: "Yeniden ifade et", instruction: "Seçili metni aynı anlamı koruyarak farklı sözcük ve cümle yapılarıyla yeniden ifade et. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  simplify: { label: "Basitleştir", instruction: "Seçili metni akademik düzeyi düşürmeden daha sade ve anlaşılır hâle getir: uzun cümleleri böl, gereksiz karmaşıklığı kaldır. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  strengthen_argument: { label: "Argümanı güçlendir", instruction: "Seçili metindeki argümanı güçlendir: iddia–gerekçe–kanıt bağını netleştir, mantıksal boşlukları kapat. Yeni kanıt gerekiyorsa yalnızca KAYNAKLAR listesindeki çalışmalara atıf yap; uygun kaynak yoksa [KAYNAK GEREKLİ] yaz. Atıf işaretlerini koru; veri veya bulgu uydurma. Sonucu tek bir :::taslak bloğunda ver." },
+  counter_argument: { label: "Karşı argüman ekle", instruction: "Seçili metindeki görüşe akademik bir karşı argüman ve buna kısa bir yanıt ekle (metnin sonuna, yeni bir paragraf olarak). Karşı görüşü yalnızca KAYNAKLAR listesindeki çalışmalara dayandır; uygun kaynak yoksa [KAYNAK GEREKLİ] yaz. Mevcut metni ve atıflarını koru; veri veya bulgu uydurma. Sonucu (mevcut metin + eklenen paragraf) tek bir :::taslak bloğunda ver." },
+  formal: { label: "Resmiliği artır", instruction: "Seçili metnin üslubunu daha resmî ve akademik yap: gündelik ifadeleri, birinci tekil şahsı ve abartılı nitelemeleri kaldır. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  technical: { label: "Teknik hassasiyet", instruction: "Seçili metinde terimleri alanın teknik terminolojisine göre kesinleştir; belirsiz ifadeleri (ör. ‘bazı’, ‘çok’) ölçülebilir veya tanımlı ifadelerle değiştir; metinde olmayan sayı ekleme, gerekirse [VERİ GİRİLECEK] kullan. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  assertive: { label: "İddia güvenini artır", instruction: "Seçili metinde, atıfla desteklenen iddiaları gereksiz çekinceler olmadan daha net ve kararlı ifade et. Atıfsız iddiaları güçlendirme. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  hedge: { label: "İddia güvenini yumuşat", instruction: "Seçili metindeki kesin iddiaları akademik temkinle yumuşat (ör. ‘göstermektedir’ yerine ‘işaret etmektedir’, ‘…olabilir’). Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  tense_past: { label: "Geçmiş zamana çevir", instruction: "Seçili metnin zaman kipini geçmiş zamana çevir (ör. yöntem ve bulgular için ‘…yapılmıştır’, ‘…bulunmuştur’). Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  tense_present: { label: "Şimdiki/geniş zamana çevir", instruction: "Seçili metnin zaman kipini geniş/şimdiki zamana çevir (ör. ‘…göstermektedir’, ‘…ele alınmaktadır’). Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  to_bullets: { label: "Madde listesine dönüştür", instruction: "Seçili metni anlamı koruyarak madde işaretli bir listeye dönüştür (her madde ‘- ’ ile başlasın). Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  to_numbered: { label: "Numaralı listeye dönüştür", instruction: "Seçili metni anlamı koruyarak numaralı bir listeye dönüştür (1. 2. 3.). Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  to_table: { label: "Tabloya dönüştür", instruction: "Seçili metindeki bilgileri Markdown tablosuna dönüştür; uygun sütun başlıkları seç, tablonun üstüne italik ‘Tablo N. Başlık’ satırı yaz. Metinde olmayan değer ekleme; boş hücreye [VERİ GİRİLECEK] yaz. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
+  to_prose: { label: "Düzyazıya dönüştür", instruction: "Seçili liste veya tabloyu akıcı akademik paragraf(lar)a dönüştür. Atıf işaretlerini ([[kaynak:…]]) aynen koru; yeni kaynak, veri veya bulgu ekleme. Sonucu tek bir :::taslak bloğunda ver." },
   discussion: { label: "Tartışma geliştir", instruction: "Kullanıcının bulgularını literatürle karşılaştırarak tartışma paragrafları yaz; destekleyen ve çelişen çalışmaları göster. Bulgu uydurma." },
 } as const;
 
@@ -58,6 +74,10 @@ export const ACTION_TIER: Record<AssistantAction, "fast" | "balanced" | "default
   hypotheses: "default",
   interpret: "default",
   discussion: "default",
+  // D149: seçim menüsü
+  fluency: "fast", rephrase: "fast", simplify: "fast", formal: "fast", technical: "balanced", assertive: "fast", hedge: "fast",
+  tense_past: "fast", tense_present: "fast", to_bullets: "fast", to_numbered: "fast", to_table: "fast", to_prose: "fast",
+  strengthen_argument: "balanced", counter_argument: "balanced",
   consistency: "default",
   reviewer_response: "default",
   journal_checklist: "default",
@@ -74,6 +94,8 @@ export const ACTION_EFFORT: Partial<Record<AssistantAction, "low" | "medium" | "
   academic_tone: "low",
   reduce_repetition: "low",
   from_notes: "low",
+  fluency: "low", rephrase: "low", simplify: "low", formal: "low", assertive: "low", hedge: "low",
+  tense_past: "low", tense_present: "low", to_bullets: "low", to_numbered: "low", to_table: "low", to_prose: "low",
 };
 
 export const OUTPUT_PROTOCOL = `ÇIKTI BİÇİMİ:

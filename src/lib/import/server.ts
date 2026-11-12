@@ -40,15 +40,13 @@ function findExisting(p: ParsedRef, sources: any[]): any | null {
   return null;
 }
 
-export async function importDocx(db: SupabaseClient, params: { projectId: string; userId: string; buffer: Buffer; base: number; max: number; dropTitle?: string | null }): Promise<{ nodes: JSONNode[]; sources: any[]; report: ImportReport }> {
-  const mammoth = await import("mammoth");
-  const html = await mammoth.convertToHtml({ buffer: params.buffer }, { styleMap: ["p[style-name='Title'] => h1:fresh", "p[style-name='Subtitle'] => h2:fresh"] });
-  const { nodes: raw, stats } = htmlToNodes(html.value);
-  const { body, refs: lines } = splitReferences(raw);
+/**
+ * Kaynakça satırlarını projeye ekler (mevcutlarla eşleştirir, DOI varsa kayıt otoritesinden künye) ve metin içi atıf
+ * bağlama anahtarlarını döndürür. Word içe aktarma (tek bölüm) ve tüm çalışmayı içe aktarma (D149) ortak kullanır.
+ */
+export async function addReferenceLines(db: SupabaseClient, projectId: string, userId: string, lines: string[]): Promise<{ keys: RefKey[]; added: any[]; reused: number; unverified: string[]; total: number }> {
   const parsed = lines.slice(0, MAX_REFS).map(parseReference);
-
-  // 1) Mevcut kaynaklarla eşleştir, kalanları künyeleriyle hazırla (DOI → kayıt otoritesi)
-  const { data: before } = await db.from("sources").select("*").eq("project_id", params.projectId).eq("user_id", params.userId);
+  const { data: before } = await db.from("sources").select("*").eq("project_id", projectId).eq("user_id", userId);
   const existing = before ?? [];
   const reused = new Map<number, any>();
   parsed.forEach((p, i) => { const s = findExisting(p, existing); if (s) reused.set(i, s); });
@@ -67,9 +65,8 @@ export async function importDocx(db: SupabaseClient, params: { projectId: string
     return safe.success ? safe.data : null;
   });
   const valid = inputs.filter((x): x is NonNullable<typeof x> => !!x);
-  const added = valid.length ? await addSourcesToProject(db, params.projectId, params.userId, valid) : { sources: [] as any[] };
-
-  // 2) Her kaynak satırını bir proje kaynağına bağla (yeni eklenen veya mevcut)
+  const added = valid.length ? await addSourcesToProject(db, projectId, userId, valid) : { sources: [] as any[] };
+  // Her kaynak satırını bir proje kaynağına bağla (yeni eklenen veya mevcut)
   const pool = [...existing, ...added.sources];
   const keys: RefKey[] = [];
   const unverified: string[] = [];
@@ -79,18 +76,33 @@ export async function importDocx(db: SupabaseClient, params: { projectId: string
     keys.push({ id: s.id, families: p.families.length ? p.families : (s.authors ?? []).map((a: any) => a.family ?? a.literal ?? "").filter(Boolean), year: p.year ?? s.year ?? null, suffix: p.yearSuffix || undefined });
     if (!reused.has(i) && !s.verified) unverified.push(p.raw.slice(0, 160));
   });
+  return { keys, added: added.sources, reused: reused.size, unverified: unverified.slice(0, 20), total: parsed.length };
+}
 
-  // 3) Başlıkları çalışmaya oturt, atıfları bağla
+/** Word belgesinden düğümler (başlıklar, tablolar, görseller) */
+export async function docxToNodes(buffer: Buffer): Promise<{ nodes: JSONNode[]; images: number }> {
+  const mammoth = await import("mammoth");
+  const html = await mammoth.convertToHtml({ buffer }, { styleMap: ["p[style-name='Title'] => h1:fresh", "p[style-name='Subtitle'] => h2:fresh"] });
+  const { nodes, stats } = htmlToNodes(html.value);
+  return { nodes, images: stats.images };
+}
+
+export async function importDocx(db: SupabaseClient, params: { projectId: string; userId: string; buffer: Buffer; base: number; max: number; dropTitle?: string | null }): Promise<{ nodes: JSONNode[]; sources: any[]; report: ImportReport }> {
+  const { nodes: raw, images } = await docxToNodes(params.buffer);
+  const { body, refs: lines } = splitReferences(raw);
+  const r = await addReferenceLines(db, params.projectId, params.userId, lines);
+  // Başlıkları çalışmaya oturt, atıfları bağla
   const dropTitle = params.dropTitle ? fold(params.dropTitle) : null;
   const fitted = fitHeadings(body, { base: params.base, max: params.max, dropTitle: dropTitle ? (t) => fold(t) === dropTitle : undefined });
-  const { nodes, report } = linkCitations(fitted, keys);
+  const { nodes, report } = linkCitations(fitted, r.keys);
   return {
     nodes,
-    sources: added.sources,
+    sources: r.added,
     report: {
-      refsTotal: parsed.length, refsAdded: added.sources.length, refsReused: reused.size, refsUnverified: unverified.slice(0, 20),
-      linked: report.linked, unmatched: report.unmatched, images: stats.images, headings: nodes.filter((n) => n.type === "heading").length,
+      refsTotal: r.total, refsAdded: r.added.length, refsReused: r.reused, refsUnverified: r.unverified,
+      linked: report.linked, unmatched: report.unmatched, images, headings: nodes.filter((n) => n.type === "heading").length,
     },
   };
 }
+
 /* eslint-enable @typescript-eslint/no-explicit-any */

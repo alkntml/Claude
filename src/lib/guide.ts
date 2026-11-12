@@ -89,6 +89,18 @@ export const GUIDE: GuideChapter[] = [
         s("Başlıklar bölüm ve alt başlıklara, tablolar tablolara dönüşür.", "Headings become sections and subheadings; tables stay tables."),
         s("Kaynakçanız ayrıştırılıp doğrulanır, kaynaklara eklenir ve metindeki atıflar bu kaynaklara bağlanır.", "Your reference list is parsed, verified and added to sources, and in-text citations are linked to them."),
       ], tip: s("Belgenizden öğrenilen kavram ve kararları asistanın hatırlaması için Hafıza sekmesinde “Belgeden öğren”i de kullanabilirsiniz.", "To let the assistant remember concepts and decisions from your document, also use “Learn from document” in the Memory tab.") },
+      { id: "tum-calisma", title: s("Tüm çalışmanızı içe aktarma", "Importing your whole work"), where: s("Yeni çalışma → “Mevcut çalışmamı içe aktar” veya çalışma ekranında üstte “İçe aktar”", "New work → “Import my existing work”, or “Import” at the top of the workspace"), steps: [
+        s("Word (.docx), PDF veya metin dosyanızı seçin.", "Choose your Word (.docx), PDF or text file."),
+        s("Yeni çalışmada yapay zekâ türü, seviyeyi, konuyu ve atıf stilini çıkarır; metniniz yeniden yazılmaz.", "For a new work, the AI identifies type, level, topic and citation style; your text is not rewritten."),
+        s("En üst düzey başlıklarınız bölüm olur; kaynakça doğrulanıp eklenir, atıflar bağlanır ve çalışma ekranı açılır.", "Your top-level headings become sections; the reference list is verified and added, citations are linked and the workspace opens."),
+        s("Var olan çalışmada boş bölümler doldurulur, diğerleri yeni bölüm olarak eklenir; dolu bölümlerin üzerine yazılmaz.", "In an existing work, empty sections are filled and the rest are added as new sections; sections with text are never overwritten."),
+      ], tip: s("En iyi sonuç Word ile alınır; PDF’te başlıklar yaklaşık çıkarılır.", "Word gives the best result; in PDFs headings are detected approximately.") },
+      { id: "kaynak-ice", title: s("Zotero, Mendeley, PDF ve DOI ile kaynak ekleme", "Adding sources from Zotero, Mendeley, PDF and DOI"), where: s("Çalışma ekranında üstte “İçe aktar”", "“Import” at the top of the workspace"), steps: [
+        s("Zotero: kullanıcı kimliğinizi ve yalnızca okuma izinli API anahtarınızı girin; anahtar saklanmaz.", "Zotero: enter your user ID and a read-only API key; the key is not stored."),
+        s("Mendeley: kaynaklarınızı BibTeX veya RIS olarak dışa aktarıp dosyayı yükleyin.", "Mendeley: export your references as BibTeX or RIS and upload the file."),
+        s("PDF: makale PDF’lerinizi seçin; künye doğrulanır, tam metin okunur.", "PDF: choose your article PDFs; the reference is verified and the full text is read."),
+        s("DOI, PMID veya arXiv kimliği ile tek kaynak ekleyebilirsiniz.", "You can add a single source by DOI, PMID or arXiv ID."),
+      ], tip: s("Kaynak tercihlerinizi (yayın yılı, en az atıf, ön baskılar, veri tabanı taraması) Proje ayarları’ndan değiştirebilirsiniz.", "You can change your source preferences (publication year, minimum citations, preprints, database search) in Project settings.") },
     ],
   },
   {

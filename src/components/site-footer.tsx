@@ -10,6 +10,7 @@ const FOOTER_GUIDES: [string, string, string, string][] = [
   ["literatur-taramasi-nasil-yapilir", "how-to-write-a-literature-review", "Literatür taraması", "literaturrecherche-literaturuebersicht-schreiben"],
   ["intihal-nasil-onlenir", "how-to-avoid-plagiarism", "İntihalden kaçınma", "plagiat-vermeiden"],
   ["tubitak-2209-a-basvurusu-nasil-hazirlanir", "tubitak-2209-a-research-project-application-guide", "TÜBİTAK 2209-A başvurusu", "tubitak-2209-a-antrag-leitfaden"],
+  ["tubitak-2242-proje-yarismasi-rehberi", "tubitak-2242-university-research-project-competition-guide", "TÜBİTAK 2242 proje yarışması", "tubitak-2242-studentischer-projektwettbewerb-leitfaden"],
 ];
 
 export function SiteFooter() {

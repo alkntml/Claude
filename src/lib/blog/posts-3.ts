@@ -175,7 +175,9 @@ Talep ettiğiniz her kalemin yöntemdeki hangi iş için gerekli olduğunu gerek
 
 ## Academiana ile proje önerisi
 
-Academiana’da "TÜBİTAK / BAP proje önerisi" çalışma türünü seçip programınızı (2209-A, 2209-B, 1001, 3501, BAP veya burs) belirlediğinizde özet, özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleri hazır gelir. Asistan literatür boşluğunu gerçek kaynaklarla göstermenize yardımcı olur, iş-zaman çizelgesi ve risk tablosunu tablo hâlinde taslaklar. Bütçe tutarı ve program kuralı uydurmaz; bunları sizin girmeniz ve çağrı duyurusundan kontrol etmeniz istenir.`,
+Academiana’da "TÜBİTAK / BAP proje önerisi" çalışma türünü seçip programınızı (2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP veya burs) belirlediğinizde özet, özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleri hazır gelir. Asistan literatür boşluğunu gerçek kaynaklarla göstermenize yardımcı olur, iş-zaman çizelgesi ve risk tablosunu tablo hâlinde taslaklar. Bütçe tutarı ve program kuralı uydurmaz; bunları sizin girmeniz ve çağrı duyurusundan kontrol etmeniz istenir.
+
+Diğer TÜBİTAK programları için rehberlerimiz: [1002-A Hızlı Destek](/blog/tubitak-1002-a-hizli-destek-basvurusu), [3005 Sosyal ve Beşeri Bilimler](/blog/tubitak-3005-sosyal-bilimler-proje-onerisi), [2242 Proje Yarışması](/blog/tubitak-2242-proje-yarismasi-rehberi) ve [2204-A Lise Araştırma Projeleri](/blog/tubitak-2204-a-lise-proje-nasil-hazirlanir).`,
   },
   {
     slug: "dergipark-tr-dizin-yok-tez-kaynak-arama",

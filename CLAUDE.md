@@ -33,7 +33,7 @@ Next.js 15.5 (App Router, Node runtime) · React 19.1 · TypeScript (strict) · 
 npm run dev          # geliştirme
 npm run build        # üretim derlemesi (push öncesi çalıştır)
 npm run typecheck    # tsc --noEmit
-npm test             # 531 test: birim + PGlite üzerinde RLS entegrasyon
+npm test             # 534 test: birim + PGlite üzerinde RLS entegrasyon
 npx next lint
 npm run build:demo   # tarayıcı demosu -> demo/dist/index.html (Artifact olarak yayınlanır)
 ```
@@ -44,7 +44,7 @@ Push öncesi asgari kontrol: `npx tsc --noEmit && npm test && npx next lint` (b�
 src/app/                 Sayfalar + API rotaları
   (app)/                 Oturum gerektiren: panel, yeni, kaynaklar, dosyalar, anketler, konu-bul, hesap, kurum, yonetim
   a/[token]/             Herkese açık anket formu (kimlik bilgisi toplanmaz)
-  blog/ + blog/[slug]/   Blog (34 yazı, statik üretim, BlogPosting + Breadcrumb JSON-LD)
+  blog/ + blog/[slug]/   Blog (38 yazı, statik üretim, BlogPosting + Breadcrumb JSON-LD)
   proje/[id]/            Çalışma alanı (+ /kalite)
   paylasim/[token]/      Danışman salt okunur görünümü
   api/                   REST uçları (aşağıda)
@@ -72,7 +72,7 @@ src/lib/
   stats/                 dist.ts (dağılımlar), tests.ts (t, ANOVA, regresyon…), apa.ts (APA rapor)
   sources/bib.ts         BibTeX/RIS/CSL-JSON; sources/journals.ts dergi önerisi
   export/presentation.ts Savunma sunumu (.pptx); export/format.ts biçim şablonları
-  blog/                  Blog yazıları (posts-1..5.ts, İngilizceleri en-1..5.ts, Almancaları de-1..5.ts; basit Markdown gövde), index.ts (liste, ayrıştırıcı, ilgili yazılar)
+  blog/                  Blog yazıları (posts-1..6.ts, İngilizceleri en-1..6.ts, Almancaları de-1..6.ts; basit Markdown gövde), index.ts (liste, ayrıştırıcı, ilgili yazılar)
   seo.ts                 Dil bazlı adresler (/en öneki), localizedPath, bot tanıma
   seo-pages.ts           Herkese açık sayfaların TR/EN başlık, açıklama, anahtar kelimeleri
   seo-server.ts          buildMeta/pageMeta: canonical, hreflang, Open Graph, Twitter, robots

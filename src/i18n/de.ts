@@ -3717,4 +3717,12 @@ export const DE: Dict = {
   "İstatistik, grafik, anket": "Statistik, Diagramme, Umfragen",
   "Denetim ve teslim": "Prüfung und Abgabe",
   "İddia denetimi, Word/PDF/LaTeX": "Aussagenprüfung, Word/PDF/LaTeX",
+  // D153: TÜBİTAK programları
+  "TÜBİTAK 1002-A Hızlı Destek Modülü": "TÜBİTAK 1002-A Schnellförderungsmodul",
+  "TÜBİTAK 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler": "TÜBİTAK 3005 Innovative Lösungen in den Sozial- und Geisteswissenschaften",
+  "TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması": "TÜBİTAK 2204-A Forschungsprojektwettbewerb für Schülerinnen und Schüler",
+  "TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları": "TÜBİTAK 2242 Forschungsprojektwettbewerbe für Studierende",
+  "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, burs": "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, Stipendium",
+  // D153
+  "TÜBİTAK 2242 proje yarışması": "TÜBİTAK-2242-Projektwettbewerb",
 };

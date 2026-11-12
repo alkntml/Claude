@@ -23,7 +23,7 @@ export const WORK_TYPES: WorkTypeMeta[] = [
   { id: "capstone", title: "Bitirme projesi", short: "Proje ve rapor", description: "Tasarım, uygulama ve değerlendirme süreçleriyle bitirme projesi raporu.", icon: "Rocket", levels: ["bachelor", "master"] },
   { id: "literature_review", title: "Literatür taraması", short: "Sistematik / anlatı derleme", description: "Arama stratejisi, tarama ve tematik sentez ile derleme çalışması.", icon: "Library", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "research_proposal", title: "Araştırma önerisi", short: "Research proposal", description: "Tez önerisi, proje başvurusu veya burs için araştırma önerisi.", icon: "Lightbulb", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
-  { id: "grant_proposal", title: "TÜBİTAK / BAP proje önerisi", short: "2209-A, 2209-B, 1001, 3501, BAP, burs", description: "Özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleriyle proje başvurusu hazırlayın.", icon: "Landmark", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
+  { id: "grant_proposal", title: "TÜBİTAK / BAP proje önerisi", short: "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, burs", description: "Özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleriyle proje başvurusu hazırlayın.", icon: "Landmark", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "text_editing", title: "Akademik metin düzenleme", short: "Dil, yapı ve atıf", description: "Mevcut metninizin dilini, yapısını ve atıflarını geliştirin.", icon: "PenLine", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "source_research", title: "Kaynak ve literatür araştırması", short: "Gerçek veri tabanları", description: "OpenAlex, Crossref, PubMed ve diğer veri tabanlarında doğrulanmış kaynak bulun.", icon: "SearchCheck", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
 ];
@@ -53,12 +53,30 @@ export const GRANT_PROGRAMS = [
   { id: "tubitak_2209a", label: "TÜBİTAK 2209-A Üniversite Öğrencileri Araştırma Projeleri" },
   { id: "tubitak_2209b", label: "TÜBİTAK 2209-B Sanayiye Yönelik Bitirme Projeleri" },
   { id: "tubitak_1001", label: "TÜBİTAK 1001 Araştırma Projeleri" },
+  { id: "tubitak_1002a", label: "TÜBİTAK 1002-A Hızlı Destek Modülü" },
+  { id: "tubitak_3005", label: "TÜBİTAK 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler" },
+  { id: "tubitak_2204a", label: "TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması" },
+  { id: "tubitak_2242", label: "TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları" },
   { id: "tubitak_3501", label: "TÜBİTAK 3501 Kariyer Geliştirme Programı" },
   { id: "bap", label: "Üniversite BAP projesi" },
   { id: "scholarship", label: "Burs başvurusu için araştırma önerisi (ör. 2211, 2214)" },
   { id: "other", label: "Diğer kurum / fon" },
 ] as const;
 export type GrantProgram = (typeof GRANT_PROGRAMS)[number]["id"];
+
+/**
+ * Programa özel yazım notları (D153): yapay zekâ bağlamına girer. Yalnızca programın genel niteliği; tutar, süre,
+ * puanlama gibi her çağrıda değişebilen ayrıntılar yazılmaz (kullanıcıya çağrı duyurusunu kontrol etmesi söylenir).
+ */
+export const PROGRAM_NOTES: Partial<Record<GrantProgram, string>> = {
+  tubitak_2209a: "Lisans öğrencisi araştırma projesi; danışman eşliğinde, öğrenci düzeyine uygun, gerçekçi ve ölçülebilir hedefler.",
+  tubitak_1001: "ARDEB araştırma projesi; özgün değer, yöntem, proje yönetimi (iş paketleri, risk), yaygın etki ve gerekçeli bütçe düzeni.",
+  tubitak_1002a: "ARDEB Hızlı Destek: kısa süreli, sınırlı bütçeli, odaklı bir araştırma (ör. ön çalışma, fizibilite, acil ihtiyaç). Kapsamı dar tut; iş paketleri az ve kısa, hedefler kısa sürede ulaşılabilir olsun; neden hızlı destek gerektiğini gerekçelendir.",
+  tubitak_3005: "Sosyal ve beşeri bilimlerde toplumsal bir soruna yenilikçi çözüm önerisi. Sorunu ve etkilenen kesimi verilerle tanımla; çözümün yenilikçi yönünü, uygulanabilirliğini ve toplumsal/kamu politikasına katkısını öne çıkar; nitel/nicel/karma yöntemi soruna göre gerekçelendir.",
+  tubitak_2204a: "Lise öğrencileri araştırma projesi yarışması; danışman öğretmen eşliğinde. Proje raporu sade ve anlaşılır olmalı: problem, amaç, yöntem, bulgular, sonuç ve öneriler; bilimsel yöntem ve etik kurallar (insan/hayvan deneyleri, izinler) vurgulanır. Yaş düzeyine uygun, kendi yapılmış deney/gözlem.",
+  tubitak_2242: "Üniversite öğrencileri araştırma proje yarışması (tematik alanlar); fikir ya da tamamlanmış proje. Problem, özgünlük, yöntem, uygulanabilirlik ve yaygın etki; sergi/sunum için kısa ve görsel anlatım.",
+  bap: "Üniversite BAP projesi; üniversitenin kendi BAP yönergesi ve form şablonu esas alınır.",
+};
 
 export interface RoadmapInput {
   workType: WorkType;
@@ -80,8 +98,8 @@ export interface RoadmapStage {
  */
 export function buildRoadmap({ workType, level, methodology = "quantitative", program }: RoadmapInput): RoadmapStage[] {
   let keys = [...BASE[workType]];
-  // Burs başvurusu araştırma önerilerinde bütçe bölümü bulunmaz
-  if (workType === "grant_proposal" && program === "scholarship") keys = keys.filter((k) => k !== "grant_budget");
+  // Burs başvurusu ve lise/öğrenci yarışmalarında (2204-A, 2242) bütçe bölümü bulunmaz
+  if (workType === "grant_proposal" && (program === "scholarship" || program === "tubitak_2204a" || program === "tubitak_2242")) keys = keys.filter((k) => k !== "grant_budget");
 
   if (workType === "thesis" || workType === "research_proposal") {
     if (methodology === "qualitative") {

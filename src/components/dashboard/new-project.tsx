@@ -34,7 +34,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [language, setLanguage] = useState<"tr" | "en" | "de">(locale);
   const [style, setStyle] = useState(defaultStyle);
   const [university, setUniversity] = useState("");
-  const [program, setProgram] = useState<GrantProgram>("tubitak_2209a");
+  const [program, setProgram] = useState<GrantProgram>(() => GRANT_PROGRAMS.find((g) => g.id === params.get("program"))?.id ?? "tubitak_2209a");
   const [loading, setLoading] = useState(false);
   const [prefs, setPrefs] = useState<ResearchPrefs>(DEFAULT_RESEARCH_PREFS);
   const [structure, setStructure] = useState<"standard" | "smart" | "free">("smart");

@@ -3725,4 +3725,12 @@ export const EN: Record<string, string> = {
   "İstatistik, grafik, anket": "Statistics, charts, surveys",
   "Denetim ve teslim": "Review and submission",
   "İddia denetimi, Word/PDF/LaTeX": "Claim audit, Word/PDF/LaTeX",
+  // D153: TÜBİTAK programları
+  "TÜBİTAK 1002-A Hızlı Destek Modülü": "TÜBİTAK 1002-A Rapid Support Module",
+  "TÜBİTAK 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler": "TÜBİTAK 3005 Innovative Solutions in Social Sciences and Humanities",
+  "TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması": "TÜBİTAK 2204-A High School Students Research Projects Competition",
+  "TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları": "TÜBİTAK 2242 University Students Research Project Competitions",
+  "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, burs": "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, scholarship",
+  // D153
+  "TÜBİTAK 2242 proje yarışması": "TÜBİTAK 2242 project competition",
 };

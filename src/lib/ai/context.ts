@@ -6,7 +6,7 @@ import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
-import { GRANT_PROGRAMS, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
+import { GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -97,7 +97,7 @@ export async function buildContext(params: {
   if (project.keywords?.length) head.push(`Anahtar kelimeler: ${project.keywords.join(", ")}`);
   if (ctx.university) head.push(`Üniversite / kılavuz: ${ctx.university}`);
   if (ctx.targetJournal) head.push(`Hedef dergi: ${ctx.targetJournal}`);
-  if (ctx.program) head.push(`Başvurulan program: ${GRANT_PROGRAMS.find((p) => p.id === ctx.program)?.label ?? ctx.program}. Başvuru formunun bölüm düzenine uy; programın üst sınırları, puanlama ölçütleri veya kuralları hakkında bilmediğin ayrıntıyı uydurma, kullanıcıya çağrı duyurusunu kontrol etmesini söyle.`);
+  if (ctx.program) head.push(`Başvurulan program: ${GRANT_PROGRAMS.find((p) => p.id === ctx.program)?.label ?? ctx.program}. ${PROGRAM_NOTES[ctx.program as keyof typeof PROGRAM_NOTES] ?? ""} Başvuru formunun bölüm düzenine uy; programın üst sınırları, puanlama ölçütleri veya kuralları hakkında bilmediğin ayrıntıyı uydurma, kullanıcıya çağrı duyurusunu kontrol etmesini söyle.`);
 
   // Öğrencinin kurgusu (D67): yazım bu plana göre ilerler (bölüme özel not değişken kısımda)
   const plan = blueprintContext(bp, null);

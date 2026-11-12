@@ -169,7 +169,9 @@ Justify every item by the task in the method it serves. Base amounts on current 
 
 ## Proposals with Academiana
 
-Choose the "TÜBİTAK / BAP proposal" work type in Academiana and select your programme (2209-A, 2209-B, 1001, 3501, BAP or a scholarship) to get summary, originality, methods, project management, impact and budget sections. The assistant helps you show the literature gap with real sources and drafts the work plan and risk table as tables. It never invents budget amounts or programme rules; you enter them and check the call announcement.`,
+Choose the "TÜBİTAK / BAP proposal" work type in Academiana and select your programme (2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP or a scholarship) to get summary, originality, methods, project management, impact and budget sections. The assistant helps you show the literature gap with real sources and drafts the work plan and risk table as tables. It never invents budget amounts or programme rules; you enter them and check the call announcement.
+
+Guides to other TÜBİTAK programmes: [1002-A Rapid Support](/en/blog/tubitak-1002-a-rapid-support-application-guide), [3005 Social Sciences and Humanities](/en/blog/tubitak-3005-social-sciences-innovative-solutions-proposal), [2242 Project Competition](/en/blog/tubitak-2242-university-research-project-competition-guide) and [2204-A High School Research Projects](/en/blog/tubitak-2204-a-high-school-research-project-guide).`,
   },
   "dergipark-tr-dizin-yok-tez-kaynak-arama": {
     slug: "how-to-search-dergipark-tr-dizin-yok-thesis-center",

@@ -762,3 +762,6 @@ Manşet ortalandı; eğik ve renkli degrade vurgu kaldırıldı (dik serif, kal�
 ## D152 — “20 kat” ifadesi (2026-11-14)
 Site sahibi kendi kullanımında yaklaşık 20 kat hızlandığını beyan etti. Manşet altına kurucunun kendi deneyimi olarak, kişiye bağlı tırnaklı beyan biçiminde eklendi (genel performans garantisi olarak değil). Ölçümlü kullanıcı testi yapılırsa genel ifadeye çevrilebilir.
 Güncelleme: site sahibinin isteğiyle ifade kaldırıldı.
+
+## D153 — Yeni TÜBİTAK programları + program rehberleri (2026-11-12)
+2209-A rehberinin ilgi görmesi üzerine benzer dört program eklendi: 1002-A Hızlı Destek, 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler, 2204-A Lise Öğrencileri Araştırma Projeleri, 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları (`GRANT_PROGRAMS`). Her programın yapay zekâ bağlamına giren kısa notu var (`PROGRAM_NOTES` → context.ts). 2204-A ve 2242 yarışma olduğu için bütçe bölümü çıkarılır (burs gibi). Sihirbaz `?program=` parametresini okur. Her program için TR/EN/DE blog rehberi (posts-6, en-6, de-6); 2209-A yazısından bu rehberlere iç bağlantı, alt bilgiye 2242 bağlantısı. Tutar, süre, takvim gibi çağrıya göre değişen ayrıntılar yazılmadı; metinler güncel çağrı duyurusunun kontrol edilmesini söyler (uydurma yok ilkesi). Test: tests/grant-programs.test.ts.

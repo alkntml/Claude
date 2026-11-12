@@ -173,7 +173,9 @@ Begründen Sie jeden Posten mit der Aufgabe in der Methode, der er dient. Stütz
 
 ## Anträge mit Academiana
 
-Wählen Sie in Academiana die Art „TÜBİTAK-/BAP-Antrag“ und Ihr Programm (2209-A, 2209-B, 1001, 3501, BAP oder ein Stipendium); Sie erhalten Abschnitte zu Zusammenfassung, Originalität, Methode, Projektmanagement, Wirkung und Budget. Der Assistent hilft, die Forschungslücke mit echten Quellen zu belegen, und entwirft Arbeitsplan und Risikotabelle als Tabellen. Budgetbeträge oder Programmregeln erfindet er nie; diese tragen Sie ein und prüfen sie anhand der Ausschreibung.`,
+Wählen Sie in Academiana die Art „TÜBİTAK-/BAP-Antrag“ und Ihr Programm (2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP oder ein Stipendium); Sie erhalten Abschnitte zu Zusammenfassung, Originalität, Methode, Projektmanagement, Wirkung und Budget. Der Assistent hilft, die Forschungslücke mit echten Quellen zu belegen, und entwirft Arbeitsplan und Risikotabelle als Tabellen. Budgetbeträge oder Programmregeln erfindet er nie; diese tragen Sie ein und prüfen sie anhand der Ausschreibung.
+
+Leitfäden zu weiteren TÜBİTAK-Programmen: [1002-A Schnellförderung](/de/blog/tubitak-1002-a-schnellfoerderung-leitfaden), [3005 Sozial- und Geisteswissenschaften](/de/blog/tubitak-3005-sozialwissenschaften-projektantrag), [2242 Projektwettbewerb](/de/blog/tubitak-2242-studentischer-projektwettbewerb-leitfaden) und [2204-A Schülerforschungsprojekte](/de/blog/tubitak-2204-a-schuelerforschungsprojekt-leitfaden).`,
   },
   "dergipark-tr-dizin-yok-tez-kaynak-arama": {
     slug: "dergipark-tr-dizin-yok-recherche",

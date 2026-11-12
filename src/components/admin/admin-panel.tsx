@@ -1,8 +1,9 @@
 "use client";
 import { AlertsTab } from "./alerts";
 import { AutopilotTab } from "./autopilot";
+import { DiscountsTab } from "./discounts";
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket } from "lucide-react";
+import { Activity, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -15,13 +16,14 @@ import { STAGE_LIBRARY } from "@/lib/workflows";
 import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
 import { CostBreakdown, ProductHealth, TrafficTab } from "./insights";
 import { memberCode } from "@/lib/member";
+import { discountedPrice, discountLabel } from "@/lib/discount";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals";
+type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts";
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
-  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift },
+  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift }, { id: "discounts", label: "İndirim kodları", icon: Percent },
 ];
 
 function useRows(resource: string, q = "") {
@@ -68,6 +70,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "errors" && <ErrorsTab />}
         {tab === "locks" && <LocksTab />}
         {tab === "referrals" && <ReferralsTab />}
+        {tab === "discounts" && <DiscountsTab />}
       </motion.div>
     </div>
   );
@@ -270,6 +273,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               <p className="text-sm text-ink-500">{d.profile.email}{d.profile.institution ? ` · ${d.profile.institution}` : ""}</p>
               <div className="mt-2 flex flex-wrap items-center gap-2"><Badge tone="brand">{d.plan?.name ?? d.profile.plan_id}</Badge>{expiryBadge(d.profile)}{d.profile.work_locked && <Badge tone="amber">Kilitli: {d.reasons.join(", ") || "—"}</Badge>}{d.org && <Badge tone="violet">Kurum: {d.org.organizations?.name}</Badge>}</div>
               <p className="mt-2 text-sm">Üye no: <b className="font-mono">{memberCode(d.profile.member_no)}</b></p>
+              {d.discount && <p className="mt-1 rounded-lg bg-emerald-50 px-2 py-1 text-[13px] text-emerald-900">İndirim kodu: <b className="font-mono">{d.discount.code}</b> ({discountLabel(d.discount)}) · {plans.filter((p) => Number(p.price_monthly) > 0 && discountedPrice(Number(p.price_monthly), d.discount, p.id) != null).map((p) => `${p.name}: ${discountedPrice(Number(p.price_monthly), d.discount, p.id)!.toLocaleString("tr-TR")} TL`).join(" · ") || "uygun paket yok"}</p>}
               <p className="mt-1 text-xs text-ink-400">Kayıt: {new Date(d.profile.created_at).toLocaleDateString("tr-TR")} · Sistem kimliği: <span className="font-mono">{d.profile.id}</span></p>
             </div>
             <div className="rounded-2xl border border-ink-100 p-4">
@@ -328,7 +332,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               </div>
               <input className="input mt-2 !py-1.5" placeholder="Not (isteğe bağlı)" value={credit.note} onChange={(e) => setCredit({ ...credit, note: e.target.value })} />
               <Button className="mt-2" size="sm" onClick={() => act({ action: "grant_credits", aiRequests: credit.ai, sourceSearches: credit.search, days: credit.days, note: credit.note }, "Ek hak verildi")}>Hakkı ver</Button>
-              {d.credits.length > 0 && <div className="mt-3 space-y-0.5">{d.credits.map((c: any, i: number) => <p key={i} className="text-[12px] text-ink-500">+{c.amount} {c.kind === "ai_requests" ? "YZ isteği" : "tarama"} · {c.reason} · {c.expires_at ? `${new Date(c.expires_at).toLocaleDateString("tr-TR")}’e kadar` : "süresiz"}</p>)}</div>}
+              {d.credits.length > 0 && <div className="mt-3 space-y-0.5">{d.credits.map((c: any, i: number) => <p key={i} className="text-[12px] text-ink-500">+{c.amount} {c.kind === "ai_requests" ? "YZ isteği" : c.kind === "pages" ? "sayfa" : "tarama"} · {c.reason} · {c.expires_at ? `${new Date(c.expires_at).toLocaleDateString("tr-TR")}’e kadar` : "süresiz"}</p>)}</div>}
             </div>
           </div>
         </div>
@@ -707,12 +711,12 @@ function ReferralsTab() {
     ["Toplam davetle kayıt", d.totals.invited, ""],
     ["Ödül verilen", d.totals.rewarded, "e-postasını doğrulayanlar"],
     ["Doğrulama bekleyen", d.totals.pending, "henüz ödül verilmedi"],
-    ["Bu ay ödül", d.totals.rewardedMonth, `${d.totals.aiGrantedMonth} YZ isteği dağıtıldı`],
+    ["Bu ay ödül", d.totals.rewardedMonth, `${d.totals.aiGrantedMonth} YZ isteği davet edenlere`],
   ];
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-        <span>Ödüller <b>otomatik</b> verilir: davet edilen kişi e-postasını doğruladığında ikisine de {d.settings.ai_requests} YZ isteği + {d.settings.source_searches} tarama ({d.settings.valid_days} gün). Davet eden ayda en fazla {d.settings.monthly_cap} ödül alır.{!d.settings.enabled && " — Kampanya şu an KAPALI (Ayarlar)."}</span>
+        <span>Ödüller <b>otomatik</b> verilir: davet edilen kişi e-postasını doğruladığında <b>yalnızca davet edene</b> bir Ücretsiz paket kadar hak — {d.settings.pages} sayfa + {d.settings.ai_requests} YZ isteği + {d.settings.source_searches} tarama ({d.settings.valid_days} gün; daha fazlası değil). Davet eden ayda en fazla {d.settings.monthly_cap} ödül alır.{!d.settings.enabled && " — Kampanya şu an KAPALI (Ayarlar)."}</span>
         <Button size="sm" variant="ghost" onClick={load}><RefreshCw className="h-3.5 w-3.5" /></Button>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{tiles.map(([l, v, sub]) => <div key={l} className="card p-4"><p className="text-[13px] text-ink-500">{l}</p><p className="mt-1 text-2xl font-semibold text-ink-900">{v}</p>{sub && <p className="text-xs text-ink-400">{sub}</p>}</div>)}</div>

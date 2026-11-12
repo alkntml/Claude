@@ -236,7 +236,7 @@ describe("migration'lar ve seed", () => {
     // Cihaz bilgisi yok → karar ilk girişe kalır (işaretlenmez)
     await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${U}', 'u@ornek.com', '{"ref":"${code}"}')`);
     const credits = (await db.query<{ n: number }>(`select count(*)::int as n from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows[0].n;
-    expect(credits).toBe(2);
+    expect(credits).toBe(3);
     const kinds = (await db.query<{ kind: string }>(`select kind from public.notifications where user_id = '${A}' order by id`)).rows.map((r) => r.kind);
     expect(kinds).toEqual(["referral_same_device", "referral_reward"]);
     const u = (await db.query<{ referral_rewarded_at: string | null; signup_device: string | null }>(`select referral_rewarded_at, signup_device from public.profiles where id = '${U}'`)).rows[0];
@@ -293,10 +293,10 @@ describe("migration'lar ve seed", () => {
     expect((await db.query(`select 1 from public.profiles where id = '${P}' and referral_rewarded_at is null`)).rows).toHaveLength(1);
     // Doğrulanınca verilir
     await db.exec(`update auth.users set email_confirmed_at = now() where id = '${P}'`);
-    expect(await credits()).toBe(2);
+    expect(await credits()).toBe(3);
     // Geçici e-posta (alt alan adı dahil) → ödül yok, bilgi bildirimi
     await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${T}', 'x@mail.yopmail.com', '{"ref":"${code}","did":"${"2".repeat(64)}"}')`);
-    expect(await credits()).toBe(2);
+    expect(await credits()).toBe(3);
     const kinds = (await db.query<{ kind: string }>(`select kind from public.notifications where user_id = '${A}' order by id`)).rows.map((r) => r.kind);
     expect(kinds).toEqual(["referral_reward", "referral_disposable_email"]);
     expect((await db.query(`select 1 from public.profiles where id = '${T}' and referral_rewarded_at is not null`)).rows).toHaveLength(1);
@@ -310,14 +310,14 @@ describe("migration'lar ve seed", () => {
     expect(prof.referred_by).toBe(A);
     expect(prof.referral_rewarded_at).not.toBeNull();
     const inviter = (await db.query<{ kind: string; amount: number }>(`select kind, amount from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter' order by kind`)).rows;
-    expect(inviter).toEqual([{ kind: "ai_requests", amount: 10 }, { kind: "source_searches", amount: 7 }]);
+    expect(inviter).toEqual([{ kind: "ai_requests", amount: 10 }, { kind: "pages", amount: 5 }, { kind: "source_searches", amount: 7 }]);
     expect((await db.query(`select 1 from public.usage_credits where user_id = '${N}'`)).rows).toHaveLength(0);
     // Aynı kişi için ikinci kez verilmez
     await db.exec(`update public.profiles set referred_by = referred_by where id = '${N}'`);
-    expect((await db.query(`select 1 from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows).toHaveLength(2);
+    expect((await db.query(`select 1 from public.usage_credits where user_id = '${A}' and reason = 'referral_inviter'`)).rows).toHaveLength(3);
     // Bildirim kutusu (D100): davet edene tek bildirim; davetliye yok; kullanıcı yalnızca okundu işaretleyebilir
     const notes = (await db.query<{ kind: string; data: { ai: number; ss: number; days: number } }>(`select kind, data from public.notifications where user_id = '${A}'`)).rows;
-    expect(notes).toEqual([{ kind: "referral_reward", data: { ai: 10, ss: 7, days: 60 } }]);
+    expect(notes).toEqual([{ kind: "referral_reward", data: { ai: 10, ss: 7, pg: 5, days: 60 } }]);
     expect((await db.query(`select 1 from public.notifications where user_id = '${N}'`)).rows).toHaveLength(0);
     expect(await as(B, "select * from public.notifications")).toHaveLength(0);
     expect(await as(A, "update public.notifications set read_at = now() returning id")).toHaveLength(1);
@@ -345,9 +345,9 @@ describe("migration'lar ve seed", () => {
     const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
     expect(by.free.limits.ai_requests_month).toBe(10); // D52: gelirin 1/3’ü maliyet
     expect(by.free.limits.source_searches_month).toBe(7);
-    expect(by.basic.limits).toMatchObject({ projects: 3, ai_requests_month: 40, source_searches_month: 100 });
-    expect(by.pro.limits.ai_requests_month).toBe(75);
-    expect(by.premium.limits.ai_requests_month).toBe(125);
+    expect(by.basic.limits).toMatchObject({ projects: 3, ai_requests_month: 50, source_searches_month: 100, pages_month: 25 });
+    expect(by.pro.limits.ai_requests_month).toBe(90);
+    expect(by.premium.limits.ai_requests_month).toBe(150);
     expect(Number(by.basic.price_monthly)).toBe(749);
     expect(by.pro.limits.projects).toBe(10);
     expect(Number(by.pro.price_monthly)).toBe(1349);
@@ -489,11 +489,37 @@ describe("kurumsal lisans, davet ve krediler", () => {
     await expectError(as(C, "update public.profiles set referral_code = 'AAAAAAAA' where id = auth.uid()"), /yetkiniz yok/);
     await expectError(as(C, "update public.profiles set referral_rewarded_at = now() where id = auth.uid()"), /yetkiniz yok/);
   });
+  it("indirim kodları (migration 38): kayıtta bağlanır, sınırlar uygulanır, kullanıcı göremez ve değiştiremez", async () => {
+    await db.exec(`insert into public.discount_codes (code, kind, value, max_uses) values ('OGRENCI20', 'percent', 20, 1), ('ESKI', 'amount_try', 100, null)`);
+    await db.exec(`update public.discount_codes set active = false where code = 'ESKI'`);
+    await expectError(db.query(`insert into public.discount_codes (code, kind, value) values ('FAZLA', 'percent', 120)`), /check/);
+    const [K1, K2, K3] = ["00000000-0000-4000-8000-00000000dc01", "00000000-0000-4000-8000-00000000dc02", "00000000-0000-4000-8000-00000000dc03"];
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${K1}', 'k1@ornek.com', '{"discount":" ogrenci20 "}')`);
+    // Kullanım sınırı doldu → bağlanmaz; pasif kod → bağlanmaz
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${K2}', 'k2@ornek.com', '{"discount":"OGRENCI20"}')`);
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${K3}', 'k3@ornek.com', '{"discount":"ESKI"}')`);
+    const codes = (await db.query<{ id: string; discount_code: string | null }>(`select id, discount_code from public.profiles where id in ('${K1}','${K2}','${K3}') order by id`)).rows.map((r) => r.discount_code);
+    expect(codes).toEqual(["OGRENCI20", null, null]);
+    expect((await db.query<{ uses: number }>(`select uses from public.discount_codes where code = 'OGRENCI20'`)).rows[0].uses).toBe(1);
+    // Kullanıcı kodları okuyamaz ve kendi kodunu değiştiremez
+    expect(await as(K1, "select * from public.discount_codes")).toHaveLength(0);
+    await expectError(as(K1, "update public.profiles set discount_code = null where id = auth.uid()"), /yetkiniz yok/);
+    await db.exec(`delete from public.profiles where id in ('${K1}','${K2}','${K3}'); delete from auth.users where id in ('${K1}','${K2}','${K3}'); delete from public.discount_codes;`);
+  });
+  it("sayfa hakkı (migration 38): yazılan kelimeler toplanır", async () => {
+    await db.query(`insert into public.usage_events (user_id, kind, meta) values ($1, 'ai_request', '{"words": 1200}'), ($1, 'ai_request', '{"words": 300}'), ($1, 'ai_request', '{}')`, [B]);
+    expect(Number((await db.query<{ w: string }>(`select public.usage_words($1, now() - interval '1 hour') as w`, [B])).rows[0].w)).toBe(1500);
+    await db.exec(`delete from public.usage_events where user_id = '${B}'`);
+    const plans = (await db.query<{ id: string; p: string; f: string[] }>(`select id, limits->>'pages_month' as p, features as f from public.plans where id in ('free','basic','pro','premium') order by sort_order`)).rows;
+    expect(plans.map((x) => x.p)).toEqual(["5", "25", "50", "85"]);
+    expect(plans[0].f).toContain("Yapay zekâ ile 5 sayfa deneme taslağı");
+    expect(plans[1].f).toContain("Ayda 25 sayfa yapay zekâ destekli akademik metin (ör. 1 makale veya tezin 2–3 bölümü)");
+  });
   it("krediler: kullanıcı yalnızca kendininkini görür, yazamaz", async () => {
     await db.query("insert into public.usage_credits (user_id, kind, amount, reason) values ($1, 'ai_requests', 50, 'davet')", [A]);
     // A’nın ayrıca C’yi davet ettiği için kayıtta aldığı davet ödülü vardır (D99)
     expect(await as(A, "select * from public.usage_credits where reason = 'davet'")).toHaveLength(1);
-    expect(await as(A, "select * from public.usage_credits where reason = 'referral_inviter'")).toHaveLength(2);
+    expect(await as(A, "select * from public.usage_credits where reason = 'referral_inviter'")).toHaveLength(3);
     expect(await as(B, "select * from public.usage_credits")).toHaveLength(0);
     await expectError(as(A, "insert into public.usage_credits (user_id, kind, amount, reason) values (auth.uid(), 'ai_requests', 9999, 'hile')"), /row-level security/);
   });

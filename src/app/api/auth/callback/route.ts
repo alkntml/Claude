@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { attachReferral, grantReferralReward } from "@/lib/growth";
+import { attachDiscount } from "@/lib/discount-server";
 import { deviceFromCookie, recordDevice } from "@/lib/devices";
 
 /** E-posta doğrulama ve OAuth dönüşü: kodu oturuma çevirir. */
@@ -17,6 +18,9 @@ export async function GET(req: Request) {
       // Google/Apple ile ilk girişte davet kodu geri dönüş adresinden gelir
       const ref = url.searchParams.get("ref");
       if (data.user && ref) await attachReferral(data.user.id, ref, data.user.created_at).catch(() => {});
+      // D145: indirim kodu (Google/Apple ile kayıtta)
+      const kod = url.searchParams.get("kod");
+      if (data.user && kod) await attachDiscount(data.user.id, kod, data.user.created_at).catch(() => {});
       if (data.user) {
         // D101: cihaz kaydı ve aynı cihaz kontrolü (sosyal girişte cihaz bilgisi kayıtta yoktur)
         const device = await deviceFromCookie();

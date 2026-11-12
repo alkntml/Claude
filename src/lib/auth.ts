@@ -25,6 +25,8 @@ export interface Profile {
   /** Etkin kurum üyeliği (kurumsal lisans) */
   org?: OrgInfo | null;
   referral_code?: string | null;
+  /** D145: kayıtta bağlanan indirim kodu */
+  discount_code?: string | null;
   /** Çalışma kilidi bayrağı (D50); sunucu yönetir */
   work_locked?: boolean;
   /** Ücretli paketin bitiş tarihi (D53); null = süresiz */

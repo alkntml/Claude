@@ -4,10 +4,13 @@ import { ApiError } from "@/lib/api";
 import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
 import { activeCredits } from "@/lib/growth";
+import { wordsToPages, WORDS_PER_PAGE } from "@/lib/pages";
 
 export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check" | "autocomplete";
 
 export interface PlanLimits {
+  /** Aylık sayfa hakkı (D145): yapay zekânın yazdığı taslak kelimesi / 344. Boşsa sınırsız. */
+  pages_month?: number | null;
   ai_requests_month?: number | null;
   tokens_month?: number | null;
   source_searches_month?: number | null;
@@ -44,19 +47,21 @@ export function costCapUsd(priceTry: number, m: { usd_try: number; vat_rate: num
 
 /** Paket limitleri + süresi dolmamış krediler (davet ödülü vb.) */
 /** Yönetici (site sahibi) için sınır yoktur: uyarılar, sayaç çubukları ve tarama hakkı hesapları da sınırsız görünür (D82) */
-const UNLIMITED: PlanLimits = { ai_requests_month: null, tokens_month: null, source_searches_month: null, projects: null, storage_mb: null, export_formats: ["txt", "md", "docx", "pdf"], cost_usd_month: null };
+const UNLIMITED: PlanLimits = { pages_month: null, ai_requests_month: null, tokens_month: null, source_searches_month: null, projects: null, storage_mb: null, export_formats: ["txt", "md", "docx", "pdf"], cost_usd_month: null };
 
 export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
   if (await isAdminUser(userId).catch(() => false)) return { ...UNLIMITED };
   const [l, m] = await Promise.all([planLimits(planId), getSetting("billing.margin")]);
-  const c = await activeCredits(userId, { ai: l.ai_requests_month, search: l.source_searches_month });
+  const c = await activeCredits(userId, { ai: l.ai_requests_month, search: l.source_searches_month, pages: l.pages_month });
   return {
     ...l,
     // D98: krediyle gelen istekler token sınırına da eklenir (istek başı ~50 bin token; ücretsiz pakette ödül kullanılabilsin)
     tokens_month: l.tokens_month == null ? l.tokens_month : l.tokens_month + c.ai_requests * 50_000,
     // Davet ödülü istekleri maliyet tavanına ortalama istek maliyetiyle eklenir
-    cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : l.cost_usd_month + c.ai_requests * m.avg_request_usd,
+    cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : l.cost_usd_month + Math.max(c.ai_requests, c.pages) * m.avg_request_usd,
     ai_requests_month: l.ai_requests_month == null ? l.ai_requests_month : l.ai_requests_month + c.ai_requests,
+    // Davet ödülü sayfaları (D145); sayfa hakkı ödülle artınca maliyet tavanı da sayfa başı ortalama maliyetle genişler
+    pages_month: l.pages_month == null ? l.pages_month : l.pages_month + c.pages,
     source_searches_month: l.source_searches_month == null ? l.source_searches_month : l.source_searches_month + c.source_searches,
   };
 }
@@ -70,16 +75,22 @@ export interface UsageSummary {
   storage_mb: number;
   /** Bu ayki toplam API maliyeti ($) */
   cost_usd: number;
+  /** Bu ay yapay zekânın yazdığı taslak kelimesi ve sayfa karşılığı (D145) */
+  words: number;
+  pages: number;
 }
 
 export async function usageSummary(userId: string): Promise<UsageSummary> {
   const db = adminClient();
   const since = monthStart();
-  const [totals, projects] = await Promise.all([
+  const [totals, projects, words] = await Promise.all([
     db.rpc("usage_totals", { p_user: userId, p_since: since }),
     db.from("projects").select("id", { count: "exact", head: true }).eq("user_id", userId).neq("status", "archived"),
+    db.rpc("usage_words", { p_user: userId, p_since: since }),
   ]);
-  const sum: UsageSummary = { ai_requests: 0, tokens: 0, source_searches: 0, exports: 0, projects: projects.count ?? 0, storage_mb: 0, cost_usd: 0 };
+  const sum: UsageSummary = { ai_requests: 0, tokens: 0, source_searches: 0, exports: 0, projects: projects.count ?? 0, storage_mb: 0, cost_usd: 0, words: 0, pages: 0 };
+  // Migration 38 çalıştırılmadıysa sayfa sayılmaz (sınır uygulanmaz)
+  if (!words.error) { sum.words = Number(words.data) || 0; sum.pages = wordsToPages(sum.words); }
   const row = Array.isArray(totals.data) ? totals.data[0] : totals.data;
   if (!totals.error && row) {
     // Toplam veritabanında hesaplanır (D51); satır sınırına takılmaz
@@ -117,9 +128,9 @@ export function forClient(usage: UsageSummary | null, limits: PlanLimits | Recor
   const l = limits as PlanLimits;
   const ratio = (u: number, lim: number | null | undefined) => (lim ? u / lim : 0);
   const ai_near = !!usage && Math.max(ratio(usage.ai_requests, l.ai_requests_month), ratio(usage.tokens, l.tokens_month), ratio(usage.cost_usd, l.cost_usd_month)) >= 0.8;
-  const { cost_usd: _c, tokens: _t, ...u } = usage ?? ({} as UsageSummary);
+  const { cost_usd: _c, tokens: _t, words: _w, ...u } = usage ?? ({} as UsageSummary);
   const { cost_usd_month: _cm, tokens_month: _tm, ...lim } = l;
-  void _c; void _t; void _cm; void _tm;
+  void _c; void _t; void _w; void _cm; void _tm;
   return { usage: usage ? { ...u, ai_near } : null, limits: lim };
 }
 
@@ -128,6 +139,14 @@ export async function searchesRemaining(userId: string, planId: string): Promise
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   if (limits.source_searches_month == null) return null;
   return Math.max(0, limits.source_searches_month - usage.source_searches);
+}
+
+/** Bu ay kalan sayfa hakkı, kelime olarak (sınırsızsa null; D145) */
+export async function wordsRemaining(userId: string, planId: string): Promise<number | null> {
+  if (await isAdminUser(userId).catch(() => false)) return null;
+  const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
+  if (limits.pages_month == null) return null;
+  return Math.max(0, Math.round(limits.pages_month * WORDS_PER_PAGE - usage.words));
 }
 
 /** Dakikalık hız sınırı — veritabanı tabanlı olduğu için birden çok sunucu örneğinde de tutarlıdır. */
@@ -200,7 +219,7 @@ export async function isAdminUser(userId: string): Promise<boolean> {
   return v;
 }
 
-export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string; projectId?: string; costOnly?: boolean } = {}) {
+export async function assertWithinLimits(userId: string, planId: string, kind: UsageKind, extra: { bytes?: number; format?: string; projectId?: string; costOnly?: boolean; writes?: boolean } = {}) {
   if (await isAdminUser(userId).catch(() => false)) return;
   await rateLimit(userId, kind);
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
@@ -210,6 +229,8 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
   if (kind === "ai_request") {
     // costOnly: haktan düşmeyen ucuz işlemler (ör. literatür matrisi, D96) yalnızca maliyet ve token tavanına bakar
     if (!extra.costOnly && over(usage.ai_requests, limits.ai_requests_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
+    // D145: yeni metin yazan işler paket kartındaki aylık sayfa hakkıyla sınırlıdır (soru-cevap, düzeltme, kontrol açık kalır)
+    if (extra.writes && over(usage.words, limits.pages_month == null ? null : limits.pages_month * WORDS_PER_PAGE)) throw new ApiError(402, "Bu ayki sayfa hakkınız doldu.", "limit_pages");
     if (over(usage.tokens, limits.tokens_month)) throw new ApiError(402, "Bu ayki token limitinize ulaştınız.", "limit_tokens");
     // Maliyet tavanı (D52) kullanıcıya “yapay zekâ hakkı” olarak görünür
     if (over(usage.cost_usd ?? 0, limits.cost_usd_month)) throw new ApiError(402, "Bu ayki yapay zekâ istek limitinize ulaştınız.", "limit_ai");
@@ -238,12 +259,13 @@ export async function recordUsage(userId: string, kind: UsageKind, data: { quant
   });
 }
 
-export interface UsageWarning { kind: "ai_requests" | "tokens" | "source_searches" | "storage_mb"; used: number; limit: number; pct: number }
+export interface UsageWarning { kind: "pages" | "ai_requests" | "tokens" | "source_searches" | "storage_mb"; used: number; limit: number; pct: number }
 
 /** Paket limitinin %80'ine ulaşılan kalemler (kullanıcıya önceden uyarı göstermek için). */
 export async function usageWarnings(userId: string, planId: string, threshold = 0.8): Promise<UsageWarning[]> {
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
   const pairs: [UsageWarning["kind"], number, number | null | undefined][] = [
+    ["pages", usage.pages, limits.pages_month],
     ["ai_requests", usage.ai_requests, limits.ai_requests_month],
     ["tokens", usage.tokens, limits.tokens_month],
     // Maliyet tavanına yaklaşma da “yapay zekâ hakkı” uyarısı olarak gösterilir (sayı verilmez; D49/D52)

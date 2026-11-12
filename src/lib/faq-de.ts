@@ -171,7 +171,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   "ne-kadar-yazabilirim": {
     q: "Wie viel kann ich pro Monat mit einem Tarif schreiben?",
-    a: "Grob gesagt: ein Probeentwurf von 5 Seiten im Free-Tarif, **25 Seiten pro Monat in Basic**, **50 in Pro** und **85 in Premium** KI-gestützten wissenschaftlichen Text. Eine Seite ist eine Haupttextseite im Format einer türkischen Abschlussarbeit (12 pt, Zeilenabstand 1,5); Titelblatt, Inhaltsverzeichnis, Literaturverzeichnis und Anhänge werden nicht mitgezählt. Häufiges Neu-Erzeugen von Entwürfen ergibt weniger Seiten, effiziente Nutzung mehr. Der Haupttext einer Masterarbeit (etwa 80 Seiten) lässt sich in Pro zum Beispiel in 1–2 Monaten schreiben.",
+    a: "Im Free-Tarif ein Probeentwurf von 5 Seiten, **25 Seiten pro Monat in Basic**, **50 in Pro** und **85 in Premium** KI-gestützter wissenschaftlicher Text; diese Zahlen sind die tatsächliche Grenze Ihres Tarifs. Gezählt werden die Wörter der von der KI geschriebenen Entwürfe (1 Seite = 344 Wörter: Format einer türkischen Abschlussarbeit, 12 pt, Zeilenabstand 1,5). Selbst geschriebener Text, Fragen und Antworten, Kürzen und Stilkorrekturen zählen nicht zum Seitenkontingent; lassen Sie markierten Text neu schreiben, zählen nur die hinzugekommenen Wörter. Was noch übrig ist, sehen Sie auf der Kontoseite; ist das Kontingent aufgebraucht, pausiert das Schreiben neuer Entwürfe bis zum nächsten Monat, alle anderen Funktionen bleiben verfügbar. Der Haupttext einer Masterarbeit (etwa 80 Seiten) lässt sich in Pro zum Beispiel in 1–2 Monaten schreiben.",
   },
   limit: {
     q: "Was passiert, wenn ich mein Monatslimit erreiche? Wird meine Arbeit gelöscht?",

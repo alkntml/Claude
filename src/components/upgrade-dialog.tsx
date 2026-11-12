@@ -8,11 +8,13 @@ import { UPGRADE_EVENT, type UpgradeRequest } from "@/lib/client";
 import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
 import { PLAN_RANK, whatsappLink, isOneTimePlan } from "@/lib/pricing";
 import { usePrice } from "@/components/price-context";
+import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
 
 interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
-interface PlansData { current: string; email: string; memberNo?: string; plans: PlanRow[] }
+interface PlansData { current: string; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
 
 const TITLES: Record<string, string> = {
+  limit_pages: "Bu ayki sayfa hakkınız doldu",
   limit_ai: "Bu ayki yapay zekâ kullanım hakkınız doldu",
   limit_tokens: "Bu ayki yapay zekâ kullanım hakkınız doldu",
   limit_search: "Bu ayki kaynak tarama hakkınız doldu",
@@ -57,7 +59,7 @@ export function UpgradeDialogHost() {
   const minRank = req.plan ? PLAN_RANK[req.plan] ?? 0 : 0;
   const options = (data?.plans ?? []).filter((p) => (PLAN_RANK[p.id] ?? 0) > currentRank && (PLAN_RANK[p.id] ?? 0) >= minRank && p.price_monthly > 0);
   const currentName = data?.plans.find((p) => p.id === data.current)?.name ?? data?.current ?? "";
-  const monthly = req.code === "limit_ai" || req.code === "limit_tokens" || req.code === "limit_search" || workLocked;
+  const monthly = req.code === "limit_pages" || req.code === "limit_ai" || req.code === "limit_tokens" || req.code === "limit_search" || workLocked;
   const title = req.target ? t("{name} paketine geçin", { name: t(data?.plans.find((p) => p.id === req.target)?.name ?? req.target) }) : t(TITLES[req.code ?? ""] ?? "Paketinizi yükseltin");
   const feature = req.feature && req.feature in FEATURE_LABEL ? t(FEATURE_LABEL[req.feature as FeatureId]) : null;
 
@@ -65,15 +67,22 @@ export function UpgradeDialogHost() {
   const storage = (mb: number | null) => (mb == null ? t("Sınırsız depolama") : mb >= 1000 ? t("{n} GB depolama", { n: Math.round(mb / 1000) }) : t("{n} MB depolama", { n: mb }));
   // D96: önce müşterinin anladığı birim (sayfa); tarama sınırı 1.000’in üstündeyse adil kullanımla sınırsız
   const lines = (p: PlanRow) => [
-    ...(p.limits.pages_month ? [t("Ayda yaklaşık {n} sayfa akademik metin", { n: num(p.limits.pages_month) })] : []),
+    ...(p.limits.pages_month ? [t("Ayda {n} sayfa yapay zekâ destekli akademik metin", { n: num(p.limits.pages_month) })] : []),
     p.limits.ai_requests_month == null ? t("Sınırsız yapay zekâ isteği") : t("Aylık {n} yapay zekâ isteği", { n: num(p.limits.ai_requests_month) }),
     p.limits.source_searches_month == null ? t("Sınırsız kaynak taraması") : p.limits.source_searches_month >= 1000 ? t("Sınırsız kaynak taraması (adil kullanım)") : t("Aylık {n} kaynak taraması", { n: num(p.limits.source_searches_month) }),
     p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: p.limits.projects }),
     storage(p.limits.storage_mb),
   ];
-  const href = (p: PlanRow) => whatsappLink(t("Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} ({price}/ay)\nPaket sınırları: {limits}\nÜye no: {no}\nHesap e-postam: {email}", {
-    current: t(currentName), target: t(p.name), price: isOneTimePlan(p.id) ? `${price(p.price_monthly)} ${t("tek ödeme")}` : price(p.price_monthly), limits: lines(p).join(", "), email: data?.email ?? "",
-  }));
+  // D145: kayıtta bağlanan indirim kodu — indirimli fiyat ve kod mesaja eklenir
+  const disc = (p: PlanRow) => discountedPrice(p.price_monthly, data?.discount, p.id);
+  const href = (p: PlanRow) => {
+    const d = disc(p);
+    const shown = d == null ? p.price_monthly : d;
+    const msg = t("Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} ({price}/ay)\nPaket sınırları: {limits}\nÜye no: {no}\nHesap e-postam: {email}", {
+      current: t(currentName), target: t(p.name), price: isOneTimePlan(p.id) ? `${price(shown)} ${t("tek ödeme")}` : price(shown), limits: lines(p).join(", "), email: data?.email ?? "", no: data?.memberNo ?? "",
+    });
+    return whatsappLink(d != null && data?.discount ? `${msg}\n${t("İndirim kodum: {code} ({label}; liste fiyatı {list})", { code: data.discount.code, label: discountLabel(data.discount), list: price(p.price_monthly) })}` : msg);
+  };
 
   return (
     <Modal open onClose={close} title={title} wide>
@@ -95,7 +104,8 @@ export function UpgradeDialogHost() {
             {options.map((p) => (
               <div key={p.id} className={cn("flex flex-col rounded-2xl border p-4", req.target === p.id ? "border-brand-400 ring-2 ring-brand-200" : "border-ink-100")}>
                 <p className="flex items-center gap-1.5 font-semibold text-ink-900">{p.id === "premium" && <Sparkles className="h-4 w-4 text-amber-500" />}{t(p.name)}</p>
-                <p className="mt-1 text-xl font-semibold">{price(p.price_monthly)}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme")}` : `/${t("ay")}`}</span></p>
+                {disc(p) != null && <p className="mt-1 text-[12.5px] text-emerald-700">{t("İndirim kodunuz {code} uygulandı", { code: data?.discount?.code ?? "" })} · <s className="text-ink-400">{price(p.price_monthly)}</s></p>}
+                <p className="mt-1 text-xl font-semibold">{price(disc(p) ?? p.price_monthly)}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme")}` : `/${t("ay")}`}</span></p>
                 <ul className="mt-3 flex-1 space-y-1.5 text-[13px] text-ink-600">
                   {lines(p).map((l) => <li key={l} className="flex items-start gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />{l}</li>)}
                 </ul>

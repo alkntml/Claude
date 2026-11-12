@@ -1,6 +1,7 @@
 import { json, route } from "@/lib/api";
 import { requireAdmin } from "@/lib/auth";
 import { getSetting } from "@/lib/settings";
+import { referralReward } from "@/lib/growth";
 import { adminClient } from "@/lib/supabase/admin";
 import { monthStart } from "@/lib/usage";
 
@@ -35,10 +36,12 @@ export const GET = route("admin.referrals", async () => {
     if (r.referral_rewarded_at) by[r.referred_by].rewarded++;
     if (r.referral_rewarded_at && r.referral_rewarded_at >= since) by[r.referred_by].month++;
   }
-  const rewardedMonth = (inviteeMonth.data ?? []).length;
+  // D99: ödül yalnızca davet edene verilir; bu ay ödüllenen davetler (doğrulama zamanı)
+  const rewardedMonth = refs.filter((r) => r.referral_rewarded_at && r.referral_rewarded_at >= since).length;
+  const reward = await referralReward();
   const inviterRewardsMonth = (inviterMonth.data ?? []).length;
   return json({
-    settings: cfg,
+    settings: { ...cfg, ai_requests: reward.ai_requests, source_searches: reward.source_searches, pages: reward.pages },
     totals: {
       invited: refs.length,
       rewarded: refs.filter((r) => r.referral_rewarded_at).length,

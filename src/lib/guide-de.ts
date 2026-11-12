@@ -283,7 +283,7 @@ export const GUIDE_DE: Record<string, string> = {
   "Davet et, kazan": "Einladen und profitieren",
   "Sol menü altında: “Davet et, kazan”": "Unten im linken Menü: „Einladen & profitieren“",
   "Davet bağlantınızı paylaşın.": "Teilen Sie Ihren Einladungslink.",
-  "Bağlantınızla kaydolan kişi e-postasını doğruladığında size ek yapay zekâ isteği ve kaynak taraması hakkı tanımlanır; zil simgesinde bildirim görürsünüz.": "Registriert sich jemand über Ihren Link und bestätigt die E-Mail-Adresse, erhalten Sie zusätzliche KI-Anfragen und Quellenrecherchen; unter der Glocke erscheint eine Benachrichtigung.",
+  "Bağlantınızla kaydolan kişi e-postasını doğruladığında size bir Ücretsiz paket kadar ek hak (sayfa, yapay zekâ isteği ve kaynak taraması) tanımlanır; zil simgesinde bildirim görürsünüz.": "Wenn sich jemand über Ihren Link registriert und die E-Mail-Adresse bestätigt, erhalten Sie das zusätzliche Kontingent eines Free-Pakets (Seiten, KI-Anfragen und Quellensuchen); eine Benachrichtigung erscheint unter der Glocke.",
   "Kurum lisansı": "Institutionslizenz",
   "“Hesap ve abonelik” → “Kurum kodu”": "„Konto und Abonnement“ → „Institutionscode“",
   "Kurumunuzun verdiği kodu girerek kurum lisansına katılın; “Kurumdan ayrıl” ile ayrılın.": "Treten Sie mit dem Code Ihrer Institution bei; mit „Institution verlassen“ treten Sie aus.",

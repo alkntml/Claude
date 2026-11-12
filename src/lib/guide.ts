@@ -342,7 +342,7 @@ export const GUIDE: GuideChapter[] = [
       ] },
       { id: "davet", title: s("Davet et, kazan", "Invite and earn"), where: s("Sol menü altında: “Davet et, kazan”", "Bottom of left menu: “Invite & earn”"), steps: [
         s("Davet bağlantınızı paylaşın.", "Share your invite link."),
-        s("Bağlantınızla kaydolan kişi e-postasını doğruladığında size ek yapay zekâ isteği ve kaynak taraması hakkı tanımlanır; zil simgesinde bildirim görürsünüz.", "When someone signs up via your link and confirms their email, you get extra AI requests and source searches; a notification appears under the bell."),
+        s("Bağlantınızla kaydolan kişi e-postasını doğruladığında size bir Ücretsiz paket kadar ek hak (sayfa, yapay zekâ isteği ve kaynak taraması) tanımlanır; zil simgesinde bildirim görürsünüz.", "When someone signs up via your link and confirms their email, you get one Free plan’s worth of extra allowance (pages, AI requests and source searches); a notification appears under the bell."),
       ] },
       { id: "kurum", title: s("Kurum lisansı", "Institutional licence"), where: s("“Hesap ve abonelik” → “Kurum kodu”", "“Account and subscription” → “Institution code”"), steps: [
         s("Kurumunuzun verdiği kodu girerek kurum lisansına katılın; “Kurumdan ayrıl” ile ayrılın.", "Join with the code from your institution; leave with “Leave institution”."),

@@ -93,3 +93,6 @@ Bulunan sorunlar:
 **Uygulandı (D98, Kasım 2026):** Ödül = Ücretsiz paketin aylık hakları (10 istek + 7 tarama, ≈5 sayfa) her iki tarafa; tek seferlik bakiye (hata 1 düzeltildi); token sınırı krediyle artar (hata 2 düzeltildi). Yeni maliyet (temel): taraf başı ≈ $0,86 (41 TL), davet başı ≈ $1,71 (82 TL); ayda 20 ödül sınırıyla en kötü durumda davet eden başına ≈ $17/ay (820 TL). Aylık sınır (20) değiştirilmedi.
 
 **Güncelleme (D99):** Ödül yalnızca davet edene, davetli kaydolduğu anda (e-posta doğrulaması beklenmez). Davet başı ≈ $0,86 ≈ 41 TL; aylık 20 ödül sınırıyla davet eden başına en fazla ≈ $17/ay (820 TL).
+
+## Uygulama notu (D145)
+Kartlardaki sayfa sayıları artık sistemde gerçek sınırdır: yapay zekânın yazdığı taslak kelimesi / 344 (Türk tez biçimi). Maliyet tavanı (gelirin 1/3’ü) güvenlik ağı olarak kalır; istek sınırı adil kullanım düzeyine çekildi (Basic 50, Pro 90, Premium 150) ki sayfa hakkı dolmadan istek bitmesin. Davet ödülü bir Ücretsiz paket kadardır (5 sayfa dahil).

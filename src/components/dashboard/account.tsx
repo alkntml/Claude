@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Badge, Modal } from "@/components/ui/primitives";
 import { UsageMeter } from "@/components/ui/charts";
+import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, openUpgrade } from "@/lib/client";
@@ -16,7 +17,7 @@ import { usePrice } from "@/components/price-context";
 import { GrowthSection } from "./growth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function AccountView({ profile, usage, limits, plans, locked }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean }) {
+export function AccountView({ profile, usage, limits, plans, locked, discount }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean; discount?: DiscountCode | null }) {
   const { t, dl } = useT();
   const toast = useToast();
   const price = usePrice();
@@ -41,6 +42,8 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
   }
 
   const rows: [string, number, number | null | undefined][] = [
+    // D145: paket kartındaki sayfa hakkı (yapay zekânın yazdığı taslak; 1 sayfa = 344 kelime)
+    [t("Yapay zekâ ile yazılan sayfa"), usage?.pages ?? 0, limits?.pages_month],
     [t("Kaynak taramaları"), usage?.source_searches ?? 0, limits?.source_searches_month],
     [t("Aktif projeler"), usage?.projects ?? 0, limits?.projects],
     [t("Depolama (MB)"), usage?.storage_mb ?? 0, limits?.storage_mb],
@@ -89,13 +92,16 @@ export function AccountView({ profile, usage, limits, plans, locked }: { profile
       <section>
         <h2 className="flex items-center gap-2 font-semibold"><CreditCard className="h-4 w-4" /> {t("Paketler")}</h2>
         <p className="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm text-emerald-900">{t("Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda paketin kullanım sınırlarını görür, ardından hazır bir mesajla WhatsApp’a geçersiniz. Ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır.")}</p>
+        {discount && <p className="mt-2 rounded-xl bg-brand-50 px-4 py-2.5 text-sm text-brand-900">{t("İndirim kodunuz: {code} ({label}). İndirimli fiyatlar aşağıda gösterilir ve yükseltme mesajına eklenir.", { code: discount.code, label: discountLabel(discount) })}</p>}
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => {
             const current = p.id === profile.plan_id;
+            const dp = discountedPrice(Number(p.price_monthly), discount, p.id);
             return (
               <div key={p.id} className={cn("card flex flex-col p-5 transition", current && "ring-2 ring-brand-400", params.get("paket") === p.id && !current && "ring-2 ring-amber-300")}>
                 <div className="flex items-center justify-between"><h3 className="font-semibold">{t(p.name)}</h3>{current && <Badge tone="green"><CheckCircle2 className="h-3 w-3" /> {t("Mevcut")}</Badge>}</div>
-                <p className="mt-2 text-2xl font-semibold">{price(Number(p.price_monthly))}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme")}` : `/${t("ay")}`}</span></p>
+                {dp != null && <p className="mt-2 text-[12.5px] text-ink-400"><s>{price(Number(p.price_monthly))}</s> <span className="text-emerald-700">{discountLabel(discount!)}</span></p>}
+                <p className={cn("text-2xl font-semibold", dp == null && "mt-2")}>{price(dp ?? Number(p.price_monthly))}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme")}` : `/${t("ay")}`}</span></p>
                 <ul className="mt-3 flex-1 space-y-1 text-[13px] text-ink-600">{p.features.map((f: string) => <li key={f}>• {t(f)}</li>)}</ul>
                 {!current && Number(p.price_monthly) > 0 && (
                   <button type="button" onClick={() => openUpgrade({ target: p.id })} className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">

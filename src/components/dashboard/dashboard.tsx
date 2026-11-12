@@ -21,7 +21,7 @@ import { LEVEL_LABELS, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
   name: string; plan: string; projects: any[]; shared?: { id: string; title: string; work_type: string; progress: number; updated_at: string; role: string; owner_name: string | null }[]; recentStages: any[]; sourcesCount: number; conversations: any[]; files: any[]; announcements: any[];
-  usage: { ai_requests: number; source_searches: number; projects: number; storage_mb: number; ai_near?: boolean } | null; limits: any;
+  usage: { ai_requests: number; pages?: number; source_searches: number; projects: number; storage_mb: number; ai_near?: boolean } | null; limits: any;
 }
 
 export function timeAgo(iso: string, t: TFn = makeDictT(null), dl = "tr-TR") {
@@ -65,7 +65,7 @@ export function Dashboard(p: Props) {
 
       {(() => {
         // Paket limitinin %80'ine yaklaşınca önceden uyar
-        const items: [string, number, number | null | undefined][] = [["kaynak tarama", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["depolama", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]];
+        const items: [string, number, number | null | undefined][] = [["sayfa hakkı", p.usage?.pages ?? 0, p.limits?.pages_month], ["kaynak tarama", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["depolama", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]];
         const near = items.filter(([, u, l]) => l && l > 0 && u / l >= 0.8);
         // Yapay zekâ sınırı sayı olarak gösterilmez (D49); yalnızca yaklaşıldığı söylenir
         const aiNear = !!p.usage?.ai_near;
@@ -177,7 +177,7 @@ export function Dashboard(p: Props) {
           <div className="card p-5">
             <div className="flex items-center justify-between"><h2 className="font-semibold text-ink-900">{t("Kullanım durumu")}</h2><Link href="/hesap" className="text-xs font-medium text-brand-600">{t("Paketi yönet")}</Link></div>
             <div className="mt-4 space-y-4">
-              {[["Kaynak taramaları", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["Projeler", p.usage?.projects ?? 0, p.limits?.projects], ["Depolama (MB)", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]].map(([l, v, m]) => (
+              {[["Yapay zekâ ile yazılan sayfa", p.usage?.pages ?? 0, p.limits?.pages_month], ["Kaynak taramaları", p.usage?.source_searches ?? 0, p.limits?.source_searches_month], ["Projeler", p.usage?.projects ?? 0, p.limits?.projects], ["Depolama (MB)", p.usage?.storage_mb ?? 0, p.limits?.storage_mb]].map(([l, v, m]) => (
                 <UsageMeter key={l as string} label={t(l as string)} value={v as number} max={m as number | null} warnText={t("Doluyor")} fullText={t("Doldu")} unlimitedText={t("Sınırsız")} />
               ))}
             </div>

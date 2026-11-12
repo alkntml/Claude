@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 
-interface Referral { code: string; link: string; invited: number; rewarded: number; reward: { ai_requests: number; source_searches: number; valid_days: number } }
+interface Referral { code: string; link: string; invited: number; rewarded: number; reward: { ai_requests: number; source_searches: number; pages?: number; valid_days: number } }
 
 const SEEN_KEY = "academiana-gift-seen";
 const PEEK_KEY = "academiana-gift-peek";
@@ -65,7 +65,7 @@ export function GiftBox() {
               <button onClick={() => setOpen(false)} className="absolute right-3 top-3 rounded-lg p-1 text-white/80 hover:bg-white/15" aria-label={t("Kapat")}><X className="h-4 w-4" /></button>
               <Gift className="h-8 w-8" />
               <p className="mt-2 text-lg font-semibold">{t("Arkadaşını davet et, kazan")}</p>
-              <p className="mt-1 text-sm text-white/85">{t("Davet ettiğin her arkadaş kaydolduğunda sana {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlanır ({d} gün geçerli).", { a: ref.reward.ai_requests, s: ref.reward.source_searches, d: ref.reward.valid_days })}</p>
+              <p className="mt-1 text-sm text-white/85">{t("Davet ettiğin her arkadaş kaydolduğunda sana bir Ücretsiz paket kadar hak tanımlanır: {p} sayfa, {a} yapay zekâ isteği ve {s} kaynak tarama ({d} gün geçerli).", { p: ref.reward.pages ?? 5, a: ref.reward.ai_requests, s: ref.reward.source_searches, d: ref.reward.valid_days })}</p>
             </div>
             <div className="space-y-3 p-4">
               <div className="flex gap-2">

@@ -157,7 +157,8 @@ export function AssistantPanel({ projectId, stage, def, selection, files, onInse
             for (const w of data.warnings ?? []) {
               if (!shouldWarnOnce(`${w.kind}:${w.pct >= 100 ? 100 : 80}`)) continue;
               // Yapay zekâ sınırı sayı olarak gösterilmez (D49)
-              if (w.kind === "ai_requests" || w.kind === "tokens") toast({ tone: "warning", title: t("Bu ayki yapay zekâ kullanım hakkınızın sonuna yaklaşıyorsunuz"), detail: t("Hakkınız dolduğunda paket seçenekleri gösterilir.") });
+              if (w.kind === "pages") toast({ tone: "warning", title: t("Bu ayki sayfa hakkınızın %{pct} kadarını kullandınız", { pct: w.pct }), detail: t("Hakkınız dolduğunda paket seçenekleri gösterilir.") });
+              else if (w.kind === "ai_requests" || w.kind === "tokens") toast({ tone: "warning", title: t("Bu ayki yapay zekâ kullanım hakkınızın sonuna yaklaşıyorsunuz"), detail: t("Hakkınız dolduğunda paket seçenekleri gösterilir.") });
               else toast({ tone: "warning", title: t("Bu ay {item} limitinizin %{pct} kadarını kullandınız", { item: t(USAGE_LABEL[w.kind] ?? w.kind), pct: w.pct }), detail: t("{used} / {limit}. Paketinizi Hesap sayfasından yükseltebilirsiniz.", { used: w.used, limit: w.limit }) });
             }
           }

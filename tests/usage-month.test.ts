@@ -14,7 +14,7 @@ describe("sayaç dönemi ve kilit nedenleri", () => {
     expect(monthStart(new Date("2026-11-30T20:30:00Z"))).toBe("2026-10-31T21:00:00.000Z");
   });
   it("limit tam dolunca kilitlenir, sınırsızda (null) kilitlenmez", () => {
-    const usage = { ai_requests: 20, tokens: 100, source_searches: 6, exports: 0, projects: 1, storage_mb: 0, cost_usd: 1.2 };
+    const usage = { ai_requests: 20, tokens: 100, source_searches: 6, exports: 0, projects: 1, storage_mb: 0, cost_usd: 1.2, words: 0, pages: 0 };
     expect(lockReasons({ ai_requests_month: 20, source_searches_month: 7, tokens_month: null }, usage)).toEqual(["ai_requests"]);
     expect(lockReasons({ ai_requests_month: 21, source_searches_month: 7 }, usage)).toEqual([]);
     expect(lockReasons({ ai_requests_month: null, source_searches_month: 6 }, usage, "basic")).toEqual(["source_searches"]);
@@ -25,7 +25,7 @@ describe("sayaç dönemi ve kilit nedenleri", () => {
     const m = { usd_try: 48, vat_rate: 0.2, cost_share: 1 / 3 };
     expect(costCapUsd(499, m)).toBeCloseTo(2.89, 2); // 499/1,2/48/3
     expect(costCapUsd(1499, m)).toBeCloseTo(8.67, 2);
-    const usage = { ai_requests: 5, tokens: 0, source_searches: 0, exports: 0, projects: 1, storage_mb: 0, cost_usd: 2.9 };
+    const usage = { ai_requests: 5, tokens: 0, source_searches: 0, exports: 0, projects: 1, storage_mb: 0, cost_usd: 2.9, words: 0, pages: 0 };
     expect(lockReasons({ ai_requests_month: 40, cost_usd_month: 2.89 }, usage)).toEqual(["cost"]);
     expect(lockReasons({ ai_requests_month: 40, cost_usd_month: null }, usage)).toEqual([]);
   });

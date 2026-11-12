@@ -20,7 +20,8 @@ import { getSetting } from "@/lib/settings";
 import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { addSourcesToProject, executeSearch, providerHealthMeta, focusOf, ingestWithBudget, minSourcesFor, pickForAutoAdd, planResearch, rankSources, recordResearchUsage, recordToInput, researchGate } from "@/lib/research";
 import { hasOpenAccessCandidate } from "@/lib/sources/fulltext";
-import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining } from "@/lib/usage";
+import { assertFeature, assertWithinLimits, recordUsage, usageWarnings, searchesRemaining, wordsRemaining } from "@/lib/usage";
+import { chargedWords, countWords, PAGE_ACTIONS } from "@/lib/pages";
 import { writingLang } from "@/lib/writing-lang";
 
 export const maxDuration = 300;
@@ -55,7 +56,8 @@ export const POST = route("ai.chat", async (req) => {
   const b = await parseBody(req, Schema);
   if (b.action === "reviewer_response") assertFeature(s.profile.plan_id, "reviewer");
   if (b.action === "journal_checklist") assertFeature(s.profile.plan_id, "journals");
-  await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
+  // D145: yeni metin yazan eylemler aylık sayfa hakkıyla sınırlı
+  await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request", { writes: PAGE_ACTIONS.has(b.action) });
   await assertSingleProject(s, b.projectId);
 
   // Ortak yazım (D115): çalışma içeriği sahibin kaydıdır; sohbet kişiseldir (ortak yazarın kendi adına)
@@ -256,7 +258,12 @@ export const POST = route("ai.chat", async (req) => {
         const target = stage && !b.selection && LENGTH_ACTIONS.has(b.action)
           ? draftTarget({ chapterWords, doc: stage.content as JSONNode, focusIndex: b.focusIndex ?? null, currentWords: Number(stage.word_count) || 0 })
           : null;
+        // D145: hedef, kalan sayfa hakkını aşmaz; hak bittiyse (soru-cevapta) yeni taslak yazılmaz
+        const leftWords = await wordsRemaining(s.user.id, s.profile.plan_id).catch(() => null);
+        if (target && leftWords != null && leftWords < target.words) target.words = Math.max(100, Math.round(leftWords / 10) * 10);
         if (target) ctx.tail += `\n\n${lengthInstruction(target)}`;
+        else if (leftWords != null && leftWords < 150) ctx.tail += "\n\nSAYFA HAKKI: Kullanıcının bu ayki sayfa hakkı doldu. :::taslak bloğu ile yeni metin yazma; soruyu yanıtla, öneri ve düzeltme yap.";
+        else if (leftWords != null && PAGE_ACTIONS.has(b.action)) ctx.tail += `\n\nSAYFA HAKKI: Kullanıcının bu ay kalan yazım hakkı ${leftWords} kelime; :::taslak bloğu bunu aşmasın.`;
         controller.enqueue(sse("meta", { conversationId, sourceMap: ctx.sourceMap, model: model.model, usedChunks: ctx.usedChunks }));
         const effort = ACTION_EFFORT[b.action] ?? models.effort;
         // Türkçe ~2,7 token/kelime + düşünme payı; hedef uzunsa çıktı sınırı büyütülür
@@ -298,7 +305,7 @@ export const POST = route("ai.chat", async (req) => {
         await Promise.all([
           s.supabase.from("ai_messages").insert({ conversation_id: conversationId, user_id: s.user.id, role: "assistant", content: answer, meta: { sourceMap: ctx.sourceMap, model: servedModel, usage, stopReason, action: b.action, ...(searchedQueries.length ? { research: { focusKey, queries: searchedQueries } } : {}) } }),
           s.supabase.from("ai_conversations").update({ updated_at: new Date().toISOString() }).eq("id", conversationId),
-          recordUsage(s.user.id, "ai_request", { usage, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId } }),
+          recordUsage(s.user.id, "ai_request", { usage, costUsd: cost, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, words: chargedWords(draftWords(answer), countWords(b.selection)) } }),
           // Kullanım kanıt kaydı (D102): kullanıcı metni sonradan silse de yönetici görebilir
           logAiOutput({ userId: s.user.id, action: b.action, projectId: b.projectId, projectTitle: bundle.project.title, stageTitle: stage?.title ?? null, model: servedModel, output: answer }),
           // D109: Tek Proje — yazım çıktısı çalışmanın konusundan tamamen kopuksa yöneticiye uyarı (engellemez)
@@ -339,7 +346,7 @@ export const POST = route("ai.chat", async (req) => {
           const tin = usage.input || Math.ceil(promptChars / 3);
           const out = usage.output || Math.ceil(answer.length / 3);
           const costUsd = await estimateCost(servedModel, tin, out, usage).catch(() => 0);
-          await recordUsage(s.user.id, "ai_request", { quantity: answer ? 1 : 0, tokensIn: tin, tokensOut: out, costUsd, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, partial: true, estimated: !usage.input } }).catch(() => {});
+          await recordUsage(s.user.id, "ai_request", { quantity: answer ? 1 : 0, tokensIn: tin, tokensOut: out, costUsd, provider: model.provider, model: servedModel, meta: { action: b.action, projectId: b.projectId, partial: true, estimated: !usage.input, words: chargedWords(draftWords(answer), countWords(b.selection)) } }).catch(() => {});
           if (answer) await logAiOutput({ userId: s.user.id, action: `${b.action}:yarım`, projectId: b.projectId, projectTitle: bundle.project.title, stageTitle: stage?.title ?? null, model: servedModel, output: answer });
         }
         controller.enqueue(sse("error", { error: req.signal.aborted ? T("İstek iptal edildi") : T("Yapay zekâ yanıtı alınamadı. Lütfen tekrar deneyin.") }));

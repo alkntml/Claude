@@ -9,6 +9,7 @@ import { deviceHash, deviceId } from "@/lib/device-client";
 import { Logo } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { createBrowser } from "@/lib/supabase/browser";
+import { normalizeCode } from "@/lib/discount";
 
 type OAuthProvider = "google" | "apple";
 
@@ -41,6 +42,11 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
     const fromUrl = (params.get("ref") ?? "").replace(/[^A-Za-z0-9]/g, "").slice(0, 16).toUpperCase();
     try { if (fromUrl) sessionStorage.setItem("akademi:ref", fromUrl); return fromUrl || sessionStorage.getItem("akademi:ref") || ""; } catch { return fromUrl; }
   });
+  // İndirim kodu (D145): ?kod= bağlantısından veya formdan; oturum boyunca saklanır
+  const [discount, setDiscount] = useState(() => {
+    const fromUrl = normalizeCode(params.get("kod"));
+    try { if (fromUrl) sessionStorage.setItem("akademi:kod", fromUrl); return fromUrl || sessionStorage.getItem("akademi:kod") || ""; } catch { return fromUrl; }
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -55,7 +61,8 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
     setError(null);
     if (mode === "signup" && !consent) { setError(t("Devam etmek için aydınlatma metnini onaylayın.")); return; }
     setOauthBusy(provider);
-    const q = new URLSearchParams({ next: safeNext, ...(ref ? { ref } : {}) });
+    const kod = mode === "signup" ? normalizeCode(discount) : "";
+    const q = new URLSearchParams({ next: safeNext, ...(ref ? { ref } : {}), ...(kod ? { kod } : {}) });
     const { error } = await createBrowser().auth.signInWithOAuth({ provider, options: { redirectTo: `${window.location.origin}/api/auth/callback?${q}` } });
     // Başarılıysa tarayıcı sağlayıcının sayfasına yönlenir; hata olursa burada kalırız
     if (error) { setError(t("{p} ile giriş şu anda kullanılamıyor. E-posta ile devam edebilirsiniz.", { p: provider === "google" ? "Google" : "Apple" })); setOauthBusy(null); }
@@ -74,7 +81,7 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
         if (password.length < 8) throw new Error(t("Şifre en az 8 karakter olmalıdır."));
         if (!consent) throw new Error(t("Devam etmek için aydınlatma metnini onaylayın."));
         const did = ref ? await deviceHash().catch(() => null) : null;
-        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, ...(ref ? { ref } : {}), ...(ref && did ? { did } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
+        const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name, ...(ref ? { ref } : {}), ...(ref && did ? { did } : {}), ...(normalizeCode(discount) ? { discount: normalizeCode(discount) } : {}) }, emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(safeNext)}` } });
         if (error) throw error;
         if (!data.session) { setSent(true); return; }
       } else {
@@ -128,6 +135,13 @@ export function AuthForm({ mode, providers = [] }: { mode: "login" | "signup"; p
               <form onSubmit={submit} className={providers.length ? "mt-4 space-y-4" : "mt-7 space-y-4"}>
                 {mode === "signup" && (
                   <div><label className="label" htmlFor="name">{t("Ad soyad")}</label><input id="name" className="input" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" /></div>
+                )}
+                {mode === "signup" && (
+                  <div>
+                    <label className="label" htmlFor="discount">{t("İndirim kodu (varsa)")}</label>
+                    <input id="discount" className="input font-mono uppercase" value={discount} onChange={(e) => { const v = normalizeCode(e.target.value); setDiscount(v); try { sessionStorage.setItem("akademi:kod", v); } catch { /* yok say */ } }} autoComplete="off" maxLength={32} placeholder={t("Örn. OGRENCI20")} />
+                    {discount && <p className="mt-1 text-[12px] text-ink-500">{t("Kod geçerliyse hesabınıza bağlanır; indirimli fiyatları Hesap sayfasında ve paket yükseltirken görürsünüz.")}</p>}
+                  </div>
                 )}
                 <div><label className="label" htmlFor="email">{t("E-posta")}</label><input id="email" type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></div>
                 <div>

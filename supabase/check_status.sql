@@ -63,4 +63,8 @@ union all select '36 PDF bölümleri, derleme oyları, veri çıkarma ve kalite'
 union all select '37 Gerçek zamanlı ortak yazım kanalı',
   case when exists (select 1 from pg_proc where proname = 'collab_project_access')
         and exists (select 1 from pg_policies where schemaname = 'realtime' and tablename = 'messages' and policyname = 'academiana_collab_read')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '38 İndirim kodları ve sayfa hakkı',
+  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'discount_codes')
+        and exists (select 1 from pg_proc where proname = 'usage_words')
        then 'YAPILMIŞ' else 'EKSİK' end;

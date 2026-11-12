@@ -9,8 +9,8 @@ import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 
 interface Growth {
-  referral: { code: string; link: string; invited: number; rewarded: number; reward: { ai_requests: number; source_searches: number; valid_days: number } } | null;
-  credits: { ai_requests: number; source_searches: number };
+  referral: { code: string; link: string; invited: number; rewarded: number; reward: { ai_requests: number; source_searches: number; pages?: number; valid_days: number } } | null;
+  credits: { ai_requests: number; source_searches: number; pages?: number };
   org: { id: string; name: string; plan_id: string; role: "admin" | "member" } | null;
   personalPlan: string;
 }
@@ -71,13 +71,13 @@ export function GrowthSection() {
       {g.referral && (
         <section className="card p-6">
           <h2 className="flex items-center gap-2 font-semibold"><Gift className="h-4 w-4" /> {t("Arkadaşını davet et")}</h2>
-          <p className="mt-2 text-sm text-ink-500">{t("Arkadaşınız bu bağlantıyla kaydolduğunda size {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlanır ({d} gün geçerli).", { a: g.referral.reward.ai_requests, s: g.referral.reward.source_searches, d: g.referral.reward.valid_days })}</p>
+          <p className="mt-2 text-sm text-ink-500">{t("Arkadaşınız bu bağlantıyla kaydolduğunda size bir Ücretsiz paket kadar hak tanımlanır: {p} sayfa, {a} yapay zekâ isteği ve {s} kaynak tarama ({d} gün geçerli).", { p: g.referral.reward.pages ?? 5, a: g.referral.reward.ai_requests, s: g.referral.reward.source_searches, d: g.referral.reward.valid_days })}</p>
           <div className="mt-3 flex gap-2">
             <input className="input !text-[13px]" readOnly value={g.referral.link} onFocus={(e) => e.target.select()} aria-label={t("Davet bağlantısı")} />
             <Button size="sm" variant="secondary" className="!h-10" onClick={() => { navigator.clipboard.writeText(g.referral!.link); toast({ tone: "success", title: t("Kopyalandı") }); }} aria-label={t("Kopyala")}><Copy className="h-4 w-4" /></Button>
             <Button size="sm" className="!h-10" onClick={share} aria-label={t("Paylaş")}><Share2 className="h-4 w-4" /></Button>
           </div>
-          <p className="mt-2 text-xs text-ink-500">{t("Davet ettiğiniz: {n} · ödül kazanan: {r}", { n: g.referral.invited, r: g.referral.rewarded })}{g.credits.ai_requests || g.credits.source_searches ? ` · ${t("aktif ek hakkınız: {a} AI isteği, {s} tarama", { a: g.credits.ai_requests, s: g.credits.source_searches })}` : ""}</p>
+          <p className="mt-2 text-xs text-ink-500">{t("Davet ettiğiniz: {n} · ödül kazanan: {r}", { n: g.referral.invited, r: g.referral.rewarded })}{g.credits.ai_requests || g.credits.source_searches || g.credits.pages ? ` · ${t("aktif ek hakkınız: {p} sayfa, {a} AI isteği, {s} tarama", { p: g.credits.pages ?? 0, a: g.credits.ai_requests, s: g.credits.source_searches })}` : ""}</p>
         </section>
       )}
 

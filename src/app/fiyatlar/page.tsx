@@ -32,7 +32,7 @@ export default async function Pricing() {
         <PricingCards plans={plans} signedIn={s} />
         <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-ink-100 bg-white p-5 text-sm leading-relaxed text-ink-600">
           <p className="font-semibold text-ink-900">{t("Paket ölçüleri nasıl belirlendi?")}</p>
-          <p className="mt-1">{t("Aylık sayfa miktarları, 44 gerçek akademik tam metin üzerinde ölçülen ortalama sayfa uzunluğu ve bir sayfanın ortalama yapay zekâ maliyeti esas alınarak hesaplanır; sayfa sayıları yaklaşıktır. Ana sayfa ve bu sayfa aynı paket kaydından beslenir.")}</p>
+          <p className="mt-1">{t("Aylık sayfa miktarları, 44 gerçek akademik tam metin üzerinde ölçülen ortalama sayfa uzunluğu ve bir sayfanın ortalama yapay zekâ maliyeti esas alınarak belirlenir ve paketinizin gerçek sınırıdır: yapay zekânın yazdığı taslak kelimeleri sayılır (1 sayfa = 344 kelime). Ana sayfa ve bu sayfa aynı paket kaydından beslenir.")}</p>
           <p className="mt-2">{t("“Sınırsız” ifadesi, bir kişinin akademik çalışması için olağan kullanımı anlatır.")} <Link href="/kosullar#adil-kullanim" className="font-medium text-brand-700 hover:underline">{t("Adil kullanım koşulları →")}</Link> · <Link href="/yontem" className="font-medium text-brand-700 hover:underline">{t("Yöntem ve şeffaflık →")}</Link></p>
         </div>
         <p className="mt-8 text-center"><Link href="/ornekler" className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 hover:underline">{t("Her hizmetin örnek çıktısını görün →")}</Link></p>
@@ -45,7 +45,7 @@ export default async function Pricing() {
           {referral.enabled && (
             <div className="card p-5">
               <p className="font-semibold text-ink-900">{t("Arkadaşını davet et")}</p>
-              <p className="mt-1 text-sm text-ink-500">{t("Davet ettiğiniz her arkadaşınız kaydolduğunda size {a} yapay zekâ isteği ve {s} kaynak tarama hakkı tanımlanır ({d} gün geçerli).", { a: reward.ai_requests, s: reward.source_searches, d: referral.valid_days })}</p>
+              <p className="mt-1 text-sm text-ink-500">{t("Davet ettiğiniz her arkadaşınız kaydolduğunda size bir Ücretsiz paket kadar hak tanımlanır: {p} sayfa, {a} yapay zekâ isteği ve {s} kaynak tarama ({d} gün geçerli).", { p: reward.pages, a: reward.ai_requests, s: reward.source_searches, d: referral.valid_days })}</p>
             </div>
           )}
         </div>

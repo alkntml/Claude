@@ -4,6 +4,7 @@ import { isDisposableEmail } from "@/lib/disposable-email";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSetting } from "@/lib/settings";
 import { adminClient } from "@/lib/supabase/admin";
+import { WORDS_PER_PAGE } from "@/lib/pages";
 
 /* Kurumsal lisans, kullanım kredileri ve davet ödülü (sunucu) */
 
@@ -23,11 +24,11 @@ export async function activeOrg(db: SupabaseClient, userId: string): Promise<Org
 }
 
 /** Davet ödülü (D98): Ücretsiz paketin aylık haklarına eşittir; paket değişirse ödül de değişir */
-export async function referralReward(): Promise<{ ai_requests: number; source_searches: number; pages: number | null }> {
+export async function referralReward(): Promise<{ ai_requests: number; source_searches: number; pages: number }> {
   try {
     const { data } = await adminClient().from("plans").select("limits").eq("id", "free").maybeSingle();
     const l = (data?.limits ?? {}) as { ai_requests_month?: number | null; source_searches_month?: number | null; pages_month?: number | null };
-    return { ai_requests: Number(l.ai_requests_month) || 10, source_searches: Number(l.source_searches_month) || 7, pages: l.pages_month ?? null };
+    return { ai_requests: Number(l.ai_requests_month) || 10, source_searches: Number(l.source_searches_month) || 7, pages: Number(l.pages_month) || 5 };
   } catch {
     return { ai_requests: 10, source_searches: 7, pages: 5 };
   }
@@ -42,10 +43,10 @@ export const trMonth = (d: Date | string) => { const x = new Date(new Date(d).ge
  * kalan bakiye bu ayki sınıra eklenir (önceden 60 gün geçerli kredi aktif olduğu her ay yeniden sayılıyordu).
  * Saf fonksiyon (test edilir). `base` null ise sınırsızdır, kredi gerekmez.
  */
-export function creditPool(credits: CreditRow[], usageByMonth: Record<string, { ai: number; search: number }>, base: { ai: number | null | undefined; search: number | null | undefined }, now = new Date()): { ai_requests: number; source_searches: number } {
+export function creditPool(credits: CreditRow[], usageByMonth: Record<string, { ai: number; search: number; pages?: number }>, base: { ai: number | null | undefined; search: number | null | undefined; pages?: number | null }, now = new Date()): { ai_requests: number; source_searches: number; pages: number } {
   const nowMs = now.getTime();
   const current = trMonth(now);
-  const calc = (kind: "ai_requests" | "source_searches", key: "ai" | "search", lim: number | null | undefined) => {
+  const calc = (kind: "ai_requests" | "source_searches" | "pages", key: "ai" | "search" | "pages", lim: number | null | undefined) => {
     const rows = credits.filter((c) => c.kind === kind && c.amount > 0);
     if (!rows.length || lim == null) return 0;
     const months = [...new Set(rows.map((c) => trMonth(c.created_at)))].sort();
@@ -60,7 +61,8 @@ export function creditPool(credits: CreditRow[], usageByMonth: Record<string, { 
     const live = rows.filter((c) => !c.expires_at || new Date(c.expires_at).getTime() >= nowMs).reduce((a, c) => a + c.amount, 0);
     return Math.max(0, Math.min(pool, live));
   };
-  return { ai_requests: calc("ai_requests", "ai", base.ai), source_searches: calc("source_searches", "search", base.search) };
+  // Sayfa kredisi (D145): pakette sayfa sınırı yoksa (undefined/null) gerekmez
+  return { ai_requests: calc("ai_requests", "ai", base.ai), source_searches: calc("source_searches", "search", base.search), pages: calc("pages", "pages", base.pages) };
 }
 
 function nextMonth(m: string) {
@@ -69,30 +71,31 @@ function nextMonth(m: string) {
 }
 
 /** Bu ay kullanılabilecek kredi (aylık sınıra eklenir). `base`: paketin aylık hakları */
-export async function activeCredits(userId: string, base: { ai: number | null | undefined; search: number | null | undefined } = { ai: 0, search: 0 }): Promise<{ ai_requests: number; source_searches: number }> {
+export async function activeCredits(userId: string, base: { ai: number | null | undefined; search: number | null | undefined; pages?: number | null } = { ai: 0, search: 0, pages: 0 }): Promise<{ ai_requests: number; source_searches: number; pages: number }> {
   try {
     const db = adminClient();
     const { data } = await db.from("usage_credits").select("kind, amount, created_at, expires_at").eq("user_id", userId);
     const now = Date.now();
     const rows = ((data ?? []) as CreditRow[]).filter((c) => !c.expires_at || new Date(c.expires_at).getTime() >= now - 100 * 86_400_000);
-    if (!rows.some((c) => !c.expires_at || new Date(c.expires_at).getTime() >= now)) return { ai_requests: 0, source_searches: 0 };
+    if (!rows.some((c) => !c.expires_at || new Date(c.expires_at).getTime() >= now)) return { ai_requests: 0, source_searches: 0, pages: 0 };
     // Krediler verildiği aydan bu yana aylık kullanım
     const first = rows.map((c) => c.created_at).sort()[0];
     const [y, m] = trMonth(first).split("-").map(Number);
     const since = new Date(Date.UTC(y, m - 1, 1) - 3 * 3600_000).toISOString();
-    const usage: Record<string, { ai: number; search: number }> = {};
+    const usage: Record<string, { ai: number; search: number; pages: number }> = {};
     for (let from = 0; from < 50000; from += 1000) {
-      const { data: ev } = await db.from("usage_events").select("kind, quantity, created_at").eq("user_id", userId).in("kind", ["ai_request", "source_search"]).gte("created_at", since).order("id").range(from, from + 999);
+      const { data: ev } = await db.from("usage_events").select("kind, quantity, created_at, words:meta->words").eq("user_id", userId).in("kind", ["ai_request", "source_search"]).gte("created_at", since).order("id").range(from, from + 999);
       for (const e of ev ?? []) {
         const k = trMonth(e.created_at as string);
-        usage[k] ??= { ai: 0, search: 0 };
-        if (e.kind === "ai_request") usage[k].ai += Number(e.quantity) || 0; else usage[k].search += Number(e.quantity) || 0;
+        usage[k] ??= { ai: 0, search: 0, pages: 0 };
+        if (e.kind === "ai_request") { usage[k].ai += Number(e.quantity) || 0; usage[k].pages += (Number((e as { words?: unknown }).words) || 0) / WORDS_PER_PAGE; }
+        else usage[k].search += Number(e.quantity) || 0;
       }
       if (!ev || ev.length < 1000) break;
     }
     return creditPool(rows, usage, base);
   } catch {
-    return { ai_requests: 0, source_searches: 0 };
+    return { ai_requests: 0, source_searches: 0, pages: 0 };
   }
 }
 
@@ -149,9 +152,11 @@ export async function grantReferralReward(userId: string, device?: string | null
     await db.from("usage_credits").insert([
       { user_id: p.referred_by, kind: "ai_requests", amount: reward.ai_requests, reason: "referral_inviter", expires_at: expires },
       { user_id: p.referred_by, kind: "source_searches", amount: reward.source_searches, reason: "referral_inviter", expires_at: expires },
+      // D145: Ücretsiz paketin sayfa hakkı kadar sayfa (migration 38 yoksa bu satır reddedilir; diğerleri ayrı eklenir)
     ]);
+    await db.from("usage_credits").insert({ user_id: p.referred_by, kind: "pages", amount: reward.pages, reason: "referral_inviter", expires_at: expires }).then(() => undefined, () => undefined);
     // Bildirim kutusu (D100); tablo yoksa sessizce atlanır
-    await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_reward", data: { ai: reward.ai_requests, ss: reward.source_searches, days: cfg.valid_days } }).then(() => undefined, () => undefined);
+    await db.from("notifications").insert({ user_id: p.referred_by, kind: "referral_reward", data: { ai: reward.ai_requests, ss: reward.source_searches, pg: reward.pages, days: cfg.valid_days } }).then(() => undefined, () => undefined);
     return true;
   } catch {
     return false;

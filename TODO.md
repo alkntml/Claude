@@ -1,4 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] Supabase SQL Editor’de migration 38’i çalıştır (indirim kodları, sayfa hakkı, davet ödülüne sayfa; D145); check_status.sql’de “38” YAPILMIŞ görünmeli
+- [ ] Canlıda dene: Yönetim → İndirim kodları → kod oluştur; çıkış yapıp /kayit?kod=KOD ile yeni hesap aç; Hesap sayfasında indirimli fiyat ve WhatsApp mesajında kod görünmeli (D145)
+- [ ] Canlıda dene: Ücretsiz hesapla bölüm yazdır; Hesap → “Yapay zekâ ile yazılan sayfa” sayacı artmalı, 5 sayfada yeni taslak durmalı (D145)
 - [ ] Canlıda dene: /de sayfaları, Almanya’dan girişte otomatik Almanca, Almanca arayüzle asistan cevabı (D143)
 - [ ] Canlıda dene: Almanca çalışma oluştur → bölüm yaz, atıf ekle, Word/PDF/LaTeX indir, istatistik ve çeviri (D144)
 - [ ] Canlıda dene: /yardim (Kullanım rehberi) ve çalışma alanında “?” → 15 adımlı rehberli tur (D142)

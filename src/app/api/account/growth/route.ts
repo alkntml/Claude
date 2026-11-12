@@ -10,7 +10,7 @@ import { adminClient } from "@/lib/supabase/admin";
 export const GET = route("account.growth", async (req) => {
   const s = await requireUser();
   const [ref, reward, limits] = await Promise.all([getSetting("referral"), referralReward(), planLimits(s.profile.plan_id)]);
-  const credits = await activeCredits(s.user.id, { ai: limits.ai_requests_month, search: limits.source_searches_month });
+  const credits = await activeCredits(s.user.id, { ai: limits.ai_requests_month, search: limits.source_searches_month, pages: limits.pages_month });
   const db = adminClient();
   const [{ count: invited }, { count: rewarded }] = await Promise.all([
     db.from("profiles").select("id", { count: "exact", head: true }).eq("referred_by", s.user.id),
@@ -18,7 +18,7 @@ export const GET = route("account.growth", async (req) => {
   ]);
   const origin = env.appUrl || new URL(req.url).origin;
   return json({
-    referral: ref.enabled && s.profile.referral_code ? { code: s.profile.referral_code, link: `${origin}/davet/${s.profile.referral_code}`, invited: invited ?? 0, rewarded: rewarded ?? 0, reward: { ai_requests: reward.ai_requests, source_searches: reward.source_searches, valid_days: ref.valid_days } } : null,
+    referral: ref.enabled && s.profile.referral_code ? { code: s.profile.referral_code, link: `${origin}/davet/${s.profile.referral_code}`, invited: invited ?? 0, rewarded: rewarded ?? 0, reward: { ai_requests: reward.ai_requests, source_searches: reward.source_searches, pages: reward.pages, valid_days: ref.valid_days } } : null,
     credits,
     org: s.profile.org ?? null,
     personalPlan: s.profile.personal_plan_id ?? s.profile.plan_id,

@@ -54,7 +54,7 @@ export default async function MethodPage() {
         <h2>7. „Was sagt die Forschung?“</h2>
         <p>Die Antwort wird ausschließlich aus den Abstracts der gefundenen Artikel (höchstens 14) zusammengestellt; jeder Satz ist mit einem nummerierten Artikel verknüpft, Verweise auf Nummern, die nicht in der Liste stehen, werden entfernt. Die Konsensanzeige erscheint nur bei Ja/Nein-Fragen mit mindestens drei relevanten Studien. Sie ist keine Literaturübersicht.</p>
         <h2>8. Wie die Tarifumfänge festgelegt wurden</h2>
-        <p>Die monatlichen Seitenumfänge beruhen auf der durchschnittlichen Seitenlänge und den KI-Kosten, gemessen an 44 echten wissenschaftlichen Volltexten; die Seitenzahlen sind Näherungswerte. „Unbegrenzt“ bezeichnet die übliche Nutzung durch eine Person für wissenschaftliche Arbeit und unterliegt den <Link href="/kosullar#adil-kullanim">Fair-Use-Bedingungen</Link>.</p>
+        <p>Die monatlichen Seitenumfänge beruhen auf der durchschnittlichen Seitenlänge und den KI-Kosten, gemessen an 44 echten wissenschaftlichen Volltexten; die Seitenzahl Ihres Tarifs ist eine echte Grenze: Gezählt werden die Wörter der von der KI geschriebenen Entwürfe (1 Seite = 344 Wörter). „Unbegrenzt“ bezeichnet die übliche Nutzung durch eine Person für wissenschaftliche Arbeit und unterliegt den <Link href="/kosullar#adil-kullanim">Fair-Use-Bedingungen</Link>.</p>
         <h2>9. Bekannte Grenzen</h2>
         <ul>
           <li>Artikel hinter Bezahlschranken können nicht gelesen werden, es sei denn, Sie laden das PDF selbst hoch.</li>
@@ -105,7 +105,7 @@ export default async function MethodPage() {
         <h2>7. “What does research say?”</h2>
         <p>The answer is compiled only from the abstracts of the papers found (at most 14); each sentence is linked to a numbered paper and references to papers that do not exist in the list are removed. The consensus meter appears only for yes/no questions with at least three relevant studies. It is not a literature review.</p>
         <h2>8. How plan amounts are set</h2>
-        <p>Monthly page amounts are based on the average page length and AI cost measured on 44 real academic full texts; page counts are approximate. “Unlimited” means ordinary use by one person for academic work and is subject to the <Link href="/kosullar#adil-kullanim">fair use terms</Link>.</p>
+        <p>Monthly page amounts are based on the average page length and AI cost measured on 44 real academic full texts; the page count on your plan is a real limit: the words of drafts written by the AI are counted (1 page = 344 words). “Unlimited” means ordinary use by one person for academic work and is subject to the <Link href="/kosullar#adil-kullanim">fair use terms</Link>.</p>
         <h2>9. Known limitations</h2>
         <ul>
           <li>Paywalled articles cannot be read unless you upload the PDF yourself.</li>
@@ -155,7 +155,7 @@ export default async function MethodPage() {
       <h2>7. “Araştırmalar ne diyor?”</h2>
       <p>Cevap yalnızca bulunan makalelerin (en fazla 14) özetlerinden derlenir; her cümle numaralı bir makaleye bağlanır, listede olmayan numaraya yapılan göndermeler silinir. Uzlaşı göstergesi yalnızca evet/hayır sorularında ve en az üç ilgili çalışma varsa görünür. Bir literatür taraması değildir.</p>
       <h2>8. Paket ölçüleri nasıl belirlendi?</h2>
-      <p>Aylık sayfa miktarları, 44 gerçek akademik tam metin üzerinde ölçülen ortalama sayfa uzunluğuna ve yapay zekâ maliyetine dayanır; sayfa sayıları yaklaşıktır. “Sınırsız”, bir kişinin akademik çalışması için olağan kullanımı anlatır ve <Link href="/kosullar#adil-kullanim">adil kullanım koşullarına</Link> tabidir.</p>
+      <p>Aylık sayfa miktarları, 44 gerçek akademik tam metin üzerinde ölçülen ortalama sayfa uzunluğuna ve yapay zekâ maliyetine dayanır; paketinizdeki sayfa sayısı gerçek sınırdır: yapay zekânın yazdığı taslak kelimeleri sayılır (1 sayfa = 344 kelime). “Sınırsız”, bir kişinin akademik çalışması için olağan kullanımı anlatır ve <Link href="/kosullar#adil-kullanim">adil kullanım koşullarına</Link> tabidir.</p>
       <h2>9. Bilinen sınırlamalar</h2>
       <ul>
         <li>Ücretli (kapalı erişimli) makaleler, PDF’ini siz yüklemedikçe okunamaz.</li>

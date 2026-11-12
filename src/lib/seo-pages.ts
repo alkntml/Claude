@@ -65,8 +65,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "/": {
     title: {
-      tr: "Academiana — Yapay Zekâ ile Tez ve Makale Yazımı",
-      en: "Academiana — AI Thesis & Academic Writing Assistant", de: "Academiana — KI-Assistent für Abschlussarbeit und wissenschaftliches Schreiben",
+      tr: "Academiana | Eksiksiz Akademik Araştırma Çalışma Alanı",
+      en: "Academiana | The Complete Academic Research Workspace", de: "Academiana | Der komplette Arbeitsbereich für Forschung",
     },
     description: {
       tr: "Tez, makale ve literatür taramanızı gerçek kaynaklarla yazın; atıflı her cümle kaynağında denetlenir. APA 7, PRISMA, istatistik, anket ve Word çıktısı.",

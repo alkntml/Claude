@@ -33,7 +33,7 @@ export function buildMeta(m: MetaInput, locale: Locale): Metadata {
   const self = locale === "en" ? enPath : locale === "de" && hasDe ? dePath : locale === "de" ? enPath : trPath;
   const title = pick(m.title, locale);
   const description = pick(m.description, locale);
-  const img = ogImage(title.replace(/\s*\|\s*Academiana$/, ""), m.tagline ? pick(m.tagline, locale) : "academiana.com.tr", locale);
+  const img = ogImage(title.replace(/\s*\|\s*Academiana$/, "").replace(/^Academiana\s*\|\s*/, ""), m.tagline ? pick(m.tagline, locale) : "academiana.com.tr", locale);
   const og: Record<Locale, string> = { tr: "tr_TR", en: "en_US", de: "de_DE" };
   const langs: Locale[] = hasDe ? ["tr", "en", "de"] : ["tr", "en"];
   return {

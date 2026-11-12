@@ -382,7 +382,7 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, bu
         p.kind === "text" ? (
           <div key={i} className="rounded-2xl rounded-tl-md border border-ink-100 bg-white px-3.5 py-3 text-ink-700"><Markdown text={p.text} sourceMap={msg.sourceMap} /></div>
         ) : (
-          <div key={i} className="overflow-hidden rounded-2xl border border-brand-200 bg-white shadow-[0_10px_30px_-18px_rgb(39_71_220/0.5)]">
+          <div key={i} className="overflow-hidden rounded-2xl border border-brand-200 bg-white shadow-[0_10px_30px_-18px_rgb(79_70_229/0.5)]">
             <div className="flex items-center justify-between gap-2 border-b border-brand-100 bg-brand-50/70 px-3.5 py-2">
               <span className="text-[12px] font-semibold text-brand-700">{t("Taslak metin")}</span>
               {(p.complete || !streaming) && <button onClick={() => { navigator.clipboard.writeText(p.text); toast({ tone: "success", title: t("Kopyalandı") }); }} className="rounded-lg p-1.5 text-ink-500 hover:bg-white" title={t("Kopyala")} aria-label={t("Kopyala")}><ClipboardCopy className="h-3.5 w-3.5" /></button>}

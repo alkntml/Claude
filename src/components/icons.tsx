@@ -14,7 +14,7 @@ export function Logo({ className = "", variant = "mark" }: { className?: string;
   return (
     <span className={`inline-flex items-center gap-2 ${className}`}>
       <img src="/brand/academiana-emblem.png" alt="" width={192} height={169} className="h-9 w-auto shrink-0" />
-      <span className="font-serif text-[21px] font-semibold leading-none tracking-tight text-[#0f1d3d] dark:text-white">Academiana</span>
+      <span className="wordmark font-serif text-[21px] font-semibold leading-none tracking-tight text-[#0f1d3d] dark:text-white">Academiana</span>
     </span>
   );
 }

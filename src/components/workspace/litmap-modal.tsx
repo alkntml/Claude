@@ -19,7 +19,7 @@ interface MapData { nodes: MapNode[]; edges: MapEdge[]; clusters?: MapCluster[];
 type View = "network" | "timeline" | "topics" | "missing" | "new";
 const W = 760, H = 460;
 /** Küme renkleri (kategorik, sabit sıra); 0 = kümesiz */
-const PALETTE = ["#2747dc", "#059669", "#d97706", "#e11d48", "#7c3aed", "#0284c7", "#0d9488", "#ea580c"];
+const PALETTE = ["#4f46e5", "#059669", "#d97706", "#e11d48", "#7c3aed", "#0284c7", "#0d9488", "#ea580c"];
 const clusterColor = (c?: number) => (c ? PALETTE[(c - 1) % PALETTE.length] : "#9aa1b9");
 const EDGE_STYLE: Record<EdgeKind, { dash?: string; color: string }> = { cites: { color: "rgb(120 128 160)" }, coupling: { dash: "4 3", color: "rgb(160 168 196)" }, cocitation: { dash: "1 3", color: "rgb(176 140 60)" } };
 
@@ -134,7 +134,7 @@ export function LitMapModal({ open, onClose, projectId, sourceCount, onSourcesAd
     const a = P[e.from], b = P[e.to]; if (!a || !b) return null;
     const k = e.kind ?? "cites"; const st = EDGE_STYLE[k];
     const hot = sel && (e.from === sel || e.to === sel);
-    return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={hot ? "#2747dc" : st.color} strokeOpacity={hot ? 0.95 : 0.55} strokeWidth={hot ? 1.8 : k === "coupling" ? 0.8 + 2 * (e.weight ?? 0) : 1} strokeDasharray={st.dash} markerEnd={k === "cites" ? "url(#lm-a)" : undefined} />;
+    return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={hot ? "#4f46e5" : st.color} strokeOpacity={hot ? 0.95 : 0.55} strokeWidth={hot ? 1.8 : k === "coupling" ? 0.8 + 2 * (e.weight ?? 0) : 1} strokeDasharray={st.dash} markerEnd={k === "cites" ? "url(#lm-a)" : undefined} />;
   });
 
   return (

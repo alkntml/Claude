@@ -20,7 +20,7 @@ export function HowItWorks() {
   return (
     <section id="nasil" className="relative overflow-hidden bg-ink-950 py-24 text-white">
       <div className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:22px_22px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(420px_160px_at_50%_0%,rgb(39_71_220/0.35),transparent_75%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(420px_160px_at_50%_0%,rgb(79_70_229/0.35),transparent_75%)]" />
       <div className="relative mx-auto max-w-6xl px-6">
         <FadeIn className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-300">{t("Nasıl çalışır")}</p>

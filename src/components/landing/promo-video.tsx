@@ -28,7 +28,7 @@ export function PromoVideo() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={PROMO_VIDEO.poster} alt="" className="h-full w-full object-cover" loading="lazy" />
                 <span className="absolute inset-0 bg-gradient-to-t from-ink-950/35 via-transparent to-transparent transition group-hover:from-ink-950/45" />
-                <span className="absolute bottom-3 left-3 inline-flex items-center gap-2.5 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2 pl-2 pr-4 text-sm font-semibold text-white shadow-[0_16px_32px_-12px_rgb(39_71_220/0.8)] transition group-hover:-translate-y-0.5 sm:bottom-6 sm:left-6 sm:py-2.5 sm:pl-2.5 sm:pr-5 sm:text-base">
+                <span className="absolute bottom-3 left-3 inline-flex items-center gap-2.5 rounded-full bg-gradient-to-b from-brand-500 to-brand-600 py-2 pl-2 pr-4 text-sm font-semibold text-white shadow-[0_16px_32px_-12px_rgb(79_70_229/0.8)] transition group-hover:-translate-y-0.5 sm:bottom-6 sm:left-6 sm:py-2.5 sm:pl-2.5 sm:pr-5 sm:text-base">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 sm:h-10 sm:w-10"><Play className="ml-0.5 h-4 w-4 fill-current sm:h-5 sm:w-5" /></span>
                   {t("Tanıtımı izle")} <span className="font-normal text-white/75">· 1:08</span>
                 </span>

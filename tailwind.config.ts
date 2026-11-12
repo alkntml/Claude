@@ -8,7 +8,7 @@ export default {
       colors: {
         // Gece modu (D61): ink tonları CSS değişkeni; .dark sınıfında ters çevrilir
         ink: Object.fromEntries([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((k) => [k, `rgb(var(--ink-${k}) / <alpha-value>)`])),
-        brand: { 50: "#eef4ff", 100: "#dbe7ff", 200: "#bcd2ff", 300: "#8db3ff", 400: "#5a89fb", 500: "#3a64f2", 600: "#2747dc", 700: "#2038b2", 800: "#20338c", 900: "#1f2f6f" },
+        brand: { 50: "#eef2ff", 100: "#e0e7ff", 200: "#c7d2fe", 300: "#a5b4fc", 400: "#818cf8", 500: "#6366f1", 600: "#4f46e5", 700: "#4338ca", 800: "#3730a3", 900: "#312e81" },
         amberx: { 400: "#f5b84b", 500: "#e89e1f" },
         sage: { 400: "#4fc7a1", 500: "#23a983" },
       },
@@ -18,8 +18,9 @@ export default {
       },
       borderRadius: { "2xl": "1.1rem", "3xl": "1.6rem" },
       boxShadow: {
-        soft: "0 1px 2px rgb(16 24 40 / 0.04), 0 8px 24px -6px rgb(16 24 40 / 0.10)",
-        glow: "0 0 0 1px rgb(58 100 242 / 0.25), 0 10px 40px -10px rgb(58 100 242 / 0.45)",
+        // D148: daha hafif gölge (ince çizgi + çok yumuşak derinlik)
+        soft: "0 1px 2px rgb(16 24 40 / 0.04), 0 4px 14px -6px rgb(16 24 40 / 0.06)",
+        glow: "0 0 0 1px rgb(99 102 241 / 0.25), 0 10px 40px -10px rgb(99 102 241 / 0.45)",
       },
       keyframes: {
         shimmer: { "0%": { backgroundPosition: "-400px 0" }, "100%": { backgroundPosition: "400px 0" } },

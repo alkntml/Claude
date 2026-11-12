@@ -43,7 +43,7 @@ export function ToolsMenu({ onPick, workType, variant = "button", planId }: { on
   }
   return (
     <div className="relative hidden lg:block">
-      <Button size="sm" variant="secondary" className="!h-9" onClick={() => setOpen((o) => !o)}><Wrench className="h-4 w-4" /> {t("Araçlar")}</Button>
+      <Button size="sm" variant="ghost" className="!h-9 !text-[13.5px]" onClick={() => setOpen((o) => !o)}><Wrench className="h-4 w-4" /> {t("Araçlar")}</Button>
       <AnimatePresence>
         {open && (
           <>

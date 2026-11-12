@@ -207,3 +207,4 @@ _Son güncelleme: 1 Kasım 2026 (gece) — her büyük değişiklik commit’ind
 - D145 (2026-11-14): İndirim kodları (yönetim modülü, TL/$ karşılıkları, kayıtta kod, indirimli fiyat gösterimi), sayfa hakkı paket kartıyla birebir (yazılan taslak kelimesi / 344), davet ödülü = bir Ücretsiz paket (sayfa dahil); migration 38
 - D146 (2026-11-14): Yönetimden tek bir kullanıcıya bildirim (başlık, mesaj, site içi bağlantı; okundu bilgisi); ek hak verirken sayfa
 - D147 (2026-11-14): Ana sayfada 7 akademisyen/araştırmacı görüşü (özgün dilinde, değiştirilmeden; yorum şeması yok)
+- D148 (2026-11-14): Sade ve zarif arayüz — nötr griler, indigo vurgu, editörde Inter ve bağlantı biçimli atıflar, düz araç çubuğu, çerçevesiz üst düğmeler

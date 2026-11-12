@@ -48,7 +48,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
           ) : (
             <>
               <Link href="/giris" className="whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium text-ink-700 transition hover:bg-ink-100/70">{t("Giriş yap")}</Link>
-              <Link href="/kayit" className="whitespace-nowrap rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2 text-sm font-medium text-white shadow-[0_8px_20px_-8px_rgb(39_71_220/0.65)] transition hover:-translate-y-px">{t("Ücretsiz başla")}</Link>
+              <Link href="/kayit" className="whitespace-nowrap rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2 text-sm font-medium text-white shadow-[0_8px_20px_-8px_rgb(79_70_229/0.65)] transition hover:-translate-y-px">{t("Ücretsiz başla")}</Link>
             </>
           )}
         </div>

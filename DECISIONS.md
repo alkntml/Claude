@@ -732,3 +732,13 @@ Yönetim → Kullanıcılar → kullanıcı ayrıntısı → “Bildirim gönder
 ## D147 — Ana sayfada akademisyen görüşleri (2026-11-14)
 Site sahibinin ilettiği 7 görüş (`lib/testimonials.ts`, bileşen `components/landing/testimonials.tsx`) ana sayfada İlkeler’den sonra, paketlerden önce (`#gorusler`). Metinler özgün dilinde ve değiştirilmeden; her dilde aynı görüşler gösterilir (çevrilip kişinin sözü gibi sunulmaz). Yıldızlar yalnızca görsel; Review/AggregateRating yapılandırılmış verisi EKLENMEZ (Google kendi ürününe ait yorum işaretlemesini kabul etmez; D107 ilkesi). Görüşlerin gerçekliği ve kişilerin ad/unvanla yayın izni site sahibinin sorumluluğundadır; yeni görüş yalnızca site sahibi iletirse eklenir, uydurulmaz.
 
+## D148 — Sade ve zarif arayüz (2026-11-14)
+Kullanıcı, rakip bir yazım uygulamasının ekranlarını örnek gösterip “kibar, zarif renkler ve metin tarzı” istedi. Ekranlar kopyalanmadı; yalnızca genel tasarım dili uygulandı, kendi düzenimiz korundu:
+- Renk: ink ölçeği nötr griye (mavi alt ton kaldırıldı), marka mavisi indigoya (#4f46e5) çevrildi; zemin beyaza yakın (252 252 253), çalışma alanı beyaz. Gece modu nötr koyu grilerle.
+- Düğmeler: birincil düz indigo (degrade ve ağır gölge yok); siyah dolgu düğmeler (bg-ink-900 + beyaz yazı) global CSS ile indigoya döner; çalışma alanı üst çubuğundaki düğmeler çerçevesiz.
+- Kartlar: daha hafif gölge (shadow-soft), ince çizgi.
+- Editör: Inter (sade) yazı tipi 16,5 px, satır aralığı 1,8, sola yaslı (iki yana yaslama kaldırıldı); atıflar kutucuk yerine metin içinde indigo bağlantı gibi. Word/PDF çıktı biçimi DEĞİŞMEDİ.
+- Araç çubuğu: kart/gölge yerine düz satır, alt çizgiyle ayrılır; etkin düğme açık indigo zemin.
+- Uygulama içinde (.app-ui: AppShell ve çalışma alanı) serif başlıklar sade yazı tipine döner; logo yazısı (.wordmark) ve tanıtım sayfası serif başlıkları korunur.
+- Gece modunda beyaz degradeler (from/via/to-white) koyu yüzeye döner. Servis çalışanı sürümü v5.
+

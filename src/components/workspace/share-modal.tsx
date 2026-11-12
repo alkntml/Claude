@@ -37,7 +37,7 @@ export function ShareButton({ projectId, variant }: { projectId: string; variant
     <>
       {variant === "row"
         ? <button onClick={() => setOpen(true)} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Share2 className="h-5 w-5 text-brand-600" /> {t("Danışmanla paylaş")}</button>
-        : <button onClick={() => setOpen(true)} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><Share2 className="h-4 w-4" /> {t("Paylaş")}</button>}
+        : <button onClick={() => setOpen(true)} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex"><Share2 className="h-4 w-4" /> {t("Paylaş")}</button>}
       <Modal open={open} onClose={() => setOpen(false)} title={t("Danışmanla paylaş")}>
         <p className="text-sm text-ink-500">{t("Salt okunur bir bağlantı oluşturun. Bağlantıya sahip kişi çalışmanızı (bölümler, atıflar, kaynakça) görebilir ama düzenleyemez. Bağlantıyı istediğiniz zaman iptal edebilirsiniz.")}</p>
         <div className="mt-4 grid grid-cols-2 gap-2">

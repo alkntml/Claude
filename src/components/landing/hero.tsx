@@ -24,7 +24,7 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
             {t("Tez, makale ve araştırma önerinizi adım adım ilerleyen bir yol haritasıyla hazırlayın. Kaynaklar OpenAlex, Crossref ve PubMed gibi veri tabanlarından gelir ve doğrulanır. Atıflar seçtiğiniz stile göre kendiliğinden biçimlenir.")}
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-6 font-medium text-white shadow-[0_14px_30px_-12px_rgb(39_71_220/0.8)] transition hover:-translate-y-0.5">
+            <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-6 font-medium text-white shadow-[0_14px_30px_-12px_rgb(79_70_229/0.8)] transition hover:-translate-y-0.5">
               {t("Çalışmaya başla")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Link>
             <Link href="#tur-sec" className="inline-flex h-12 items-center rounded-2xl border border-ink-200 bg-white/80 px-6 font-medium text-ink-700 transition hover:border-ink-300 hover:bg-white">{t("Çalışma türlerini gör")}</Link>

@@ -77,7 +77,7 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between px-5 pb-6 pt-6"><Link href="/panel"><Logo /></Link><NotificationBell className="hidden lg:block" /></div>
       <div className="px-3">
-        <Link href="/yeni" className="group mb-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_24px_-10px_rgb(39_71_220/0.8)] transition hover:-translate-y-px">
+        <Link href="/yeni" className="group mb-4 flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_24px_-10px_rgb(79_70_229/0.8)] transition hover:-translate-y-px">
           <Plus className="h-4 w-4 transition group-hover:rotate-90" /> {t("Yeni çalışma")}
         </Link>
         <nav className="space-y-0.5">
@@ -85,7 +85,7 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
             const active = path === n.href || path.startsWith(`${n.href}/`);
             return (
               <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className={cn("relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors", active ? "text-ink-900" : "text-ink-500 hover:text-ink-900")}>
-                {active && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-xl bg-white shadow-sm ring-1 ring-ink-100" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
+                {active && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-lg bg-ink-100" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
                 <n.icon className="relative h-[18px] w-[18px]" />
                 <span className="relative">{t(n.label)}</span>
               </Link>
@@ -113,8 +113,8 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
   );
 
   return (
-    <div className="min-h-screen bg-[rgb(var(--bg))]">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-100 bg-ink-50/50 lg:block">{Side}</aside>
+    <div className="app-ui min-h-screen bg-[rgb(var(--bg))]">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-200/70 bg-white lg:block">{Side}</aside>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/95 px-4 py-3 lg:hidden">
         <Logo />
         <div className="flex items-center gap-1">

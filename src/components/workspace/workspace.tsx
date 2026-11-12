@@ -1083,18 +1083,18 @@ export function Workspace(props: Props) {
 
   return (
     <CitationContext.Provider value={citeCtx}>
-      <div className="flex h-[100dvh] flex-col bg-[rgb(var(--bg))]">
+      <div className="app-ui flex h-[100dvh] flex-col bg-white">
         {/* Üst çubuk */}
-        <header className="relative z-30 flex h-14 shrink-0 items-center gap-1.5 border-b border-ink-100 bg-white/85 px-2 backdrop-blur sm:gap-2 sm:px-4" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
+        <header className="relative z-30 flex h-14 shrink-0 items-center gap-1.5 border-b border-ink-200/70 bg-white px-2 sm:gap-2 sm:px-4" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
           <Link href="/panel" className="rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900" aria-label={t("Panele dön")}><ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" /></Link>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[14px] font-semibold text-ink-900 sm:text-[14.5px]">{mobilePane !== "nav" && active ? <span className="lg:hidden">{active.title}</span> : null}<span className={mobilePane !== "nav" && active ? "hidden lg:inline" : ""}>{project.title}</span></p>
             <SaveIndicator state={save} />
           </div>
-          <select data-tour="style" aria-label={t("Atıf stili")} value={project.citation_style} onChange={(e) => changeStyle(e.target.value as CitationStyleId)} className="hidden h-9 rounded-xl border border-ink-200 bg-white px-2.5 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 md:block">
+          <select data-tour="style" aria-label={t("Atıf stili")} value={project.citation_style} onChange={(e) => changeStyle(e.target.value as CitationStyleId)} className="hidden h-9 rounded-lg border-0 bg-transparent px-2 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 md:block">
             {STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}
           </select>
-          <Link data-tour="quality" href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
+          <Link data-tour="quality" href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           {isLive && <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11.5px] font-medium text-emerald-700 sm:inline-flex" title={t("Ortak yazarlarla gerçek zamanlı bağlantı açık: değişiklikler anında görünür ve birleşir.")}><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>{t("Canlı")}</span>}
           <span data-tour="coauthors" className="flex"><CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} /></span>
           {isOwner && <span data-tour="share" className="flex"><ShareButton projectId={project.id} /></span>}
@@ -1164,7 +1164,7 @@ export function Workspace(props: Props) {
                         <span className="min-w-0 flex-1">{t("{n} şu an bu bölümde.", { n: present.filter((p) => p.stageId === active.id).map((p) => p.name).join(", ") })} <span className="text-emerald-700">{isLive ? t("Değişiklikler anında görünür ve farklı paragraflarda otomatik birleşir; renkli çizgi diğer yazarın bulunduğu paragrafı gösterir.") : t("Farklı alt başlıklarda çalışmanız önerilir; aynı anda kaydederseniz hiçbir metin kaybolmaz.")}</span></span>
                       </div>
                     )}
-                    <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-[rgb(var(--bg))] via-[rgb(var(--bg))] to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
+                    <div data-tour="toolbar" className="sticky top-0 z-20 -mx-4 mb-4 bg-gradient-to-b from-white via-white to-transparent px-2 pb-2 pt-1 sm:-mx-2 sm:mb-6 sm:pb-3">
                       <Toolbar editor={editor} onFind={() => setFindOpen((v) => !v)} findOn={findOpen} onFootnote={() => setFootnote("")} suggestOn={autoSuggest} onToggleSuggest={() => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); }} />
                       {findOpen && <FindBar key={`${activeId}-${focus ?? "all"}`} editor={editor} canEdit={canEdit} onClose={() => { setFindOpen(false); editor?.commands.focus(); }} scopeLabel={focused ? t("Arama yalnızca açık alt başlıkta: {n} {t}", { n: focused.number, t: focused.text }) : t("Arama yalnızca açık bölümde: {t}", { t: active?.title ?? "" })} />}
                     </div>

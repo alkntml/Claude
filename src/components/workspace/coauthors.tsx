@@ -36,7 +36,7 @@ export function CoauthorsButton({ projectId, isOwner, planId, present, variant, 
       {variant === "row"
         ? <button onClick={() => setOpen(true)} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Users className="h-5 w-5 text-brand-600" /> {t("Ortak yazarlar")}</button>
         : (
-          <button onClick={() => setOpen(true)} className="hidden h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-2.5 text-[13px] font-medium text-ink-700 transition hover:border-ink-300 lg:flex" title={present.length ? t("Şu an çalışmada: {n}", { n: present.map((p) => p.name).join(", ") }) : t("Ortak yazarlar")}>
+          <button onClick={() => setOpen(true)} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex" title={present.length ? t("Şu an çalışmada: {n}", { n: present.map((p) => p.name).join(", ") }) : t("Ortak yazarlar")}>
             {present.length ? <span className="flex -space-x-1.5">{present.slice(0, 3).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span> : <Users className="h-4 w-4" />}
             {t("Ortak yazarlar")}
           </button>

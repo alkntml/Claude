@@ -72,7 +72,7 @@ export function useAcademicEditor(opts: { content: JSONNode | null; placeholder:
 function TB({ on, active, label, children, disabled }: { on: () => void; active?: boolean; label: string; children: React.ReactNode; disabled?: boolean }) {
   return (
     <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={on} disabled={disabled} title={label} aria-label={label} aria-pressed={active}
-      className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-ink-500 transition duration-150 hover:bg-ink-100 hover:text-ink-900 disabled:opacity-30", active && "bg-ink-900 text-white hover:bg-ink-800 hover:text-white")}>
+      className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-ink-500 transition duration-150 hover:bg-ink-100 hover:text-ink-900 disabled:opacity-30", active && "bg-brand-50 text-brand-700 hover:bg-brand-100 hover:text-brand-800")}>
       {children}
     </button>
   );
@@ -84,41 +84,41 @@ export function Toolbar({ editor, onFootnote, suggestOn, onToggleSuggest, onFind
   const c = () => editor.chain().focus();
   const inTable = editor.isActive("table");
   return (
-    <div className="no-scrollbar flex flex-nowrap items-center gap-0.5 overflow-x-auto rounded-2xl border border-ink-100 bg-white/90 p-1 shadow-soft backdrop-blur sm:flex-wrap sm:p-1.5">
+    <div className="no-scrollbar flex flex-nowrap items-center gap-px overflow-x-auto border-b border-ink-200/70 py-1.5 xl:flex-wrap">
       <TB label={t("Geri al")} on={() => c().undo().run()} disabled={!editor.can().undo()}><Undo2 className="h-4 w-4" /></TB>
       <TB label={t("Yinele")} on={() => c().redo().run()} disabled={!editor.can().redo()}><Redo2 className="h-4 w-4" /></TB>
-      <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+      <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
       <TB label={t("Alt başlık")} active={editor.isActive("heading", { level: 2 })} on={() => c().toggleHeading({ level: 2 }).run()}><Heading2 className="h-4 w-4" /></TB>
       <TB label={t("Alt başlık 2")} active={editor.isActive("heading", { level: 3 })} on={() => c().toggleHeading({ level: 3 }).run()}><Heading3 className="h-4 w-4" /></TB>
       <TB label={t("Alt başlık 3")} active={editor.isActive("heading", { level: 4 })} on={() => c().toggleHeading({ level: 4 }).run()}><Heading4 className="h-4 w-4" /></TB>
-      <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+      <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
       <TB label={t("Kalın")} active={editor.isActive("bold")} on={() => c().toggleBold().run()}><Bold className="h-4 w-4" /></TB>
       <TB label={t("İtalik")} active={editor.isActive("italic")} on={() => c().toggleItalic().run()}><Italic className="h-4 w-4" /></TB>
       <TB label={t("Altı çizili")} active={editor.isActive("underline")} on={() => c().toggleUnderline().run()}><U className="h-4 w-4" /></TB>
-      <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+      <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
       <TB label={t("Madde listesi")} active={editor.isActive("bulletList")} on={() => c().toggleBulletList().run()}><List className="h-4 w-4" /></TB>
       <TB label={t("Numaralı liste")} active={editor.isActive("orderedList")} on={() => c().toggleOrderedList().run()}><ListOrdered className="h-4 w-4" /></TB>
       <TB label={t("Blok alıntı")} active={editor.isActive("blockquote")} on={() => c().toggleBlockquote().run()}><Quote className="h-4 w-4" /></TB>
       <TB label={t("Ayırıcı")} on={() => c().setHorizontalRule().run()}><Minus className="h-4 w-4" /></TB>
-      <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+      <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
       <TB label={t("Dipnot ekle")} on={onFootnote}><StickyNote className="h-4 w-4" /></TB>
       <TB label={t("Tablo ekle")} on={() => c().insertContent([{ type: "paragraph", content: [{ type: "text", text: t("Tablo 1. Başlık"), marks: [{ type: "italic" }] }] }]).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}><Table2 className="h-4 w-4" /></TB>
       <TB label={t("Şekil başlığı ekle")} on={() => c().insertContent({ type: "paragraph", content: [{ type: "text", text: t("Şekil 1. Açıklama"), marks: [{ type: "italic" }] }] }).run()}><ImageIcon className="h-4 w-4" /></TB>
       {onFind && (
         <>
-          <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+          <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
           <TB label={t("Bul ve değiştir (Ctrl+F)")} active={!!findOn} on={onFind}><Search className="h-4 w-4" /></TB>
         </>
       )}
       {onToggleSuggest && (
         <>
-          <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+          <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
           <TB label={suggestOn ? t("Otomatik tamamlama açık (kapat)") : t("Otomatik tamamlama kapalı (aç)")} active={!!suggestOn} on={onToggleSuggest}><WandSparkles className="h-4 w-4" /></TB>
         </>
       )}
       {inTable && (
         <>
-          <span className="mx-1 h-5 w-px shrink-0 bg-ink-100" />
+          <span className="mx-1 h-4 w-px shrink-0 bg-ink-200" />
           <TB label={t("Satır ekle")} on={() => c().addRowAfter().run()}><Rows3 className="h-4 w-4" /></TB>
           <TB label={t("Sütun ekle")} on={() => c().addColumnAfter().run()}><Columns3 className="h-4 w-4" /></TB>
           <TB label={t("Tabloyu sil")} on={() => c().deleteTable().run()}><Trash2 className="h-4 w-4" /></TB>

@@ -12,6 +12,10 @@ export interface BlogPost {
   cta: { text: string; href: string; label: string };
   /** Basit Markdown: ##, ###, paragraf, - liste, 1. liste, **kalın**, [bağlantı](/yol), > not */
   body: string;
+  /** D164: son içerik güncellemesi (YYYY-AA-GG); yoksa yayın tarihi */
+  updated?: string;
+  /** D164: yazıda dayanılan akademik kaynaklar (yalnızca doğrulanmış, gerçek eserler); yazının sonunda listelenir */
+  sources?: { text: string; url?: string }[];
 }
 
 /** Yazının İngilizce sürümü (ayrı adres: /en/blog/<slug>) */

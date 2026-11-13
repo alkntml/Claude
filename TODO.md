@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D164) Google Search Console → Site haritaları → `sitemap.xml`’i yeniden gönder; URL denetimi ile yeni 9 rehber adresi için “Dizine eklenmesini iste” (TR: /blog/t-testi-nasil-yapilir-ve-yorumlanir, /blog/normallik-testi-carpiklik-basiklik, /blog/isnad-atif-sistemi-rehberi ve EN/DE karşılıkları). Bing Webmaster Tools’u bağla
 - [ ] (D162) Supabase SQL Editor’de migration 41’i çalıştır (paket adı “Sınırsız Proje”)
 - [x] (2026-11-13) (D157/D158) Supabase SQL Editor’de migration 40’ı çalıştır (yıllık ödeme + “Sınırsız Kullanım” paketi); kullanıcı “belki değişiklik olur” diye bekletiyor. Çalıştırılana kadar paket kartı eski adı/metni gösterir ve yıllık paket atanamaz
 - [ ] (D157) docs/legal/HUKUKCU_NOTU_D157.md’yi hukukçuya ilet (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler; yıllık ödeme ve yeni Tek Proje)
@@ -149,3 +150,9 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 ## Bilinen küçük konular
 - Artifact yayın aracı demoda "indirme bağlantısı" uyarısı veriyor (demoda erişilemeyen dışa aktarma kodu; zararsız)
 - npm audit uyarıları (bağımlılıklar) gözden geçirilmeli
+
+## SEO (D164 sonrası, ayrıntı docs/seo/SEO_PLAN.md)
+- [ ] İçerik dalgası 2: DOI rehberi, literatür matrisi, ANOVA, korelasyon, regresyon raporlama, YZ kullanım beyanı, örneklem hazır tablosu (TR/EN/DE, motorla doğrulanmış örnekler)
+- [ ] Yazı tipi önyüklemesini azalt (6 woff2 ≈ 590 KB; italik serif önyüklemesiz) — editörde italik görünüm testiyle
+- [ ] SSS ve ana sayfanın HTML ağırlığını azalt (içerik HTML + RSC + JSON-LD olarak üç kez taşınıyor)
+- [ ] Eski yazılara `updated` + `sources` ekle (önce en çok gösterim alan 10 yazı; Search Console verisiyle)

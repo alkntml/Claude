@@ -3831,4 +3831,21 @@ export const EN: Record<string, string> = {
   "En fazla {n} proje": "Up to {n} projects",
   // D161
   "En fazla {n} proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Everything unlimited except a maximum of {n} projects: AI, page drafting, source searches, storage and every feature (fair use).",
+  // D164
+  "Güncellendi": "Updated",
+  "Bu yazı Academiana Editör Ekibi tarafından hazırlanır; örnek hesaplamalar platformun istatistik ve atıf motoruyla doğrulanır.": "This article is prepared by the Academiana Editorial Team; worked examples are verified with the platform’s statistics and citation engines.",
+  "Planlama ve veri toplama": "Planning and data collection",
+  "Çalışmaya başlamadan önce kaç katılımcıya ihtiyacınız olduğunu hesaplayın ve anket sorularınızı hazırlayın.": "Before you start, calculate how many participants you need and prepare your survey questions.",
+  "Ölçek ve analiz": "Scales and analysis",
+  "Ölçek puanlarını kullanmadan önce güvenirliği kontrol edin; analiz seçimi ve raporlama için rehberlere göz atın.": "Check reliability before using scale scores; see the guides for choosing and reporting analyses.",
+  "Bir sorunun literatürde nasıl yanıtlandığını gerçek makalelerin özetleriyle görün; kaynakçanızdaki kaynakların gerçekten var olup olmadığını doğrulayın.": "See how the literature answers a question from real paper abstracts; verify that the sources in your bibliography actually exist.",
+  "Kaynakça ve atıf": "Bibliography and citation",
+  "DOI veya başlıktan künye oluşturun, hazır kaynakçanızı derginin istediği stile çevirin.": "Create references from a DOI or title and convert your bibliography to the style the journal requires.",
+  "Araştırmanın hangi adımında hangi araç?": "Which tool at which stage of your research?",
+  "Araçlar, bir tez veya makalenin farklı aşamalarındaki tekrar eden işler için tasarlandı. Her adımda ilgili aracı ve konuyu ayrıntılı anlatan rehberi bulabilirsiniz.": "The tools are designed for recurring tasks at different stages of a thesis or paper. For each stage you will find the matching tool and a guide that explains the topic in detail.",
+  "Araçlar nasıl çalışır?": "How do the tools work?",
+  "Kaynakça oluşturucu, atıf dönüştürücü, örneklem ve Cronbach alfa hesaplayıcı ile anket oluşturucu yapay zekâ kullanmaz; hesaplamalar tarayıcınızda yapılır.": "The bibliography generator, citation converter, sample size and Cronbach’s alpha calculators and survey builder do not use AI; calculations run in your browser.",
+  "Künye bilgileri yalnızca kayıt otoritelerinden (Crossref, DataCite, OpenAlex) alınır; araçlar kaynak, yazar veya DOI uydurmaz.": "Reference metadata comes only from registration agencies and indexes (Crossref, DataCite, OpenAlex); the tools never invent sources, authors or DOIs.",
+  "Yapay zekâ kullanan iki araç (“Araştırmalar ne diyor?” ve “Uydurma kaynak kontrolü”) bunu kartında açıkça belirtir.": "The two tools that use AI (“What does research say?” and “Fake reference checker”) state this clearly on their cards.",
+  "Aynı hesaplamalar ve atıf stilleri, üye olduğunuzda tezinizin veya makalenizin içinde de kullanılabilir: atıflar metne kaynağa bağlı eklenir, kaynakça kendiliğinden oluşur.": "With an account, the same calculations and citation styles work inside your thesis or paper: citations are linked to sources and the bibliography builds itself.",
 };

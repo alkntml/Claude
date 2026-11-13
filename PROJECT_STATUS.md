@@ -18,6 +18,12 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Kapsamlı SEO (D164, 13 Kasım 2026)**
+- Botlara meta veri `<head>` içinde; her blog yazısı ≥3 iç bağlantı; yazılarda “Kaynaklar” ve güncellenme tarihi
+- Yeni rehberler (TR/EN/DE): t testi, normallik (çarpıklık/basıklık), ISNAD — örnekler ürün motoruyla doğrulandı
+- `/araclar` zenginleştirildi; EN/DE sayfalar ~8 kat küçüldü (sözlük ayrı dosyada), mobil ilk görüntü ~1,4 sn hızlandı; logo 140 KB → 11 KB
+- Plan ve 30 maddelik içerik listesi: `docs/seo/SEO_PLAN.md`
+
 **Tema eski indigo maviye döndü (D163, 13 Kasım 2026)**
 
 **Sınırsız Proje adı, ekip indirimi kapsamı, ücretsiz araçlar, Adil Kullanım (D162, 13 Kasım 2026)**

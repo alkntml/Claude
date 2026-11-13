@@ -4,7 +4,6 @@ import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nProvider } from "@/i18n/client";
 import { getLocale } from "@/i18n/server";
-import { dictFor } from "@/i18n";
 import { PwaRegister } from "@/components/pwa";
 import { ConsentBanner } from "@/components/consent/consent";
 import { Analytics } from "@/components/analytics";
@@ -53,7 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale} className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} /></head>
       <body className="font-sans min-h-screen">
-        <I18nProvider locale={locale} dict={dictFor(locale)}>
+        <I18nProvider locale={locale}>
           <PriceProvider usdTry={usdTry}><ToastProvider>{children}</ToastProvider>
           <PwaRegister />
           <ConsentBanner />

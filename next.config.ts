@@ -44,6 +44,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // SEO (D164): arama motoru ve sosyal önizleme botlarına başlık/açıklama/canonical/hreflang <head> içinde,
+  // JavaScript çalıştırmadan okunacak biçimde gönderilir (Next’in akıtılan meta verisi yerine engelleyen işleme).
+  // Next’in varsayılan listesine Googlebot, Bingbot ve genel tarayıcılar eklendi; insan ziyaretçiler etkilenmez.
+  htmlLimitedBots: /Googlebot|Google-InspectionTool|Storebot-Google|AdsBot-Google|Mediapartners-Google|[\w-]+-Google|Google-[\w-]+|bingbot|BingPreview|Slurp|DuckDuckBot|YandexBot|Baiduspider|Applebot|facebookexternalhit|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|TelegramBot|Chrome-Lighthouse|AhrefsBot|SemrushBot|crawler|spider/i,
   serverExternalPackages: ["pdfkit", "unpdf", "mammoth", "read-excel-file", "unzipper"],
   outputFileTracingIncludes: { "/api/projects/[id]/export": ["./assets/fonts/**"], "/api/og": ["./assets/fonts/**", "./public/brand/**"] },
   experimental: { serverActions: { bodySizeLimit: "2mb" } },

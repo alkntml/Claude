@@ -52,11 +52,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const jsonLd = [
     {
       "@context": "https://schema.org", "@type": "BlogPosting", "@id": `${url}#article`,
-      headline: p.title, description: p.description, datePublished: p.date, dateModified: p.date,
+      headline: p.title, description: p.description, datePublished: p.date, dateModified: found.post.updated ?? p.date,
       inLanguage: locale === "en" ? "en" : locale === "de" ? "de-DE" : "tr-TR", keywords: p.keywords.join(", "), articleSection: t(p.category),
       wordCount: plainText(p.body).split(/\s+/).length, mainEntityOfPage: { "@type": "WebPage", "@id": url }, url,
       image: { "@type": "ImageObject", url: `${SITE_URL}${ogImage(p.title, locale === "en" ? "Academiana Blog" : `Blog · ${p.category}`, locale)}`, width: 1200, height: 630 },
       author: { "@type": "Organization", name: `${SITE_NAME}`, url: SITE_URL },
+      ...(found.post.sources?.length ? { citation: found.post.sources.map((x) => x.text) } : {}),
       publisher: { "@id": `${SITE_URL}/#organization` },
       isPartOf: { "@id": `${SITE_URL}/blog#blog` },
     },
@@ -80,9 +81,19 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <p className="mt-4 flex flex-wrap items-center gap-3 border-b border-ink-100 pb-6 text-sm text-ink-400">
               <span>{t("{s} Editör Ekibi", { s: SITE_NAME })}</span><span>·</span>
               <time dateTime={p.date}>{new Date(p.date).toLocaleDateString(dateLocale(locale), { day: "numeric", month: "long", year: "numeric" })}</time><span>·</span>
+              {found.post.updated && found.post.updated !== p.date && <><span>{t("Güncellendi")}: <time dateTime={found.post.updated}>{new Date(found.post.updated).toLocaleDateString(dateLocale(locale), { day: "numeric", month: "long", year: "numeric" })}</time></span><span>·</span></>}
               <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t("{n} dk okuma", { n: readingMinutes(p) })}</span>
             </p>
             <div className="mt-8"><BlogBody blocks={blocks} /></div>
+            {found.post.sources?.length ? (
+              <section aria-labelledby="kaynaklar" className="mt-12 border-t border-ink-100 pt-6">
+                <h2 id="kaynaklar" className="font-serif text-xl font-semibold text-ink-950">{t("Kaynaklar")}</h2>
+                <ul className="mt-3 space-y-2 text-[14.5px] leading-relaxed text-ink-600">
+                  {found.post.sources.map((x) => <li key={x.text} className="pl-6 -indent-6">{x.text}{x.url && <> <a href={x.url} target="_blank" rel="noopener noreferrer" className="break-all text-brand-700 hover:underline">{x.url}</a></>}</li>)}
+                </ul>
+                <p className="mt-4 text-[13px] text-ink-400">{t("Bu yazı Academiana Editör Ekibi tarafından hazırlanır; örnek hesaplamalar platformun istatistik ve atıf motoruyla doğrulanır.")} <Link href="/yontem" className="text-brand-700 hover:underline">{t("Yöntem ve şeffaflık")}</Link></p>
+              </section>
+            ) : null}
             <div className="mt-12 rounded-3xl bg-gradient-to-br from-brand-600 to-indigo-600 p-7 text-white shadow-glow">
               <p className="font-serif text-2xl font-semibold leading-snug">{t("Bunu Academiana ile kolayca yapın")}</p>
               <p className="mt-2 text-[15px] leading-relaxed text-white/85">{p.cta.text}</p>

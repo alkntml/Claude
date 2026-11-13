@@ -27,6 +27,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   };
   return [
     ...pages.flatMap(([p, pr, cf]) => group({ tr: p, en: localizedPath(p, "en"), de: localizedPath(p, "de") }, pr, cf, updated)),
-    ...POSTS.flatMap((p) => group({ tr: postPath(p, "tr"), en: postPath(p, "en"), de: DE_POSTS[p.slug] ? postPath(p, "de") : undefined }, 0.7, "monthly", p.date)),
+    ...POSTS.flatMap((p) => group({ tr: postPath(p, "tr"), en: postPath(p, "en"), de: DE_POSTS[p.slug] ? postPath(p, "de") : undefined }, 0.7, "monthly", p.updated ?? p.date)),
   ];
 }

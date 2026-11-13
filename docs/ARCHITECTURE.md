@@ -173,7 +173,7 @@ src/lib/
   consent.ts             Çerez/tarayıcı belleği envanteri ve izin altyapısı (D154); components/consent/consent.tsx (ConsentBanner, ConsentGate)
   account-delete.ts pii.ts  Hesap silmede depo dosyalarının tamamı (D154, docs/ACCOUNT_DELETION.md); hata kayıtlarında kişisel veri maskeleme
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts
-src/i18n/                core.ts (sözlüksüz çekirdek: Locale tr/en/de, pick, contentLang, AI_LANGUAGE; istemci bunu kullanır), index.ts (core + sözlükler, sunucu; dictFor), server.ts (getT), client.tsx (useT, LanguageSwitch), en.ts + de.ts (sözlükler)
+src/i18n/                core.ts (sözlüksüz çekirdek: Locale tr/en/de, pick, contentLang, AI_LANGUAGE; istemci bunu kullanır), index.ts (core + sözlükler, sunucu; dictFor), server.ts (getT), client.tsx (useT, LanguageSwitch; EN/DE sözlüğü ayrı JS parçasından `import()` + `use` ile yüklenir, layout’tan prop geçmez — D164), en.ts + de.ts (sözlükler)
 supabase/migrations/     Sıralı SQL migration'ları
 supabase/setup.sql       Tüm migration'ların birleşimi (sıfırdan kurulum)
 public/                  brand/ (logo ve amblem PNG), favicon.ico, icons/ (uygulama simgeleri; amblemden üretildi), sw.js (servis çalışanı; sürüm değişince VERSION artır)

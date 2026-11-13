@@ -3823,4 +3823,21 @@ export const DE: Dict = {
   "En fazla {n} proje": "Bis zu {n} Projekte",
   // D161
   "En fazla {n} proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Alles unbegrenzt außer höchstens {n} Projekten: KI, Seitenentwürfe, Quellensuche, Speicher und alle Funktionen (Fair Use).",
+  // D164
+  "Güncellendi": "Aktualisiert",
+  "Bu yazı Academiana Editör Ekibi tarafından hazırlanır; örnek hesaplamalar platformun istatistik ve atıf motoruyla doğrulanır.": "Dieser Beitrag wird vom Academiana-Redaktionsteam erstellt; Rechenbeispiele werden mit der Statistik- und Zitier-Engine der Plattform geprüft.",
+  "Planlama ve veri toplama": "Planung und Datenerhebung",
+  "Çalışmaya başlamadan önce kaç katılımcıya ihtiyacınız olduğunu hesaplayın ve anket sorularınızı hazırlayın.": "Berechnen Sie vor Beginn, wie viele Teilnehmende Sie brauchen, und bereiten Sie Ihre Fragebogenfragen vor.",
+  "Ölçek ve analiz": "Skalen und Analyse",
+  "Ölçek puanlarını kullanmadan önce güvenirliği kontrol edin; analiz seçimi ve raporlama için rehberlere göz atın.": "Prüfen Sie die Reliabilität, bevor Sie Skalenwerte verwenden; die Leitfäden helfen bei Auswahl und Bericht der Analysen.",
+  "Bir sorunun literatürde nasıl yanıtlandığını gerçek makalelerin özetleriyle görün; kaynakçanızdaki kaynakların gerçekten var olup olmadığını doğrulayın.": "Sehen Sie anhand echter Abstracts, wie die Literatur eine Frage beantwortet, und prüfen Sie, ob die Quellen in Ihrem Verzeichnis wirklich existieren.",
+  "Kaynakça ve atıf": "Literaturverzeichnis und Zitation",
+  "DOI veya başlıktan künye oluşturun, hazır kaynakçanızı derginin istediği stile çevirin.": "Erstellen Sie Angaben aus DOI oder Titel und wandeln Sie Ihr Verzeichnis in den von der Zeitschrift verlangten Stil um.",
+  "Araştırmanın hangi adımında hangi araç?": "Welches Werkzeug in welcher Forschungsphase?",
+  "Araçlar, bir tez veya makalenin farklı aşamalarındaki tekrar eden işler için tasarlandı. Her adımda ilgili aracı ve konuyu ayrıntılı anlatan rehberi bulabilirsiniz.": "Die Werkzeuge sind für wiederkehrende Aufgaben in verschiedenen Phasen einer Abschlussarbeit oder eines Artikels gedacht. Zu jeder Phase finden Sie das passende Werkzeug und einen ausführlichen Leitfaden.",
+  "Araçlar nasıl çalışır?": "Wie funktionieren die Werkzeuge?",
+  "Kaynakça oluşturucu, atıf dönüştürücü, örneklem ve Cronbach alfa hesaplayıcı ile anket oluşturucu yapay zekâ kullanmaz; hesaplamalar tarayıcınızda yapılır.": "Literaturverzeichnis-Generator, Zitierkonverter, Stichproben- und Cronbach-Alpha-Rechner sowie der Fragebogen-Generator nutzen keine KI; die Berechnungen laufen in Ihrem Browser.",
+  "Künye bilgileri yalnızca kayıt otoritelerinden (Crossref, DataCite, OpenAlex) alınır; araçlar kaynak, yazar veya DOI uydurmaz.": "Bibliografische Angaben stammen nur aus Registrierungsstellen und Indizes (Crossref, DataCite, OpenAlex); die Werkzeuge erfinden keine Quellen, Autoren oder DOIs.",
+  "Yapay zekâ kullanan iki araç (“Araştırmalar ne diyor?” ve “Uydurma kaynak kontrolü”) bunu kartında açıkça belirtir.": "Die beiden Werkzeuge mit KI („Was sagt die Forschung?“ und „Prüfung auf erfundene Quellen“) weisen auf ihrer Karte deutlich darauf hin.",
+  "Aynı hesaplamalar ve atıf stilleri, üye olduğunuzda tezinizin veya makalenizin içinde de kullanılabilir: atıflar metne kaynağa bağlı eklenir, kaynakça kendiliğinden oluşur.": "Mit einem Konto funktionieren dieselben Berechnungen und Zitierstile direkt in Ihrer Arbeit: Belege sind mit Quellen verknüpft, das Literaturverzeichnis entsteht automatisch.",
 };

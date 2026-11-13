@@ -44,7 +44,7 @@ export function SurveyForm({ token, title, description, consent, questions, acce
           <a href="https://www.academiana.com.tr/araclar/anket-olusturucu?utm_source=anket&amp;utm_medium=form&amp;utm_campaign=alt-bilgi" target="_blank" rel="noopener" className="mx-auto mt-8 flex w-fit flex-col items-center gap-1.5 rounded-2xl px-4 py-3 text-center transition hover:bg-white/70">
             <span className="text-[11px] font-medium uppercase tracking-wider text-ink-400">{t("Academiana ile oluşturuldu")}</span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/academiana-logo-transparent.png" alt="Academiana" width={960} height={245} className="h-9 w-auto" />
+            <img src="/brand/academiana-logo-web.png" alt="Academiana" width={482} height={123} className="h-9 w-auto" />
             <span className="text-xs text-ink-400">{t("Kendi akademik anketinizi ücretsiz oluşturun")}</span>
           </a>
         ) : null}

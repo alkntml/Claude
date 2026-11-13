@@ -1,11 +1,34 @@
 "use client";
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, use, useCallback, useContext, useMemo } from "react";
 import { LOCALE_COOKIE, LOCALES, LOCALE_NAME, dateLocale, makeDictT, type Dict, type Locale, type TFn } from "./core";
 
 interface Ctx { locale: Locale; t: TFn; setLocale: (l: Locale) => void; dl: string }
 const I18nContext = createContext<Ctx>({ locale: "tr", t: makeDictT(null), setLocale: () => {}, dl: "tr-TR" });
 
-export function I18nProvider({ locale, dict, children }: { locale: Locale; dict?: Dict | null; children: React.ReactNode }) {
+/**
+ * D164 (Core Web Vitals): İngilizce/Almanca sözlük artık her sayfanın HTML’ine gömülmez (sayfa başına ~130 KB sıkıştırılmış,
+ * mobilde ilk görüntüyü ~1,4 sn geciktiriyordu). Tarayıcıda ayrı, adı içeriğe göre değişen ve kalıcı önbelleğe alınan bir
+ * JS parçası olarak bir kez yüklenir. Sunucu HTML’i zaten çevrilmiş geldiği için sayfa hemen görünür; React, sözlük gelene
+ * kadar etkileşimi (hydration) bekletir (use + Suspense), böylece metinler hiçbir an Türkçeye dönmez.
+ */
+const DICT_LOADERS: Record<Exclude<Locale, "tr">, () => Promise<Dict>> = {
+  en: () => import("./en").then((m) => m.EN),
+  de: () => import("./de").then((m) => m.DE),
+};
+const loadedDicts: Partial<Record<Locale, Dict>> = {};
+const loadingDicts: Partial<Record<Locale, Promise<Dict>>> = {};
+function dictPromise(l: Exclude<Locale, "tr">): Promise<Dict> {
+  return (loadingDicts[l] ??= DICT_LOADERS[l]().then((d) => (loadedDicts[l] = d)));
+}
+
+/** `dict` verilirse (ör. demo paketi) doğrudan kullanılır; verilmezse dile göre yukarıdaki parçadan yüklenir */
+export function I18nProvider({ locale, dict: given, children }: { locale: Locale; dict?: Dict | null; children: React.ReactNode }) {
+  // Kanca (hook) içermez: sözlük beklenirken askıya alınabilir; kancalar alttaki bileşendedir
+  const dict: Dict | null = locale === "tr" ? null : (given ?? loadedDicts[locale] ?? use(dictPromise(locale)));
+  return <I18nValue locale={locale} dict={dict}>{children}</I18nValue>;
+}
+
+function I18nValue({ locale, dict, children }: { locale: Locale; dict: Dict | null; children: React.ReactNode }) {
   const setLocale = useCallback((l: Locale) => {
     try {
       document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
@@ -15,7 +38,7 @@ export function I18nProvider({ locale, dict, children }: { locale: Locale; dict?
     if (alt?.href) { const u = new URL(alt.href); window.location.href = `${u.pathname}${window.location.search}${window.location.hash}`; return; }
     window.location.reload();
   }, []);
-  const value = useMemo(() => ({ locale, t: makeDictT(locale === "tr" ? null : dict), setLocale, dl: dateLocale(locale) }), [locale, dict, setLocale]);
+  const value = useMemo(() => ({ locale, t: makeDictT(dict), setLocale, dl: dateLocale(locale) }), [locale, dict, setLocale]);
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 

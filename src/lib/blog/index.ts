@@ -4,23 +4,25 @@ import { POSTS_3 } from "./posts-3";
 import { POSTS_4 } from "./posts-4";
 import { POSTS_5 } from "./posts-5";
 import { POSTS_6 } from "./posts-6";
+import { POSTS_7 } from "./posts-7";
 import { EN_1 } from "./en-1";
 import { EN_2 } from "./en-2";
 import { EN_3 } from "./en-3";
 import { EN_4 } from "./en-4";
 import { EN_5 } from "./en-5";
 import { EN_6 } from "./en-6";
+import { EN_7 } from "./en-7";
 import { DE_POSTS as DE_ALL } from "./de";
 import type { BlogPost, BlogPostEn } from "./types";
 import type { Locale } from "@/i18n";
 
 export type { BlogPost, BlogPostEn } from "./types";
 
-export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5, ...POSTS_6];
+export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5, ...POSTS_6, ...POSTS_7];
 export const CATEGORIES = [...new Set(POSTS.map((p) => p.category))];
 
 /** İngilizce sürümler (anahtar: Türkçe adres) */
-export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5, ...EN_6 };
+export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5, ...EN_6, ...EN_7 };
 /** Almanca sürümler (anahtar: Türkçe adres; D143). Almancası olmayan yazı Almanca sitede İngilizce gösterilir. */
 export const DE_POSTS: Record<string, BlogPostEn> = DE_ALL;
 const TRANSLATED: Record<"en" | "de", Record<string, BlogPostEn>> = { en: EN_POSTS, de: DE_POSTS };
@@ -65,10 +67,26 @@ export function readingMinutes(p: BlogPost): number {
 }
 
 /** Aynı kategoriden (yetmezse diğerlerinden) ilgili yazılar */
+/**
+ * İlgili yazılar (D164): önce aynı kategoride, yazının kategori içindeki komşuları (döngüsel: sonraki, önceki, …),
+ * sonra ortak anahtar kelimesi en çok olan diğer yazılar. Böylece her yazı en az iki yazıdan bağlantı alır
+ * (eskiden kategorinin ilk üç yazısı hep seçiliyor, sonrakiler hiç bağlantı almıyordu).
+ */
 export function relatedPosts(p: BlogPost, n = 3): BlogPost[] {
-  const same = POSTS.filter((x) => x.slug !== p.slug && x.category === p.category);
-  const other = POSTS.filter((x) => x.slug !== p.slug && x.category !== p.category);
-  return [...same, ...other].slice(0, n);
+  const cat = POSTS.filter((x) => x.category === p.category);
+  const i = cat.findIndex((x) => x.slug === p.slug);
+  const ring: BlogPost[] = [];
+  for (let k = 1; k < cat.length && ring.length < n; k++) {
+    for (const j of [i + k, i - k]) {
+      const x = cat[((j % cat.length) + cat.length) % cat.length];
+      if (x.slug !== p.slug && !ring.includes(x) && ring.length < n) ring.push(x);
+    }
+  }
+  if (ring.length >= n) return ring;
+  const kw = new Set(p.keywords.map((k) => k.toLocaleLowerCase("tr")));
+  const score = (x: BlogPost) => x.keywords.filter((k) => kw.has(k.toLocaleLowerCase("tr"))).length;
+  const other = POSTS.filter((x) => x.category !== p.category).map((x, idx) => ({ x, s: score(x), idx })).sort((a, b) => b.s - a.s || a.idx - b.idx).map((o) => o.x);
+  return [...ring, ...other].slice(0, n);
 }
 
 export type Block =

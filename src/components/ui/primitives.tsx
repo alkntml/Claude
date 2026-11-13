@@ -37,7 +37,7 @@ export function ProgressRing({ value, size = 44, stroke = 4, className }: { valu
 
 export function ProgressBar({ value, max = 100, tone = "brand", className }: { value: number; max?: number | null; tone?: "brand" | "amber" | "red"; className?: string }) {
   const pct = max ? Math.min(100, (value / max) * 100) : 0;
-  const color = pct > 90 ? "from-rose-400 to-rose-500" : pct > 70 ? "from-amber-400 to-amber-500" : tone === "brand" ? "from-brand-400 to-brand-500" : "from-amber-400 to-amber-500";
+  const color = pct > 90 ? "from-rose-400 to-rose-500" : pct > 70 ? "from-amber-400 to-amber-500" : tone === "brand" ? "from-brand-400 to-indigo-500" : "from-amber-400 to-amber-500";
   return (
     <div className={cn("h-1.5 w-full overflow-hidden rounded-full bg-ink-100", className)}>
       <motion.div className={cn("h-full rounded-full bg-gradient-to-r", color)} initial={{ width: 0 }} animate={{ width: `${max ? pct : 4}%` }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }} />

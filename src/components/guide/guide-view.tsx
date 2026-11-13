@@ -52,7 +52,7 @@ export function GuideView({ locale }: { locale: Locale }) {
           <ol className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {QUICK_START.map((x, i) => (
               <li key={i} className="flex gap-3 rounded-2xl border border-ink-100 bg-white p-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-200 text-[13px] font-semibold text-brand-950">{i + 1}</span>
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[13px] font-semibold text-white">{i + 1}</span>
                 <span className="min-w-0"><span className="block font-medium text-ink-900">{L(x.title)}</span><span className="mt-0.5 block text-[13.5px] leading-relaxed text-ink-600">{L(x.text)}</span></span>
               </li>
             ))}

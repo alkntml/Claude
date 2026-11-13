@@ -10,7 +10,7 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
     <section className="relative overflow-hidden pb-20 pt-32 sm:pt-40">
       <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_40%,transparent_75%)]" />
       {/* Arka plan renkleri: bulanıklık yerine yumuşak radyal geçiş (ekran kartını yormaz; D57) */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(520px_circle_at_8%_0%,rgb(233_212_167/0.4),transparent_70%),radial-gradient(460px_circle_at_95%_20%,rgb(243_229_199/0.28),transparent_70%),radial-gradient(320px_circle_at_40%_100%,rgb(253_230_138/0.28),transparent_70%)]" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(520px_circle_at_8%_0%,rgb(147_168_250/0.35),transparent_70%),radial-gradient(460px_circle_at_95%_20%,rgb(125_211_252/0.28),transparent_70%),radial-gradient(320px_circle_at_40%_100%,rgb(253_230_138/0.28),transparent_70%)]" />
 
       {/* D151: ortalanmış, resmî manşet — eğik/renkli vurgu yok; temel mesaj: eksiksiz akademik çalışma alanı */}
       <div className="relative mx-auto max-w-6xl animate-rise px-6">
@@ -25,13 +25,13 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
             {t("Tezinizi, makalenizi ve bilimsel araştırmalarınızı yapay zekâ desteğiyle; doğrulanmış kaynaklara dayalı, her atıfı denetlenmiş ve eksiksiz biçimde yazın.")}
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-            <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-200 px-7 font-medium text-brand-950 transition hover:bg-brand-300">
+            <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-7 font-medium text-white transition hover:bg-brand-700">
               {t("Çalışmaya başla")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Link>
             <Link href="#tur-sec" className="inline-flex h-12 items-center rounded-xl border border-ink-200 bg-white px-7 font-medium text-ink-700 transition hover:border-ink-300">{t("Çalışma türlerini gör")}</Link>
           </div>
           <p className="mt-7 flex items-center justify-center gap-2 text-[15px] text-ink-600">
-            <span className="flex -space-x-1.5">{["bg-brand-500", "bg-brand-400", "bg-amber-400", "bg-emerald-400"].map((c) => <span key={c} className={`h-6 w-6 rounded-full border-2 border-white ${c}`} />)}</span>
+            <span className="flex -space-x-1.5">{["bg-brand-500", "bg-sky-400", "bg-amber-400", "bg-emerald-400"].map((c) => <span key={c} className={`h-6 w-6 rounded-full border-2 border-white ${c}`} />)}</span>
             {t("10.000’den fazla araştırmacı tarafından tercih edildi")}
           </p>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-ink-500">

@@ -71,7 +71,7 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
           <ol className="space-y-2 border-l-2 border-brand-100 pl-4">
             {BLUEPRINT.chapters.map((c, i) => (
               <li key={c.t.tr} className="relative rounded-xl border border-ink-100 p-2.5">
-                <span className="absolute -left-[27px] top-3 flex h-5 w-5 items-center justify-center rounded-full bg-brand-200 text-[10px] font-semibold text-brand-950">{i + 1}</span>
+                <span className="absolute -left-[27px] top-3 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] font-semibold text-white">{i + 1}</span>
                 <div className="flex items-center justify-between gap-2 text-[13.5px]"><span className="font-medium text-ink-900">{p(c.t)}</span><span className="shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11.5px] font-medium text-brand-700">~{c.w.toLocaleString(dateLocale(locale))} {t("kelime")}</span></div>
                 <div className="mt-1.5 h-1.5 rounded-full bg-ink-100"><div className="h-1.5 rounded-full bg-brand-500" style={{ width: `${(c.w / 7000) * 100}%` }} /></div>
               </li>
@@ -84,7 +84,7 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
       <ul className="space-y-2">
         {TITLES.map((x, i) => (
           <li key={x.t.tr} className={cn("flex items-start gap-3 rounded-2xl border p-3.5", i === 0 ? "border-brand-300 bg-brand-50/60" : "border-ink-100")}>
-            <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border", i === 0 ? "border-brand-300 bg-brand-200 text-brand-950" : "border-ink-300")}>{i === 0 && <Check className="h-3 w-3" />}</span>
+            <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border", i === 0 ? "border-brand-600 bg-brand-600 text-white" : "border-ink-300")}>{i === 0 && <Check className="h-3 w-3" />}</span>
             <span><span className="block font-serif text-[16px] font-medium leading-snug text-ink-950">{p(x.t)}</span><span className="mt-0.5 block text-[12.5px] text-ink-500">{p(x.n)}</span></span>
           </li>
         ))}
@@ -95,7 +95,7 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
         <div className="flex flex-wrap items-center gap-2 rounded-xl bg-ink-50 px-3 py-2 text-[13px] text-ink-600"><Search className="h-4 w-4 text-ink-400" /> <span className="font-medium text-ink-800">{l === "en" ? "social media use academic procrastination sleep quality" : "sosyal medya kullanımı akademik erteleme uyku kalitesi"}</span><span className="ml-auto text-[12px] text-ink-400">{t("OpenAlex · Crossref · PubMed · DergiPark · TR Dizin…")}</span></div>
         {SEARCH_RESULTS.map((r) => {
           const s = src(r.id);
-          const acc = r.access === "full_text" ? { label: t("Tam metin okundu"), cls: "bg-emerald-50 text-emerald-700" } : r.access === "abstract" ? { label: t("Özet okundu"), cls: "bg-brand-50 text-brand-700" } : { label: t("Yalnızca künye"), cls: "bg-amber-50 text-amber-800" };
+          const acc = r.access === "full_text" ? { label: t("Tam metin okundu"), cls: "bg-emerald-50 text-emerald-700" } : r.access === "abstract" ? { label: t("Özet okundu"), cls: "bg-sky-50 text-sky-700" } : { label: t("Yalnızca künye"), cls: "bg-amber-50 text-amber-800" };
           return (
             <div key={r.id} className="rounded-2xl border border-ink-100 p-3.5">
               <p className="text-[14.5px] font-medium text-ink-900">{s.title}</p>
@@ -268,7 +268,7 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
               <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><I className="h-5 w-5" /></span>
                 <h2 className="font-serif text-2xl font-medium text-ink-950">{p(s.title)}</h2>
-                <span className={cn("rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold", s.plan === "free" ? "bg-emerald-50 text-emerald-700" : s.plan === "basic" ? "bg-brand-50 text-brand-700" : "bg-violet-50 text-violet-700")}>{t(PLAN_LABEL[s.plan])}</span>
+                <span className={cn("rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold", s.plan === "free" ? "bg-emerald-50 text-emerald-700" : s.plan === "basic" ? "bg-sky-50 text-sky-700" : "bg-violet-50 text-violet-700")}>{t(PLAN_LABEL[s.plan])}</span>
               </div>
               <p className="mb-3 text-[14.5px] text-ink-500">{p(s.what)}</p>
               <div className="rounded-3xl border border-ink-100 bg-white p-5 shadow-soft sm:p-6">{body[s.id]}</div>

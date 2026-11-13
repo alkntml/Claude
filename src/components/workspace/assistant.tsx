@@ -64,7 +64,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
       {visible.map((p, i) => (
         <li key={p} className="flex items-center gap-1">
           {i > 0 && <span className={cn("h-px w-3", i <= cur ? "bg-brand-300" : "bg-ink-200")} />}
-          <span className={cn("flex items-center gap-1 rounded-full px-2 py-0.5", i < cur ? "bg-emerald-50 text-emerald-700" : i === cur ? "bg-brand-200 text-brand-950" : "bg-ink-100 text-ink-400")}>
+          <span className={cn("flex items-center gap-1 rounded-full px-2 py-0.5", i < cur ? "bg-emerald-50 text-emerald-700" : i === cur ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-400")}>
             {i < cur ? <Check className="h-3 w-3" /> : i === cur ? <Loader2 className="h-3 w-3 animate-spin" /> : null}{t(PHASE_LABEL[p])}
           </span>
         </li>
@@ -305,7 +305,7 @@ export function AssistantPanel({ researchPrefs, projectId, stage, def, selection
             if (q === "research") return <button key={q} onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>;
             // Bulgu yorumlama yalnızca kullanıcı verisi gereken bölümde veya veri dosyası varken
             if (q === "interpret" && !def?.requiresUserData && !dataFiles.length) return null;
-            return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-brand-300 bg-brand-200 text-brand-950 hover:bg-brand-300" : "border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
+            return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-brand-600 bg-brand-600 text-white hover:bg-brand-700" : "border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
           })}
           {onOpenImport && <button disabled={busy} onClick={onOpenImport} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}><FilePlus2 className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>}
           {input.trim().length > 20 && <button disabled={busy} onClick={() => send(input, "from_notes")} className={cn(chip, "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100")}>{t(ASSISTANT_ACTIONS.from_notes.label)}</button>}
@@ -329,7 +329,7 @@ export function AssistantPanel({ researchPrefs, projectId, stage, def, selection
             className="max-h-40 min-h-[36px] flex-1 resize-none bg-transparent px-2 py-2 text-[16px] leading-snug text-ink-900 outline-none placeholder:text-ink-400 sm:text-[14px]" />
           {busy
             ? <button onClick={() => abort.current?.abort()} className="flex h-9 shrink-0 items-center gap-1.5 rounded-xl bg-ink-100 px-3 text-[13px] font-medium text-ink-700 hover:bg-ink-200" aria-label={t("Durdur")}><Square className="h-3 w-3" /><span className="hidden sm:inline">{t("Durdur")}</span></button>
-            : <button onClick={() => send(input)} disabled={!input.trim()} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-200 text-brand-950 transition hover:bg-brand-300 disabled:bg-ink-200" aria-label={t("Gönder")}><ArrowUp className="h-4 w-4" /></button>}
+            : <button onClick={() => send(input)} disabled={!input.trim()} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white transition hover:bg-brand-700 disabled:bg-ink-200" aria-label={t("Gönder")}><ArrowUp className="h-4 w-4" /></button>}
         </div>
         <p className="mt-1 hidden px-1 text-[10.5px] text-ink-400 lg:block">{t("Enter: gönder · Shift+Enter: yeni satır")}</p>
       </div>
@@ -391,7 +391,7 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, bu
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
           <button disabled={busy} onClick={() => onPermission("skip")} className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-ink-600 hover:bg-ink-100">{t("Atla")}</button>
           <button disabled={busy} onClick={() => onPermission("always")} className="rounded-lg px-3 py-1.5 text-[13px] font-medium text-ink-700 hover:bg-ink-100">{t("Her zaman izin ver")}</button>
-          <button disabled={busy} onClick={() => onPermission("once")} className="rounded-lg bg-brand-200 px-3 py-1.5 text-[13px] font-medium text-brand-950 hover:bg-brand-300">{t("Bu sefer izin ver")}</button>
+          <button disabled={busy} onClick={() => onPermission("once")} className="rounded-lg bg-brand-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-brand-700">{t("Bu sefer izin ver")}</button>
         </div>
       </div>
     </div>
@@ -417,7 +417,7 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, bu
             {(p.complete || !streaming) && (
               <div className="flex flex-wrap justify-end gap-1.5 border-t border-brand-100 bg-brand-50/40 px-2.5 py-2">
                 <button onClick={() => onInsert(p.text, msg.sourceMap, "replace")} className="flex h-9 items-center gap-1.5 rounded-xl border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 hover:border-ink-300 sm:h-8 sm:text-[12px]" title={t("Seçili metnin yerine koy")}><Replace className="h-3.5 w-3.5" /> {t("Seçimin yerine")}</button>
-                <button onClick={() => onInsert(p.text, msg.sourceMap, "append")} className="flex h-9 items-center gap-1.5 rounded-xl bg-brand-200 px-3 text-[13px] font-medium text-brand-950 hover:bg-brand-300 sm:h-8 sm:text-[12px]"><FilePlus2 className="h-3.5 w-3.5" /> {t("Belgeye ekle")}</button>
+                <button onClick={() => onInsert(p.text, msg.sourceMap, "append")} className="flex h-9 items-center gap-1.5 rounded-xl bg-brand-600 px-3 text-[13px] font-medium text-white hover:bg-brand-700 sm:h-8 sm:text-[12px]"><FilePlus2 className="h-3.5 w-3.5" /> {t("Belgeye ekle")}</button>
               </div>
             )}
           </div>

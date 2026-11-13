@@ -60,7 +60,7 @@ export function Dashboard(p: Props) {
           <h1 className="mt-1 text-[28px] font-semibold tracking-tight text-ink-950">{greet}{p.name ? `, ${p.name}` : ""}.</h1>
           <p className="mt-1 text-ink-500">{active.length ? t("{n} devam eden çalışmanız var.", { n: active.length }) : t("İlk akademik çalışmanızı başlatın.")}</p>
         </div>
-        <Link href="/yeni" className="inline-flex items-center gap-2 rounded-lg bg-brand-200 px-4 py-2.5 text-sm font-medium text-brand-950 transition hover:bg-brand-300"><Plus className="h-4 w-4" /> {t("Yeni çalışma")}</Link>
+        <Link href="/yeni" className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"><Plus className="h-4 w-4" /> {t("Yeni çalışma")}</Link>
       </motion.div>
 
       {(() => {
@@ -88,7 +88,7 @@ export function Dashboard(p: Props) {
 
       <motion.div variants={item} className="card grid grid-cols-2 divide-ink-100 overflow-hidden lg:grid-cols-4 lg:divide-x">
         {[
-          { label: "Devam eden", value: active.length, icon: Clock3, tone: "from-brand-500 to-brand-500" },
+          { label: "Devam eden", value: active.length, icon: Clock3, tone: "from-brand-500 to-indigo-500" },
           { label: "Tamamlanan", value: done.length, icon: CheckCircle2, tone: "from-emerald-500 to-teal-500" },
           { label: "Kayıtlı kaynak", value: p.sourcesCount, icon: BookMarked, tone: "from-amber-500 to-orange-500" },
           { label: "Bu ay AI isteği", value: p.usage?.ai_requests ?? 0, icon: Sparkles, tone: "from-fuchsia-500 to-violet-500" },

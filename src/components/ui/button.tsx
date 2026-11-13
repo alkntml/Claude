@@ -9,11 +9,11 @@ type Size = "sm" | "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
   // D148: düz indigo, hafif gölge
-  primary: "text-brand-950 bg-brand-200 hover:bg-brand-300 shadow-sm shadow-brand-900/10",
+  primary: "text-white bg-brand-600 hover:bg-brand-700 shadow-sm shadow-brand-600/20",
   secondary: "bg-white text-ink-700 border border-ink-200 hover:bg-ink-50",
   ghost: "text-ink-600 hover:text-ink-900 hover:bg-ink-100/70",
   danger: "text-white bg-rose-600 hover:bg-rose-700 shadow-sm",
-  dark: "text-brand-950 bg-brand-200 hover:bg-brand-300 shadow-sm shadow-brand-900/10",
+  dark: "text-white bg-brand-600 hover:bg-brand-700 shadow-sm shadow-brand-600/20",
   soft: "text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-100",
 };
 const SIZES: Record<Size, string> = {

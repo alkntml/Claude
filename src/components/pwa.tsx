@@ -61,7 +61,7 @@ export function InstallApp({ variant = "row", className }: { variant?: "row" | "
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/icons/icon-192.png" alt="" className="h-10 w-10 shrink-0 rounded-xl" />
           <span className="min-w-0 flex-1"><b className="block text-ink-900">{t("Academiana’yı telefonunuza kurun")}</b>{t("Ana ekrandan tek dokunuşla, tam ekran açılır.")}</span>
-          <button onClick={install} className="shrink-0 rounded-xl bg-brand-200 px-3 py-2 text-[13px] font-medium text-brand-950">{t("Kur")}</button>
+          <button onClick={install} className="shrink-0 rounded-xl bg-brand-600 px-3 py-2 text-[13px] font-medium text-white">{t("Kur")}</button>
           <button onClick={dismiss} className="shrink-0 rounded-lg p-1 text-ink-400" aria-label={t("Kapat")}><X className="h-4 w-4" /></button>
         </div>
       ) : (

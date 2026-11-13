@@ -153,7 +153,7 @@ export function SuggestSwitch({ on, onToggle }: { on: boolean; onToggle: () => v
       title={on ? t("Otomatik tamamlama açık (kapat)") : t("Otomatik tamamlama kapalı (aç)")}
       className="flex h-7 shrink-0 items-center gap-2 rounded-md pl-2 pr-1 text-[12.5px] text-ink-600 hover:bg-ink-50">
       <span>{t("Otomatik tamamlama")}</span>
-      <span className={cn("relative inline-flex h-[18px] w-8 items-center rounded-full transition-colors", on ? "bg-brand-500" : "bg-ink-200")}>
+      <span className={cn("relative inline-flex h-[18px] w-8 items-center rounded-full transition-colors", on ? "bg-brand-600" : "bg-ink-200")}>
         <span className={cn("inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform", on ? "translate-x-[16px]" : "translate-x-0.5")} />
       </span>
     </button>

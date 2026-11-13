@@ -16,7 +16,7 @@ import { ROLE_HINT, ROLE_LABEL, type CoauthorRole } from "@/lib/coauthors";
 import { FEATURE_MIN_PLAN, hasFeature } from "@/lib/features";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const COLORS = ["bg-brand-500", "bg-emerald-600", "bg-amber-600", "bg-rose-600", "bg-violet-600", "bg-brand-600"];
+const COLORS = ["bg-brand-600", "bg-emerald-600", "bg-amber-600", "bg-rose-600", "bg-violet-600", "bg-sky-600"];
 function colorOf(id: string) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0; return COLORS[h % COLORS.length]; }
 const initials = (name: string) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]!.toLocaleUpperCase("tr")).join("") || "?";
 

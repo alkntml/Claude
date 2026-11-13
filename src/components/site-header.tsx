@@ -48,7 +48,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
           ) : (
             <>
               <Link href="/giris" className="whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium text-ink-700 transition hover:bg-ink-100/70">{t("Giriş yap")}</Link>
-              <Link href="/kayit" className="whitespace-nowrap rounded-xl bg-brand-200 px-4 py-2 text-sm font-medium text-brand-950 shadow-[0_8px_20px_-8px_rgb(140_107_58/0.65)] transition hover:-translate-y-px">{t("Ücretsiz başla")}</Link>
+              <Link href="/kayit" className="whitespace-nowrap rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 px-4 py-2 text-sm font-medium text-white shadow-[0_8px_20px_-8px_rgb(79_70_229/0.65)] transition hover:-translate-y-px">{t("Ücretsiz başla")}</Link>
             </>
           )}
         </div>
@@ -58,7 +58,7 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
         <div className="glass mx-3 mt-2 animate-rise rounded-2xl p-3 md:hidden">
           {NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-ink-700">{t(n.label)}</Link>)}
           <div className="flex items-center gap-2 px-3 py-2"><LanguageSwitch /><ThemeToggle label /></div>
-          <Link href={signedIn ? "/panel" : "/kayit"} className="mt-2 block rounded-xl bg-brand-200 px-3 py-2.5 text-center font-medium text-brand-950">{signedIn ? t("Çalışma alanım") : t("Ücretsiz başla")}</Link>
+          <Link href={signedIn ? "/panel" : "/kayit"} className="mt-2 block rounded-xl bg-brand-600 px-3 py-2.5 text-center font-medium text-white">{signedIn ? t("Çalışma alanım") : t("Ücretsiz başla")}</Link>
         </div>
       )}
     </header>

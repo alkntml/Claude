@@ -211,7 +211,7 @@ export function BlueprintScreen({ open, onClose, project, stages, onSaved, onApp
                   <ol className="relative space-y-3 border-l-2 border-brand-100 pl-5">
                     {bp.chapters.map((c, i) => (
                       <li key={c.stageId} className="relative">
-                        <span className="absolute -left-[31px] top-3 flex h-5 w-5 items-center justify-center rounded-full bg-brand-200 text-[10px] font-semibold text-brand-950">{i + 1}</span>
+                        <span className="absolute -left-[31px] top-3 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] font-semibold text-white">{i + 1}</span>
                         <div className="card p-3.5">
                           <div className="flex items-center gap-2">
                             <p className="min-w-0 flex-1 text-[14px] font-semibold text-ink-900">{c.title}</p>

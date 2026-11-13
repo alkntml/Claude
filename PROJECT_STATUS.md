@@ -18,6 +18,8 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Tema eski indigo maviye döndü (D163, 13 Kasım 2026)**
+
 **Sınırsız Proje adı, ekip indirimi kapsamı, ücretsiz araçlar, Adil Kullanım (D162, 13 Kasım 2026)**
 - Migration 41 (paket adı) kullanıcıda bekliyor
 

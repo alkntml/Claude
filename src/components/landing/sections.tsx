@@ -22,7 +22,7 @@ export function HowItWorks() {
   return (
     <section id="nasil" className="relative overflow-hidden bg-ink-950 py-24 text-white">
       <div className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:22px_22px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(420px_160px_at_50%_0%,rgb(196_160_102/0.3),transparent_75%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(420px_160px_at_50%_0%,rgb(79_70_229/0.35),transparent_75%)]" />
       <div className="relative mx-auto max-w-6xl px-6">
         <FadeIn className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-300">{t("Nasıl çalışır")}</p>
@@ -125,7 +125,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
         return (
           <FadeIn key={p.id} delay={i * 0.06}>
             <div className={`relative flex h-full flex-col rounded-3xl border p-6 transition duration-300 hover:-translate-y-1 ${featured ? "border-transparent bg-ink-950 text-white shadow-[0_30px_60px_-25px_rgb(21_24_41/0.6)]" : "border-ink-100 bg-white shadow-soft"}`}>
-              {featured && <span className="absolute -top-3 left-6 rounded-full bg-brand-200 px-3 py-1 text-xs font-semibold text-brand-950">{t("En çok tercih edilen")}</span>}
+              {featured && <span className="absolute -top-3 left-6 rounded-full bg-gradient-to-r from-brand-500 to-sky-400 px-3 py-1 text-xs font-semibold text-white">{t("En çok tercih edilen")}</span>}
               <h3 className="text-lg font-semibold">{t(p.name)}</h3>
               <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{(() => { const d = yearly ? yearlyDescription(p.id, p.description) : { key: p.description }; return t(d.key, d.vars); })()}</p>
               {yearly && <p className={`mt-5 text-[13px] ${featured ? "text-white/50" : "text-ink-400"}`}><s>{price(Number(p.price_monthly))}</s> <span className={featured ? "text-emerald-300" : "text-emerald-700"}>{t("%{p} indirim", { p: YEARLY_DISCOUNT_PERCENT })}</span></p>}
@@ -136,7 +136,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
               {yearly && <p className={`mt-1 text-[13px] ${featured ? "text-white/70" : "text-ink-600"}`}>{t("Yıllık toplam: {total} (tek ödeme)", { total: price(yearlyTotalPrice(Number(p.price_monthly))) })}</p>}
               {period === "yearly" && !yearly && Number(p.price_monthly) > 0 && <p className={`mt-1 text-[12.5px] ${featured ? "text-white/50" : "text-ink-400"}`}>{t("Bu paketin yıllık seçeneği yok.")}</p>}
               <ul className="mt-6 flex-1 space-y-2.5">
-                {p.features.map((f) => { const y = yearly ? yearlyFeature(f) : { key: f }; return <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-brand-300" : "text-brand-500"}`} />{t(y.key, y.vars ? { n: Number(y.vars.n).toLocaleString(dl) } : undefined)}</li>; })}
+                {p.features.map((f) => { const y = yearly ? yearlyFeature(f) : { key: f }; return <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-sky-300" : "text-brand-500"}`} />{t(y.key, y.vars ? { n: Number(y.vars.n).toLocaleString(dl) } : undefined)}</li>; })}
               </ul>
               <Link href={signedIn ? (Number(p.price_monthly) === 0 ? "/panel" : `/hesap?paket=${p.id}${yearly ? "&donem=yillik" : ""}`) : `/kayit?paket=${p.id}`} className={`mt-7 inline-flex h-11 items-center justify-center rounded-2xl text-sm font-medium transition hover:-translate-y-0.5 ${featured ? "bg-white text-ink-900 hover:bg-white/90" : "bg-ink-900 text-white hover:bg-ink-800"}`}>
                 {Number(p.price_monthly) === 0 ? t("Ücretsiz başla") : t("{name} paketini seç", { name: t(p.name) })}
@@ -170,7 +170,7 @@ function TeamCard({ plans }: { plans: PlanLike[] }) {
   ];
   return (
     <div className="relative flex h-full flex-col rounded-3xl border-2 border-brand-200 bg-white p-6 shadow-soft transition duration-300 hover:-translate-y-1">
-      <span className="absolute -top-3 left-6 rounded-full bg-brand-200 px-3 py-1 text-xs font-semibold text-brand-950">{t("%{p} indirim", { p: TEAM_DISCOUNT.percent })}</span>
+      <span className="absolute -top-3 left-6 rounded-full bg-gradient-to-r from-violet-500 to-brand-500 px-3 py-1 text-xs font-semibold text-white">{t("%{p} indirim", { p: TEAM_DISCOUNT.percent })}</span>
       <h3 className="flex items-center gap-2 text-lg font-semibold"><Users className="h-4 w-4 text-brand-600" /> {t("Akademik Ekip")}</h3>
       <p className="mt-1 text-sm text-ink-500">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için.")}</p>
       <div className="mt-5">
@@ -183,7 +183,7 @@ function TeamCard({ plans }: { plans: PlanLike[] }) {
       <ul className="mt-5 flex-1 space-y-2.5">
         {features.map((f) => <li key={f} className="flex items-start gap-2 text-sm text-ink-600"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />{f}</li>)}
       </ul>
-      <a href={href} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex h-11 items-center justify-center rounded-2xl bg-brand-200 text-sm font-medium text-brand-950 transition hover:-translate-y-0.5 hover:bg-brand-300 hover:brightness-110">{t("Ekip teklifi al")}</a>
+      <a href={href} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex h-11 items-center justify-center rounded-2xl bg-gradient-to-r from-violet-600 to-brand-600 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:brightness-110">{t("Ekip teklifi al")}</a>
     </div>
   );
 }

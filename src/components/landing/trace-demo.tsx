@@ -101,7 +101,7 @@ export function TraceDemo() {
                   <span key={i}>
                     <span className={cn("rounded px-0.5 transition-colors duration-300", active === i && (it.cite ? "bg-brand-50" : "bg-amber-50"))}>{t(it.text)}</span>{" "}
                     {it.cite ? (
-                      <button type="button" onClick={() => pick(i)} onMouseEnter={() => pick(i)} className={cn("whitespace-nowrap rounded-md border px-1.5 font-sans text-[12.5px] transition-colors duration-300", active === i ? "border-brand-400 bg-brand-200 text-brand-950" : "border-brand-100 bg-brand-50 text-brand-700 hover:bg-brand-100")}>({t(it.cite)})</button>
+                      <button type="button" onClick={() => pick(i)} onMouseEnter={() => pick(i)} className={cn("whitespace-nowrap rounded-md border px-1.5 font-sans text-[12.5px] transition-colors duration-300", active === i ? "border-brand-400 bg-brand-600 text-white" : "border-brand-100 bg-brand-50 text-brand-700 hover:bg-brand-100")}>({t(it.cite)})</button>
                     ) : (
                       <button type="button" onClick={() => pick(i)} className={cn("whitespace-nowrap rounded-md border px-1.5 font-sans text-[12px] font-semibold transition-colors duration-300", active === i ? "border-amber-400 bg-amber-500 text-white" : "border-amber-200 bg-amber-50 text-amber-700")}>{t("[KAYNAK GEREKLİ]")}</button>
                     )}

@@ -8,7 +8,7 @@ export function PeriodToggle({ value, onChange, className }: { value: BillingPer
   const { t } = useT();
   const opt = (v: BillingPeriod, label: React.ReactNode) => (
     <button type="button" role="radio" aria-checked={value === v} onClick={() => onChange(v)}
-      className={cn("inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium transition", value === v ? "bg-brand-200 text-brand-950 shadow-sm" : "text-ink-600 hover:text-ink-900")}>
+      className={cn("inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium transition", value === v ? "bg-brand-600 text-white shadow-sm" : "text-ink-600 hover:text-ink-900")}>
       {label}
     </button>
   );

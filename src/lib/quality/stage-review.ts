@@ -22,6 +22,23 @@ const SCHEMA = {
   },
 };
 
+/** D176: özet bölümünü Türkçe Özet / İngilizce Abstract (ve Almanca Zusammenfassung) kısımlarına ayırıp kelimeleri sayar; anahtar kelime satırları sayılmaz */
+export function abstractParts(text: string): { label: string; words: number }[] {
+  const lines = text.replace(/\r/g, "").split("\n");
+  const parts: { label: string; body: string[] }[] = [];
+  for (const line of lines) {
+    const h = line.trim().match(/^(Özet|Öz|Abstract|Zusammenfassung)$/i);
+    if (h) { parts.push({ label: h[1], body: [] }); continue; }
+    if (/^(Anahtar Kelimeler|Anahtar sözcükler|Keywords|Schlüsselwörter)\s*:/i.test(line.trim())) continue;
+    if (!parts.length) parts.push({ label: "Özet", body: [] });
+    parts[parts.length - 1].body.push(line);
+  }
+  return parts.map((p) => ({ label: p.label, words: p.body.join(" ").split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length })).filter((p) => p.words > 0);
+}
+
+/** D176: bölümün özeti için öbür bölümlerin ana metin olup olmadığı */
+const NOT_MAIN = new Set(["title_abstract", "grant_summary", "references", "declarations", "appendices", "front_matter", "journal_requirements", "cover_letter"]);
+
 /** Bölüm bazında kural kontrolleri (yalnızca bu bölüme ait sorunlar) */
 export function ruleIssues(bundle: any, stage: any, uiLocale: Locale): ReviewIssue[] {
   const def = stageDef(stage.key);
@@ -36,6 +53,10 @@ export function ruleIssues(bundle: any, stage: any, uiLocale: Locale): ReviewIss
   const missing = (text.match(/\[KAYNAK GEREKLİ\]/g) ?? []).length;
   const data = (text.match(/\[VERİ GİRİLECEK\]/g) ?? []).length;
   if (missing) out.unshift({ severity: "error", title: T("Kaynak bekleyen iddialar"), detail: T("Bölümde {n} yerde “[KAYNAK GEREKLİ]” var.", { n: missing }), fix: T("Üstteki “Kaynak bul ve düzelt” ile kaynak ekleyin veya iddiayı çıkarın."), source: "rule" });
+  // D176: özet uzunluğu sistemce sayılır (yapay zekâ incelemesine bırakılmaz)
+  if (stage.key === "title_abstract") for (const p of abstractParts(text)) {
+    if (p.words < 150 || p.words > 250) out.push({ severity: "warning", title: T("Özet uzunluğu aralık dışında"), detail: T("{label}: {n} kelime (önerilen 150–250).", { label: p.label, n: p.words }), fix: T("Derginin sınırına göre kısaltın veya genişletin."), source: "rule" });
+  }
   if (data) out.unshift({ severity: "error", title: T("Doldurulmamış veri alanları"), detail: T("Bölümde {n} yerde “[VERİ GİRİLECEK]” var.", { n: data }), fix: T("Kendi verilerinizi girin; yapay zekâ veri üretmez."), source: "rule" });
   // Aynı başlık birden çok kez gelirse tekilleştir
   const seen = new Set<string>();
@@ -48,7 +69,18 @@ export async function aiStageReview(params: { planId: string; bundle: any; stage
   const def = stageDef(stage.key);
   const model = await resolveModel(params.planId, params.tier ?? "fast");
   if (!isProviderConfigured(model.provider)) return null;
-  const others = bundle.stages.filter((x: any) => x.id !== stage.id && String(x.content_text ?? "").trim()).map((x: any) => `- ${x.title}: ${String(x.content_text).slice(0, 300).replace(/\s+/g, " ")}…`).join("\n");
+  // D176: bütünü özetleyen/yorumlayan bölümlerde denetleyici ana metnin tamamını görür (“tutarlılık doğrulanamıyor” gibi boş uyarılar olmasın)
+  const whole = ["title_abstract", "grant_summary", "conclusion", "conclusion_article", "discussion", "discussion_article", "cover_letter"].includes(stage.key);
+  const per = whole ? 6000 : 300;
+  const written = bundle.stages.filter((x: any) => x.id !== stage.id && !x.hidden && String(x.content_text ?? "").trim());
+  const others = written.map((x: any) => `- ${x.title}: ${String(x.content_text).slice(0, per).replace(/\s+/g, " ")}${String(x.content_text).length > per ? "…" : ""}`).join("\n").slice(0, whole ? 40000 : 6000);
+  const unwritten = bundle.stages.filter((x: any) => x.id !== stage.id && !x.hidden && !NOT_MAIN.has(x.key) && !String(x.content_text ?? "").trim()).map((x: any) => x.title);
+  const text = String(stage.content_text ?? "");
+  const measured = [
+    `Bölümün kelime sayısı (sistem saydı): ${text.split(/\s+/).filter(Boolean).length}`,
+    ...(stage.key === "title_abstract" ? abstractParts(text).map((p) => `${p.label}: ${p.words} kelime (sistem saydı)`) : []),
+    `Henüz yazılmamış ana bölümler: ${unwritten.length ? unwritten.join(", ") : "yok"}`,
+  ].join("\n");
   const res = await complete(model, {
     system: `Deneyimli bir tez danışmanısın; öğrencinin tamamladığını söylediği TEK bir bölümü değerlendiriyorsun. Geri bildirim dili: ${AI_LANGUAGE[params.uiLocale]}.
 DEĞERLENDİR:
@@ -59,8 +91,11 @@ KURALLAR:
 - Yalnızca verilen metne dayan; kaynakların doğruluğunu veya içeriğini yorumlama (sistem ayrıca kontrol ediyor).
 - "verdict": "ok" = teslim edilebilir; "minor" = küçük düzeltmeler önerilir; "major" = bölüm amacını karşılamıyor veya önemli eksik var.
 - En fazla 6 sorun; her biri için somut "fix" (ne yapılmalı). "strengths" en fazla 3 madde. "summary" tek-iki cümle.
-- Nazik ama dürüst ol; gereksiz sorun üretme.`,
-    messages: [{ role: "user", content: `ÇALIŞMA: ${bundle.project.title}\nTür: ${bundle.project.work_type} · Seviye: ${bundle.project.academic_level}\n\nBÖLÜM: ${stage.title}\nAmaç: ${def?.purpose ?? stage.description ?? ""}\nYazım kuralları:\n${(def?.rules ?? []).map((r: string) => `- ${r}`).join("\n") || "-"}\n\nDİĞER BÖLÜMLER (kısa):\n${others || "-"}\n\nBÖLÜM METNİ:\n"""\n${String(stage.content_text ?? "").slice(0, 24000)}\n"""` }],
+- Nazik ama dürüst ol; gereksiz sorun üretme.
+- ÖLÇÜLEN DEĞERLER sistem tarafından kesin olarak hesaplanmıştır: kelime sayısını yeniden saymayı veya “doğrulanmamış” demeyi ÖNERME; uzunluk sorununu sistem ayrıca bildirir.
+- Göremediğin veya doğrulayamadığın bir şeyi sorun olarak YAZMA (“doğrulanamıyor”, “kontrol edilmemiş”, “belirtilmemiş olabilir” gibi). Yalnızca metinde gerçekten bulunan, yazarın düzeltebileceği somut sorunları yaz.
+- Henüz yazılmamış ana bölümler varsa, o bölümlere bağlı eksiklikleri (ör. özette sonuç yok) ayrı ayrı sorun olarak yazma; en fazla tek bir “info” ile “ana metin tamamlanınca bu bölüm güncellenmeli” de.`,
+    messages: [{ role: "user", content: `ÇALIŞMA: ${bundle.project.title}\nTür: ${bundle.project.work_type} · Seviye: ${bundle.project.academic_level}\n\nBÖLÜM: ${stage.title}\nAmaç: ${def?.purpose ?? stage.description ?? ""}\nYazım kuralları:\n${(def?.rules ?? []).map((r: string) => `- ${r}`).join("\n") || "-"}\n\nÖLÇÜLEN DEĞERLER:\n${measured}\n\nDİĞER BÖLÜMLER${whole ? "" : " (kısa)"}:\n${others || "-"}\n\nBÖLÜM METNİ:\n"""\n${String(stage.content_text ?? "").slice(0, 24000)}\n"""` }],
     maxTokens: 2500,
     effort: "medium",
     jsonSchema: SCHEMA,

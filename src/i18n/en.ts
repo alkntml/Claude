@@ -4565,4 +4565,8 @@ export const EN: Record<string, string> = {
   "Veriye dayalı makalede konu bölümleri yerine Yöntem, Bulgular ve Tartışma kullanılır.": "A data-based article uses Methods, Results and Discussion instead of topical sections.",
   "Araştırma önerisinde veri henüz toplanmadığından gerçek bulgu ve tamamlanmış tartışma yer almaz.": "As no data have been collected yet in a research proposal, it contains no real findings or completed discussion.",
   "Çalışmanın bölümleri oluşturulamadı. Lütfen tekrar deneyin; sorun sürerse Geri bildirim ile bize yazın.": "The sections of the work could not be created. Please try again; if the problem persists, write to us via Feedback.",
+  "Özet uzunluğu aralık dışında": "Abstract length out of range",
+  "{label}: {n} kelime (önerilen 150–250).": "{label}: {n} words (recommended 150–250).",
+  "Derginin sınırına göre kısaltın veya genişletin.": "Shorten or expand according to the journal’s limit.",
+  "Özet, çalışmanın tamamı yazıldıktan sonra yazılır. Henüz yazılmamış bölümler: {list}. Şimdi yazılan özet sonuç içeremez ve ana metin bitince yeniden yazılması gerekir. Yine de taslak özet yazılsın mı?": "The abstract is written after the whole work is complete. Sections not yet written: {list}. An abstract written now cannot contain conclusions and will need to be rewritten once the main text is finished. Write a draft abstract anyway?",
 };

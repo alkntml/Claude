@@ -4557,4 +4557,8 @@ export const DE: Dict = {
   "Veriye dayalı makalede konu bölümleri yerine Yöntem, Bulgular ve Tartışma kullanılır.": "Ein datenbasierter Artikel verwendet statt thematischer Kapitel Methode, Ergebnisse und Diskussion.",
   "Araştırma önerisinde veri henüz toplanmadığından gerçek bulgu ve tamamlanmış tartışma yer almaz.": "Da in einem Forschungsexposé noch keine Daten erhoben wurden, enthält es keine echten Ergebnisse und keine abgeschlossene Diskussion.",
   "Çalışmanın bölümleri oluşturulamadı. Lütfen tekrar deneyin; sorun sürerse Geri bildirim ile bize yazın.": "Die Kapitel der Arbeit konnten nicht angelegt werden. Bitte versuchen Sie es erneut; falls das Problem bleibt, schreiben Sie uns über Feedback.",
+  "Özet uzunluğu aralık dışında": "Länge der Zusammenfassung außerhalb des Bereichs",
+  "{label}: {n} kelime (önerilen 150–250).": "{label}: {n} Wörter (empfohlen 150–250).",
+  "Derginin sınırına göre kısaltın veya genişletin.": "Kürzen oder erweitern Sie entsprechend der Vorgabe der Zeitschrift.",
+  "Özet, çalışmanın tamamı yazıldıktan sonra yazılır. Henüz yazılmamış bölümler: {list}. Şimdi yazılan özet sonuç içeremez ve ana metin bitince yeniden yazılması gerekir. Yine de taslak özet yazılsın mı?": "Die Zusammenfassung wird geschrieben, wenn die gesamte Arbeit fertig ist. Noch nicht geschriebene Kapitel: {list}. Eine jetzt geschriebene Zusammenfassung kann keine Ergebnisse enthalten und muss nach Fertigstellung des Haupttexts neu geschrieben werden. Trotzdem eine Entwurfsfassung schreiben?",
 };

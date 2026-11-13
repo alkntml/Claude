@@ -182,3 +182,15 @@ describe("kaynak numaraları sabit (metne “[KAYNAK DOĞRULANAMADI]” düşmes
     expect(m2).toEqual(m1);
   });
 });
+
+describe("özet bölüm kontrolü (D176)", () => {
+  it("Özet ve Abstract kelimeleri ayrı sayılır; anahtar kelime satırları sayılmaz; aralık dışıysa kural uyarısı", async () => {
+    const { abstractParts, ruleIssues } = await import("@/lib/quality/stage-review");
+    const w = (n: number) => Array(n).fill("kelime").join(" ");
+    const text = `Özet\n\n${w(120)}\n\nAnahtar Kelimeler: medya, kuram\n\nAbstract\n\n${w(200)}\n\nKeywords: media, theory`;
+    expect(abstractParts(text)).toEqual([{ label: "Özet", words: 120 }, { label: "Abstract", words: 200 }]);
+    const bundle = { project: { language: "tr" }, sources: [] };
+    const issues = ruleIssues(bundle, { key: "title_abstract", title: "Özet", content_text: text, content: null }, "tr");
+    expect(issues.filter((i) => i.title === "Özet uzunluğu aralık dışında").map((i) => i.detail)).toEqual(["Özet: 120 kelime (önerilen 150–250)."]);
+  });
+});

@@ -41,6 +41,8 @@ interface Props {
   onOpenImport?: () => void;
   /** Projede kapsam için yeterli kaynak yok (literatür kısayolu her bölümde görünür) */
   lowSources?: boolean;
+  /** D176: henüz yazılmamış ana bölümler (özet en son yazılır; ana metin bitmeden yazılan özet sonuç içeremez) */
+  unwrittenMain?: string[];
   /** Kurgudaki bölüm hedefi (kelime); uzun bölümlerde “Alt başlıklarla yaz” */
   targetWords?: number;
   onOpenAnalysis?: () => void;
@@ -75,7 +77,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ needsData = false, researchPrefs, projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport }: Props) {
+export function AssistantPanel({ needsData = false, researchPrefs, projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport, unwrittenMain }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -124,6 +126,7 @@ export function AssistantPanel({ needsData = false, researchPrefs, projectId, st
 
   const send = useCallback(async (text: string, action: AssistantAction = "chat", extra?: string, selOverride?: string, research?: "allow" | "skip") => {
     if (!text.trim() || busy) return;
+    if (action === "abstract" && unwrittenMain?.length && !confirm(t("Özet, çalışmanın tamamı yazıldıktan sonra yazılır. Henüz yazılmamış bölümler: {list}. Şimdi yazılan özet sonuç içeremez ve ana metin bitince yeniden yazılması gerekir. Yine de taslak özet yazılsın mı?", { list: unwrittenMain.join(", ") }))) return;
     const sel = selOverride ?? selection;
     const useSel = selOverride !== undefined || SELECTION_ACTIONS.includes(action) || (action === "chat" && sel.length > 0 && sel.length < 30000);
     const userMsg: Msg = { id: `u${Date.now()}`, role: "user", content: text, sourceMap: {} };

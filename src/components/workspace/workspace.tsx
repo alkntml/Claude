@@ -27,7 +27,7 @@ import { CitationEngine, STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
 import { api, handlePlanError, openUpgrade, setCurrentProject } from "@/lib/client";
 import { FEATURE_MIN_PLAN, hasFeature } from "@/lib/features";
-import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
+import { blockToTokenText, citedIdsInOrder, docToPlain, findPlaceholderBlocks, markdownToDoc, replaceBlockByText, restoreTokens, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItemClient } from "@/lib/sources/row";
 import { REQUIREMENT_LABEL, SCOPE_LABEL, type Requirement, type Scope, customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, stageNeedsData, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 import { AssistantPanel } from "./assistant";
@@ -631,6 +631,8 @@ export function Workspace(props: Props) {
     else editor.chain().focus("end").insertContent(doc.content ?? []).run();
     pending.current = { id: activeId, doc: fullDocRef.current() };
     flush({ note: mode === "replace" ? t("AI: seçili metin değiştirildi") : t("AI: taslak eklendi"), author: "ai" });
+    const marked = findPlaceholderBlocks(doc);
+    if (marked.length) { const sid = activeId; setTimeout(() => autoHealRef.current(sid, marked), 400); }
     if (opts.silent) return;
     toast({ tone: "success", title: t("Belgeye eklendi"), detail: t("Önceki hâl sürüm geçmişinde saklandı.") });
     setMobilePane("editor");
@@ -842,6 +844,36 @@ export function Workspace(props: Props) {
   };
   const applyBlockRef = useRef(applyBlock);
   applyBlockRef.current = applyBlock;
+
+  // D177: yapay zekâ metni eklenirken kaynak işareti kalan paragraflar kendiliğinden kaynakla düzeltilir
+  // (kaynak aranır, tam metin → özet → konu düzeyi sırasıyla atıf yapılır; desteklenemeyen iddia genel ifadeye çevrilir).
+  // Kalite kontrol algılaması değişmez: düzeltilemeyen işaret görünür kalır.
+  const healing = useRef(false);
+  const autoHeal = async (stageId: string, blocks: JSONNode[]) => {
+    if (healing.current || !blocks.length) return;
+    healing.current = true;
+    const { fixParagraph } = await import("./fix-claims");
+    const items = blocks.slice(0, 6).map((b) => ({ plain: docToPlain({ type: "doc", content: b.content }), ...blockToTokenText(b) }));
+    toast({ tone: "info", title: t("{n} paragrafta kaynak işareti var; kaynak bulunup düzeltiliyor…", { n: items.length }) });
+    let fixed = 0, left = 0, permission = false;
+    for (const it of items) {
+      try {
+        const r = await fixParagraph({ projectId: project.id, stageId, tokenText: it.text, t, signal: new AbortController().signal, onSourcesAdded: addSources });
+        if (r.permission) { permission = true; left += items.length - fixed - left; break; }
+        if (r.md && !r.problems.length) {
+          const doc = markdownToDoc(r.md, (sid) => r.map[sid] ?? null);
+          ensureSources(citedIdsInOrder([doc]));
+          if (await applyBlockRef.current(stageId, it.plain, restoreTokens(doc.content ?? [], it.tokens))) fixed++; else left++;
+        } else left++;
+      } catch { left++; }
+    }
+    healing.current = false;
+    if (permission) toast({ tone: "info", title: t("Kaynak araması için izniniz gerekiyor"), detail: t("Asistan’da izin verin veya Proje ayarları → Kaynak tercihleri’nden “her zaman izin ver”i seçin; ardından “Kaynak bul ve düzelt”.") });
+    else if (left) toast({ tone: "info", title: t("{d} paragraf düzeltildi, {n} paragraf için tekrar deneyin", { d: fixed, n: left }), detail: t("Üstteki “Kaynak bul ve düzelt” ile yeniden deneyebilirsiniz.") });
+    else toast({ tone: "success", title: t("{n} paragraf kaynakla düzeltildi", { n: fixed }) });
+  };
+  const autoHealRef = useRef(autoHeal);
+  autoHealRef.current = autoHeal;
 
   function cite(id: string) {
     if (!editor) return;

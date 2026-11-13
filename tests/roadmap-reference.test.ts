@@ -194,3 +194,35 @@ describe("özet bölüm kontrolü (D176)", () => {
     expect(issues.filter((i) => i.title === "Özet uzunluğu aralık dışında").map((i) => i.detail)).toEqual(["Özet: 120 kelime (önerilen 150–250)."]);
   });
 });
+
+describe("kaynak düzeltme ve tam metin oranı (D177)", () => {
+  it("eklenen kaynakların en az %60’ı tam metni okunabilen kaynaklar", async () => {
+    const { pickWithFullTextQuota, fullTextLikely } = await import("@/lib/sources/fulltext-share");
+    const items = ["a", "b", "F1", "c", "F2", "d", "F3", "e"].map((x) => ({ id: x, oaUrl: x.startsWith("F") ? "https://x/p.pdf" : null }));
+    const picked = pickWithFullTextQuota(items, 8, fullTextLikely).map((i) => items[i].id);
+    const ft = picked.filter((x) => x.startsWith("F")).length;
+    expect(ft).toBe(3);
+    expect(ft / picked.length).toBeGreaterThanOrEqual(0.6);
+    expect(picked.length).toBe(5); // 3 tam metin + en fazla 2 diğer
+    expect(pickWithFullTextQuota(items.filter((x) => !x.oaUrl), 8, fullTextLikely)).toEqual([]);
+    const { pickForAutoAdd } = await import("@/lib/research");
+    const rec = (title: string, oa: boolean, i: number) => ({ title, authors: [{ family: "A" }], year: 2020, doi: `10.1/${i}`, oaUrl: oa ? "https://x/p.pdf" : null, abstract: "x".repeat(60), score: 1 - i * 0.01 }) as never;
+    const res = pickForAutoAdd([rec("Bir", false, 1), rec("İki", true, 2), rec("Üç", false, 3), rec("Dört", true, 4), rec("Beş", false, 5)], new Set(), 8);
+    const share = res.filter((r: { oaUrl?: string | null }) => r.oaUrl).length / res.length;
+    expect(share).toBeGreaterThanOrEqual(0.6);
+  });
+
+  it("düzeltme önerisi kontrolü: kalan işaret, listede olmayan numara ve kaybolan atıf yakalanır", async () => {
+    const { proposalProblems } = await import("@/lib/sources/fix-check");
+    const map = { S1: "a", S2: "b" };
+    expect(proposalProblems("Temiz cümle [[kaynak:S1]] ve ⟦C1⟧.", map, "Eski ⟦C1⟧ [KAYNAK GEREKLİ]")).toEqual([]);
+    expect(proposalProblems("Hâlâ [KAYNAK DOĞRULANAMADI] var ⟦C1⟧.", map, "⟦C1⟧")).toContain("marker");
+    expect(proposalProblems("Uydurma [[kaynak:S9]] ⟦C1⟧.", map, "⟦C1⟧")).toContain("unknown");
+    expect(proposalProblems("Atıf kayboldu [[kaynak:S2]].", map, "Eski ⟦C1⟧")).toContain("lost");
+  });
+
+  it("“Kaynakla düzelt” her zaman kaynak arar", async () => {
+    const { researchGate } = await import("@/lib/research");
+    expect(researchGate({ action: "fix_claim", message: "düzelt", recentlySearchedFocus: true })).toBe("force");
+  });
+});

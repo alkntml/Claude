@@ -8,10 +8,45 @@ import { useT } from "@/i18n/client";
 import { streamChat } from "@/lib/ai/chat-client";
 import { blockToTokenText, docToPlain, findPlaceholderBlocks, markdownToDoc, restoreTokens, type JSONNode } from "@/lib/editor/doc";
 import { Markdown, parseAnswer } from "./markdown";
+import { proposalProblems } from "@/lib/sources/fix-check";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Found { stageId: string; stageTitle: string; plain: string; tokenText: string; tokens: JSONNode[] }
 interface Proposal { state: "waiting" | "running" | "ready" | "applied" | "skipped" | "failed"; md?: string; map?: Record<string, string>; added?: number; error?: string }
+
+export { proposalProblems } from "@/lib/sources/fix-check";
+
+/**
+ * D177: bir paragrafı kaynakla düzeltir; öneri işaret/bilinmeyen numara/kaybolan atıf içeriyorsa daha kesin talimatla
+ * en fazla iki kez yeniden ister. Son denemede desteklenemeyen iddialar genel ifadeye çevrilir veya çıkarılır
+ * (kaynak uydurulmaz). Dönen öneri temizse problems boştur.
+ */
+export async function fixParagraph(p: { projectId: string; stageId: string; tokenText: string; t: (s: string) => string; signal: AbortSignal; onSourcesAdded: (rows: any[]) => void }): Promise<{ md?: string; map: Record<string, string>; added: number; problems: string[]; permission?: boolean }> {
+  const { t } = p;
+  const base = t("Aşağıdaki paragraftaki [KAYNAK GEREKLİ] ve [KAYNAK DOĞRULANAMADI] işaretli iddialar için kaynak bul ve paragrafı düzelt. ⟦C1⟧ gibi işaretler mevcut atıflardır; yerlerini ve yazımını aynen koru.");
+  const retry = t("Önceki önerinde hâlâ kaynak işareti, listede olmayan bir kaynak numarası veya kaybolmuş bir atıf vardı. Her işaretli iddiayı ya KAYNAKLAR listesindeki bir kaynakla (tam metin → özet → yalnızca konu düzeyinde genel atıf sırasıyla) destekle ya da kaynak gerektirmeyen temkinli genel bir ifadeye dönüştür. Çıktıda hiçbir kaynak işareti kalmasın; ⟦C1⟧ gibi işaretleri aynen koru.");
+  const last = t("Son deneme: KAYNAKLAR listesindeki bir kaynakla desteklenemeyen her iddia cümlesini çıkar veya kaynak gerektirmeyen genel bir ifadeye dönüştür. Çıktıda hiçbir kaynak işareti kalmasın; ⟦C1⟧ gibi işaretleri aynen koru. Kaynak, yazar veya bulgu uydurma.");
+  let added = 0;
+  let best: { md?: string; map: Record<string, string>; problems: string[] } = { map: {}, problems: ["empty"] };
+  for (const message of [base, retry, last]) {
+    let answer = "";
+    let map: Record<string, string> = {};
+    let permission = false;
+    await streamChat({ projectId: p.projectId, stageId: p.stageId, conversationId: null, action: "fix_claim", message, selection: p.tokenText }, p.signal, (ev, data) => {
+      if (ev === "meta") map = data.sourceMap ?? {};
+      else if (ev === "text") answer += data.text;
+      else if (ev === "research_permission") permission = true;
+      else if (ev === "sources_added" || ev === "gap_sources" || ev === "fulltext_read") { p.onSourcesAdded(data.sources); if (ev !== "fulltext_read") added += data.sources.length; }
+    }, t("Hata"));
+    if (permission) return { ...best, added, permission: true };
+    const md = parseAnswer(answer).parts.find((x) => x.kind === "draft")?.text?.trim();
+    if (!md) continue;
+    const problems = proposalProblems(md, map, p.tokenText);
+    if (!best.md || problems.length < best.problems.length) best = { md, map, problems };
+    if (!problems.length) break;
+  }
+  return { ...best, added };
+}
 
 /** Projedeki tüm yer tutucuları bulur */
 export function collectPlaceholders(stages: any[]): Found[] {
@@ -49,21 +84,10 @@ export function FixClaimsModal({ open, onClose, projectId, stages, sourceExists,
     for (let i = 0; i < items.length; i++) {
       upd(i, { state: "running" });
       abort.current = new AbortController();
-      let answer = "";
-      let map: Record<string, string> = {};
-      let added = 0;
       try {
-        await streamChat({
-          projectId, stageId: items[i].stageId, conversationId: null, action: "fix_claim",
-          message: t("Aşağıdaki paragraftaki [KAYNAK GEREKLİ] işaretli iddialar için kaynak bul ve paragrafı düzelt. ⟦C1⟧ gibi işaretler mevcut atıflardır; yerlerini ve yazımını aynen koru."),
-          selection: items[i].tokenText,
-        }, abort.current.signal, (ev, data) => {
-          if (ev === "meta") map = data.sourceMap;
-          else if (ev === "text") answer += data.text;
-          else if (ev === "sources_added" || ev === "gap_sources" || ev === "fulltext_read") { onSourcesAdded(data.sources); if (ev !== "fulltext_read") added += data.sources.length; }
-        }, t("Hata"));
-        const md = parseAnswer(answer).parts.find((p) => p.kind === "draft")?.text?.trim();
-        upd(i, md ? { state: "ready", md, map, added } : { state: "failed", error: t("Öneri üretilemedi") });
+        const r = await fixParagraph({ projectId, stageId: items[i].stageId, tokenText: items[i].tokenText, t, signal: abort.current.signal, onSourcesAdded });
+        if (r.permission) { upd(i, { state: "failed", error: t("Kaynak araması için izniniz gerekiyor; Asistan’da izin verin veya Proje ayarları → Kaynak tercihleri’nden “her zaman izin ver”i seçin.") }); continue; }
+        upd(i, r.md && !r.problems.length ? { state: "ready", md: r.md, map: r.map, added: r.added } : { state: "failed", error: t("Bu paragraf için temiz bir öneri üretilemedi; tekrar deneyin.") });
       } catch (e) {
         if ((e as Error).name === "AbortError") { upd(i, { state: "skipped" }); break; }
         upd(i, { state: "failed", error: (e as Error).message });

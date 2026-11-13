@@ -1,4 +1,5 @@
 "use client";
+import { fullTextLikely, pickWithFullTextQuota } from "@/lib/sources/fulltext-share";
 import { SourceAskModal } from "./source-ask";
 import { useT } from "@/i18n/client";
 import { DeleteButton } from "@/components/ui/delete-button";
@@ -422,7 +423,9 @@ export function ResearchModal({ open, onClose, projectId, stageId, prefill, exis
     try {
       const r = await api<{ plan: any; results: any[]; providers: any[] }>("/api/ai/research", { method: "POST", json: { projectId, stageId, request } });
       setData(r);
-      setSelected(new Set(r.results.map((x, i) => (i < 8 && !(x.doi && existing.has(x.doi)) ? i : -1)).filter((i) => i >= 0)));
+      // D177: ön seçim — en az %60’ı tam metni okunabilen (açık erişim) kaynaklar
+      const fresh = r.results.map((x, i) => ({ x, i })).filter(({ x }) => !(x.doi && existing.has(x.doi)));
+      setSelected(new Set(pickWithFullTextQuota(fresh, 8, ({ x }) => fullTextLikely(x)).map((k) => fresh[k].i)));
     } catch (e) {
       toast({ tone: "error", title: t("Araştırma yapılamadı"), detail: (e as Error).message });
     } finally {
@@ -446,7 +449,7 @@ export function ResearchModal({ open, onClose, projectId, stageId, prefill, exis
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={t("Literatür araştırması")} wide footer={data ? <><span className="mr-auto self-center text-sm text-ink-500">{t("{n} kaynak seçildi", { n: selected.size })}</span><Button variant="ghost" onClick={onClose}>{t("Vazgeç")}</Button><Button onClick={save} loading={saving} disabled={!selected.size}>{t("Seçilenleri projeye ekle")}</Button></> : undefined}>
+    <Modal open={open} onClose={onClose} title={t("Literatür araştırması")} wide footer={data ? <><span className="mr-auto self-center text-sm text-ink-500">{t("{n} kaynak seçildi", { n: selected.size })}{selected.size > 0 && (() => { const ft = data.results.filter((x, i) => selected.has(i) && fullTextLikely(x)).length; const pct = Math.round((ft / selected.size) * 100); return <span className={cn("ml-2", pct < 60 ? "text-amber-700" : "text-emerald-700")}>· {t("tam metni okunabilen: %{p}", { p: pct })}{pct < 60 ? ` (${t("en az %60 önerilir")})` : ""}</span>; })()}</span><Button variant="ghost" onClick={onClose}>{t("Vazgeç")}</Button><Button onClick={save} loading={saving} disabled={!selected.size}>{t("Seçilenleri projeye ekle")}</Button></> : undefined}>
       <div className="space-y-3">
         <textarea className="input min-h-[90px]" placeholder={t("ör. Bu konuya uygun literatürü araştır ve kavramsal çerçeve için temel çalışmaları bul.")} value={request} onChange={(e) => setRequest(e.target.value)} />
         <div className="flex items-center justify-between gap-3">

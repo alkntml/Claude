@@ -210,7 +210,8 @@ export function completeRecord(r: SourceRecord): boolean {
 }
 
 /** Tam metni açık erişimle okunabilecek mi? (PDF bağlantısı, PubMed Central veya arXiv) */
-export const fullTextLikely = (r: { oaUrl?: string | null; pmcid?: string | null; arxivId?: string | null }) => !!(r.oaUrl || r.pmcid || r.arxivId);
+export { fullTextLikely, FULLTEXT_SHARE } from "@/lib/sources/fulltext-share";
+import { fullTextLikely, pickWithFullTextQuota } from "@/lib/sources/fulltext-share";
 
 /**
  * Asistan için otomatik seçim (D169): önce tam metni okunabilecek, kalıcı tanımlayıcıyla doğrulanabilir ve künyesi eksiksiz
@@ -227,13 +228,10 @@ export function pickForAutoAdd(results: (SourceRecord & { foundBy?: string })[],
     + (completeRecord(r) ? 0.1 : 0);
   const sorted = usable.sort((a, b) => quality(b) - quality(a));
   const pool = sorted.filter(verifiable).length >= max ? sorted.filter(verifiable) : sorted;
-  const out: typeof usable = [];
-  for (const r of pool) {
-    if (out.length >= max) break;
-    if (!out.some((x) => sameWork(x, r))) out.push(r);
-  }
-  return out;
+  // D177: eklenen kaynakların en az %60’ı tam metni okunabilecek kaynaklar (lib/sources/fulltext-share.ts)
+  return pickWithFullTextQuota(pool, max, fullTextLikely, (r, chosen) => !chosen.some((x) => sameWork(x, r))).map((i) => pool[i]);
 }
+
 
 /** Veri tabanı sağlığı için kayıt biçimi (yönetim → veri kaynağı sağlığı, D92) */
 export function providerHealthMeta(providers: { provider: string; ok: boolean; count: number; error?: string }[]) {
@@ -282,6 +280,8 @@ export type ResearchGate = "skip" | "planner" | "force";
  */
 export function researchGate(p: { action: string; message: string; recentlySearchedFocus: boolean }): ResearchGate {
   if (asksForSources(p.message)) return "force";
+  // D177: “Kaynakla düzelt” her zaman o iddia için kaynak arar (kütüphanede uygun kaynak olmayabilir)
+  if (p.action === "fix_claim") return "force";
   if (!WRITING_ACTIONS.has(p.action)) return "skip";
   if (p.recentlySearchedFocus) return "skip";
   return "planner";

@@ -15,11 +15,17 @@ describe("kaynak seçimi ve kullanımı (D169)", () => {
     const full = rec({ title: "Sleep quality and screen time two", doi: "10.1/b", oaUrl: "https://x.org/b.pdf", abstract: "x".repeat(60), score: 0.5 });
     const noId = rec({ title: "Academic stress in students three", score: 0.9 });
     const picks = pickForAutoAdd([meta, noId, full], new Set(), 2);
-    expect(picks.map((p) => p.doi)).toEqual(["10.1/b", "10.1/a"]);
+    // D177: tam metni olmayan kaynak, eklenenlerin %40’ını geçemez (1 tam metin → 0 diğer)
+    expect(picks.map((p) => p.doi)).toEqual(["10.1/b"]);
+    const full2 = rec({ title: "Screen time and attention four", doi: "10.1/c", pmcid: "PMC1", score: 0.4 });
+    const full3 = rec({ title: "Smartphone use and memory five", doi: "10.1/d", arxivId: "2101.1", score: 0.3 });
+    const five = pickForAutoAdd([meta, noId, full, full2, full3], new Set(), 5);
+    expect(five).toHaveLength(5); // 3 tam metin + 2 diğer = %60
+    expect(five.filter((p) => p.oaUrl || p.pmcid || p.arxivId).length / five.length).toBeGreaterThanOrEqual(0.6);
   });
 
   it("projede olan eser (benzer başlık) ve sonuçlar içindeki tekrarlar eklenmez", () => {
-    const a = rec({ title: "The effect of feedback timing on self regulation in online learning", doi: "10.1/x" });
+    const a = rec({ title: "The effect of feedback timing on self regulation in online learning", doi: "10.1/x", oaUrl: "https://x.org/a.pdf" });
     const b = rec({ title: "The effect of feedback timing on self-regulation in online learning", doi: null });
     const c = rec({ title: "Completely different study about sleep", doi: "10.1/y" });
     expect(sameWork(a, b)).toBe(true);

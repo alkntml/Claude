@@ -143,6 +143,7 @@ export const POST = route("ai.chat", async (req) => {
   if (b.research === "skip" && gate === "force") gate = "skip";
   const askFirst = prefs.mode === "ask" && gate === "planner" && b.research !== "allow";
   let searchedQueries: string[] = [];
+  const justAdded = new Set<string>();
   let searchProviders: Awaited<ReturnType<typeof executeSearch>>["providers"] = [];
 
   const [sysSetting, stagePrompts, models] = await Promise.all([getSetting("ai.system_prompt"), getSetting("ai.stage_prompts"), getSetting("ai.models")]);
@@ -210,6 +211,7 @@ export const POST = route("ai.chat", async (req) => {
                 controller.enqueue(sse("status", { text: T("{n} sonuç bulundu; en uygun {k} kaynak doğrulanıyor…", { n: results.length, k: picks.length }) }));
                 const added = await addSourcesToProject(acc.db, b.projectId, acc.ownerId, picks.map(recordToInput), { deferFulltext: true });
                 bundle.sources.push(...added.sources);
+                for (const x of added.sources) justAdded.add(x.id);
                 controller.enqueue(sse("sources_added", { sources: added.sources, queries }));
               } else {
                 controller.enqueue(sse("status", { text: T("Veri tabanlarında uygun yeni kaynak bulunamadı.") }));
@@ -232,9 +234,11 @@ export const POST = route("ai.chat", async (req) => {
         // (sayfa numaralı atıf için). Süre sınırlı; bitmeyenler arka planda tamamlanır.
         try {
           const citedHere = new Set(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
-          const toRead = rankSources(bundle.sources, `${b.message} ${stage?.title ?? ""}`, citedHere)
-            .filter((x) => x.access_level !== "full_text" && hasOpenAccessCandidate(x) && (!x.fulltext_status || x.fulltext_status === "none" || x.fulltext_status === "queued"))
-            .slice(0, 6);
+          // D177: bu istekte yeni eklenen kaynakların tam metni önce okunur (kütüphanede tam metin oranı yüksek kalsın)
+          const candidates = rankSources(bundle.sources, `${b.message} ${b.selection ?? ""} ${stage?.title ?? ""}`, citedHere)
+            .filter((x) => x.access_level !== "full_text" && hasOpenAccessCandidate(x) && (!x.fulltext_status || x.fulltext_status === "none" || x.fulltext_status === "queued"));
+          const fresh = candidates.filter((x) => justAdded.has(x.id));
+          const toRead = [...fresh, ...candidates.filter((x) => !justAdded.has(x.id)).slice(0, Math.max(0, (b.action === "fix_claim" ? 8 : 6) - fresh.length))];
           if (toRead.length) {
             controller.enqueue(sse("phase", { phase: "read" }));
             controller.enqueue(sse("status", { text: T("{n} kaynağın açık erişimli tam metni okunuyor…", { n: toRead.length }) }));

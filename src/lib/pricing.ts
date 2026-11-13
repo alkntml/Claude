@@ -38,6 +38,11 @@ export function yearlyMonthlyPrice(priceMonthly: number): number {
 export function yearlyTotalPrice(priceMonthly: number): number {
   return yearlyMonthlyPrice(priceMonthly) * 12;
 }
+/** D161: Yıllık görünümde paket açıklaması — Sınırsız Kullanım’da “En fazla 5 proje” yerine yıllık sınır (60) */
+export function yearlyDescription(planId: string, d: string): { key: string; vars?: Record<string, string | number> } {
+  if (planId === "single" && d.startsWith("En fazla 5 proje dışında")) return { key: "En fazla {n} proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).", vars: { n: UNLIMITED_PLAN_PROJECTS_YEARLY } };
+  return { key: d };
+}
 /** Yıllık görünümde paket kartı satırı: aylık miktarlı satırlar 12 katına çevrilir (çeviri anahtarı + değişken) */
 export function yearlyFeature(f: string): { key: string; vars?: Record<string, string | number> } {
   let m = f.match(/^Ayda (\d+) sayfa yapay zekâ destekli akademik metin/);

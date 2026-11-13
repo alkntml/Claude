@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/supabase/admin", () => ({ adminClient: () => { throw new Error("veritabanı yok"); } }));
-import { hasYearlyOption, isOneTimePlan, PLAN_RANK, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, SINGLE_PLAN_DAYS, UNLIMITED_PLAN_PROJECTS, projectLimitFor } from "@/lib/pricing";
+import { hasYearlyOption, isOneTimePlan, PLAN_RANK, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, SINGLE_PLAN_DAYS, UNLIMITED_PLAN_PROJECTS, projectLimitFor, yearlyDescription } from "@/lib/pricing";
 import { hasFeature, PLAN_NAME } from "@/lib/features";
 import { monthStart, periodFor, scaleForPeriod } from "@/lib/usage";
 import { isLegacySingle } from "@/lib/single-project";
@@ -60,6 +60,10 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(yearlyFeature("Word dışa aktarma")).toEqual({ key: "Word dışa aktarma" });
     // D159: Sınırsız Kullanım yıllıkta 60 proje
     expect(yearlyFeature("En fazla 5 proje")).toEqual({ key: "En fazla {n} proje", vars: { n: 60 } });
+    // D161: kart açıklaması da yıllıkta 60 proje der
+    const desc = FALLBACK_PLANS.find((p) => p.id === "single")!.description;
+    expect(yearlyDescription("single", desc)).toMatchObject({ vars: { n: 60 } });
+    expect(yearlyDescription("pro", "Gelişmiş araştırma")).toEqual({ key: "Gelişmiş araştırma" });
   });
 
   it("Sınırsız Kullanım: 5 proje dışında her şey sınırsız, aylık 30 gün; tek çalışma kuralları yalnızca eski (süresiz) Tek Proje’de", () => {

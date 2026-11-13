@@ -796,3 +796,6 @@ Site sahibinin isteği: Sınırsız Kullanım (single) aylık ödemede en fazla 
 
 ## D160 — Akademik Ekip İndirimi %20 (2026-11-13)
 Site sahibinin isteği: `TEAM_DISCOUNT.percent` 30 → 20 (en az 3 kişi aynı). Ekip kartı, kurumlar ve hesap sayfası, WhatsApp mesajları sabitten okur; SSS (TR/EN/DE) ve fiyatlar sayfası arama açıklaması güncellendi. Hukukçunun Mesafeli Sözleşmeler metnindeki “(%30)” değiştirilmedi; hukukçu notuna eklendi.
+
+## D161 — Sınırsız Kullanım kart açıklaması yıllıkta 60 proje (2026-11-13)
+Paket açıklaması veritabanından gelir (“En fazla 5 proje dışında…”); yıllık görünümde `yearlyDescription` bu paket için “En fazla 60 proje dışında…” gösterir (TR/EN/DE). Veritabanı değişikliği yok.

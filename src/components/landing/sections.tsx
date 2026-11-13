@@ -5,7 +5,7 @@ import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 import { usePrice } from "@/components/price-context";
-import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
+import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyFeature, yearlyDescription, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
 import { useState } from "react";
 import { PeriodToggle } from "@/components/pricing/period-toggle";
 
@@ -127,7 +127,7 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
             <div className={`relative flex h-full flex-col rounded-3xl border p-6 transition duration-300 hover:-translate-y-1 ${featured ? "border-transparent bg-ink-950 text-white shadow-[0_30px_60px_-25px_rgb(21_24_41/0.6)]" : "border-ink-100 bg-white shadow-soft"}`}>
               {featured && <span className="absolute -top-3 left-6 rounded-full bg-brand-200 px-3 py-1 text-xs font-semibold text-brand-950">{t("En çok tercih edilen")}</span>}
               <h3 className="text-lg font-semibold">{t(p.name)}</h3>
-              <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{t(p.description)}</p>
+              <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{(() => { const d = yearly ? yearlyDescription(p.id, p.description) : { key: p.description }; return t(d.key, d.vars); })()}</p>
               {yearly && <p className={`mt-5 text-[13px] ${featured ? "text-white/50" : "text-ink-400"}`}><s>{price(Number(p.price_monthly))}</s> <span className={featured ? "text-emerald-300" : "text-emerald-700"}>{t("%{p} indirim", { p: YEARLY_DISCOUNT_PERCENT })}</span></p>}
               <div className={`${yearly ? "mt-1" : "mt-5"} flex items-baseline gap-1`}>
                 <span className="text-4xl font-semibold tracking-tight">{price(yearly ? yearlyMonthlyPrice(Number(p.price_monthly)) : Number(p.price_monthly))}</span>

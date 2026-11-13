@@ -3821,4 +3821,6 @@ export const DE: Dict = {
   "Tüm özellikler sınırsız": "Alle Funktionen unbegrenzt",
   // D159
   "En fazla {n} proje": "Bis zu {n} Projekte",
+  // D161
+  "En fazla {n} proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Alles unbegrenzt außer höchstens {n} Projekten: KI, Seitenentwürfe, Quellensuche, Speicher und alle Funktionen (Fair Use).",
 };

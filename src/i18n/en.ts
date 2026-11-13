@@ -3829,4 +3829,6 @@ export const EN: Record<string, string> = {
   "Tüm özellikler sınırsız": "All features unlimited",
   // D159
   "En fazla {n} proje": "Up to {n} projects",
+  // D161
+  "En fazla {n} proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Everything unlimited except a maximum of {n} projects: AI, page drafting, source searches, storage and every feature (fair use).",
 };

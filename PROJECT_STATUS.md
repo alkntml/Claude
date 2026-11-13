@@ -18,6 +18,8 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Yeni uygulama simgesi ve favicon (D165, 13 Kasım 2026)**
+
 **Kapsamlı SEO (D164, 13 Kasım 2026)**
 - Botlara meta veri `<head>` içinde; her blog yazısı ≥3 iç bağlantı; yazılarda “Kaynaklar” ve güncellenme tarihi
 - Yeni rehberler (TR/EN/DE): t testi, normallik (çarpıklık/basıklık), ISNAD — örnekler ürün motoruyla doğrulandı

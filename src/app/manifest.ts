@@ -20,18 +20,18 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     scope: "/",
     display: "standalone",
     orientation: "portrait-primary",
-    background_color: "#ffffff",
+    background_color: "#020d2d",
     theme_color: "#0f1d3d",
     lang: x.lang,
     categories: ["education", "productivity"],
     icons: [
-      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/icon-192.png?v=2", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/icon-512.png?v=2", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/maskable-512.png?v=2", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
-      { name: x.newWork, url: "/yeni", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
-      { name: x.sources, url: "/kaynaklar", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: x.newWork, url: "/yeni", icons: [{ src: "/icons/icon-192.png?v=2", sizes: "192x192" }] },
+      { name: x.sources, url: "/kaynaklar", icons: [{ src: "/icons/icon-192.png?v=2", sizes: "192x192" }] },
     ],
   };
 }

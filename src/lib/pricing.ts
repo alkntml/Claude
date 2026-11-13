@@ -1,8 +1,39 @@
 /** Fiyatlandırma ve paket yardımcıları (istemci ve sunucu ortak, saf fonksiyonlar). */
 
 export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 3 };
-/** Tek ödemeli (süresiz) paketler (D103): fiyat aylık değil tek seferliktir */
+/** Tek ödemeli paketler: fiyat aylık değil tek seferliktir. D157: Tek Proje = 1 ay, her şey sınırsız (yenilenmez) */
 export const ONE_TIME_PLANS = new Set(["single"]);
+/** D157: Tek Proje’nin süresi (gün) */
+export const SINGLE_PLAN_DAYS = 30;
+
+/* ---------------------------------------------------------------------
+ * D157: Aylık / yıllık ödeme. Yıllık ödeme güncel aylık fiyatın %20 indirimlisidir; kullanım hakları düşmez:
+ * aylık hakların 12 katı paket başında tek seferde tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır (aylık kısıt yok).
+ * Tek Proje ve Ücretsiz paketin yıllık seçeneği yoktur. Yıllık fiyat indirim kodu / ekip indirimiyle birleştirilmez.
+ * ------------------------------------------------------------------- */
+export type BillingPeriod = "monthly" | "yearly";
+export const YEARLY_DISCOUNT_PERCENT = 20;
+export const YEARLY_DAYS = 365;
+
+export function hasYearlyOption(planId: string, priceMonthly: number): boolean {
+  return priceMonthly > 0 && !isOneTimePlan(planId);
+}
+/** Yıllık ödemede aylık karşılık (tam TL’ye yuvarlanır) */
+export function yearlyMonthlyPrice(priceMonthly: number): number {
+  return Math.round(priceMonthly * (1 - YEARLY_DISCOUNT_PERCENT / 100));
+}
+/** Yıllık toplam = aylık karşılık × 12 (müşterinin gördüğü iki sayı birbiriyle tutarlı) */
+export function yearlyTotalPrice(priceMonthly: number): number {
+  return yearlyMonthlyPrice(priceMonthly) * 12;
+}
+/** Yıllık görünümde paket kartı satırı: aylık miktarlı satırlar 12 katına çevrilir (çeviri anahtarı + değişken) */
+export function yearlyFeature(f: string): { key: string; vars?: Record<string, string | number> } {
+  let m = f.match(/^Ayda (\d+) sayfa yapay zekâ destekli akademik metin/);
+  if (m) return { key: "Yılda {n} sayfa yapay zekâ destekli akademik metin (12 aylık hak baştan tanımlanır, 1 yıl geçerli)", vars: { n: Number(m[1]) * 12 } };
+  m = f.match(/^Aylık (\d+) kaynak taraması$/);
+  if (m) return { key: "Yılda {n} kaynak taraması", vars: { n: Number(m[1]) * 12 } };
+  return { key: f };
+}
 export const isOneTimePlan = (id: string | null | undefined) => !!id && ONE_TIME_PLANS.has(id);
 
 /** Kurum paketi kişisel paketten yüksekse kurum paketi geçerlidir */

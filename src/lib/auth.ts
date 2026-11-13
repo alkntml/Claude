@@ -32,6 +32,9 @@ export interface Profile {
   work_locked?: boolean;
   /** Ücretli paketin bitiş tarihi (D53); null = süresiz */
   plan_expires_at?: string | null;
+  /** D157: ödeme dönemi ve paket başlangıcı */
+  plan_period?: "monthly" | "yearly" | null;
+  plan_started_at?: string | null;
   /** Üye numarası (D56) */
   member_no?: number | null;
 }
@@ -58,10 +61,11 @@ export const getSession = cache(async (): Promise<Session | null> => {
   if (!profile) return null;
   const p = profile as Profile;
   // Paket süresi dolduysa ücretsiz pakete düşer (D53); tarih bilgi için saklanır
-  // Tek Proje süresizdir (D103): yanlışlıkla yazılmış bir bitiş tarihi paketi düşürmez (D109)
-  if (p.plan_id !== "free" && p.plan_id !== "single" && p.plan_expires_at && new Date(p.plan_expires_at).getTime() < Date.now()) {
+  // D157: Tek Proje artık 1 aylıktır ve süresi dolunca düşer; eski (süresiz) Tek Proje’de bitiş tarihi yoktur
+  if (p.plan_id !== "free" && p.plan_expires_at && new Date(p.plan_expires_at).getTime() < Date.now()) {
     p.plan_id = "free";
     try { await adminClient().from("profiles").update({ plan_id: "free" }).eq("id", p.id); } catch { /* service role yoksa yalnızca bu istekte düşer */ }
+    try { await adminClient().from("profiles").update({ plan_period: "monthly" }).eq("id", p.id); } catch { /* migration 40 öncesi */ }
   }
   // Kurumsal lisans: kurum paketi kişisel paketten yüksekse o geçerlidir
   p.personal_plan_id = p.plan_id;

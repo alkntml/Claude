@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D156)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D157)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 

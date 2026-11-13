@@ -47,7 +47,7 @@ export const GUIDE: GuideChapter[] = [
         s("Ortak yazar olarak davet edildiğiniz çalışmalar “Benimle paylaşılan çalışmalar” altındadır.", "Works you were invited to as a co-author are under “Shared with me”."),
       ] },
       { id: "haklar", title: s("Paketler ve aylık haklar", "Plans and monthly allowance"), where: s("Sol menü: “Hesap ve abonelik” → “Paketler”", "Left menu: “Account and subscription” → “Plans”"), steps: [
-        s("Her paketin aylık yapay zekâ isteği ve kaynak taraması hakkı vardır; haklar her ayın başında yenilenir.", "Each plan has monthly AI requests and source searches; they reset at the start of each month."),
+        s("Aylık pakette yapay zekâ ve kaynak tarama hakları her ayın başında yenilenir; yıllık pakette aylık hakların 12 katı baştan tanımlanır ve 1 yıl geçerlidir. Tek Proje 1 ay boyunca sınırsızdır.", "On a monthly plan, AI and source search allowances reset at the start of each month; on an annual plan, 12 times the monthly allowance is granted up front and is valid for 1 year. The Single Project plan is unlimited for 1 month."),
         s("Sayfa veya yapay zekâ hakkınız dolunca çalışmalarınızı yalnızca görüntüleyip indirebilirsiniz; diğer özellikler yükseltene veya hak yenilenene kadar kapanır. Ücretsiz araçlar açık kalır.", "When your page or AI allowance runs out, you can only view and download your works; other features close until you upgrade or the allowance renews. The free tools stay open."),
         s("Pakete bağlı özelliklerde kilit simgesi görürsünüz; tıklayınca hangi pakette açıldığı gösterilir.", "Plan-gated features show a lock; clicking it shows which plan unlocks it."),
         s("Yükseltmek için “Yükselt” → “WhatsApp ile yükselt”.", "To upgrade: “Upgrade” → “Upgrade via WhatsApp”."),

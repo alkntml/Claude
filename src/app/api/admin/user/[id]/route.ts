@@ -4,6 +4,7 @@ import { INTERNAL_LINK_RE } from "@/lib/notify";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireAdmin } from "@/lib/auth";
 import { addDays } from "@/lib/admin-users";
+import { SINGLE_PLAN_DAYS, YEARLY_DAYS } from "@/lib/pricing";
 import { getSetting } from "@/lib/settings";
 import { adminClient } from "@/lib/supabase/admin";
 import { effectiveLimits, lockReasons, setWorkLock, usageSummary } from "@/lib/usage";
@@ -58,6 +59,8 @@ const Action = z.discriminatedUnion("action", [
   z.object({ action: z.literal("set_expiry"), expiresAt: z.string().datetime({ offset: true }).nullable() }),
   z.object({
     action: z.literal("set_plan"), planId: z.string().max(40), days: z.number().int().min(1).max(3650).nullable().default(30),
+    // D157: ödeme dönemi (yıllıkta 12 aylık hak baştan, 365 gün); Tek Proje her zaman 1 ay
+    period: z.enum(["monthly", "yearly"]).default("monthly"),
     // D109: ödeme WhatsApp’tan alındığı için ödeyen kişinin bilgisi paketle birlikte kaydedilir (Tek Proje’de ad zorunlu)
     purchase: z.object({ payerName: z.string().trim().max(200).default(""), payerPhone: z.string().trim().max(40).default(""), amountTry: z.number().min(0).max(1_000_000).nullable().default(null), note: z.string().trim().max(1000).default("") }).optional(),
   }),
@@ -78,13 +81,14 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
   const { data: profile } = await db.from("profiles").select("id, plan_id, plan_expires_at, role").eq("id", id).maybeSingle();
   if (!profile) throw new ApiError(404, "Kullanıcı bulunamadı");
   let update: Record<string, unknown> = {};
+  let periodUpdate: Record<string, unknown> | null = null;
   if (b.action === "extend") {
     if (profile.plan_id === "free") throw new ApiError(422, "Ücretsiz pakette süre yok; önce bir paket atayın");
-    if (profile.plan_id === "single") throw new ApiError(422, "Tek Proje paketi süresizdir; süre uzatılamaz");
+    if (profile.plan_id === "single" && !profile.plan_expires_at) throw new ApiError(422, "Bu Tek Proje eski koşullarla (süresiz) tanımlandı; süre uzatılamaz");
     update = { plan_expires_at: addDays(profile.plan_expires_at, b.days) };
   }
   if (b.action === "set_expiry") {
-    if (profile.plan_id === "single" && b.expiresAt) throw new ApiError(422, "Tek Proje paketi süresizdir; bitiş tarihi verilemez");
+    if (profile.plan_id === "single" && !profile.plan_expires_at && b.expiresAt) throw new ApiError(422, "Bu Tek Proje eski koşullarla (süresiz) tanımlandı; bitiş tarihi verilemez");
     update = { plan_expires_at: b.expiresAt };
   }
   if (b.action === "set_plan") {
@@ -96,7 +100,11 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
       const { error } = await db.from("plan_purchases").insert({ user_id: id, plan_id: b.planId, payer_name: pu.payerName, payer_phone: pu.payerPhone, amount_try: pu.amountTry, note: pu.note, created_by: admin.user.id });
       if (error) throw new ApiError(500, "Satın alma kaydı yazılamadı (migration 31 çalıştırıldı mı?)");
     }
-    update = { plan_id: b.planId, plan_expires_at: b.planId === "free" || b.planId === "single" || b.days == null ? null : addDays(null, b.days) };
+    // D157: Tek Proje 1 ay; yıllık ödemede 365 gün ve 12 aylık hak baştan; ücretsiz pakette süre yok
+    const yearly = b.period === "yearly" && b.planId !== "free" && b.planId !== "single";
+    const days = b.planId === "free" ? null : b.planId === "single" ? (b.days ?? SINGLE_PLAN_DAYS) : yearly ? YEARLY_DAYS : b.days;
+    update = { plan_id: b.planId, plan_expires_at: days == null ? null : addDays(null, days) };
+    periodUpdate = { plan_period: yearly ? "yearly" : "monthly", plan_started_at: new Date().toISOString() };
   }
   if (b.action === "grant_credits") {
     const expires = new Date(Date.now() + b.days * 86400_000).toISOString();
@@ -118,8 +126,12 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
     const { error } = await db.from("profiles").update(update).eq("id", id);
     if (error) throw error;
   }
+  if (periodUpdate) {
+    const { error } = await db.from("profiles").update(periodUpdate).eq("id", id);
+    if (error && periodUpdate.plan_period === "yearly") throw new ApiError(500, "Paket atandı ama yıllık dönem kaydedilemedi (migration 40 çalıştırıldı mı?)");
+  }
   // D81: çalışma kilidi kaldırıldı; eskiden kalmış bayrak varsa temizlenir
   await setWorkLock(id, false);
-  const { data: after } = await db.from("profiles").select("id, plan_id, plan_expires_at, work_locked").eq("id", id).single();
+  const { data: after } = await db.from("profiles").select("*").eq("id", id).single();
   return json({ ok: true, profile: after });
 });

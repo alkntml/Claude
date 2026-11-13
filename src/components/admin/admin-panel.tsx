@@ -297,11 +297,13 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
           <div className="space-y-4">
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="font-semibold">Paket ve süre</p>
-              <label className="mt-2 block text-xs text-ink-500">Paket ata (ücretli paketler gün sayısı kadar geçerli olur)</label>
+              <label className="mt-2 block text-xs text-ink-500">Paket ata — Aylık: gün sayısı kadar geçerli; Yıllık: 365 gün, 12 aylık hak baştan; Tek Proje: 1 ay, her şey sınırsız</label>
+              {d.profile.plan_period === "yearly" && d.profile.plan_id !== "free" && <p className="mt-1 text-[12px] text-emerald-700">Yıllık paket · başlangıç {d.profile.plan_started_at ? new Date(d.profile.plan_started_at).toLocaleDateString("tr-TR") : "—"}</p>}
               <div className="mt-1 flex gap-2">
                 <select id="plan-pick" className="input !py-2" defaultValue={d.profile.plan_id}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
-                <input className="input !w-24 !py-2" type="number" min={1} value={days} onChange={(e) => setDays(Number(e.target.value) || 30)} />
-                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" || v === "single" ? null : days, purchase: { payerName: pur.name, payerPhone: pur.phone, amountTry: pur.amount ? Number(pur.amount.replace(",", ".")) : null, note: pur.note } }, v === "single" ? "Tek Proje atandı (süresiz)" : "Paket atandı"); }}>Ata</Button>
+                <select id="period-pick" className="input !w-28 !py-2" defaultValue={d.profile.plan_period ?? "monthly"} title="Ödeme dönemi"><option value="monthly">Aylık</option><option value="yearly">Yıllık</option></select>
+                <input className="input !w-24 !py-2" type="number" min={1} value={days} onChange={(e) => setDays(Number(e.target.value) || 30)} title="Aylık pakette gün sayısı" />
+                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" ? null : v === "single" ? 30 : days, period: (document.getElementById("period-pick") as HTMLSelectElement).value, purchase: { payerName: pur.name, payerPhone: pur.phone, amountTry: pur.amount ? Number(pur.amount.replace(",", ".")) : null, note: pur.note } }, v === "single" ? "Tek Proje atandı (süresiz)" : "Paket atandı"); }}>Ata</Button>
               </div>
               <p className="mt-3 text-xs text-ink-500">Ödeme bilgisi (paketle birlikte kaydedilir; Tek Proje’de ödeyen adı zorunlu)</p>
               <div className="mt-1 grid grid-cols-2 gap-2">
@@ -318,14 +320,14 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               {(d.requests ?? []).length > 0 && <div className="mt-1 space-y-0.5">{d.requests.map((x: any, i: number) => <p key={i} className="text-[12px] text-ink-500">KVKK talebi · {x.kind === "export" ? "veri" : x.kind} · {x.status === "pending" ? "bekliyor" : "tamamlandı"} · {new Date(x.created_at).toLocaleDateString("tr-TR")}</p>)}</div>}
               <p className="mt-3 text-xs text-ink-500">Ek gün ver (bitiş tarihinden, süresi geçtiyse bugünden itibaren)</p>
               <div className="mt-1 flex flex-wrap gap-1.5">
-                {d.profile.plan_id === "single" && <span className="text-[12px] text-ink-500">Tek Proje süresizdir; süre değiştirilemez.</span>}
-                {[7, 15, 30, 90, 365].map((n) => <Button key={n} size="sm" variant="secondary" disabled={d.profile.plan_id === "free" || d.profile.plan_id === "single"} onClick={() => act({ action: "extend", days: n }, `${n} gün eklendi`)}>+{n} gün</Button>)}
-                <Button size="sm" variant="ghost" disabled={d.profile.plan_id === "free" || d.profile.plan_id === "single"} onClick={() => { const n = Number(prompt("Kaç gün eklensin? (eksi değer süreyi kısaltır)", "10")); if (n) act({ action: "extend", days: n }, `${n} gün eklendi`); }}>Özel…</Button>
+                {d.profile.plan_id === "single" && !d.profile.plan_expires_at && <span className="text-[12px] text-ink-500">Eski koşullu (süresiz) Tek Proje; süre değiştirilemez.</span>}
+                {[7, 15, 30, 90, 365].map((n) => <Button key={n} size="sm" variant="secondary" disabled={d.profile.plan_id === "free" || (d.profile.plan_id === "single" && !d.profile.plan_expires_at)} onClick={() => act({ action: "extend", days: n }, `${n} gün eklendi`)}>+{n} gün</Button>)}
+                <Button size="sm" variant="ghost" disabled={d.profile.plan_id === "free" || (d.profile.plan_id === "single" && !d.profile.plan_expires_at)} onClick={() => { const n = Number(prompt("Kaç gün eklensin? (eksi değer süreyi kısaltır)", "10")); if (n) act({ action: "extend", days: n }, `${n} gün eklendi`); }}>Özel…</Button>
               </div>
               <p className="mt-3 text-xs text-ink-500">Bitiş tarihini değiştir</p>
               <div className="mt-1 flex gap-2">
                 <input className="input !py-2" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                <Button size="sm" variant="secondary" disabled={!date || d.profile.plan_id === "single"} onClick={() => act({ action: "set_expiry", expiresAt: new Date(`${date}T23:59:00+03:00`).toISOString() }, "Bitiş tarihi güncellendi")}>Kaydet</Button>
+                <Button size="sm" variant="secondary" disabled={!date || (d.profile.plan_id === "single" && !d.profile.plan_expires_at)} onClick={() => act({ action: "set_expiry", expiresAt: new Date(`${date}T23:59:00+03:00`).toISOString() }, "Bitiş tarihi güncellendi")}>Kaydet</Button>
                 <Button size="sm" variant="ghost" onClick={() => act({ action: "set_expiry", expiresAt: null }, "Süresiz yapıldı")}>Süresiz</Button>
               </div>
             </div>

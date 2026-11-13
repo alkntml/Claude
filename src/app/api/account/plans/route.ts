@@ -19,5 +19,5 @@ export const GET = route("account.plans", async () => {
   });
   // D145: kayıtta bağlanan indirim kodu (indirimli fiyat gösterilir)
   const discount = await userDiscount(s.profile);
-  return json({ current: s.profile.plan_id, email: s.profile.email ?? s.user.email ?? "", memberNo: memberCode(s.profile.member_no), plans, discount });
+  return json({ current: s.profile.plan_id, currentPeriod: s.profile.plan_period === "yearly" ? "yearly" : "monthly", email: s.profile.email ?? s.user.email ?? "", memberNo: memberCode(s.profile.member_no), plans, discount });
 });

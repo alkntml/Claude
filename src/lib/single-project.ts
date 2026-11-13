@@ -5,10 +5,14 @@ import { monthStart, planLimits } from "@/lib/usage";
 
 /**
  * Tek Proje paketi (D103): yalnızca tek bir çalışma; sınırsız kullanım yalnızca o çalışmada.
+ * D157: Yeni Tek Proje 1 aylıktır ve her şey sınırsızdır (bitiş tarihi vardır); aşağıdaki tek çalışma kuralları
+ * yalnızca eski koşullarla atanmış, bitiş tarihi olmayan (süresiz) Tek Proje paketlerinde uygulanır.
  * Engellenen denemeler ve şüpheli davranış yöneticilere bildirilir (raise_abuse_alert, migration 27).
  */
 export const SINGLE_PLAN = "single";
-type Prof = { id?: string; plan_id: string; single_project_id?: string | null; role?: string };
+type Prof = { id?: string; plan_id: string; single_project_id?: string | null; role?: string; plan_expires_at?: string | null };
+/** Eski (süresiz, tek çalışmalık) Tek Proje mi? */
+export const isLegacySingle = (p: Prof) => p.plan_id === SINGLE_PLAN && !p.plan_expires_at && p.role !== "admin";
 
 export async function singleAlert(userId: string, rule: string, data: Record<string, unknown> = {}): Promise<void> {
   await adminClient().rpc("raise_abuse_alert", { p_user: userId, p_rule: rule, p_data: data }).then(() => undefined, () => undefined);
@@ -17,7 +21,7 @@ export async function singleAlert(userId: string, rule: string, data: Record<str
 /** Yapay zekâ ve tarama yalnızca pakete bağlı çalışmada kullanılabilir */
 export async function assertSingleProject(s: { user: { id: string }; profile: Prof }, projectId: string | null | undefined): Promise<void> {
   const p = s.profile;
-  if (p.plan_id !== SINGLE_PLAN || p.role === "admin" || !projectId) return;
+  if (!isLegacySingle(p) || !projectId) return;
   if (p.single_project_id && p.single_project_id !== projectId) {
     const { data } = await adminClient().from("projects").select("title").eq("id", p.single_project_id).maybeSingle();
     throw new ApiError(402, `Tek Proje paketiniz yalnızca “${data?.title ?? "pakete bağlı çalışma"}” çalışmasında geçerlidir.`, "single_project");
@@ -27,7 +31,7 @@ export async function assertSingleProject(s: { user: { id: string }; profile: Pr
 /** Yeni çalışma: pakete bağlı çalışma varsa engellenir ve yöneticiye bildirilir */
 export async function assertCanCreateProject(s: { user: { id: string }; profile: Prof }): Promise<void> {
   const p = s.profile;
-  if (p.plan_id !== SINGLE_PLAN || p.role === "admin" || !p.single_project_id) return;
+  if (!isLegacySingle(p) || !p.single_project_id) return;
   await singleAlert(s.user.id, "second_project", { project_id: p.single_project_id });
   throw new ApiError(402, "Tek Proje paketinde yalnızca bir çalışma yapılabilir. Yeni bir çalışma için paketinizi yükseltebilirsiniz.", "single_project");
 }
@@ -35,7 +39,7 @@ export async function assertCanCreateProject(s: { user: { id: string }; profile:
 /** Pakete bağlı çalışmanın silinmesi ve türünün değiştirilmesi engellenir, denemeler bildirilir */
 export async function assertSingleProjectChange(s: { user: { id: string }; profile: Prof }, projectId: string, change: "delete" | "work_type", title?: string | null): Promise<void> {
   const p = s.profile;
-  if (p.plan_id !== SINGLE_PLAN || p.role === "admin" || p.single_project_id !== projectId) return;
+  if (!isLegacySingle(p) || p.single_project_id !== projectId) return;
   await singleAlert(s.user.id, change === "delete" ? "delete_project" : "worktype_change", { project_id: projectId, project_title: title ?? null });
   throw new ApiError(403, change === "delete" ? "Tek Proje paketine bağlı çalışma silinemez." : "Tek Proje paketinde çalışma türü değiştirilemez.", "single_project");
 }
@@ -52,7 +56,7 @@ const OFF_MSG = {
  */
 export async function assertSingleOffProject(s: { user: { id: string }; profile: Prof }, kind: "ai_request" | "source_search"): Promise<boolean> {
   const p = s.profile;
-  if (p.plan_id !== SINGLE_PLAN || p.role === "admin") return false;
+  if (!isLegacySingle(p)) return false;
   const free = await planLimits("free");
   const lim = kind === "ai_request" ? free.ai_requests_month : free.source_searches_month;
   if (lim == null) return true;
@@ -65,6 +69,6 @@ export async function assertSingleOffProject(s: { user: { id: string }; profile:
 
 /** Çalışmaya bağlıysa (pakete bağlı çalışma) sınırsız; değilse çalışma dışı aylık hak (D109). Dönüş: kullanım kaydına offProject yazılsın mı? */
 export async function singleScope(s: { user: { id: string }; profile: Prof }, kind: "ai_request" | "source_search", projectId: string | null | undefined): Promise<boolean> {
-  if (projectId && projectId === s.profile.single_project_id) return false;
+  if (!isLegacySingle(s.profile) || (projectId && projectId === s.profile.single_project_id)) return false;
   return assertSingleOffProject(s, kind);
 }

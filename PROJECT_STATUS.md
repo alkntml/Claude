@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Aylık/yıllık ödeme, 1 aylık sınırsız Tek Proje (D157, 13 Kasım 2026)**
+- Fiyatlarda Aylık/Yıllık seçimi (%20 indirim, aylık karşılık + yıllık toplam; 12 aylık hak baştan, 1 yıl); Tek Proje 1 ay her şey sınırsız; migration 40
+
 **Krem tema ve SSS “Neden Academiana?” (D156, 13 Kasım 2026)**
 - Mavi vurgu krem tonlarına çevrildi (açık ve gece modu); SSS’ye 7 soruluk tanıtım grubu (TR/EN/DE)
 

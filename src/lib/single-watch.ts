@@ -13,8 +13,10 @@ import { adminClient } from "@/lib/supabase/admin";
  * - many_sections: bölüm sayısı çalışma türü şablonunun iki katını aştı
  * - off_topic: uzun bir yapay zekâ çıktısında çalışmanın konu terimlerinden hiçbiri geçmiyor
  */
-type Prof = { plan_id: string; role?: string; full_name?: string | null; email?: string | null };
-const watched = (p: Prof) => p.plan_id === SINGLE_PLAN && p.role !== "admin";
+type Prof = { plan_id: string; role?: string; full_name?: string | null; email?: string | null; plan_expires_at?: string | null };
+/** D157: içerik/tek çalışma uyarıları yalnızca eski (süresiz, tek çalışmalık) Tek Proje’de; hesap paylaşımı (cihaz) her Tek Proje’de */
+const watched = (p: Prof) => p.plan_id === SINGLE_PLAN && !p.plan_expires_at && p.role !== "admin";
+const watchedDevices = (p: Prof) => p.plan_id === SINGLE_PLAN && p.role !== "admin";
 
 export const REPLACED_MIN_WORDS = 3000;
 export const REPLACED_MAX_SIMILARITY = 0.3;
@@ -61,7 +63,7 @@ export async function watchExport(o: { userId: string; profile: Prof; projectId:
 
 /** Tek Proje kullanıcısının cihazı kaydedilir; 30 günde DEVICE_LIMIT ve üzeri farklı cihaz uyarı üretir */
 export async function watchDevices(userId: string, profile: Prof, device: string | null): Promise<void> {
-  if (!watched(profile) || !device) return;
+  if (!watchedDevices(profile) || !device) return;
   const db = adminClient();
   await db.from("user_devices").upsert({ user_id: userId, device, last_seen: new Date().toISOString() }, { onConflict: "user_id,device" }).then(() => undefined, () => undefined);
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();

@@ -439,8 +439,8 @@ export const FAQ: FaqGroup[] = [
         id: "tek-proje",
         q: { tr: "Tek Proje paketi nedir?", en: "What is the Single Project plan?" },
         a: {
-          tr: "**Tek seferlik 3.999 TL** ödemeyle tek bir çalışmanızı (tez, makale, proje önerisi…) süre sınırı olmadan, tüm özelliklerle ve sınırsız yapay zekâ kullanımıyla yazarsınız. Paket yalnızca bir çalışma içindir: pakete bağlı çalışma silinemez, türü değiştirilemez ve ikinci bir çalışma açılamaz. Sınırsızlık bu çalışma içindir; çalışma dışındaki anket yardımcısı ve konu bulma ayda Ücretsiz paket kadardır. Çalışmayı bitirip silerek veya üzerine yazarak başka bir çalışma yazmak ve hesabı paylaşmak paket kurallarına aykırıdır; bu tür kullanım tespit edilip bir yönetici tarafından incelenir (bkz. Kullanım koşulları → Adil kullanım).",
-          en: "With a **one-time payment of 3,999 TL** you write a single work (thesis, article, proposal…) with no time limit, all features and unlimited AI use. The plan covers one work only: the linked work cannot be deleted or change type, and a second work cannot be created. Unlimited use applies to that work; the survey assistant and topic finder outside it are limited to the Free plan allowance each month. Finishing a work and deleting or overwriting it to write another, or sharing the account, breaks the plan rules; such use is detected and reviewed by an administrator (see Terms of use → Fair use).",
+          tr: "**Tek seferlik 3.999 TL** ödemeyle **1 ay boyunca her şey sınırsızdır**: istediğiniz kadar çalışma açabilir, yapay zekâyı, sayfa yazımını ve kaynak taramasını sınırsız kullanabilir, tüm özelliklere (Premium dâhil) erişebilirsiniz. Süre paket tanımlandığı gün başlar ve 1 ay sonra biter; kendiliğinden yenilenmez, süre bitince Ücretsiz pakete geçersiniz ve çalışmalarınız silinmez. “Sınırsız”, bir kişinin kendi akademik çalışmaları için olağan kullanımı anlamına gelir; hesabı paylaşmak veya başkaları adına toplu üretim yapmak adil kullanım kurallarına aykırıdır.",
+          en: "With a **one-time payment of 3,999 TL**, **everything is unlimited for 1 month**: you can open as many works as you like, use AI, page drafting and source searches without limits and access every feature (Premium included). The period starts on the day the plan is assigned and ends 1 month later; it does not renew automatically, you move to the Free plan when it ends, and your work is not deleted. “Unlimited” means one person’s ordinary use for their own academic work; sharing the account or mass production on behalf of others breaks the fair use rules.",
         },
       },
       {
@@ -457,6 +457,14 @@ export const FAQ: FaqGroup[] = [
         a: {
           tr: "Hesap ve abonelik sayfasında istediğiniz paketin altındaki “Yükselt” düğmesine basın. Mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir WhatsApp mesajı açılır; mesajı gönderdiğinizde ödeme ayrıntıları size iletilir ve ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır. Kart bilgilerinizi sitemize girmezsiniz.",
           en: "On the Account page, press “Upgrade” under the plan you want. A ready-made WhatsApp message with your current and chosen plan opens; once you send it, we share the payment details and your plan is activated on your account after payment. You never enter card details on our site.",
+        },
+      },
+      {
+        id: "yillik",
+        q: { tr: "Yıllık ödeme seçeneği var mı? Haklarım nasıl işler?", en: "Is there an annual payment option? How do my allowances work?" },
+        a: {
+          tr: "Evet. Basic, Pro ve Premium paketlerde yıllık ödemede **güncel fiyata %20 indirim** uygulanır; fiyatlar sayfasında hem aylık karşılığı hem yıllık toplam tutarı görürsünüz. Kullanım hakları azalmaz: **aylık hakların 12 katı** (sayfa, yapay zekâ isteği, kaynak taraması) paket başında tek seferde tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır; aylık bir kısıt yoktur. Yıllık indirim, indirim kodu veya Akademik Ekip İndirimi ile birleştirilmez. Tek Proje paketinin yıllık seçeneği yoktur.",
+          en: "Yes. On Basic, Pro and Premium, annual payment gets **20% off the current price**; the pricing page shows both the monthly equivalent and the annual total. Your allowances are not reduced: **12 times the monthly allowances** (pages, AI requests, source searches) are granted at the start of the plan and can be used however you like within the year, with no monthly cap. The annual discount cannot be combined with a discount code or the Academic Team Discount. The Single Project plan has no annual option.",
         },
       },
       {

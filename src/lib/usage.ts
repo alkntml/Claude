@@ -50,9 +50,45 @@ export function costCapUsd(priceTry: number, m: { usd_try: number; vat_rate: num
 /** Yönetici (site sahibi) için sınır yoktur: uyarılar, sayaç çubukları ve tarama hakkı hesapları da sınırsız görünür (D82) */
 const UNLIMITED: PlanLimits = { pages_month: null, ai_requests_month: null, tokens_month: null, source_searches_month: null, projects: null, storage_mb: null, export_formats: ["txt", "md", "docx", "pdf"], cost_usd_month: null };
 
+/* ---------------------------------------------------------------------
+ * D157: Ödeme dönemi. Aylık pakette haklar her ayın başında yenilenir. Yıllık pakette aylık hakların 12 katı
+ * paket başında (plan_started_at) tanımlanır ve paket bitene kadar (plan_expires_at) dilediğiniz gibi kullanılır.
+ * ------------------------------------------------------------------- */
+export interface UsagePeriod { yearly: boolean; since: string; until: string | null }
+const periodCache = new Map<string, { v: UsagePeriod; at: number }>();
+
+/** Saf kural: profil yıllık ve paket etkinse yıllık dönem, değilse takvim ayı */
+export function periodFor(p: { plan_id?: string | null; plan_period?: string | null; plan_started_at?: string | null; plan_expires_at?: string | null } | null, now = new Date()): UsagePeriod {
+  const active = !!p && p.plan_period === "yearly" && !!p.plan_id && p.plan_id !== "free" && !!p.plan_started_at
+    && (!p.plan_expires_at || new Date(p.plan_expires_at).getTime() > now.getTime());
+  if (active) return { yearly: true, since: new Date(p!.plan_started_at!).toISOString(), until: p!.plan_expires_at ?? null };
+  const start = monthStart(now);
+  const next = new Date(start); next.setUTCMonth(next.getUTCMonth() + 1);
+  return { yearly: false, since: start, until: monthStart(next) };
+}
+
+export async function usagePeriod(userId: string): Promise<UsagePeriod> {
+  const c = periodCache.get(userId);
+  if (c && Date.now() - c.at < 30_000) return c.v;
+  const { data, error } = await adminClient().from("profiles").select("plan_id, plan_period, plan_started_at, plan_expires_at").eq("id", userId).maybeSingle();
+  // Migration 40 çalıştırılmadıysa sütun yoktur: aylık
+  const v = periodFor(error ? null : data);
+  periodCache.set(userId, { v, at: Date.now() });
+  if (periodCache.size > 5000) periodCache.clear();
+  return v;
+}
+
+/** Yıllık dönemde aylık haklar 12 katı (sayfa, yapay zekâ isteği, token, tarama, maliyet tavanı); proje ve depolama değişmez */
+export function scaleForPeriod(l: PlanLimits, yearly: boolean): PlanLimits {
+  if (!yearly) return l;
+  const x = (v: number | null | undefined) => (v == null ? v : v * 12);
+  return { ...l, pages_month: x(l.pages_month), ai_requests_month: x(l.ai_requests_month), tokens_month: x(l.tokens_month), source_searches_month: x(l.source_searches_month), cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : Math.round(l.cost_usd_month * 12 * 100) / 100 };
+}
+
 export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
   if (await isAdminUser(userId).catch(() => false)) return { ...UNLIMITED };
-  const [l, m] = await Promise.all([planLimits(planId), getSetting("billing.margin")]);
+  const [base, m, period] = await Promise.all([planLimits(planId), getSetting("billing.margin"), usagePeriod(userId)]);
+  const l = scaleForPeriod(base, period.yearly);
   const c = await activeCredits(userId, { ai: l.ai_requests_month, search: l.source_searches_month, pages: l.pages_month });
   return {
     ...l,
@@ -83,7 +119,8 @@ export interface UsageSummary {
 
 export async function usageSummary(userId: string): Promise<UsageSummary> {
   const db = adminClient();
-  const since = monthStart();
+  // D157: yıllık pakette paket başından beri, aylıkta ay başından beri
+  const since = (await usagePeriod(userId)).since;
   const [totals, projects, words] = await Promise.all([
     db.rpc("usage_totals", { p_user: userId, p_since: since }),
     db.from("projects").select("id", { count: "exact", head: true }).eq("user_id", userId).neq("status", "archived"),

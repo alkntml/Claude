@@ -5,7 +5,9 @@ import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 import { usePrice } from "@/components/price-context";
-import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan } from "@/lib/pricing";
+import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
+import { useState } from "react";
+import { PeriodToggle } from "@/components/pricing/period-toggle";
 
 export function HowItWorks() {
   const { t } = useT();
@@ -104,27 +106,39 @@ export function Principles() {
 }
 
 export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn: boolean }) {
-  const { t } = useT();
+  const { t, dl } = useT();
   const price = usePrice();
+  // D157: aylık / yıllık ödeme
+  const [period, setPeriod] = useState<BillingPeriod>("monthly");
   return (
     <>
+    <div className="mb-8 flex flex-col items-center gap-2">
+      <PeriodToggle value={period} onChange={setPeriod} />
+      <p className="text-center text-[13px] text-ink-500">{period === "yearly"
+        ? t("Yıllık ödemede %{p} indirim; kullanım hakları azalmaz: 12 aylık hak baştan tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır.", { p: YEARLY_DISCOUNT_PERCENT })
+        : t("Aylık ödemede haklar her ayın başında yenilenir.")}</p>
+    </div>
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {plans.map((p, i) => {
         const featured = p.id === "pro";
+        const yearly = period === "yearly" && hasYearlyOption(p.id, Number(p.price_monthly));
         return (
           <FadeIn key={p.id} delay={i * 0.06}>
             <div className={`relative flex h-full flex-col rounded-3xl border p-6 transition duration-300 hover:-translate-y-1 ${featured ? "border-transparent bg-ink-950 text-white shadow-[0_30px_60px_-25px_rgb(21_24_41/0.6)]" : "border-ink-100 bg-white shadow-soft"}`}>
               {featured && <span className="absolute -top-3 left-6 rounded-full bg-brand-200 px-3 py-1 text-xs font-semibold text-brand-950">{t("En çok tercih edilen")}</span>}
               <h3 className="text-lg font-semibold">{t(p.name)}</h3>
               <p className={`mt-1 text-sm ${featured ? "text-white/60" : "text-ink-500"}`}>{t(p.description)}</p>
-              <div className="mt-5 flex items-baseline gap-1">
-                <span className="text-4xl font-semibold tracking-tight">{price(Number(p.price_monthly))}</span>
-                <span className={featured ? "text-white/50" : "text-ink-400"}>{isOneTimePlan(p.id) ? t("tek ödeme") : t("/ay")}</span>
+              {yearly && <p className={`mt-5 text-[13px] ${featured ? "text-white/50" : "text-ink-400"}`}><s>{price(Number(p.price_monthly))}</s> <span className={featured ? "text-emerald-300" : "text-emerald-700"}>{t("%{p} indirim", { p: YEARLY_DISCOUNT_PERCENT })}</span></p>}
+              <div className={`${yearly ? "mt-1" : "mt-5"} flex items-baseline gap-1`}>
+                <span className="text-4xl font-semibold tracking-tight">{price(yearly ? yearlyMonthlyPrice(Number(p.price_monthly)) : Number(p.price_monthly))}</span>
+                <span className={featured ? "text-white/50" : "text-ink-400"}>{isOneTimePlan(p.id) ? t("tek ödeme · 1 ay") : t("/ay")}</span>
               </div>
+              {yearly && <p className={`mt-1 text-[13px] ${featured ? "text-white/70" : "text-ink-600"}`}>{t("Yıllık toplam: {total} (tek ödeme)", { total: price(yearlyTotalPrice(Number(p.price_monthly))) })}</p>}
+              {period === "yearly" && !yearly && Number(p.price_monthly) > 0 && <p className={`mt-1 text-[12.5px] ${featured ? "text-white/50" : "text-ink-400"}`}>{t("Bu paketin yıllık seçeneği yok.")}</p>}
               <ul className="mt-6 flex-1 space-y-2.5">
-                {p.features.map((f) => <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-brand-300" : "text-brand-500"}`} />{t(f)}</li>)}
+                {p.features.map((f) => { const y = yearly ? yearlyFeature(f) : { key: f }; return <li key={f} className={`flex items-start gap-2 text-sm ${featured ? "text-white/80" : "text-ink-600"}`}><CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${featured ? "text-brand-300" : "text-brand-500"}`} />{t(y.key, y.vars ? { n: Number(y.vars.n).toLocaleString(dl) } : undefined)}</li>; })}
               </ul>
-              <Link href={signedIn ? (Number(p.price_monthly) === 0 ? "/panel" : `/hesap?paket=${p.id}`) : `/kayit?paket=${p.id}`} className={`mt-7 inline-flex h-11 items-center justify-center rounded-2xl text-sm font-medium transition hover:-translate-y-0.5 ${featured ? "bg-white text-ink-900 hover:bg-white/90" : "bg-ink-900 text-white hover:bg-ink-800"}`}>
+              <Link href={signedIn ? (Number(p.price_monthly) === 0 ? "/panel" : `/hesap?paket=${p.id}${yearly ? "&donem=yillik" : ""}`) : `/kayit?paket=${p.id}`} className={`mt-7 inline-flex h-11 items-center justify-center rounded-2xl text-sm font-medium transition hover:-translate-y-0.5 ${featured ? "bg-white text-ink-900 hover:bg-white/90" : "bg-ink-900 text-white hover:bg-ink-800"}`}>
                 {Number(p.price_monthly) === 0 ? t("Ücretsiz başla") : t("{name} paketini seç", { name: t(p.name) })}
               </Link>
             </div>

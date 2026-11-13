@@ -208,7 +208,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   "tek-proje": {
     q: "Was ist der Einzelprojekt-Tarif?",
-    a: "Mit einer **Einmalzahlung von 3.999 TL** schreiben Sie eine einzelne Arbeit (Abschlussarbeit, Artikel, Exposé …) ohne Zeitlimit, mit allen Funktionen und unbegrenzter KI-Nutzung. Der Tarif gilt nur für eine Arbeit: Die verknüpfte Arbeit kann weder gelöscht noch in ihrer Art geändert werden, und eine zweite Arbeit lässt sich nicht anlegen. Die unbegrenzte Nutzung gilt für diese Arbeit; Umfrage-Assistent und Themenfinder außerhalb davon sind monatlich auf das Kontingent des Free-Tarifs begrenzt. Eine Arbeit abzuschließen und sie dann zu löschen oder zu überschreiben, um eine andere zu schreiben, oder das Konto zu teilen, verstößt gegen die Tarifregeln; eine solche Nutzung wird erkannt und von der Administration geprüft (siehe Nutzungsbedingungen → Fair Use).",
+    a: "Mit einer **Einmalzahlung von 3.999 TL** ist **einen Monat lang alles unbegrenzt**: Sie können beliebig viele Arbeiten anlegen, KI, Seitenentwürfe und Quellensuche ohne Grenzen nutzen und auf alle Funktionen (einschließlich Premium) zugreifen. Der Zeitraum beginnt am Tag der Freischaltung und endet nach einem Monat; er verlängert sich nicht automatisch, danach wechseln Sie in den kostenlosen Tarif, und Ihre Arbeiten werden nicht gelöscht. „Unbegrenzt“ bedeutet die übliche Nutzung einer Person für ihre eigenen wissenschaftlichen Arbeiten; das Teilen des Kontos oder Massenproduktion im Auftrag anderer verstößt gegen die Fair-Use-Regeln.",
   },
   "silme-hak": {
     q: "Bekomme ich mein Kontingent zurück, wenn ich erzeugten Text lösche?",
@@ -217,6 +217,10 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   yukseltme: {
     q: "Wie upgrade und bezahle ich?",
     a: "Drücken Sie auf der Kontoseite unter dem gewünschten Tarif auf „Upgrade“. Es öffnet sich eine vorbereitete WhatsApp-Nachricht mit Ihrem aktuellen und dem gewählten Tarif; sobald Sie sie senden, teilen wir Ihnen die Zahlungsdetails mit, und Ihr Tarif wird nach der Zahlung in Ihrem Konto freigeschaltet. Kartendaten geben Sie auf unserer Website nie ein.",
+  },
+  yillik: {
+    q: "Gibt es eine jährliche Zahlung? Wie funktioniert mein Kontingent?",
+    a: "Ja. Bei Basic, Pro und Premium gibt es bei jährlicher Zahlung **20 % Rabatt auf den aktuellen Preis**; auf der Preisseite sehen Sie sowohl den monatlichen Gegenwert als auch den Jahresbetrag. Ihr Kontingent wird nicht reduziert: **das 12-Fache des Monatskontingents** (Seiten, KI-Anfragen, Quellensuchen) wird zu Beginn freigeschaltet und kann innerhalb des Jahres beliebig genutzt werden, ohne monatliche Begrenzung. Der Jahresrabatt ist nicht mit einem Rabattcode oder dem Akademischen Teamrabatt kombinierbar. Der Einzelprojekt-Tarif hat keine jährliche Option.",
   },
   iptal: {
     q: "Gibt es eine Vertragsbindung? Wie kündige ich?",

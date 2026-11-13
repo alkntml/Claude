@@ -83,10 +83,11 @@ D) ADIM ADIM SIK İŞLER
 - Anket verisini analize almak: Anketlerim → anketi açın → “Cevaplar” → “Cevapları çalışmaya veri dosyası olarak aktar” → çalışmayı seçip “Aktar”.
 - Eski sürüme dönmek: sağdaki Geçmiş sekmesi → sürüm → “Geri yükle”.
 - Kaynak doğrulamak: atfa tıklayıp “Kaynakta doğrula” ya da Kaynaklar’da “Doğrula”.
-- Hak/kota: Kontrol paneli → “Kullanım durumu” veya Hesap ve abonelik → “Bu ayki kullanım”; haklar her ayın başında yenilenir; üretilen metni sonradan silmek kullanılan hakkı geri vermez; sayfa veya yapay zekâ hakkı dolunca, yükseltene veya hak yenilenene kadar çalışmalar yalnızca görüntülenir ve indirilir (elle düzenleme dâhil diğer özellikler kapalı; ücretsiz araçlar açık); yalnızca tarama hakkı dolarsa sadece tarama durur.
+- Hak/kota: Kontrol paneli → “Kullanım durumu” veya Hesap ve abonelik → “Bu ayki kullanım” (yıllık pakette “Yıllık paket kullanımı”); aylık pakette haklar her ayın başında yenilenir, yıllık pakette 12 aylık hak 1 yıl geçerlidir; üretilen metni sonradan silmek kullanılan hakkı geri vermez; sayfa veya yapay zekâ hakkı dolunca, yükseltene veya hak yenilenene kadar çalışmalar yalnızca görüntülenir ve indirilir (elle düzenleme dâhil diğer özellikler kapalı; ücretsiz araçlar açık); yalnızca tarama hakkı dolarsa sadece tarama durur.
 - Paket başına aylık yazım (yaklaşık, Türk tez biçiminde ana metin sayfası): Ücretsiz 5 sayfa deneme, Basic 25, Pro 50, Premium 85 sayfa. Literatür matrisi istek hakkından düşmez.
 - Paket yükseltme: Hesap ve abonelik → “Paketler” → “Yükselt” → “WhatsApp ile yükselt”.
-- “Tek Proje” paketi: tek ödeme (3.999 TL), süresiz; tek bir çalışmada tüm özellikler ve sınırsız yapay zekâ. Pakete bağlı çalışma silinemez, türü değiştirilemez, ikinci çalışma açılamaz.
+- “Tek Proje” paketi: tek ödeme (3.999 TL), 1 ay geçerli; bu sürede her şey sınırsız (sınırsız çalışma, yapay zekâ, sayfa, kaynak taraması; adil kullanım), kendiliğinden yenilenmez.
+- Yıllık ödeme (Basic, Pro, Premium): güncel fiyata %20 indirim; aylık hakların 12 katı paket başında tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır (aylık kısıt yok). Yükselt penceresinde “Yıllık” seçilir.
 - Dil ve görünüm: sol menünün altındaki dil seçici ve ay/güneş simgesi.
 - Hesabı silme: Hesap ve abonelik → “Hesabımı sil”.
 - Sorun bildirme veya öneri: sol menüde “Geri bildirim”.`;

@@ -175,7 +175,8 @@ describe("migration'lar ve seed", () => {
     const bound = (await db.query<{ s: string }>(`select single_project_id as s from public.profiles where id = '${U}'`)).rows[0].s;
     expect(bound).toBe(p1.id);
     const plan = (await db.query<{ limits: { ai_requests_month: null; projects: number; cost_usd_month: null; one_time: boolean } }>("select limits from public.plans where id = 'single'")).rows[0];
-    expect(plan.limits).toMatchObject({ ai_requests_month: null, projects: 1, cost_usd_month: null, one_time: true });
+    // D157: güncel paket 1 aylık ve her şey sınırsız (projects: null); bu kullanıcının paketi süresiz (eski koşullar) olduğundan tek çalışma kuralları geçerli
+    expect(plan.limits).toMatchObject({ ai_requests_month: null, projects: null, cost_usd_month: null, one_time: true });
     // Engeller (kullanıcı kendisi)
     await expectError(as(U, "insert into public.projects (user_id, title, work_type, academic_level) values (auth.uid(), 'İkinci', 'research_article', 'master')"), /row-level security|yalnızca bir çalışma/);
     await expectError(as(U, `delete from public.projects where id = '${p1.id}'`), /silinemez/);
@@ -773,6 +774,40 @@ describe("anketler", () => {
     expect((await db.query(`select 1 from public.error_logs where user_id = $1`, [D])).rows).toHaveLength(0);
     await db.query(`delete from auth.users where id = $1`, [E]);
     expect((await db.query(`select 1 from public.legal_acceptances where user_id = $1`, [E])).rows).toHaveLength(0);
+  });
+
+  it("migration 40: yıllık ödeme sütunları korumalı; yeni (1 aylık) Tek Proje sınırsız çalışma, eski (süresiz) Tek Proje tek çalışma (D157)", async () => {
+    const N = "f0f0f0f0-0000-4000-8000-000000000040"; // yeni Tek Proje (bitiş tarihli)
+    const L = "f1f1f1f1-0000-4000-8000-000000000040"; // eski Tek Proje (süresiz)
+    await db.query(`insert into auth.users (id, email, raw_user_meta_data) values ($1, 'n40@ornek.com', '{}'), ($2, 'l40@ornek.com', '{}')`, [N, L]);
+    // Paket: 1 ay, her şey sınırsız
+    const plan = (await db.query<{ limits: Record<string, unknown>; features: string[] }>(`select limits, features from public.plans where id = 'single'`)).rows[0];
+    expect(plan.limits.projects).toBeNull();
+    expect(plan.limits.ai_requests_month).toBeNull();
+    expect(plan.limits.cost_usd_month).toBeNull();
+    expect(plan.features).toContain("Tek seferlik ödeme, 1 ay geçerli");
+    // Yönetici atar: yeni Tek Proje bitiş tarihli → çalışmaya bağlanmaz, birden çok çalışma açılır ve silinebilir
+    await db.query(`update public.profiles set plan_id = 'single', plan_expires_at = now() + interval '30 days', plan_period = 'monthly', plan_started_at = now() where id = $1`, [N]);
+    // Çalışmaları sunucu oluşturur (D51); kullanıcı silme/düzenleme yapar
+    const ins = async (uid: string, title: string) => (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ($1, $2, 'thesis', 'master') returning id`, [uid, title])).rows;
+    const [n1] = await ins(N, "Bir"); const [n2] = await ins(N, "İki"); await ins(N, "Üç");
+    expect((await db.query<{ s: string | null }>(`select single_project_id as s from public.profiles where id = $1`, [N])).rows[0].s).toBeNull();
+    await as(N, `delete from public.projects where id = '${n2.id}'`);
+    await as(N, `update public.projects set work_type = 'research_article' where id = '${n1.id}'`);
+    expect((await db.query(`select 1 from public.projects where user_id = $1`, [N])).rows).toHaveLength(2);
+    // Eski Tek Proje (bitiş tarihi yok): tek çalışma kuralı aynen geçerli
+    await db.query(`update public.profiles set plan_id = 'single', plan_expires_at = null where id = $1`, [L]);
+    const [l1] = await ins(L, "Tek");
+    expect((await db.query<{ s: string }>(`select single_project_id as s from public.profiles where id = $1`, [L])).rows[0].s).toBe(l1.id);
+    await expectError(as(L, `insert into public.projects (user_id, title, work_type, academic_level) values (auth.uid(), 'İkinci', 'thesis', 'master')`), /row-level security|yalnızca bir çalışma/);
+    await expectError(as(L, `delete from public.projects where id = '${l1.id}'`), /silinemez/);
+    // Kullanıcı ödeme dönemini ve başlangıcı kendisi değiştiremez; geçersiz dönem reddedilir
+    await expectError(as(N, `update public.profiles set plan_period = 'yearly' where id = auth.uid()`), /yetkiniz yok/);
+    await expectError(as(N, `update public.profiles set plan_started_at = now() - interval '1 year' where id = auth.uid()`), /yetkiniz yok/);
+    await expectError(db.query(`update public.profiles set plan_period = 'haftalik' where id = $1`, [N]), /check/i);
+    await db.query(`update public.profiles set plan_id = 'pro', plan_period = 'yearly', plan_started_at = now(), plan_expires_at = now() + interval '365 days' where id = $1`, [N]);
+    expect((await db.query<{ p: string }>(`select plan_period as p from public.profiles where id = $1`, [N])).rows[0].p).toBe("yearly");
+    await db.query(`delete from auth.users where id in ($1, $2)`, [N, L]);
   });
 });
 

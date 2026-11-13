@@ -7,7 +7,7 @@ export class ClientApiError extends Error {
 }
 
 /** Paket sınırı / kilitli özellik: yükseltme penceresini açar (UpgradeDialogHost dinler) */
-export interface UpgradeRequest { code?: string; message?: string; feature?: string; plan?: string; target?: string; projectId?: string; projectTitle?: string }
+export interface UpgradeRequest { code?: string; message?: string; feature?: string; plan?: string; target?: string; projectId?: string; projectTitle?: string; period?: "monthly" | "yearly" }
 
 /** Açık çalışma (kilit penceresindeki “mevcut çalışmayı indir” mesajı için) */
 let currentProject: { id: string; title: string } | null = null;

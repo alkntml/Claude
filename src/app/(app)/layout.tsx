@@ -31,10 +31,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   }
   // D109: Tek Proje — hesap paylaşımı işareti için cihazlar kaydedilir (yalnızca bu pakette; engellemez)
   if (s.profile.plan_id === "single" && s.profile.role !== "admin") await watchDevices(s.user.id, s.profile, await deviceFromCookie()).catch(() => {});
-  // D81: hak dolunca çalışma kilitlenmez; yalnızca bilgilendirme şeridi gösterilir
-  const { reasons } = await getWorkLock();
+  // D155: sayfa/yapay zekâ hakkı dolunca salt okunur (görüntüle + indir); yalnızca tarama dolduysa bilgi şeridi
+  const { reasons, locked } = await getWorkLock();
   return (
-    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null, memberNo: memberCode(s.profile.member_no) }} limitReached={reasons.length > 0} expiresAt={s.profile.plan_id !== "free" && s.profile.role !== "admin" ? s.profile.plan_expires_at ?? null : null}>
+    <AppShell user={{ name: s.profile.full_name ?? "", email: s.profile.email ?? s.user.email ?? "", plan: s.profile.plan_id, isAdmin: s.profile.role === "admin", isOrgAdmin: s.profile.org?.role === "admin", orgName: s.profile.org?.name ?? null, memberNo: memberCode(s.profile.member_no) }} limitReached={reasons.length > 0} readOnly={locked} expiresAt={s.profile.plan_id !== "free" && s.profile.role !== "admin" ? s.profile.plan_expires_at ?? null : null}>
       {children}
     </AppShell>
   );

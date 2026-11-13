@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Hak dolunca salt okunur (D155, 13 Kasım 2026)**
+- 100 TL indirme hakkı kaldırıldı; herkes paket biçimlerinde ücretsiz indirir. Sayfa/yapay zekâ hakkı dolunca yalnızca görüntüleme, indirme, hesap/KVKK işlemleri ve ücretsiz araçlar (lib/read-only.ts). Kullanım Koşulları değişikliği hukukçuda
+
 **Hukuki metinler ve uyum (D154, 13 Kasım 2026)**
 - Yedi hukuki belge üç dilde: /kvkk, /kosullar, /adil-kullanim, /cerez-politikasi, /akademik-durustluk, /mesafeli-sozlesmeler, /gdpr; altbilgide “Gizlilik ve Güvenlik”; /gizlilik → /kvkk
 - Sürümlü kabul kayıtları (migration 39, legal_acceptances), Google/Apple ilk girişte ve yeni sürümde /sozlesme-onayi

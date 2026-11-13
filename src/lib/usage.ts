@@ -5,6 +5,7 @@ import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
 import { activeCredits } from "@/lib/growth";
 import { wordsToPages, WORDS_PER_PAGE } from "@/lib/pages";
+import { READ_ONLY_ALLOWED_ROUTES, READ_ONLY_MESSAGE, readOnlyReasons, type ReadOnlyReason } from "@/lib/read-only";
 
 export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check" | "autocomplete";
 
@@ -183,23 +184,36 @@ export async function setWorkLock(userId: string, locked: boolean) {
 }
 
 /**
- * Aylık hak durumu (sayfa yüklemelerinde çağrılır). D81: kullanıcı kendi çalışmasına erişimi hiçbir zaman
- * kaybetmez; hak dolunca yalnızca yapay zekâ ve kaynak tarama durur. Bu yüzden `locked` her zaman false’tur ve
- * eskiden kalmış kilit bayrağı temizlenir; `reasons` yalnızca “hakkınız doldu” uyarısı için döner.
+ * Aylık hak durumu (sayfa yüklemelerinde çağrılır). D155: sayfa veya yapay zekâ hakkı dolunca `locked` = true —
+ * kullanıcı çalışmalarını yalnızca görüntüleyip indirebilir (salt okunur; lib/read-only.ts). Veritabanındaki eski
+ * work_locked bayrağı kullanılmaz (D81’de RLS kilidi kaldırıldı; okuma her zaman açık kalmalı) ve temizlenir.
  */
-export async function syncWorkLock(userId: string, planId: string, opts: { isAdmin?: boolean; stored?: boolean } = {}): Promise<{ locked: boolean; reasons: LockReason[] }> {
+export async function syncWorkLock(userId: string, planId: string, opts: { isAdmin?: boolean; stored?: boolean } = {}): Promise<{ locked: boolean; reasons: LockReason[]; readOnly: ReadOnlyReason[] }> {
   if (opts.stored) await setWorkLock(userId, false).catch(() => {});
-  if (opts.isAdmin) return { locked: false, reasons: [] };
+  if (opts.isAdmin) return { locked: false, reasons: [], readOnly: [] };
   const [limits, usage] = await Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
-  return { locked: false, reasons: lockReasons(limits, usage, planId) };
+  const readOnly = readOnlyReasons(limits, usage, WORDS_PER_PAGE);
+  return { locked: readOnly.length > 0, reasons: lockReasons(limits, usage, planId), readOnly };
 }
 
-/** Yöneticinin tanımladığı “mevcut çalışmayı indir” hakkı (100 TL) geçerli mi? */
-export async function hasDownloadPass(userId: string, projectId: string): Promise<boolean> {
-  const { count } = await adminClient().from("download_passes").select("id", { count: "exact", head: true })
-    .eq("user_id", userId).eq("project_id", projectId).gt("expires_at", new Date().toISOString());
-  return (count ?? 0) > 0;
+/** D155: salt okunur kullanıcının çağırabileceği uç değilse 402 (work_locked). Kısa süreli önbellek (aynı kullanıcı, 15 sn). */
+const readOnlyCache = new Map<string, { v: boolean; at: number }>();
+type LimitsLoader = (userId: string, planId: string) => Promise<[PlanLimits, UsageSummary]>;
+const loadLimits: LimitsLoader = (userId, planId) => Promise.all([effectiveLimits(userId, planId), usageSummary(userId)]);
+export async function assertNotReadOnly(userId: string, planId: string, routeName: string | undefined, isAdmin: boolean, load: LimitsLoader = loadLimits) {
+  if (isAdmin || !routeName || READ_ONLY_ALLOWED_ROUTES.has(routeName)) return;
+  const c = readOnlyCache.get(userId);
+  let ro: boolean;
+  if (c && Date.now() - c.at < 15_000) ro = c.v;
+  else {
+    const [limits, usage] = await load(userId, planId);
+    ro = readOnlyReasons(limits, usage, WORDS_PER_PAGE).length > 0;
+    readOnlyCache.set(userId, { v: ro, at: Date.now() });
+    if (readOnlyCache.size > 5000) readOnlyCache.clear();
+  }
+  if (ro) throw new ApiError(402, READ_ONLY_MESSAGE, "work_locked");
 }
+
 
 
 /** Pakete bağlı özellik kontrolü (D49): paket yetmiyorsa 402 + yükseltme penceresi için ayrıntı döner. */

@@ -98,7 +98,7 @@ export function UpgradeDialogHost() {
         {feature && <p className="flex items-center gap-2 text-[15px] text-ink-700"><Lock className="h-4 w-4 text-ink-400" /> {t("“{feature}” {plan} ve üzeri paketlerde kullanılabilir.", { feature, plan: t(data?.plans.find((p) => p.id === req.plan)?.name ?? req.plan ?? "") })}</p>}
         {!feature && req.message && !req.target && <p className="text-[15px] text-ink-700">{req.message}</p>}
         {monthly && <p className="text-sm text-ink-500">{t("Hakkınız her ayın başında yenilenir. Beklemek istemiyorsanız paketinizi yükseltebilirsiniz.")}</p>}
-        {monthly && <p className="text-sm text-ink-500">{t("Çalışmalarınız kilitlenmez: görüntülemeye, elle düzenlemeye ve indirmeye her zaman devam edebilirsiniz.")}</p>}
+        {monthly && <p className="text-sm text-ink-500">{t("Çalışmalarınız silinmez: hakkınız dolsa da onları görüntüleyebilir ve ücretsiz indirebilirsiniz. Ücretsiz araçlar her zaman açıktır.")}</p>}
         {failed && <p className="text-sm text-ink-500">{t("Paket bilgileri yüklenemedi. Hesap ve abonelik sayfasından tekrar deneyin.")}</p>}
         {!data && !failed && <p className="text-sm text-ink-400">{t("Paketler yükleniyor…")}</p>}
         {data && options.length === 0 && (

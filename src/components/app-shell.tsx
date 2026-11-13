@@ -19,7 +19,7 @@ import { NotificationBell } from "@/components/notifications";
 import { deviceHash } from "@/lib/device-client";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; limitReached?: boolean; expiresAt?: string | null }
+interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; limitReached?: boolean; readOnly?: boolean; expiresAt?: string | null }
 
 const NAV = [
   { href: "/panel", label: "Kontrol paneli", icon: Home },
@@ -30,7 +30,7 @@ const NAV = [
   { href: "/hesap", label: "Hesap ve abonelik", icon: UserRound },
 ];
 
-export function AppShell({ children, user, limitReached, expiresAt }: Props) {
+export function AppShell({ children, user, limitReached, readOnly, expiresAt }: Props) {
   const { t } = useT();
   const path = usePathname();
   const router = useRouter();
@@ -164,10 +164,12 @@ export function AppShell({ children, user, limitReached, expiresAt }: Props) {
             );
           })()}
           {limitReached && (
-            // D81: aylık hak dolunca çalışma kilitlenmez; yalnızca yapay zekâ ve kaynak tarama durur
+            // D155: sayfa/yapay zekâ hakkı dolunca salt okunur; yalnızca tarama hakkı dolduysa yalnızca tarama durur
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              <span className="flex items-center gap-2"><Lock className="h-4 w-4" /> {t("Bu ayki yapay zekâ hakkınız doldu. Çalışmalarınızı görüntülemeye, düzenlemeye ve indirmeye devam edebilirsiniz.")}</span>
-              <button type="button" onClick={() => openUpgrade({ code: "limit_ai" })} className="rounded-xl bg-ink-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-ink-800">{t("Seçenekleri gör")}</button>
+              <span className="flex items-center gap-2"><Lock className="h-4 w-4 shrink-0" /> {readOnly
+                ? <span>{t("Bu ayki kullanım hakkınız doldu. Çalışmalarınızı görüntüleyebilir ve indirebilirsiniz; diğer özellikler paketinizi yükseltene veya hakkınız yenilenene kadar kapalıdır.")} <Link href="/araclar" className="font-medium underline">{t("Ücretsiz araçlar açık")}</Link></span>
+                : t("Bu ayki kaynak tarama hakkınız doldu. Diğer özellikleri kullanmaya devam edebilirsiniz.")}</span>
+              <button type="button" onClick={() => openUpgrade({ code: readOnly ? "work_locked" : "limit_search" })} className="rounded-xl bg-ink-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-ink-800">{t("Seçenekleri gör")}</button>
             </div>
           )}
           {children}

@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D154)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D155)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -60,6 +60,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
   - Modeller: `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`. `temperature` gönderme, `output_config.effort` kullan; Opus/Sonnet’te `fallbacks: "default"`.
   - Maliyet (D78, D94): sabit bağlam `context`, değişken `contextTail`; `estimateCost` + `recordUsage(..., { usage, costUsd })`; yanıt okunamazsa `throw await spentError(...)`; geçmiş `compactHistory`.
   - Limit `assertWithinLimits`, özellik kilidi `assertFeature`.
+- **Hak dolunca salt okunur (D155):** yeni bir API ucu salt okunur kullanıcıya kendiliğinden kapalıdır; yalnızca görüntüleme/indirme/hesap işlemi ise `lib/read-only.ts` → `READ_ONLY_ALLOWED_ROUTES`’a ekle.
 - Menü/özellik değişince kullanım metinlerini güncelle: `ai/help.ts`, `guide.ts`, `faq.ts`.
 - Tarayıcıdan yeni bir dış adrese bağlanılıyorsa `next.config.ts` CSP’ye ekle (D106).
 - Commit/PR metinlerine model kimliği yazma.

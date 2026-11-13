@@ -101,7 +101,7 @@ function saveDraft(id: string, doc: JSONNode) { try { localStorage.setItem(DRAFT
 function readDraft(id: string): { at: number; doc: JSONNode } | null { try { const v = localStorage.getItem(DRAFT_KEY(id)); return v ? JSON.parse(v) : null; } catch { return null; } }
 function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); } catch { /* yok */ } }
 
-interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter"; collaborative?: boolean; me?: { id: string; name: string } }
+interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter"; readOnly?: boolean; collaborative?: boolean; me?: { id: string; name: string } }
 
 export function Workspace(props: Props) {
   const { t, dl } = useT();
@@ -117,14 +117,16 @@ export function Workspace(props: Props) {
   // Ortak yazım (D115): rol, kimler çalışmada, çakışma
   const role = props.role ?? "owner";
   const isOwner = role === "owner";
-  const canEdit = role !== "commenter";
+  // D155: hak dolunca salt okunur — düzenleme, asistan ve araçlar kapalı; görüntüleme ve indirme açık
+  const readOnly = !!props.readOnly;
+  const canEdit = role !== "commenter" && !readOnly;
   const [collaborative, setCollaborative] = useState(!!props.collaborative);
   const collabRef = useRef(collaborative);
   collabRef.current = collaborative;
   const [present, setPresent] = useState<PresencePerson[]>([]);
   const [conflict, setConflict] = useState<{ stageId: string; mine: JSONNode; theirs: any; by: string } | null>(null);
   const [save, setSave] = useState<SaveState>("saved");
-  const [tab, setTab] = useState<RightTab>(props.role === "commenter" ? "comments" : "assistant");
+  const [tab, setTab] = useState<RightTab>(props.role === "commenter" || props.readOnly ? "comments" : "assistant");
   const [mobilePane, setMobilePane] = useState<"nav" | "editor" | "panel">("editor");
   const [research, setResearch] = useState<{ open: boolean; prefill: string }>({ open: false, prefill: "" });
   const [addStage, setAddStage] = useState(false);
@@ -373,7 +375,8 @@ export function Workspace(props: Props) {
   // Açılışta: sunucudakinden yeni, kaydedilmemiş yerel taslak varsa geri yükle
   const restored = useRef(false);
   useEffect(() => {
-    if (restored.current || !editor) return;
+    // D155: salt okunurken yerel taslak sunucuya yazılamaz; cihazda kalır, hak yenilenince geri yüklenir
+    if (restored.current || !editor || props.readOnly) return;
     restored.current = true;
     let count = 0;
     for (const st of props.stages) {
@@ -1168,7 +1171,7 @@ export function Workspace(props: Props) {
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
                     )}
-                    {!canEdit && <p className="mb-3 rounded-2xl border border-ink-100 bg-ink-50 px-3.5 py-2.5 text-[13px] text-ink-600">{t("Bu çalışmada yorumcusunuz: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilirsiniz.")}</p>}
+                    {readOnly ? <p className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[13px] text-amber-900">{t("Bu ayki kullanım hakkınız doldu: çalışmanızı görüntüleyebilir ve “Dışa aktar” ile indirebilirsiniz. Düzenleme ve diğer özellikler paketinizi yükseltene veya hakkınız yenilenene kadar kapalıdır.")} <button type="button" onClick={() => openUpgrade({ code: "work_locked" })} className="font-medium underline">{t("Seçenekleri gör")}</button></p> : !canEdit && <p className="mb-3 rounded-2xl border border-ink-100 bg-ink-50 px-3.5 py-2.5 text-[13px] text-ink-600">{t("Bu çalışmada yorumcusunuz: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilirsiniz.")}</p>}
                     {present.some((p) => p.stageId === active.id) && (
                       <div className="mb-3 flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-[13px] text-emerald-900">
                         <span className="flex -space-x-1.5">{present.filter((p) => p.stageId === active.id).slice(0, 3).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>

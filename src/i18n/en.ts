@@ -3790,4 +3790,10 @@ export const EN: Record<string, string> = {
   "Şunlar geri alınamaz şekilde silinecek: çalışmalarınız ve bölümleriniz, sürüm geçmişi ve yorumlar, kaynaklar ve notlar, dosyalarınız, yapay zekâ sohbetleri, kullanım kayıtları, cihaz kimliği kayıtları, gönderdiğiniz ortak yazar davetleri, danışman paylaşım bağlantıları ve site içi bildirimler.": "The following will be permanently deleted: your works and sections, version history and comments, sources and notes, your files, AI conversations, usage records, device identifier records, co-author invitations you sent, advisor sharing links and in-app notifications.",
   "’nı okudum ve kabul ediyorum.": ": I have read and accept them.",
   "GDPR / Data Protection": "GDPR / Data Protection",
+  // D155: hak dolunca salt okunur
+  "Bu ayki kullanım hakkınız doldu. Çalışmalarınızı görüntüleyebilir ve indirebilirsiniz; diğer özellikler paketinizi yükseltene veya hakkınız yenilenene kadar kapalıdır.": "Your allowance for this month has run out. You can view and download your work; other features are closed until you upgrade or your allowance renews.",
+  "Ücretsiz araçlar açık": "Free tools are open",
+  "Bu ayki kaynak tarama hakkınız doldu. Diğer özellikleri kullanmaya devam edebilirsiniz.": "Your source search allowance for this month has run out. You can keep using the other features.",
+  "Çalışmalarınız silinmez: hakkınız dolsa da onları görüntüleyebilir ve ücretsiz indirebilirsiniz. Ücretsiz araçlar her zaman açıktır.": "Your work is never deleted: even when your allowance runs out you can view it and download it free of charge. The free tools are always open.",
+  "Bu ayki kullanım hakkınız doldu: çalışmanızı görüntüleyebilir ve “Dışa aktar” ile indirebilirsiniz. Düzenleme ve diğer özellikler paketinizi yükseltene veya hakkınız yenilenene kadar kapalıdır.": "Your allowance for this month has run out: you can view your work and download it with “Export”. Editing and other features are closed until you upgrade or your allowance renews.",
 };

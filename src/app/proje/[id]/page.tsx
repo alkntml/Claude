@@ -6,6 +6,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { loadProjectBundle } from "@/lib/projects";
 import { displayName, hasMembers, projectAccessOrNull } from "@/lib/project-access";
 import { requireLegalAcceptance } from "@/lib/legal/server";
+import { getWorkLock } from "@/lib/lock";
 
 export const dynamic = "force-dynamic";
 
@@ -39,5 +40,7 @@ export default async function ProjectPage({ params, searchParams }: { params: Pr
     access.isOwner ? s.supabase.from("projects").update({ last_opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", s.user.id) : Promise.resolve(null),
   ]);
   if (!bundle) notFound();
-  return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} planId={s.profile.plan_id} role={access.role} collaborative={shared} me={{ id: s.user.id, name: displayName({ full_name: s.profile.full_name, email: s.user.email }) }} />;
+  // D155: sayfa/yapay zekâ hakkı dolduysa çalışma salt okunur açılır (görüntüle + indir)
+  const { locked } = await getWorkLock();
+  return <Workspace project={bundle.project} stages={bundle.stages} sources={bundle.sources} memory={bundle.memory} files={files ?? []} initialStageId={bolum ?? null} planId={s.profile.plan_id} role={access.role} readOnly={locked} collaborative={shared} me={{ id: s.user.id, name: displayName({ full_name: s.profile.full_name, email: s.user.email }) }} />;
 }

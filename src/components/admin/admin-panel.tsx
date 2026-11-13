@@ -24,7 +24,7 @@ type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" |
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
-  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "Kilitler ve indirme", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift }, { id: "discounts", label: "İndirim kodları", icon: Percent },
+  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "KVKK talepleri", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift }, { id: "discounts", label: "İndirim kodları", icon: Percent },
 ];
 
 function useRows(resource: string, q = "") {
@@ -671,48 +671,18 @@ function HelpTab() {
   );
 }
 
-/** Çalışma kilidi (D50): 100 TL indirme hakkı tanımlama, kilitli kullanıcılar, bekleyen KVKK veri talepleri */
+/** KVKK veri talepleri ve hesap silmeler (D155: ücretli indirme hakkı kaldırıldı; herkes çalışmasını ücretsiz indirir) */
 function LocksTab() {
   const toast = useToast();
-  const [data, setData] = useState<{ passes: any[]; requests: any[]; locked: any[]; recent?: any[] } | null>(null);
-  const [projectId, setProjectId] = useState("");
-  const [days, setDays] = useState(7);
-  const [note, setNote] = useState("");
+  const [data, setData] = useState<{ requests: any[]; recent?: any[] } | null>(null);
   const load = useCallback(async () => { try { setData(await api("/api/admin/locks")); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [toast]);
   useEffect(() => { load(); }, [load]);
-  async function grant() {
-    try {
-      const r = await api<{ pass: any }>("/api/admin/locks", { method: "POST", json: { projectId: projectId.trim(), days, note } });
-      toast({ tone: "success", title: "İndirme hakkı tanımlandı", detail: `${r.pass.title} · ${days} gün` }); setProjectId(""); setNote(""); load();
-    } catch (e) { toast({ tone: "error", title: "Tanımlanamadı", detail: (e as Error).message }); }
-  }
   return (
     <div className="grid gap-5 lg:grid-cols-2">
-      <div className="card space-y-3 p-5">
-        <h3 className="font-semibold">“Mevcut çalışmayı indir” hakkı tanımla (100 TL)</h3>
-        <p className="text-sm text-ink-500">WhatsApp mesajındaki <b>çalışma kodunu</b> yapıştırın. Ödeme alındıktan sonra tanımlayın; kullanıcı çalışma sayfasında Word / PDF / TXT indirme düğmelerini görür.</p>
-        <label className="block text-xs text-ink-500">Çalışma kodu<input className="input !py-2 font-mono" value={projectId} onChange={(e) => setProjectId(e.target.value)} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" /></label>
-        <div className="grid grid-cols-2 gap-2">
-          <label className="text-xs text-ink-500">Geçerlilik (gün)<input className="input !py-2" type="number" min={1} max={60} value={days} onChange={(e) => setDays(Number(e.target.value) || 7)} /></label>
-          <label className="text-xs text-ink-500">Not<input className="input !py-2" value={note} onChange={(e) => setNote(e.target.value)} placeholder="ör. havale 12.11" /></label>
-        </div>
-        <Button onClick={grant} disabled={!/^[0-9a-f-]{36}$/i.test(projectId.trim())}>Hakkı tanımla</Button>
-        <div className="border-t border-ink-100 pt-3">
-          <p className="mb-2 text-sm font-medium">Son tanımlanan haklar</p>
-          {(data?.passes ?? []).length === 0 && <p className="text-sm text-ink-400">Kayıt yok.</p>}
-          {(data?.passes ?? []).map((p) => (
-            <div key={p.id} className="flex items-center gap-2 border-t border-ink-50 py-1.5 text-[13px]">
-              <span className="flex-1 truncate">{p.title ?? p.project_id} · <span className="text-ink-500">{p.email}</span></span>
-              <Badge tone={new Date(p.expires_at) > new Date() ? "green" : "ink"}>{new Date(p.expires_at).toLocaleDateString("tr-TR")}</Badge>
-              <button className="text-ink-400 hover:text-rose-600" title="İptal et" onClick={async () => { await api("/api/admin/locks", { method: "DELETE", json: { passId: p.id } }); load(); }}><Trash2 className="h-3.5 w-3.5" /></button>
-            </div>
-          ))}
-        </div>
-      </div>
       <div className="space-y-5">
         <div className="card p-5">
           <h3 className="font-semibold">Bekleyen KVKK veri talepleri</h3>
-          <p className="mt-1 text-sm text-ink-500">Kilitli kullanıcılar anında indiremez; talebi 30 gün içinde, ücretsiz olarak kullanıcının e-postasına iletmeniz yasal zorunluluktur.</p>
+          <p className="mt-1 text-sm text-ink-500">Kullanıcılar verilerini Hesap sayfasından anında indirebilir; talep oluşturanlara 30 gün içinde ücretsiz yanıt vermeniz yasal zorunluluktur.</p>
           {(data?.requests ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Bekleyen talep yok.</p>}
           {(data?.requests ?? []).map((r) => (
             <div key={r.id} className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-ink-100 p-2.5 text-[13px]">
@@ -727,12 +697,6 @@ function LocksTab() {
           <p className="mt-1 text-sm text-ink-500">Hesap silme anında yapılır; silinen hesabın kaydında kişi bilgisi tutulmaz.</p>
           {(data?.recent ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Kayıt yok.</p>}
           {(data?.recent ?? []).map((r) => <p key={r.id} className="border-t border-ink-50 py-1.5 text-[13px]">{r.kind === "delete" ? "Hesap silme" : "Veri dışa aktarma"} · {r.email ?? (r.user_id ? r.user_id : "silinmiş hesap")} · {new Date(r.completed_at ?? r.created_at).toLocaleString("tr-TR")}</p>)}
-        </div>
-        <div className="card p-5">
-          <div className="flex items-center justify-between"><h3 className="font-semibold">Kilitli kullanıcılar</h3><Button size="sm" variant="ghost" onClick={load}><RefreshCw className="h-3.5 w-3.5" /></Button></div>
-          {(data?.locked ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Kilitli kullanıcı yok.</p>}
-          {(data?.locked ?? []).map((u) => <p key={u.id} className="border-t border-ink-50 py-1.5 text-[13px]">{u.email} <span className="text-ink-400">· {u.plan_id}</span></p>)}
-          <p className="mt-2 text-xs text-ink-400">Paket yükseltmek için Kullanıcılar sekmesinden paketini değiştirin; kilit kullanıcı sayfayı yenilediğinde kalkar.</p>
         </div>
       </div>
     </div>

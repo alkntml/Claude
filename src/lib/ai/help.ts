@@ -83,7 +83,7 @@ D) ADIM ADIM SIK İŞLER
 - Anket verisini analize almak: Anketlerim → anketi açın → “Cevaplar” → “Cevapları çalışmaya veri dosyası olarak aktar” → çalışmayı seçip “Aktar”.
 - Eski sürüme dönmek: sağdaki Geçmiş sekmesi → sürüm → “Geri yükle”.
 - Kaynak doğrulamak: atfa tıklayıp “Kaynakta doğrula” ya da Kaynaklar’da “Doğrula”.
-- Hak/kota: Kontrol paneli → “Kullanım durumu” veya Hesap ve abonelik → “Bu ayki kullanım”; haklar her ayın başında yenilenir; üretilen metni sonradan silmek kullanılan hakkı geri vermez; hak dolsa da çalışmalar açılır, düzenlenir ve indirilir.
+- Hak/kota: Kontrol paneli → “Kullanım durumu” veya Hesap ve abonelik → “Bu ayki kullanım”; haklar her ayın başında yenilenir; üretilen metni sonradan silmek kullanılan hakkı geri vermez; sayfa veya yapay zekâ hakkı dolunca, yükseltene veya hak yenilenene kadar çalışmalar yalnızca görüntülenir ve indirilir (elle düzenleme dâhil diğer özellikler kapalı; ücretsiz araçlar açık); yalnızca tarama hakkı dolarsa sadece tarama durur.
 - Paket başına aylık yazım (yaklaşık, Türk tez biçiminde ana metin sayfası): Ücretsiz 5 sayfa deneme, Basic 25, Pro 50, Premium 85 sayfa. Literatür matrisi istek hakkından düşmez.
 - Paket yükseltme: Hesap ve abonelik → “Paketler” → “Yükselt” → “WhatsApp ile yükselt”.
 - “Tek Proje” paketi: tek ödeme (3.999 TL), süresiz; tek bir çalışmada tüm özellikler ve sınırsız yapay zekâ. Pakete bağlı çalışma silinemez, türü değiştirilemez, ikinci çalışma açılamaz.

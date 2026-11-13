@@ -8,7 +8,7 @@ import { adminClient } from "@/lib/supabase/admin";
 import { scrubMeta, scrubPII } from "@/lib/pii";
 
 /** İstek kapsamı: oturum açan kullanıcı (requireUser yazar); hata hâlinde harcanan yapay zekâ maliyetini kaydetmek için (D94) */
-export const requestCtx = new AsyncLocalStorage<{ userId?: string }>();
+export const requestCtx = new AsyncLocalStorage<{ userId?: string; route?: string }>();
 
 /**
  * Yapay zekâ çağrısı faturalandı ama yanıt kullanılamadı (ör. JSON bozuk). `route()` bu hatayı yakalayınca maliyeti
@@ -88,7 +88,7 @@ type Handler<C> = (req: Request, ctx: C) => Promise<Response>;
 
 /** Ortak hata yakalama + CSRF kontrolü. */
 export function route<C>(name: string, fn: Handler<C>): Handler<C> {
-  return (req, ctx) => requestCtx.run({}, async () => {
+  return (req, ctx) => requestCtx.run({ route: name }, async () => {
     try {
       assertSameOrigin(req);
       return await fn(req, ctx);

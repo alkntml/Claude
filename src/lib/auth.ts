@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { activeOrg, type OrgInfo } from "@/lib/growth";
 import { higherPlan } from "@/lib/pricing";
 import { adminClient } from "@/lib/supabase/admin";
+import { assertNotReadOnly } from "@/lib/usage";
 
 export interface Profile {
   id: string;
@@ -90,6 +91,8 @@ export async function requireUser(): Promise<Session> {
   if (s.profile.is_suspended) throw new ApiError(403, "Hesabınız askıya alınmış", "suspended");
   const ctx = requestCtx.getStore();
   if (ctx) ctx.userId = s.user.id;
+  // D155: sayfa/yapay zekâ hakkı dolan kullanıcı yalnızca görüntüleme, indirme ve hesap işlemlerini kullanabilir
+  await assertNotReadOnly(s.user.id, s.profile.plan_id, ctx?.route, s.profile.role === "admin");
   return s;
 }
 

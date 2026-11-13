@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D155) docs/legal/HUKUKCU_NOTU_D155.md’yi hukukçuya ilet: Kullanım Koşulları’ndaki “hak dolduğunda … düzenleyebilir” cümlesi yeni salt okunur kuralla çelişiyor; yeni metin gelince sürüm artırılıp yayımlanacak. Hukukçunun yeni metni gelmeden main’e alınmamalı
+- [ ] (D155) Canlıda dene: hakkı dolmuş bir hesapla çalışma salt okunur açılıyor mu, “Dışa aktar” çalışıyor mu, yeni çalışma/bölüm/kaynak eklemede “hakkınız doldu” penceresi çıkıyor mu, ücretsiz araçlar açık mı
 - [ ] (D154) Supabase SQL Editor’de migration 39’u çalıştır (`supabase/migrations/20261203000039_legal_acceptances.sql`, hukuki kabul kayıtları); check_status.sql’de “39” YAPILMIŞ görünmeli. Çalıştırılmadan önce site çalışır ama kabul kayıtları tutulmaz
 - [ ] (D154) Hukukçudan: veri sorumlusu/satıcı unvanı, adres, MERSİS/vergi no, KEP ve KVKK başvuru e-postası → metinlerin “yayımdan önce eklenmelidir” yazan yerlerine eklenecek (yeni sürüm = yeniden kabul)
 - [ ] (D154) Hukukçu kararları: bağlayıcı dil; cihaz kimliği (acd_did) için izin gerekir mi (gerekirse lib/consent.ts SECURITY_REQUIRES_CONSENT = true); cayma hakkı ve anında ifa onayı; ödeme ve kabul kayıtları hesap silinince saklanmalı mı; saklama süreleri (12 ay kanıt kaydı, geri bildirim, hata kayıtları, ziyaret istatistiği); yaş sınırı

@@ -16,7 +16,7 @@ interface AcceptRow { doc: string; version: string; kind: "accept" | "notice"; s
  * Hesap → Gizlilik ve Veri Yönetimi (D154): verileri JSON indirme, KVKK veri talebi, danışman paylaşım bağlantılarını
  * görme/iptal etme, kabul edilen hukuki belge sürümleri ve hesabı silme.
  */
-export function PrivacySection({ locked }: { locked?: boolean }) {
+export function PrivacySection() {
   const { t, dl, locale } = useT();
   const toast = useToast();
   const [shares, setShares] = useState<ShareRow[] | null>(null);
@@ -62,8 +62,8 @@ export function PrivacySection({ locked }: { locked?: boolean }) {
       <h2 className="flex items-center gap-2 font-semibold"><ShieldCheck className="h-4 w-4" /> {t("Gizlilik ve Veri Yönetimi")}</h2>
       <p className="mt-1 text-sm text-ink-500">{t("Tüm projelerinizi, bölümlerinizi, kaynaklarınızı, sohbetlerinizi ve kullanım kayıtlarınızı taşınabilir JSON biçiminde indirebilir veya hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz.")} <Link href="/kvkk" className="text-brand-700 hover:underline">{t("KVKK Aydınlatma Metni")}</Link></p>
       <div className="mt-4 flex flex-wrap gap-2">
-        {/* Kilitliyken anında indirme yerine KVKK talebi: yasal süre içinde ücretsiz yanıtlanır (D50) */}
-        {!locked && <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi JSON olarak indir")}</a>}
+        {/* D155: hak dolsa da veriler her zaman indirilebilir */}
+        <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi JSON olarak indir")}</a>
         <Button variant="secondary" onClick={request}><FileText className="h-4 w-4" /> {t("Veri talebi oluştur (KVKK)")}</Button>
         <Button variant="danger" onClick={() => setDelOpen(true)}><Trash2 className="h-4 w-4" /> {t("Hesabımı ve verilerimi sil")}</Button>
       </div>

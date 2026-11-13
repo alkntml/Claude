@@ -19,7 +19,7 @@ import Link from "@/components/l-link";
 import { PrivacySection } from "./privacy";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function AccountView({ profile, usage, limits, plans, locked, discount }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean; discount?: DiscountCode | null }) {
+export function AccountView({ profile, usage, limits, plans, discount }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean; discount?: DiscountCode | null }) {
   const { t, dl } = useT();
   const toast = useToast();
   const price = usePrice();
@@ -118,7 +118,7 @@ export function AccountView({ profile, usage, limits, plans, locked, discount }:
         </div>
       </section>
 
-      <PrivacySection locked={locked} />
+      <PrivacySection />
     </div>
   );
 }

@@ -17,12 +17,11 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
   const db = adminClient();
   const { data: profile } = await db.from("profiles").select("*").eq("id", id).maybeSingle();
   if (!profile) throw new ApiError(404, "Kullanıcı bulunamadı");
-  const [usage, limits, projects, credits, passes, plan, margin, org, messages, purchases, legal, requests] = await Promise.all([
+  const [usage, limits, projects, credits, plan, margin, org, messages, purchases, legal, requests] = await Promise.all([
     usageSummary(id),
     effectiveLimits(id, profile.plan_id),
     db.from("projects").select("id, title, work_type, status, updated_at").eq("user_id", id).order("updated_at", { ascending: false }).limit(20),
     db.from("usage_credits").select("kind, amount, reason, expires_at, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(20),
-    db.from("download_passes").select("project_id, expires_at, note, created_at").eq("user_id", id).order("created_at", { ascending: false }).limit(10),
     db.from("plans").select("name, price_monthly").eq("id", profile.plan_id).maybeSingle(),
     getSetting("billing.margin"),
     db.from("organization_members").select("role, organizations(name, plan_id)").eq("user_id", id).limit(1),
@@ -43,7 +42,7 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
   const revenueUsd = plan.data?.price_monthly ? Number(plan.data.price_monthly) / (1 + margin.vat_rate) / Math.max(1, margin.usd_try) : 0;
   return json({
     profile, usage, limits, reasons: lockReasons(limits, usage, profile.plan_id),
-    projects: projects.data ?? [], credits: credits.data ?? [], passes: passes.data ?? [], org: org.data?.[0] ?? null,
+    projects: projects.data ?? [], credits: credits.data ?? [], org: org.data?.[0] ?? null,
     plan: plan.data ?? null,
     purchases: purchases.data ?? [],
     legal, requests,

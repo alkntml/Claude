@@ -169,6 +169,7 @@ src/lib/
   sources/zotero.ts sources/import-refs.ts  Zotero Web API (anahtar saklanmaz) + BibTeX/RIS/CSL-JSON içe aktarma ortak işlevi
   pages.ts               Sayfa hakkı (D145): 1 sayfa = 344 kelime, PAGE_ACTIONS (hak dolunca duran yazım eylemleri), chargedWords; sınır usage.ts assertWithinLimits(..., { writes })
   legal/                 Hukuki metinler (D154): docs.ts (adres, başlık, sürüm, kabul kuralı), content-tr/en/de.ts (metinler), server.ts (requireLegalAcceptance, recordLegal); sayfalar components/legal/legal-page.tsx, onay /sozlesme-onayi (components/auth/consent-form.tsx), uç api/legal/accept
+  read-only.ts           Hak dolunca salt okunur kullanım (D155): READ_ONLY_ALLOWED_ROUTES (varsayılan yasak), readOnlyReasons; denetim usage.ts assertNotReadOnly ← auth.ts requireUser
   consent.ts             Çerez/tarayıcı belleği envanteri ve izin altyapısı (D154); components/consent/consent.tsx (ConsentBanner, ConsentGate)
   account-delete.ts pii.ts  Hesap silmede depo dosyalarının tamamı (D154, docs/ACCOUNT_DELETION.md); hata kayıtlarında kişisel veri maskeleme
   usage.ts settings.ts auth.ts api.ts env.ts projects.ts shares.ts

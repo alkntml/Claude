@@ -48,7 +48,7 @@ export const GUIDE: GuideChapter[] = [
       ] },
       { id: "haklar", title: s("Paketler ve aylık haklar", "Plans and monthly allowance"), where: s("Sol menü: “Hesap ve abonelik” → “Paketler”", "Left menu: “Account and subscription” → “Plans”"), steps: [
         s("Her paketin aylık yapay zekâ isteği ve kaynak taraması hakkı vardır; haklar her ayın başında yenilenir.", "Each plan has monthly AI requests and source searches; they reset at the start of each month."),
-        s("Hakkınız dolsa da çalışmalarınız açılır, düzenlenir ve indirilir; yalnızca yeni yapay zekâ işlemleri durur.", "Even when your allowance runs out, your works still open, can be edited and downloaded; only new AI actions pause."),
+        s("Sayfa veya yapay zekâ hakkınız dolunca çalışmalarınızı yalnızca görüntüleyip indirebilirsiniz; diğer özellikler yükseltene veya hak yenilenene kadar kapanır. Ücretsiz araçlar açık kalır.", "When your page or AI allowance runs out, you can only view and download your works; other features close until you upgrade or the allowance renews. The free tools stay open."),
         s("Pakete bağlı özelliklerde kilit simgesi görürsünüz; tıklayınca hangi pakette açıldığı gösterilir.", "Plan-gated features show a lock; clicking it shows which plan unlocks it."),
         s("Yükseltmek için “Yükselt” → “WhatsApp ile yükselt”.", "To upgrade: “Upgrade” → “Upgrade via WhatsApp”."),
       ], tip: s("Üretilen metni silmek kullanılan hakkı geri vermez; büyük işlerden önce kurguyu onaylamak hakkınızı verimli kullanmanızı sağlar.", "Deleting generated text does not refund the request; approving the blueprint first makes large jobs more efficient.") },
@@ -385,7 +385,7 @@ export const GUIDE: GuideChapter[] = [
         s("Kütüphanenizden indirdiğiniz PDF’i kaynağın “PDF yükle” düğmesiyle ekleyin. Taranmış (resim) PDF’lerde metin okunamayabilir.", "Upload the PDF from your library with “Upload PDF”. Scanned (image) PDFs may not be readable."),
       ] },
       { id: "hak", title: s("Hakkım doldu", "My allowance ran out"), steps: [
-        s("Çalışmalarınızı açabilir, düzenleyebilir ve indirebilirsiniz; yeni yapay zekâ işlemleri ay başında açılır.", "You can still open, edit and download; new AI actions resume at the start of the month."),
+        s("Çalışmalarınızı görüntüleyip ücretsiz indirebilirsiniz; düzenleme ve diğer özellikler ay başında hakkınız yenilenince açılır.", "You can view and download your works free of charge; editing and other features reopen when your allowance renews at the start of the month."),
         s("Hemen devam etmek için “Hesap ve abonelik” → “Yükselt”.", "To continue now: “Account and subscription” → “Upgrade”."),
       ] },
       { id: "destek", title: s("Bulamadığım bir şey var", "I can’t find something"), steps: [

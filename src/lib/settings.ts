@@ -35,6 +35,8 @@ export const DEFAULTS = {
   /** Kârlılık (D52): API maliyeti KDV hariç gelirin en fazla cost_share’i; dolar kuru güncel tutulmalı */
   "billing.margin": { usd_try: 48, vat_rate: 0.2, cost_share: 0.3333, avg_request_usd: 0.09 },
   "referral": { enabled: true, ai_requests: 10, source_searches: 7, valid_days: 60, monthly_cap: 20 },
+  /** D173: yönetim panelinden eklenen araştırma desenleri (referans 2.1: desen listesi kapalı değildir) */
+  "workflows.designs": { extra: [] as { id: string; label: string; approach: "quantitative" | "qualitative" | "mixed"; guidance: string; standards: string[]; disciplines?: string[] }[] },
   /** Site iletişim ve dış hizmetler */
   "site.contact": { email: "" },
 };

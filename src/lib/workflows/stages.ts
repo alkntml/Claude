@@ -579,6 +579,14 @@ const S: StageDef[] = [
     questions: [],
   },
   {
+    key: "front_matter",
+    title: "Ön sayfalar (onay, beyan, önsöz)",
+    purpose: "Enstitünün istediği ön sayfaları (onay sayfası, bilimsel etik beyanı, önsöz/teşekkür, kısaltmalar) hazırlamak; kapak, içindekiler ve tablo/şekil listeleri dışa aktarmada otomatik oluşur.",
+    steps: ["Enstitü kılavuzundaki onay ve beyan sayfası metnini kılavuzdan aynen alın.", "Jüri üyeleri, tarih ve imza alanlarını kendi bilgilerinizle doldurun.", "İsterseniz önsöz/teşekkür ve kısaltmalar listesini ekleyin."],
+    rules: ["Jüri adı, tarih, onay veya etik kurul bilgisi uydurulmaz; bilinmeyen alanlar [VERİ GİRİLECEK] olarak bırakılır.", "Beyan metni enstitünün resmi metnidir; kılavuzda varsa aynen kullanılır."],
+    questions: ["Enstitünüzün onay ve beyan sayfası şablonu var mı?"],
+  },
+  {
     key: "needs_analysis",
     title: "İhtiyaç analizi ve hedef grup",
     purpose: "Uygulamanın yanıt verdiği ihtiyacı ve hedef grubu tanımlamak.",

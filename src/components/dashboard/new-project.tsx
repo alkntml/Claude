@@ -1,7 +1,7 @@
 "use client";
 import { useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, FileUp, LayoutList, Loader2, PenLine, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, FileUp, LayoutList, Loader2, PenLine, Plus, Sparkles, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { WORK_ICONS } from "@/components/icons";
@@ -12,7 +12,7 @@ import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, handlePlanError } from "@/lib/client";
 import { ResearchPrefsForm } from "@/components/research-prefs-form";
 import { DEFAULT_RESEARCH_PREFS, promptStrength, type ResearchPrefs } from "@/lib/research-prefs";
-import { buildRoadmap, CAPSTONE_KINDS, designById, designsFor, EMPIRICAL, GRANT_PROGRAMS, type CapstoneKind, type GrantProgram, LEVEL_LABELS, METHODOLOGY_LABELS, REQUIREMENT_LABEL, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
+import { buildRoadmap, CAPSTONE_KINDS, designById, designsFor, DOCUMENT_PURPOSES, omittedSections, type Design, EMPIRICAL, GRANT_PROGRAMS, type CapstoneKind, type GrantProgram, LEVEL_LABELS, METHODOLOGY_LABELS, REQUIREMENT_LABEL, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
 
 /** D171: çalışma türüne göre sunulan araştırma yaklaşımları (uygun olmayanlar gösterilmez) */
 function approachOptions(workType: WorkType, variant: CapstoneKind): Methodology[] {
@@ -59,6 +59,13 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
   const [templates, setTemplates] = useState<{ id: string; name: string; work_type: string; count: number }[] | null>(null);
   const [templateId, setTemplateId] = useState<string>("");
+  // D173: belge amacı, bilinen araştırma soruları, yönetimden eklenen desenler, oluşturmadan önce düzenlenen yol haritası
+  const [documentPurpose, setDocumentPurpose] = useState<string>("");
+  const [researchQuestions, setResearchQuestions] = useState("");
+  const [extraDesigns, setExtraDesigns] = useState<Design[]>([]);
+  const [edited, setEdited] = useState<{ key: string; title: string; requirement: string; critical?: boolean; why?: string }[] | null>(null);
+  const [showOmitted, setShowOmitted] = useState(false);
+  useEffect(() => { api<{ designs: Design[] }>("/api/designs").then((r) => setExtraDesigns(r.designs)).catch(() => {}); }, []);
   // D149: “Mevcut çalışmamı içe aktar”
   const [importing, setImporting] = useState<null | "upload" | "analyze">(null);
   const [importErr, setImportErr] = useState<string | null>(null);
@@ -69,10 +76,18 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   // Dergi makalesine geçilince yaklaşım “kaynaklara dayalı” ile başlar (kullanıcı değiştirebilir)
   useEffect(() => { if (workType === "journal_article") setMethodology("theoretical"); }, [workType]);
   const effMethod: Methodology = options.length ? (options.includes(methodology) ? methodology : options[0]) : methodology;
-  const designs = designsFor(effMethod);
+  const designs = designsFor(effMethod, discipline, extraDesigns);
   const effDesign = designs.some((d) => d.id === design) ? design : "";
   const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology: effMethod, program, design: effDesign || null, variant: workType === "capstone" ? variant : null }), [workType, level, effMethod, program, effDesign, variant]);
   const showMethod = options.length > 0;
+  const purpose = documentPurpose || (workType === "thesis" ? "institute" : ["research_article", "journal_article"].includes(workType) ? "journal" : workType === "grant_proposal" ? "grant" : workType === "capstone" ? "course" : "");
+  const omitted = useMemo(() => omittedSections({ workType, level, methodology: effMethod, program, design: effDesign || null, variant: workType === "capstone" ? variant : null }), [workType, level, effMethod, program, effDesign, variant]);
+  // Yol haritası değişirse (tür, yaklaşım, desen…) elle yapılan düzenleme sıfırlanır
+  useEffect(() => setEdited(null), [roadmap]);
+  const editable = structure !== "free" && !templateId;
+  type Sec = { key: string; title: string; requirement: string; critical?: boolean; why?: string };
+  const sections: Sec[] = edited ?? roadmap.map((r) => ({ key: r.key, title: t(r.title), requirement: r.requirement ?? "required", critical: r.critical, why: r.why }));
+  const editSections = (fn: (list: Sec[]) => Sec[]) => setEdited(fn([...sections]));
   useEffect(() => {
     if (step !== LAST || templates) return;
     api<{ templates: { id: string; name: string; work_type: string; count: number }[] }>("/api/templates").then((r) => setTemplates(r.templates)).catch(() => setTemplates([]));
@@ -93,7 +108,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
     try {
       const { project } = await api<{ project: { id: string } }>("/api/projects", {
         method: "POST",
-        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology: effMethod, discipline, ...(effDesign ? { design: effDesign } : {}), ...(workType === "capstone" ? { variant } : {}), ...(templateId ? { templateId } : {}), language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, research: prefs, structure, ...(workType === "grant_proposal" ? { program } : {}) },
+        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology: effMethod, discipline, ...(effDesign ? { design: effDesign } : {}), ...(workType === "capstone" ? { variant } : {}), ...(templateId ? { templateId } : {}), ...(purpose ? { documentPurpose: purpose } : {}), ...(researchQuestions.trim() ? { researchQuestions: researchQuestions.trim() } : {}), ...(edited && editable ? { sections: edited.map((x) => ({ key: x.key, title: x.title, requirement: x.requirement as "required" | "conditional" | "optional" })) } : {}), language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, research: prefs, structure, ...(workType === "grant_proposal" ? { program } : {}) },
       });
       router.push(`/proje/${project.id}`);
     } catch (e) {
@@ -226,6 +241,14 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                   <div><label className="label" htmlFor="disc">{t("Bilim dalı / disiplin")}</label><input id="disc" className="input" placeholder={t("ör. Klinik Psikoloji")} value={discipline} onChange={(e) => setDiscipline(e.target.value)} /></div>
                   <div><label className="label" htmlFor="uni">{t("Üniversite / hedef dergi (isteğe bağlı)")}</label><input id="uni" className="input" placeholder={t("ör. Hacettepe Üniversitesi")} value={university} onChange={(e) => setUniversity(e.target.value)} /></div>
                 </div>
+                <div>
+                  <label className="label" htmlFor="purpose">{t("Belge amacı")}</label>
+                  <select id="purpose" className="input" value={purpose} onChange={(e) => setDocumentPurpose(e.target.value)}>
+                    <option value="">{t("Belirtmek istemiyorum")}</option>
+                    {DOCUMENT_PURPOSES.map((d) => <option key={d.id} value={d.id}>{t(d.label)}</option>)}
+                  </select>
+                  <p className="mt-1.5 text-xs text-ink-400">{t("Biçim ve teslim gerekliliklerini belirler; kılavuzunuz (enstitü, dergi, çağrı) her zaman önceliklidir.")}</p>
+                </div>
               </div>
             )}
             {step === 2 && (
@@ -240,6 +263,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                   )}
                 </div>
                 <div><label className="label" htmlFor="title">{t("Çalışma başlığı (geçici)")}</label><input id="title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("Boş bırakılırsa konudan oluşturulur")} /></div>
+                <div><label className="label" htmlFor="rq">{t("Araştırma sorularınız (varsa, isteğe bağlı)")}</label><textarea id="rq" className="input min-h-[70px]" maxLength={2000} value={researchQuestions} onChange={(e) => setResearchQuestions(e.target.value)} placeholder={t("Her satıra bir soru yazın. Henüz yoksa boş bırakın; asistan birlikte oluşturur.")} /></div>
                 <div><label className="label" htmlFor="kw">{t("Anahtar kelimeler (virgülle ayırın)")}</label><input id="kw" className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder={t("ilişki odaklı OKB, ebeveyn tutumları, beş faktör kişilik")} /></div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div><label className="label" htmlFor="lang">{t("Yazım dili")}</label><select id="lang" className="input" value={language} onChange={(e) => setLanguage(e.target.value as "tr" | "en" | "de")}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option><option value="de">{t("Almanca")}</option></select></div>
@@ -284,6 +308,27 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                     </div>
                   )}
                 </div>
+                {editable && (
+                  <div className="rounded-xl border border-ink-200 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-semibold text-ink-900">{t("Yol haritasını inceleyin ve düzenleyin")}</p>
+                      {edited && <Button size="sm" variant="ghost" onClick={() => setEdited(null)}>{t("Varsayılana dön")}</Button>}
+                    </div>
+                    <p className="mt-0.5 text-[13px] text-ink-500">{t("Başlıkları yeniden adlandırabilir, sıralayabilir, kaldırabilir veya yeni bölüm ekleyebilirsiniz. Önerilen yapı bir başlangıçtır; karar sizindir.")}</p>
+                    <ul className="mt-3 space-y-1">
+                      {sections.map((x, i) => (
+                        <li key={x.key} className="flex items-center gap-1.5">
+                          <span className="w-5 shrink-0 text-right text-[11px] text-ink-400">{i + 1}</span>
+                          <input className="input !py-1.5 text-[13px]" value={x.title} maxLength={200} aria-label={t("Bölüm adı")} onChange={(e) => editSections((l) => l.map((y, j) => (j === i ? { ...y, title: e.target.value } : y)))} />
+                          <button type="button" disabled={i === 0} onClick={() => editSections((l) => { [l[i - 1], l[i]] = [l[i], l[i - 1]]; return l; })} className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 disabled:opacity-30" aria-label={t("Yukarı taşı")}><ArrowUp className="h-3.5 w-3.5" /></button>
+                          <button type="button" disabled={i === sections.length - 1} onClick={() => editSections((l) => { [l[i + 1], l[i]] = [l[i], l[i + 1]]; return l; })} className="rounded-md p-1.5 text-ink-400 hover:bg-ink-100 disabled:opacity-30" aria-label={t("Aşağı taşı")}><ArrowDown className="h-3.5 w-3.5" /></button>
+                          <button type="button" disabled={x.key === "references"} onClick={() => { if (x.critical && !confirm(`${t("“{title}” bu çalışma türü için kritik bir bölümdür.", { title: x.title })} ${x.why ? t(x.why) : ""} ${t("Silerseniz çalışmanın akademik bütünlüğü zarar görebilir ve kalite kontrolünde eksik olarak görünebilir.")}`)) return; editSections((l) => l.filter((_, j) => j !== i)); }} className="rounded-md p-1.5 text-ink-400 hover:bg-rose-50 hover:text-rose-500 disabled:opacity-30" aria-label={t("Bölümü kaldır")}><X className="h-3.5 w-3.5" /></button>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button className="mt-2" size="sm" variant="secondary" onClick={() => editSections((l) => { const ri = l.findIndex((y) => y.key === "references"); const n = { key: `custom_${Date.now().toString(36)}`, title: t("Yeni bölüm"), requirement: "optional" }; if (ri >= 0) l.splice(ri, 0, n); else l.push(n); return l; })}><Plus className="h-4 w-4" /> {t("Bölüm ekle")}</Button>
+                  </div>
+                )}
               </div>
             )}
           </motion.div>
@@ -303,15 +348,21 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
           </div>
           <ol className="max-h-[60vh] space-y-0.5 overflow-y-auto p-3">
             <AnimatePresence initial={false}>
-              {(structure === "free" ? [{ key: "custom_text", title: "Metin" }, ...roadmap.filter((x) => x.key === "references")] : roadmap).map((r, i) => (
+              {(structure === "free" ? [{ key: "custom_text", title: "Metin" }, ...roadmap.filter((x) => x.key === "references")] : edited && editable ? edited : roadmap).map((r, i) => (
                 <motion.li key={r.key} layout initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, height: 0 }} className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-sm">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-100 text-[11px] font-medium text-ink-600">{i + 1}</span>
                   <span className="min-w-0 flex-1 text-ink-700" title={"why" in r && r.why ? t(r.why) : undefined}>{t(r.title)}</span>
-                  {"requirement" in r && r.requirement && r.requirement !== "required" && <span className="shrink-0 rounded-full bg-ink-100 px-2 py-0.5 text-[10.5px] font-medium text-ink-500">{t(REQUIREMENT_LABEL[r.requirement])}</span>}
+                  {"requirement" in r && r.requirement && r.requirement !== "required" && <span className="shrink-0 rounded-full bg-ink-100 px-2 py-0.5 text-[10.5px] font-medium text-ink-500">{t(REQUIREMENT_LABEL[r.requirement as keyof typeof REQUIREMENT_LABEL])}</span>}
                 </motion.li>
               ))}
             </AnimatePresence>
           </ol>
+          {structure !== "free" && !templateId && omitted.length > 0 && (
+            <div className="border-t border-ink-100 px-5 py-3 text-xs text-ink-500">
+              <button type="button" onClick={() => setShowOmitted((v) => !v)} className="font-medium text-brand-700 hover:underline">{showOmitted ? t("Gösterilmeyen bölümleri gizle") : t("Neden bazı bölümler yok? ({n})", { n: omitted.length })}</button>
+              {showOmitted && <ul className="mt-2 space-y-1.5">{omitted.map((o) => <li key={o.key}><b className="font-medium text-ink-700">{t(o.title)}:</b> {t(o.why)}</li>)}</ul>}
+            </div>
+          )}
           <p className="border-t border-ink-100 px-5 py-3 text-xs text-ink-400">{templateId ? t("Kayıtlı şablonunuzun bölüm yapısı kullanılacak.") : t("Aşamaları sonradan ekleyebilir, silebilir ve sıralayabilirsiniz. Üniversite kılavuzu yüklerseniz yeni bir düzen önerilir.")}</p>
         </div>
       </aside>

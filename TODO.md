@@ -1,5 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
 - [ ] (D171) Supabase SQL Editor’de migration 43’ü çalıştır (`supabase/migrations/20261207000043_dynamic_templates.sql`: bölüm ayarları, kayıtlı şablonlar, yapı geçmişi); check_status.sql’de “43” YAPILMIŞ görünmeli
+- [ ] (D173) Canlıda dene: yeni tezde son adımda yol haritasını düzenle (adlandır, sırala, kaldır, ekle), “Neden bazı bölümler yok?”; çalışmada bölüm ayarlarında “İlgili asistan” ve “beklenen işlevler”; “Yapıyı yönet” → geçmişte “Geri al”; kalite kontrolde “Bu öneriyi reddet”; tablolu/şekilli bir tezi Word ve PDF indir (Tablolar ve Şekiller Listesi)
 - [ ] (D171) Canlıda dene: yeni nitel/karma tez ve yazılım bitirme projesi oluştur (bölümler farklı mı), “Yönteminizi henüz bilmiyor musunuz?”, bölüm ayarları, “Yapıyı yönet” → şablon kaydet → yeni projede “Kayıtlı şablonum”, kalite kontrolde “Akademik tutarlılık zinciri”
 - [ ] (D168) Supabase SQL Editor’de migration 42’yi çalıştır (`supabase/migrations/20261206000042_yearly_price_sync.sql`: yıllık fiyatlar fiyat sayfasıyla aynı olur); check_status.sql’de “42” YAPILMIŞ görünmeli
 - [x] (2026-11-13) (D164) Search Console’a site haritası gönderildi (tam adres: https://www.academiana.com.tr/sitemap.xml)

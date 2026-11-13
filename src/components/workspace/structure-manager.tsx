@@ -8,7 +8,7 @@ import { cn } from "@/components/ui/cn";
 import { Badge, Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
-import { buildTemplate, REQUIREMENT_LABEL, SCOPE_LABEL, STRUCTURE_ACTION_LABEL, type Requirement, type Scope, type TemplateSection } from "@/lib/workflows";
+import { assistantFor, reportingStandards, sectionFunctions, UNDOABLE_ACTIONS, buildTemplate, REQUIREMENT_LABEL, SCOPE_LABEL, STRUCTURE_ACTION_LABEL, type Requirement, type Scope, type TemplateSection } from "@/lib/workflows";
 
 /** Projenin yol haritası girdileri (bağlamda saklanır, D171) */
 export function templateInputOfProject(project: any) {
@@ -53,6 +53,12 @@ export function StageSettingsModal({ stage, project, open, onClose, onSaved, onD
   if (!stage) return null;
   const why = stage.why || (def ? t(def.why) : "");
   const critical = stage.critical ?? def?.critical;
+  // D173: ilgili asistan, beklenen işlevler ve (yöntem/bulgu bölümlerinde) raporlama standardı (referans 3.3, 9, 14)
+  const ctx = project.context ?? {};
+  const role = assistantFor(stage.key, ctx.methodology);
+  const fns = sectionFunctions(stage.key, { workType: project.work_type, methodology: ctx.methodology, variant: ctx.variant });
+  const standards = ["method", "methods_article", "sample", "participants", "instruments", "analysis", "findings", "results_article", "trustworthiness", "integration", "review_protocol", "source_screening", "meta_analysis"].includes(stage.key)
+    ? reportingStandards({ workType: project.work_type, approach: ctx.methodology, design: ctx.design, discipline: project.discipline }) : [];
 
   async function save() {
     setBusy(true);
@@ -93,6 +99,12 @@ export function StageSettingsModal({ stage, project, open, onClose, onSaved, onD
           <div><p className="font-medium text-ink-900">{t("Bu bölüm neden var?")}</p><p className="mt-0.5">{why}</p>{critical && <p className="mt-1 text-[12px] font-medium text-rose-600">{t("Bu çalışma türü için kritik bölüm.")}</p>}</div>
         </div>
       )}
+      <div className="mb-4 space-y-1.5 rounded-xl border border-ink-100 p-3 text-[12.5px] text-ink-600">
+        <p><b className="font-medium text-ink-800">{t("İlgili asistan:")}</b> {t(role.name)} · {t(role.duty)}</p>
+        {fns.length > 0 && <p><b className="font-medium text-ink-800">{t("Bu bölümde beklenen işlevler:")}</b> {fns.map((f) => t(f)).join(" · ")}</p>}
+        {standards.length > 0 && <p><b className="font-medium text-ink-800">{t("Raporlama standardı:")}</b> {standards.join(", ")} <span className="text-ink-400">({t("güncel sürümünü resmi kaynağından kontrol edin")})</span></p>}
+        <p className="text-[11.5px] text-ink-400">{t("İşlevler başlık olarak birebir kopyalanmaz; yapay zekâ alt başlıkları konunuza göre adlandırır.")}</p>
+      </div>
       <label className="label">{t("Bölüm adı")}</label>
       <input className="input" value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
       <label className="label mt-4">{t("Bölümün amacı / açıklaması")}</label>
@@ -199,6 +211,16 @@ export function StructureModal({ open, onClose, project, isOwner, onApplied }: {
       loadTemplates();
     } catch (err) { toast({ tone: "error", title: t("Şablon içe aktarılamadı"), detail: (err as Error).message }); }
   }
+  async function undo(logId: number) {
+    if (!confirm(t("Bu değişiklik geri alınsın mı? Metin içeren bölümler silinmez."))) return;
+    setBusy(true);
+    try {
+      const r = await api<{ skipped: string[] }>(`/api/projects/${project.id}/structure`, { method: "PATCH", json: { undo: logId } });
+      toast({ tone: "success", title: t("Değişiklik geri alındı"), detail: r.skipped.length ? t("Metni olduğu için kaldırılmayan bölümler: {list}", { list: r.skipped.join(", ") }) : undefined });
+      onApplied();
+      load(source);
+    } catch (e) { toast({ tone: "error", title: t("Geri alınamadı"), detail: (e as Error).message }); } finally { setBusy(false); }
+  }
   async function removeTemplate(id: string, tname: string) {
     if (!confirm(t("“{name}” şablonu silinsin mi? Bu şablonla oluşturulmuş projeler etkilenmez.", { name: tname }))) return;
     try { await api(`/api/templates/${id}`, { method: "DELETE" }); if (source === id) setSource("default"); loadTemplates(); }
@@ -304,7 +326,9 @@ export function StructureModal({ open, onClose, project, isOwner, onApplied }: {
           <p className="mb-1.5 text-[13px] font-medium text-ink-800">{t("Yapı değişiklik geçmişi")}</p>
           <ul className="max-h-40 space-y-0.5 overflow-y-auto text-[12px] text-ink-600">
             {data.log.map((l: any, i: number) => (
-              <li key={i} className="flex gap-2"><span className="shrink-0 text-ink-400">{new Date(l.created_at).toLocaleString(dl)}</span><span>{t(STRUCTURE_ACTION_LABEL[l.action] ?? "Yapı değişti")}{l.detail?.title ? ` · ${l.detail.title}` : ""}</span></li>
+              <li key={i} className="flex items-center gap-2"><span className="shrink-0 text-ink-400">{new Date(l.created_at).toLocaleString(dl)}</span><span className="min-w-0 flex-1">{t(STRUCTURE_ACTION_LABEL[l.action] ?? "Yapı değişti")}{l.detail?.title ? ` · ${l.detail.title}` : ""}{l.detail?.undone ? ` · ${t("geri alındı")}` : ""}</span>
+                {isOwner && l.id && UNDOABLE_ACTIONS.has(l.action) && !l.detail?.undone && !(l.action === "section.delete" && (l.detail?.words ?? 0) > 0) && <button onClick={() => undo(l.id)} disabled={busy} className="shrink-0 font-medium text-brand-700 hover:underline">{t("Geri al")}</button>}
+              </li>
             ))}
           </ul>
         </div>

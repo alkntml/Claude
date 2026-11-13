@@ -66,7 +66,7 @@ export const POST = route<Ctx>("stages.add", async (req, { params }) => {
     ...copied,
   }, (row) => db.from("project_stages").insert(row).select().single());
   if (error) throw error;
-  await logStructureChange(id, s.user.id, b.duplicateOf ? "section.duplicate" : "section.add", { key, title: b.title, position: pos });
+  await logStructureChange(id, s.user.id, b.duplicateOf ? "section.duplicate" : "section.add", { key, title: b.title, position: pos, stageId: data.id });
   // D109: Tek Proje — bölüm sayısı çalışma türü şablonunun iki katını aşarsa yöneticiye uyarı (engellemez)
   let template = 0;
   try { template = buildRoadmap({ workType: project.work_type, level: project.academic_level, methodology: project.context?.methodology ?? undefined, program: project.context?.program, design: project.context?.design, variant: project.context?.variant }).length; } catch { /* bilinmeyen tür */ }
@@ -81,7 +81,11 @@ export const PUT = route<Ctx>("stages.reorder", async (req, { params }) => {
   const { id } = await params;
   const { db } = await projectAccess(s, id, "edit");
   const { order } = await parseBody(req, ReorderSchema);
+  // D173: geri alma için önceki sıra saklanır
+  const { data: before } = await db.from("project_stages").select("id").eq("project_id", id).order("position");
+  const prev = (before ?? []).map((x) => x.id as string);
+  if (prev.join() === order.join()) return json({ ok: true });
   await Promise.all(order.map((sid, idx) => db.from("project_stages").update({ position: idx }).eq("id", sid).eq("project_id", id)));
-  await logStructureChange(id, s.user.id, "section.reorder", { count: order.length });
+  await logStructureChange(id, s.user.id, "section.reorder", { count: order.length, prev });
   return json({ ok: true });
 });

@@ -183,6 +183,7 @@ export function Workspace(props: Props) {
   // --- Otomatik kayıt
   const pending = useRef<{ id: string; doc: JSONNode } | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const chainNotice = useRef(false);
   const stateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const flush = useCallback(async (snapshot?: { note: string; author: "user" | "ai" | "system" }) => {
@@ -204,6 +205,12 @@ export function Workspace(props: Props) {
       liveRef.current.sendSaved(target.id, r.stage.updated_at, target.doc as JSONNode);
       if ((pending.current as { id: string } | null)?.id !== target.id) clearDraft(target.id);
       if (snapshot) setHistVer((v) => v + 1);
+      // D173 (referans 9): araştırma sorusu/amaç değiştiyse ve yöntem–bulgu zinciri yazılmışsa tutarlılık kontrolü hatırlatılır (oturumda bir kez)
+      const changedKey = stagesRef.current.find((x: any) => x.id === target.id)?.key;
+      if (["questions", "purpose", "problem"].includes(changedKey) && !chainNotice.current && stagesRef.current.some((x: any) => ["method", "methods_article", "analysis", "findings", "results_article", "discussion", "discussion_article"].includes(x.key) && (x.word_count ?? 0) > 0)) {
+        chainNotice.current = true;
+        toast({ tone: "info", title: t("Araştırma soruları veya amaç değişti"), detail: t("Yöntem, analiz planı, bulgular ve tartışmanın yeni sorularla uyumunu kalite kontrolündeki “Akademik tutarlılık zinciri”nden kontrol edin.") });
+      }
     } catch (e) {
       if (e instanceof ClientApiError && e.code === "stage_conflict" && e.extra?.stage) {
         // D140: farklı paragraflardaki değişiklikler otomatik birleştirilir; yalnızca aynı paragraf çakışırsa sorulur

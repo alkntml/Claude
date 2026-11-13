@@ -97,8 +97,11 @@ function blockTex(b: Block, keys: Map<string, string>, figure: (b: Extract<Block
       const env = b.ordered ? "enumerate" : "itemize";
       return `\\begin{${env}}\n${b.items.map((it) => `  \\item ${runsToTex(it, keys)}`).join("\n")}\n\\end{${env}}`;
     }
-    case "caption":
-      return `\\begin{${b.align === "center" ? "center" : "flushleft"}}\n${b.lines.map((l) => runsToTex(l, keys)).join("\\\\\n")}\n\\end{${b.align === "center" ? "center" : "flushleft"}}`;
+    case "caption": {
+      // D173: tablo/şekil listesindeki sayfa numarası için etiket
+      const lbl = b.list ? `\\label{${b.list === "table" ? "lot" : "lof"}:${++capCount[b.list]}}` : "";
+      return `\\begin{${b.align === "center" ? "center" : "flushleft"}}\n${lbl}${b.lines.map((l) => runsToTex(l, keys)).join("\\\\\n")}\n\\end{${b.align === "center" ? "center" : "flushleft"}}`;
+    }
     case "table": {
       const cols = Math.max(1, ...b.rows.map((r) => r.length));
       const spec = `@{}${`>{\\raggedright\\arraybackslash}p{\\dimexpr(\\linewidth-${cols * 2}\\tabcolsep)/${cols}\\relax}`.repeat(cols)}@{}`;
@@ -155,6 +158,7 @@ export function biblatexSetup(style: string, lang: boolean | "tr" | "en" | "de")
 }
 
 export function toLatexFiles(doc: ExportDoc, o: { style: CitationStyleId; items: CitationItem[] }): LatexFile[] {
+  capCount.table = 0; capCount.figure = 0;
   const keys = bibKeyMap(o.items);
   const tr = doc.language === "tr", de = doc.language === "de";
   const bl = BIBLATEX_STYLE[o.style] ?? { style: "authoryear" };
@@ -192,7 +196,7 @@ ${bs.preamble}\\addbibresource{references.bib}
 
 \\begin{document}
 \\maketitle
-${doc.article ? "" : "\\tableofcontents\n\\clearpage\n"}
+${doc.article ? "" : `\\tableofcontents\n\\clearpage\n${texLists(doc)}`}
 ${body}
 
 ${bs.bibBegin}\\printbibliography[title={${texEscape(doc.bibliographyTitle)}}]${bs.bibEnd}
@@ -211,4 +215,12 @@ export async function toLatexZip(doc: ExportDoc, o: { style: CitationStyleId; it
   const zip = new JSZip();
   for (const f of toLatexFiles(doc, o)) zip.file(f.name, f.data);
   return zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
+}
+
+/** D173: tezde tablolar ve şekiller listesi (başlıklar \\label ile işaretlenir, sayfa \\pageref ile) */
+const capCount = { table: 0, figure: 0 };
+function texLists(doc: ExportDoc): string {
+  return ([["lot", doc.lists.tables, doc.lists.tablesTitle], ["lof", doc.lists.figures, doc.lists.figuresTitle]] as const)
+    .filter(([, items]) => items.length > 0)
+    .map(([k, items, title]) => `\\section*{${texEscape(title)}}\n\\begin{flushleft}\n${items.map((x, i) => `${texEscape(x)} \\dotfill \\pageref{${k}:${i + 1}}\\\\`).join("\n")}\n\\end{flushleft}\n\\clearpage\n`).join("");
 }

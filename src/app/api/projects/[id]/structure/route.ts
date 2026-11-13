@@ -3,7 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { projectAccess } from "@/lib/project-access";
 import { isMissingColumn } from "@/lib/db-compat";
-import { cleanSavedSections, defaultTemplateFor, insertStageRows, logStructureChange, sectionColumns, TEMPLATE_VERSION } from "@/lib/structure-server";
+import { cleanSavedSections, defaultTemplateFor, insertStageRows, logStructureChange, sectionColumns, TEMPLATE_VERSION, undoStructureChange } from "@/lib/structure-server";
 import { diffTemplate, STAGE_LIBRARY, type TemplateSection } from "@/lib/workflows";
 import { translate } from "@/i18n";
 import { localeFromRequest } from "@/i18n/server";
@@ -34,7 +34,7 @@ export const GET = route<Ctx>("structure.get", async (req, { params }) => {
   const source = new URL(req.url).searchParams.get("source") ?? "default";
   const stages = await loadStages(db, id);
   const target = await targetOf(s, project, source === "default" ? "default" : source, uiLocale);
-  const { data: log } = await db.from("template_change_logs").select("action, detail, created_at").eq("project_id", id).order("created_at", { ascending: false }).limit(40);
+  const { data: log } = await db.from("template_change_logs").select("id, action, detail, created_at").eq("project_id", id).order("created_at", { ascending: false }).limit(40);
   return json({
     template: target, diff: diffTemplate(stages, target),
     version: { project: Number(project.context?.templateVersion ?? 1), current: TEMPLATE_VERSION },
@@ -63,13 +63,19 @@ export const POST = route<Ctx>("structure.apply", async (req, { params }) => {
   const stages = await loadStages(db, id);
   const diff = diffTemplate(stages, target);
   const skipped: string[] = [];
-  // Kaldır (yalnızca boş bölümler)
+  const prevOrder = stages.map((x) => x.id as string);
+  const removedRows: Record<string, unknown>[] = [];
+  // Kaldır (yalnızca boş bölümler); geri alma için satır bilgisi saklanır
   for (const r of diff.remove.filter((x) => b.remove.includes(x.id))) {
     if (r.hasText) { skipped.push(r.title); continue; }
+    const st = stages.find((x) => x.id === r.id);
+    removedRows.push({ key: r.key, title: r.title, requirement: st?.requirement ?? "required", scope: st?.scope ?? "standard", position: st?.position ?? 0 });
     await db.from("project_stages").delete().eq("id", r.id).eq("project_id", id);
   }
   // Yeniden adlandır
-  for (const r of diff.rename.filter((x) => b.rename.includes(x.id))) await db.from("project_stages").update({ title: r.to.slice(0, 200) }).eq("id", r.id).eq("project_id", id);
+  const renamed = diff.rename.filter((x) => b.rename.includes(x.id));
+  for (const r of renamed) await db.from("project_stages").update({ title: r.to.slice(0, 200) }).eq("id", r.id).eq("project_id", id);
+  let addedIds: string[] = [];
   // Ekle: hedef sıradaki önceki bölümün arkasına
   const addList = diff.add.filter((x) => b.add.includes(x.key) && (STAGE_LIBRARY[x.key] || x.key.startsWith("custom_")));
   if (addList.length) {
@@ -86,10 +92,29 @@ export const POST = route<Ctx>("structure.apply", async (req, { params }) => {
     if (error) throw error;
     // Sıra numaralarını yeniden yaz
     const ids = order.map((x) => x.id ?? (inserted ?? []).find((r: any) => r.key === x.key)?.id).filter(Boolean);
+    addedIds = (inserted ?? []).map((r: any) => r.id);
     await Promise.all(ids.map((sid: string, idx: number) => db.from("project_stages").update({ position: idx }).eq("id", sid).eq("project_id", id)));
   }
+  const prevVersion = project.context?.templateVersion ?? null;
   if (b.source === "default") await db.from("projects").update({ context: { ...(project.context ?? {}), templateVersion: TEMPLATE_VERSION } }).eq("id", id);
-  await logStructureChange(id, s.user.id, b.source === "default" ? "template.default" : "template.apply", { source: b.source, added: addList.map((x) => x.key), removed: b.remove.length - skipped.length, renamed: b.rename.length, skipped });
+  await logStructureChange(id, s.user.id, b.source === "default" ? "template.default" : "template.apply", {
+    source: b.source, added: addList.map((x) => x.key), removed: removedRows.length, renamed: renamed.length, skipped,
+    // D173: geri alma bilgisi
+    undo: { addedIds, renamed: renamed.map((r) => ({ id: r.id, from: r.from })), removedRows, prevOrder, prevVersion },
+  });
   return json({ ok: true, skipped });
+});
+
+/** D173 (referans 11.2, 12.2): bir yapı değişikliğini proje bazında geri alır. Metin içeren bölüm silinmez; yalnızca sahip. */
+export const PATCH = route<Ctx>("structure.undo", async (req, { params }) => {
+  const s = await requireUser();
+  const { id } = await params;
+  const { db, ownerId } = await projectAccess(s, id, "owner");
+  const b = await parseBody(req, z.object({ undo: z.number().int().positive() }));
+  const { data: log } = await db.from("template_change_logs").select("id, action, detail").eq("id", b.undo).eq("project_id", id).maybeSingle();
+  if (!log) throw new ApiError(404, "Kayıt bulunamadı");
+  const res = await undoStructureChange(db, id, ownerId, log as any);
+  await logStructureChange(id, s.user.id, "undo", { of: log.id, action: log.action, skipped: res.skipped });
+  return json({ ok: true, skipped: res.skipped });
 });
 /* eslint-enable @typescript-eslint/no-explicit-any */

@@ -1,3 +1,4 @@
+import { getSetting } from "@/lib/settings";
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { scoreRecord } from "@/lib/sources/aggregate";
@@ -6,7 +7,7 @@ import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
-import { approachRules, approachSectionGuidance, workTypeGuidance, capstoneGuidance, designById, LITERATURE_FUNCTIONS, LITERATURE_STAGES, literatureDepth, reportingStandards, scopeGuidance, GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
+import { levelGuidance, assistantFor, disciplineGuidance, documentPurposeGuidance, HEADING_RULES, sectionFunctions, approachRules, approachSectionGuidance, workTypeGuidance, capstoneGuidance, designById, LITERATURE_FUNCTIONS, LITERATURE_STAGES, literatureDepth, reportingStandards, scopeGuidance, GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
 import { missingFields } from "@/lib/citations/checks";
 import { sourceRowToItemClient } from "@/lib/sources/row";
@@ -115,10 +116,12 @@ export async function buildContext(params: {
   head.push(`Çalışma türü: ${project.work_type} · Seviye: ${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level} · Disiplin: ${project.discipline || "belirtilmedi"}`);
   if (ctx.methodology) head.push(`Yöntem yaklaşımı: ${METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology}`);
   // D171: araştırma deseni, raporlama standardı ve bitirme projesi türü
-  const design = designById(ctx.design);
+  // D173: yönetim panelinden eklenen desenler de tanınır
+  const extraDesigns = ctx.design && !designById(ctx.design) ? (await getSetting("workflows.designs")).extra : [];
+  const design = designById(ctx.design) ?? extraDesigns.find((d) => d.id === ctx.design);
   if (design) head.push(`Araştırma deseni: ${design.label}. Desen gereği: ${design.guidance}`);
-  const standards = reportingStandards({ workType: project.work_type, approach: ctx.methodology, design: ctx.design });
-  if (standards.length) head.push(`Raporlama standardı (yol gösterici): ${standards.join(", ")}. Standardın gerektirdiği ancak kullanıcının sağlamadığı bilgiyi uydurma; [VERİ GİRİLECEK] ile işaretle.`);
+  const standards = reportingStandards({ workType: project.work_type, approach: ctx.methodology, design: ctx.design, discipline: project.discipline, extra: extraDesigns });
+  if (standards.length) head.push(`Raporlama standardı (yol gösterici): ${standards.join(", ")}. Standardın gerektirdiği ancak kullanıcının sağlamadığı bilgiyi uydurma; [VERİ GİRİLECEK] ile işaretle. Standartların hepsini birden dayatma; güncel sürümünün resmi kaynağından (APA Style, EQUATOR Network, PRISMA) kontrol edilmesi gerektiğini gerektiğinde hatırlat.`);
   const capstone = project.work_type === "capstone" ? capstoneGuidance(ctx.variant) : "";
   if (capstone) head.push(capstone);
   // D170: kaynaklara dayalı çalışmalarda (dergi makalesi, derleme, kuramsal/derleme yaklaşımlı tez ve makale) veri yer tutucusu yok
@@ -132,6 +135,15 @@ export async function buildContext(params: {
   if (rules) head.push(rules);
   const wt = workTypeGuidance(project.work_type);
   if (wt) head.push(wt);
+  // D173: disiplin, belge amacı, kullanıcının oluştururken yazdığı araştırma soruları ve başlıklandırma kuralları
+  const dg = disciplineGuidance(project.discipline);
+  if (dg) head.push(dg);
+  const dp = documentPurposeGuidance(ctx.documentPurpose);
+  if (dp) head.push(dp);
+  if (typeof ctx.researchQuestions === "string" && ctx.researchQuestions.trim()) head.push(`Kullanıcının belirttiği araştırma soruları (kullanıcı değiştirmedikçe bunlara bağlı kal): ${ctx.researchQuestions.trim().slice(0, 1500)}`);
+  const lg = levelGuidance(project.academic_level);
+  if (lg) head.push(lg);
+  head.push(HEADING_RULES);
   head.push(`Çalışma dili: ${LANG_NAME_TR[writingLang(project.language)]} · Atıf stili: ${project.citation_style}`);
   // D144: Almanca yazım — akademik Almanca kuralları; sistem işaretleri ve özet biçimi
   if (writingLang(project.language) === "de") head.push("ALMANCA YAZIM: Taslakların tamamını akademik Almancayla (wissenschaftliches Deutsch) yaz: nesnel üslup, birinci tekil şahıs yerine edilgen veya “in der vorliegenden Arbeit” yapıları, doğru büyük harf ve virgül kuralları, yerleşik Almanca terimler. Sistem işaretlerini ([[kaynak:S1]], [KAYNAK GEREKLİ], [VERİ GİRİLECEK], :::taslak) asla çevirme, aynen kullan. Özet istendiğinde Türkçe Özet yerine “## Zusammenfassung” (Almanca, 150–250 kelime) ve “Schlüsselwörter:” satırı, ardından “## Abstract” ve “Keywords:” yaz.");
@@ -209,6 +221,11 @@ export async function buildContext(params: {
     if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
     // D171: bölümün gerekçesi, kullanıcının seçtiği kapsam ve literatür derinliği
     if (stage.why) tail.push(`Bölümün çalışmadaki işlevi: ${stage.why}`);
+    // D173: bölümden sorumlu asistan rolü ve bölümde karşılanması beklenen işlevler (başlık olarak birebir kopyalanmaz)
+    const role = assistantFor(stage.key, ctx.methodology);
+    tail.push(`Bu bölümde ${role.name} rolündesin: ${role.duty}.`);
+    const fns = sourceBased && ["method", "methods_article", "findings", "results_article"].includes(stage.key) ? [] : sectionFunctions(stage.key, { workType: project.work_type, methodology: ctx.methodology, variant: ctx.variant });
+    if (fns.length) tail.push(`Bu bölümde karşılanması beklenen işlevler (gereken alt başlıkları konuya özgü adlarla bunlardan türet; listeyi başlık olarak kopyalama, çalışmaya uymayanı atla): ${fns.join("; ")}.`);
     const ag = sourceBased ? "" : approachSectionGuidance(stage.key, ctx.methodology);
     if (ag) tail.push(ag);
     const sg = scopeGuidance(stage.scope);

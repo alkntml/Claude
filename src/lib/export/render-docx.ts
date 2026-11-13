@@ -60,16 +60,24 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
   if (!d.article) {
   body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: d.language === "tr" ? "İÇİNDEKİLER" : d.language === "de" ? "INHALTSVERZEICHNIS" : "CONTENTS", font, bold: true, size: 28 })] }));
   const textWidth = Math.round((21 - f.margins.left - f.margins.right) * CM);
-  const tocEntry = (anchor: string, text: string, level: number) => new Paragraph({
+  const tocEntry = (anchor: string, text: string, level: number, bold = level === 1) => new Paragraph({
     tabStops: [{ type: TabStopType.RIGHT, position: textWidth, leader: LeaderType.DOT }],
     indent: { left: (level - 1) * 400 },
     spacing: { line: 300, after: 60 },
-    children: [new InternalHyperlink({ anchor, children: [new TextRun({ text, font, size, bold: level === 1 }), new TextRun({ text: "\t", font, size })] }), new PageReference(anchor, { hyperlink: true })],
+    children: [new InternalHyperlink({ anchor, children: [new TextRun({ text, font, size, bold }), new TextRun({ text: "\t", font, size })] }), new PageReference(anchor, { hyperlink: true })],
   });
   d.toc.forEach((t, k) => body.push(tocEntry(`_Toc${k + 1}`, `${t.number ? `${t.number} ` : ""}${t.level === 1 && f.chapterTitleUppercase ? t.text.toLocaleUpperCase(d.language) : t.text}`, t.level)));
   if (d.bibliography.length) body.push(tocEntry("_TocBib", d.bibliographyTitle, 1));
   body.push(new Paragraph({ children: [new PageBreak()] }));
+  // D173: tablolar ve şekiller listesi (tezde ön sayfalar; yalnızca başlıklı tablo/şekil varsa)
+  for (const [kind, items, title] of [["Lot", d.lists.tables, d.lists.tablesTitle], ["Lof", d.lists.figures, d.lists.figuresTitle]] as const) {
+    if (!items.length) continue;
+    body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: title, bold: true, font, size: 28 })] }));
+    items.forEach((text, k) => body.push(tocEntry(`_${kind}${k + 1}`, text, 1, false)));
+    body.push(new Paragraph({ children: [new PageBreak()] }));
   }
+  }
+  const capNo = { table: 0, figure: 0 };
   let tocIdx = 0;
 
   let firstChapter = true;
@@ -92,7 +100,9 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       else body.push(new Paragraph({ ...keepAbs, alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {
       // D106: satırlar ve biçim (kalın/italik/ortalı) atıf stiline göre modelde hazırlanır
-      b.lines.forEach((l, k) => body.push(new Paragraph({ alignment: b.align === "center" ? AlignmentType.CENTER : AlignmentType.LEFT, keepNext: true, spacing: { before: k === 0 ? 120 : 0, after: k === b.lines.length - 1 ? 60 : 0 }, children: runs(l) })));
+      // D173: tablo/şekil listesindeki sayfa numarası için başlığın ilk satırı yer imiyle işaretlenir
+      const mark = !d.article && b.list ? `_${b.list === "table" ? "Lot" : "Lof"}${++capNo[b.list]}` : "";
+      b.lines.forEach((l, k) => body.push(new Paragraph({ alignment: b.align === "center" ? AlignmentType.CENTER : AlignmentType.LEFT, keepNext: true, spacing: { before: k === 0 ? 120 : 0, after: k === b.lines.length - 1 ? 60 : 0 }, children: k === 0 && mark ? [new Bookmark({ id: mark, children: runs(l) })] : runs(l) })));
     } else if (b.kind === "image") {
       // Metin genişliği ~15 cm (≈ 567 px @96dpi); şekil oranı korunur
       const w = Math.min(560, b.width), h = Math.round((w * b.height) / b.width);

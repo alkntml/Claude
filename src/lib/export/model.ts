@@ -28,7 +28,7 @@ export type Block =
   | { kind: "list"; ordered: boolean; items: Run[][] }
   | { kind: "table"; rows: Run[][][]; header: boolean }
   /** Tablo/şekil başlığı: satırlar ve hizalama projenin atıf stiline göre (D106, citations/captions.ts) */
-  | { kind: "caption"; lines: Run[][]; align: "left" | "center" }
+  | { kind: "caption"; lines: Run[][]; align: "left" | "center"; /** D173: tablo/şekil listesi için */ list?: "table" | "figure"; entry?: string }
   | { kind: "image"; src: string; width: number; height: number; alt: string };
 
 /** base64 → bayt (sunucuda Buffer, tarayıcıda atob) */
@@ -73,6 +73,8 @@ export interface ExportDoc {
   numericBibliography: boolean;
   /** D170: dergi/araştırma makalesi düzeni: kapak ve içindekiler yok, başlık ilk sayfanın üstünde, bölümler kesintisiz */
   article: boolean;
+  /** D173: tezde ön sayfalardaki tablo ve şekil listeleri (başlık sırasıyla) */
+  lists: { tables: string[]; figures: string[]; tablesTitle: string; figuresTitle: string };
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -216,19 +218,21 @@ export function buildExportDoc(params: {
     const skipTitle = [st.title, def?.title ?? "", title].find((x) => x) ?? "";
     const b0 = blocks.length, t0 = toc.length;
     ch.startedHere = false;
-    if (st.key === "title_abstract" || st.key === "article_body") {
+    if (st.key === "title_abstract" || st.key === "article_body" || st.key === "front_matter") {
       // D170: Özet bölümü iş adıyla (“Başlık, özet ve anahtar kelimeler”) basılmaz; içindeki “Özet / Abstract” başlıkları
       // numarasız ana başlık olur. Konu bölümlerinin kendi başlığı yoktur; içindeki her ## başlık numaralı ana bölümdür.
       currentGroup = null;
       const isAbstract = st.key === "title_abstract";
-      numbered = !isAbstract;
+      const isFront = st.key === "front_matter";
+      numbered = !isAbstract && !isFront;
       counters[0] = chapter; counters[1] = counters[2] = counters[3] = 0;
       lastLevel = 0;
       const firstIsHeading = (doc?.content ?? []).find((n) => n.type === "heading" || (n.type === "paragraph" && (n.content ?? []).length));
       if (isAbstract && firstIsHeading?.type !== "heading") emit(1, [{ text: title || tl(st.title) }]);
-      headingCtx = { shift: -1, skipTitle: isAbstract ? "" : skipTitle, seen: 0 };
+      headingCtx = { shift: -1, skipTitle: isAbstract || isFront ? "" : skipTitle, seen: 0 };
       if (doc) visit(doc);
-      if (!isAbstract) chapter = counters[0];
+      if (isFront) { counters[0] = chapter; numbered = true; }
+      else if (!isAbstract) chapter = counters[0];
       else for (let k = b0; k < blocks.length; k++) { const blk = blocks[k]; if (blk.kind === "heading" || blk.kind === "paragraph") blk.keep = "abstract"; }
       if (only && !only.has(st.id)) { blocks.splice(b0); toc.splice(t0); }
       continue;
@@ -271,6 +275,12 @@ export function buildExportDoc(params: {
     bibliography: bib.map((b) => ({ number: b.number, rich: b.rich })),
     numericBibliography: meta.family === "numeric",
     article: project.work_type === "journal_article" || project.work_type === "research_article",
+    lists: {
+      tables: arranged.flatMap((b) => (b.kind === "caption" && b.list === "table" ? [b.entry ?? ""] : [])),
+      figures: arranged.flatMap((b) => (b.kind === "caption" && b.list === "figure" ? [b.entry ?? ""] : [])),
+      tablesTitle: locale === "tr" ? "TABLOLAR LİSTESİ" : locale === "de" ? "TABELLENVERZEICHNIS" : "LIST OF TABLES",
+      figuresTitle: locale === "tr" ? "ŞEKİLLER LİSTESİ" : locale === "de" ? "ABBILDUNGSVERZEICHNIS" : "LIST OF FIGURES",
+    },
   };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -292,7 +302,9 @@ export function arrangeCaptions(blocks: Block[], capOf: Map<Block, ParsedCaption
   const plain = (b: Block) => (b.kind === "paragraph" ? runsToPlain(b.runs) : "");
   const make = (kind: "table" | "figure", no: number, title: string) => {
     const f = formatCaption(style, kind, no, title, lang);
-    return { pos: f.position, block: { kind: "caption", lines: f.lines.map((l) => l.map((r) => ({ text: r.text, bold: r.bold, italic: r.italic }))), align: f.align } as Block };
+    const lines = f.lines.map((l) => l.map((r) => ({ text: r.text, bold: r.bold, italic: r.italic })));
+    const entry = lines.map((l) => l.map((r) => r.text).join("")).join(" ").replace(/\s+/g, " ").trim();
+    return { pos: f.position, block: { kind: "caption", lines, align: f.align, list: kind, entry } as Block };
   };
   const pushNotes = (from: number): number => {
     let i = from;

@@ -846,3 +846,16 @@ Site sahibinin “belgedeki her şeyi dikkate aldın mı, makale için de bir ş
 (3) Literatür kapsamı (6.4, 12.3): tutarlılık zincirinde “Literatür kapsamı sınırlı görünüyor” (bölümdeki farklı kaynak sayısı düzeye göre az: lisans 5, yüksek lisans 10, doktora 15, makale girişi 5) ve “Araştırma boşluğu gösterilmemiş”; İyileştirme düzeyinde, puanı etkilemez.
 (4) Kullanıcı işlemleri (3.1): şablonu dosya olarak indirme ve dosyadan içe aktarma (metin içermez, bölümler temizlenir); özel bölüm eklerken açıklama, zorunluluk ve kapsam seçimi.
 (5) Şablon sürümü 3: mevcut projeler değişmez; “Yapıyı yönet” sürüm uyarısıyla farkları gösterir.
+
+## D173 — Referans belgesinin tamamına uyum (üçüncü tur, madde madde) (2026-11-13)
+Site sahibi “belgede yüzlerce bilgi verdim, tamamını oku ve dikkate al” dedi. Belge baştan sona yeniden okundu; her madde `docs/roadmap/REFERANS_UYUM.md` tablosunda kodla eşleştirildi ve eksikler tamamlandı:
+(1) 4.1–4.9: Belgedeki alt başlık listeleri (nicel/nitel/karma tez, meta-analizin 7 adımı, öneri, fon, kaynak araştırması, metin düzenleme) `sectionFunctions` ile bölüm bazında “beklenen işlevler” olarak yapay zekâya ve bölüm ayarlarına verilir; başlık olarak birebir kopyalanmaz. Tezde “Ön sayfalar (onay, beyan, önsöz)” (koşullu, numarasız) ve “Özet ve Abstract”; Word/PDF/LaTeX’te tezde tablo ve şekil listeleri (sayfa numaralı). Fon başvurusuna isteğe bağlı ekler. Öneri, fon ve metin düzenleme için ayrı yapay zekâ yönergesi (veri yok/güncel çağrı belirleyici/anlam değiştiren müdahale ayrıca listelenir).
+(2) 1.1 ve 2: disiplin yönergesi (sağlık, eğitim, mühendislik, işletme, sosyal, beşeri), akademik düzey yönergesi (akademisyen dâhil; literatür derinliğinde akademisyen doktora düzeyinde), belge amacı (enstitü, dergi, ders, fon, kongre). “Neden bazı bölümler yok?” gerekçe listesi.
+(3) 2.1 ve 14: disipline uygun olmayan desen gösterilmez (kohort/vaka-kontrol yalnızca sağlıkta); yönetim panelinden yeni desen eklenebilir (`workflows.designs`); raporlama standardı disipline göre (sağlık dışı alanda STROBE/CONSORT/COREQ dayatılmaz), güncel sürüm kontrolü hatırlatılır.
+(4) 7 ve 13: başlıklandırma kuralları (işlev, tekrar yok, hiyerarşi, kılavuz terimleri öncelikli, onaysız yeniden adlandırma yok, belirsizlikte sor); kalite kontrolde “Yinelenen başlık”.
+(5) 8: yeni projede araştırma soruları (ortak hafızaya “soru” olarak yazılır), oluşturmadan önce yol haritasını yeniden adlandırma/sıralama/kaldırma/ekleme ve varsayılana dönme.
+(6) 9 ve 3.3: her bölümün sorumlu asistanı (belgedeki 11 asistan) yapay zekâya rol olarak verilir ve bölüm ayarlarında görünür; araştırma sorusu/amaç değişince yöntem–bulgu zinciri için hatırlatma.
+(7) 6.4: tutarlılık zincirinde ardışık özet (atıflı paragrafların %75+’ı tek kaynağa dayanıyorsa), son 5 yılın çalışması yoksa ve çelişkili bulgu ifadesi yoksa İyileştirme uyarısı.
+(8) 10.2: kullanıcı öneriyi reddedebilir, reddedilenler geri alınabilir (proje bağlamında `dismissedChecks`, ortak yazarlar da görür).
+(9) 11.2/12.2: yapı geçmişinde “Geri al” (bölüm ekleme/kopyalama, ayar değişikliği, sıralama, boş bölüm silme, şablon uygulama); metin içeren bölüm hiçbir zaman silinmez.
+Puan yazılımı değişmedi. Veritabanı değişikliği yok (migration 43 yeterli). Kısmi kalanlar uyum tablosunun “Bilinen sınırlar” kısmında.

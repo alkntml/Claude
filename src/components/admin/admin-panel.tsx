@@ -435,8 +435,10 @@ function AiTab() {
   const [stageKey, setStageKey] = useState("concepts");
   const [stagePrompts, setStagePrompts] = useState<Record<string, string>>({});
   const [rate, setRate] = useState({ ai_per_minute: 12, search_per_minute: 30 });
+  const [designs, setDesigns] = useState("[]");
   useEffect(() => {
     if (!ready) return;
+    setDesigns(JSON.stringify(get("workflows.designs")?.extra ?? [], null, 2));
     setModels(JSON.stringify(get("ai.models") ?? {}, null, 2));
     setSystem(get("ai.system_prompt")?.text ?? "");
     setStagePrompts(get("ai.stage_prompts") ?? {});
@@ -469,6 +471,12 @@ function AiTab() {
           <select className="input" value={stageKey} onChange={(e) => setStageKey(e.target.value)}>{Object.values(STAGE_LIBRARY).map((s) => <option key={s.key} value={s.key}>{s.title}{stagePrompts[s.key] ? " ●" : ""}</option>)}</select>
           <textarea className="input min-h-[120px] text-[13px]" placeholder="Bu bölümün asistanına eklenecek talimat (boş = yok)" value={stagePrompts[stageKey] ?? ""} onChange={(e) => setStagePrompts({ ...stagePrompts, [stageKey]: e.target.value })} />
           <Button size="sm" onClick={() => put("ai.stage_prompts", Object.fromEntries(Object.entries(stagePrompts).filter(([, v]) => v.trim())))}><Save className="h-3.5 w-3.5" /> Kaydet</Button>
+        </div>
+        <div className="card space-y-3 p-5">
+          <h3 className="font-semibold">Ek araştırma desenleri</h3>
+          <p className="text-[13px] text-ink-500">Yeni proje sihirbazındaki desen listesine eklenir (D173). Her desen: <code>id</code> (küçük harf ve alt çizgi), <code>label</code>, <code>approach</code> (<code>quantitative</code> | <code>qualitative</code> | <code>mixed</code>), <code>guidance</code> (yapay zekâya verilen desen rehberi), <code>standards</code> (ör. <code>[&quot;APA JARS-Qual&quot;]</code>), isteğe bağlı <code>disciplines</code> (<code>health</code>, <code>education</code>, <code>engineering</code>, <code>business</code>, <code>social</code>, <code>humanities</code>). Ad yalnızca Türkçe görünür.</p>
+          <textarea className="input min-h-[160px] font-mono text-[12px]" value={designs} onChange={(e) => setDesigns(e.target.value)} spellCheck={false} />
+          <Button size="sm" onClick={() => { try { const v = JSON.parse(designs); if (!Array.isArray(v)) throw new Error(); put("workflows.designs", { extra: v }); } catch { toast({ tone: "error", title: "Geçersiz JSON (dizi olmalı)" }); } }}><Save className="h-3.5 w-3.5" /> Kaydet</Button>
         </div>
         <div className="card space-y-3 p-5">
           <h3 className="font-semibold">Dakikalık hız sınırları (kullanıcı başına)</h3>

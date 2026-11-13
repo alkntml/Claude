@@ -28,13 +28,25 @@ const CAT: Record<string, { label: string; icon: any }> = {
 const SEV = { error: { label: "Kritik", tone: "red" as const }, warning: { label: "Önemli", tone: "amber" as const }, info: { label: "İyileştirme", tone: "ink" as const } };
 const CHAIN_TONE = { critical: "red" as const, important: "amber" as const, improvement: "ink" as const };
 
-export function QualityView({ project, initial, stages, checklist = [], chain = [] }: { project: any; initial: any; stages: any[]; checklist?: CheckItem[]; chain?: ChainItem[] }) {
+export function QualityView({ project, initial, stages, checklist = [], chain = [], dismissed: dismissed0 = [] }: { project: any; initial: any; stages: any[]; checklist?: CheckItem[]; chain?: ChainItem[]; dismissed?: string[] }) {
   const { t } = useT();
   const toast = useToast();
   const [report, setReport] = useState<any>(initial);
   const [loading, setLoading] = useState(false);
   const [withAi, setWithAi] = useState(true);
   const stageByKey = Object.fromEntries(stages.map((s) => [s.key, s]));
+  // D173 (referans 10.2): kullanıcı bir öneriyi reddedebilir; tercih projeye kaydedilir (ortak yazarlar da görür), geri alınabilir
+  const [dismissed, setDismissed] = useState<string[]>(dismissed0);
+  const [showDismissed, setShowDismissed] = useState(false);
+  const chainKey = (c: ChainItem) => `${c.title}|${c.stageKey ?? ""}`;
+  async function setDismiss(next: string[]) {
+    const prev = dismissed;
+    setDismissed(next);
+    try { await api(`/api/projects/${project.id}`, { method: "PATCH", json: { context: { dismissedChecks: next.slice(-200) } } }); }
+    catch (e) { setDismissed(prev); toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); }
+  }
+  const visibleChain = chain.filter((c) => !dismissed.includes(chainKey(c)));
+  const hiddenChain = chain.filter((c) => dismissed.includes(chainKey(c)));
 
   async function run() {
     setLoading(true);
@@ -86,12 +98,13 @@ export function QualityView({ project, initial, stages, checklist = [], chain = 
         </section>
       )}
 
-      {chain.length > 0 && (
+      {(visibleChain.length > 0 || hiddenChain.length > 0) && (
         <section className="mt-8">
           <h2 className="flex items-center gap-2 font-semibold text-ink-900"><ScanSearch className="h-4 w-4 text-brand-600" /> {t("Akademik tutarlılık zinciri")}</h2>
           <p className="mt-1 text-sm text-ink-500">{t("Problem, soru, yöntem, örneklem, analiz, bulgu ve tartışma arasındaki bağlantılar. Bu öneriler puanı etkilemez ve otomatik düzeltme yapılmaz; kabul edip etmemek size kalmıştır.")}</p>
           <ul className="card mt-3 divide-y divide-ink-100">
-            {chain.map((c) => (
+            {visibleChain.length === 0 && <li className="p-3.5 text-sm text-ink-500">{t("Gösterilecek öneri yok.")}</li>}
+            {visibleChain.map((c) => (
               <li key={c.id} className="flex items-start gap-3 p-3.5">
                 <Badge tone={CHAIN_TONE[c.level]}>{t(CHAIN_LEVEL_LABEL[c.level])}</Badge>
                 <div className="min-w-0 flex-1">
@@ -99,10 +112,19 @@ export function QualityView({ project, initial, stages, checklist = [], chain = 
                   <p className="text-sm text-ink-600"><b className="font-medium">{t("Kanıt:")}</b> {t(c.evidence, c.vars ? { ...c.vars, s: t(String(c.vars.s ?? "")) } : undefined)}</p>
                   <p className="text-sm text-ink-600"><b className="font-medium">{t("Öneri:")}</b> {t(c.suggestion)}</p>
                 </div>
-                {c.stageKey && stageByKey[c.stageKey] && <Link href={`/proje/${project.id}?bolum=${stageByKey[c.stageKey].id}`} className="shrink-0 text-sm font-medium text-brand-600">{t("Düzelt →")}</Link>}
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  {c.stageKey && stageByKey[c.stageKey] && <Link href={`/proje/${project.id}?bolum=${stageByKey[c.stageKey].id}`} className="text-sm font-medium text-brand-600">{t("Düzelt →")}</Link>}
+                  <button onClick={() => setDismiss([...dismissed, chainKey(c)])} className="text-[12px] text-ink-400 hover:text-ink-700">{t("Bu öneriyi reddet")}</button>
+                </div>
               </li>
             ))}
           </ul>
+          {hiddenChain.length > 0 && (
+            <div className="mt-2 text-[12.5px] text-ink-500">
+              <button onClick={() => setShowDismissed((v) => !v)} className="font-medium text-brand-700 hover:underline">{t("Reddedilen öneriler ({n})", { n: hiddenChain.length })}</button>
+              {showDismissed && <ul className="mt-1 space-y-1">{hiddenChain.map((c) => <li key={c.id} className="flex items-center gap-2"><span>{t(c.title)}</span><button onClick={() => setDismiss(dismissed.filter((x) => x !== chainKey(c)))} className="text-brand-700 hover:underline">{t("Geri al")}</button></li>)}</ul>}
+            </div>
+          )}
         </section>
       )}
 

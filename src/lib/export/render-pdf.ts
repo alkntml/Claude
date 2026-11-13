@@ -77,6 +77,9 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   const tocPages = d.article ? 0 : Math.max(1, Math.ceil((d.toc.length + (d.bibliography.length ? 1 : 0)) / tocPerPage));
   const tocStart = doc.bufferedPageRange().count;
   for (let k = 0; k < tocPages; k++) doc.addPage();
+  // D173: tablo ve şekil listeleri için sayfa ayrılır (tezde; yalnızca başlıklı tablo/şekil varsa)
+  const listDefs = d.article ? [] : ([["table", d.lists.tables, d.lists.tablesTitle], ["figure", d.lists.figures, d.lists.figuresTitle]] as const).filter(([, items]) => items.length > 0)
+    .map(([kind, items, title]) => { const start = doc.bufferedPageRange().count; const n = Math.ceil(items.length / tocPerPage); for (let k = 0; k < n; k++) doc.addPage(); return { kind, items, title, start, pages: [] as number[] }; });
   const headingPages: number[] = [];
   let bibPage = -1;
   const currentPage = () => { const r = doc.bufferedPageRange(); return r.start + r.count - 1; };
@@ -106,6 +109,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       else writeRuns(b.runs, { size: base, align: f.justify ? "justify" : "left", lineGap: gap, indent: b.quote ? 0 : pt(f.firstLineIndentCm), ...(b.quote ? { width: doc.page.width - M.left - M.right - 60 } : {}) });
       doc.moveDown(0.5);
     } else if (b.kind === "caption") {
+      if (b.list) listDefs.find((x) => x.kind === b.list)?.pages.push(currentPage());
       b.lines.forEach((l) => writeRuns(l, { size: 10.5, align: b.align }));
       doc.moveDown(0.3);
     } else if (b.kind === "image") {
@@ -166,12 +170,12 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   // İçindekiler: noktalı çizgi ve sayfa numaralarıyla
   const entries = [...d.toc.map((t, k) => ({ ...t, page: headingPages[k] })), ...(bibPage >= 0 ? [{ level: 1, number: "", text: d.bibliographyTitle, page: bibPage }] : [])];
   const left = M.left, right = doc.page.width - M.right;
-  if (!d.article) entries.forEach((t, k) => {
-    const pageIdx = tocStart + Math.floor(k / tocPerPage);
+  const writeIndex = (list: { level: number; number: string; text: string; page?: number }[], start: number, heading: string) => list.forEach((t, k) => {
+    const pageIdx = start + Math.floor(k / tocPerPage);
     if (k % tocPerPage === 0) {
       doc.switchToPage(pageIdx);
       doc.x = left; doc.y = M.top;
-      if (k === 0) doc.font("b").fontSize(15).text(d.language === "tr" ? "İçindekiler" : d.language === "de" ? "Inhaltsverzeichnis" : "Contents").moveDown();
+      if (k === 0) doc.font("b").fontSize(15).text(heading).moveDown();
     }
     const indent = (t.level - 1) * 16;
     const label = `${t.number ? `${t.number}  ` : ""}${t.text}`;
@@ -192,6 +196,8 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     doc.x = left;
     doc.y = y + 18;
   });
+  if (!d.article) writeIndex(entries, tocStart, d.language === "tr" ? "İçindekiler" : d.language === "de" ? "Inhaltsverzeichnis" : "Contents");
+  for (const l of listDefs) writeIndex(l.items.map((text, k) => ({ level: 2, number: "", text, page: l.pages[k] })), l.start, l.title);
 
   // Sayfa numaraları (kapak hariç; makalede ilk sayfadan itibaren)
   const range = doc.bufferedPageRange();

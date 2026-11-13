@@ -20,14 +20,14 @@ export interface ChainItem {
   stageKey?: string;
 }
 
-export interface ChainStage { key: string; title: string; text: string; hidden?: boolean; /** Bölümde atıf yapılan farklı kaynak sayısı */ citations?: number }
+export interface ChainStage { key: string; title: string; text: string; hidden?: boolean; /** Bölümde atıf yapılan farklı kaynak sayısı */ citations?: number; /** Atıf yapılan kaynakların yayın yılları */ citedYears?: number[]; /** Bölümdeki alt başlıklar */ headings?: string[]; /** Atıflı paragraflardan tek kaynağa dayananların oranı (0–1) ve atıflı paragraf sayısı */ singleSourceShare?: number; citedParagraphs?: number }
 
 const words = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 const HYPOTHESIS = /\bH[0-9₀-₉]\b|\bhipotez|\bhypothes|\bHypothese/i;
 const STATS = /t[- ]?test|anova|ancova|manova|regresyon|regression|korelasyon|correlation|ki[- ]?kare|chi[- ]?square|mann|wilcoxon|kruskal|faktör analizi|factor analysis|sem\b|yapısal eşitlik/i;
 const QUAL = /tema|theme|kodla|coding|içerik analizi|content analysis|betimsel analiz|thematic|söylem|discourse|fenomenoloj|phenomenolog|gömülü teori|grounded/i;
 
-export function consistencyChain(input: TemplateInput & { stages: ChainStage[] }): ChainItem[] {
+export function consistencyChain(input: TemplateInput & { stages: ChainStage[]; now?: number }): ChainItem[] {
   const out: ChainItem[] = [];
   const visible = input.stages.filter((s) => !s.hidden);
   const byKey = (k: string) => visible.find((s) => s.key === k);
@@ -88,6 +88,36 @@ export function consistencyChain(input: TemplateInput & { stages: ChainStage[] }
   }
   if (input.workType === "thesis" && (input.level === "master" || input.level === "doctorate") && filled("literature") && byKey("gaps") && !filled("gaps"))
     add({ level: "improvement", title: "Araştırma boşluğu gösterilmemiş", evidence: "Literatür yazılmış, ancak araştırma boşluğu bölümü boş.", suggestion: "Literatürdeki boşluğu kaynaklara dayanarak gösterin ve çalışmanızın konumunu gerekçelendirin.", stageKey: "gaps" });
+
+  // Sentez mi ardışık özet mi (referans 6.4): atıflı paragrafların büyük çoğunluğu tek kaynağa dayanıyorsa
+  for (const s of visible.filter((x) => litKeys.has(x.key) && (x.citedParagraphs ?? 0) >= 5 && (x.singleSourceShare ?? 0) >= 0.75))
+    add({ level: "improvement", title: "Kaynaklar sentezlenmek yerine ardışık özetlenmiş olabilir", evidence: "“{s}” bölümündeki atıflı paragrafların %{p}’i yalnızca tek bir kaynağa dayanıyor.", vars: { s: s.title, p: Math.round((s.singleSourceShare ?? 0) * 100) }, suggestion: "Paragrafları kaynak kaynak değil tema tema kurun; aynı paragrafta birden çok çalışmayı karşılaştırın.", stageKey: s.key });
+  // Çelişkili bulgular ve yöntem farklılıkları (referans 6.1/6.4)
+  const CONTRAST = /çeliş|tutarsız|farklı sonuç|aksine|buna karşın|bununla birlikte|öte yandan|desteklememekte|however|in contrast|contrary|inconsistent|mixed findings|jedoch|im gegensatz|widersprüchlich/i;
+  for (const s of visible.filter((x) => (x.key === "literature" || x.key === "review_synthesis") && words(x.text) > 600 && !CONTRAST.test(x.text)))
+    add({ level: "improvement", title: "Çelişkili bulgular ele alınmamış görünüyor", evidence: "“{s}” bölümünde çalışmalar arasındaki farklılık veya çelişkiye işaret eden bir ifade bulunamadı.", vars: { s: s.title }, suggestion: "Uzlaşan ve çelişen bulguları, yöntem farklılıklarını ve olası nedenlerini karşılaştırın.", stageKey: s.key });
+
+  // Temel ve güncel çalışmaların dengesi (referans 6.4): literatür bölümlerinde son 5 yılın çalışması hiç yoksa
+  const nowYear = input.now ?? new Date().getFullYear();
+  for (const s of visible.filter((x) => litKeys.has(x.key) && (x.citedYears?.length ?? 0) >= 3)) {
+    if (!s.citedYears!.some((y) => y >= nowYear - 5))
+      add({ level: "improvement", title: "Güncel çalışmalar temsil edilmiyor", evidence: "“{s}” bölümünde atıf yapılan kaynakların hiçbiri son 5 yıla ait değil (en yenisi {y}).", vars: { s: s.title, y: Math.max(...s.citedYears!) }, suggestion: "Temel çalışmaların yanında alanın güncel ampirik çalışmalarını da ekleyin (Literatür araştır).", stageKey: s.key });
+  }
+  // Yinelenen başlıklar (referans 7.3): aynı başlık bir bölümde veya bölümler arasında tekrar etmemeli
+  const normH = (x: string) => x.toLocaleLowerCase("tr").replace(/^[\d.\s]+/, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const seenH = new Map<string, string>();
+  const dup = new Set<string>();
+  for (const s of visible) {
+    const inStage = (s.headings ?? []).map(normH).filter((k) => k.length >= 3);
+    const twice = inStage.find((k, i) => inStage.indexOf(k) !== i);
+    if (twice && !dup.has(twice)) { dup.add(twice); add({ level: "improvement", title: "Yinelenen başlık", evidence: "“{h}” başlığı birden fazla yerde geçiyor.", vars: { h: (s.headings ?? []).find((h) => normH(h) === twice) ?? twice }, suggestion: "Aynı işlevi gören başlıkları birleştirin veya içeriğe özgü, ayırt edici adlar verin.", stageKey: s.key }); }
+  }
+  for (const s of visible) for (const h of [s.title, ...(s.headings ?? [])]) {
+    const k = normH(h);
+    if (k.length < 3) continue;
+    if (seenH.has(k) && seenH.get(k) !== s.key && !dup.has(k)) { dup.add(k); add({ level: "improvement", title: "Yinelenen başlık", evidence: "“{h}” başlığı birden fazla yerde geçiyor.", vars: { h }, suggestion: "Aynı işlevi gören başlıkları birleştirin veya içeriğe özgü, ayırt edici adlar verin.", stageKey: s.key }); }
+    else seenH.set(k, s.key);
+  }
 
   // Kritik bölüm eksik veya gizlenmiş
   let template: ReturnType<typeof buildTemplate> = [];

@@ -52,7 +52,13 @@ export const DESIGNS: Design[] = [
   { id: "multiphase", label: "Çok aşamalı karma desen", approach: "mixed", guidance: "Birden fazla sıralı/eş zamanlı aşama, her aşamanın amacı, örneklemi ve aşamalar arası bağlantılar.", standards: ["APA JARS-Mixed", "GRAMMS"] },
 ];
 export const designById = (id?: string | null) => DESIGNS.find((d) => d.id === id) ?? null;
-export const designsFor = (approach?: string | null) => DESIGNS.filter((d) => d.approach === approach);
+/** Desenin önerildiği disiplinler (boşsa hepsi). Disipline uygun olmayan desen gereksiz yere gösterilmez (referans 2.1). */
+const DESIGN_DISCIPLINES: Record<string, DisciplineGroup[]> = { cohort_case_control: ["health", "other"] };
+export const designsFor = (approach?: string | null, discipline?: string | null, extra: (Design & { disciplines?: string[] })[] = []) => {
+  const g = disciplineGroup(discipline);
+  return [...DESIGNS, ...extra.filter((x) => !DESIGNS.some((d) => d.id === x.id))].filter((d) => d.approach === approach)
+    .filter((d) => { const only = (d as { disciplines?: string[] }).disciplines ?? DESIGN_DISCIPLINES[d.id]; return !only?.length || !discipline?.trim() || only.includes(g); });
+};
 
 /** Disiplin kategorisi (serbest metinden): raporlama pratikleri ve terminoloji için */
 export type DisciplineGroup = "health" | "education" | "engineering" | "business" | "social" | "humanities" | "other";
@@ -68,9 +74,15 @@ export function disciplineGroup(text?: string | null): DisciplineGroup {
 }
 
 /** Raporlama standartları (referans 14): yaklaşıma, desene ve çalışma türüne göre; hepsi birden dayatılmaz */
-export function reportingStandards(p: { workType?: string; approach?: string | null; design?: string | null }): string[] {
-  const d = designById(p.design);
-  if (d) return d.standards;
+export function reportingStandards(p: { workType?: string; approach?: string | null; design?: string | null; discipline?: string | null; extra?: Design[] }): string[] {
+  const d = designById(p.design) ?? p.extra?.find((x) => x.id === p.design);
+  if (d) {
+    // Sağlık dışı alanlarda sağlık odaklı kontrol listeleri (STROBE, CONSORT, COREQ) dayatılmaz; APA JARS/SRQR yeterli
+    const g = disciplineGroup(p.discipline);
+    const health = new Set(["STROBE", "CONSORT", "COREQ"]);
+    const list = g === "health" || !p.discipline?.trim() ? d.standards : d.standards.filter((x) => !health.has(x));
+    return list.length ? list : d.standards;
+  }
   if (p.approach === "systematic_review" || p.approach === "meta_analysis") return ["PRISMA 2020"];
   if (p.approach === "quantitative") return ["APA JARS-Quant"];
   if (p.approach === "qualitative") return ["APA JARS-Qual"];
@@ -108,6 +120,9 @@ const isEmpirical = (m?: string | null) => !!m && (EMPIRICAL as string[]).includ
 /** Tez iskeleti (referans 4.1): giriş → kuramsal çerçeve/literatür → yöntem → bulgular → tartışma → sonuç */
 function thesis(m: string, level: string): Item[] {
   const out: Item[] = [
+    // Ön sayfalar (referans 4.1/1): kapak, içindekiler ve listeler dışa aktarmada otomatik; onay/beyan/önsöz kullanıcıdan
+    it("front_matter", { req: "conditional", why: "Onay sayfası, bilimsel etik beyanı ve önsöz enstitü kılavuzuna göre eklenir; kapak, içindekiler ve tablo/şekil listeleri dışa aktarmada otomatik oluşur." }),
+    it("title_abstract", { title: "Özet ve Abstract", critical: true, why: "Tezlerde Türkçe özet ve İngilizce abstract ön sayfalarda yer alır; tüm bölümler yazıldıktan sonra en son yazılır." }),
     it("topic", { critical: true }), it("problem", { critical: true }), it("purpose", { critical: true }),
     m === "qualitative"
       ? it("questions", { title: "Araştırma soruları", why: "Nitel araştırmada hipotez kurulmaz; açık uçlu araştırma soruları yazılır." })
@@ -224,6 +239,7 @@ function grant(program?: string | null): Item[] {
     it("grant_literature"), it("grant_method", { title: "Yöntem ve iş paketleri", critical: true }), it("grant_management", { critical: true }),
     it("grant_risks", { critical: true }), it("grant_impact", { title: "Beklenen çıktılar ve yaygın etki", critical: true }),
     ...(noBudget ? [] : [it("grant_budget", { critical: true })]), it("references", { critical: true }),
+    it("appendices", { req: "optional", why: "Çağrının istediği ekler (özgeçmiş, kurum izinleri, ölçekler) varsa eklenir." }),
   ];
 }
 
@@ -237,7 +253,7 @@ function journal(m: string): Item[] {
 /** Düzeye ve bölüm türüne göre önerilen kapsam (referans 6.3) */
 function scopeFor(key: string, level: string, workType: string): Scope {
   const LIT = new Set(["literature", "theory", "concepts", "review_synthesis", "article_body", "grant_literature"]);
-  const SHORT = new Set(["topic", "purpose", "questions", "scope_limits", "declarations", "appendices", "cover_letter", "expected_contribution", "proposal_timeline", "grant_summary", "title_abstract", "ethics"]);
+  const SHORT = new Set(["front_matter", "topic", "purpose", "questions", "scope_limits", "declarations", "appendices", "cover_letter", "expected_contribution", "proposal_timeline", "grant_summary", "title_abstract", "ethics"]);
   if (SHORT.has(key)) return "brief";
   if (LIT.has(key)) {
     if (workType === "thesis") return level === "bachelor" ? "standard" : "detailed";
@@ -299,7 +315,7 @@ export const LITERATURE_FUNCTIONS =
 export function literatureDepth(p: { workType?: string; level?: string; approach?: string | null }): string {
   if (p.approach === "systematic_review" || p.approach === "meta_analysis") return "Önceden tanımlanmış ve yeniden üretilebilir arama/eleme yöntemi; literatürün sistematik sentezi (PRISMA 2020 akışına uygun).";
   if (p.workType === "journal_article" || p.workType === "research_article") return "Derginin kelime sınırı içinde yoğun, seçici ve doğrudan araştırma boşluğuna bağlanan literatür.";
-  if (p.level === "doctorate") return "Derin ve eleştirel sentez, kuramsal tartışma, alan içi çelişkilerin analizi, metodolojik değerlendirme ve özgün katkının güçlü gerekçesi.";
+  if (p.level === "doctorate" || p.level === "postdoc") return "Derin ve eleştirel sentez, kuramsal tartışma, alan içi çelişkilerin analizi, metodolojik değerlendirme ve özgün katkının güçlü gerekçesi.";
   if (p.level === "master") return "Genişletilmiş kuramsal çerçeve, tematik ampirik sentez, yöntemsel karşılaştırma ve açık bir araştırma boşluğu.";
   return "Temel kavramlar, seçilmiş kuramsal dayanaklar, ilgili çalışmaların düzenli özeti ve problemin gerekçesi.";
 }
@@ -329,7 +345,10 @@ export const STRUCTURE_ACTION_LABEL: Record<string, string> = {
   "section.reorder": "Bölüm sırası değişti",
   "template.default": "Academiana şablonu uygulandı",
   "template.apply": "Kayıtlı şablon uygulandı",
+  undo: "Değişiklik geri alındı",
 };
+/** D173: geri alınabilen yapı değişiklikleri (sunucudaki liste ile aynı) */
+export const UNDOABLE_ACTIONS = new Set(["section.add", "section.duplicate", "section.update", "section.reorder", "section.delete", "template.default", "template.apply"]);
 
 /* ---------------- D172: yaklaşıma göre yöntem kuralları (referans 5 ve 5.1) ---------------- */
 
@@ -371,6 +390,191 @@ export function approachSectionGuidance(key: string, approach?: string | null): 
 /** Çalışma türüne özgü yapı yönergesi (makale tez kopyası değildir; dergi uyarlamasında dergi kuralları önceliklidir) */
 export function workTypeGuidance(workType?: string): string {
   if (workType === "research_article") return "ARAŞTIRMA MAKALESİ: Tez iskeletinin kısaltılmış kopyası değildir; hedef dergi ve desene göre giriş–yöntem–bulgular–tartışma ekseninde yoğun yazılır. Tezlerdeki uzun ve bağımsız kuramsal çerçeve bölümü makaleye eklenmez; kuramsal dayanak girişte kısa ve araştırma boşluğuna bağlı verilir.";
+  if (workType === "research_proposal") return "ARAŞTIRMA ÖNERİSİ: Gelecekte yapılacak çalışmayı tanımlar; veri henüz toplanmamıştır. Gerçek bulgu, analiz sonucu veya tamamlanmış tartışma YAZMA; yöntemi, analizi ve katkıyı plan/beklenti diliyle (“yapılacaktır”, “beklenmektedir”) yaz. Nicel öneride değişkenler, hipotezler ve istatistiksel analiz planı; nitel öneride katılımcı seçimi, veri üretimi ve nitel analiz; karma öneride aşamaların sırası ve entegrasyon planı açıkça tanımlanır.";
+  if (workType === "grant_proposal") return "FON / PROJE BAŞVURUSU: Tez veya makale şablonundan bağımsızdır; programın GÜNCEL resmi başvuru formu ve çağrı metni belirleyicidir. Eski formları güncelmiş gibi sunma; bilmediğin form ayrıntısını, puanlama ölçütünü veya üst sınırı uydurma, kullanıcıdan güncel çağrı dokümanını iste. Amaçlar ölçülebilir hedeflere, yöntem iş paketlerine, iş-zaman planı ve risklere (B planı) bağlanır; bütçe kalemleri gerekçelendirilir ve kullanıcının gerçek tutarlarıyla yazılır.";
+  if (workType === "text_editing") return "AKADEMİK METİN DÜZENLEME: Yazarın anlamını koru. Anlamı değiştirebilecek her müdahaleyi (iddianın gücü, kapsamı, terim değişikliği, cümle çıkarma) ayrıca listele ve gerekçesini yaz; kullanıcı bunları kabul veya reddeder. Atıfları ve kaynakça eşleşmesini koru; yeni kaynak ekleme.";
   if (workType === "journal_article") return "DERGİ MAKALESİ / YAYIN UYARLAMA: Hedef derginin yazar rehberi, kelime sınırı, bölüm sırası, tablo/şekil ve atıf biçimi önceliklidir. Derginin talep etmediği tez tipi uzun bölümler eklenmez; derginin zorunlu başlıkları ve raporlama standartları korunur. Dergi kuralları bilinmiyorsa uydurma, kullanıcıya yazar rehberini sor.";
+  return "";
+}
+
+/* ---------------- D173: bölümde kapsanması beklenen işlevler (referans 4.1–4.9) ----------------
+ * Belgedeki örnek alt başlıklar BİREBİR başlık olarak kullanılmaz; yapay zekâya ve kullanıcıya “bu bölümde karşılanması
+ * beklenen işlevler” olarak verilir. Alt başlık adları konuya, disipline ve kılavuza göre üretilir. */
+export function sectionFunctions(key: string, p: { workType?: string; methodology?: string | null; variant?: string | null }): string[] {
+  const m = p.methodology ?? null;
+  const wt = p.workType ?? "";
+  const proposal = wt === "research_proposal";
+  switch (key) {
+    case "front_matter": return ["Kapak ve iç kapak (enstitü şablonuna göre)", "Onay sayfası (jüri bilgileri kullanıcı tarafından girilir)", "Bilimsel etik beyanı", "Önsöz/teşekkür (isteğe bağlı)", "Kısaltmalar, tablolar ve şekiller listesi (gerekiyorsa)"];
+    case "topic": return ["Konunun bağlamı ve önemi"];
+    case "problem": return ["Problem durumu", "Gerekçe"];
+    case "purpose": return ["Araştırmanın amacı", "Araştırmanın önemi ve beklenen katkısı"];
+    case "questions":
+      if (m === "qualitative") return ["Açık uçlu, keşfedici araştırma soruları (hipotez yok)"];
+      if (m === "mixed") return ["Nicel araştırma soruları (gerekirse hipotezler)", "Nitel araştırma soruları", "Karma (entegrasyon) sorusu"];
+      if (m === "quantitative") return ["Araştırma soruları", "Hipotezler (araştırma amacı gerektiriyorsa)", "Değişkenlerin tanımı"];
+      return ["Araştırma soruları"];
+    case "scope_limits": return ["Kapsam", "Varsayımlar", "Sınırlılıklar", "Tanımlar"];
+    case "concepts": return ["Temel kavramların kaynaklı tanımları", "Terminolojinin tutarlı kullanımı"];
+    case "theory": return ["Temel kuramsal yaklaşımlar ve modellerin karşılaştırılması", "Çalışmanın dayandığı kuramsal çerçevenin gerekçesi"];
+    case "literature": return ["Güncel ve temel ampirik çalışmaların araştırma sorularına göre tematik sentezi", "Önceki çalışmaların örneklem, yöntem, bağlam ve bulgularının karşılaştırılması", "Uzlaşma, çelişki ve yöntemsel sınırlılıklar", "Tarihsel gelişim (gerektiği ölçüde)"];
+    case "gaps": return ["Kanıta dayalı araştırma boşluğu", "Çalışmanın kuramsal ve ampirik konumu"];
+    case "method":
+    case "methods_article":
+      if (m === "quantitative") return ["Araştırma modeli ve değişkenlerin kavramsallaştırılması", ...(key === "methods_article" ? ["Evren, örneklem ve örneklem büyüklüğünün gerekçesi", "Ölçme araçları ve psikometrik özellikleri", "Veri toplama prosedürü", "İstatistiksel analiz planı", "Etik onay"] : [])];
+      if (m === "qualitative") return ["Nitel yaklaşım ve desenin gerekçesi", "Araştırma bağlamı", ...(key === "methods_article" ? ["Katılımcı seçimi (amaçlı örnekleme)", "Veri üretimi ve transkripsiyon", "Kodlama ve analiz yaklaşımı", "Araştırmacının konumu ve refleksivite", "Etik"] : [])];
+      if (m === "mixed") return ["Karma yöntemin gerekçesi ve desen türü", "Aşamaların sıralanması veya eş zamanlı yürütülmesi", "Veri setlerinin entegrasyon noktası ve yöntemi", ...(key === "methods_article" ? ["Her aşamanın örneklemi ve veri toplama süreci", "Nicel ve nitel analizler", "Etik"] : [])];
+      if (m === "systematic_review" || m === "meta_analysis") return ["Derleme türü ve protokol", "Raporlama standardı (PRISMA 2020)"];
+      return ["İnceleme yaklaşımı ve kaynak seçim ölçütleri"];
+    case "sample": return m === "mixed" ? ["Her aşamanın örneklemi ve örnekleme stratejisi", "Aşamalar arası katılımcı bağlantısı"] : ["Evren ve örneklem", "Örnekleme yöntemi", "Örneklem büyüklüğünün gerekçesi", "Dahil etme/dışlama ölçütleri"];
+    case "participants": return ["Araştırma bağlamı ve katılımcı özellikleri", "Amaçlı örnekleme ve katılımcı seçimi", "Bilgi zenginliği ve veri doygunluğu"];
+    case "instruments":
+      if (m === "qualitative") return ["Görüşme, gözlem veya doküman veri kaynakları", "Veri üretimi/toplanması ve transkripsiyon"];
+      if (m === "mixed") return ["Nicel veri toplama araçları ve psikometrik özellikleri", "Nitel veri kaynakları", "Her aşamanın veri toplama süreci"];
+      return ["Ölçme araçları ve psikometrik özellikleri (geçerlik, güvenirlik)", "Veri toplama prosedürü"];
+    case "analysis":
+      if (m === "qualitative") return ["Kodlama ve analiz yaklaşımı", "Temaların geliştirilmesi", "Kullanılan yazılım (varsa)"];
+      if (m === "mixed") return ["Nicel analizler", "Nitel analizler", "Entegrasyon stratejisi (ör. ortak gösterim)"];
+      return ["İstatistiksel analiz planı", "Varsayım kontrolleri (normallik vb.)", "Uygun olduğunda etki büyüklüğü ve güven aralıkları"];
+    case "trustworthiness": return ["İnandırıcılık", "Aktarılabilirlik", "Tutarlılık", "Teyit edilebilirlik", "Araştırmacının konumu ve refleksivite"];
+    case "ethics": return proposal ? ["Planlanan etik kurul başvurusu", "Bilgilendirilmiş onam", "Veri gizliliği"] : ["Etik kurul onayı (kullanıcının gerçek bilgisi)", "Bilgilendirilmiş onam", "Veri gizliliği ve saklama"];
+    case "findings":
+    case "results_article":
+      if (m === "qualitative") return ["Araştırma sorularına göre temalar ve alt temalar", "Gerçek veriden katılımcı alıntıları"];
+      if (m === "mixed") return ["Nicel bulgular", "Nitel bulgular", "Bütünleştirilmiş bulgular"];
+      return ["Tanımlayıcı istatistikler", "Araştırma sorularına/hipotezlere göre analiz sonuçları", "Tablo ve şekiller", "Etki büyüklükleri"];
+    case "integration": return ["Veri setlerinin entegrasyon noktası ve yöntemi", "Uyumlu ve çelişkili bulguların değerlendirilmesi", "Bütünleştirilmiş çıkarımlar (meta-çıkarımlar)", "Ortak gösterim tablosu"];
+    case "discussion":
+    case "discussion_article":
+      if (m === "qualitative") return ["Temaların bağlam ve anlam odaklı yorumu", "Literatürle ilişkilendirme", "Aktarılabilirlik ve sınırlılıklar"];
+      if (m === "mixed") return ["Entegrasyon ve meta-çıkarımlar üzerinden tartışma", "Bileşenlerin uyuştuğu ve ayrıştığı noktalar", "Sınırlılıklar"];
+      return ["Bulguların önceki çalışmalar ve kuramsal çerçeveyle karşılaştırılması", "Olası açıklamalar", "Sınırlılıklar", ...(key === "discussion_article" ? ["Sonuç ve çıkarımlar (dergi yapısına göre)"] : [])];
+    case "conclusion": return wt === "capstone" && p.variant === "software" ? ["Sonuç", "Gelecek geliştirmeler"] : ["Temel çıkarımlar", "Katkı", "Uygulamaya yönelik öneriler", "Gelecek araştırmalar için öneriler"];
+    case "introduction": return wt === "research_article" || wt === "journal_article" ? ["Problem ve bağlam", "Literatür boşluğu", "Gerekçe", "Amaç (ve uygunsa hipotezler)"] : [];
+    case "review_protocol": return ["Açık araştırma sorusu (PICO/SPIDER vb.)", "Protokol ve kayıt (varsa)", "Dahil etme/dışlama ölçütleri"];
+    case "search_strategy": return wt === "source_research" ? ["Araştırma konusu ve kapsamı", "Anahtar kelimeler ve eş anlamlılar", "Veri tabanları ve arama sorguları", "Tarih aralığı ve seçim kriterleri"] : ["Uygun veri tabanları", "Yeniden üretilebilir arama dizgileri", "Arama tarihi"];
+    case "source_screening": return wt === "source_research" ? ["Kaynakların bibliyografik doğrulanması", "DOI ve yayın bilgileri"] : ["Tarama ve seçim süreci", "PRISMA akış şeması (gerçek sayılarla)"];
+    case "data_extraction": return ["Veri çıkarım formu", "Çalışma kalitesi / yanlılık riski değerlendirmesi"];
+    case "meta_analysis": return ["Etki ölçüsü", "İstatistiksel model ve model seçiminin gerekçesi", "Heterojenlik", "Yayın yanlılığı ve küçük çalışma etkileri (uygunsa)", "Alt grup ve meta-regresyon analizleri (gerekçelendirildiğinde)", "Duyarlılık analizleri", "Forest plot ve uygun görseller"];
+    case "review_synthesis": return m === "systematic_review" || m === "meta_analysis" ? ["Bulguların sentezi", "Kanıtın kesinliği"] : ["Literatürün tematik veya kronolojik örgütlenmesi", "Çalışmaların yöntem ve bulgularının karşılaştırılması"];
+    case "source_matrix": return ["Tematik sınıflandırma", "Literatür matrisi"];
+    case "risks": return ["Etik hususlar", "Riskler ve alternatif planlar"];
+    case "expected_contribution": return ["Kuramsal katkı", "Uygulamaya/politikaya katkı", "Beklenen çıktılar"];
+    case "proposal_timeline": return ["Zaman çizelgesi (iş adımları ve süreler)"];
+    case "grant_summary": return ["Proje özeti", "Anahtar kelimeler"];
+    case "grant_originality": return ["Problem", "Gerekçe", "Özgün değer"];
+    case "grant_objectives": return ["Amaçlar", "Ölçülebilir hedefler ve başarı ölçütleri"];
+    case "grant_literature": return ["Literatür", "Mevcut durum"];
+    case "grant_method": return ["Yöntem", "İş paketleri"];
+    case "grant_management": return ["İş-zaman planı", "Proje yönetimi ve görev dağılımı"];
+    case "grant_risks": return ["Riskler", "Alternatif planlar (B planı)"];
+    case "grant_impact": return ["Beklenen çıktılar", "Yaygın etki"];
+    case "grant_budget": return ["Bütçe kalemleri", "Bütçe gerekçesi"];
+    case "requirements_analysis": return ["Problem tanımı", "Kullanıcı ve sistem gereksinimleri"];
+    case "design_development": return ["Tasarım kararları", "Sistem mimarisi"];
+    case "tech_choice": return ["Teknoloji seçimi ve gerekçesi", "Geliştirme yöntemi"];
+    case "testing": return ["Test planı", "Doğrulama", "Performans değerlendirmesi"];
+    case "case_context": return ["Kurum/sektör bağlamı", "Mevcut durum"];
+    case "strategic_recommendations": return ["Stratejik değerlendirme", "Uygulanabilir öneriler"];
+    case "needs_analysis": return ["İhtiyaç belirleme yöntemi", "Belirlenen ihtiyaçlar", "Hedef grubun özellikleri"];
+    case "program_design": return ["Kazanımlar/hedefler", "İçerik ve etkinlikler", "Materyaller"];
+    case "evaluation": return ["Değerlendirme yöntemi", "Değerlendirme sonuçları (gerçek veri)"];
+    case "editing_input": return ["Orijinal metin", "Hedef format ve kılavuz"];
+    case "editing_language": return ["Akademik dil ve terminoloji", "Dil bilgisi, imla ve noktalama"];
+    case "editing_structure": return ["Paragraf bütünlüğü ve mantıksal akış", "Bölümler arası tutarlılık", "Gereksiz tekrarlar"];
+    case "editing_citations": return ["Atıf-kaynakça eşleşmesi"];
+    case "editing_format": return ["Üniversite/dergi formatına uyarlama", "Orijinal ve düzenlenmiş metin karşılaştırması"];
+    case "journal_requirements": return ["Hedef dergi ve makale türünün doğrulanması", "Yazar rehberi ve güncel şablon", "Kelime sınırı, bölüm sırası, tablo/şekil ve atıf biçimi"];
+    case "declarations": return ["Etik beyan", "Çıkar çatışması", "Fon", "Yazar katkıları", "Veri erişilebilirliği", "Yapay zekâ kullanımı"];
+    case "cover_letter": return ["Kapak mektubu", "Gönderim öncesi kontrol"];
+    default: return [];
+  }
+}
+
+/* ---------------- D173: disiplin, başlıklandırma ve asistan rolleri (referans 1.1, 7, 9, 13, 14) ---------------- */
+
+/** Disipline özgü raporlama pratikleri (yalnızca yol gösterici; kullanıcının kılavuzu önceliklidir) */
+export function disciplineGuidance(discipline?: string | null): string {
+  switch (disciplineGroup(discipline)) {
+    case "health": return "DİSİPLİN (sağlık bilimleri): Etik kurul onayı ve bilgilendirilmiş onam bilgisi (kullanıcının gerçek bilgisiyle), klinik/epidemiyolojik terminoloji, desene uygun EQUATOR kontrol listesi (STROBE, CONSORT, COREQ vb.), etki ölçüleri ve güven aralıkları; kesin olmayan bulguyu klinik öneri gibi sunma.";
+    case "education": return "DİSİPLİN (eğitim bilimleri): Uygulama izinleri (kurum/MEB vb.) ve etik onay, katılımcıların yaş/düzey bilgisi, öğretim bağlamının betimlenmesi, APA 7 raporlaması; çıkarımları eğitim uygulamasına bağla.";
+    case "engineering": return "DİSİPLİN (mühendislik/bilgisayar): Problem ve gereksinimler, sistem/deney düzeneği, parametreler ve tekrarlanabilirlik, performans ölçütleri ve karşılaştırma ölçütleri (baseline); sonuçları yalnızca kullanıcının gerçek test/deney verisiyle raporla.";
+    case "business": return "DİSİPLİN (işletme/iktisat): Kurum ve sektör bağlamı, kuramsal dayanak, veri kaynakları ve analiz yaklaşımı, yönetsel ve stratejik çıkarımlar; kurum verilerini kullanıcıdan al, finansal değer uydurma.";
+    case "humanities": return "DİSİPLİN (beşeri bilimler): Birincil ve ikincil kaynak ayrımı, kaynak eleştirisi, kavramsal ve tarihsel bağlam, yorumlayıcı argüman; alıntılar yalnızca projedeki kaynaklardan ve sayfa numarasıyla.";
+    case "social": return "DİSİPLİN (sosyal bilimler): Kavramların işlevsel tanımı, kuramsal çerçeve, örneklem/katılımcı ve bağlam betimlemesi, APA 7 raporlaması.";
+    default: return "";
+  }
+}
+
+/** Belge amacı (referans 2: format ve teslim gerekliliklerini belirler) */
+export const DOCUMENT_PURPOSES = [
+  { id: "institute", label: "Enstitü / üniversite teslimi" },
+  { id: "journal", label: "Dergi gönderimi" },
+  { id: "course", label: "Ders projesi / ödev" },
+  { id: "grant", label: "Fon / burs başvurusu" },
+  { id: "conference", label: "Kongre bildirisi" },
+  { id: "other", label: "Diğer" },
+] as const;
+export function documentPurposeGuidance(id?: string | null): string {
+  if (id === "institute") return "BELGE AMACI: Enstitü/üniversite teslimi — enstitü yazım kılavuzu (sayfa düzeni, ön sayfalar, başlık düzeyleri, atıf stili) önceliklidir.";
+  if (id === "journal") return "BELGE AMACI: Dergi gönderimi — hedef derginin yazar rehberi (kelime sınırı, bölüm sırası, atıf biçimi, beyanlar) önceliklidir.";
+  if (id === "course") return "BELGE AMACI: Ders projesi/ödev — dersin yönergesi ve öğretim elemanının beklentisi önceliklidir; kapsam ölçülü tutulur.";
+  if (id === "grant") return "BELGE AMACI: Fon/burs başvurusu — güncel çağrı metni ve başvuru formu önceliklidir.";
+  if (id === "conference") return "BELGE AMACI: Kongre bildirisi — kongrenin bildiri şablonu ve kelime/sayfa sınırı önceliklidir; yapı kısa ve yoğundur.";
+  return "";
+}
+
+/** Başlıklandırma kuralları (referans 7.1–7.3, 13.5, 13.8) */
+export const HEADING_RULES = "BAŞLIKLANDIRMA: Başlık, altındaki içeriğin gerçek akademik işlevini yansıtır; konuya özgüdür (genel, gündelik veya pazarlama dili yok); aynı işlevi gören başlıkları farklı adlarla çoğaltma; alt başlık üst başlığın kapsamını daraltır ve düzey atlanmaz; desene özgü terminolojiyi doğru kullan. Referans/örnek başlıkları birebir kopyalama. Kullanıcının kılavuzundaki resmi başlık adları ve terimler genel önerilerden önceliklidir; kullanıcının verdiği veya değiştirdiği başlıkları onayı olmadan yeniden adlandırma. Kılavuzda belirsiz veya çelişkili bir kural varsa varsayımda bulunma, kullanıcıya sor.";
+
+/** Bölümden sorumlu asistan rolü (referans 9; 3.3 “ilgili asistan”) */
+export function assistantFor(key: string, approach?: string | null): { name: string; duty: string } {
+  const A = (name: string, duty: string) => ({ name, duty });
+  if (["topic", "problem", "purpose", "questions", "scope_limits"].includes(key)) return A("Konu ve problem asistanı", "Konuyu daraltma, araştırılabilirlik, problem ve amaç tutarlılığı");
+  if (["concepts", "theory", "literature", "gaps", "review_protocol", "search_strategy", "source_screening", "data_extraction", "review_synthesis", "source_matrix", "grant_literature", "introduction", "article_body"].includes(key)) return A("Literatür asistanı", "Kaynak keşfi, doğrulama, tematik sentez ve araştırma boşluğu");
+  if (["method", "methods_article", "trustworthiness"].includes(key)) return A("Yöntem asistanı", "Yaklaşım/desen seçimi, yöntemsel gerekçe ve tasarım tutarlılığı");
+  if (["sample", "participants", "instruments"].includes(key)) return A("Örneklem/veri asistanı", "Örneklem veya katılımcı stratejisi, veri kaynakları ve süreç");
+  if (key === "analysis" || key === "meta_analysis") return approach === "qualitative" ? A("Nitel analiz asistanı", "Kodlama, tema geliştirme, veri örnekleri ve refleksivite") : approach === "mixed" ? A("Karma yöntem asistanı", "Nicel-nitel entegrasyon ve meta-çıkarımlar") : A("Nicel analiz asistanı", "Analiz seçimi, varsayımlar, istatistiksel raporlama ve yorum");
+  if (key === "integration") return A("Karma yöntem asistanı", "Nicel-nitel entegrasyon ve meta-çıkarımlar");
+  if (["findings", "results_article", "discussion", "discussion_article", "conclusion", "conclusion_article"].includes(key)) return A("Bulgular/tartışma asistanı", "Bulguların uygun sunumu ve literatürle ilişkilendirilmesi");
+  if (key === "references") return A("Kaynakça asistanı", "Atıf-kaynakça eşleşmesi ve bibliyografik doğrulama");
+  if (["ethics", "declarations", "risks"].includes(key)) return A("Etik kontrol asistanı", "Etik gereklilikler, veri dürüstlüğü ve raporlama kontrolleri");
+  return A("Akademik editör", "Dil, akış, terminoloji, tutarlılık ve biçim");
+}
+
+/**
+ * D173: Şeffaflık (referans 1.1) — sistemin bir bölümü NEDEN göstermediğini açıklar. Aynı çalışma türünün diğer
+ * yaklaşımlarında bulunan ama bu seçimde olmayan bölümler gerekçesiyle listelenir; kullanıcı isterse ekleyebilir.
+ */
+export function omittedSections(p: TemplateInput): { key: string; title: string; why: string }[] {
+  const current = buildTemplate(p);
+  const have = new Set(current.map((x) => x.key));
+  const others = ["quantitative", "qualitative", "mixed", "theoretical", "systematic_review", "meta_analysis"]
+    .flatMap((m) => buildTemplate({ ...p, methodology: m, design: null }))
+    .concat(p.workType === "thesis" ? buildTemplate({ ...p, level: "doctorate" }) : []);
+  const m = p.methodology ?? "";
+  const reason = (key: string): string => {
+    if (key === "sample" && m === "qualitative") return "Nitel araştırmada evren-örneklem yerine amaçlı seçilen çalışma grubu kullanılır.";
+    if (key === "participants") return "Nicel bileşende katılımcılar evren ve örneklem bölümünde anlatılır.";
+    if (key === "trustworthiness") return "Nicel araştırmada kalite, ölçme araçlarının geçerlik ve güvenirliğiyle gösterilir.";
+    if (key === "integration") return "Entegrasyon ve meta-çıkarımlar yalnızca karma yöntemde gereklidir.";
+    if (key === "meta_analysis") return "Meta-analiz, sistematik derlemede karşılaştırılabilir nicel veri bulunduğunda uygulanan ayrı bir istatistiksel sentezdir.";
+    if (["review_protocol", "search_strategy", "source_screening", "data_extraction", "review_synthesis"].includes(key)) return "Protokol, tarama ve veri çıkarımı yalnızca sistematik derleme ve meta-analizde gerekir.";
+    if (["theory", "gaps"].includes(key) && p.level === "bachelor") return "Lisans düzeyinde kuramsal dayanak ve boşluk literatür içinde kısaca verilir.";
+    if (["findings", "results_article", "discussion", "discussion_article", "methods_article", "sample", "instruments", "analysis", "ethics"].includes(key))
+      return p.workType === "research_proposal" ? "Araştırma önerisinde veri henüz toplanmadığından gerçek bulgu ve tamamlanmış tartışma yer almaz." : "Bu yaklaşımda kullanıcı verisi toplanmadığından veri toplama, analiz ve bulgu bölümleri eklenmez.";
+    if (key === "article_body" || key === "conclusion_article") return "Veriye dayalı makalede konu bölümleri yerine Yöntem, Bulgular ve Tartışma kullanılır.";
+    return "Bu çalışma türü ve yaklaşım için varsayılan olarak gerekmez; isterseniz ekleyebilirsiniz.";
+  };
+  const seen = new Set<string>();
+  return others.filter((x) => !have.has(x.key) && !seen.has(x.key) && (seen.add(x.key), true)).map((x) => ({ key: x.key, title: x.title, why: reason(x.key) }));
+}
+
+/** D173: akademik düzeye göre beklenti (referans 1.1: düzey yalnızca başlık sayısını değil derinliği değiştirir) */
+export function levelGuidance(level?: string | null): string {
+  if (level === "bachelor") return "AKADEMİK DÜZEY (lisans): Temel kavramları doğru ve açık kullan; seçilmiş kuramsal dayanaklarla problemi gerekçelendir; aşırı iddialı özgünlük vurgusu yapma.";
+  if (level === "master") return "AKADEMİK DÜZEY (yüksek lisans): Genişletilmiş kuramsal çerçeve, tematik sentez ve yöntemsel karşılaştırma; araştırma boşluğunu açıkça göster ve yöntem seçimlerini gerekçelendir.";
+  if (level === "doctorate") return "AKADEMİK DÜZEY (doktora): Derin ve eleştirel sentez, kuramsal tartışma, alan içi çelişkilerin ve yöntemsel sınırlılıkların analizi; özgün katkıyı güçlü biçimde gerekçelendir.";
+  if (level === "postdoc") return "AKADEMİK DÜZEY (akademisyen): Alanın güncel tartışmalarına konumlanan, yöntemsel olarak savunulabilir ve özgün katkısı net bir metin; yayın standartlarında yoğun anlatım.";
   return "";
 }

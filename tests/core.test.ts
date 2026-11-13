@@ -6,7 +6,7 @@ import { runQualityChecks } from "@/lib/quality/checks";
 describe("roadmap", () => {
   it("builds full thesis roadmap", () => {
     const r = buildRoadmap({ workType: "thesis", level: "master" });
-    expect(r.map((s) => s.key)).toEqual(["topic", "problem", "purpose", "questions", "scope_limits", "concepts", "theory", "literature", "gaps", "method", "sample", "instruments", "analysis", "ethics", "findings", "discussion", "conclusion", "references", "appendices"]);
+    expect(r.map((s) => s.key)).toEqual(["front_matter", "title_abstract", "topic", "problem", "purpose", "questions", "scope_limits", "concepts", "theory", "literature", "gaps", "method", "sample", "instruments", "analysis", "ethics", "findings", "discussion", "conclusion", "references", "appendices"]);
   });
   it("adapts to qualitative + bachelor", () => {
     const keys = buildRoadmap({ workType: "thesis", level: "bachelor", methodology: "qualitative" }).map((s) => s.key);

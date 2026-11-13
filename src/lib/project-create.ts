@@ -21,8 +21,11 @@ export interface CreateInput {
   research?: ResearchPrefs; structure?: Structure;
   /** D171: araştırma deseni, alt tür (bitirme projesi türü) ve kullanıcı şablonu */
   design?: string | null; variant?: string | null; templateId?: string | null;
+  /** D173: belge amacı, kullanıcının bildiği araştırma soruları, oluşturmadan önce düzenlenen bölüm listesi */
+  documentPurpose?: string | null; researchQuestions?: string | null;
+  sections?: { key: string; title: string; requirement?: string; scope?: string }[] | null;
 }
-export interface StageSeed { key: string; title: string; description?: string; content?: JSONNode | null; requirement?: string; scope?: string; why?: string; critical?: boolean; hidden?: boolean; fromUser?: boolean }
+export interface StageSeed { key: string; title: string; description?: string; content?: JSONNode | null; requirement?: string; scope?: string; why?: string; critical?: boolean; hidden?: boolean; fromUser?: boolean; titleFromUser?: boolean }
 
 export async function createProject(s: Session, body: CreateInput, uiLocale: Locale, stagesSource?: StageSeed[] | ((projectId: string) => Promise<StageSeed[]>), extraContext: Record<string, unknown> = {}) {
   const structure = body.structure ?? "smart";
@@ -34,6 +37,7 @@ export async function createProject(s: Session, body: CreateInput, uiLocale: Loc
       context: {
         methodology: body.methodology, university: body.university, targetJournal: body.targetJournal,
         ...(body.design ? { design: body.design } : {}), ...(body.variant ? { variant: body.variant } : {}),
+        ...(body.documentPurpose ? { documentPurpose: body.documentPurpose } : {}), ...(body.researchQuestions?.trim() ? { researchQuestions: body.researchQuestions.trim() } : {}),
         templateVersion: TEMPLATE_VERSION, ...(body.templateId ? { templateId: body.templateId } : {}),
         ...(body.workType === "grant_proposal" ? { program: body.program ?? "other" } : {}),
         ...(body.research ? { research: body.research } : {}),
@@ -66,6 +70,18 @@ export async function createProject(s: Session, body: CreateInput, uiLocale: Loc
   } else if (saved.length) {
     seeds = saved.map((x) => ({ key: x.key, title: x.title, description: x.description, requirement: x.requirement, scope: x.scope, hidden: x.hidden, fromUser: true }));
     if (refStage && !seeds.some((x) => x.key === "references")) seeds.push({ key: "references", title: refStage.title, description: refStage.description });
+  } else if (body.sections?.length) {
+    // D173: kullanıcı yol haritasını oluşturmadan önce düzenledi (ekleme, silme, yeniden adlandırma, sıralama)
+    seeds = body.sections.flatMap((x): StageSeed[] => {
+      const r = roadmap.find((y) => y.key === x.key);
+      if (r) {
+        const renamed = x.title.trim() && x.title.trim() !== translate(uiLocale, r.title);
+        return [{ key: r.key, title: renamed ? x.title.trim() : r.title, description: r.description, requirement: x.requirement ?? r.requirement, scope: x.scope ?? r.scope, why: r.why, critical: r.critical, titleFromUser: !!renamed }];
+      }
+      if (/^custom_[a-z0-9_]{1,40}$/.test(x.key) && x.title.trim()) return [{ key: x.key, title: x.title.trim(), description: "", requirement: x.requirement ?? "optional", scope: x.scope ?? "standard", titleFromUser: true }];
+      return [];
+    });
+    if (refStage && !seeds.some((x) => x.key === "references")) seeds.push({ key: "references", title: refStage.title, description: refStage.description });
   } else {
     seeds = roadmap.map((r) => ({ key: r.key, title: r.title, description: r.description, requirement: r.requirement, scope: r.scope, why: r.why, critical: r.critical }));
   }
@@ -79,7 +95,7 @@ export async function createProject(s: Session, body: CreateInput, uiLocale: Loc
     return {
       project_id: project.id, user_id: s.user.id, key, position: idx,
       // Şablon başlıkları arayüz diline çevrilir; içe aktarılan başlıklar olduğu gibi kalır
-      title: stagesOverride?.length || st.fromUser ? st.title : translate(uiLocale, st.title),
+      title: stagesOverride?.length || st.fromUser || st.titleFromUser ? st.title : translate(uiLocale, st.title),
       description: stagesOverride?.length || st.fromUser ? (st.description ?? "") : translate(uiLocale, st.description ?? ""),
       // D171: zorunluluk, kapsam, gerekçe ve kritiklik (gerekçe arayüz diline çevrilir)
       ...(st.requirement ? { requirement: st.requirement } : {}), ...(st.scope ? { scope: st.scope } : {}),
@@ -91,6 +107,10 @@ export async function createProject(s: Session, body: CreateInput, uiLocale: Loc
   if (stErr) {
     await s.supabase.from("projects").delete().eq("id", project.id);
     throw stErr;
+  }
+  // D173: ortak proje hafızası — kullanıcının bildiği araştırma soruları (onaylı bilgi olarak)
+  if (body.researchQuestions?.trim()) {
+    await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "question", content: body.researchQuestions.trim().slice(0, 1000), source: "user", pinned: true });
   }
   if (body.topic) {
     await s.supabase.from("project_memory").insert({ project_id: project.id, user_id: s.user.id, kind: "fact", content: `${pick({ tr: "Araştırma konusu", en: "Research topic", de: "Forschungsthema" }, uiLocale)}: ${body.topic}`, source: "user", pinned: true });

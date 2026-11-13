@@ -30,6 +30,8 @@ const DOC_TITLE: Record<string, L2> = {
   topic: { tr: "", en: "", de: "" }, // Giriş’in açılış metni: ayrı başlık almaz
   // D170: makale özeti belgede “Özet” başlığıyla başlar (“Başlık, özet ve anahtar kelimeler” bir iş adıdır, belgeye yazılmaz)
   title_abstract: { tr: "Özet", en: "Abstract", de: "Zusammenfassung" },
+  // D173: ön sayfaların kendi başlığı yok; içindeki “Onay”, “Beyan”, “Önsöz” başlıkları numarasız basılır
+  front_matter: { tr: "", en: "", de: "" },
   // Konu bölümleri kendi başlığını almaz: içindeki her ## başlık makalede ayrı numaralı ana bölümdür
   article_body: { tr: "", en: "", de: "" },
   conclusion_article: { tr: "SONUÇ", en: "CONCLUSION", de: "FAZIT" },
@@ -63,7 +65,7 @@ const DOC_TITLE: Record<string, L2> = {
 };
 
 /** Numarasız ön/son kısımlar (bölüm numarası almaz) */
-export const UNNUMBERED = new Set(["title_abstract", "declarations", "appendices", "journal_requirements", "cover_letter"]);
+export const UNNUMBERED = new Set(["front_matter", "title_abstract", "declarations", "appendices", "journal_requirements", "cover_letter"]);
 /** D171: çalışma notu niteliğindeki aşamalar (dergi gereklilikleri, editöre mektup) makale metnine basılmaz */
 export const NOT_IN_MANUSCRIPT = new Set(["journal_requirements", "cover_letter"]);
 

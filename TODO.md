@@ -1,5 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] (D164) Google Search Console → Site haritaları → `sitemap.xml`’i yeniden gönder; URL denetimi ile yeni 9 rehber adresi için “Dizine eklenmesini iste” (TR: /blog/t-testi-nasil-yapilir-ve-yorumlanir, /blog/normallik-testi-carpiklik-basiklik, /blog/isnad-atif-sistemi-rehberi ve EN/DE karşılıkları). Bing Webmaster Tools’u bağla
+- [x] (2026-11-13) (D164) Search Console’a site haritası gönderildi (tam adres: https://www.academiana.com.tr/sitemap.xml)
+- [ ] (D164) URL denetimi ile yeni 9 rehber adresi için “Dizine eklenmesini iste” (TR: /blog/t-testi-nasil-yapilir-ve-yorumlanir, /blog/normallik-testi-carpiklik-basiklik, /blog/isnad-atif-sistemi-rehberi ve EN/DE karşılıkları). Bing Webmaster Tools’u bağla
 - [ ] (D162) Supabase SQL Editor’de migration 41’i çalıştır (paket adı “Sınırsız Proje”)
 - [x] (2026-11-13) (D157/D158) Supabase SQL Editor’de migration 40’ı çalıştır (yıllık ödeme + “Sınırsız Kullanım” paketi); kullanıcı “belki değişiklik olur” diye bekletiyor. Çalıştırılana kadar paket kartı eski adı/metni gösterir ve yıllık paket atanamaz
 - [ ] (D157) docs/legal/HUKUKCU_NOTU_D157.md’yi hukukçuya ilet (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler; yıllık ödeme ve yeni Tek Proje)

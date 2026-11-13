@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/supabase/admin", () => ({ adminClient: () => { throw new Error("veritabanı yok"); } }));
-import { hasYearlyOption, isOneTimePlan, PLAN_RANK, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, SINGLE_PLAN_DAYS, UNLIMITED_PLAN_PROJECTS } from "@/lib/pricing";
+import { hasYearlyOption, isOneTimePlan, PLAN_RANK, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, SINGLE_PLAN_DAYS, UNLIMITED_PLAN_PROJECTS, projectLimitFor } from "@/lib/pricing";
 import { hasFeature, PLAN_NAME } from "@/lib/features";
 import { monthStart, periodFor, scaleForPeriod } from "@/lib/usage";
 import { isLegacySingle } from "@/lib/single-project";
@@ -32,6 +32,14 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(scaleForPeriod(l, false)).toEqual(l);
     expect(scaleForPeriod(l, true)).toEqual({ ...l, pages_month: 300, ai_requests_month: 3600, tokens_month: 9600000, source_searches_month: 1200, cost_usd_month: 54 });
     expect(scaleForPeriod({ ...l, pages_month: null, source_searches_month: null }, true)).toMatchObject({ pages_month: null, source_searches_month: null });
+    // D159: proje sınırı yalnızca Sınırsız Kullanım’da ve yalnızca yıllıkta değişir (5 → 60)
+    const unl = { pages_month: null, ai_requests_month: null, projects: 5 };
+    expect(scaleForPeriod(unl, true, "single").projects).toBe(60);
+    expect(scaleForPeriod(unl, false, "single").projects).toBe(5);
+    expect(scaleForPeriod(l, true, "basic").projects).toBe(3);
+    expect(projectLimitFor("single", 5, true)).toBe(60);
+    expect(projectLimitFor("single", 5, false)).toBe(5);
+    expect(projectLimitFor("premium", null, true)).toBeNull();
   });
 
   it("dönem: yıllık ve etkin pakette paket başından itibaren; aksi hâlde takvim ayı", () => {
@@ -50,6 +58,8 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(yearlyFeature("Ayda 25 sayfa yapay zekâ destekli akademik metin (ör. 1 makale veya tezin 2–3 bölümü)")).toMatchObject({ vars: { n: 300 } });
     expect(yearlyFeature("Aylık 100 kaynak taraması")).toMatchObject({ key: "Yılda {n} kaynak taraması", vars: { n: 1200 } });
     expect(yearlyFeature("Word dışa aktarma")).toEqual({ key: "Word dışa aktarma" });
+    // D159: Sınırsız Kullanım yıllıkta 60 proje
+    expect(yearlyFeature("En fazla 5 proje")).toEqual({ key: "En fazla {n} proje", vars: { n: 60 } });
   });
 
   it("Sınırsız Kullanım: 5 proje dışında her şey sınırsız, aylık 30 gün; tek çalışma kuralları yalnızca eski (süresiz) Tek Proje’de", () => {

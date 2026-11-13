@@ -6,7 +6,7 @@ import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { UPGRADE_EVENT, type UpgradeRequest } from "@/lib/client";
 import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
-import { PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
+import { projectLimitFor, PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
 import { PeriodToggle } from "@/components/pricing/period-toggle";
 import { usePrice } from "@/components/price-context";
 import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
@@ -87,7 +87,7 @@ export function UpgradeDialogHost() {
     ...(p.limits.pages_month ? [t("Yılda {n} sayfa yapay zekâ destekli akademik metin", { n: num(y12(p.limits.pages_month)) })] : p.limits.pages_month === null ? [t("Sınırsız sayfa yazımı (adil kullanım)")] : []),
     p.limits.ai_requests_month == null ? t("Sınırsız yapay zekâ isteği") : t("Yılda {n} yapay zekâ isteği", { n: num(y12(p.limits.ai_requests_month)) }),
     p.limits.source_searches_month == null ? t("Sınırsız kaynak taraması") : p.limits.source_searches_month >= 1000 ? t("Sınırsız kaynak taraması (adil kullanım)") : t("Yılda {n} kaynak taraması", { n: num(y12(p.limits.source_searches_month)) }),
-    p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: p.limits.projects }),
+    p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: projectLimitFor(p.id, p.limits.projects, true) ?? p.limits.projects }),
     storage(p.limits.storage_mb),
   ] : [
     ...(p.limits.pages_month ? [t("Ayda {n} sayfa yapay zekâ destekli akademik metin", { n: num(p.limits.pages_month) })] : p.limits.pages_month === null ? [t("Sınırsız sayfa yazımı (adil kullanım)")] : []),

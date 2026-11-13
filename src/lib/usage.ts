@@ -5,6 +5,7 @@ import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
 import { activeCredits } from "@/lib/growth";
 import { wordsToPages, WORDS_PER_PAGE } from "@/lib/pages";
+import { projectLimitFor } from "@/lib/pricing";
 import { READ_ONLY_ALLOWED_ROUTES, READ_ONLY_MESSAGE, readOnlyReasons, type ReadOnlyReason } from "@/lib/read-only";
 
 export type UsageKind = "ai_request" | "source_search" | "export" | "upload" | "quality_check" | "autocomplete";
@@ -79,8 +80,10 @@ export async function usagePeriod(userId: string): Promise<UsagePeriod> {
 }
 
 /** Yıllık dönemde aylık haklar 12 katı (sayfa, yapay zekâ isteği, token, tarama, maliyet tavanı); proje ve depolama değişmez */
-export function scaleForPeriod(l: PlanLimits, yearly: boolean): PlanLimits {
+export function scaleForPeriod(l: PlanLimits, yearly: boolean, planId?: string): PlanLimits {
   if (!yearly) return l;
+  // D159: Sınırsız Kullanım (single) yıllıkta en fazla 60 proje
+  if (planId) l = { ...l, projects: projectLimitFor(planId, l.projects, true) };
   const x = (v: number | null | undefined) => (v == null ? v : v * 12);
   return { ...l, pages_month: x(l.pages_month), ai_requests_month: x(l.ai_requests_month), tokens_month: x(l.tokens_month), source_searches_month: x(l.source_searches_month), cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : Math.round(l.cost_usd_month * 12 * 100) / 100 };
 }
@@ -88,7 +91,7 @@ export function scaleForPeriod(l: PlanLimits, yearly: boolean): PlanLimits {
 export async function effectiveLimits(userId: string, planId: string): Promise<PlanLimits> {
   if (await isAdminUser(userId).catch(() => false)) return { ...UNLIMITED };
   const [base, m, period] = await Promise.all([planLimits(planId), getSetting("billing.margin"), usagePeriod(userId)]);
-  const l = scaleForPeriod(base, period.yearly);
+  const l = scaleForPeriod(base, period.yearly, planId);
   const c = await activeCredits(userId, { ai: l.ai_requests_month, search: l.source_searches_month, pages: l.pages_month });
   return {
     ...l,
@@ -293,7 +296,9 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
 
 export async function assertProjectQuota(userId: string, planId: string) {
   if (await isAdminUser(userId).catch(() => false)) return;
-  const [limits, usage] = await Promise.all([planLimits(planId), usageSummary(userId)]);
+  const [base, usage, period] = await Promise.all([planLimits(planId), usageSummary(userId), usagePeriod(userId)]);
+  // D159: proje sınırı ödeme dönemine göre (Sınırsız Kullanım yıllıkta 60)
+  const limits = { ...base, projects: projectLimitFor(planId, base.projects, period.yearly) };
   if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");
 }
 

@@ -3827,4 +3827,6 @@ export const EN: Record<string, string> = {
   "Premium paketteki her şey": "Everything in Premium",
   "En fazla 5 proje": "Up to 5 projects",
   "Tüm özellikler sınırsız": "All features unlimited",
+  // D159
+  "En fazla {n} proje": "Up to {n} projects",
 };

@@ -35,3 +35,6 @@ Yukarıdaki 2. maddenin yerine geçer: Paketin adı **Sınırsız Kullanım** ol
 - **Aylık** (₺3.999, 1 ay) veya **yıllık** (%20 indirimli: ₺3.199/ay, toplam ₺38.388, 1 yıl) ödenir. Kendiliğinden yenilenmez.
 - Metinlerdeki “Tek Proje” geçen bütün yerler (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler) bu pakete göre yeniden yazılmalı.
 - Eski süresiz “Tek Proje” satın alımları eski koşullarla devam eder.
+
+## Güncelleme (D159)
+Sınırsız Kullanım’da proje sınırı: **aylık ödemede en fazla 5, yıllık ödemede en fazla 60 aktif proje**. Diğer her şey iki dönemde de sınırsız.

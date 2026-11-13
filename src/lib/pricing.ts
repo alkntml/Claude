@@ -9,8 +9,14 @@ export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, pr
 export const ONE_TIME_PLANS = new Set<string>();
 /** D157/D158: Sınırsız Kullanım (single) aylık dönemi (gün) */
 export const SINGLE_PLAN_DAYS = 30;
-/** D158: Sınırsız Kullanım’da tek sınır: en fazla 5 proje */
+/** D158: Sınırsız Kullanım’da tek sınır: en fazla 5 proje (aylık) */
 export const UNLIMITED_PLAN_PROJECTS = 5;
+/** D159: Sınırsız Kullanım yıllık ödemede en fazla 60 proje */
+export const UNLIMITED_PLAN_PROJECTS_YEARLY = 60;
+/** Dönemine göre proje sınırı: yalnızca Sınırsız Kullanım (single) yıllıkta 60; diğer paketlerde proje sınırı dönemle değişmez */
+export function projectLimitFor(planId: string, projects: number | null | undefined, yearly: boolean): number | null | undefined {
+  return planId === "single" && yearly && projects != null ? UNLIMITED_PLAN_PROJECTS_YEARLY : projects;
+}
 
 /* ---------------------------------------------------------------------
  * D157: Aylık / yıllık ödeme. Yıllık ödeme güncel aylık fiyatın %20 indirimlisidir; kullanım hakları düşmez:
@@ -38,6 +44,8 @@ export function yearlyFeature(f: string): { key: string; vars?: Record<string, s
   if (m) return { key: "Yılda {n} sayfa yapay zekâ destekli akademik metin (12 aylık hak baştan tanımlanır, 1 yıl geçerli)", vars: { n: Number(m[1]) * 12 } };
   m = f.match(/^Aylık (\d+) kaynak taraması$/);
   if (m) return { key: "Yılda {n} kaynak taraması", vars: { n: Number(m[1]) * 12 } };
+  // D159: Sınırsız Kullanım yıllıkta en fazla 60 proje
+  if (f === "En fazla 5 proje") return { key: "En fazla {n} proje", vars: { n: UNLIMITED_PLAN_PROJECTS_YEARLY } };
   return { key: f };
 }
 export const isOneTimePlan = (id: string | null | undefined) => !!id && ONE_TIME_PLANS.has(id);

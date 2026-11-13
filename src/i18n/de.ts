@@ -3819,4 +3819,6 @@ export const DE: Dict = {
   "Premium paketteki her şey": "Alles aus Premium",
   "En fazla 5 proje": "Bis zu 5 Projekte",
   "Tüm özellikler sınırsız": "Alle Funktionen unbegrenzt",
+  // D159
+  "En fazla {n} proje": "Bis zu {n} Projekte",
 };

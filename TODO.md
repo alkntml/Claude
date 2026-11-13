@@ -1,5 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] (D157/D158) Supabase SQL Editor’de migration 40’ı çalıştır (yıllık ödeme + “Sınırsız Kullanım” paketi); kullanıcı “belki değişiklik olur” diye bekletiyor. Çalıştırılana kadar paket kartı eski adı/metni gösterir ve yıllık paket atanamaz
+- [x] (2026-11-13) (D157/D158) Supabase SQL Editor’de migration 40’ı çalıştır (yıllık ödeme + “Sınırsız Kullanım” paketi); kullanıcı “belki değişiklik olur” diye bekletiyor. Çalıştırılana kadar paket kartı eski adı/metni gösterir ve yıllık paket atanamaz
 - [ ] (D157) docs/legal/HUKUKCU_NOTU_D157.md’yi hukukçuya ilet (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler; yıllık ödeme ve yeni Tek Proje)
 - [ ] (D155) docs/legal/HUKUKCU_NOTU_D155.md’yi hukukçuya ilet: Kullanım Koşulları’ndaki “hak dolduğunda … düzenleyebilir” cümlesi yeni salt okunur kuralla çelişiyor; yeni metin gelince sürüm artırılıp yayımlanacak. Hukukçunun yeni metni gelmeden main’e alınmamalı
 - [ ] (D155) Canlıda dene: hakkı dolmuş bir hesapla çalışma salt okunur açılıyor mu, “Dışa aktar” çalışıyor mu, yeni çalışma/bölüm/kaynak eklemede “hakkınız doldu” penceresi çıkıyor mu, ücretsiz araçlar açık mı

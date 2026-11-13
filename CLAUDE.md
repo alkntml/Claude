@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D165)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D166)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -26,7 +26,7 @@ Büyük değişiklik commit’lerinde ve kullanıcı “yedekle” dediğinde bu
 4. **Gizli anahtarlar** koda/commit’e/istemciye girmez. Sohbette paylaşılırsa yazılmaz, yenilenmesi önerilir.
 5. **RLS** ile izolasyon. `adminClient` yalnızca sunucuda ve her zaman açık `user_id`/`project_id` filtresiyle.
 6. Yapılandırılmış veriye sahte puan/yorum eklenmez; görüşler değiştirilmez (D147).
-7. **Hukuki metinler (D154)** `lib/legal/` içindedir; Türkçe metin hukukçunun metnidir, değiştirilmez/kısaltılmaz. Metin değişince `docs.ts`’teki `version` artırılır (Kullanım Koşulları’nda yeniden kabul istenir). Veri işleme, çerez veya satış akışı değişirse ilgili metnin hâlâ doğru olduğu kontrol edilir; yeni çerez/tarayıcı belleği `lib/consent.ts` envanterine eklenir.
+7. **Hukuki metinler (D154)** `lib/legal/` içindedir; Türkçe metin hukukçunun metnidir, değiştirilmez/kısaltılmaz; metinlerde “taslak”, “yayımdan önce eklenmeli” gibi çalışma notu bulunmaz (D166). Metin değişince `docs.ts`’teki `version` artırılır (Kullanım Koşulları’nda yeniden kabul istenir). Veri işleme, çerez veya satış akışı değişirse ilgili metnin hâlâ doğru olduğu kontrol edilir; yeni çerez/tarayıcı belleği `lib/consent.ts` envanterine eklenir.
 
 ## Teknoloji
 Next.js 15.5 (App Router) · React 19 · TypeScript strict · Tailwind 3 · TipTap 3 · Supabase · `@anthropic-ai/sdk` (+ isteğe bağlı OpenAI) · docx/pdfkit/unpdf/mammoth · Vitest + PGlite.

@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Hukuki metinlerden taslak/çalışma notları kaldırıldı (D166, 13 Kasım 2026)**
+- Yedi belge, üç dil; sürüm 2026-11-14 (kullanıcılar Kullanım Koşulları’nı bir kez yeniden onaylar)
+
 **Yeni uygulama simgesi ve favicon (D165, 13 Kasım 2026)**
 
 **Kapsamlı SEO (D164, 13 Kasım 2026)**

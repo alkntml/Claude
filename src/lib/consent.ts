@@ -28,7 +28,7 @@ export const TECHNOLOGIES: Technology[] = [
   { name: "lang", kind: "cookie", category: "functional", party: "first", duration: "1 yıl", purpose: "Arayüz dili" },
   { name: "academiana-theme", kind: "localStorage", category: "functional", party: "first", duration: "Silinene kadar", purpose: "Gece modu tercihi" },
   { name: "akademi:tour:v1", kind: "localStorage", category: "functional", party: "first", duration: "Silinene kadar", purpose: "Rehberli tur durumu" },
-  { name: "taslak yedeği (çalışma kimliğiyle)", kind: "localStorage", category: "functional", party: "first", duration: "Kayıt tamamlanınca silinir", purpose: "Çevrimdışı taslak yedeği" },
+  { name: "yazı yedeği (çalışma kimliğiyle)", kind: "localStorage", category: "functional", party: "first", duration: "Kayıt tamamlanınca silinir", purpose: "Çevrimdışı yazı yedeği" },
   { name: "diğer arayüz tercihleri (acd_autosuggest, academiana-gift-*, akademi:install-dismissed, akademi:*-later:*, academiana:tool-survey, acd_dev_sent)", kind: "localStorage", category: "functional", party: "first", duration: "Silinene kadar", purpose: "Satır içi öneri tercihi, hediye kutusu ve uygulama yükleme bildirimi görüldü bilgisi, “sonra” tercihleri, ücretsiz anket aracı taslağı, cihaz özeti gönderildi bilgisi" },
   { name: "akademi:ref, akademi:kod, warn:*, survey-ai-notes:*", kind: "sessionStorage", category: "functional", party: "first", duration: "Sekme kapanınca silinir", purpose: "Kayıt sırasında davet/indirim kodunun korunması, bir kez gösterilen uyarılar, anket yardımcısı notları" },
   { name: "sw.js", kind: "serviceWorker", category: "functional", party: "first", duration: "—", purpose: "PWA: sitenin çevrimdışı açılması" },

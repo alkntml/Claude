@@ -1,13 +1,13 @@
 import type { LegalContent } from "./types";
 
-/** Hukuki metinler (TR). Türkçe metinler PDF’ten (13 Kasım 2026) olduğu gibi alınmıştır; GDPR metni İngilizce aslından çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). D162: Adil Kullanım Politikası’ndaki “Sınırsız Proje paketi” bölümü ve “İhlal sayılabilecek davranışlar” giriş cümlesi site sahibinin talimatıyla güncellendi (hukukçunun PDF metninden farklıdır). */
+/** Hukuki metinler (TR). Kaynak: hukukçunun metinleri (docs/legal/yasal-metinler-2026-11-13.txt); GDPR metni İngilizce aslından çeviridir. D162: Adil Kullanım’da “Sınırsız Proje paketi” bölümü site sahibinin talimatıyla güncellendi. D166: site sahibinin talimatıyla metinlerdeki çalışma notları (taslak, yayımdan önce eklenmeli, bilgi notuna göre vb.) kaldırıldı; metinler yürürlükteki hâliyle yayımlanır. */
 export const CONTENT: LegalContent = {
  "kvkk": [
   {
    "h": "Giriş ve veri sorumlusu",
    "b": [
     {
-     "p": "Bu aydınlatma metni, www.academiana.com.tr adresinde sunulan Academiana platformunun kullanımı sırasında kişisel verilerin işlenmesine ilişkin bilgi vermek amacıyla hazırlanmıştır. Academiana; akademik araştırma ve yazım süreçlerine yardımcı olan, yapay zekâ destekli çevrim içi bir platformdur. Platformun işletilmesinden sorumlu gerçek veya tüzel kişinin ticaret unvanı ve tebligat/başvuru adresi, bu taslakta doğrulanmış bilgi bulunmadığından belirtilmemiştir. Yayına alınmadan önce veri sorumlusu kimliği ve KVKK başvuru kanalı açıkça eklenmelidir."
+     "p": "Bu aydınlatma metni, www.academiana.com.tr adresinde sunulan Academiana platformunun kullanımı sırasında kişisel verilerin işlenmesine ilişkin bilgi vermek amacıyla hazırlanmıştır. Academiana; akademik araştırma ve yazım süreçlerine yardımcı olan, yapay zekâ destekli çevrim içi bir platformdur."
     }
    ]
   },
@@ -41,7 +41,7 @@ export const CONTENT: LegalContent = {
    "h": "İşleme amaçları",
    "b": [
     {
-     "p": "Kişisel veriler; üyelik oluşturma ve hesabı yönetme, kimlik doğrulama, akademik çalışma alanını ve dosya hizmetlerini sunma, yapay zekâ özelliklerini çalıştırma, kaynak arama ve atıf işlevlerini sağlama, istatistiksel analiz yapma, ortak yazar ve danışman paylaşımını yürütme, paket ve kullanım haklarını yönetme, ödeme sonrasında paketi tanımlama, müşteri desteği sağlama, güvenliği ve kötüye kullanımı önleme, teknik sorunları tespit etme, hizmet performansını ölçme ve hukuki yükümlülükleri yerine getirme amaçlarıyla işlenir. Veriler satılmaz ve reklam hedeflemesi amacıyla kullanılmaz. Platformda analitik veya reklam amaçlı üçüncü taraf çerezleri kullanılmadığı bildirilmiştir."
+     "p": "Kişisel veriler; üyelik oluşturma ve hesabı yönetme, kimlik doğrulama, akademik çalışma alanını ve dosya hizmetlerini sunma, yapay zekâ özelliklerini çalıştırma, kaynak arama ve atıf işlevlerini sağlama, istatistiksel analiz yapma, ortak yazar ve danışman paylaşımını yürütme, paket ve kullanım haklarını yönetme, ödeme sonrasında paketi tanımlama, müşteri desteği sağlama, güvenliği ve kötüye kullanımı önleme, teknik sorunları tespit etme, hizmet performansını ölçme ve hukuki yükümlülükleri yerine getirme amaçlarıyla işlenir. Veriler satılmaz ve reklam hedeflemesi amacıyla kullanılmaz. Platformda analitik veya reklam amaçlı üçüncü taraf çerezleri kullanılmaz."
     }
    ]
   },
@@ -57,7 +57,7 @@ export const CONTENT: LegalContent = {
    "h": "Saklama süreleri",
    "b": [
     {
-     "p": "Hesap, akademik içerik, dosyalar, sohbetler, sayaçlar, cihaz kimliği özeti ve bildirimler kural olarak hesap silinene kadar tutulur. Ortak yazar daveti 14 gün içinde geçersiz olur; davet kaydı çalışma ile birlikte tutulabilir. Danışman paylaşım bağlantısı, kullanıcı bağlantıyı iptal edene kadar erişime açık kalır. Kullanım kanıt kayıtları mevcut sistemde hesap silinene kadar tutulmaktadır; metinlerde geçen 12 aylık süre için otomatik silme uygulanmadığı bildirilmiştir. Geri bildirim ve hata kayıtları süresiz tutulabilmekte; hesap silindiğinde kullanıcıyla bağlantısı koparılmakta, metin içeriği kalabilmektedir. Ziyaret istatistikleri süresiz tutulmaktadır. Ödeme kayıtlarının saklanması, uygulanabilir vergi ve muhasebe yükümlülüklerine tabidir. Bu sürelerin mevzuata uygun nihai takvimi belirlenmeli ve gerekiyorsa otomatik silme mekanizması kurulmalıdır."
+     "p": "Hesap, akademik içerik, dosyalar, sohbetler, sayaçlar, cihaz kimliği özeti ve bildirimler kural olarak hesap silinene kadar tutulur. Ortak yazar daveti 14 gün içinde geçersiz olur; davet kaydı çalışma ile birlikte tutulabilir. Danışman paylaşım bağlantısı, kullanıcı bağlantıyı iptal edene kadar erişime açık kalır. Kullanım kanıt kayıtları hesap silinene kadar tutulur. Geri bildirim ve hata kayıtları süresiz tutulabilmekte; hesap silindiğinde kullanıcıyla bağlantısı koparılmakta, metin içeriği kalabilmektedir. Ziyaret istatistikleri süresiz tutulmaktadır. Ödeme kayıtlarının saklanması, uygulanabilir vergi ve muhasebe yükümlülüklerine tabidir."
     }
    ]
   },
@@ -65,7 +65,7 @@ export const CONTENT: LegalContent = {
    "h": "Verilerin aktarıldığı alıcı grupları ve yurt dışına aktarım",
    "b": [
     {
-     "p": "Hizmetin sunulması kapsamında veriler; veritabanı, kimlik doğrulama ve dosya depolama hizmetleri için Supabase'e; barındırma ve dağıtım hizmetleri için Vercel'e; yapay zekâ özellikleri kullanıldığında Anthropic'e (Claude) aktarılabilir. OpenAI entegrasyonu kodda isteğe bağlı olarak bulunmaktadır; canlı ortamda kullanılıp kullanılmadığı teyit edilmediğinden bu metin, OpenAI'ı aktif alıcı olarak kabul etmez. Google ve Apple, yalnızca ilgili sosyal giriş yöntemi seçildiğinde kimlik doğrulama sürecine dahil olur. Akademik kaynak aramalarında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall gibi kaynak servislerine arama terimleri ve DOI gönderilebilir; kullanıcı kimliğinin bu arama servislerine gönderilmediği bildirilmiştir. Anahtar tanımlıysa Springer Nature, IEEE ve NASA ADS servisleri de kullanılabilir. Kullanıcının talebiyle Overleaf'e LaTeX dosyası aktarılabilir; Zotero entegrasyonunda kullanıcının girdiği anahtarın saklanmadığı bildirilmiştir. Ödeme iletişimi WhatsApp üzerinden yürütülebilir."
+     "p": "Hizmetin sunulması kapsamında veriler; veritabanı, kimlik doğrulama ve dosya depolama hizmetleri için Supabase'e; barındırma ve dağıtım hizmetleri için Vercel'e; yapay zekâ özellikleri kullanıldığında Anthropic'e (Claude) aktarılabilir. Google ve Apple, yalnızca ilgili sosyal giriş yöntemi seçildiğinde kimlik doğrulama sürecine dahil olur. Akademik kaynak aramalarında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall gibi kaynak servislerine arama terimleri ve DOI gönderilebilir; kullanıcı kimliği bu arama servislerine gönderilmez. Anahtar tanımlıysa Springer Nature, IEEE ve NASA ADS servisleri de kullanılabilir. Kullanıcının talebiyle Overleaf'e LaTeX dosyası aktarılabilir; Zotero entegrasyonunda kullanıcının girdiği anahtar saklanmaz. Ödeme iletişimi WhatsApp üzerinden yürütülebilir."
     }
    ]
   },
@@ -73,7 +73,7 @@ export const CONTENT: LegalContent = {
    "h": "Yurt dışı veri konumları",
    "b": [
     {
-     "p": "Bilgi notuna göre Supabase verileri Frankfurt/Avrupa Birliği bölgesinde, Vercel barındırma sunucuları Frankfurt'ta tutulmakta; Vercel'in küresel CDN ağı da kullanılmaktadır. Supabase ve Vercel ABD merkezli şirketlerdir. Yapay zekâ özelliği kullanıldığında kullanıcının metni, çalışma bağlamı ve seçilen kaynak/dosya parçaları ABD'deki Anthropic'e aktarılır. Akademik veri tabanlarının bir kısmı yurt dışındadır. Bu aktarımların her biri için KVKK'nın yurt dışına aktarım hükümlerine uygun hukuki mekanizma kurulmalıdır."
+     "p": "Supabase verileri Frankfurt/Avrupa Birliği bölgesinde, Vercel barındırma sunucuları Frankfurt'ta tutulmakta; Vercel'in küresel CDN ağı da kullanılmaktadır. Supabase ve Vercel ABD merkezli şirketlerdir. Yapay zekâ özelliği kullanıldığında kullanıcının metni, çalışma bağlamı ve seçilen kaynak/dosya parçaları ABD'deki Anthropic'e aktarılır. Akademik veri tabanlarının bir kısmı yurt dışındadır."
     }
    ]
   },
@@ -81,7 +81,7 @@ export const CONTENT: LegalContent = {
    "h": "Üçüncü kişilere ve özel nitelikli verilere ilişkin uyarı",
    "b": [
     {
-     "p": "Kullanıcıların yüklediği tez, görüşme dökümü, anket veya diğer belgelerde üçüncü kişilere ait kişisel veriler ya da özel nitelikli kişisel veriler bulunabilir. Kullanıcı, bu verileri platforma yüklemek ve işlemek için gerekli hukuki yetkiye sahip olduğunu; ilgili kişileri bilgilendirdiğini ve gerekli hukuki şartları sağladığını değerlendirmelidir. Araştırma anketlerinde katılımcılara karşı veri sorumlusu, araştırmayı yürüten araştırmacı olabilir; Academiana ilgili hizmet bakımından veri işleyen konumunda bulunabilir. Tarafların rolleri somut kullanım ve sözleşmeye göre belirlenmelidir. Gereksiz kimlik bilgileri, sağlık verileri ve diğer hassas bilgiler platforma yüklenmemelidir."
+     "p": "Kullanıcıların yüklediği tez, görüşme dökümü, anket veya diğer belgelerde üçüncü kişilere ait kişisel veriler ya da özel nitelikli kişisel veriler bulunabilir. Kullanıcı, bu verileri platforma yüklemek ve işlemek için gerekli hukuki yetkiye sahip olduğunu; ilgili kişileri bilgilendirdiğini ve gerekli hukuki şartları sağladığını değerlendirmelidir. Araştırma anketlerinde katılımcılara karşı veri sorumlusu, araştırmayı yürüten araştırmacı olabilir; Academiana ilgili hizmet bakımından veri işleyen konumunda bulunabilir. Gereksiz kimlik bilgileri, sağlık verileri ve diğer hassas bilgiler platforma yüklenmemelidir."
     }
    ]
   },
@@ -97,7 +97,7 @@ export const CONTENT: LegalContent = {
    "h": "İlgili kişinin hakları ve başvuru",
    "b": [
     {
-     "p": "İlgili kişiler, KVKK'nın 11. maddesi kapsamındaki haklarını kullanabilir. Platformda kullanıcılar hesap sayfasından verilerini JSON formatında indirebilir, hesaplarını ve hesapla ilişkili verilerini silebilir ve veri talebi oluşturabilir. Veri talebine 30 gün içinde ücretsiz yanıt verildiği bildirilmiştir. Başvurunun iletileceği e-posta/KEP/posta adresi bilgi notunda bulunmadığından bu taslakta belirtilmemiştir; yayımdan önce başvuru kanalı eklenmelidir."
+     "p": "İlgili kişiler, KVKK'nın 11. maddesi kapsamındaki haklarını kullanabilir. Platformda kullanıcılar hesap sayfasından verilerini JSON formatında indirebilir, hesaplarını ve hesapla ilişkili verilerini silebilir ve veri talebi oluşturabilir. Veri talebine 30 gün içinde ücretsiz yanıt verilir."
     }
    ]
   },
@@ -171,7 +171,7 @@ export const CONTENT: LegalContent = {
    "h": "Yönetim, denetim ve askıya alma",
    "b": [
     {
-     "p": "Hizmet yöneticileri hesapları askıya alabilir, paket tanımlayabilir, site içi bildirim gönderebilir, kullanım kayıtlarını ve yapay zekâ çıktı metinlerini inceleyebilir ve kullanıcının talep ettiği veri dışa aktarım işlemlerini yürütebilir. Güvenlik ve kötüye kullanım kontrolleri kapsamında otomatik uyarılar üretilebilir; hesap otomatik olarak askıya alınmaz. Uyarı insan tarafından incelenir. İnceleme sonucunda sorun olmadığına karar verilebilir, kullanıcı uyarılabilir veya hesap askıya alınabilir. Kullanıcı, kararın gerekçesini talep edebilir ve itirazını destek kanalına iletebilir. Başvuru kanalı yayımdan önce açıkça belirtilmelidir."
+     "p": "Hizmet yöneticileri hesapları askıya alabilir, paket tanımlayabilir, site içi bildirim gönderebilir, kullanım kayıtlarını ve yapay zekâ çıktı metinlerini inceleyebilir ve kullanıcının talep ettiği veri dışa aktarım işlemlerini yürütebilir. Güvenlik ve kötüye kullanım kontrolleri kapsamında otomatik uyarılar üretilebilir; hesap otomatik olarak askıya alınmaz. Uyarı insan tarafından incelenir. İnceleme sonucunda sorun olmadığına karar verilebilir, kullanıcı uyarılabilir veya hesap askıya alınabilir. Kullanıcı, kararın gerekçesini talep edebilir ve itirazını destek kanalına iletebilir."
     }
    ]
   },
@@ -203,7 +203,7 @@ export const CONTENT: LegalContent = {
    "h": "Uygulanacak hukuk ve dil",
    "b": [
     {
-     "p": "Kullanım koşullarına Türk hukuku uygulanır. Tüketicinin yerleşim yerindeki emredici yetki ve görev kuralları saklıdır. Uyuşmazlıklarda, kanunen görevli tüketici hakem heyetleri ve mahkemeler ile genel görevli/yetkili mahkemeler bakımından ilgili mevzuat uygulanır. Platformun Türkçe, İngilizce ve Almanca arayüzleri bulunabilir. Bu taslakta bağlayıcı dil tercihi kesinleştirilmediğinden herhangi bir dilin diğerlerine üstün olduğu iddia edilmemektedir; yayına alınmadan önce dil hükmü belirlenmelidir."
+     "p": "Kullanım koşullarına Türk hukuku uygulanır. Tüketicinin yerleşim yerindeki emredici yetki ve görev kuralları saklıdır. Uyuşmazlıklarda, kanunen görevli tüketici hakem heyetleri ve mahkemeler ile genel görevli/yetkili mahkemeler bakımından ilgili mevzuat uygulanır. Platformun Türkçe, İngilizce ve Almanca arayüzleri bulunabilir."
     }
    ]
   },
@@ -211,7 +211,7 @@ export const CONTENT: LegalContent = {
    "h": "Yaş ve kabul",
    "b": [
     {
-     "p": "Platform için mevcut durumda yaş sınırı ve yaş doğrulama mekanizması bulunmadığı bildirilmiştir. Bu nedenle reşit olmayan kullanıcılar bakımından veli/vasinin izni ve özel veri koruma gereklilikleri ayrıca değerlendirilmelidir. Kullanıcı, kayıt veya kullanım sırasında kendisine sunulan güncel koşulları incelemekle yükümlüdür."
+     "p": "Platformda yaş sınırı ve yaş doğrulama mekanizması bulunmamaktadır. Kullanıcı, kayıt veya kullanım sırasında kendisine sunulan güncel koşulları incelemekle yükümlüdür."
     }
    ]
   }
@@ -253,7 +253,7 @@ export const CONTENT: LegalContent = {
    "h": "İnsan incelemesi ve karar",
    "b": [
     {
-     "p": "Uyarı oluşması hesabın otomatik askıya alınacağı anlamına gelmez. Her uyarı yönetici tarafından incelenir. İnceleme sonucunda ihlal olmadığına karar verilebilir, kullanıcıdan açıklama istenebilir veya kullanıcı uyarılabilir. İhlalin niteliğine ve ağırlığına göre hesap askıya alınabilir. Kullanıcı, kararın gerekçesini öğrenmek ve karara itiraz etmek için platformun destek kanalını kullanabilir. Destek/başvuru iletişim bilgisi yayımdan önce açıkça gösterilmelidir."
+     "p": "Uyarı oluşması hesabın otomatik askıya alınacağı anlamına gelmez. Her uyarı yönetici tarafından incelenir. İnceleme sonucunda ihlal olmadığına karar verilebilir, kullanıcıdan açıklama istenebilir veya kullanıcı uyarılabilir. İhlalin niteliğine ve ağırlığına göre hesap askıya alınabilir. Kullanıcı, kararın gerekçesini öğrenmek ve karara itiraz etmek için platformun destek kanalını kullanabilir."
     }
    ]
   },
@@ -299,7 +299,7 @@ export const CONTENT: LegalContent = {
       "Supabase oturum çerezleri: Kullanıcının oturumunu açık tutmak ve kimlik doğrulamayı sürdürmek için kullanılır. Birinci taraf ve hizmetin çalışması için zorunludur; süresi oturum ve yenileme mekanizmasına bağlıdır.",
       "acd_did çerezi ve tarayıcı belleği: Kötüye kullanımı önlemek (davet ödülü suistimali ve hesap paylaşımını tespit etmek) amacıyla rastgele cihaz kimliği tutar. Sunucuda bu kimliğin geri çözülemeyen özeti ve ilk/son görülme tarihleri saklanır. Süresi 400 gündür. Reklam amacıyla kullanılmaz.",
       "lang çerezi: Arayüz dilini hatırlamak için kullanılır; birinci taraf işlevsel çerezdir ve 1 yıl saklanır.",
-      "localStorage: Gece modu, rehberli tur durumu ve çevrimdışı taslak yedeği gibi tercihleri kullanıcının cihazında tutabilir. Bu veriler yalnızca kullanıcının cihazındaki tarayıcı belleğinde saklanır.",
+      "localStorage: Gece modu, rehberli tur durumu ve çevrimdışı yazı yedeği gibi tercihleri kullanıcının cihazında tutabilir. Bu veriler yalnızca kullanıcının cihazındaki tarayıcı belleğinde saklanır.",
       "PWA servis çalışanı: Sitenin çevrimdışı açılabilmesine yardımcı olur."
      ]
     }
@@ -309,7 +309,7 @@ export const CONTENT: LegalContent = {
    "h": "Analitik ve reklam teknolojileri",
    "b": [
     {
-     "p": "Bilgi notuna göre platformda analitik, reklam ve üçüncü taraf reklam çerezi bulunmamaktadır. Ziyaret sayımı çerezsiz yürütülür. IP adresi ve tarayıcı bilgisi yalnızca günlük değişen geri çözülemeyen kodu üretmek için anlık kullanılır; saklanmaz ve günler arasında aynı kişinin izlenmesine imkân verecek biçimde tutulmaz. Tarayıcı Do Not Track (DNT) veya Global Privacy Control (GPC) sinyali gönderiyorsa ziyaret sayımı yapılmaz."
+     "p": "Platformda analitik, reklam ve üçüncü taraf reklam çerezi bulunmamaktadır. Ziyaret sayımı çerezsiz yürütülür. IP adresi ve tarayıcı bilgisi yalnızca günlük değişen geri çözülemeyen kodu üretmek için anlık kullanılır; saklanmaz ve günler arasında aynı kişinin izlenmesine imkân verecek biçimde tutulmaz. Tarayıcı Do Not Track (DNT) veya Global Privacy Control (GPC) sinyali gönderiyorsa ziyaret sayımı yapılmaz."
     }
    ]
   },
@@ -317,7 +317,7 @@ export const CONTENT: LegalContent = {
    "h": "Cihaz tanımlayıcısı ve tercih yönetimi",
    "b": [
     {
-     "p": "Cihaz tanımlayıcısı reklam veya kullanıcı profili oluşturmak için değil, güvenlik ve kötüye kullanımı önlemek amacıyla kullanılmaktadır. Bununla birlikte cihaz tanımlayıcısının hukuken zorunlu teknoloji sayılıp sayılmadığı ve önceden izin gerektirip gerektirmediği somut teknik yapı ve mevzuat bakımından ayrıca değerlendirilmelidir. Kullanıcı tarayıcı ayarlarından çerezleri silebilir veya engelleyebilir; ancak zorunlu oturum çerezlerinin engellenmesi giriş ve bazı platform özelliklerinin çalışmasını etkileyebilir."
+     "p": "Cihaz tanımlayıcısı reklam veya kullanıcı profili oluşturmak için değil, güvenlik ve kötüye kullanımı önlemek amacıyla kullanılmaktadır. Kullanıcı tarayıcı ayarlarından çerezleri silebilir veya engelleyebilir; ancak zorunlu oturum çerezlerinin engellenmesi giriş ve bazı platform özelliklerinin çalışmasını etkileyebilir."
     }
    ]
   },
@@ -407,7 +407,7 @@ export const CONTENT: LegalContent = {
    "h": "Kalite puanı",
    "b": [
     {
-     "p": "Platformun kalite puanı yönteminin /yontem sayfasında açıklandığı bildirilmiştir. Yapay zekâ bulguları kalite puanını etkilemez. Kalite puanı, akademik kabul veya bilimsel geçerlilik garantisi olarak yorumlanmamalıdır."
+     "p": "Platformun kalite puanı yöntemi /yontem sayfasında açıklanmıştır. Yapay zekâ bulguları kalite puanını etkilemez. Kalite puanı, akademik kabul veya bilimsel geçerlilik garantisi olarak yorumlanmamalıdır."
     }
    ]
   },
@@ -425,7 +425,7 @@ export const CONTENT: LegalContent = {
    "h": "Önemli kapsam notu",
    "b": [
     {
-     "p": "Academiana'da mevcut satış akışı, fiyat veya uygulama içindeki “Yükselt” düğmesinden WhatsApp'ta paket adı ve varsa indirim kodu bulunan hazır mesaj açılması; ödemenin platform dışında alınması ve paketin yönetici tarafından manuel tanımlanması şeklindedir. Platformda çevrim içi ödeme sayfası bulunmadığı, kart bilgilerinin sisteme alınmadığı bildirilmiştir. Bu belge, mevcut akışa göre genel ön bilgilendirme ve sözleşme esaslarını düzenleyen taslaktır. Satıcı kimliği, iletişim/başvuru bilgileri, somut fiyat, ödeme yöntemi, KDV, fatura ve iade şartları doğrulanmadığı için bu bilgiler uydurulmamıştır."
+     "p": "Academiana'da mevcut satış akışı, fiyat veya uygulama içindeki “Yükselt” düğmesinden WhatsApp'ta paket adı ve varsa indirim kodu bulunan hazır mesaj açılması; ödemenin platform dışında alınması ve paketin yönetici tarafından manuel tanımlanması şeklindedir. Platformda çevrim içi ödeme sayfası bulunmamakta, kart bilgileri sisteme alınmamaktadır. Bu belge, mevcut akışa göre genel ön bilgilendirme ve sözleşme esaslarını düzenler."
     }
    ]
   },
@@ -441,7 +441,7 @@ export const CONTENT: LegalContent = {
    "h": "Satış ve sözleşmenin kurulması",
    "b": [
     {
-     "p": "Kullanıcı paket seçimini fiyatlar sayfasında veya uygulama içinde yapar ve WhatsApp üzerinden iletişim başlatır. Paket, ödeme ve tanımlama ayrıntıları kullanıcıyla ayrıca teyit edilir. Ödeme sonrasında yönetici paketi sistemde tanımlar ve hizmet başlar. Sözleşmenin kurulduğu an, satıcı kimliği, paket, fiyat, ödeme ve tanımlama bilgileri kullanıcıya kalıcı veri saklayıcısıyla teyit edilerek kayıt altına alınmalıdır. Bu teyit adımı mevcut akışta bulunmuyorsa devreye alınmalıdır."
+     "p": "Kullanıcı paket seçimini fiyatlar sayfasında veya uygulama içinde yapar ve WhatsApp üzerinden iletişim başlatır. Paket, ödeme ve tanımlama ayrıntıları kullanıcıyla ayrıca teyit edilir. Ödeme sonrasında yönetici paketi sistemde tanımlar ve hizmet başlar."
     }
    ]
   },
@@ -449,7 +449,7 @@ export const CONTENT: LegalContent = {
    "h": "Paket türleri",
    "b": [
     {
-     "p": "Platformda Ücretsiz paket, aylık ücretli paketler, tek seferlik ve tek bir çalışma için süresiz Tek Proje paketi ve kurum lisansı bulunabilir. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim kodları, davet programı ödülleri ve en az üç kişilik Akademik Ekip İndirimi (%30) uygulanabilir. İndirimin kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilmelidir."
+     "p": "Platformda Ücretsiz paket, aylık ücretli paketler, tek seferlik ve tek bir çalışma için süresiz Tek Proje paketi ve kurum lisansı bulunabilir. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim kodları, davet programı ödülleri ve en az üç kişilik Akademik Ekip İndirimi (%30) uygulanabilir. İndirimin kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilir."
     }
    ]
   },
@@ -457,7 +457,7 @@ export const CONTENT: LegalContent = {
    "h": "Fiyat, vergi ve ödeme",
    "b": [
     {
-     "p": "Ödenecek toplam bedel, varsa vergiler ve indirimler, ödeme yöntemi ve ödeme zamanı işlem öncesinde kullanıcıya açıkça bildirilmelidir. Mevcut bilgi notunda güncel paket fiyatları, KDV'nin fiyata dahil olup olmadığı, ödeme yöntemi (havale/EFT veya ödeme bağlantısı), fatura/e-arşiv düzeni ve satıcı bilgileri bulunmamaktadır. Bu nedenle bu taslakta tutar veya ödeme yöntemi belirtilmemiştir. Her satışta bu bilgiler yazılı olarak teyit edilmeden sözleşme tamamlanmış sayılmamalıdır."
+     "p": "Ödenecek toplam bedel, varsa vergiler ve indirimler, ödeme yöntemi ve ödeme zamanı işlem öncesinde kullanıcıya açıkça bildirilir. Her satışta bu bilgiler yazılı olarak teyit edilmeden sözleşme tamamlanmış sayılmaz."
     }
    ]
   },
@@ -473,7 +473,7 @@ export const CONTENT: LegalContent = {
    "h": "Hizmetin başlama zamanı ve dijital hizmet",
    "b": [
     {
-     "p": "Ödeme sonrasında paket yönetici tarafından tanımlandığında hizmetin başladığı bildirilmiştir. Dijital hizmetin hemen başlatılması, cayma hakkının kapsamı ve olası istisnalar bakımından tüketici mevzuatındaki koşullar somut sözleşme türüne göre değerlendirilmelidir. Kullanıcıdan, gerekiyorsa hizmetin cayma süresi dolmadan başlatılmasına ilişkin ayrı ve açık talep/onay alınmalı; bunun hukuki sonuçları ayrıca açıklanmalıdır. Sadece genel kullanım koşullarının kabulü, tek başına geçerli bir feragat veya istisna oluşturduğu varsayımıyla kullanılmamalıdır."
+     "p": "Hizmet, ödeme sonrasında paket yönetici tarafından tanımlandığında başlar. Gerekli hâllerde kullanıcıdan, hizmetin cayma süresi dolmadan başlatılmasına ilişkin ayrı ve açık talep/onay alınır ve bunun hukuki sonuçları açıklanır. Genel kullanım koşullarının kabulü, tek başına cayma hakkından feragat veya istisna oluşturmaz."
     }
    ]
   },
@@ -481,7 +481,7 @@ export const CONTENT: LegalContent = {
    "h": "Cayma hakkı ve iade",
    "b": [
     {
-     "p": "Tüketicinin cayma hakkı ve dijital hizmetlerde uygulanabilecek istisnalar, hizmetin niteliğine, ifanın başlayıp başlamadığına, kullanıcının önceden verdiği açık talep/onaya ve yürürlükteki mevzuata göre belirlenir. Bu bilgi notunda mevcut bir cayma hakkı bilgilendirmesi, iade politikası veya hizmetin hemen başlatılmasına ilişkin ayrı onay bulunmadığı belirtilmiştir. Bu nedenle burada kesin bir cayma süresi veya “hiçbir koşulda iade yapılmaz” hükmü kurulmamaktadır. Satıcı, işlem öncesinde tüketiciye uygulanacak cayma/iade koşullarını açıkça bildirmeli ve zorunlu tüketici haklarını saklı tutmalıdır."
+     "p": "Tüketicinin cayma hakkı ve dijital hizmetlerde uygulanabilecek istisnalar, hizmetin niteliğine, ifanın başlayıp başlamadığına, kullanıcının önceden verdiği açık talep/onaya ve yürürlükteki mevzuata göre belirlenir. Satıcı, işlem öncesinde tüketiciye uygulanacak cayma/iade koşullarını açıkça bildirir; zorunlu tüketici hakları saklıdır."
     }
    ]
   },
@@ -497,7 +497,7 @@ export const CONTENT: LegalContent = {
    "h": "Kurum lisansı",
    "b": [
     {
-     "p": "Kurum lisansı, kurumla yapılacak ayrı anlaşmanın şartlarına göre sunulabilir. Kurum yöneticisinin üye listesi ve kullanım istatistiklerini görebildiği; kullanıcıların akademik çalışma içeriğini göremediği bildirilmiştir. Kurum lisansına özgü fiyat, süre, kullanıcı sayısı, destek seviyesi ve veri işleme hükümleri ayrıca yazılı olarak belirlenmelidir."
+     "p": "Kurum lisansı, kurumla yapılacak ayrı anlaşmanın şartlarına göre sunulabilir. Kurum yöneticisi üye listesini ve kullanım istatistiklerini görebilir; kullanıcıların akademik çalışma içeriğini göremez. Kurum lisansına özgü fiyat, süre, kullanıcı sayısı, destek seviyesi ve veri işleme hükümleri ayrıca yazılı olarak belirlenir."
     }
    ]
   },
@@ -505,7 +505,7 @@ export const CONTENT: LegalContent = {
    "h": "Şikâyet ve başvuru",
    "b": [
     {
-     "p": "Kullanıcı, satın alma veya hizmetle ilgili sorunlarını platformun destek kanalı üzerinden bildirebilir. Resmî satıcı iletişim bilgileri ve başvuru adresi bilgi notunda bulunmadığından bu taslakta yer almamaktadır. Yayımdan önce satıcının unvanı, adresi, e-posta/telefon bilgileri ve uygulanabilir tüketici başvuru yolları eklenmelidir."
+     "p": "Kullanıcı, satın alma veya hizmetle ilgili sorunlarını platformun destek kanalı üzerinden bildirebilir."
     }
    ]
   },
@@ -513,7 +513,7 @@ export const CONTENT: LegalContent = {
    "h": "Siparişe özel teyit",
    "b": [
     {
-     "p": "Her satın alma işleminde en azından satıcı bilgisi, kullanıcı bilgisi, paket adı, hizmet kapsamı, süre, limitler, toplam bedel, vergiler, ödeme yöntemi, hizmetin başlama zamanı, otomatik yenileme olup olmadığı ve uygulanacak cayma/iade şartları kullanıcıya işlemden önce sunulmalı; sipariş özeti ve sözleşme kalıcı veri saklayıcısıyla kullanıcıya iletilmelidir."
+     "p": "Her satın alma işleminde en azından satıcı bilgisi, kullanıcı bilgisi, paket adı, hizmet kapsamı, süre, limitler, toplam bedel, vergiler, ödeme yöntemi, hizmetin başlama zamanı, otomatik yenileme olup olmadığı ve uygulanacak cayma/iade şartları kullanıcıya işlemden önce sunulur; sipariş özeti ve sözleşme kalıcı veri saklayıcısıyla kullanıcıya iletilir."
     }
    ]
   }
@@ -523,7 +523,7 @@ export const CONTENT: LegalContent = {
    "h": "Kapsam ve veri sorumlusu",
    "b": [
     {
-     "p": "Bu bildirim, www.academiana.com.tr adresinde sunulan, yapay zekâ destekli bir akademik araştırma ve yazım platformu olan Academiana ile ilişkili kişisel veri işleme faaliyetlerini açıklar. Platform Türkiye’deki kullanıcıların erişimine açıktır ve başka ülkelerden de erişilebilir. Academiana’yı işleten gerçek veya tüzel kişinin kimliği ve posta/iletişim bilgileri kaynak bilgilerde sağlanmamıştır; bu nedenle bu taslakta bilerek belirtilmemiştir. Yayımdan önce eklenmeleri gerekir. GDPR’ın 3(2). maddesinin platformun faaliyetlerine uygulanıp uygulanmadığı ve 27. madde uyarınca bir AB temsilcisi gerekip gerekmediği, AB’deki kişilere yönelik fiilî hedefleme ve izleme esas alınarak değerlendirilmelidir."
+     "p": "Bu bildirim, www.academiana.com.tr adresinde sunulan, yapay zekâ destekli bir akademik araştırma ve yazım platformu olan Academiana ile ilişkili kişisel veri işleme faaliyetlerini açıklar. Platform Türkiye’deki kullanıcıların erişimine açıktır ve başka ülkelerden de erişilebilir."
     }
    ]
   },
@@ -547,7 +547,7 @@ export const CONTENT: LegalContent = {
    "h": "Saklama",
    "b": [
     {
-     "p": "Hesap verileri, akademik içerik, dosyalar, yapay zekâ sohbetleri, kullanım sayaçları, cihaz tanımlayıcısı özetleri ve uygulama içi bildirimler kural olarak hesap silinene kadar saklanır. Ortak yazar davetleri 14 gün sonra geçersiz olur; ancak davet kaydı projeyle birlikte kalabilir. Danışmanla paylaşım, kullanıcı bağlantıyı iptal edene kadar erişilebilir kalır. Tam metinli yapay zekâ kullanım kanıtları şu anda hesap silinene kadar saklanmaktadır; mevcut ifadelerde 12 aylık bir süreden söz edilse de otomatik silme şu anda uygulanmamaktadır. Geri bildirim ve hata kayıtları süresiz saklanabilir; hesap silindikten sonra kullanıcıyla bağlantısı kaldırılır, ancak metin kalabilir. Ziyaret istatistikleri süresiz saklanır. Ödeme kayıtları kanuni muhasebe ve vergi saklama gerekliliklerine tabi olabilir. Mevzuata uygun bir saklama takvimi ve otomatik silme kuralları belirlenmeli ve belgelenmelidir."
+     "p": "Hesap verileri, akademik içerik, dosyalar, yapay zekâ sohbetleri, kullanım sayaçları, cihaz tanımlayıcısı özetleri ve uygulama içi bildirimler kural olarak hesap silinene kadar saklanır. Ortak yazar davetleri 14 gün sonra geçersiz olur; ancak davet kaydı projeyle birlikte kalabilir. Danışmanla paylaşım, kullanıcı bağlantıyı iptal edene kadar erişilebilir kalır. Tam metinli yapay zekâ kullanım kanıtları hesap silinene kadar saklanır. Geri bildirim ve hata kayıtları süresiz saklanabilir; hesap silindikten sonra kullanıcıyla bağlantısı kaldırılır, ancak metin kalabilir. Ziyaret istatistikleri süresiz saklanır. Ödeme kayıtları kanuni muhasebe ve vergi saklama gerekliliklerine tabi olabilir."
     }
    ]
   },
@@ -555,7 +555,7 @@ export const CONTENT: LegalContent = {
    "h": "Alıcılar ve uluslararası aktarımlar",
    "b": [
     {
-     "p": "Hizmet sağlayıcılar ve alıcılar şunları içerebilir: veritabanı, kimlik doğrulama ve dosya depolama için Supabase; barındırma ve içerik dağıtımı için Vercel; bir yapay zekâ özelliği kullanıldığında yapay zekâ işlemesi için Anthropic; kullanıcı ilgili giriş yöntemini seçtiğinde Google veya Apple. OpenAI kodda isteğe bağlı bir entegrasyon olarak bulunmaktadır; ancak canlı kullanımı teyit edilmemiştir ve bu taslakta aktif alıcı olarak değerlendirilmemektedir. Akademik arama servisleri, kullanıcının hesap kimliği olmadan arama terimlerini ve DOI tanımlayıcılarını alabilir; bunlar arasında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall bulunur; API erişim bilgileri tanımlandığında Springer Nature, IEEE ve NASA ADS de kullanılabilir. Kullanıcının talebi üzerine LaTeX dosyaları Overleaf’e gönderilebilir ve kullanıcının başlattığı ödeme iletişimi WhatsApp üzerinden yürütülebilir."
+     "p": "Hizmet sağlayıcılar ve alıcılar şunları içerebilir: veritabanı, kimlik doğrulama ve dosya depolama için Supabase; barındırma ve içerik dağıtımı için Vercel; bir yapay zekâ özelliği kullanıldığında yapay zekâ işlemesi için Anthropic; kullanıcı ilgili giriş yöntemini seçtiğinde Google veya Apple. Akademik arama servisleri, kullanıcının hesap kimliği olmadan arama terimlerini ve DOI tanımlayıcılarını alabilir; bunlar arasında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall bulunur; API erişim bilgileri tanımlandığında Springer Nature, IEEE ve NASA ADS de kullanılabilir. Kullanıcının talebi üzerine LaTeX dosyaları Overleaf’e gönderilebilir ve kullanıcının başlattığı ödeme iletişimi WhatsApp üzerinden yürütülebilir."
     }
    ]
   },
@@ -563,7 +563,7 @@ export const CONTENT: LegalContent = {
    "h": "Veri konumları ve aktarım güvenceleri",
    "b": [
     {
-     "p": "Sağlanan teknik bilgilere göre Supabase verileri AB sınırları içinde Frankfurt’ta barındırılmaktadır; Vercel barındırması da Frankfurt’tadır, Vercel ayrıca küresel bir CDN kullanır. Supabase ve Vercel ABD merkezli şirketlerdir. Bir yapay zekâ özelliği kullanıldığında kullanıcının istemi, ilgili çalışma alanı bağlamı ve seçilen kaynak/dosya parçaları Amerika Birleşik Devletleri’ndeki Anthropic’e aktarılır. Bazı akademik arama servisleri de kullanıcının ülkesi dışında bulunmaktadır. Veri sorumlusu, kısıtlamaya tabi her aktarım için uygun bir aktarım mekanizması belirlemeli ve belgelemelidir; örneğin uygulanabilir yeterlilik düzenlemeleri veya gerektiğinde ek önlemlerle birlikte Standart Sözleşme Maddeleri. Sağlayıcıların Veri İşleme Sözleşmeleri, alt işleyenler, aktarım etki değerlendirmeleri ve fiilî hizmet yapılandırmaları yayımdan önce doğrulanmalıdır."
+     "p": "Supabase verileri AB sınırları içinde Frankfurt’ta barındırılmaktadır; Vercel barındırması da Frankfurt’tadır, Vercel ayrıca küresel bir CDN kullanır. Supabase ve Vercel ABD merkezli şirketlerdir. Bir yapay zekâ özelliği kullanıldığında kullanıcının istemi, ilgili çalışma alanı bağlamı ve seçilen kaynak/dosya parçaları Amerika Birleşik Devletleri’ndeki Anthropic’e aktarılır. Bazı akademik arama servisleri de kullanıcının ülkesi dışında bulunmaktadır. Kısıtlamaya tabi her aktarım için uygun bir aktarım mekanizması kullanılır; örneğin uygulanabilir yeterlilik düzenlemeleri veya gerektiğinde ek önlemlerle birlikte Standart Sözleşme Maddeleri."
     }
    ]
   },
@@ -587,7 +587,7 @@ export const CONTENT: LegalContent = {
    "h": "Güvenlik",
    "b": [
     {
-     "p": "Sağlanan teknik bilgiler; HTTPS, HSTS, İçerik Güvenlik Politikası, otomatik testlerle kullanıcı verisi izolasyonu, CSRF ve SSRF korumaları, sunucu tarafında gizli anahtar yönetimi, süreli dosya bağlantıları, bağımlılık güvenlik taraması ve 500’den fazla otomatik testi açıklamaktadır. Bu bilgiler ayrıca iki aşamalı kimlik doğrulamanın, yazılı bir kişisel veri ihlali prosedürünün ve bağımsız bir güvenlik testinin bulunmadığını belirtmektedir. Güvenlik önlemleri düzenli olarak gözden geçirilmeli ve GDPR’ın 32. maddesiyle uyumlu hâle getirilmelidir. Bir kişisel veri ihlali müdahale süreci; değerlendirmeyi ve gerektiğinde ihlalin öğrenilmesinden itibaren 72 saat içinde denetim makamına bildirimi, yasal eşik karşılandığında ise etkilenen kişilere bildirimi mümkün kılmalıdır."
+     "p": "Platformda HTTPS, HSTS, İçerik Güvenlik Politikası, otomatik testlerle kullanıcı verisi izolasyonu, CSRF ve SSRF korumaları, sunucu tarafında gizli anahtar yönetimi, süreli dosya bağlantıları, bağımlılık güvenlik taraması ve 500’den fazla otomatik test gibi güvenlik önlemleri uygulanır. Güvenlik önlemleri düzenli olarak gözden geçirilir. Kişisel veri ihlali durumunda ihlal değerlendirilir; gerektiğinde ihlalin öğrenilmesinden itibaren 72 saat içinde denetim makamına, yasal eşik karşılandığında ise etkilenen kişilere bildirim yapılır."
     }
    ]
   },
@@ -595,7 +595,7 @@ export const CONTENT: LegalContent = {
    "h": "İlgili kişi hakları",
    "b": [
     {
-     "p": "GDPR’daki koşul ve sınırlamalara tabi olarak kişiler erişim, düzeltme, silme, kısıtlama ve veri taşınabilirliği talep edebilir ve meşru menfaatlere dayalı işlemeye itiraz edebilir. Kullanıcılar şu anda verilerini JSON biçiminde indirebilir, hesaplarını ve ilişkili hesap verilerini silebilir ve platform üzerinden veri talebi oluşturabilir. Sağlanan bilgilere göre veri taleplerine 30 gün içinde ücretsiz yanıt verilmektedir. Veri sorumlusunun iletişim bilgileri ve hakların kullanılacağı kanal sağlanmamıştır; yayımdan önce eklenmelidir. Kişiler ayrıca yetkili bir veri koruma denetim makamına, özellikle mutat meskenlerinin, işyerlerinin veya iddia edilen ihlalin gerçekleştiği AB üye devletinde şikâyette bulunabilir."
+     "p": "GDPR’daki koşul ve sınırlamalara tabi olarak kişiler erişim, düzeltme, silme, kısıtlama ve veri taşınabilirliği talep edebilir ve meşru menfaatlere dayalı işlemeye itiraz edebilir. Kullanıcılar şu anda verilerini JSON biçiminde indirebilir, hesaplarını ve ilişkili hesap verilerini silebilir ve platform üzerinden veri talebi oluşturabilir. Veri taleplerine 30 gün içinde ücretsiz yanıt verilir. Kişiler ayrıca yetkili bir veri koruma denetim makamına, özellikle mutat meskenlerinin, işyerlerinin veya iddia edilen ihlalin gerçekleştiği AB üye devletinde şikâyette bulunabilir."
     }
    ]
   },
@@ -603,7 +603,7 @@ export const CONTENT: LegalContent = {
    "h": "Kurumsal müşteriler",
    "b": [
     {
-     "p": "Kurum lisanslarında Academiana, işlemenin fiilî amaç ve araçlarına bağlı olarak kurum adına veri işleyen sıfatıyla hareket edebilir. Yazılı bir Veri İşleme Sözleşmesi; işlemenin konusunu, süresini, niteliğini ve amacını, veri kategorilerini, ilgili kişi kategorilerini, güvenlik önlemlerini, alt işleyenleri, yardım yükümlülüklerini, verilerin silinmesini/iadesini ve denetim düzenlemelerini tanımlamalıdır."
+     "p": "Kurum lisanslarında Academiana, işlemenin fiilî amaç ve araçlarına bağlı olarak kurum adına veri işleyen sıfatıyla hareket edebilir. Yazılı bir Veri İşleme Sözleşmesi; işlemenin konusunu, süresini, niteliğini ve amacını, veri kategorilerini, ilgili kişi kategorilerini, güvenlik önlemlerini, alt işleyenleri, yardım yükümlülüklerini, verilerin silinmesini/iadesini ve denetim düzenlemelerini tanımlar."
     }
    ]
   },
@@ -611,7 +611,7 @@ export const CONTENT: LegalContent = {
    "h": "Çocuklar",
    "b": [
     {
-     "p": "Sağlanan bilgilere göre platformda şu anda yaş sınırı yoktur ve yaş doğrulaması yapılmamaktadır. Veri sorumlusu, hizmetin çocuklara sunulmasının muhtemel olup olmadığını değerlendirmeli ve uygulanabilir hukukun gerektirdiği durumlarda uygun yaşa ilişkin güvenceleri ve ebeveyn izni süreçlerini uygulamalıdır."
+     "p": "Platformda yaş sınırı yoktur ve yaş doğrulaması yapılmamaktadır. Uygulanabilir hukukun gerektirdiği durumlarda uygun yaşa ilişkin güvenceler ve ebeveyn izni süreçleri uygulanır."
     }
    ]
   },
@@ -619,7 +619,7 @@ export const CONTENT: LegalContent = {
    "h": "Değişiklikler",
    "b": [
     {
-     "p": "Bu bildirim, işleme faaliyetlerindeki, hizmet sağlayıcılardaki veya uygulanabilir hukuktaki değişiklikleri yansıtmak üzere güncellenebilir. Önemli değişiklikler uygun bir kanal aracılığıyla bildirilir. Veri sorumlusunun kimliği ve iletişim bilgileri, gerekiyorsa AB temsilcisi bilgileri ve uygulanabilir denetim makamı bilgileri, bu bildirim nihai hukuki bildirim olarak yayımlanmadan önce tamamlanmalıdır."
+     "p": "Bu bildirim, işleme faaliyetlerindeki, hizmet sağlayıcılardaki veya uygulanabilir hukuktaki değişiklikleri yansıtmak üzere güncellenebilir. Önemli değişiklikler uygun bir kanal aracılığıyla bildirilir."
     }
    ]
   }

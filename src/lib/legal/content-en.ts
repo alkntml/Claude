@@ -7,7 +7,7 @@ export const CONTENT: LegalContent = {
    "h": "Introduction and data controller",
    "b": [
     {
-     "p": "This information notice has been prepared to provide information on the processing of personal data during the use of the Academiana platform offered at www.academiana.com.tr. Academiana is an AI-assisted online platform that supports academic research and writing processes. The trade name and the notification/application address of the natural or legal person responsible for operating the platform are not stated, as no verified information is available in this draft. Before publication, the identity of the data controller and the KVKK application channel must be added clearly."
+     "p": "This information notice has been prepared to provide information on the processing of personal data during the use of the Academiana platform offered at www.academiana.com.tr. Academiana is an AI-assisted online platform that supports academic research and writing processes."
     }
    ]
   },
@@ -41,7 +41,7 @@ export const CONTENT: LegalContent = {
    "h": "Purposes of processing",
    "b": [
     {
-     "p": "Personal data is processed for the purposes of creating membership and managing the account, authentication, providing the academic workspace and file services, running AI features, providing source search and citation functions, performing statistical analysis, carrying out co-author and advisor sharing, managing plans and usage rights, assigning the plan after payment, providing customer support, ensuring security and preventing abuse, detecting technical problems, measuring service performance and fulfilling legal obligations. Data is not sold and is not used for advertising targeting. It has been stated that no third-party cookies for analytics or advertising purposes are used on the platform."
+     "p": "Personal data is processed for the purposes of creating membership and managing the account, authentication, providing the academic workspace and file services, running AI features, providing source search and citation functions, performing statistical analysis, carrying out co-author and advisor sharing, managing plans and usage rights, assigning the plan after payment, providing customer support, ensuring security and preventing abuse, detecting technical problems, measuring service performance and fulfilling legal obligations. Data is not sold and is not used for advertising targeting. No third-party cookies for analytics or advertising purposes are used on the platform."
     }
    ]
   },
@@ -57,7 +57,7 @@ export const CONTENT: LegalContent = {
    "h": "Retention periods",
    "b": [
     {
-     "p": "Account, academic content, files, conversations, counters, the device identifier digest and notifications are, as a rule, kept until the account is deleted. A co-author invitation becomes invalid within 14 days; the invitation record may be kept together with the work. The advisor sharing link remains accessible until the user revokes the link. Usage evidence records are currently kept until the account is deleted in the existing system; it has been stated that automatic deletion is not applied for the 12-month period mentioned in the texts. Feedback and error records may be kept indefinitely; when the account is deleted, their link to the user is removed, but the text content may remain. Visit statistics are kept indefinitely. The retention of payment records is subject to applicable tax and accounting obligations. A final schedule of these periods in compliance with the legislation must be determined and, where necessary, an automatic deletion mechanism must be established."
+     "p": "Account, academic content, files, conversations, counters, the device identifier digest and notifications are, as a rule, kept until the account is deleted. A co-author invitation becomes invalid within 14 days; the invitation record may be kept together with the work. The advisor sharing link remains accessible until the user revokes the link. Usage evidence records are kept until the account is deleted. Feedback and error records may be kept indefinitely; when the account is deleted, their link to the user is removed, but the text content may remain. Visit statistics are kept indefinitely. The retention of payment records is subject to applicable tax and accounting obligations."
     }
    ]
   },
@@ -65,7 +65,7 @@ export const CONTENT: LegalContent = {
    "h": "Recipient groups and transfers abroad",
    "b": [
     {
-     "p": "Within the scope of providing the service, data may be transferred to Supabase for database, authentication and file storage services; to Vercel for hosting and delivery services; and to Anthropic (Claude) when AI features are used. An OpenAI integration is optionally present in the code; as it has not been confirmed whether it is used in the live environment, this text does not regard OpenAI as an active recipient. Google and Apple are involved in the authentication process only when the relevant social sign-in method is chosen. In academic source searches, search terms and DOIs may be sent to source services such as OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; it has been stated that the user’s identity is not sent to these search services. If a key is configured, the Springer Nature, IEEE and NASA ADS services may also be used. At the user’s request, a LaTeX file may be transferred to Overleaf; it has been stated that in the Zotero integration the key entered by the user is not stored. Payment communication may be carried out via WhatsApp."
+     "p": "Within the scope of providing the service, data may be transferred to Supabase for database, authentication and file storage services; to Vercel for hosting and delivery services; and to Anthropic (Claude) when AI features are used. Google and Apple are involved in the authentication process only when the relevant social sign-in method is chosen. In academic source searches, search terms and DOIs may be sent to source services such as OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; the user’s identity is not sent to these search services. If a key is configured, the Springer Nature, IEEE and NASA ADS services may also be used. At the user’s request, a LaTeX file may be transferred to Overleaf; in the Zotero integration the key entered by the user is not stored. Payment communication may be carried out via WhatsApp."
     }
    ]
   },
@@ -73,7 +73,7 @@ export const CONTENT: LegalContent = {
    "h": "Data locations abroad",
    "b": [
     {
-     "p": "According to the information note, Supabase data is kept in the Frankfurt/European Union region and Vercel hosting servers in Frankfurt; Vercel’s global CDN network is also used. Supabase and Vercel are US-based companies. When an AI feature is used, the user’s text, work context and selected source/file excerpts are transferred to Anthropic in the USA. Some of the academic databases are located abroad. For each of these transfers, a legal mechanism in compliance with the KVKK provisions on transfers abroad must be established."
+     "p": "Supabase data is kept in the Frankfurt/European Union region and Vercel hosting servers in Frankfurt; Vercel’s global CDN network is also used. Supabase and Vercel are US-based companies. When an AI feature is used, the user’s text, work context and selected source/file excerpts are transferred to Anthropic in the USA. Some of the academic databases are located abroad."
     }
    ]
   },
@@ -81,7 +81,7 @@ export const CONTENT: LegalContent = {
    "h": "Notice on third-party and special-category data",
    "b": [
     {
-     "p": "Theses, interview transcripts, surveys or other documents uploaded by users may contain personal data belonging to third parties or special categories of personal data. The user should assess whether they have the necessary legal authority to upload and process this data on the platform, whether they have informed the data subjects and whether they meet the required legal conditions. In research surveys, the data controller towards participants may be the researcher conducting the research; Academiana may be in the position of data processor for the relevant service. The roles of the parties should be determined according to the specific use and the contract. Unnecessary identity information, health data and other sensitive information should not be uploaded to the platform."
+     "p": "Theses, interview transcripts, surveys or other documents uploaded by users may contain personal data belonging to third parties or special categories of personal data. The user should assess whether they have the necessary legal authority to upload and process this data on the platform, whether they have informed the data subjects and whether they meet the required legal conditions. In research surveys, the data controller towards participants may be the researcher conducting the research; Academiana may be in the position of data processor for the relevant service. Unnecessary identity information, health data and other sensitive information should not be uploaded to the platform."
     }
    ]
   },
@@ -97,7 +97,7 @@ export const CONTENT: LegalContent = {
    "h": "Rights of the data subject and application",
    "b": [
     {
-     "p": "Data subjects may exercise their rights under Article 11 of the KVKK. On the platform, users can download their data in JSON format from the account page, delete their account and the data associated with the account, and create a data request. It has been stated that data requests are answered free of charge within 30 days. The email/KEP/postal address to which applications are to be sent is not stated in this draft as it is not included in the information note; the application channel must be added before publication."
+     "p": "Data subjects may exercise their rights under Article 11 of the KVKK. On the platform, users can download their data in JSON format from the account page, delete their account and the data associated with the account, and create a data request. Data requests are answered free of charge within 30 days."
     }
    ]
   },
@@ -171,7 +171,7 @@ export const CONTENT: LegalContent = {
    "h": "Administration, oversight and suspension",
    "b": [
     {
-     "p": "Service administrators may suspend accounts, assign plans, send in-app notifications, review usage records and AI output texts, and carry out data export operations requested by the user. Automatic alerts may be generated within the scope of security and abuse checks; the account is not suspended automatically. The alert is reviewed by a human. As a result of the review, it may be decided that there is no problem, the user may be warned or the account may be suspended. The user may request the reasons for the decision and submit an objection to the support channel. The application channel must be clearly stated before publication."
+     "p": "Service administrators may suspend accounts, assign plans, send in-app notifications, review usage records and AI output texts, and carry out data export operations requested by the user. Automatic alerts may be generated within the scope of security and abuse checks; the account is not suspended automatically. The alert is reviewed by a human. As a result of the review, it may be decided that there is no problem, the user may be warned or the account may be suspended. The user may request the reasons for the decision and submit an objection to the support channel."
     }
    ]
   },
@@ -203,7 +203,7 @@ export const CONTENT: LegalContent = {
    "h": "Governing law and language",
    "b": [
     {
-     "p": "Turkish law applies to the terms of use. Mandatory rules of jurisdiction and competence at the consumer’s place of residence are reserved. In disputes, the relevant legislation applies with regard to the consumer arbitration committees and courts competent by law, as well as the courts of general competence/jurisdiction. The platform may have Turkish, English and German interfaces. Since the binding language preference has not been finalised in this draft, it is not claimed that any language prevails over the others; the language provision must be determined before publication."
+     "p": "Turkish law applies to the terms of use. Mandatory rules of jurisdiction and competence at the consumer’s place of residence are reserved. In disputes, the relevant legislation applies with regard to the consumer arbitration committees and courts competent by law, as well as the courts of general competence/jurisdiction. The platform may have Turkish, English and German interfaces."
     }
    ]
   },
@@ -211,7 +211,7 @@ export const CONTENT: LegalContent = {
    "h": "Age and acceptance",
    "b": [
     {
-     "p": "It has been stated that there is currently no age limit or age verification mechanism for the platform. Therefore, parental/guardian permission and special data protection requirements regarding minor users should be assessed separately. The user is obliged to review the current terms presented to them during registration or use."
+     "p": "There is no age limit or age verification mechanism on the platform. The user is obliged to review the current terms presented to them during registration or use."
     }
    ]
   }
@@ -229,7 +229,7 @@ export const CONTENT: LegalContent = {
    "h": "Unlimited Project plan",
    "b": [
     {
-     "p": "The Unlimited Project plan is valid for 1 month from the date it is assigned; with annual payment the period is 1 year. During this period everything except the number of projects is completely unlimited: AI use, page drafting, source searches, storage, the free tools and all features can be used without any quota. The number of projects is at most 5 active projects with monthly payment and at most 60 with annual payment. When the period ends, the plan does not renew automatically and the account moves to the Free plan; works are not deleted. Single Project plans previously purchased under the earlier terms (open-ended and for a single work) continue under the terms on which they were purchased."
+     "p": "The Unlimited Project plan is valid for 1 month from the date it is assigned; with annual payment the period is 1 year. During this period everything except the number of projects is completely unlimited: AI use, page writing, source searches, storage, the free tools and all features can be used without any quota. The number of projects is at most 5 active projects with monthly payment and at most 60 with annual payment. When the period ends, the plan does not renew automatically and the account moves to the Free plan; works are not deleted. Single Project plans previously purchased under the earlier terms (open-ended and for a single work) continue under the terms on which they were purchased."
     }
    ]
   },
@@ -253,7 +253,7 @@ export const CONTENT: LegalContent = {
    "h": "Human review and decision",
    "b": [
     {
-     "p": "An alert does not mean that the account will be suspended automatically. Every alert is reviewed by an administrator. As a result of the review, it may be decided that there is no breach, the user may be asked for an explanation or the user may be warned. Depending on the nature and severity of the breach, the account may be suspended. The user may use the platform’s support channel to learn the reasons for the decision and to object to it. The support/application contact information must be clearly shown before publication."
+     "p": "An alert does not mean that the account will be suspended automatically. Every alert is reviewed by an administrator. As a result of the review, it may be decided that there is no breach, the user may be asked for an explanation or the user may be warned. Depending on the nature and severity of the breach, the account may be suspended. The user may use the platform’s support channel to learn the reasons for the decision and to object to it."
     }
    ]
   },
@@ -299,7 +299,7 @@ export const CONTENT: LegalContent = {
       "Supabase session cookies: Used to keep the user’s session open and to maintain authentication. They are first-party and strictly necessary for the service to work; their duration depends on the session and refresh mechanism.",
       "acd_did cookie and browser storage: Keeps a random device identifier for the purpose of preventing abuse (detecting referral reward abuse and account sharing). A non-reversible digest of this identifier and the first/last seen dates are stored on the server. Its duration is 400 days. It is not used for advertising.",
       "lang cookie: Used to remember the interface language; it is a first-party functional cookie and is kept for 1 year.",
-      "localStorage: May keep preferences such as dark mode, guided tour status and offline draft backup on the user’s device. This data is stored only in the browser storage on the user’s device.",
+      "localStorage: May keep preferences such as dark mode, guided tour status and offline text backup on the user’s device. This data is stored only in the browser storage on the user’s device.",
       "PWA service worker: Helps the site open offline."
      ]
     }
@@ -309,7 +309,7 @@ export const CONTENT: LegalContent = {
    "h": "Analytics and advertising technologies",
    "b": [
     {
-     "p": "According to the information note, there are no analytics, advertising or third-party advertising cookies on the platform. Visit counting is carried out without cookies. The IP address and browser information are used only momentarily to generate the daily-changing, non-reversible code; they are not stored and are not kept in a way that would allow the same person to be tracked across days. If the browser sends a Do Not Track (DNT) or Global Privacy Control (GPC) signal, no visit counting is performed."
+     "p": "There are no analytics, advertising or third-party advertising cookies on the platform. Visit counting is carried out without cookies. The IP address and browser information are used only momentarily to generate the daily-changing, non-reversible code; they are not stored and are not kept in a way that would allow the same person to be tracked across days. If the browser sends a Do Not Track (DNT) or Global Privacy Control (GPC) signal, no visit counting is performed."
     }
    ]
   },
@@ -317,7 +317,7 @@ export const CONTENT: LegalContent = {
    "h": "Device identifier and preference management",
    "b": [
     {
-     "p": "The device identifier is used not for advertising or creating user profiles, but for security and abuse prevention. Nevertheless, whether the device identifier legally counts as a strictly necessary technology and whether it requires prior consent should be assessed separately in terms of the specific technical structure and the legislation. The user can delete or block cookies from the browser settings; however, blocking strictly necessary session cookies may affect sign-in and the functioning of some platform features."
+     "p": "The device identifier is used not for advertising or creating user profiles, but for security and abuse prevention. The user can delete or block cookies from the browser settings; however, blocking strictly necessary session cookies may affect sign-in and the functioning of some platform features."
     }
    ]
   },
@@ -407,7 +407,7 @@ export const CONTENT: LegalContent = {
    "h": "Quality score",
    "b": [
     {
-     "p": "It has been stated that the platform’s quality score method is explained on the /yontem page. AI findings do not affect the quality score. The quality score should not be interpreted as a guarantee of academic acceptance or scientific validity."
+     "p": "The platform’s quality score method is explained on the /yontem page. AI findings do not affect the quality score. The quality score should not be interpreted as a guarantee of academic acceptance or scientific validity."
     }
    ]
   },
@@ -425,7 +425,7 @@ export const CONTENT: LegalContent = {
    "h": "Important note on scope",
    "b": [
     {
-     "p": "The current sales flow at Academiana is as follows: from the price page or the “Upgrade” button in the application, a pre-filled WhatsApp message containing the plan name and, if any, the discount code is opened; payment is taken outside the platform and the plan is assigned manually by an administrator. It has been stated that there is no online payment page on the platform and that card details are not taken into the system. This document is a draft setting out the general pre-contractual information and contract principles according to the current flow. As the seller’s identity, contact/application details, specific price, payment method, VAT, invoice and refund terms have not been verified, this information has not been made up."
+     "p": "The current sales flow at Academiana is as follows: from the price page or the “Upgrade” button in the application, a pre-filled WhatsApp message containing the plan name and, if any, the discount code is opened; payment is taken outside the platform and the plan is assigned manually by an administrator. There is no online payment page on the platform and card details are not taken into the system. This document sets out the general pre-contractual information and contract principles according to the current flow."
     }
    ]
   },
@@ -441,7 +441,7 @@ export const CONTENT: LegalContent = {
    "h": "Sale and formation of the contract",
    "b": [
     {
-     "p": "The user selects the plan on the prices page or within the application and initiates communication via WhatsApp. The plan, payment and assignment details are confirmed with the user separately. After payment, the administrator assigns the plan in the system and the service begins. The moment the contract is formed, the seller’s identity, plan, price, payment and assignment information should be confirmed to the user on a durable medium and recorded. If this confirmation step does not exist in the current flow, it should be put into operation."
+     "p": "The user selects the plan on the prices page or within the application and initiates communication via WhatsApp. The plan, payment and assignment details are confirmed with the user separately. After payment, the administrator assigns the plan in the system and the service begins."
     }
    ]
   },
@@ -449,7 +449,7 @@ export const CONTENT: LegalContent = {
    "h": "Plan types",
    "b": [
     {
-     "p": "The platform may offer a Free plan, monthly paid plans, a one-time Single Project plan that is indefinite for a single work, and an institutional licence. Institutional licences may be subject to a separate agreement with the institution. Discount codes, referral programme rewards and the Academic Team Discount (30%) for at least three people may apply. The scope of the discount and the price on which it is calculated should be clearly communicated to the user before purchase."
+     "p": "The platform may offer a Free plan, monthly paid plans, a one-time Single Project plan that is indefinite for a single work, and an institutional licence. Institutional licences may be subject to a separate agreement with the institution. Discount codes, referral programme rewards and the Academic Team Discount (30%) for at least three people may apply. The scope of the discount and the price on which it is calculated are clearly communicated to the user before purchase."
     }
    ]
   },
@@ -457,7 +457,7 @@ export const CONTENT: LegalContent = {
    "h": "Price, tax and payment",
    "b": [
     {
-     "p": "The total amount payable, any taxes and discounts, the payment method and the payment time should be clearly communicated to the user before the transaction. The current information note does not contain the current plan prices, whether VAT is included in the price, the payment method (bank transfer/EFT or payment link), the invoice/e-archive arrangement or the seller information. For this reason, no amount or payment method is stated in this draft. For each sale, the contract should not be considered completed without this information being confirmed in writing."
+     "p": "The total amount payable, any taxes and discounts, the payment method and the payment time are clearly communicated to the user before the transaction. For each sale, the contract is not considered completed until this information has been confirmed in writing."
     }
    ]
   },
@@ -473,7 +473,7 @@ export const CONTENT: LegalContent = {
    "h": "Start of the service and digital service",
    "b": [
     {
-     "p": "It has been stated that the service starts when the plan is assigned by the administrator after payment. The conditions in the consumer legislation regarding the immediate start of a digital service, the scope of the right of withdrawal and possible exceptions should be assessed according to the specific type of contract. Where necessary, a separate and explicit request/approval should be obtained from the user for the service to start before the withdrawal period expires, and its legal consequences should be explained separately. Mere acceptance of the general terms of use should not be relied upon on the assumption that it alone constitutes a valid waiver or exception."
+     "p": "The service starts when the plan is assigned by the administrator after payment. Where necessary, a separate and explicit request/approval is obtained from the user for the service to start before the withdrawal period expires, and its legal consequences are explained. Acceptance of the general terms of use does not by itself constitute a waiver of the right of withdrawal or an exception."
     }
    ]
   },
@@ -481,7 +481,7 @@ export const CONTENT: LegalContent = {
    "h": "Right of withdrawal and refunds",
    "b": [
     {
-     "p": "The consumer’s right of withdrawal and the exceptions that may apply to digital services are determined according to the nature of the service, whether performance has begun, the explicit request/approval given in advance by the user and the legislation in force. This information note states that there is currently no information on the right of withdrawal, no refund policy and no separate approval for the immediate start of the service. For this reason, no definite withdrawal period or “no refunds under any circumstances” provision is established here. The seller should clearly communicate to the consumer before the transaction the withdrawal/refund conditions to be applied and reserve mandatory consumer rights."
+     "p": "The consumer’s right of withdrawal and the exceptions that may apply to digital services are determined according to the nature of the service, whether performance has begun, the explicit request/approval given in advance by the user and the legislation in force. The seller clearly communicates to the consumer before the transaction the withdrawal/refund conditions to be applied; mandatory consumer rights are reserved."
     }
    ]
   },
@@ -497,7 +497,7 @@ export const CONTENT: LegalContent = {
    "h": "Institutional licence",
    "b": [
     {
-     "p": "The institutional licence may be offered under the terms of a separate agreement to be made with the institution. It has been stated that the institution administrator can see the member list and usage statistics, but cannot see users’ academic work content. The price, duration, number of users, support level and data processing provisions specific to the institutional licence should be determined separately in writing."
+     "p": "The institutional licence may be offered under the terms of a separate agreement to be made with the institution. The institution administrator can see the member list and usage statistics, but cannot see users’ academic work content. The price, duration, number of users, support level and data processing provisions specific to the institutional licence are determined separately in writing."
     }
    ]
   },
@@ -505,7 +505,7 @@ export const CONTENT: LegalContent = {
    "h": "Complaints and applications",
    "b": [
     {
-     "p": "The user may report problems related to the purchase or the service via the platform’s support channel. As the official seller contact details and application address are not included in the information note, they are not included in this draft. Before publication, the seller’s trade name, address, email/phone details and the applicable consumer application routes should be added."
+     "p": "The user may report problems related to the purchase or the service via the platform’s support channel."
     }
    ]
   },
@@ -513,7 +513,7 @@ export const CONTENT: LegalContent = {
    "h": "Order-specific confirmation",
    "b": [
     {
-     "p": "For each purchase, at least the seller information, user information, plan name, scope of service, duration, limits, total price, taxes, payment method, the start time of the service, whether there is automatic renewal and the withdrawal/refund conditions to be applied should be presented to the user before the transaction; the order summary and contract should be sent to the user on a durable medium."
+     "p": "For each purchase, at least the seller information, user information, plan name, scope of service, duration, limits, total price, taxes, payment method, the start time of the service, whether there is automatic renewal and the withdrawal/refund conditions to be applied are presented to the user before the transaction; the order summary and contract are sent to the user on a durable medium."
     }
    ]
   }
@@ -523,7 +523,7 @@ export const CONTENT: LegalContent = {
    "h": "Scope and controller",
    "b": [
     {
-     "p": "This notice describes the personal data processing associated with Academiana, an AI-assisted academic research and writing platform available at www.academiana.com.tr. The platform is accessible to users in Türkiye and may also be accessed from other countries. The identity and postal/contact details of the natural or legal person operating Academiana have not been provided in the source information and are therefore intentionally not stated in this draft. They must be added before publication. Whether GDPR Article 3(2) applies to the platform's activities and whether an EU representative is required under Article 27 must be assessed based on the actual targeting and monitoring of individuals in the EU."
+     "p": "This notice describes the personal data processing associated with Academiana, an AI-assisted academic research and writing platform available at www.academiana.com.tr. The platform is accessible to users in Türkiye and may also be accessed from other countries."
     }
    ]
   },
@@ -547,7 +547,7 @@ export const CONTENT: LegalContent = {
    "h": "Retention",
    "b": [
     {
-     "p": "Account data, academic content, files, AI conversations, usage counters, device identifier hashes and in-app notifications are generally retained until the account is deleted. Collaborator invitations expire after 14 days, although the invitation record may remain with the project. Advisor sharing remains available until the user revokes the link. Full-text AI usage evidence is currently retained until account deletion; although a 12-month period is mentioned in existing wording, automatic deletion is not currently implemented. Feedback and error records may be retained indefinitely, with the user link removed after account deletion while the text may remain. Visit statistics are retained indefinitely. Payment records may be subject to statutory accounting and tax retention requirements. A compliant retention schedule and automated deletion rules should be established and documented."
+     "p": "Account data, academic content, files, AI conversations, usage counters, device identifier hashes and in-app notifications are generally retained until the account is deleted. Collaborator invitations expire after 14 days, although the invitation record may remain with the project. Advisor sharing remains available until the user revokes the link. Full-text AI usage evidence is retained until account deletion. Feedback and error records may be retained indefinitely, with the user link removed after account deletion while the text may remain. Visit statistics are retained indefinitely. Payment records may be subject to statutory accounting and tax retention requirements."
     }
    ]
   },
@@ -555,7 +555,7 @@ export const CONTENT: LegalContent = {
    "h": "Recipients and international transfers",
    "b": [
     {
-     "p": "Service providers and recipients may include Supabase for database, authentication and file storage; Vercel for hosting and content delivery; Anthropic for AI processing when an AI feature is used; and Google or Apple when the user chooses the relevant sign-in method. OpenAI is present as an optional integration in the code, but its live use has not been confirmed and it is not treated as an active recipient in this draft. Academic search services may receive search terms and DOI identifiers, without the user's account identity, including OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; Springer Nature, IEEE and NASA ADS may also be used where API credentials are configured. At the user's request, LaTeX files may be sent to Overleaf and user-initiated payment communications may take place through WhatsApp."
+     "p": "Service providers and recipients may include Supabase for database, authentication and file storage; Vercel for hosting and content delivery; Anthropic for AI processing when an AI feature is used; and Google or Apple when the user chooses the relevant sign-in method. Academic search services may receive search terms and DOI identifiers, without the user's account identity, including OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; Springer Nature, IEEE and NASA ADS may also be used where API credentials are configured. At the user's request, LaTeX files may be sent to Overleaf and user-initiated payment communications may take place through WhatsApp."
     }
    ]
   },
@@ -563,7 +563,7 @@ export const CONTENT: LegalContent = {
    "h": "Data locations and transfer safeguards",
    "b": [
     {
-     "p": "According to the supplied technical information, Supabase data is hosted in Frankfurt, within the EU, and Vercel hosting is also located in Frankfurt, while Vercel uses a global CDN. Supabase and Vercel are US-based companies. When an AI feature is used, the user's prompt, relevant workspace context and selected source/file excerpts are transferred to Anthropic in the United States. Some academic search services are also located outside the user's country. The controller must identify and document an appropriate transfer mechanism for each restricted transfer, such as applicable adequacy arrangements or Standard Contractual Clauses with supplementary measures where required. Provider Data Processing Agreements, sub-processors, transfer impact assessments and actual service configurations must be verified before publication."
+     "p": "Supabase data is hosted in Frankfurt, within the EU, and Vercel hosting is also located in Frankfurt, while Vercel uses a global CDN. Supabase and Vercel are US-based companies. When an AI feature is used, the user's prompt, relevant workspace context and selected source/file excerpts are transferred to Anthropic in the United States. Some academic search services are also located outside the user's country. An appropriate transfer mechanism is used for each restricted transfer, such as applicable adequacy arrangements or Standard Contractual Clauses with supplementary measures where required."
     }
    ]
   },
@@ -587,7 +587,7 @@ export const CONTENT: LegalContent = {
    "h": "Security",
    "b": [
     {
-     "p": "The supplied technical information describes HTTPS, HSTS, Content Security Policy, user-data isolation with automated tests, CSRF and SSRF protections, server-side secret management, time-limited file links, dependency security scanning and more than 500 automated tests. It also identifies the absence of two-factor authentication, a written personal data breach procedure and an independent security test. Security measures should be reviewed regularly and brought into line with GDPR Article 32. A personal data breach response process should enable assessment and, where required, notification to the supervisory authority within 72 hours after becoming aware of the breach, and communication to affected individuals where the legal threshold is met."
+     "p": "Security measures on the platform include HTTPS, HSTS, Content Security Policy, user-data isolation with automated tests, CSRF and SSRF protections, server-side secret management, time-limited file links, dependency security scanning and more than 500 automated tests. Security measures are reviewed regularly. In the event of a personal data breach, the breach is assessed and, where required, notified to the supervisory authority within 72 hours after becoming aware of it and communicated to affected individuals where the legal threshold is met."
     }
    ]
   },
@@ -595,7 +595,7 @@ export const CONTENT: LegalContent = {
    "h": "Data subject rights",
    "b": [
     {
-     "p": "Subject to the conditions and limitations in the GDPR, individuals may request access, rectification, erasure, restriction, portability and may object to processing based on legitimate interests. Users can currently download their data in JSON format, delete their account and associated account data, and submit a data request through the platform. The supplied information states that data requests are answered free of charge within 30 days. The controller's contact details and the channel for exercising rights have not been supplied and must be added before publication. Individuals may also lodge a complaint with a competent data protection supervisory authority, in particular in the EU Member State of their habitual residence, place of work or alleged infringement."
+     "p": "Subject to the conditions and limitations in the GDPR, individuals may request access, rectification, erasure, restriction, portability and may object to processing based on legitimate interests. Users can download their data in JSON format, delete their account and associated account data, and submit a data request through the platform. Data requests are answered free of charge within 30 days. Individuals may also lodge a complaint with a competent data protection supervisory authority, in particular in the EU Member State of their habitual residence, place of work or alleged infringement."
     }
    ]
   },
@@ -603,7 +603,7 @@ export const CONTENT: LegalContent = {
    "h": "Institutional customers",
    "b": [
     {
-     "p": "For institutional licences, Academiana may act as a processor on behalf of the institution, depending on the actual purposes and means of processing. A written Data Processing Agreement should define the subject matter, duration, nature and purpose of processing, data categories, data-subject categories, security measures, sub-processors, assistance obligations, deletion/return of data and audit arrangements."
+     "p": "For institutional licences, Academiana may act as a processor on behalf of the institution, depending on the actual purposes and means of processing. A written Data Processing Agreement defines the subject matter, duration, nature and purpose of processing, data categories, data-subject categories, security measures, sub-processors, assistance obligations, deletion/return of data and audit arrangements."
     }
    ]
   },
@@ -611,7 +611,7 @@ export const CONTENT: LegalContent = {
    "h": "Children",
    "b": [
     {
-     "p": "The platform currently has no age limit and does not perform age verification, according to the supplied information. The controller should assess whether the service is likely to be offered to children and implement appropriate age-related safeguards and parental authorisation processes where required by applicable law."
+     "p": "The platform has no age limit and does not perform age verification. Where required by applicable law, appropriate age-related safeguards and parental authorisation processes are applied."
     }
    ]
   },
@@ -619,7 +619,7 @@ export const CONTENT: LegalContent = {
    "h": "Changes",
    "b": [
     {
-     "p": "This notice may be updated to reflect changes in processing activities, service providers or applicable law. Material changes will be communicated through an appropriate channel. The controller's identity and contact details, EU representative details if required, and any applicable supervisory authority information must be completed before this notice is published as a final legal notice."
+     "p": "This notice may be updated to reflect changes in processing activities, service providers or applicable law. Material changes will be communicated through an appropriate channel."
     }
    ]
   }

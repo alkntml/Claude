@@ -99,7 +99,6 @@ export const DE: Dict = {
   "Gizlilik ve KVKK aydınlatma metni": "Datenschutzhinweis",
   "Kişisel verileriniz ve akademik çalışmalarınız nasıl işlenir?": "Wie werden Ihre personenbezogenen Daten und wissenschaftlichen Arbeiten verarbeitet?",
   "Kayıt ol": "Registrieren",
-  "Şablon metin: yayına almadan önce hukuki inceleme yapılmalıdır.": "Mustertext: Vor der Veröffentlichung ist eine rechtliche Prüfung erforderlich.",
   "Kurulum durumu": "Einrichtungsstatus",
   "Supabase (veritabanı, kimlik doğrulama, depolama)": "Supabase (Datenbank, Authentifizierung, Speicher)",
   "Supabase service role (kullanım kayıtları, yönetim)": "Supabase-Service-Role (Nutzungsdaten, Administration)",

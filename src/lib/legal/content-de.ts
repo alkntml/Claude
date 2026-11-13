@@ -7,7 +7,7 @@ export const CONTENT: LegalContent = {
    "h": "Einleitung und Verantwortlicher",
    "b": [
     {
-     "p": "Diese Datenschutzinformation wurde erstellt, um über die Verarbeitung personenbezogener Daten bei der Nutzung der unter www.academiana.com.tr angebotenen Plattform Academiana zu informieren. Academiana ist eine KI-gestützte Online-Plattform, die Prozesse der wissenschaftlichen Recherche und des wissenschaftlichen Schreibens unterstützt. Die Firma sowie die Zustellungs-/Antragsanschrift der natürlichen oder juristischen Person, die für den Betrieb der Plattform verantwortlich ist, sind nicht angegeben, da in diesem Entwurf keine verifizierten Angaben vorliegen. Vor der Veröffentlichung müssen die Identität des Verantwortlichen und der Antragsweg nach dem KVKK (türkisches Datenschutzgesetz) eindeutig ergänzt werden."
+     "p": "Diese Datenschutzinformation wurde erstellt, um über die Verarbeitung personenbezogener Daten bei der Nutzung der unter www.academiana.com.tr angebotenen Plattform Academiana zu informieren. Academiana ist eine KI-gestützte Online-Plattform, die Prozesse der wissenschaftlichen Recherche und des wissenschaftlichen Schreibens unterstützt."
     }
    ]
   },
@@ -41,7 +41,7 @@ export const CONTENT: LegalContent = {
    "h": "Zwecke der Verarbeitung",
    "b": [
     {
-     "p": "Personenbezogene Daten werden zu folgenden Zwecken verarbeitet: Begründung der Mitgliedschaft und Verwaltung des Kontos, Authentifizierung, Bereitstellung des wissenschaftlichen Arbeitsbereichs und der Dateidienste, Ausführung der KI-Funktionen, Bereitstellung der Quellensuche und Zitierfunktionen, Durchführung statistischer Analysen, Abwicklung der Freigabe an Mitautorinnen, Mitautoren und Betreuende, Verwaltung von Tarifen und Nutzungsrechten, Zuweisung des Tarifs nach der Zahlung, Kundensupport, Gewährleistung der Sicherheit und Verhinderung von Missbrauch, Erkennung technischer Probleme, Messung der Dienstleistung und Erfüllung rechtlicher Pflichten. Daten werden nicht verkauft und nicht zur gezielten Werbung verwendet. Es wurde mitgeteilt, dass auf der Plattform keine Drittanbieter-Cookies für Analyse- oder Werbezwecke verwendet werden."
+     "p": "Personenbezogene Daten werden zu folgenden Zwecken verarbeitet: Begründung der Mitgliedschaft und Verwaltung des Kontos, Authentifizierung, Bereitstellung des wissenschaftlichen Arbeitsbereichs und der Dateidienste, Ausführung der KI-Funktionen, Bereitstellung der Quellensuche und Zitierfunktionen, Durchführung statistischer Analysen, Abwicklung der Freigabe an Mitautorinnen, Mitautoren und Betreuende, Verwaltung von Tarifen und Nutzungsrechten, Zuweisung des Tarifs nach der Zahlung, Kundensupport, Gewährleistung der Sicherheit und Verhinderung von Missbrauch, Erkennung technischer Probleme, Messung der Dienstleistung und Erfüllung rechtlicher Pflichten. Daten werden nicht verkauft und nicht zur gezielten Werbung verwendet. Auf der Plattform werden keine Drittanbieter-Cookies für Analyse- oder Werbezwecke verwendet."
     }
    ]
   },
@@ -57,7 +57,7 @@ export const CONTENT: LegalContent = {
    "h": "Speicherdauer",
    "b": [
     {
-     "p": "Konto, wissenschaftliche Inhalte, Dateien, Unterhaltungen, Zähler, der Hashwert der Gerätekennung und Benachrichtigungen werden grundsätzlich bis zur Löschung des Kontos gespeichert. Eine Einladung als Mitautorin bzw. Mitautor wird innerhalb von 14 Tagen ungültig; der Einladungsdatensatz kann zusammen mit der Arbeit gespeichert bleiben. Der Freigabelink für die Betreuung bleibt zugänglich, bis die Nutzerin bzw. der Nutzer ihn widerruft. Nutzungsnachweise werden im derzeitigen System bis zur Löschung des Kontos gespeichert; es wurde mitgeteilt, dass für die in den Texten genannte Frist von 12 Monaten keine automatische Löschung angewendet wird. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden; bei Löschung des Kontos wird ihre Verknüpfung mit der Person entfernt, der Textinhalt kann jedoch bestehen bleiben. Besuchsstatistiken werden unbefristet gespeichert. Die Aufbewahrung von Zahlungsdaten unterliegt den anwendbaren steuer- und handelsrechtlichen Pflichten. Ein rechtskonformer endgültiger Zeitplan für diese Fristen muss festgelegt und erforderlichenfalls ein automatischer Löschmechanismus eingerichtet werden."
+     "p": "Konto, wissenschaftliche Inhalte, Dateien, Unterhaltungen, Zähler, der Hashwert der Gerätekennung und Benachrichtigungen werden grundsätzlich bis zur Löschung des Kontos gespeichert. Eine Einladung als Mitautorin bzw. Mitautor wird innerhalb von 14 Tagen ungültig; der Einladungsdatensatz kann zusammen mit der Arbeit gespeichert bleiben. Der Freigabelink für die Betreuung bleibt zugänglich, bis die Nutzerin bzw. der Nutzer ihn widerruft. Nutzungsnachweise werden bis zur Löschung des Kontos gespeichert. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden; bei Löschung des Kontos wird ihre Verknüpfung mit der Person entfernt, der Textinhalt kann jedoch bestehen bleiben. Besuchsstatistiken werden unbefristet gespeichert. Die Aufbewahrung von Zahlungsdaten unterliegt den anwendbaren steuer- und handelsrechtlichen Pflichten."
     }
    ]
   },
@@ -65,7 +65,7 @@ export const CONTENT: LegalContent = {
    "h": "Empfängergruppen und Übermittlung ins Ausland",
    "b": [
     {
-     "p": "Im Rahmen der Erbringung des Dienstes können Daten übermittelt werden an Supabase für Datenbank-, Authentifizierungs- und Dateispeicherdienste, an Vercel für Hosting- und Auslieferungsdienste sowie bei Nutzung von KI-Funktionen an Anthropic (Claude). Eine OpenAI-Integration ist im Code optional vorhanden; da nicht bestätigt ist, ob sie in der Live-Umgebung genutzt wird, betrachtet dieser Text OpenAI nicht als aktiven Empfänger. Google und Apple sind nur dann am Authentifizierungsprozess beteiligt, wenn die betreffende Social-Login-Methode gewählt wird. Bei der Suche nach wissenschaftlichen Quellen können Suchbegriffe und DOIs an Quellendienste wie OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall gesendet werden; es wurde mitgeteilt, dass die Identität der Nutzerin bzw. des Nutzers nicht an diese Suchdienste übermittelt wird. Ist ein Schlüssel hinterlegt, können auch die Dienste Springer Nature, IEEE und NASA ADS genutzt werden. Auf Wunsch der Nutzerin bzw. des Nutzers kann eine LaTeX-Datei an Overleaf übermittelt werden; es wurde mitgeteilt, dass bei der Zotero-Integration der eingegebene Schlüssel nicht gespeichert wird. Die Zahlungskommunikation kann über WhatsApp erfolgen."
+     "p": "Im Rahmen der Erbringung des Dienstes können Daten übermittelt werden an Supabase für Datenbank-, Authentifizierungs- und Dateispeicherdienste, an Vercel für Hosting- und Auslieferungsdienste sowie bei Nutzung von KI-Funktionen an Anthropic (Claude). Google und Apple sind nur dann am Authentifizierungsprozess beteiligt, wenn die betreffende Social-Login-Methode gewählt wird. Bei der Suche nach wissenschaftlichen Quellen können Suchbegriffe und DOIs an Quellendienste wie OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall gesendet werden; die Identität der Nutzerin bzw. des Nutzers wird nicht an diese Suchdienste übermittelt. Ist ein Schlüssel hinterlegt, können auch die Dienste Springer Nature, IEEE und NASA ADS genutzt werden. Auf Wunsch der Nutzerin bzw. des Nutzers kann eine LaTeX-Datei an Overleaf übermittelt werden; bei der Zotero-Integration wird der eingegebene Schlüssel nicht gespeichert. Die Zahlungskommunikation kann über WhatsApp erfolgen."
     }
    ]
   },
@@ -73,7 +73,7 @@ export const CONTENT: LegalContent = {
    "h": "Datenstandorte im Ausland",
    "b": [
     {
-     "p": "Laut Informationsnotiz werden die Supabase-Daten in der Region Frankfurt/Europäische Union und die Hosting-Server von Vercel in Frankfurt gehalten; zudem wird das globale CDN-Netz von Vercel genutzt. Supabase und Vercel sind Unternehmen mit Sitz in den USA. Bei Nutzung einer KI-Funktion werden der Text der Nutzerin bzw. des Nutzers, der Arbeitskontext und ausgewählte Quellen-/Dateiauszüge an Anthropic in den USA übermittelt. Ein Teil der wissenschaftlichen Datenbanken befindet sich im Ausland. Für jede dieser Übermittlungen muss ein rechtlicher Mechanismus eingerichtet werden, der den Vorschriften des KVKK zur Übermittlung ins Ausland entspricht."
+     "p": "Die Supabase-Daten werden in der Region Frankfurt/Europäische Union und die Hosting-Server von Vercel in Frankfurt gehalten; zudem wird das globale CDN-Netz von Vercel genutzt. Supabase und Vercel sind Unternehmen mit Sitz in den USA. Bei Nutzung einer KI-Funktion werden der Text der Nutzerin bzw. des Nutzers, der Arbeitskontext und ausgewählte Quellen-/Dateiauszüge an Anthropic in den USA übermittelt. Ein Teil der wissenschaftlichen Datenbanken befindet sich im Ausland."
     }
    ]
   },
@@ -81,7 +81,7 @@ export const CONTENT: LegalContent = {
    "h": "Hinweis zu Daten Dritter und besonderen Kategorien personenbezogener Daten",
    "b": [
     {
-     "p": "Von Nutzerinnen und Nutzern hochgeladene Abschlussarbeiten, Interviewtranskripte, Umfragen oder andere Dokumente können personenbezogene Daten Dritter oder besondere Kategorien personenbezogener Daten enthalten. Die Nutzerin bzw. der Nutzer sollte prüfen, ob sie bzw. er die erforderliche rechtliche Befugnis hat, diese Daten auf die Plattform hochzuladen und zu verarbeiten, die betroffenen Personen informiert hat und die erforderlichen rechtlichen Voraussetzungen erfüllt. Bei Forschungsumfragen kann gegenüber den Teilnehmenden die forschende Person, die die Untersuchung durchführt, Verantwortlicher sein; Academiana kann hinsichtlich des betreffenden Dienstes in der Position eines Auftragsverarbeiters sein. Die Rollen der Parteien sollten nach der konkreten Nutzung und dem Vertrag bestimmt werden. Unnötige Identitätsangaben, Gesundheitsdaten und andere sensible Informationen sollten nicht auf die Plattform hochgeladen werden."
+     "p": "Von Nutzerinnen und Nutzern hochgeladene Abschlussarbeiten, Interviewtranskripte, Umfragen oder andere Dokumente können personenbezogene Daten Dritter oder besondere Kategorien personenbezogener Daten enthalten. Die Nutzerin bzw. der Nutzer sollte prüfen, ob sie bzw. er die erforderliche rechtliche Befugnis hat, diese Daten auf die Plattform hochzuladen und zu verarbeiten, die betroffenen Personen informiert hat und die erforderlichen rechtlichen Voraussetzungen erfüllt. Bei Forschungsumfragen kann gegenüber den Teilnehmenden die forschende Person, die die Untersuchung durchführt, Verantwortlicher sein; Academiana kann hinsichtlich des betreffenden Dienstes in der Position eines Auftragsverarbeiters sein. Unnötige Identitätsangaben, Gesundheitsdaten und andere sensible Informationen sollten nicht auf die Plattform hochgeladen werden."
     }
    ]
   },
@@ -97,7 +97,7 @@ export const CONTENT: LegalContent = {
    "h": "Rechte der betroffenen Person und Antragstellung",
    "b": [
     {
-     "p": "Betroffene Personen können ihre Rechte nach Artikel 11 KVKK ausüben. Auf der Plattform können Nutzerinnen und Nutzer über die Kontoseite ihre Daten im JSON-Format herunterladen, ihr Konto und die mit dem Konto verbundenen Daten löschen sowie eine Datenanfrage stellen. Es wurde mitgeteilt, dass Datenanfragen innerhalb von 30 Tagen kostenlos beantwortet werden. Die E-Mail-/KEP-/Postanschrift, an die Anträge zu richten sind, ist in diesem Entwurf nicht angegeben, da sie in der Informationsnotiz nicht enthalten ist; der Antragsweg muss vor der Veröffentlichung ergänzt werden."
+     "p": "Betroffene Personen können ihre Rechte nach Artikel 11 KVKK ausüben. Auf der Plattform können Nutzerinnen und Nutzer über die Kontoseite ihre Daten im JSON-Format herunterladen, ihr Konto und die mit dem Konto verbundenen Daten löschen sowie eine Datenanfrage stellen. Datenanfragen werden innerhalb von 30 Tagen kostenlos beantwortet."
     }
    ]
   },
@@ -171,7 +171,7 @@ export const CONTENT: LegalContent = {
    "h": "Verwaltung, Kontrolle und Sperrung",
    "b": [
     {
-     "p": "Die Administration des Dienstes kann Konten sperren, Tarife zuweisen, Benachrichtigungen innerhalb der Website senden, Nutzungsprotokolle und KI-Ausgabetexte prüfen sowie die von der Nutzerin bzw. dem Nutzer angeforderten Datenexporte durchführen. Im Rahmen von Sicherheits- und Missbrauchskontrollen können automatische Warnungen erzeugt werden; das Konto wird nicht automatisch gesperrt. Die Warnung wird von einem Menschen geprüft. Im Ergebnis kann entschieden werden, dass kein Problem vorliegt, die Nutzerin bzw. der Nutzer verwarnt oder das Konto gesperrt wird. Die Nutzerin bzw. der Nutzer kann die Begründung der Entscheidung verlangen und Einspruch über den Support-Kanal einlegen. Der Antragsweg muss vor der Veröffentlichung eindeutig angegeben werden."
+     "p": "Die Administration des Dienstes kann Konten sperren, Tarife zuweisen, Benachrichtigungen innerhalb der Website senden, Nutzungsprotokolle und KI-Ausgabetexte prüfen sowie die von der Nutzerin bzw. dem Nutzer angeforderten Datenexporte durchführen. Im Rahmen von Sicherheits- und Missbrauchskontrollen können automatische Warnungen erzeugt werden; das Konto wird nicht automatisch gesperrt. Die Warnung wird von einem Menschen geprüft. Im Ergebnis kann entschieden werden, dass kein Problem vorliegt, die Nutzerin bzw. der Nutzer verwarnt oder das Konto gesperrt wird. Die Nutzerin bzw. der Nutzer kann die Begründung der Entscheidung verlangen und Einspruch über den Support-Kanal einlegen."
     }
    ]
   },
@@ -203,7 +203,7 @@ export const CONTENT: LegalContent = {
    "h": "Anwendbares Recht und Sprache",
    "b": [
     {
-     "p": "Auf die Nutzungsbedingungen findet türkisches Recht Anwendung. Zwingende Zuständigkeitsregeln am Wohnsitz der Verbraucherin bzw. des Verbrauchers bleiben unberührt. Bei Streitigkeiten gilt das einschlägige Recht hinsichtlich der gesetzlich zuständigen Verbraucherschiedsstellen und Gerichte sowie der allgemein zuständigen Gerichte. Die Plattform kann über türkische, englische und deutsche Oberflächen verfügen. Da in diesem Entwurf keine verbindliche Sprachregelung festgelegt wurde, wird nicht behauptet, dass eine Sprache Vorrang vor den anderen hat; die Sprachregelung muss vor der Veröffentlichung festgelegt werden."
+     "p": "Auf die Nutzungsbedingungen findet türkisches Recht Anwendung. Zwingende Zuständigkeitsregeln am Wohnsitz der Verbraucherin bzw. des Verbrauchers bleiben unberührt. Bei Streitigkeiten gilt das einschlägige Recht hinsichtlich der gesetzlich zuständigen Verbraucherschiedsstellen und Gerichte sowie der allgemein zuständigen Gerichte. Die Plattform kann über türkische, englische und deutsche Oberflächen verfügen."
     }
    ]
   },
@@ -211,7 +211,7 @@ export const CONTENT: LegalContent = {
    "h": "Alter und Annahme",
    "b": [
     {
-     "p": "Es wurde mitgeteilt, dass für die Plattform derzeit keine Altersgrenze und kein Altersverifikationsmechanismus besteht. Daher sollten die Zustimmung von Eltern/Vormund und besondere Datenschutzanforderungen in Bezug auf minderjährige Nutzerinnen und Nutzer gesondert geprüft werden. Die Nutzerin bzw. der Nutzer ist verpflichtet, die bei der Registrierung oder Nutzung vorgelegten aktuellen Bedingungen zu prüfen."
+     "p": "Auf der Plattform gibt es keine Altersgrenze und keinen Altersverifikationsmechanismus. Die Nutzerin bzw. der Nutzer ist verpflichtet, die bei der Registrierung oder Nutzung vorgelegten aktuellen Bedingungen zu prüfen."
     }
    ]
   }
@@ -253,7 +253,7 @@ export const CONTENT: LegalContent = {
    "h": "Menschliche Prüfung und Entscheidung",
    "b": [
     {
-     "p": "Eine Warnung bedeutet nicht, dass das Konto automatisch gesperrt wird. Jede Warnung wird von der Administration geprüft. Im Ergebnis kann entschieden werden, dass kein Verstoß vorliegt, die Nutzerin bzw. der Nutzer um eine Erklärung gebeten oder verwarnt wird. Je nach Art und Schwere des Verstoßes kann das Konto gesperrt werden. Die Nutzerin bzw. der Nutzer kann den Support-Kanal der Plattform nutzen, um die Begründung der Entscheidung zu erfahren und Einspruch einzulegen. Die Kontaktangaben für Support/Anträge müssen vor der Veröffentlichung eindeutig angegeben werden."
+     "p": "Eine Warnung bedeutet nicht, dass das Konto automatisch gesperrt wird. Jede Warnung wird von der Administration geprüft. Im Ergebnis kann entschieden werden, dass kein Verstoß vorliegt, die Nutzerin bzw. der Nutzer um eine Erklärung gebeten oder verwarnt wird. Je nach Art und Schwere des Verstoßes kann das Konto gesperrt werden. Die Nutzerin bzw. der Nutzer kann den Support-Kanal der Plattform nutzen, um die Begründung der Entscheidung zu erfahren und Einspruch einzulegen."
     }
    ]
   },
@@ -309,7 +309,7 @@ export const CONTENT: LegalContent = {
    "h": "Analyse- und Werbetechnologien",
    "b": [
     {
-     "p": "Laut Informationsnotiz gibt es auf der Plattform keine Analyse-, Werbe- oder Drittanbieter-Werbecookies. Die Besuchszählung erfolgt ohne Cookies. IP-Adresse und Browserinformationen werden nur kurzzeitig verwendet, um den täglich wechselnden, nicht umkehrbaren Code zu erzeugen; sie werden nicht gespeichert und nicht in einer Weise vorgehalten, die eine Verfolgung derselben Person über mehrere Tage ermöglichen würde. Sendet der Browser ein Do-Not-Track-(DNT)- oder Global-Privacy-Control-(GPC)-Signal, erfolgt keine Besuchszählung."
+     "p": "Auf der Plattform gibt es keine Analyse-, Werbe- oder Drittanbieter-Werbecookies. Die Besuchszählung erfolgt ohne Cookies. IP-Adresse und Browserinformationen werden nur kurzzeitig verwendet, um den täglich wechselnden, nicht umkehrbaren Code zu erzeugen; sie werden nicht gespeichert und nicht in einer Weise vorgehalten, die eine Verfolgung derselben Person über mehrere Tage ermöglichen würde. Sendet der Browser ein Do-Not-Track-(DNT)- oder Global-Privacy-Control-(GPC)-Signal, erfolgt keine Besuchszählung."
     }
    ]
   },
@@ -317,7 +317,7 @@ export const CONTENT: LegalContent = {
    "h": "Gerätekennung und Verwaltung von Einstellungen",
    "b": [
     {
-     "p": "Die Gerätekennung wird nicht für Werbung oder zur Erstellung von Nutzerprofilen, sondern zur Sicherheit und zur Verhinderung von Missbrauch verwendet. Gleichwohl sollte gesondert anhand der konkreten technischen Struktur und der Rechtslage geprüft werden, ob die Gerätekennung rechtlich als zwingend erforderliche Technologie gilt und ob sie eine vorherige Einwilligung erfordert. Die Nutzerin bzw. der Nutzer kann Cookies in den Browsereinstellungen löschen oder blockieren; das Blockieren zwingend erforderlicher Sitzungscookies kann jedoch die Anmeldung und die Funktion einiger Plattformfunktionen beeinträchtigen."
+     "p": "Die Gerätekennung wird nicht für Werbung oder zur Erstellung von Nutzerprofilen, sondern zur Sicherheit und zur Verhinderung von Missbrauch verwendet. Die Nutzerin bzw. der Nutzer kann Cookies in den Browsereinstellungen löschen oder blockieren; das Blockieren zwingend erforderlicher Sitzungscookies kann jedoch die Anmeldung und die Funktion einiger Plattformfunktionen beeinträchtigen."
     }
    ]
   },
@@ -407,7 +407,7 @@ export const CONTENT: LegalContent = {
    "h": "Qualitätswert",
    "b": [
     {
-     "p": "Es wurde mitgeteilt, dass die Methode des Qualitätswerts der Plattform auf der Seite /yontem erläutert wird. KI-Befunde beeinflussen den Qualitätswert nicht. Der Qualitätswert sollte nicht als Garantie für akademische Anerkennung oder wissenschaftliche Gültigkeit ausgelegt werden."
+     "p": "Die Methode des Qualitätswerts der Plattform wird auf der Seite /yontem erläutert. KI-Befunde beeinflussen den Qualitätswert nicht. Der Qualitätswert sollte nicht als Garantie für akademische Anerkennung oder wissenschaftliche Gültigkeit ausgelegt werden."
     }
    ]
   },
@@ -425,7 +425,7 @@ export const CONTENT: LegalContent = {
    "h": "Wichtiger Hinweis zum Geltungsbereich",
    "b": [
     {
-     "p": "Der derzeitige Verkaufsablauf bei Academiana sieht so aus: Über die Preisseite oder die Schaltfläche „Upgrade“ in der Anwendung wird in WhatsApp eine vorbereitete Nachricht mit dem Tarifnamen und gegebenenfalls dem Rabattcode geöffnet; die Zahlung wird außerhalb der Plattform entgegengenommen und der Tarif von der Administration manuell zugewiesen. Es wurde mitgeteilt, dass es auf der Plattform keine Online-Zahlungsseite gibt und Kartendaten nicht in das System aufgenommen werden. Dieses Dokument ist ein Entwurf, der die allgemeinen vorvertraglichen Informationen und Vertragsgrundsätze nach dem derzeitigen Ablauf regelt. Da Identität des Verkäufers, Kontakt-/Antragsangaben, konkreter Preis, Zahlungsart, Umsatzsteuer, Rechnungs- und Rückerstattungsbedingungen nicht verifiziert wurden, wurden diese Angaben nicht erfunden."
+     "p": "Der derzeitige Verkaufsablauf bei Academiana sieht so aus: Über die Preisseite oder die Schaltfläche „Upgrade“ in der Anwendung wird in WhatsApp eine vorbereitete Nachricht mit dem Tarifnamen und gegebenenfalls dem Rabattcode geöffnet; die Zahlung wird außerhalb der Plattform entgegengenommen und der Tarif von der Administration manuell zugewiesen. Auf der Plattform gibt es keine Online-Zahlungsseite, und Kartendaten werden nicht in das System aufgenommen. Dieses Dokument regelt die allgemeinen vorvertraglichen Informationen und Vertragsgrundsätze nach dem derzeitigen Ablauf."
     }
    ]
   },
@@ -441,7 +441,7 @@ export const CONTENT: LegalContent = {
    "h": "Verkauf und Vertragsschluss",
    "b": [
     {
-     "p": "Die Nutzerin bzw. der Nutzer wählt den Tarif auf der Preisseite oder in der Anwendung und nimmt über WhatsApp Kontakt auf. Tarif-, Zahlungs- und Zuweisungsdetails werden mit der Nutzerin bzw. dem Nutzer gesondert bestätigt. Nach der Zahlung weist die Administration den Tarif im System zu und die Leistung beginnt. Der Zeitpunkt des Vertragsschlusses sowie Angaben zu Verkäufer, Tarif, Preis, Zahlung und Zuweisung sollten der Nutzerin bzw. dem Nutzer auf einem dauerhaften Datenträger bestätigt und festgehalten werden. Fehlt dieser Bestätigungsschritt im derzeitigen Ablauf, sollte er eingeführt werden."
+     "p": "Die Nutzerin bzw. der Nutzer wählt den Tarif auf der Preisseite oder in der Anwendung und nimmt über WhatsApp Kontakt auf. Tarif-, Zahlungs- und Zuweisungsdetails werden mit der Nutzerin bzw. dem Nutzer gesondert bestätigt. Nach der Zahlung weist die Administration den Tarif im System zu und die Leistung beginnt."
     }
    ]
   },
@@ -449,7 +449,7 @@ export const CONTENT: LegalContent = {
    "h": "Tarifarten",
    "b": [
     {
-     "p": "Auf der Plattform können ein kostenloser Tarif, monatliche kostenpflichtige Tarife, ein einmaliger und für eine einzelne Arbeit unbefristeter Tarif „Tek Proje“ (Einzelprojekt) sowie eine institutionelle Lizenz angeboten werden. Institutionelle Lizenzen können einer gesonderten Vereinbarung mit der Institution unterliegen. Rabattcodes, Prämien aus dem Einladungsprogramm und der Akademische Teamrabatt (30 %) für mindestens drei Personen können angewendet werden. Umfang des Rabatts und der Preis, auf dessen Grundlage er berechnet wird, sollten der Nutzerin bzw. dem Nutzer vor dem Kauf deutlich mitgeteilt werden."
+     "p": "Auf der Plattform können ein kostenloser Tarif, monatliche kostenpflichtige Tarife, ein einmaliger und für eine einzelne Arbeit unbefristeter Tarif „Tek Proje“ (Einzelprojekt) sowie eine institutionelle Lizenz angeboten werden. Institutionelle Lizenzen können einer gesonderten Vereinbarung mit der Institution unterliegen. Rabattcodes, Prämien aus dem Einladungsprogramm und der Akademische Teamrabatt (30 %) für mindestens drei Personen können angewendet werden. Umfang des Rabatts und der Preis, auf dessen Grundlage er berechnet wird, werden der Nutzerin bzw. dem Nutzer vor dem Kauf deutlich mitgeteilt."
     }
    ]
   },
@@ -457,7 +457,7 @@ export const CONTENT: LegalContent = {
    "h": "Preis, Steuern und Zahlung",
    "b": [
     {
-     "p": "Der zu zahlende Gesamtbetrag, gegebenenfalls Steuern und Rabatte, die Zahlungsart und der Zahlungszeitpunkt sollten der Nutzerin bzw. dem Nutzer vor dem Vorgang deutlich mitgeteilt werden. Die vorliegende Informationsnotiz enthält weder die aktuellen Tarifpreise noch Angaben dazu, ob die Umsatzsteuer im Preis enthalten ist, zur Zahlungsart (Überweisung/EFT oder Zahlungslink), zur Rechnungs-/E-Archiv-Regelung oder zu den Verkäuferangaben. Daher sind in diesem Entwurf weder Betrag noch Zahlungsart angegeben. Bei jedem Verkauf sollte der Vertrag nicht als abgeschlossen gelten, bevor diese Angaben schriftlich bestätigt sind."
+     "p": "Der zu zahlende Gesamtbetrag, gegebenenfalls Steuern und Rabatte, die Zahlungsart und der Zahlungszeitpunkt werden der Nutzerin bzw. dem Nutzer vor dem Vorgang deutlich mitgeteilt. Bei jedem Verkauf gilt der Vertrag erst als abgeschlossen, wenn diese Angaben schriftlich bestätigt sind."
     }
    ]
   },
@@ -473,7 +473,7 @@ export const CONTENT: LegalContent = {
    "h": "Beginn der Leistung und digitale Dienstleistung",
    "b": [
     {
-     "p": "Es wurde mitgeteilt, dass die Leistung beginnt, sobald der Tarif nach der Zahlung von der Administration zugewiesen wird. Die Voraussetzungen des Verbraucherrechts hinsichtlich des sofortigen Beginns einer digitalen Dienstleistung, des Umfangs des Widerrufsrechts und möglicher Ausnahmen sollten nach der konkreten Vertragsart geprüft werden. Erforderlichenfalls sollte von der Nutzerin bzw. dem Nutzer ein gesondertes und ausdrückliches Verlangen/eine gesonderte Zustimmung dafür eingeholt werden, dass die Leistung vor Ablauf der Widerrufsfrist beginnt, und dessen bzw. deren rechtliche Folgen sollten gesondert erläutert werden. Die bloße Annahme der allgemeinen Nutzungsbedingungen sollte nicht in der Annahme verwendet werden, dass sie allein einen wirksamen Verzicht oder eine Ausnahme begründet."
+     "p": "Die Leistung beginnt, sobald der Tarif nach der Zahlung von der Administration zugewiesen wird. Erforderlichenfalls wird von der Nutzerin bzw. dem Nutzer ein gesondertes und ausdrückliches Verlangen bzw. eine gesonderte Zustimmung dafür eingeholt, dass die Leistung vor Ablauf der Widerrufsfrist beginnt, und die rechtlichen Folgen werden erläutert. Die Annahme der allgemeinen Nutzungsbedingungen allein begründet keinen Verzicht auf das Widerrufsrecht und keine Ausnahme."
     }
    ]
   },
@@ -481,7 +481,7 @@ export const CONTENT: LegalContent = {
    "h": "Widerrufsrecht und Rückerstattung",
    "b": [
     {
-     "p": "Das Widerrufsrecht der Verbraucherin bzw. des Verbrauchers und die auf digitale Dienstleistungen anwendbaren Ausnahmen richten sich nach der Art der Leistung, danach, ob mit der Erfüllung begonnen wurde, nach dem vorab erklärten ausdrücklichen Verlangen/der Zustimmung der Nutzerin bzw. des Nutzers und nach dem geltenden Recht. In dieser Informationsnotiz wird festgehalten, dass derzeit keine Widerrufsbelehrung, keine Rückerstattungsrichtlinie und keine gesonderte Zustimmung zum sofortigen Beginn der Leistung bestehen. Daher wird hier weder eine bestimmte Widerrufsfrist noch eine Bestimmung „keine Rückerstattung unter keinen Umständen“ festgelegt. Der Verkäufer sollte der Verbraucherin bzw. dem Verbraucher vor dem Vorgang die anzuwendenden Widerrufs-/Rückerstattungsbedingungen deutlich mitteilen und zwingende Verbraucherrechte wahren."
+     "p": "Das Widerrufsrecht der Verbraucherin bzw. des Verbrauchers und die auf digitale Dienstleistungen anwendbaren Ausnahmen richten sich nach der Art der Leistung, danach, ob mit der Erfüllung begonnen wurde, nach dem vorab erklärten ausdrücklichen Verlangen/der Zustimmung der Nutzerin bzw. des Nutzers und nach dem geltenden Recht. Der Verkäufer teilt der Verbraucherin bzw. dem Verbraucher vor dem Vorgang die anzuwendenden Widerrufs-/Rückerstattungsbedingungen deutlich mit; zwingende Verbraucherrechte bleiben unberührt."
     }
    ]
   },
@@ -497,7 +497,7 @@ export const CONTENT: LegalContent = {
    "h": "Institutionelle Lizenz",
    "b": [
     {
-     "p": "Die institutionelle Lizenz kann zu den Bedingungen einer gesonderten Vereinbarung mit der Institution angeboten werden. Es wurde mitgeteilt, dass die Administration der Institution die Mitgliederliste und Nutzungsstatistiken sehen kann, die wissenschaftlichen Arbeitsinhalte der Nutzerinnen und Nutzer jedoch nicht. Preis, Dauer, Anzahl der Nutzerinnen und Nutzer, Supportniveau und Datenverarbeitungsbestimmungen der institutionellen Lizenz sollten gesondert schriftlich festgelegt werden."
+     "p": "Die institutionelle Lizenz kann zu den Bedingungen einer gesonderten Vereinbarung mit der Institution angeboten werden. Die Administration der Institution kann die Mitgliederliste und Nutzungsstatistiken sehen, die wissenschaftlichen Arbeitsinhalte der Nutzerinnen und Nutzer jedoch nicht. Preis, Dauer, Anzahl der Nutzerinnen und Nutzer, Supportniveau und Datenverarbeitungsbestimmungen der institutionellen Lizenz werden gesondert schriftlich festgelegt."
     }
    ]
   },
@@ -505,7 +505,7 @@ export const CONTENT: LegalContent = {
    "h": "Beschwerden und Anträge",
    "b": [
     {
-     "p": "Die Nutzerin bzw. der Nutzer kann Probleme im Zusammenhang mit dem Kauf oder der Leistung über den Support-Kanal der Plattform melden. Da die offiziellen Kontaktdaten des Verkäufers und die Antragsanschrift in der Informationsnotiz nicht enthalten sind, sind sie in diesem Entwurf nicht aufgeführt. Vor der Veröffentlichung sollten Firma, Anschrift, E-Mail-/Telefonangaben des Verkäufers und die anwendbaren verbraucherrechtlichen Antragswege ergänzt werden."
+     "p": "Die Nutzerin bzw. der Nutzer kann Probleme im Zusammenhang mit dem Kauf oder der Leistung über den Support-Kanal der Plattform melden."
     }
    ]
   },
@@ -513,7 +513,7 @@ export const CONTENT: LegalContent = {
    "h": "Bestellspezifische Bestätigung",
    "b": [
     {
-     "p": "Bei jedem Kauf sollten der Nutzerin bzw. dem Nutzer vor dem Vorgang mindestens Verkäuferangaben, Nutzerangaben, Tarifname, Leistungsumfang, Dauer, Grenzen, Gesamtpreis, Steuern, Zahlungsart, Beginn der Leistung, das Bestehen oder Nichtbestehen einer automatischen Verlängerung sowie die anzuwendenden Widerrufs-/Rückerstattungsbedingungen vorgelegt werden; Bestellübersicht und Vertrag sollten der Nutzerin bzw. dem Nutzer auf einem dauerhaften Datenträger übermittelt werden."
+     "p": "Bei jedem Kauf werden der Nutzerin bzw. dem Nutzer vor dem Vorgang mindestens Verkäuferangaben, Nutzerangaben, Tarifname, Leistungsumfang, Dauer, Grenzen, Gesamtpreis, Steuern, Zahlungsart, Beginn der Leistung, das Bestehen oder Nichtbestehen einer automatischen Verlängerung sowie die anzuwendenden Widerrufs-/Rückerstattungsbedingungen vorgelegt; Bestellübersicht und Vertrag werden der Nutzerin bzw. dem Nutzer auf einem dauerhaften Datenträger übermittelt."
     }
    ]
   }
@@ -523,7 +523,7 @@ export const CONTENT: LegalContent = {
    "h": "Geltungsbereich und Verantwortlicher",
    "b": [
     {
-     "p": "Dieser Hinweis beschreibt die Verarbeitung personenbezogener Daten im Zusammenhang mit Academiana, einer KI-gestützten Plattform für wissenschaftliche Recherche und wissenschaftliches Schreiben, die unter www.academiana.com.tr verfügbar ist. Die Plattform ist für Nutzerinnen und Nutzer in der Türkei zugänglich und kann auch aus anderen Ländern aufgerufen werden. Identität sowie Post-/Kontaktangaben der natürlichen oder juristischen Person, die Academiana betreibt, wurden in den Quellinformationen nicht bereitgestellt und sind daher in diesem Entwurf bewusst nicht angegeben. Sie müssen vor der Veröffentlichung ergänzt werden. Ob Artikel 3 Absatz 2 DSGVO auf die Tätigkeiten der Plattform anwendbar ist und ob nach Artikel 27 ein Vertreter in der EU erforderlich ist, muss anhand der tatsächlichen Ausrichtung auf und Beobachtung von Personen in der EU beurteilt werden."
+     "p": "Dieser Hinweis beschreibt die Verarbeitung personenbezogener Daten im Zusammenhang mit Academiana, einer KI-gestützten Plattform für wissenschaftliche Recherche und wissenschaftliches Schreiben, die unter www.academiana.com.tr verfügbar ist. Die Plattform ist für Nutzerinnen und Nutzer in der Türkei zugänglich und kann auch aus anderen Ländern aufgerufen werden."
     }
    ]
   },
@@ -547,7 +547,7 @@ export const CONTENT: LegalContent = {
    "h": "Speicherdauer",
    "b": [
     {
-     "p": "Kontodaten, wissenschaftliche Inhalte, Dateien, KI-Unterhaltungen, Nutzungszähler, Hashwerte der Gerätekennungen und Benachrichtigungen innerhalb der Anwendung werden grundsätzlich bis zur Löschung des Kontos gespeichert. Einladungen von Mitautorinnen und Mitautoren laufen nach 14 Tagen ab, der Einladungsdatensatz kann jedoch beim Projekt verbleiben. Die Freigabe an die Betreuung bleibt verfügbar, bis die Nutzerin bzw. der Nutzer den Link widerruft. Volltext-Nutzungsnachweise der KI werden derzeit bis zur Löschung des Kontos gespeichert; obwohl in bestehenden Formulierungen eine Frist von 12 Monaten genannt wird, ist eine automatische Löschung derzeit nicht umgesetzt. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden, wobei die Verknüpfung mit der Person nach Löschung des Kontos entfernt wird, der Text jedoch bestehen bleiben kann. Besuchsstatistiken werden unbefristet gespeichert. Zahlungsdaten können gesetzlichen handels- und steuerrechtlichen Aufbewahrungspflichten unterliegen. Ein rechtskonformer Aufbewahrungsplan und automatisierte Löschregeln sollten festgelegt und dokumentiert werden."
+     "p": "Kontodaten, wissenschaftliche Inhalte, Dateien, KI-Unterhaltungen, Nutzungszähler, Hashwerte der Gerätekennungen und Benachrichtigungen innerhalb der Anwendung werden grundsätzlich bis zur Löschung des Kontos gespeichert. Einladungen von Mitautorinnen und Mitautoren laufen nach 14 Tagen ab, der Einladungsdatensatz kann jedoch beim Projekt verbleiben. Die Freigabe an die Betreuung bleibt verfügbar, bis die Nutzerin bzw. der Nutzer den Link widerruft. Volltext-Nutzungsnachweise der KI werden bis zur Löschung des Kontos gespeichert. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden, wobei die Verknüpfung mit der Person nach Löschung des Kontos entfernt wird, der Text jedoch bestehen bleiben kann. Besuchsstatistiken werden unbefristet gespeichert. Zahlungsdaten können gesetzlichen handels- und steuerrechtlichen Aufbewahrungspflichten unterliegen."
     }
    ]
   },
@@ -555,7 +555,7 @@ export const CONTENT: LegalContent = {
    "h": "Empfänger und internationale Übermittlungen",
    "b": [
     {
-     "p": "Zu den Dienstleistern und Empfängern können gehören: Supabase für Datenbank, Authentifizierung und Dateispeicherung; Vercel für Hosting und Inhaltsauslieferung; Anthropic für die KI-Verarbeitung, wenn eine KI-Funktion genutzt wird; sowie Google oder Apple, wenn die Nutzerin bzw. der Nutzer die betreffende Anmeldemethode wählt. OpenAI ist als optionale Integration im Code vorhanden, seine Nutzung im Live-Betrieb wurde jedoch nicht bestätigt, und es wird in diesem Entwurf nicht als aktiver Empfänger behandelt. Wissenschaftliche Suchdienste können Suchbegriffe und DOI-Kennungen ohne die Kontoidentität der Nutzerin bzw. des Nutzers erhalten, darunter OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall; Springer Nature, IEEE und NASA ADS können ebenfalls genutzt werden, wenn API-Zugangsdaten hinterlegt sind. Auf Wunsch der Nutzerin bzw. des Nutzers können LaTeX-Dateien an Overleaf gesendet werden, und von der Nutzerin bzw. dem Nutzer veranlasste Zahlungskommunikation kann über WhatsApp erfolgen."
+     "p": "Zu den Dienstleistern und Empfängern können gehören: Supabase für Datenbank, Authentifizierung und Dateispeicherung; Vercel für Hosting und Inhaltsauslieferung; Anthropic für die KI-Verarbeitung, wenn eine KI-Funktion genutzt wird; sowie Google oder Apple, wenn die Nutzerin bzw. der Nutzer die betreffende Anmeldemethode wählt. Wissenschaftliche Suchdienste können Suchbegriffe und DOI-Kennungen ohne die Kontoidentität der Nutzerin bzw. des Nutzers erhalten, darunter OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall; Springer Nature, IEEE und NASA ADS können ebenfalls genutzt werden, wenn API-Zugangsdaten hinterlegt sind. Auf Wunsch der Nutzerin bzw. des Nutzers können LaTeX-Dateien an Overleaf gesendet werden, und von der Nutzerin bzw. dem Nutzer veranlasste Zahlungskommunikation kann über WhatsApp erfolgen."
     }
    ]
   },
@@ -563,7 +563,7 @@ export const CONTENT: LegalContent = {
    "h": "Datenstandorte und Garantien für Übermittlungen",
    "b": [
     {
-     "p": "Nach den bereitgestellten technischen Informationen werden die Supabase-Daten in Frankfurt innerhalb der EU gehostet, und das Hosting von Vercel befindet sich ebenfalls in Frankfurt, wobei Vercel ein globales CDN nutzt. Supabase und Vercel sind Unternehmen mit Sitz in den USA. Wird eine KI-Funktion genutzt, werden die Eingabe der Nutzerin bzw. des Nutzers, der relevante Kontext des Arbeitsbereichs und ausgewählte Quellen-/Dateiauszüge an Anthropic in den Vereinigten Staaten übermittelt. Einige wissenschaftliche Suchdienste befinden sich ebenfalls außerhalb des Landes der Nutzerin bzw. des Nutzers. Der Verantwortliche muss für jede eingeschränkte Übermittlung einen geeigneten Übermittlungsmechanismus festlegen und dokumentieren, etwa anwendbare Angemessenheitsregelungen oder Standardvertragsklauseln mit erforderlichenfalls ergänzenden Maßnahmen. Auftragsverarbeitungsverträge der Anbieter, Unterauftragsverarbeiter, Transfer-Folgenabschätzungen und die tatsächlichen Dienstkonfigurationen müssen vor der Veröffentlichung überprüft werden."
+     "p": "Die Supabase-Daten werden in Frankfurt innerhalb der EU gehostet, und das Hosting von Vercel befindet sich ebenfalls in Frankfurt, wobei Vercel ein globales CDN nutzt. Supabase und Vercel sind Unternehmen mit Sitz in den USA. Wird eine KI-Funktion genutzt, werden die Eingabe der Nutzerin bzw. des Nutzers, der relevante Kontext des Arbeitsbereichs und ausgewählte Quellen-/Dateiauszüge an Anthropic in den Vereinigten Staaten übermittelt. Einige wissenschaftliche Suchdienste befinden sich ebenfalls außerhalb des Landes der Nutzerin bzw. des Nutzers. Für jede eingeschränkte Übermittlung wird ein geeigneter Übermittlungsmechanismus verwendet, etwa anwendbare Angemessenheitsregelungen oder Standardvertragsklauseln mit erforderlichenfalls ergänzenden Maßnahmen."
     }
    ]
   },
@@ -587,7 +587,7 @@ export const CONTENT: LegalContent = {
    "h": "Sicherheit",
    "b": [
     {
-     "p": "Die bereitgestellten technischen Informationen beschreiben HTTPS, HSTS, Content Security Policy, Isolation von Nutzerdaten mit automatisierten Tests, Schutz vor CSRF und SSRF, serverseitige Verwaltung von Geheimnissen, zeitlich begrenzte Dateilinks, Sicherheitsprüfungen von Abhängigkeiten und mehr als 500 automatisierte Tests. Sie weisen auch auf das Fehlen einer Zwei-Faktor-Authentifizierung, eines schriftlichen Verfahrens für Verletzungen des Schutzes personenbezogener Daten und eines unabhängigen Sicherheitstests hin. Die Sicherheitsmaßnahmen sollten regelmäßig überprüft und mit Artikel 32 DSGVO in Einklang gebracht werden. Ein Verfahren zur Reaktion auf Datenschutzverletzungen sollte die Bewertung und, soweit erforderlich, die Meldung an die Aufsichtsbehörde binnen 72 Stunden nach Bekanntwerden der Verletzung sowie die Benachrichtigung betroffener Personen ermöglichen, wenn die gesetzliche Schwelle erreicht ist."
+     "p": "Zu den Sicherheitsmaßnahmen der Plattform gehören HTTPS, HSTS, Content Security Policy, Isolation von Nutzerdaten mit automatisierten Tests, Schutz vor CSRF und SSRF, serverseitige Verwaltung von Geheimnissen, zeitlich begrenzte Dateilinks, Sicherheitsprüfungen von Abhängigkeiten und mehr als 500 automatisierte Tests. Die Sicherheitsmaßnahmen werden regelmäßig überprüft. Bei einer Verletzung des Schutzes personenbezogener Daten wird diese bewertet und, soweit erforderlich, binnen 72 Stunden nach Bekanntwerden der Aufsichtsbehörde gemeldet; betroffene Personen werden benachrichtigt, wenn die gesetzliche Schwelle erreicht ist."
     }
    ]
   },
@@ -595,7 +595,7 @@ export const CONTENT: LegalContent = {
    "h": "Rechte betroffener Personen",
    "b": [
     {
-     "p": "Vorbehaltlich der Bedingungen und Beschränkungen der DSGVO können Personen Auskunft, Berichtigung, Löschung, Einschränkung und Datenübertragbarkeit verlangen sowie der Verarbeitung auf Grundlage berechtigter Interessen widersprechen. Nutzerinnen und Nutzer können derzeit ihre Daten im JSON-Format herunterladen, ihr Konto und die zugehörigen Kontodaten löschen und über die Plattform eine Datenanfrage stellen. Laut den bereitgestellten Informationen werden Datenanfragen innerhalb von 30 Tagen kostenlos beantwortet. Die Kontaktangaben des Verantwortlichen und der Weg zur Ausübung der Rechte wurden nicht bereitgestellt und müssen vor der Veröffentlichung ergänzt werden. Personen können außerdem Beschwerde bei einer zuständigen Datenschutz-Aufsichtsbehörde einlegen, insbesondere in dem EU-Mitgliedstaat ihres gewöhnlichen Aufenthalts, ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes."
+     "p": "Vorbehaltlich der Bedingungen und Beschränkungen der DSGVO können Personen Auskunft, Berichtigung, Löschung, Einschränkung und Datenübertragbarkeit verlangen sowie der Verarbeitung auf Grundlage berechtigter Interessen widersprechen. Nutzerinnen und Nutzer können ihre Daten im JSON-Format herunterladen, ihr Konto und die zugehörigen Kontodaten löschen und über die Plattform eine Datenanfrage stellen. Datenanfragen werden innerhalb von 30 Tagen kostenlos beantwortet. Personen können außerdem Beschwerde bei einer zuständigen Datenschutz-Aufsichtsbehörde einlegen, insbesondere in dem EU-Mitgliedstaat ihres gewöhnlichen Aufenthalts, ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes."
     }
    ]
   },
@@ -603,7 +603,7 @@ export const CONTENT: LegalContent = {
    "h": "Institutionelle Kunden",
    "b": [
     {
-     "p": "Bei institutionellen Lizenzen kann Academiana je nach den tatsächlichen Zwecken und Mitteln der Verarbeitung als Auftragsverarbeiter im Auftrag der Institution handeln. Ein schriftlicher Auftragsverarbeitungsvertrag sollte Gegenstand, Dauer, Art und Zweck der Verarbeitung, Datenkategorien, Kategorien betroffener Personen, Sicherheitsmaßnahmen, Unterauftragsverarbeiter, Unterstützungspflichten, Löschung/Rückgabe von Daten und Prüfungsregelungen festlegen."
+     "p": "Bei institutionellen Lizenzen kann Academiana je nach den tatsächlichen Zwecken und Mitteln der Verarbeitung als Auftragsverarbeiter im Auftrag der Institution handeln. Ein schriftlicher Auftragsverarbeitungsvertrag legt Gegenstand, Dauer, Art und Zweck der Verarbeitung, Datenkategorien, Kategorien betroffener Personen, Sicherheitsmaßnahmen, Unterauftragsverarbeiter, Unterstützungspflichten, Löschung/Rückgabe von Daten und Prüfungsregelungen fest."
     }
    ]
   },
@@ -611,7 +611,7 @@ export const CONTENT: LegalContent = {
    "h": "Kinder",
    "b": [
     {
-     "p": "Laut den bereitgestellten Informationen hat die Plattform derzeit keine Altersgrenze und führt keine Altersverifikation durch. Der Verantwortliche sollte prüfen, ob der Dienst voraussichtlich Kindern angeboten wird, und, soweit nach anwendbarem Recht erforderlich, geeignete altersbezogene Schutzmaßnahmen und Verfahren zur elterlichen Zustimmung umsetzen."
+     "p": "Die Plattform hat keine Altersgrenze und führt keine Altersverifikation durch. Soweit nach anwendbarem Recht erforderlich, werden geeignete altersbezogene Schutzmaßnahmen und Verfahren zur elterlichen Zustimmung angewendet."
     }
    ]
   },
@@ -619,7 +619,7 @@ export const CONTENT: LegalContent = {
    "h": "Änderungen",
    "b": [
     {
-     "p": "Dieser Hinweis kann aktualisiert werden, um Änderungen der Verarbeitungstätigkeiten, der Dienstleister oder des anwendbaren Rechts widerzuspiegeln. Wesentliche Änderungen werden über einen geeigneten Kanal mitgeteilt. Identität und Kontaktangaben des Verantwortlichen, gegebenenfalls Angaben zum EU-Vertreter und gegebenenfalls Angaben zur zuständigen Aufsichtsbehörde müssen ergänzt werden, bevor dieser Hinweis als endgültiger rechtlicher Hinweis veröffentlicht wird."
+     "p": "Dieser Hinweis kann aktualisiert werden, um Änderungen der Verarbeitungstätigkeiten, der Dienstleister oder des anwendbaren Rechts widerzuspiegeln. Wesentliche Änderungen werden über einen geeigneten Kanal mitgeteilt."
     }
    ]
   }

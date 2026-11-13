@@ -98,7 +98,6 @@ export const EN: Record<string, string> = {
   "Gizlilik ve KVKK aydınlatma metni": "Privacy and data protection notice",
   "Kişisel verileriniz ve akademik çalışmalarınız nasıl işlenir?": "How are your personal data and academic work processed?",
   "Kayıt ol": "Sign up",
-  "Şablon metin: yayına almadan önce hukuki inceleme yapılmalıdır.": "Template text: legal review is required before going live.",
   "Kurulum durumu": "Setup status",
   "Supabase (veritabanı, kimlik doğrulama, depolama)": "Supabase (database, authentication, storage)",
   "Supabase service role (kullanım kayıtları, yönetim)": "Supabase service role (usage records, administration)",

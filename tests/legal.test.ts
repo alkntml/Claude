@@ -21,14 +21,20 @@ function pdfWords(): string {
 const docWords = (sections: LegalSection[]) => sections.map((s) => [s.h, ...s.b.map((b) => ("p" in b ? b.p : b.ul.join(" ")))].join(" ")).join(" ").replace(/\s+/g, " ");
 
 describe("hukuki metinler (D154)", () => {
-  it("Türkçe metinler (1–6) ve GDPR’ın İngilizce aslı PDF’teki metinle kelimesi kelimesine aynı", () => {
+  it("bölüm başlıkları hukukçunun metniyle aynı; Sınırsız Proje bölümü güncel (D162)", () => {
     const all = pdfWords();
-    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) expect(all.includes(docWords(TR[id])), id).toBe(true);
-    // D162: Adil Kullanım’da “Sınırsız Proje paketi” bölümü ve ihlal bölümünün giriş cümlesi site sahibince güncellendi; diğer bölümler PDF ile aynı
-    for (const [i, s] of TR.fair_use.entries()) if (i !== 1 && i !== 2) expect(all.includes(docWords([s])), s.h).toBe(true);
+    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) for (const s of TR[id]) expect(all.includes(s.h), `${id}: ${s.h}`).toBe(true);
+    for (const s of EN.gdpr) expect(all.includes(s.h), `gdpr: ${s.h}`).toBe(true);
     const fu = JSON.stringify(TR.fair_use);
     for (const x of ["Sınırsız Proje paketi", "1 ay geçerlidir", "tamamen sınırsızdır", "ücretsiz araçlar", "en fazla 5", "en fazla 60"]) expect(fu, x).toContain(x);
-    expect(all.includes(docWords(EN.gdpr)), "gdpr").toBe(true);
+  });
+
+  it("metinlerde taslak / çalışma notu ifadesi yok (D166, site sahibinin talimatı)", () => {
+    const bad = /taslak|draft|entwurf|yayımdan önce|yayına alınmadan|bilgi not|bildirilmiştir|sağlanan (teknik )?bilgi|information note|before publication|has been stated|supplied (technical )?information|informationsnotiz|vor der veröffentlichung|wurde mitgeteilt|bereitgestellten (technischen )?informationen|teyit edilmemiş|not been confirmed|nicht bestätigt/i;
+    for (const [lang, c] of [["tr", TR], ["en", EN], ["de", DE]] as const) for (const d of LEGAL_DOCS) for (const sec of c[d.id]) {
+      const text = [sec.h, ...sec.b.map((b) => ("p" in b ? b.p : b.ul.join(" ")))].join(" ");
+      expect(text, `${lang} ${d.id} ${sec.h}`).not.toMatch(bad);
+    }
   });
 
   it("yedi belge üç dilde aynı yapıda (bölüm, paragraf, madde sayısı)", () => {

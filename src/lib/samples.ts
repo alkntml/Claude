@@ -26,6 +26,24 @@ export const SAMPLE_SOURCES: CitationItem[] = [
   { id: "s4", type: "book", title: "Öz düzenleme ve öğrenme", authors: [{ family: "Yılmaz", given: "Burak" }], year: 2019, publisher: "Örnek Yayınevi", publisherPlace: "Ankara" },
 ];
 
+/** D168: kurgusal kaynakların İngilizce/Almanca sitede gösterilen karşılıkları (Türkçe başlıklar o dilde görünmesin) */
+const SAMPLE_SOURCE_I18N: Record<"en" | "de", Record<string, Partial<CitationItem>>> = {
+  en: {
+    s1: { title: "Social media use and academic procrastination in university students", containerTitle: "Sample Journal of Psychology" },
+    s2: { title: "Night-time screen use and sleep quality: A survey study", containerTitle: "Sample Journal of Health Sciences" },
+    s4: { title: "Self-regulation and learning", publisher: "Sample Publishing" },
+  },
+  de: {
+    s1: { title: "Social-Media-Nutzung und akademisches Aufschieben bei Studierenden", containerTitle: "Beispielzeitschrift für Psychologie" },
+    s2: { title: "Nächtliche Bildschirmnutzung und Schlafqualität: Eine Querschnittsstudie", containerTitle: "Beispielzeitschrift für Gesundheitswissenschaften" },
+    s4: { title: "Selbstregulation und Lernen", publisher: "Beispielverlag" },
+  },
+};
+export function sampleSources(lang: string): CitationItem[] {
+  const o = lang === "en" || lang === "de" ? SAMPLE_SOURCE_I18N[lang] : null;
+  return o ? SAMPLE_SOURCES.map((x) => ({ ...x, ...(o[x.id] ?? {}) })) : SAMPLE_SOURCES;
+}
+
 /** Deterministik örnek veri seti (N = 120): sabit tohumlu üreteç, her çizimde aynı sonuç */
 /** Veri setindeki değişken adları (dile göre) */
 export const VARS = {

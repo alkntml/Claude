@@ -1,4 +1,5 @@
 "use client";
+import { yearlyTotalPrice } from "@/lib/pricing";
 import { AlertsTab } from "./alerts";
 import { isSafeInternalLink } from "@/lib/notify";
 import { AutopilotTab } from "./autopilot";
@@ -391,7 +392,7 @@ function PlansTab() {
   function edit(id: string, update: any) { setRows((l) => l.map((p) => (p.id === id ? { ...p, ...update } : p))); }
   async function save(p: any) {
     try {
-      await api("/api/admin/plans", { method: "PATCH", json: { id: p.id, name: p.name, description: p.description, price_monthly: Number(p.price_monthly), price_yearly: Number(p.price_yearly), is_active: p.is_active, features: p.features, limits: p.limits } });
+      await api("/api/admin/plans", { method: "PATCH", json: { id: p.id, name: p.name, description: p.description, price_monthly: Number(p.price_monthly), is_active: p.is_active, features: p.features, limits: p.limits } });
       toast({ tone: "success", title: `${p.name} kaydedildi`, detail: "Yeni limitler hemen geçerli olur." });
     } catch (e) { toast({ tone: "error", title: "Kaydedilemedi", detail: (e as Error).message }); }
   }
@@ -405,7 +406,7 @@ function PlansTab() {
           <div key={p.id} className="card space-y-3 p-5">
             <div className="flex items-center justify-between"><input className="input !w-auto !py-1.5 font-semibold" value={p.name} onChange={(e) => edit(p.id, { name: e.target.value })} /><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={p.is_active} onChange={(e) => edit(p.id, { is_active: e.target.checked })} /> Aktif</label></div>
             <input className="input !py-2 text-sm" value={p.description} onChange={(e) => edit(p.id, { description: e.target.value })} />
-            <div className="grid grid-cols-2 gap-2"><div><label className="label">Aylık fiyat ({p.currency})</label><input className="input !py-2" type="number" value={p.price_monthly} onChange={(e) => edit(p.id, { price_monthly: e.target.value })} /></div><div><label className="label">Yıllık fiyat</label><input className="input !py-2" type="number" value={p.price_yearly} onChange={(e) => edit(p.id, { price_yearly: e.target.value })} /></div></div>
+            <div className="grid grid-cols-2 gap-2"><div><label className="label">Aylık fiyat ({p.currency})</label><input className="input !py-2" type="number" value={p.price_monthly} onChange={(e) => edit(p.id, { price_monthly: e.target.value })} /></div><div><label className="label">Yıllık toplam (otomatik: %20 indirimli × 12)</label><input className="input !py-2" type="number" value={yearlyTotalPrice(Number(p.price_monthly) || 0)} readOnly disabled /></div></div>
             <div className="grid grid-cols-2 gap-2">
               {LIMIT_FIELDS.map(([k, l]) => <div key={k}><label className="label">{l}</label><input className="input !py-2" placeholder="Sınırsız" value={p.limits?.[k] ?? ""} onChange={(e) => edit(p.id, { limits: { ...p.limits, [k]: e.target.value === "" ? null : Number(e.target.value.replace(/\D/g, "")) } })} /></div>)}
               <div><label className="label">Dışa aktarma</label><div className="flex flex-wrap gap-2 pt-1">{["txt", "md", "docx", "pdf"].map((f) => <label key={f} className="flex items-center gap-1 text-[13px]"><input type="checkbox" checked={(p.limits?.export_formats ?? []).includes(f)} onChange={(e) => edit(p.id, { limits: { ...p.limits, export_formats: e.target.checked ? [...(p.limits?.export_formats ?? []), f] : (p.limits?.export_formats ?? []).filter((x: string) => x !== f) } })} />{f.toUpperCase()}</label>)}</div></div>

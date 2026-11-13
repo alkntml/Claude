@@ -69,7 +69,7 @@ function SourcesVisual() {
       <div className="my-3 flex items-center gap-2 text-[11px] text-ink-500"><span className="h-px flex-1 bg-ink-100" />{t("tekrarlar ayıklanır, kimlikler doğrulanır")}<span className="h-px flex-1 bg-ink-100" /></div>
       <ul className="space-y-2">
         {[["Kaya, E. (2021). Uzaktan eğitimde öz düzenleme…", "Tam metin okundu", "bg-emerald-50 text-emerald-700"], ["Lee, S. vd. (2020). Feedback timing and self-regulation", "Özet okundu", "bg-amber-50 text-amber-800"], ["Zimmerman, B. (2000). Self-regulated learning", "Yalnızca künye", "bg-ink-100 text-ink-600"]].map(([a, b, c]) => (
-          <li key={a} className="flex items-center gap-2 rounded-xl border border-ink-100 px-3 py-2"><BookCheck className="h-4 w-4 shrink-0 text-ink-400" /><span className="min-w-0 flex-1 truncate font-serif text-[12.5px] text-ink-800">{a}</span><span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold", c)}>{t(b)}</span></li>
+          <li key={a} className="flex items-center gap-2 rounded-xl border border-ink-100 px-3 py-2"><BookCheck className="h-4 w-4 shrink-0 text-ink-400" /><span className="min-w-0 flex-1 truncate font-serif text-[12.5px] text-ink-800">{t(a)}</span><span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold", c)}>{t(b)}</span></li>
         ))}
       </ul>
       <div className="mt-3 rounded-xl bg-ink-900 px-3 py-2.5 text-[11.5px] text-white/90"><MessagesSquare className="mr-1.5 inline h-3.5 w-3.5 text-sky-300" />{t("Kaynağa sor: “Örneklem nasıl seçilmiş?”")} <span className="text-white/50">→ {t("cevap s. 205’ten")}</span></div>
@@ -204,7 +204,7 @@ const INFRA: { icon: Icon; title: string; text: string }[] = [
   { icon: Lock, title: "Satır düzeyinde erişim denetimi", text: "Her kullanıcının verisi veritabanı düzeyinde ayrılır; çalışmanızı yalnızca siz ve davet ettikleriniz görür." },
   { icon: ShieldCheck, title: "Uygulama güvenliği", text: "Zorunlu HTTPS (HSTS), içerik güvenlik politikası, istek kökeni denetimi ve dış bağlantılarda iç ağ koruması." },
   { icon: Activity, title: "İzleme ve dayanıklılık", text: "Veri tabanı bağlantıları geçici hatalarda yeniden denenir; kaynak sağlığı ve yapay zekâ yanıt süreleri sürekli izlenir." },
-  { icon: TestTube2, title: "Otomatik test güvencesi", text: "450’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır." },
+  { icon: TestTube2, title: "Otomatik test güvencesi", text: "500’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır." },
   { icon: FileCheck2, title: "KVKK ve şeffaflık", text: "Verilerinizi indirme ve silme talebi; kaynak doğrulama ve puanlama yöntemi herkese açık." },
 ];
 
@@ -244,7 +244,7 @@ function Connector() {
 export function FeatureShowcase() {
   const { t } = useT();
   const [active, setActive] = useState(CATEGORIES[0].id);
-  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["14", "istatistik analizi"], ["450+", "otomatik test"]];
+  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["14", "istatistik analizi"], ["500+", "otomatik test"]];
   return (
     <section id="ozellikler" className="relative scroll-mt-24 py-24">
       <div className="mx-auto max-w-6xl px-6">

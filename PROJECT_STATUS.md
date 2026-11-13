@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Denetim düzeltmeleri (D168, 13 Kasım 2026)**
+- Koşullarda hak dolunca yalnızca görüntüleme/indirme; yıllık fiyat eşitlemesi (migration 42 kullanıcıda bekliyor); tanıtım sayfaları CDN önbelleğinde; EN/DE’de Türkçe kalan metinler ve hitap düzeltildi
+
 **Hukuki metinlerden taslak/çalışma notları kaldırıldı (D166, 13 Kasım 2026)**
 - Yedi belge, üç dil; sürüm 2026-11-14 (kullanıcılar Kullanım Koşulları’nı bir kez yeniden onaylar)
 

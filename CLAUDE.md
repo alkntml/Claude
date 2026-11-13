@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D167)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D168)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -69,7 +69,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
 
 ## SEO (özet)
 Herkese açık sayfalar Türkçe öneksiz, İngilizce `/en` önekli; bağlantılar `@/components/l-link`. Yeni herkese açık sayfa: `PUBLIC_PATHS` (seo.ts) + `PAGE_SEO` (seo-pages.ts) + `generateMetadata() { return pageMeta("/yol") }` + sitemap. Başlık ≤60, açıklama ≤160 karakter. Herkese açık metin değişince `SITE_CONTENT_UPDATED` güncelle. Ayrıntı: `docs/ARCHITECTURE.md`; denetim, içerik planı ve ölçümler `docs/seo/SEO_PLAN.md` (D164).
-Blog yazısına sayı/atıf örneği konacaksa ürünün motoruyla üret ve testle denetle; kaynak (`sources`) yalnızca gerçek eser. EN/DE arayüz sözlüğünü layout’tan prop olarak geçirme (sayfa boyutu, D164).
+Blog yazısına sayı/atıf örneği konacaksa ürünün motoruyla üret ve testle denetle; kaynak (`sources`) yalnızca gerçek eser. EN/DE arayüz sözlüğünü layout’tan prop olarak geçirme (sayfa boyutu, D164). Tanıtım sayfaları CDN’den önbelleklenir (D168): sayfa HTML’i kişiye/çereze göre değişmemeli; giriş durumuna bağlı arayüz `useSignedIn` ile istemcide.
 
 ## Veritabanı değişikliği
 1. `supabase/migrations/` altına yeni sıralı dosya (`2026MMDDhhmmss_ad.sql`); eskileri değiştirme.

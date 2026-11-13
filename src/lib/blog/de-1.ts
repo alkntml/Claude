@@ -364,7 +364,7 @@ Allgemeine Chatbots können Artikel, Autor:innen und DOIs erzeugen, die es nicht
 
 ## Academiana beruht auf diesen Grundsätzen
 
-In Academiana kann der Assistent systembedingt keine Quellen erfinden: Er zitiert nur Quellen, die in echten Datenbanken gefunden und Ihrem Projekt hinzugefügt wurden. Er schreibt nie unbelegte Behauptungen und setzt „[VERİ GİRİLECEK]“ (Daten einzutragen), wo Daten nötig sind. Kein Entwurf gelangt in Ihr Dokument, bevor Sie auf „Zum Dokument hinzufügen“ klicken, und jede Änderung bleibt im Versionsverlauf erhalten. Einzelheiten finden Sie in unseren [Grundsätzen wissenschaftlicher Integrität](/de/akademik-durustluk).`,
+In Academiana kann der Assistent systembedingt keine Quellen erfinden: Er zitiert nur Quellen, die in echten Datenbanken gefunden und Ihrem Projekt hinzugefügt wurden. Er schreibt nie unbelegte Behauptungen und setzt „[DATEN EINZUTRAGEN]“ (Daten einzutragen), wo Daten nötig sind. Kein Entwurf gelangt in Ihr Dokument, bevor Sie auf „Zum Dokument hinzufügen“ klicken, und jede Änderung bleibt im Versionsverlauf erhalten. Einzelheiten finden Sie in unseren [Grundsätzen wissenschaftlicher Integrität](/de/akademik-durustluk).`,
   },
   "yapay-zeka-tespit-araclari": {
     slug: "ki-detektoren-zuverlaessig",

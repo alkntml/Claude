@@ -77,4 +77,8 @@ union all select '40 Yıllık ödeme ve Sınırsız Proje paketi',
         and exists (select 1 from public.plans where id = 'single' and limits->>'projects' = '5')
        then 'YAPILMIŞ' else 'EKSİK' end
 union all select '41 Paket adı: Sınırsız Proje',
-  case when exists (select 1 from public.plans where id = 'single' and name = 'Sınırsız Proje') then 'YAPILMIŞ' else 'EKSİK' end;
+  case when exists (select 1 from public.plans where id = 'single' and name = 'Sınırsız Proje') then 'YAPILMIŞ' else 'EKSİK' end
+union all select '42 Yıllık fiyat eşitlemesi',
+  case when exists (select 1 from pg_trigger where tgname = 'plans_sync_yearly_price')
+        and not exists (select 1 from public.plans where price_yearly <> round(price_monthly * 0.8) * 12)
+       then 'YAPILMIŞ' else 'EKSİK' end;

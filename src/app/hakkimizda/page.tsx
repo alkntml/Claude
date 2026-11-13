@@ -31,7 +31,7 @@ export default async function AboutPage() {
         <p>Die führende Plattform für das Zusammenspiel von KI und Bildung zu werden – zuerst in der Türkei, dann weltweit – und zu einer akademischen Kultur beizutragen, in der KI die Forschung beschleunigt und zugleich ihre Qualität und Integrität stärkt.</p>
         <h2>Unsere Werte</h2>
         <ul>
-          <li><strong>Nichts wird erfunden.</strong> Die KI erfindet niemals Quellen, Autor:innen, DOIs, Daten oder Ergebnisse. Fehlt eine Quelle, schreibt sie [KAYNAK GEREKLİ] (Quelle erforderlich).</li>
+          <li><strong>Nichts wird erfunden.</strong> Die KI erfindet niemals Quellen, Autor:innen, DOIs, Daten oder Ergebnisse. Fehlt eine Quelle, schreibt sie [QUELLE ERFORDERLICH].</li>
           <li><strong>Transparenz.</strong> Für jede Quelle wird angezeigt, ob die bibliografischen Angaben, das Abstract oder der Volltext gelesen wurde.</li>
           <li><strong>Sie sind die Autorin bzw. der Autor.</strong> Die Plattform unterstützt Ihr Denken und Schreiben; sie ersetzt es nicht.</li>
           <li><strong>Datenschutz.</strong> Ihre Arbeit sehen nur Sie und die Personen, mit denen Sie sie teilen; sie wird nie zum Training von KI-Modellen verwendet.</li>
@@ -57,7 +57,7 @@ export default async function AboutPage() {
         <p>To be the leading platform where AI and education work together, first in Turkey and then worldwide, and to help build an academic culture in which AI speeds up research while strengthening its quality and integrity.</p>
         <h2>Our values</h2>
         <ul>
-          <li><strong>No fabrication.</strong> The AI never invents sources, authors, DOIs, data or findings. Where a source is missing it writes [SOURCE NEEDED].</li>
+          <li><strong>No fabrication.</strong> The AI never invents sources, authors, DOIs, data or findings. Where a source is missing it writes [CITATION NEEDED].</li>
           <li><strong>Transparency.</strong> Every source shows whether its record, abstract or full text was read.</li>
           <li><strong>You are the author.</strong> The platform supports your thinking and writing; it does not replace them.</li>
           <li><strong>Privacy.</strong> Your work is visible only to you and the people you share it with, and is never used to train AI models.</li>

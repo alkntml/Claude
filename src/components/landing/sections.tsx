@@ -1,4 +1,5 @@
 "use client";
+import { useSignedIn } from "@/components/use-signed-in";
 import { useT } from "@/i18n/client";
 import { BookCheck, Brain, CheckCircle2, Users, FileDown, Layers3, Library, ListChecks, Lock, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import Link from "@/components/l-link";
@@ -105,7 +106,8 @@ export function Principles() {
   );
 }
 
-export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn: boolean }) {
+export function PricingCards({ plans, signedIn: initialSignedIn }: { plans: PlanLike[]; signedIn: boolean }) {
+  const signedIn = useSignedIn(initialSignedIn);
   const { t, dl } = useT();
   const price = usePrice();
   // D157: aylık / yıllık ödeme

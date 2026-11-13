@@ -45,7 +45,7 @@ export default async function MethodPage() {
         <h2>5. Regeln, denen der Schreibassistent folgt</h2>
         <ul>
           <li>Er zitiert nur Quellen aus Ihrer Liste und nennt keine Werke, die nicht in der Liste stehen.</li>
-          <li>Wo eine Aussage eine Quelle braucht, die nicht vorhanden ist, schreibt er „[KAYNAK GEREKLİ]“ (Quelle erforderlich); wo Ihre Daten nötig sind, „[VERİ GİRİLECEK]“ (Daten einzutragen). Zahlen erfindet er nicht.</li>
+          <li>Wo eine Aussage eine Quelle braucht, die nicht vorhanden ist, schreibt er „[QUELLE ERFORDERLICH]“; wo Ihre Daten nötig sind, „[DATEN EINZUTRAGEN]“. Zahlen erfindet er nicht.</li>
           <li>Statistiken erzeugt nicht die KI: Analysen werden auf dem Server aus Ihren eigenen Daten berechnet.</li>
           <li>Aufgaben werden an das jeweils passende Modell (klein, mittel oder groß) geleitet; das Produkt hängt nicht von einem einzigen Modell oder Anbieter ab.</li>
         </ul>

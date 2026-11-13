@@ -816,5 +816,13 @@ describe("anketler", () => {
     expect((await db.query<{ p: string }>(`select plan_period as p from public.profiles where id = $1`, [N])).rows[0].p).toBe("yearly");
     await db.query(`delete from auth.users where id in ($1, $2)`, [N, L]);
   });
-});
 
+  it("migration 42: yıllık fiyat her zaman (aylık × 0,8, yuvarlanmış) × 12; elle girilen yıllık fiyat yok sayılır (D168)", async () => {
+    const rows = (await db.query<{ id: string; m: string; y: string }>(`select id, price_monthly as m, price_yearly as y from public.plans`)).rows;
+    for (const r of rows) expect(Number(r.y), r.id).toBe(Math.round(Number(r.m) * 0.8) * 12);
+    expect(Number(rows.find((r) => r.id === "basic")!.y)).toBe(7188);
+    await db.query(`update public.plans set price_monthly = 1000, price_yearly = 1 where id = 'basic'`);
+    expect(Number((await db.query<{ y: string }>(`select price_yearly as y from public.plans where id = 'basic'`)).rows[0].y)).toBe(9600);
+    await db.query(`update public.plans set price_monthly = 749 where id = 'basic'`);
+  });
+});

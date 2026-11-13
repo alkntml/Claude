@@ -1,4 +1,5 @@
 "use client";
+import { useSignedIn } from "@/components/use-signed-in";
 import { ArrowRight, BadgeCheck, BarChart3, Check, ClipboardList, Compass, FileDown, FileText, GraduationCap, Info, MessageSquareReply, PenLine, Presentation, Quote, Search, ShieldCheck, Sigma, Table2, Type, Unlock } from "lucide-react";
 import { useMemo, useState } from "react";
 import Link from "@/components/l-link";
@@ -9,7 +10,7 @@ import { renderChartSvg } from "@/lib/charts/svg";
 import { CitationEngine, STYLE_IDS, STYLES } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
 import { richToHtml } from "@/lib/citations/util";
-import { BLUEPRINT, DEFENSE, DRAFT, MATRIX, pick, QUALITY, REVIEWER, SAMPLE_SOURCES, SAMPLE_WORK, sampleDataset, SEARCH_RESULTS, SECTIONS, SURVEY, TITLES, VARS, type L2 } from "@/lib/samples";
+import { BLUEPRINT, DEFENSE, DRAFT, MATRIX, pick, QUALITY, REVIEWER, sampleSources, SAMPLE_WORK, sampleDataset, SEARCH_RESULTS, SECTIONS, SURVEY, TITLES, VARS, type L2 } from "@/lib/samples";
 import { buildChart } from "@/lib/stats/charts";
 import { runAnalysis } from "@/lib/stats/apa";
 import { pearson } from "@/lib/stats/tests";
@@ -31,7 +32,8 @@ function mdTable(md: string): string {
  * Örnek çıktılar (D72): her hizmet için bir örnek. Tablo, grafik ve atıflar sitenin kendi motorlarıyla
  * kurgusal örnek veriden üretilir; metinler temsilidir.
  */
-export function SamplesView({ signedIn }: { signedIn: boolean }) {
+export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }) {
+  const signedIn = useSignedIn(initialSignedIn);
   const { t, locale } = useT();
   // Motor çıktıları (istatistik, grafik, atıf) yalnızca TR/EN; Almancada İngilizce motor + Almanca metinler (D143)
   const l = contentLang(locale);
@@ -52,11 +54,12 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
   }, [l, V]);
 
   const order = ["s1", "s2", "s3", "s4"];
-  const engine = useMemo(() => new CitationEngine(style, SAMPLE_SOURCES, { locale: l, citedOrder: order }), [style, l]); // eslint-disable-line react-hooks/exhaustive-deps
+  const sources = useMemo(() => sampleSources(locale), [locale]);
+  const engine = useMemo(() => new CitationEngine(style, sources, { locale: l, citedOrder: order }), [style, l, sources]); // eslint-disable-line react-hooks/exhaustive-deps
   const cite = (ids: string[]) => `<span class="sample-cite">${richToHtml(engine.cite(ids))}</span>`;
-  const withCites = (text: string) => text.replace(/\{c:([\w,]+)\}/g, (_, ids: string) => cite(ids.split(","))).replace(/\[(KAYNAK GEREKLİ|CITATION NEEDED)\]/g, `<span class="sample-flag">[$1]</span>`);
+  const withCites = (text: string) => text.replace(/\{c:([\w,]+)\}/g, (_, ids: string) => cite(ids.split(","))).replace(/\[(KAYNAK GEREKLİ|CITATION NEEDED|QUELLE ERFORDERLICH)\]/g, `<span class="sample-flag">[$1]</span>`);
   const bib = engine.bibliography();
-  const src = (id: string) => SAMPLE_SOURCES.find((s) => s.id === id)!;
+  const src = (id: string) => sources.find((s) => s.id === id)!;
   const r2s = (r: number) => r.toFixed(2).replace(/^(-?)0\./, "$1.");
 
   const body: Record<string, React.ReactNode> = {
@@ -136,7 +139,7 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-[13px]">
           <thead><tr className="border-b border-ink-200 text-[12px] uppercase tracking-wide text-ink-400">{[t("Kaynak"), t("Amaç"), t("Örneklem"), t("Yöntem"), t("Temel bulgu")].map((h) => <th key={h} className="py-2 pr-3 font-semibold">{h}</th>)}</tr></thead>
-          <tbody>{MATRIX.map((m) => { const s = src(m.src); return <tr key={m.src} className="border-b border-ink-100 align-top text-ink-700"><td className="py-2.5 pr-3 font-medium text-ink-900" dangerouslySetInnerHTML={{ __html: richToHtml(new CitationEngine("apa7", SAMPLE_SOURCES, { locale: l }).cite([s.id])) }} /><td className="py-2.5 pr-3">{p(m.aim)}</td><td className="py-2.5 pr-3">{p(m.sample)}</td><td className="py-2.5 pr-3">{p(m.method)}</td><td className="py-2.5 pr-3">{p(m.finding)}</td></tr>; })}</tbody>
+          <tbody>{MATRIX.map((m) => { const s = src(m.src); return <tr key={m.src} className="border-b border-ink-100 align-top text-ink-700"><td className="py-2.5 pr-3 font-medium text-ink-900" dangerouslySetInnerHTML={{ __html: richToHtml(new CitationEngine("apa7", sources, { locale: l }).cite([s.id])) }} /><td className="py-2.5 pr-3">{p(m.aim)}</td><td className="py-2.5 pr-3">{p(m.sample)}</td><td className="py-2.5 pr-3">{p(m.method)}</td><td className="py-2.5 pr-3">{p(m.finding)}</td></tr>; })}</tbody>
         </table>
       </div>
     ),
@@ -183,12 +186,13 @@ export function SamplesView({ signedIn }: { signedIn: boolean }) {
       </div>
     ),
     ozet: (
-      <div className="grid gap-4 md:grid-cols-2">
-        <div>
+      <div className={cn("grid gap-4", l === "tr" && !de && "md:grid-cols-2")}>
+        {/* D168: Türkçe özet yalnızca Türkçe sitede gösterilir */}
+        {l === "tr" && !de && <div>
           <p className="font-serif text-lg text-ink-950">Özet</p>
           <p className="mt-2 font-serif text-[14.5px] leading-7 text-ink-800">Bu çalışmada üniversite öğrencilerinde sosyal medya kullanım süresi, akademik erteleme ve uyku kalitesi arasındaki ilişkiler incelenmiştir. İlişkisel tarama modelindeki araştırmaya {data.n} lisans öğrencisi katılmıştır. Akademik erteleme ölçeğinin iç tutarlılığı yüksektir (α = .89). Sosyal medya kullanım süresi ile akademik erteleme arasında pozitif (r = {r2s(data.r1)}), akademik erteleme ile uyku kalitesi arasında negatif (r = {r2s(data.r2)}) anlamlı ilişkiler bulunmuştur. Erteleme puanları cinsiyete göre anlamlı biçimde farklılaşmamaktadır.</p>
           <p className="mt-2 text-[13.5px] text-ink-700"><b>Anahtar Kelimeler:</b> sosyal medya, akademik erteleme, uyku kalitesi, üniversite öğrencileri</p>
-        </div>
+        </div>}
         <div>
           <p className="font-serif text-lg text-ink-950">Abstract</p>
           <p className="mt-2 font-serif text-[14.5px] leading-7 text-ink-800">This study examined the relationships between social media use, academic procrastination and sleep quality among university students. A total of {data.n} undergraduates took part in this correlational survey. The procrastination scale showed high internal consistency (α = .89). Social media use was positively related to academic procrastination (r = {r2s(data.r1)}), and procrastination was negatively related to sleep quality (r = {r2s(data.r2)}). Procrastination scores did not differ significantly by gender.</p>

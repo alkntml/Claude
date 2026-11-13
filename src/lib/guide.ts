@@ -118,7 +118,7 @@ export const GUIDE: GuideChapter[] = [
       { id: "asistan", title: s("Asistanla bölüm yazma", "Writing a section with the assistant"), where: s("Sağ: “Asistan” sekmesi", "Right: “Assistant” tab"), steps: [
         s("Bölüme veya alt başlığa girin. Kısayollar bölüme göre değişir: “Alt başlık oluştur”, “Bölümü yaz”, “Literatür araştır”, “Tekrarları azalt”…", "Open a section or subheading. Shortcuts depend on the section: “Create subheadings”, “Write section”, “Research literature”, “Reduce repetition”…"),
         s("İsteğinizi mesaj kutusuna da yazabilirsiniz (Enter gönderir). Mikrofonla sesle de yazabilirsiniz.", "You can also type a request (Enter sends) or dictate with the microphone."),
-        s("Asistan gerekirse kaynakları kendisi arar ve yalnızca projedeki kaynaklara atıf yapar; kaynağı yoksa [KAYNAK GEREKLİ] yazar, veri yoksa [VERİ GİRİLECEK].", "If needed, the assistant searches for sources itself and cites only sources in your project; otherwise it writes [SOURCE NEEDED] or [DATA TO BE ENTERED]."),
+        s("Asistan gerekirse kaynakları kendisi arar ve yalnızca projedeki kaynaklara atıf yapar; kaynağı yoksa [KAYNAK GEREKLİ] yazar, veri yoksa [VERİ GİRİLECEK].", "If needed, the assistant searches for sources itself and cites only sources in your project; otherwise it writes [CITATION NEEDED] or [DATA TO BE ENTERED]."),
         s("Gelen taslağı “Belgeye ekle” veya “Seçili metnin yerine koy” ile metne alın, sonra kendi sözlerinizle düzenleyin.", "Take the draft into the text with “Add to document” or “Replace selection”, then edit it in your own words."),
       ], tip: s("Üretilen metin bir taslaktır. Bilimsel sorumluluk sizindir: her atıfı ve sayıyı kontrol edin (bkz. “Akademik dürüstlük”).", "Generated text is a draft. Scientific responsibility is yours: check every citation and number (see “Academic integrity”).") },
       { id: "secim", title: s("Metin seçince çıkan menü", "The selection menu"), where: s("Editörde metin seçin", "Select text in the editor"), steps: [
@@ -208,8 +208,8 @@ export const GUIDE: GuideChapter[] = [
         s("Cümle, kaynağın okunan metniyle karşılaştırılır; dayanak pasaj ve sayfası gösterilir.", "The sentence is compared with the source text; the supporting passage and page are shown."),
         s("Kaynakların künyesini Kaynaklar sekmesindeki “Doğrula” ile Crossref/OpenAlex üzerinden kontrol edebilirsiniz.", "Check reference details against Crossref/OpenAlex with “Verify” in the Sources tab."),
       ] },
-      { id: "kaynak-gerekli", title: s("[KAYNAK GEREKLİ] işaretlerini düzeltme", "Fixing [SOURCE NEEDED] markers"), where: s("Editörün üstündeki uyarı → “Kaynak bul ve düzelt”", "Banner above the editor → “Find sources and fix”"), steps: [
-        s("Asistan uygun kaynak bulamadığı cümleleri [KAYNAK GEREKLİ] ile işaretler; uydurma atıf yapmaz.", "The assistant marks sentences it cannot support with [SOURCE NEEDED]; it never invents citations."),
+      { id: "kaynak-gerekli", title: s("[KAYNAK GEREKLİ] işaretlerini düzeltme", "Fixing [CITATION NEEDED] markers"), where: s("Editörün üstündeki uyarı → “Kaynak bul ve düzelt”", "Banner above the editor → “Find sources and fix”"), steps: [
+        s("Asistan uygun kaynak bulamadığı cümleleri [KAYNAK GEREKLİ] ile işaretler; uydurma atıf yapmaz.", "The assistant marks sentences it cannot support with [CITATION NEEDED]; it never invents citations."),
         s("“Kaynak bul ve düzelt” bu cümleler için kaynak arar ve uygun olanlara atıf ekler; bulamazsa cümleyi yumuşatmanızı önerir.", "“Find sources and fix” searches for sources and cites suitable ones; otherwise it suggests softening the sentence."),
       ] },
       { id: "iddia", title: s("İddia denetimi", "Claim audit"), where: s("“Araçlar” → “İddia denetimi” veya bölüm başlığındaki düğme", "“Tools” → “Claim audit” or the section header button"), steps: [
@@ -224,7 +224,7 @@ export const GUIDE: GuideChapter[] = [
         s("“Puan nasıl hesaplanır?” bağlantısı yöntemi açıklar (herkese açık “Yöntem” sayfası).", "“How is the score calculated?” explains the method (public “Method” page)."),
       ] },
       { id: "kontrol-listesi", title: s("Teslim öncesi kontrol listesi", "Pre-submission checklist"), where: s("“Kalite kontrol” sayfası", "“Quality check” page"), steps: [
-        s("Boş bölüm, kalan [KAYNAK GEREKLİ], iddia denetimi, doğrulanmamış kaynak, özet, anahtar kelimeler ve biçim maddeleri tek listede.", "Empty sections, remaining [SOURCE NEEDED], claim audit, unverified sources, abstract, keywords and formatting in one list."),
+        s("Boş bölüm, kalan [KAYNAK GEREKLİ], iddia denetimi, doğrulanmamış kaynak, özet, anahtar kelimeler ve biçim maddeleri tek listede.", "Empty sections, remaining [CITATION NEEDED], claim audit, unverified sources, abstract, keywords and formatting in one list."),
         s("Her maddedeki “Düzelt →” sizi ilgili yere götürür.", "“Fix →” on each item takes you to the right place."),
       ] },
       { id: "tamamla", title: s("Bölümü tamamlama kontrolü", "Section completion check"), where: s("Editörün üstü: “Bölümü tamamladım”", "Above the editor: “Section complete”"), steps: [

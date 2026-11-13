@@ -125,10 +125,10 @@ export function TraceDemo() {
                   ];
                   return (
                     <div key={it.cite} onMouseEnter={() => pick(i)} className={cn("cursor-pointer rounded-xl border p-3 transition-all duration-300", on ? "border-brand-300 bg-brand-50 shadow-sm" : "border-ink-100 opacity-70 hover:opacity-100")}>
-                      <p className="flex items-start gap-2 text-[12.5px] font-medium leading-snug text-ink-800"><BookMarked className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-400" />{src.ref}</p>
+                      <p className="flex items-start gap-2 text-[12.5px] font-medium leading-snug text-ink-800"><BookMarked className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-400" />{t(src.ref)}</p>
                       {on && (
                         <div className="mt-2 space-y-1.5 pl-5">
-                          <p className="text-[11.5px] leading-snug text-ink-500">{src.meta}</p>
+                          <p className="text-[11.5px] leading-snug text-ink-500">{t(src.meta)}</p>
                           {/* Doğrulama adımları */}
                           <ul className="space-y-1">
                             {steps2.map(([ok, label]) => (

@@ -3,9 +3,11 @@ import { getT } from "@/i18n/server";
 import { FadeIn } from "@/components/ui/fade-in";
 import { initials, TESTIMONIALS } from "@/lib/testimonials";
 
-/** Ana sayfa: akademisyen ve araştırmacı görüşleri (D147). Özgün dilinde, değiştirilmeden. */
+/** Ana sayfa: akademisyen ve araştırmacı görüşleri (D147). Özgün dilinde, değiştirilmeden; EN/DE sitede Türkçe görüşler gizlenir (D168). */
 export async function Testimonials() {
-  const { t } = await getT();
+  const { t, locale } = await getT();
+  // D168: İngilizce/Almanca sitede Türkçe görüşler gösterilmez (görüşler çevrilmez; yalnızca özgün dilinde yayımlanır)
+  const list = locale === "tr" ? TESTIMONIALS : TESTIMONIALS.filter((x) => x.lang !== "tr");
   return (
     <section id="gorusler" className="scroll-mt-24 py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -14,7 +16,7 @@ export async function Testimonials() {
           <p className="mt-3 text-ink-500">{t("Platformu inceleyen akademisyen ve araştırmacıların görüşleri. Görüşler özgün dilinde ve değiştirilmeden yayımlanmıştır.")}</p>
         </FadeIn>
         <div className="flex flex-wrap justify-center gap-5">
-          {TESTIMONIALS.map((x) => (
+          {list.map((x) => (
             <figure key={x.name} className="card flex w-full flex-col p-6 sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)]">
               <div className="flex items-center justify-between">
                 <div className="flex gap-0.5 text-amber-500" role="img" aria-label={t("5 üzerinden {n} yıldız", { n: x.rating })}>

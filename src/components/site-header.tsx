@@ -1,4 +1,5 @@
 "use client";
+import { useSignedIn } from "@/components/use-signed-in";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { Menu, X } from "lucide-react";
 import Link from "@/components/l-link";
@@ -21,7 +22,8 @@ const NAV: { href: string; label: string; wide?: 1 | 2 }[] = [
   { href: "/hakkimizda", label: "Hakkımızda", wide: 1 },
 ];
 
-export function SiteHeader({ signedIn }: { signedIn: boolean }) {
+export function SiteHeader({ signedIn: initialSignedIn }: { signedIn: boolean }) {
+  const signedIn = useSignedIn(initialSignedIn);
   const { t } = useT();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);

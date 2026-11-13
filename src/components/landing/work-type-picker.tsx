@@ -1,11 +1,13 @@
 "use client";
+import { useSignedIn } from "@/components/use-signed-in";
 import { useT } from "@/i18n/client";
 import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/l-link";
 import { WORK_ICONS } from "@/components/icons";
 import { WORK_TYPES } from "@/lib/workflows";
 
-export function WorkTypePicker({ signedIn, compact = false }: { signedIn: boolean; compact?: boolean }) {
+export function WorkTypePicker({ signedIn: initialSignedIn, compact = false }: { signedIn: boolean; compact?: boolean }) {
+  const signedIn = useSignedIn(initialSignedIn);
   const { t } = useT();
   return (
     <div className={`grid gap-4 ${compact ? "sm:grid-cols-2 lg:grid-cols-4" : "sm:grid-cols-2 lg:grid-cols-4"}`}>

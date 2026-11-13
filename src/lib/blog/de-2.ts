@@ -280,7 +280,7 @@ Für Methode und Ergebnisse ist die Vergangenheit üblich („wurde durchgeführ
 
 ## Abstracts mit Academiana
 
-In Academiana steht das Abstract im Fahrplan an letzter Stelle. Sind die übrigen Kapitel fertig, entwirft die Aktion „Abstract“ aus Ihrem Text ein türkisches und ein englisches Abstract in der Reihenfolge Ziel – Methode – Ergebnisse – Fazit. Sie fügt nie Befunde hinzu, die nicht in Ihrem Text stehen; sind die Ergebnisse noch nicht geschrieben, setzt sie „[VERİ GİRİLECEK]“ (Daten einzutragen).`,
+In Academiana steht das Abstract im Fahrplan an letzter Stelle. Sind die übrigen Kapitel fertig, entwirft die Aktion „Abstract“ aus Ihrem Text ein türkisches und ein englisches Abstract in der Reihenfolge Ziel – Methode – Ergebnisse – Fazit. Sie fügt nie Befunde hinzu, die nicht in Ihrem Text stehen; sind die Ergebnisse noch nicht geschrieben, setzt sie „[DATEN EINZUTRAGEN]“ (Daten einzutragen).`,
   },
   "anket-nasil-hazirlanir-likert-olcegi": {
     slug: "fragebogen-erstellen-likert-skala",

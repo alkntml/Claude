@@ -1,9 +1,11 @@
 "use client";
+import { useSignedIn } from "@/components/use-signed-in";
 import { useT } from "@/i18n/client";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 import Link from "@/components/l-link";
 
-export function Hero({ signedIn }: { signedIn: boolean }) {
+export function Hero({ signedIn: initialSignedIn }: { signedIn: boolean }) {
+  const signedIn = useSignedIn(initialSignedIn);
   const { t } = useT();
 
   return (

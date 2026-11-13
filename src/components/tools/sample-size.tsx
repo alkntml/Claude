@@ -9,7 +9,7 @@ type Method = "cochran" | "yamane" | "mean";
 
 /** Örneklem büyüklüğü hesaplayıcı (D90): tamamen tarayıcıda, yapay zekâ yok */
 export function SampleSizeTool() {
-  const { t } = useT();
+  const { t, dl } = useT();
   const ping = useToolPing("sample_size");
   const [method, setMethod] = useState<Method>("cochran");
   const [N, setN] = useState("1000");
@@ -33,11 +33,11 @@ export function SampleSizeTool() {
   }, [method, N, conf, margin, p, sd, meanMargin, t]);
   const reach = res.n && num(rr) > 0 && num(rr) < 100 ? toReach(res.n, num(rr)) : null;
   const sentence = res.n ? (method === "yamane"
-    ? t("Araştırmanın evreni {N} kişiden oluşmaktadır. Yamane (1967) formülüyle ±%{e} hata payı için gereken örneklem büyüklüğü {n} olarak hesaplanmıştır.", { N: res.pop!.toLocaleString("tr-TR"), e: margin, n: res.n })
+    ? t("Araştırmanın evreni {N} kişiden oluşmaktadır. Yamane (1967) formülüyle ±%{e} hata payı için gereken örneklem büyüklüğü {n} olarak hesaplanmıştır.", { N: res.pop!.toLocaleString(dl), e: margin, n: res.n })
     : method === "mean"
       ? t("Ortalama tahmini için %{c} güven düzeyi, σ = {sd} ve ±{e} hata payıyla gereken örneklem büyüklüğü {n} olarak hesaplanmıştır (Cochran, 1977).", { c: conf, sd, e: meanMargin, n: res.n })
       : res.pop
-        ? t("Araştırmanın evreni {N} kişiden oluşmaktadır. %{c} güven düzeyi, ±%{e} hata payı ve p = {p} varsayımıyla gereken örneklem büyüklüğü sonlu evren düzeltmesiyle {n} olarak hesaplanmıştır (Cochran, 1977).", { N: res.pop.toLocaleString("tr-TR"), c: conf, e: margin, p: (num(p) / 100).toFixed(2), n: res.n })
+        ? t("Araştırmanın evreni {N} kişiden oluşmaktadır. %{c} güven düzeyi, ±%{e} hata payı ve p = {p} varsayımıyla gereken örneklem büyüklüğü sonlu evren düzeltmesiyle {n} olarak hesaplanmıştır (Cochran, 1977).", { N: res.pop.toLocaleString(dl), c: conf, e: margin, p: (num(p) / 100).toFixed(2), n: res.n })
         : t("%{c} güven düzeyi, ±%{e} hata payı ve p = {p} varsayımıyla gereken örneklem büyüklüğü {n} olarak hesaplanmıştır (Cochran, 1977).", { c: conf, e: margin, p: (num(p) / 100).toFixed(2), n: res.n })) : "";
   const field = (label: string, value: string, set: (v: string) => void, hint?: string, suffix?: string) => (
     <label className="block">
@@ -77,8 +77,8 @@ export function SampleSizeTool() {
       <div className="space-y-4">
         <div className="card p-6 text-center">
           <p className="text-sm text-ink-500">{t("Gereken örneklem büyüklüğü")}</p>
-          {res.error ? <p className="mt-3 text-rose-600">{res.error}</p> : <p className="mt-2 font-serif text-6xl font-semibold tracking-tight text-ink-950">{res.n?.toLocaleString("tr-TR")}</p>}
-          {reach && <p className="mt-3 text-[14px] text-ink-600">{t("Yanıt oranı %{r} ise yaklaşık {k} kişiye ulaşmanız gerekir.", { r: rr, k: reach.toLocaleString("tr-TR") })}</p>}
+          {res.error ? <p className="mt-3 text-rose-600">{res.error}</p> : <p className="mt-2 font-serif text-6xl font-semibold tracking-tight text-ink-950">{res.n?.toLocaleString(dl)}</p>}
+          {reach && <p className="mt-3 text-[14px] text-ink-600">{t("Yanıt oranı %{r} ise yaklaşık {k} kişiye ulaşmanız gerekir.", { r: rr, k: reach.toLocaleString(dl) })}</p>}
         </div>
         {sentence && (
           <div className="card p-5">

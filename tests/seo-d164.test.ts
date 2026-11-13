@@ -10,11 +10,12 @@ const root = path.resolve(__dirname, "..");
 describe("SEO teknik düzeltmeler (D164)", () => {
   it("arama motoru botlarına meta veriler <head> içinde gönderilir (htmlLimitedBots)", () => {
     const cfg = fs.readFileSync(path.join(root, "next.config.ts"), "utf8");
-    const m = cfg.match(/htmlLimitedBots:\s*(\/.+\/i),/);
+    const m = cfg.match(/htmlLimitedBots:\s*(\/.+\/i?),/);
     expect(m).toBeTruthy();
     const re = eval(m![1]) as RegExp;
     for (const ua of ["Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)", "Mozilla/5.0 (compatible; bingbot/2.0)", "Mozilla/5.0 (Linux; Android 6.0.1) Chrome-Lighthouse", "facebookexternalhit/1.1", "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Google-InspectionTool/1.0)"]) expect(re.test(ua), ua).toBe(true);
-    expect(re.test("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36")).toBe(false);
+    // D168: önbellekteki HTML herkese aynı gider; normal tarayıcılar da meta veriyi <head> içinde alır
+    expect(re.test("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36")).toBe(true);
   });
 
   it("arayüz sözlüğü her sayfanın HTML’ine gömülmez (EN/DE sayfa boyutu); istemci ayrı parçadan yükler", () => {

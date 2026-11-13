@@ -1,4 +1,5 @@
 "use client";
+import { useSignedIn } from "@/components/use-signed-in";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Check, ExternalLink, Loader2, Plus, Scale, Search } from "lucide-react";
 import Link from "@/components/l-link";
@@ -40,7 +41,8 @@ const authorShort = (a: any[]) => { const n = (a ?? []).map((x: any) => x.family
  * Araştırmalar ne diyor? (D114). `projectId` verilirse (çalışma alanı) makaleler doğrudan o çalışmaya eklenir;
  * herkese açık sayfada giriş yapmış kullanıcı çalışmasını seçer, ziyaretçiye ücretsiz kayıt önerilir.
  */
-export function ConsensusTool({ projectId, onAdded, signedIn }: { projectId?: string; onAdded?: (rows: any[]) => void; signedIn?: boolean }) {
+export function ConsensusTool({ projectId, onAdded, signedIn: initialSignedIn }: { projectId?: string; onAdded?: (rows: any[]) => void; signedIn?: boolean }) {
+  const signedIn = useSignedIn(!!initialSignedIn);
   const { t } = useT();
   const toast = useToast();
   const [q, setQ] = useState("");

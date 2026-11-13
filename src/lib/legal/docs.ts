@@ -29,7 +29,7 @@ export interface LegalDocMeta {
 export const LEGAL_DOCS: LegalDocMeta[] = [
   { id: "kvkk", path: "/kvkk", label: "KVKK Aydınlatma Metni", version: "2026-11-14", original: "tr", requiresAcceptance: false,
     title: { tr: "KVKK Aydınlatma Metni", en: "KVKK Privacy Notice", de: "Datenschutzinformation nach KVKK" } },
-  { id: "terms", path: "/kosullar", label: "Kullanım Koşulları", version: "2026-11-14", original: "tr", requiresAcceptance: true,
+  { id: "terms", path: "/kosullar", label: "Kullanım Koşulları", version: "2026-11-15", original: "tr", requiresAcceptance: true,
     title: { tr: "Kullanım Koşulları", en: "Terms of Use", de: "Nutzungsbedingungen" } },
   { id: "fair_use", path: "/adil-kullanim", label: "Adil Kullanım Politikası", version: "2026-11-14", original: "tr", requiresAcceptance: false,
     title: { tr: "Adil Kullanım Politikası", en: "Fair Use Policy", de: "Richtlinie zur fairen Nutzung" } },

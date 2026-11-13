@@ -27,7 +27,7 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 **Tema eski indigo maviye döndü (D163, 13 Kasım 2026)**
 
 **Sınırsız Proje adı, ekip indirimi kapsamı, ücretsiz araçlar, Adil Kullanım (D162, 13 Kasım 2026)**
-- Migration 41 (paket adı) kullanıcıda bekliyor
+- Migration 41 (paket adı) canlıda çalıştırıldı (2026-11-13, kullanıcı onayladı)
 
 **Akademik Ekip İndirimi %20 (D160, 13 Kasım 2026)**
 

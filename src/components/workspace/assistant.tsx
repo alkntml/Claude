@@ -20,6 +20,8 @@ import { LANG_TAG, writingLang } from "@/lib/writing-lang";
 interface Msg { id: string; role: "user" | "assistant"; content: string; sourceMap: Record<string, string>; error?: boolean; memoryAdded?: number; status?: string[]; added?: { title: string; verified: boolean; year: number | null }[]; post?: string[]; gapAdded?: { title: string; verified: boolean; year: number | null }[]; phase?: ChatPhase; phasesSeen?: ChatPhase[]; permission?: { queries: string[]; retry: { text: string; action: AssistantAction; extra?: string; sel?: string } } }
 
 interface Props {
+  /** D170: bu bölüm bu çalışmada kullanıcının gerçek verisini gerektiriyor mu (stageNeedsData) */
+  needsData?: boolean;
   projectId: string;
   stage: { id: string; key: string; title: string } | null;
   def: StageDef | undefined;
@@ -48,7 +50,7 @@ interface Props {
 }
 
 /** Uzun bölümler: alt başlıklarla yazım kısayolu */
-const LONG_STAGES = new Set(["literature", "theory", "concepts", "review_synthesis", "method", "methods_article", "findings", "results_article", "discussion", "discussion_article", "grant_method"]);
+const LONG_STAGES = new Set(["article_body", "literature", "theory", "concepts", "review_synthesis", "method", "methods_article", "findings", "results_article", "discussion", "discussion_article", "grant_method"]);
 const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure", "reduce_repetition"];
 const USAGE_LABEL: Record<string, string> = { ai_requests: "yapay zekâ isteği", tokens: "token", source_searches: "kaynak tarama", storage_mb: "depolama" };
 const PHASE_LABEL: Record<ChatPhase, string> = { plan: "Karar", search: "Arama", verify: "Doğrulama", read: "Okuma", write: "Yazım", gaps: "Eksikler" };
@@ -73,7 +75,7 @@ export function PhaseSteps({ phase, seen }: { phase?: ChatPhase; seen?: ChatPhas
   );
 }
 
-export function AssistantPanel({ researchPrefs, projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport }: Props) {
+export function AssistantPanel({ needsData = false, researchPrefs, projectId, stage, def, selection, files, onInsert, onOpenResearch, onMemoryChanged, onSourcesAdded, onOpenOutline, onOpenAnalysis, registerSend, language, lowSources = false, targetWords = 0, focus = null, onOpenImport }: Props) {
   const { t } = useT();
   const toast = useToast();
   const [msgs, setMsgs] = useState<Msg[]>([]);
@@ -251,7 +253,7 @@ export function AssistantPanel({ researchPrefs, projectId, stage, def, selection
                     {def.steps.length > 0 && <div><b className="text-ink-800">{t("Nasıl ilerlemeli?")}</b><ol className="mt-1 list-decimal space-y-0.5 pl-4">{def.steps.map((s) => <li key={s}>{t(s)}</li>)}</ol></div>}
                     {def.rules.length > 0 && <div><b className="text-ink-800">{t("Yazım kuralları")}</b><ul className="mt-1 list-disc space-y-0.5 pl-4">{def.rules.map((s) => <li key={s}>{t(s)}</li>)}</ul></div>}
                     {def.example && <div className="rounded-xl border border-ink-100 bg-white p-3 font-serif text-[13.5px] italic text-ink-700"><span className="mb-1 block font-sans text-[11px] not-italic text-ink-400">{t("Örnek metin (biçim örneğidir, alıntılanmaz)")}</span>{t(def.example)}</div>}
-                    {def.requiresUserData && <p className="flex gap-2 rounded-xl bg-amber-50 p-2.5 text-amber-800"><TriangleAlert className="h-4 w-4 shrink-0" /> {t("Bu bölüm sizin gerçek verinizi gerektirir; asistan bulgu üretmez.")}</p>}
+                    {needsData && <p className="flex gap-2 rounded-xl bg-amber-50 p-2.5 text-amber-800"><TriangleAlert className="h-4 w-4 shrink-0" /> {t("Bu bölüm sizin gerçek verinizi gerektirir; asistan bulgu üretmez.")}</p>}
                     {def.questions.length > 0 && (
                       <div><b className="text-ink-800">{t("Asistanın soruları")}</b>
                         <div className="mt-1.5 flex flex-col gap-1.5">{def.questions.map((q) => <button key={q} onClick={() => { setInput(`${t(q)}\n`); ta.current?.focus(); }} className="rounded-xl border border-ink-100 bg-white px-3 py-2 text-left text-ink-700 transition hover:border-brand-200 hover:bg-brand-50/50"><Lightbulb className="mr-1.5 inline h-3.5 w-3.5 text-amber-500" />{t(q)}</button>)}</div>
@@ -304,7 +306,7 @@ export function AssistantPanel({ researchPrefs, projectId, stage, def, selection
             if (q === "analysis") return onOpenAnalysis ? <button key={q} disabled={busy} onClick={onOpenAnalysis} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}><BarChart3 className="h-3.5 w-3.5" /> {t("İstatistik analizi")}</button> : null;
             if (q === "research") return <button key={q} onClick={() => onOpenResearch(input)} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}><SearchCheck className="h-3.5 w-3.5" /> {t("Literatür araştır")}</button>;
             // Bulgu yorumlama yalnızca kullanıcı verisi gereken bölümde veya veri dosyası varken
-            if (q === "interpret" && !def?.requiresUserData && !dataFiles.length) return null;
+            if (q === "interpret" && !needsData && !dataFiles.length) return null;
             return <button key={q} disabled={busy} onClick={() => send(input.trim() || t(ASSISTANT_ACTIONS[q].label), q)} className={cn(chip, q === "draft" ? "border-brand-600 bg-brand-600 text-white hover:bg-brand-700" : "border-ink-200 bg-white text-ink-700 hover:bg-ink-50")}>{t(ASSISTANT_ACTIONS[q].label)}</button>;
           })}
           {onOpenImport && <button disabled={busy} onClick={onOpenImport} className={cn(chip, "flex items-center gap-1 border-ink-200 bg-white text-ink-600 hover:border-ink-300 hover:text-ink-900")}><FilePlus2 className="h-3.5 w-3.5" /> {t("Word’den içe aktar")}</button>}

@@ -6,7 +6,7 @@ import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
-import { GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
+import { GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
 import { missingFields } from "@/lib/citations/checks";
 import { sourceRowToItemClient } from "@/lib/sources/row";
@@ -114,6 +114,10 @@ export async function buildContext(params: {
   head.push(`Başlık: ${project.title}`);
   head.push(`Çalışma türü: ${project.work_type} · Seviye: ${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level} · Disiplin: ${project.discipline || "belirtilmedi"}`);
   if (ctx.methodology) head.push(`Yöntem yaklaşımı: ${METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology}`);
+  // D170: kaynaklara dayalı çalışmalarda (dergi makalesi, derleme, kuramsal/derleme yaklaşımlı tez ve makale) veri yer tutucusu yok
+  const sourceBased = ["journal_article", "literature_review", "source_research"].includes(project.work_type)
+    || (["thesis", "research_article", "capstone"].includes(project.work_type) && !!ctx.methodology && !EMPIRICAL_METHODS.has(ctx.methodology));
+  if (sourceBased) head.push("ÇALIŞMANIN NİTELİĞİ: Bu çalışma kullanıcının topladığı veriye değil, KAYNAKLAR’daki yayınlara dayanır. Yöntem/Bulgular/örneklem/veri analizi anlatma, “bu çalışmada veri toplanmıştır” gibi cümle kurma ve [VERİ GİRİLECEK] işaretini HİÇ KULLANMA; olgusal her bilgiyi kaynaklarla ver.");
   head.push(`Çalışma dili: ${LANG_NAME_TR[writingLang(project.language)]} · Atıf stili: ${project.citation_style}`);
   // D144: Almanca yazım — akademik Almanca kuralları; sistem işaretleri ve özet biçimi
   if (writingLang(project.language) === "de") head.push("ALMANCA YAZIM: Taslakların tamamını akademik Almancayla (wissenschaftliches Deutsch) yaz: nesnel üslup, birinci tekil şahıs yerine edilgen veya “in der vorliegenden Arbeit” yapıları, doğru büyük harf ve virgül kuralları, yerleşik Almanca terimler. Sistem işaretlerini ([[kaynak:S1]], [KAYNAK GEREKLİ], [VERİ GİRİLECEK], :::taslak) asla çevirme, aynen kullan. Özet istendiğinde Türkçe Özet yerine “## Zusammenfassung” (Almanca, 150–250 kelime) ve “Schlüsselwörter:” satırı, ardından “## Abstract” ve “Keywords:” yaz.");
@@ -186,7 +190,7 @@ export async function buildContext(params: {
     tail.push(`Amaç: ${def?.purpose ?? stage.description}`);
     if (def?.rules.length) tail.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
     if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
-    if (def?.requiresUserData) tail.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
+    if (stageNeedsData(stage.key, project)) tail.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
     const note = blueprintStageNote(bp, stage);
     if (note) tail.push(note);
     // Akademik yapı (D76): aşama adı başlık olarak yazılmaz; alt başlık sayısı bölüm türü ve hedef uzunluğa göre sınırlı

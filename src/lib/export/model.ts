@@ -23,8 +23,8 @@ export interface Run {
 }
 
 export type Block =
-  | { kind: "heading"; level: number; number: string; runs: Run[] }
-  | { kind: "paragraph"; runs: Run[]; quote?: boolean }
+  | { kind: "heading"; level: number; number: string; runs: Run[]; keep?: "abstract" }
+  | { kind: "paragraph"; runs: Run[]; quote?: boolean; keep?: "abstract" }
   | { kind: "list"; ordered: boolean; items: Run[][] }
   | { kind: "table"; rows: Run[][][]; header: boolean }
   /** Tablo/şekil başlığı: satırlar ve hizalama projenin atıf stiline göre (D106, citations/captions.ts) */
@@ -71,6 +71,8 @@ export interface ExportDoc {
   bibliographyTitle: string;
   bibliography: { number?: number; rich: Rich }[];
   numericBibliography: boolean;
+  /** D170: dergi/araştırma makalesi düzeni: kapak ve içindekiler yok, başlık ilk sayfanın üstünde, bölümler kesintisiz */
+  article: boolean;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -214,6 +216,23 @@ export function buildExportDoc(params: {
     const skipTitle = [st.title, def?.title ?? "", title].find((x) => x) ?? "";
     const b0 = blocks.length, t0 = toc.length;
     ch.startedHere = false;
+    if (st.key === "title_abstract" || st.key === "article_body") {
+      // D170: Özet bölümü iş adıyla (“Başlık, özet ve anahtar kelimeler”) basılmaz; içindeki “Özet / Abstract” başlıkları
+      // numarasız ana başlık olur. Konu bölümlerinin kendi başlığı yoktur; içindeki her ## başlık numaralı ana bölümdür.
+      currentGroup = null;
+      const isAbstract = st.key === "title_abstract";
+      numbered = !isAbstract;
+      counters[0] = chapter; counters[1] = counters[2] = counters[3] = 0;
+      lastLevel = 0;
+      const firstIsHeading = (doc?.content ?? []).find((n) => n.type === "heading" || (n.type === "paragraph" && (n.content ?? []).length));
+      if (isAbstract && firstIsHeading?.type !== "heading") emit(1, [{ text: title || tl(st.title) }]);
+      headingCtx = { shift: -1, skipTitle: isAbstract ? "" : skipTitle, seen: 0 };
+      if (doc) visit(doc);
+      if (!isAbstract) chapter = counters[0];
+      else for (let k = b0; k < blocks.length; k++) { const blk = blocks[k]; if (blk.kind === "heading" || blk.kind === "paragraph") blk.keep = "abstract"; }
+      if (only && !only.has(st.id)) { blocks.splice(b0); toc.splice(t0); }
+      continue;
+    }
     if (group) {
       if (currentGroup !== group.id) { startChapter([{ text: group.title[locale] }], true); currentGroup = group.id; }
       if (title) { emit(2, [{ text: title }]); headingCtx = { shift: 1, skipTitle, seen: 0 }; }
@@ -251,6 +270,7 @@ export function buildExportDoc(params: {
     bibliographyTitle: meta.bibliographyTitle[locale],
     bibliography: bib.map((b) => ({ number: b.number, rich: b.rich })),
     numericBibliography: meta.family === "numeric",
+    article: project.work_type === "journal_article" || project.work_type === "research_article",
   };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */

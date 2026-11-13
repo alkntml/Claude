@@ -31,8 +31,17 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
 
   const body: (Paragraph | Table)[] = [];
 
+  // D170: makale düzeni — kapak ve içindekiler yok; başlık ve yazar ilk sayfanın üstünde, bölümler kesintisiz
+  if (d.article) {
+    body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: d.title, bold: true, font, size: 32 })] }));
+    if (d.subtitle) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: d.subtitle, italics: true, font, size: 26 })] }));
+    if (d.author) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 60 }, children: [new TextRun({ text: d.author, font, size })] }));
+    if (d.institution) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 360 }, children: [new TextRun({ text: d.institution, italics: true, font, size: size - 2 })] }));
+  }
+
   // Kapak (şablondaki kurum bilgileriyle)
   const cv = coverLines(f, d);
+  if (!d.article) {
   const center = (text: string, o: { bold?: boolean; italics?: boolean; size?: number; before?: number } = {}) =>
     text.split("\n").forEach((tx, k) => body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: k === 0 ? o.before ?? 0 : 0, line: 300 }, children: [new TextRun({ text: tx, bold: o.bold, italics: o.italics, size: o.size ?? size, font })] })));
   cv.top.forEach((tx, k) => center(tx, { bold: true, before: k === 0 ? 0 : 0 }));
@@ -44,9 +53,11 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
   if (!f.cover.university && d.institution) center(d.institution, { before: 400 });
   center(cv.bottom, { before: 2400 });
   body.push(new Paragraph({ children: [new PageBreak()] }));
+  }
 
   // İçindekiler: girişler dosyaya hazır yazılır (Word alan güncellemesi yapmasa, Mac Word / Pages / Google Dokümanlar’da da
   // görünür). Her giriş başlığa bağlantılıdır; sayfa numaraları PAGEREF alanıyla Word açılışta güncellenir.
+  if (!d.article) {
   body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: d.language === "tr" ? "İÇİNDEKİLER" : d.language === "de" ? "INHALTSVERZEICHNIS" : "CONTENTS", font, bold: true, size: 28 })] }));
   const textWidth = Math.round((21 - f.margins.left - f.margins.right) * CM);
   const tocEntry = (anchor: string, text: string, level: number) => new Paragraph({
@@ -58,21 +69,27 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
   d.toc.forEach((t, k) => body.push(tocEntry(`_Toc${k + 1}`, `${t.number ? `${t.number} ` : ""}${t.level === 1 && f.chapterTitleUppercase ? t.text.toLocaleUpperCase(d.language) : t.text}`, t.level)));
   if (d.bibliography.length) body.push(tocEntry("_TocBib", d.bibliographyTitle, 1));
   body.push(new Paragraph({ children: [new PageBreak()] }));
+  }
   let tocIdx = 0;
 
   let firstChapter = true;
-  for (const b of d.blocks) {
+  for (const [bi, b] of d.blocks.entries()) {
     if (b.kind === "heading") {
-      if (b.level === 1 && !firstChapter && f.chapterOnNewPage) body.push(new Paragraph({ children: [new PageBreak()] }));
+      if (b.level === 1 && !firstChapter && f.chapterOnNewPage && !d.article) body.push(new Paragraph({ children: [new PageBreak()] }));
       if (b.level === 1) firstChapter = false;
       const htext = b.runs.map((r) => r.text).join("");
       const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language) : htext;
       const hrun = new TextRun({ text: `${b.number ? `${b.number} ` : ""}${shown}`, bold: true, font, size: b.level === 1 ? Math.max(size, 28) : size, color: "000000" });
       // İçindekiler girişleri (model.toc) başlıklarla birebir aynı sırada
       const anchor = `_Toc${++tocIdx}`;
-      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [new Bookmark({ id: anchor, children: [hrun] })] }));
+      body.push(new Paragraph({ heading: HEADINGS[b.level - 1], keepNext: true, keepLines: true, alignment: b.level === 1 && f.chapterTitleCenter ? AlignmentType.CENTER : AlignmentType.LEFT, spacing: { before: 240, after: 120 }, children: [new Bookmark({ id: anchor, children: [hrun] })] }));
     } else if (b.kind === "paragraph") {
-      body.push(new Paragraph({ alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
+      // D170: özet/abstract bloğu (metin + anahtar kelimeler) sayfa arasında bölünmez
+      const nx = d.blocks[bi + 1];
+      const keepAbs = b.keep === "abstract" ? { keepLines: true, keepNext: nx?.kind === "paragraph" && nx.keep === "abstract" } : {};
+      // Özet/abstract: tek satır aralığı, bir punto küçük, girintisiz (dergi düzeni)
+      if (b.keep === "abstract") body.push(new Paragraph({ ...keepAbs, alignment: AlignmentType.JUSTIFIED, spacing: { line: 240, after }, children: runs(b.runs) }));
+      else body.push(new Paragraph({ ...keepAbs, alignment: f.justify ? AlignmentType.JUSTIFIED : AlignmentType.LEFT, spacing: { line, after }, indent: b.quote ? { left: 720, right: 720 } : { firstLine: Math.round(f.firstLineIndentCm * CM) }, children: runs(b.runs) }));
     } else if (b.kind === "caption") {
       // D106: satırlar ve biçim (kalın/italik/ortalı) atıf stiline göre modelde hazırlanır
       b.lines.forEach((l, k) => body.push(new Paragraph({ alignment: b.align === "center" ? AlignmentType.CENTER : AlignmentType.LEFT, keepNext: true, spacing: { before: k === 0 ? 120 : 0, after: k === b.lines.length - 1 ? 60 : 0 }, children: runs(l) })));
@@ -100,7 +117,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
   }
 
   if (d.bibliography.length) {
-    body.push(new Paragraph({ children: [new PageBreak()] }));
+    if (!d.article) body.push(new Paragraph({ children: [new PageBreak()] }));
     body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new Bookmark({ id: "_TocBib", children: [new TextRun({ text: d.bibliographyTitle, bold: true, font, size: 28 })] })] }));
     for (const e of d.bibliography) {
       const children = [

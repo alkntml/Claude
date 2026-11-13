@@ -30,7 +30,7 @@ const STAGE_WEIGHT: Record<string, number> = {
   topic: 2, problem: 3, purpose: 2, questions: 1.5, concepts: 3, theory: 10, literature: 14, gaps: 3,
   method: 3, design_development: 3, sample: 2, participants: 2, instruments: 3, analysis: 2.5, testing: 2,
   findings: 12, results_article: 10, discussion: 10, discussion_article: 8, conclusion: 4,
-  introduction: 6, methods_article: 6, title_abstract: 1, declarations: 0.5, annotated_notes: 6,
+  introduction: 6, methods_article: 6, title_abstract: 1, declarations: 0.5, article_body: 20, conclusion_article: 3, annotated_notes: 6,
   review_protocol: 4, search_strategy: 3, source_screening: 3, review_synthesis: 14,
   grant_summary: 2, grant_originality: 6, grant_method: 8, grant_management: 5, grant_risks: 3, risks: 3, grant_impact: 5, grant_budget: 2, proposal_timeline: 2,
 };

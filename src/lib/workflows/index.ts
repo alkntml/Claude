@@ -19,7 +19,7 @@ export interface WorkTypeMeta {
 export const WORK_TYPES: WorkTypeMeta[] = [
   { id: "thesis", title: "Tez hazırlama", short: "Lisans / yüksek lisans / doktora", description: "Konu seçiminden kaynakçaya kadar tezinizin tüm bölümlerini yönetin.", icon: "GraduationCap", levels: ["bachelor", "master", "doctorate"] },
   { id: "research_article", title: "Araştırma makalesi", short: "Özgün araştırma", description: "Giriş–Yöntem–Bulgular–Tartışma yapısında özgün araştırma makalesi.", icon: "FlaskConical", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
-  { id: "journal_article", title: "Bilimsel dergi makalesi", short: "Hedef dergiye uygun", description: "Hedef derginin yazım kurallarına ve raporlama kılavuzlarına uygun makale.", icon: "BookOpenText", levels: ["master", "doctorate", "postdoc", "other"] },
+  { id: "journal_article", title: "Bilimsel dergi makalesi", short: "Hedef dergiye uygun", description: "Kaynaklara dayalı; Giriş, içeriğe özgü konu bölümleri ve Sonuçtan oluşan, hedef derginin yazım kurallarına uygun makale.", icon: "BookOpenText", levels: ["master", "doctorate", "postdoc", "other"] },
   { id: "capstone", title: "Bitirme projesi", short: "Proje ve rapor", description: "Tasarım, uygulama ve değerlendirme süreçleriyle bitirme projesi raporu.", icon: "Rocket", levels: ["bachelor", "master"] },
   { id: "literature_review", title: "Literatür taraması", short: "Sistematik / anlatı derleme", description: "Arama stratejisi, tarama ve tematik sentez ile derleme çalışması.", icon: "Library", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "research_proposal", title: "Araştırma önerisi", short: "Research proposal", description: "Tez önerisi, proje başvurusu veya burs için araştırma önerisi.", icon: "Lightbulb", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
@@ -39,7 +39,8 @@ export const METHODOLOGY_LABELS: Record<Methodology, string> = {
 const BASE: Record<WorkType, string[]> = {
   thesis: ["topic", "problem", "purpose", "questions", "concepts", "literature", "theory", "method", "sample", "instruments", "analysis", "findings", "discussion", "conclusion", "references", "appendices"],
   research_article: ["title_abstract", "introduction", "methods_article", "results_article", "discussion_article", "declarations", "references"],
-  journal_article: ["title_abstract", "introduction", "methods_article", "results_article", "discussion_article", "declarations", "references"],
+  // D170: dergi makalesi kaynaklara dayalı (kuramsal/derleme) yapıdadır: Giriş → içeriğe özgü konu bölümleri → Sonuç
+  journal_article: ["title_abstract", "introduction", "article_body", "conclusion_article", "declarations", "references"],
   capstone: ["topic", "problem", "purpose", "literature", "method", "design_development", "testing", "conclusion", "references", "appendices"],
   literature_review: ["topic", "review_protocol", "literature", "review_synthesis", "gaps", "conclusion", "references"],
   research_proposal: ["topic", "problem", "purpose", "questions", "literature", "theory", "method", "sample", "instruments", "analysis", "proposal_timeline", "risks", "references"],
@@ -101,6 +102,9 @@ export function buildRoadmap({ workType, level, methodology = "quantitative", pr
   // Burs başvurusu ve lise/öğrenci yarışmalarında (2204-A, 2242) bütçe bölümü bulunmaz
   if (workType === "grant_proposal" && (program === "scholarship" || program === "tubitak_2204a" || program === "tubitak_2242")) keys = keys.filter((k) => k !== "grant_budget");
 
+  // D170: kuramsal veya derleme yaklaşımlı araştırma makalesi Yöntem/Bulgular içermez (veri toplanmaz)
+  if (workType === "research_article" && (methodology === "theoretical" || methodology === "systematic_review")) keys = [...BASE.journal_article];
+
   if (workType === "thesis" || workType === "research_proposal") {
     if (methodology === "qualitative") {
       keys = keys.map((k) => (k === "sample" ? "participants" : k));
@@ -126,6 +130,26 @@ export function buildRoadmap({ workType, level, methodology = "quantitative", pr
     const def = STAGE_LIBRARY[k];
     return { key: k, title: rename[k] ?? def.title, description: def.purpose };
   });
+}
+
+export const EMPIRICAL_METHODS = new Set<string>(["quantitative", "qualitative", "mixed"]);
+/** Kullanıcının kendi topladığı veriye dayanan (alan araştırması içeren) çalışma türleri */
+const DATA_WORKS = new Set<string>(["thesis", "research_article", "capstone"]);
+
+/**
+ * D170: Bu bölüm bu çalışmada kullanıcının gerçek araştırma verisini gerektiriyor mu? Bölüm tanımındaki işaret yalnızca
+ * alan araştırması içeren çalışmalarda (tez, araştırma makalesi, bitirme projesi) ve nicel/nitel/karma yöntemde geçerlidir.
+ * Dergi makalesi, derleme, kuramsal çalışma ve özet veri gerektirmez (yapay zekâ kaynaklarla yazar; [VERİ GİRİLECEK] kullanılmaz).
+ */
+export function stageNeedsData(key: string, project?: { work_type?: string | null; context?: { methodology?: string | null } | null } | null): boolean {
+  const def = STAGE_LIBRARY[key];
+  if (!def?.requiresUserData) return false;
+  if (key === "grant_budget") return true;
+  const wt = project?.work_type ?? "";
+  if (!DATA_WORKS.has(wt)) return false;
+  const m = project?.context?.methodology;
+  if (m && !EMPIRICAL_METHODS.has(m)) return false;
+  return true;
 }
 
 export function stageDef(key: string): StageDef | undefined {

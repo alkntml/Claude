@@ -180,12 +180,11 @@ const S: StageDef[] = [
   // --- Makale / öneri / derleme aşamaları ---
   {
     key: "title_abstract",
-    title: "Başlık, özet ve anahtar kelimeler",
-    purpose: "Çalışmayı doğru temsil eden bir başlık, yapılandırılmış özet ve anahtar kelimeler hazırlamak.",
-    steps: ["Başlığı değişkenleri ve örneklemi içerecek şekilde yazın.", "Özeti amaç–yöntem–bulgular–sonuç yapısında yazın.", "3–6 anahtar kelime seçin (tercihen MeSH/thesaurus terimleri)."],
+    title: "Özet ve anahtar kelimeler",
+    purpose: "Çalışmayı doğru temsil eden Türkçe özet, İngilizce abstract ve anahtar kelimeleri hazırlamak (makale başlığı belgenin en üstünde ayrıca yer alır).",
+    steps: ["Özeti çalışmanın türüne uygun yazın: araştırmada amaç–yöntem–bulgular–sonuç; kuramsal makale ve derlemede amaç–kapsam–ana tartışma–sonuç.", "3–5 anahtar kelime seçin (tercihen thesaurus terimleri).", "Aynı içeriği İngilizce abstract ve keywords olarak verin."],
     rules: ["Özet genellikle 150–250 kelimedir; derginin sınırını kontrol edin.", "Özette kaynak gösterilmez.", "Özet, ana metinde olmayan bilgi içermez."],
     questions: ["Hedef derginiz hangisi? Özet sınırı ve yapısı nedir?"],
-    requiresUserData: true,
   },
   {
     key: "introduction",
@@ -222,6 +221,23 @@ const S: StageDef[] = [
     questions: ["Çalışmanızın en önemli sınırlılığı nedir?"],
     needsLiterature: true,
     requiresUserData: true,
+  },
+  {
+    key: "article_body",
+    title: "Konu bölümleri",
+    purpose: "Girişte ortaya konan amaca göre konuyu, içeriğe özgü ana başlıklar altında ve kaynaklara dayanarak işlemek (her başlık makalede ayrı numaralı bir bölüm olur).",
+    steps: ["Konuyu mantıksal bir sırayla 3–6 ana başlığa ayırın (ör. kavramsal temel, tarihsel gelişim, kuramsal tartışmalar, güncel yaklaşımlar).", "Her başlıkta ilgili kaynakları karşılaştırarak sentezleyin.", "Başlıklar arasında geçiş cümleleriyle akışı sağlayın."],
+    rules: ["Başlıklar çalışmanın içeriğine özgü olmalıdır; “Yöntem”, “Bulgular”, “Literatür taraması” gibi genel başlıklar kullanılmaz.", "Her iddia projedeki kaynaklarla desteklenir; kaynak tek tek özetlenmez, karşılaştırılarak sentezlenir."],
+    questions: ["Makalenizde hangi ana konuları hangi sırayla işlemek istersiniz?"],
+    needsLiterature: true,
+  },
+  {
+    key: "conclusion_article",
+    title: "Sonuç",
+    purpose: "Konu bölümlerindeki tartışmayı bütünleştirmek; çalışmanın katkısını, sınırlılıklarını ve öneriler sunmak.",
+    steps: ["Makalenin ana çıkarımlarını kısaca bütünleştirin.", "Alana katkıyı ve sınırlılıkları belirtin.", "Gelecek çalışmalar için somut öneriler sunun."],
+    rules: ["Sonuçta yeni kaynak veya yeni iddia getirilmez; konu bölümlerinde yazılanlara dayanılır."],
+    questions: [],
   },
   {
     key: "declarations",

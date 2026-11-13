@@ -11,7 +11,7 @@ import { streamChat } from "@/lib/ai/chat-client";
 import { readBlueprint } from "@/lib/blueprint";
 import { docToPlain, docToTokenMarkdown, findPlaceholderBlocks, blockToTokenText, markdownToDoc, restoreTokens, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { applyReview, decideNext, parseHeadingLines, pushLog, TARGET_SCORE, type AutoState, type IssueLike } from "@/lib/autopilot";
-import { stageDef } from "@/lib/workflows";
+import { stageDef, stageNeedsData } from "@/lib/workflows";
 import { writingOrder } from "@/lib/workflows/order";
 import { sameHeading, subheadingBudget } from "@/lib/workflows/structure";
 import { parseAnswer } from "@/components/workspace/markdown";
@@ -24,6 +24,9 @@ export class Autopilot {
   private abort = new AbortController();
   private live: Live = { sourcesAdded: 0 };
   private dataSummary = "";
+  private project: any = null;
+  /** D170: düzeltme turundan önceki hâl; tur puanı düşürürse bu hâle dönülür */
+  private beforeFix: { score: number; docs: { id: string; content: JSONNode }[] } | null = null;
   stopped = false;
 
   constructor(private projectId: string, initial: AutoState, private t: T, private onUpdate: (s: AutoState, live: Live) => void) {
@@ -111,7 +114,8 @@ export class Autopilot {
   private async writeStage(st: any, words: number) {
     const def = stageDef(st.key);
     const budget = subheadingBudget(st.key, words);
-    const dataNote = def?.requiresUserData ? (this.dataSummary ? `\n\n${this.dataSummary}\n\nBu bölümde YALNIZCA yukarıdaki gerçek veri özetindeki değerleri kullan; olmayan değer, test sonucu veya bulgu yazma, gerekiyorsa [VERİ GİRİLECEK] bırak.` : "\n\nGerçek araştırma verisi yüklenmedi: hiçbir değer veya bulgu uydurma; gereken yerlere [VERİ GİRİLECEK] yaz ve tablo şablonlarını boş bırak.") : "";
+    void def;
+    const dataNote = stageNeedsData(st.key, this.project) ? (this.dataSummary ? `\n\n${this.dataSummary}\n\nBu bölümde YALNIZCA yukarıdaki gerçek veri özetindeki değerleri kullan; olmayan değer, test sonucu veya bulgu yazma, gerekiyorsa [VERİ GİRİLECEK] bırak.` : "\n\nGerçek araştırma verisi yüklenmedi: hiçbir değer veya bulgu uydurma; gereken yerlere [VERİ GİRİLECEK] yaz ve tablo şablonlarını boş bırak.") : "";
     const nodes: JSONNode[] = [];
     if (st.key === "title_abstract" || st.key === "grant_summary") {
       this.setLive({ step: this.t("Özet yazılıyor") });
@@ -122,7 +126,12 @@ export class Autopilot {
       let heads: string[] = [];
       if (budget > 0) {
         this.setLive({ step: this.t("Alt başlıklar planlanıyor") });
-        const { answer } = await this.ask(st.id, "outline", `Bu bölüm için akademik usule uygun alt başlıklar öner: en fazla ${budget} tane; yalnızca birbirinden belirgin biçimde ayrı alt konular için başlık aç, bölüm adını tekrar eden başlık önerme. Kurgudaki bölüm planına uy. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.`);
+        const outlineMsg = st.key === "article_body"
+          ? `Bu makalenin Giriş’ten sonra gelecek ANA KONU BAŞLIKLARINI öner: en az 3, en fazla ${budget} tane. Her başlık makalede ayrı numaralı bir ana bölüm olacak; başlıklar çalışmanın konusuna özgü olsun ve konuyu mantıklı bir sırayla işlesin (ör. kavramsal temel → tarihsel gelişim → kuramsal tartışmalar → güncel yaklaşımlar). “Giriş”, “Yöntem”, “Bulgular”, “Tartışma”, “Sonuç”, “Literatür taraması” gibi genel başlık önerme. Kurgudaki bölüm planına uy. Yalnızca bir :::taslak bloğu içinde her satıra bir başlık yaz; numara veya açıklama ekleme.`
+          : st.key === "introduction"
+            ? `Makalenin Giriş bölümü için ${Math.max(2, Math.min(budget, 3))} alt başlık öner (ör. konunun bağlamı ve önemi; problem ve alanyazındaki tartışma; çalışmanın amacı ve kapsamı). Başlıklar çalışmanın konusuna özgü olsun; “Giriş” kelimesini tekrar etme. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.`
+            : "";
+        const { answer } = await this.ask(st.id, "outline", outlineMsg || `Bu bölüm için akademik usule uygun alt başlıklar öner: en fazla ${budget} tane; yalnızca birbirinden belirgin biçimde ayrı alt konular için başlık aç, bölüm adını tekrar eden başlık önerme. Kurgudaki bölüm planına uy. Yalnızca bir :::taslak bloğu içinde her satıra bir alt başlık yaz; numara veya açıklama ekleme.`);
         heads = parseHeadingLines(this.draftOf(answer), st.title, budget, sameHeading);
       }
       if (heads.length >= 2) {
@@ -209,6 +218,7 @@ export class Autopilot {
     this.emit();
     try {
       const { project } = await api<{ project: any }>(`/api/projects/${this.projectId}`);
+      this.project = project;
       const bp = readBlueprint(project.context?.blueprint);
       const wordsOf = (id: string) => bp?.chapters.find((c) => c.stageId === id)?.words ?? 0;
 
@@ -246,6 +256,16 @@ export class Autopilot {
         const { report } = await api<{ report: any }>(`/api/projects/${this.projectId}/quality`, { method: "POST", json: { withAi } });
         if (withAi) this.state = { ...this.state, aiReviewed: true };
         const score = Number(report?.score ?? 0);
+        // D170: düzeltme turu puanı düşürdüyse değiştirilen bölümler tur öncesi hâline döndürülür (en iyi hâl korunur)
+        if (this.beforeFix && score < this.beforeFix.score) {
+          const prev = this.beforeFix;
+          this.beforeFix = null;
+          for (const d of prev.docs) await this.saveStage(d.id, d.content, this.t("Otomatik düzeltme geri alındı (puan düşmüştü)"));
+          this.log(this.t("Düzeltme turu puanı {a} → {b} düşürdü; bölümler önceki hâline döndürüldü.", { a: prev.score, b: score }));
+          await this.save();
+          continue;
+        }
+        this.beforeFix = null;
         const issues: IssueLike[] = report?.report?.issues ?? [];
         this.state = { ...this.state, score };
         this.log(this.t("Kalite puanı: {s} ({n} bulgu)", { s: score, n: issues.length }));
@@ -271,6 +291,9 @@ export class Autopilot {
         await this.save();
         const stages = await this.loadStages();
         const byKey = (k: string) => stages.find((s) => s.key === k);
+        // Tur öncesi hâli sakla (puan düşerse geri dönülür)
+        const touched = [...new Set([...plan.rewrite, ...plan.placeholders, ...Object.keys(plan.revise)])].map(byKey).filter(Boolean) as any[];
+        this.beforeFix = { score, docs: (await Promise.all(touched.map((st) => this.loadStage(st.id).catch(() => null)))).filter(Boolean).map((st: any) => ({ id: st.id, content: st.content as JSONNode })) };
         for (const k of plan.rewrite) {
           const st = byKey(k); if (!st) continue;
           this.setLive({ stage: st.title, step: this.t("Yeniden yazılıyor") });

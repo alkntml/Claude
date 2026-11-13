@@ -94,8 +94,12 @@ function Setup({ onCancel, onReady }: { onCancel: () => void; onReady: (project:
   async function start() {
     try {
       setBusy("Çalışma oluşturuluyor…");
+      // D170: veri dosyası yüklenmeden otomatik yazılan makale kaynaklara dayalı (kuramsal) yapıda kurulur:
+      // Giriş → içeriğe özgü konu bölümleri → Sonuç; Yöntem/Bulgular ve [VERİ GİRİLECEK] olmaz
+      const hasData = files.some((x) => x.purpose === "data");
+      const meth: Methodology = (workType === "journal_article" || workType === "research_article") && !hasData ? "theoretical" : methodology;
       const { project } = await api<{ project: any }>("/api/projects", { method: "POST", json: {
-        title: (title.trim() || topic.trim()).slice(0, 300), workType, level: wt.levels.includes(level) ? level : wt.levels[0], methodology, discipline, language, citationStyle: style, topic: topic.trim(), university: university.trim() || undefined,
+        title: (title.trim() || topic.trim()).slice(0, 300), workType, level: wt.levels.includes(level) ? level : wt.levels[0], methodology: meth, discipline, language, citationStyle: style, topic: topic.trim(), university: university.trim() || undefined,
       } });
       await api(`/api/projects/${project.id}`, { method: "PATCH", json: { context: { autopilot: newState() } } });
       // Belgeler: makaleler kaynak olarak, kılavuz ve diğer belgeler proje içinde aranabilir metin olarak
@@ -129,7 +133,7 @@ function Setup({ onCancel, onReady }: { onCancel: () => void; onReady: (project:
       <div className="grid gap-4 md:grid-cols-3">
         <label className="block"><span className="label">Çalışma türü</span><select className="input" value={workType} onChange={(e) => setWorkType(e.target.value)}>{WORK_TYPES.filter((w) => w.id !== "text_editing" && w.id !== "source_research").map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}</select></label>
         <label className="block"><span className="label">Seviye</span><select className="input" value={level} onChange={(e) => setLevel(e.target.value as AcademicLevel)}>{wt.levels.map((l) => <option key={l} value={l}>{LEVEL_LABELS[l as AcademicLevel]}</option>)}</select></label>
-        <label className="block"><span className="label">Yöntem yaklaşımı</span><select className="input" value={methodology} onChange={(e) => setMethodology(e.target.value as Methodology)}>{Object.entries(METHODOLOGY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></label>
+        <label className="block"><span className="label">Yöntem yaklaşımı</span><select className="input" value={methodology} onChange={(e) => setMethodology(e.target.value as Methodology)}>{Object.entries(METHODOLOGY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>{(workType === "journal_article" || workType === "research_article") && !files.some((x) => x.purpose === "data") && <span className="mt-1 block text-xs text-ink-500">Veri dosyası yüklenmediği için makale kaynaklara dayalı yazılır: Giriş → içeriğe özgü konu bölümleri → Sonuç (Yöntem/Bulgular yok).</span>}</label>
       </div>
       <label className="block"><span className="label">Konu ve kapsam (zorunlu)</span><textarea className="input min-h-[90px]" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="ör. Kablo kanallarında kablo çekme işlemini otomatikleştiren mobil robotun tasarımı ve saha performansının değerlendirilmesi" /></label>
       <div className="grid gap-4 md:grid-cols-3">

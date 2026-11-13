@@ -192,9 +192,7 @@ ${bs.preamble}\\addbibresource{references.bib}
 
 \\begin{document}
 \\maketitle
-\\tableofcontents
-\\clearpage
-
+${doc.article ? "" : "\\tableofcontents\n\\clearpage\n"}
 ${body}
 
 ${bs.bibBegin}\\printbibliography[title={${texEscape(doc.bibliographyTitle)}}]${bs.bibEnd}

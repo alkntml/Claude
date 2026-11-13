@@ -38,8 +38,28 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     });
   };
 
+  const usableW = () => doc.page.width - M.left - M.right;
+  const bottomY = () => doc.page.height - M.bottom;
+  const plain = (runs: Run[]) => runs.map((r) => r.text).join("");
+  // D170: özet/abstract dergilerdeki gibi tek satır aralığı ve bir punto küçük, girintisiz yazılır (başlıkla aynı sayfaya sığar)
+  const absSize = base - 1, absGap = 2;
+  const paraH = (runs: Run[], abs = false) => { doc.font("r").fontSize(abs ? absSize : base); return doc.heightOfString(plain(runs) || " ", { width: usableW(), lineGap: abs ? absGap : gap, indent: abs ? 0 : pt(f.firstLineIndentCm) }) + doc.currentLineHeight() * 0.5; };
+  const headH = (level: number, runs: Run[]) => { doc.font("b").fontSize(level === 1 ? 15 : level === 2 ? 13 : 12); return doc.heightOfString(plain(runs) || " ", { width: usableW() }) + doc.currentLineHeight() * 1.6; };
+  /** Kalan alan yetmiyorsa yeni sayfa (başlık sayfa sonunda yalnız kalmaz; özet bloğu bölünmez) */
+  const need = (h: number) => { if (doc.y + h > bottomY() && h < bottomY() - M.top) doc.addPage(); };
+
+  if (d.article) {
+    // D170: makale düzeni — kapak ve içindekiler yok; başlık ve yazar ilk sayfanın üstünde
+    doc.font("b").fontSize(16).text(d.title, { align: "center" });
+    if (d.subtitle) doc.moveDown(0.3).font("i").fontSize(13).text(d.subtitle, { align: "center" });
+    if (d.author) doc.moveDown(0.8).font("r").fontSize(11.5).text(d.author, { align: "center" });
+    if (d.institution) doc.font("i").fontSize(10.5).text(d.institution, { align: "center" });
+    doc.moveDown(1.5);
+  }
+
   // Kapak
   const cv = coverLines(f, d);
+  if (!d.article) {
   doc.font("b").fontSize(12);
   for (const tx of cv.top) doc.text(tx, { align: "center" });
   doc.moveDown(cv.top.length ? 6 : 8).font("b").fontSize(18).text(cv.title, { align: "center" });
@@ -50,21 +70,31 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   if (cv.advisor) doc.text(cv.advisor, { align: "center" }).moveDown(1.5);
   if (!f.cover.university && d.institution) doc.text(d.institution, { align: "center" }).moveDown(1);
   doc.moveDown(4).text(cv.bottom, { align: "center" });
+  }
 
-  // İçindekiler için sayfa(lar) ayrılır; başlıkların sayfa numaraları belge yazıldıktan sonra doldurulur.
+  // İçindekiler için sayfa(lar) ayrılır; başlıkların sayfa numaraları belge yazıldıktan sonra doldurulur (makalede yok).
   const tocPerPage = 32;
-  const tocPages = Math.max(1, Math.ceil((d.toc.length + (d.bibliography.length ? 1 : 0)) / tocPerPage));
+  const tocPages = d.article ? 0 : Math.max(1, Math.ceil((d.toc.length + (d.bibliography.length ? 1 : 0)) / tocPerPage));
   const tocStart = doc.bufferedPageRange().count;
   for (let k = 0; k < tocPages; k++) doc.addPage();
   const headingPages: number[] = [];
   let bibPage = -1;
   const currentPage = () => { const r = doc.bufferedPageRange(); return r.start + r.count - 1; };
 
-  let started = false;
-  for (const b of d.blocks) {
+  let started = d.article;
+  for (const [bi, b] of d.blocks.entries()) {
     if (b.kind === "heading") {
-      if (b.level === 1 && (f.chapterOnNewPage || !started)) { doc.addPage(); started = true; } else if (b.level === 1) doc.moveDown(1.2);
+      if (b.level === 1 && !d.article && (f.chapterOnNewPage || !started)) { doc.addPage(); started = true; } else if (b.level === 1) doc.moveDown(1.2);
       else doc.moveDown(0.6);
+      // Başlık, ardından gelen metnin en az ilk satırlarıyla aynı sayfada; özet/abstract bloğu (başlık + metin + anahtar kelimeler) bölünmez
+      let h = headH(b.level, b.runs);
+      if (b.keep === "abstract") {
+        for (let k = bi + 1; k < d.blocks.length; k++) { const n = d.blocks[k]; if (n.kind === "heading" || n.kind !== "paragraph" || n.keep !== "abstract") break; h += paraH(n.runs, true); }
+      } else {
+        const n = d.blocks[bi + 1];
+        if (n?.kind === "paragraph") h += Math.min(paraH(n.runs), doc.currentLineHeight() * 4);
+      }
+      need(h);
       headingPages.push(currentPage());
       const label = `${b.number ? `${b.number}  ` : ""}${b.runs.map((r) => r.text).join("")}`;
       doc.font("b").fontSize(b.level === 1 ? 15 : b.level === 2 ? 13 : 12).text(label, { align: "left" });
@@ -72,7 +102,8 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       doc.moveDown(0.5);
     } else if (b.kind === "paragraph") {
       if (!started) { doc.addPage(); started = true; }
-      writeRuns(b.runs, { size: base, align: f.justify ? "justify" : "left", lineGap: gap, indent: b.quote ? 0 : pt(f.firstLineIndentCm), ...(b.quote ? { width: doc.page.width - M.left - M.right - 60 } : {}) });
+      if (b.keep === "abstract") writeRuns(b.runs, { size: absSize, align: "justify", lineGap: absGap, indent: 0 });
+      else writeRuns(b.runs, { size: base, align: f.justify ? "justify" : "left", lineGap: gap, indent: b.quote ? 0 : pt(f.firstLineIndentCm), ...(b.quote ? { width: doc.page.width - M.left - M.right - 60 } : {}) });
       doc.moveDown(0.5);
     } else if (b.kind === "caption") {
       b.lines.forEach((l) => writeRuns(l, { size: 10.5, align: b.align }));
@@ -118,7 +149,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   }
 
   if (d.bibliography.length) {
-    doc.addPage();
+    if (d.article) { doc.moveDown(1.2); need(80); } else doc.addPage();
     bibPage = currentPage();
     doc.font("b").fontSize(15).text(d.bibliographyTitle).moveDown();
     doc.outline.addItem(d.bibliographyTitle);
@@ -135,7 +166,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   // İçindekiler: noktalı çizgi ve sayfa numaralarıyla
   const entries = [...d.toc.map((t, k) => ({ ...t, page: headingPages[k] })), ...(bibPage >= 0 ? [{ level: 1, number: "", text: d.bibliographyTitle, page: bibPage }] : [])];
   const left = M.left, right = doc.page.width - M.right;
-  entries.forEach((t, k) => {
+  if (!d.article) entries.forEach((t, k) => {
     const pageIdx = tocStart + Math.floor(k / tocPerPage);
     if (k % tocPerPage === 0) {
       doc.switchToPage(pageIdx);
@@ -162,14 +193,14 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     doc.y = y + 18;
   });
 
-  // Sayfa numaraları (kapak hariç)
+  // Sayfa numaraları (kapak hariç; makalede ilk sayfadan itibaren)
   const range = doc.bufferedPageRange();
-  for (let p = range.start + 1; p < range.start + range.count; p++) {
+  for (let p = range.start + (d.article ? 0 : 1); p < range.start + range.count; p++) {
     doc.switchToPage(p);
     const bottom = doc.page.margins.bottom;
     doc.page.margins.bottom = 0;
     const top = f.pageNumber === "top-right";
-    doc.font("r").fontSize(9).text(String(p), f.pageNumber === "bottom-center" ? 0 : 0, top ? 28 : doc.page.height - 40, { align: f.pageNumber === "bottom-center" ? "center" : "right", width: doc.page.width - (f.pageNumber === "bottom-center" ? 0 : M.right) });
+    doc.font("r").fontSize(9).text(String(d.article ? p + 1 : p), f.pageNumber === "bottom-center" ? 0 : 0, top ? 28 : doc.page.height - 40, { align: f.pageNumber === "bottom-center" ? "center" : "right", width: doc.page.width - (f.pageNumber === "bottom-center" ? 0 : M.right) });
     doc.page.margins.bottom = bottom;
   }
   doc.end();

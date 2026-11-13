@@ -18,6 +18,10 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Makale yapısı ve makale çıktısı (D170, 13 Kasım 2026)**
+- Dergi makalesi: Özet → Giriş (alt başlıklı) → içeriğe özgü konu bölümleri → Sonuç; Yöntem/Bulgular ve veri yer tutucusu yok
+- Word/PDF’te makale düzeni (kapaksız, başlık üstte, özet bölünmez); otomatik çalışmada puanı düşüren düzeltme geri alınır
+
 **Gündüz modu varsayılan; kaynak seçimi ve atıf doğruluğu (D169, 13 Kasım 2026)**
 - Gece/gündüz düğmesi telefonda üst çubukta; site gündüz moduyla açılır
 - Tam metni okunabilen, doğrulanmış, künyesi eksiksiz kaynaklar öncelikli; yinelenen kaynak eklenmez; yapay zekâ önce tam metni okunan kaynaklara atıf yapar

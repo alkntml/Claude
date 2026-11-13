@@ -27,6 +27,11 @@ const GROUP_OF: Record<string, ChapterGroup> = {
 /** Belgede kullanılan akademik başlıklar (kullanıcı aşamanın adını değiştirmediyse) */
 const DOC_TITLE: Record<string, L2> = {
   topic: { tr: "", en: "", de: "" }, // Giriş’in açılış metni: ayrı başlık almaz
+  // D170: makale özeti belgede “Özet” başlığıyla başlar (“Başlık, özet ve anahtar kelimeler” bir iş adıdır, belgeye yazılmaz)
+  title_abstract: { tr: "Özet", en: "Abstract", de: "Zusammenfassung" },
+  // Konu bölümleri kendi başlığını almaz: içindeki her ## başlık makalede ayrı numaralı ana bölümdür
+  article_body: { tr: "", en: "", de: "" },
+  conclusion_article: { tr: "SONUÇ", en: "CONCLUSION", de: "FAZIT" },
   problem: { tr: "Problem Durumu", en: "Problem Statement", de: "Problemstellung" },
   purpose: { tr: "Araştırmanın Amacı ve Önemi", en: "Purpose and Significance of the Study", de: "Zielsetzung und Relevanz der Studie" },
   questions: { tr: "Araştırma Soruları ve Hipotezler", en: "Research Questions and Hypotheses", de: "Forschungsfragen und Hypothesen" },
@@ -61,8 +66,12 @@ export function chapterGroup(stageKey: string): ChapterGroup | null {
  * Aşamanın belgedeki başlığı: kullanıcı aşama adını değiştirmediyse akademik karşılığı, değiştirdiyse kendi adı.
  * Boş dize: başlıksız (ör. Giriş’in açılış metni).
  */
+/** Bölüm tanımında adı sonradan değişen aşamaların eski varsayılan adları (eski çalışmalarda “yeniden adlandırılmış” sayılmasın) */
+const LEGACY_TITLES: Record<string, string[]> = { title_abstract: ["Başlık, özet ve anahtar kelimeler"] };
+
 export function sectionTitle(stageKey: string, stageTitle: string, defaultTitle: string | undefined, locale: "tr" | "en" | "de"): string {
-  const renamed = defaultTitle && norm(stageTitle) !== norm(defaultTitle);
+  const legacy = (LEGACY_TITLES[stageKey] ?? []).some((x) => norm(x) === norm(stageTitle));
+  const renamed = !legacy && defaultTitle && norm(stageTitle) !== norm(defaultTitle);
   if (renamed) return stageTitle;
   const d = DOC_TITLE[stageKey];
   return d ? d[locale] : stageTitle;
@@ -88,13 +97,16 @@ export function sameHeading(a: string, b: string): boolean {
 }
 
 /** Kısa bölümler: alt başlık açılmaz (Giriş’in alt kısımları, örneklem, veri toplama vb.) */
-const SHORT = new Set(["topic", "problem", "purpose", "questions", "gaps", "sample", "participants", "analysis", "instruments", "conclusion", "declarations", "grant_summary", "grant_budget"]);
+const SHORT = new Set(["topic", "problem", "purpose", "questions", "gaps", "sample", "participants", "analysis", "instruments", "conclusion", "conclusion_article", "declarations", "grant_summary", "grant_budget", "title_abstract"]);
 
 /**
  * Önerilen en fazla alt başlık sayısı: kısa bölümlerde 0 (gerekirse en fazla 2), uzun bölümlerde
  * yaklaşık her 900–1000 kelimeye bir alt başlık (en fazla 6). Hedef yoksa bölüm türüne göre.
  */
 export function subheadingBudget(stageKey: string, targetWords = 0): number {
+  // D170: makale girişi alt başlıklarla (ör. bağlam, problem, amaç) ilerler; konu bölümleri 3–6 ana başlıktan oluşur
+  if (stageKey === "introduction") return targetWords && targetWords < 500 ? 0 : Math.min(4, Math.max(2, Math.round(targetWords / 700)));
+  if (stageKey === "article_body") return Math.min(6, Math.max(3, Math.round((targetWords || 3000) / 1000)));
   if (SHORT.has(stageKey)) return targetWords >= 2500 ? 2 : 0;
   if (!targetWords) return 4;
   return Math.max(0, Math.min(6, Math.round(targetWords / 950)));
@@ -103,6 +115,13 @@ export function subheadingBudget(stageKey: string, targetWords = 0): number {
 /** Yapay zekâya verilen yapı kuralı (bölüm bağlamı) */
 export function structureRule(stageKey: string, stageTitle: string, targetWords = 0): string {
   const n = subheadingBudget(stageKey, targetWords);
+  if (stageKey === "article_body") {
+    return [
+      "BÖLÜM YAPISI (makalenin ana gövdesi): Bu kısmın kendi başlığı yoktur; buraya yazdığın her ## başlık makalede Giriş’ten sonra gelen ayrı, numaralı bir ana bölüm olur (2, 3, 4…). Gerekirse alt kısımlar ### ile açılır.",
+      `${n} kadar ## ana başlık kullan (en az 3). Başlıklar çalışmanın konusuna ÖZGÜ olmalı (ör. kavramlar, dönemler, kuramlar, tartışmalar); “Giriş”, “Yöntem”, “Bulgular”, “Tartışma”, “Sonuç”, “Literatür taraması” gibi genel başlıklar KULLANMA. Her ana başlığın altında en az 3–4 dolu, kaynaklı paragraf olmalı; başlıklar arasında konu tekrarı olmamalı.`,
+      "Bu bir kaynaklara dayalı makaledir: veri toplanmaz, [VERİ GİRİLECEK] kullanılmaz; her olgusal cümle KAYNAKLAR’daki bir çalışmayla desteklenir.",
+    ].join("\n");
+  }
   const group = chapterGroup(stageKey);
   return [
     `BÖLÜM YAPISI: Bu metin belgede ${group ? `“${group.title.tr}” ana bölümünün bir alt kısmı olarak` : "kendi ana bölümü olarak"} yer alır. Aşama/bölüm adını (“${stageTitle}”) metnin başına başlık olarak YAZMA; sistem başlığı kendisi ekler.`,
@@ -148,6 +167,8 @@ export function stagePrefixes(stages: { id: string; key: string; title: string; 
     } else {
       current = null;
       if (UNNUMBERED.has(st.key)) { out[st.id] = ""; continue; }
+      // D170: konu bölümleri başlıksızdır; içindeki her ## başlık ayrı ana bölüm numarası alır
+      if (st.key === "article_body") { out[st.id] = ""; chapter += topLevelHeadings(st.content); continue; }
       chapter++;
       out[st.id] = String(chapter);
     }

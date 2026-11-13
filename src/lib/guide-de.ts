@@ -294,7 +294,7 @@ export const GUIDE_DE: Record<string, string> = {
   "“Veri talebi oluştur (KVKK)” veya “Hesabımı sil”. Ayrıntılar “Güvenlik ve Gizlilik” sayfasında.": "„Meine Daten anfordern (KVKK/DSGVO)“ oder „Mein Konto löschen“. Einzelheiten auf der Seite „Sicherheit & Datenschutz“.",
   "Dil, gece modu ve telefon": "Sprache, Dunkelmodus und Smartphone",
   "Sol menünün altı": "Unten im linken Menü",
-  "Dil seçiciyle Türkçe/English/Deutsch; ay/güneş simgesiyle gece/gündüz modu.": "Mit der Sprachauswahl wechseln Sie zwischen Türkçe, English und Deutsch; mit dem Mond-/Sonnensymbol zwischen dunklem und hellem Modus.",
+  "Dil seçiciyle Türkçe/English/Deutsch; ay/güneş simgesiyle gece/gündüz modu (telefonda üst çubukta). Site gündüz moduyla açılır; seçiminiz hatırlanır.": "Mit der Sprachauswahl zwischen Türkçe, English und Deutsch wechseln; mit dem Mond-/Sonnensymbol zwischen Dunkel- und Hellmodus (auf dem Smartphone in der oberen Leiste). Die Website öffnet im Hellmodus; Ihre Wahl wird gespeichert.",
   "Telefonda alttaki sekmeler: “Bölümler”, “Metin”, “Asistan”, “Kaynaklar”, “Diğer”; “⋯” menüsünde atıf stili, araçlar ve ayarlar.": "Auf dem Smartphone nutzen Sie die unteren Tabs „Abschnitte“, „Text“, „Assistent“, „Quellen“, „Weitere“; im Menü „⋯“ finden Sie Zitierstil, Werkzeuge und Einstellungen.",
   "“Uygulamayı yükle” ile siteyi telefonunuza uygulama gibi ekleyebilirsiniz.": "Mit „App installieren“ fügen Sie die Website wie eine App zu Ihrem Smartphone hinzu.",
   "Sorun giderme": "Fehlerbehebung",

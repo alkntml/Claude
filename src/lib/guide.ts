@@ -365,7 +365,7 @@ export const GUIDE: GuideChapter[] = [
         s("“Veri talebi oluştur (KVKK)” veya “Hesabımı sil”. Ayrıntılar “Güvenlik ve Gizlilik” sayfasında.", "“Create data request (KVKK)” or “Delete my account”. Details on the “Security & Privacy” page."),
       ] },
       { id: "gorunum", title: s("Dil, gece modu ve telefon", "Language, dark mode and phone"), where: s("Sol menünün altı", "Bottom of left menu"), steps: [
-        s("Dil seçiciyle Türkçe/English/Deutsch; ay/güneş simgesiyle gece/gündüz modu.", "Switch between Türkçe, English and Deutsch with the language picker; dark/light mode with the moon/sun icon."),
+        s("Dil seçiciyle Türkçe/English/Deutsch; ay/güneş simgesiyle gece/gündüz modu (telefonda üst çubukta). Site gündüz moduyla açılır; seçiminiz hatırlanır.", "Switch between Türkçe, English and Deutsch with the language picker; dark/light mode with the moon/sun icon (on phones in the top bar). The site opens in light mode; your choice is remembered."),
         s("Telefonda alttaki sekmeler: “Bölümler”, “Metin”, “Asistan”, “Kaynaklar”, “Diğer”; “⋯” menüsünde atıf stili, araçlar ve ayarlar.", "On phones use the bottom tabs: “Sections”, “Text”, “Assistant”, “Sources”, “More”; the “⋯” menu has style, tools and settings."),
         s("“Uygulamayı yükle” ile siteyi telefonunuza uygulama gibi ekleyebilirsiniz.", "Use “Install app” to add the site to your phone like an app."),
       ] },

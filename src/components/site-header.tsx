@@ -54,7 +54,7 @@ export function SiteHeader({ signedIn: initialSignedIn }: { signedIn: boolean })
             </>
           )}
         </div>
-        <button className="rounded-lg p-2 md:hidden" onClick={() => setOpen((o) => !o)} aria-label={t("Menü")}>{open ? <X /> : <Menu />}</button>
+        <div className="flex items-center gap-1 md:hidden"><ThemeToggle /><button className="rounded-lg p-2" onClick={() => setOpen((o) => !o)} aria-label={t("Menü")}>{open ? <X /> : <Menu />}</button></div>
       </div>
       {open && (
         <div className="glass mx-3 mt-2 animate-rise rounded-2xl p-3 md:hidden">

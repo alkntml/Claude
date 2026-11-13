@@ -135,6 +135,7 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/95 px-4 py-3 lg:hidden">
         <Logo />
         <div className="flex items-center gap-1">
+          <ThemeToggle />
           <NotificationBell align="right" />
           <button onClick={() => setOpen(true)} aria-label={t("Menü")} className="rounded-lg p-2"><Menu /></button>
         </div>

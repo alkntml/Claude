@@ -5,6 +5,8 @@ import { z } from "zod";
 import { complete, estimateCost, resolveModel, isProviderConfigured } from "@/lib/ai/registry";
 import { spentError } from "@/lib/ai/spent";
 import { normalizeDoi } from "@/lib/citations";
+import { missingFields, titleSimilarity } from "@/lib/citations/checks";
+import type { CitationItem } from "@/lib/citations/types";
 import { providerConfig } from "@/lib/env";
 import { enabledProviders } from "@/lib/settings";
 import { dedupe, scoreRecord, searchAll } from "@/lib/sources/aggregate";
@@ -43,14 +45,18 @@ export function recordToInput(r: SourceRecord): z.infer<typeof SourceInput> {
  * eksik künyeyi kayıt otoritesinden tamamlar ve açık erişimli tam metinleri arka planda kuyruğa alır.
  */
 export async function addSourcesToProject(db: SupabaseClient, projectId: string, userId: string, inputs: z.infer<typeof SourceInput>[], opts: { deferFulltext?: boolean } = {}) {
-  const { data: existing } = await db.from("sources").select("doi").eq("project_id", projectId).not("doi", "is", null);
-  const have = new Set((existing ?? []).map((x) => x.doi));
+  const { data: existing } = await db.from("sources").select("doi, title, year").eq("project_id", projectId);
+  const have = new Set((existing ?? []).map((x) => x.doi).filter(Boolean));
+  const known: { title?: string | null; year?: number | null; doi?: string | null }[] = [...(existing ?? [])];
   const cfg = providerConfig();
+  // D169: aynı eser ikinci kez eklenmez (aynı DOI veya aynı yıl + çok benzer başlık)
   const fresh = inputs.filter((b) => {
     const d = normalizeDoi(b.doi);
-    if (!d) return true;
-    if (have.has(d)) return false;
-    have.add(d);
+    if (d && have.has(d)) return false;
+    const me = { title: b.title, year: b.year ?? null, doi: d };
+    if (known.some((k) => sameWork(k, me))) return false;
+    if (d) have.add(d);
+    known.push(me);
     return true;
   });
   const rows = await mapLimit(fresh, 8, async (b) => {
@@ -66,6 +72,13 @@ export async function addSourcesToProject(db: SupabaseClient, projectId: string,
         if (!row.publisher && r.publisher) filled.publisher = r.publisher;
         if (!row.year && r.year) filled.year = r.year;
         if (!row.authors.length && r.authors.length) filled.authors = r.authors;
+        // D169: künye eksik kalmasın, tam metin bulunabilsin (kayıt otoritesindeki bilgiyle tamamlanır)
+        if (!row.doi && r.doi) filled.doi = normalizeDoi(r.doi);
+        if (!row.url && r.url && /^https?:\/\//.test(r.url)) filled.url = r.url;
+        if (!row.oa_url && r.oaUrl && /^https?:\/\//.test(r.oaUrl)) filled.oa_url = r.oaUrl;
+        if (!row.pmcid && r.pmcid) filled.pmcid = r.pmcid;
+        if (!row.arxiv_id && r.arxivId) filled.arxiv_id = r.arxivId;
+        if (!row.abstract && r.abstract && r.abstract.trim().length > 40) { filled.abstract = r.abstract; if (row.access_level === "metadata") filled.access_level = "abstract"; }
       }
       const { record: _omit, ...vMeta } = v;
       void _omit;
@@ -183,11 +196,43 @@ export function rankSources<T extends { id: string; title: string; abstract?: st
     .map((x) => x.src);
 }
 
-/** Asistan için otomatik seçim: doğrulanabilir (DOI/PMID/arXiv) ve özeti olan kaynakları öne alır. */
-export function pickForAutoAdd(results: (SourceRecord & { foundBy?: string })[], existingDois: Set<string>, max = 8) {
-  const usable = results.filter((r) => r.title && r.authors.length && r.year && !(r.doi && existingDois.has(r.doi)));
-  const quality = (r: SourceRecord) => (r.score ?? 0) + (r.doi || r.pmid || r.arxivId ? 0.15 : 0) + (r.abstract ? 0.1 : 0);
-  return usable.sort((a, b) => quality(b) - quality(a)).slice(0, max);
+/** Aynı eser mi? (aynı DOI veya aynı yıl + çok benzer başlık; kalite kontrolündeki “yinelenen kaynak” kuralıyla aynı ölçüt) */
+export function sameWork(a: { title?: string | null; year?: number | null; doi?: string | null }, b: { title?: string | null; year?: number | null; doi?: string | null }): boolean {
+  const da = normalizeDoi(a.doi), db = normalizeDoi(b.doi);
+  if (da && db) return da === db;
+  const sameYear = !a.year || !b.year || a.year === b.year;
+  return sameYear && titleSimilarity(a.title ?? "", b.title ?? "") >= 0.85;
+}
+
+/** Künyesi kaynakçada eksik görünmeyecek mi? (kalite kontrolündeki “eksik künye” kuralı) */
+export function completeRecord(r: SourceRecord): boolean {
+  return missingFields({ ...(r as unknown as CitationItem), id: "x", type: (r.type ?? "article-journal") as CitationItem["type"], authors: r.authors ?? [] }).length === 0;
+}
+
+/** Tam metni açık erişimle okunabilecek mi? (PDF bağlantısı, PubMed Central veya arXiv) */
+export const fullTextLikely = (r: { oaUrl?: string | null; pmcid?: string | null; arxivId?: string | null }) => !!(r.oaUrl || r.pmcid || r.arxivId);
+
+/**
+ * Asistan için otomatik seçim (D169): önce tam metni okunabilecek, kalıcı tanımlayıcıyla doğrulanabilir ve künyesi eksiksiz
+ * kaynaklar; projede zaten olan eserler (DOI veya benzer başlık) ve sonuçlar içindeki tekrarlar elenir. Yeterli doğrulanabilir
+ * kaynak varsa tanımlayıcısı olmayan (doğrulanamayacak) kayıtlar hiç eklenmez.
+ */
+export function pickForAutoAdd(results: (SourceRecord & { foundBy?: string })[], existingDois: Set<string>, max = 8, existingSources: { title?: string | null; year?: number | null; doi?: string | null }[] = []) {
+  const usable = results.filter((r) => r.title && r.authors.length && r.year && !(r.doi && existingDois.has(r.doi)) && !existingSources.some((e) => sameWork(e, r)));
+  const verifiable = (r: SourceRecord) => !!(r.doi || r.pmid || r.arxivId);
+  const quality = (r: SourceRecord) => (r.score ?? 0)
+    + (verifiable(r) ? 0.15 : -0.2)
+    + (fullTextLikely(r) ? 0.25 : 0)
+    + (r.abstract && r.abstract.trim().length > 40 ? 0.1 : 0)
+    + (completeRecord(r) ? 0.1 : 0);
+  const sorted = usable.sort((a, b) => quality(b) - quality(a));
+  const pool = sorted.filter(verifiable).length >= max ? sorted.filter(verifiable) : sorted;
+  const out: typeof usable = [];
+  for (const r of pool) {
+    if (out.length >= max) break;
+    if (!out.some((x) => sameWork(x, r))) out.push(r);
+  }
+  return out;
 }
 
 /** Veri tabanı sağlığı için kayıt biçimi (yönetim → veri kaynağı sağlığı, D92) */

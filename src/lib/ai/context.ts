@@ -8,6 +8,8 @@ import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/bluep
 import { structureRule } from "@/lib/workflows/structure";
 import { GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
+import { missingFields } from "@/lib/citations/checks";
+import { sourceRowToItemClient } from "@/lib/sources/row";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ACCESS_TR = { metadata: "yalnızca künye", abstract: "özet okundu", full_text: "tam metin okundu" } as const;
@@ -33,9 +35,31 @@ function authorShort(authors: any[]): string {
   return fam.length > 2 ? `${fam[0]} vd.` : fam.join(" & ");
 }
 
-function sourceLine(s: any, sid: string): string {
+/**
+ * D169: Atıf önceliği. 1 = doğrulanmış, künyesi eksiksiz ve tam metni okunmuş; 2 = doğrulanmış ve özeti okunmuş (künye eksiksiz);
+ * 3 = doğrulanmış ama künyesi eksik; 4 = içeriği okunmamış (yalnızca künye) veya doğrulanmamış. Böylece model önce içeriğini
+ * gerçekten bildiği, kaynakçada eksiksiz görünecek kaynaklara atıf yapar (kalite kontrolünde “doğrulanmamış / eksik künye /
+ * yalnızca künye” bulgusu çıkmaz; atıf doğruluğu artar).
+ */
+export function citationPriority(s: any): 1 | 2 | 3 | 4 {
+  if (!s.verified || s.access_level === "metadata" || !s.access_level) return 4;
+  const complete = missingFields(sourceRowToItemClient(s)).length === 0;
+  if (!complete) return 3;
+  return s.access_level === "full_text" ? 1 : 2;
+}
+
+const PRIORITY_NOTE: Record<1 | 2 | 3 | 4, string> = {
+  1: "Atıf önceliği 1 (tam metni okundu, doğrulandı)",
+  2: "Atıf önceliği 2 (özeti okundu, doğrulandı)",
+  3: "Atıf önceliği 3 (künyesi eksik; aynı bilgiyi destekleyen öncelik 1–2 kaynak varsa onu kullan)",
+  4: "Atıf önceliği 4 (içeriği okunmadı veya doğrulanmadı)",
+};
+
+function sourceLine(s: any, sid: string, strict = false): string {
   const abs = s.access_level !== "metadata" && s.abstract ? `\n  Özet: ${String(s.abstract).slice(0, 1200)}` : "";
-  return `- ${sid}: ${authorShort(s.authors)} (${s.year ?? "t.y."}). ${s.title}. ${s.container_title ?? ""}${s.pages ? `, ss. ${s.pages}` : ""}${s.doi ? ` DOI: ${s.doi}` : ""} [Erişim: ${ACCESS_TR[s.access_level as keyof typeof ACCESS_TR]}; ${s.verified ? "doğrulandı" : "DOĞRULANMADI"}]${s.relevance_note ? `\n  Kullanıcı notu: ${s.relevance_note}` : ""}${abs}`;
+  const p = citationPriority(s);
+  const note = p === 4 && strict ? "ATIF YAPMA (içeriği okunmadı veya doğrulanmadı; bu kaynağa dayanan cümle yazma)" : PRIORITY_NOTE[p];
+  return `- ${sid}: ${authorShort(s.authors)} (${s.year ?? "t.y."}). ${s.title}. ${s.container_title ?? ""}${s.pages ? `, ss. ${s.pages}` : ""}${s.doi ? ` DOI: ${s.doi}` : ""} [Erişim: ${ACCESS_TR[s.access_level as keyof typeof ACCESS_TR]}; ${s.verified ? "doğrulandı" : "DOĞRULANMADI"}; ${note}]${s.relevance_note ? `\n  Kullanıcı notu: ${s.relevance_note}` : ""}${abs}`;
 }
 
 const relevance = (s: any, q: string) => scoreRecord({ title: s.title, abstract: s.abstract, citedByCount: 0, accessLevel: s.access_level } as SourceRecord, q);
@@ -107,21 +131,27 @@ export async function buildContext(params: {
   const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text) : [];
   const citedHere = new Set<string>(stage ? collectCitations(stage.content as JSONNode).flatMap((c) => c.ids) : []);
   const q = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${project.topic ?? ""}`;
-  const picked = selectContextSources(sources, {
+  // D169: kaynaklar atıf önceliğine göre sıralanır (eşitlikte eklenme sırası); seçimde içeriği okunan kaynaklar öne geçer
+  const ordered = sources.map((s, i) => ({ s, i, p: citationPriority(s) })).sort((a, b) => a.p - b.p || a.i - b.i).map((x) => x.s);
+  const picked = selectContextSources(ordered, {
     max: params.maxSources ?? 40,
     projectQuery: `${project.title} ${project.topic ?? ""} ${(project.keywords ?? []).join(" ")}`,
     query: q,
     citedHere,
+    score: (s: any, qq: string) => relevance(s, qq) + (4 - citationPriority(s)) * 0.08,
   });
+  // Yeterli sayıda içeriği okunmuş, doğrulanmış kaynak varsa okunmamış/doğrulanmamış kaynaklara atıf yapılmaz
+  const strict = sources.filter((s) => citationPriority(s) <= 3).length >= 3;
   const sourceMap: Record<string, string> = {};
   head.push("\n## KAYNAKLAR (yalnızca bunlara atıf yapabilirsin)");
   // D150: atıfların denetimde “destekliyor” çıkması için cümle kaynağın söylediğini söylemeli
   head.push("ATIF DOĞRULUĞU (zorunlu): Bir cümleye yalnızca o cümlenin ANA bilgisini kaynağın özetinde veya okunan metninde açıkça bulduğun kaynakla atıf yap. Sayı, oran, yön, örneklem ve kapsamı kaynaktakiyle aynı yaz; kaynak “ilişkili” diyorsa “etkiler/neden olur” yazma; kaynaktaki temkini (“olabilir”, “işaret etmektedir”) koru; belirli bir örneklemdeki bulguyu genelleştirme. Erişimi “yalnızca künye” olan kaynağa belirli bir bulgu, sayı veya sonuç atfetme (yalnızca konunun ele alındığını belirtmek için kullan). Bir cümlede birden çok bilgi varsa her bilgiyi onu söyleyen kaynağa bağla. Emin değilsen o iddiayı yazma; :::eksik bloğunda bildir.");
+  head.push("KAYNAK SEÇİMİ (zorunlu): Bir bilgiyi birden fazla kaynak destekliyorsa atıf önceliği daha iyi (küçük numaralı) olanı seç: önce tam metni okunan, sonra özeti okunan doğrulanmış kaynaklar. Tam metin parçalarında geçen bilgiyi tercih et ve sayfa numarasını kullan. Öncelik 4 kaynaklara yalnızca içeriği hakkında özette açıkça yazanı söylemek için ve başka kaynak yoksa atıf yap; “ATIF YAPMA” yazan kaynaklara hiç atıf yapma. Literatüre dayanan her alt başlıkta en az bir uygun kaynağa atıf yap; uygun kaynak yoksa kesin iddia yazma.");
   if (!sources.length) head.push("Projede henüz kaynak yok. Kaynak gerektiren kesin iddialar yazma; ihtiyaç duyulan konuları :::eksik bloğunda arama sorgusu olarak bildir.");
   picked.head.forEach((s, idx) => {
     const sid = `S${idx + 1}`;
     sourceMap[sid] = s.id;
-    head.push(sourceLine(s, sid));
+    head.push(sourceLine(s, sid, strict));
   });
 
   if (memory.length) {
@@ -135,7 +165,7 @@ export async function buildContext(params: {
     picked.extra.forEach((s, idx) => {
       const sid = `S${picked.head.length + idx + 1}`;
       sourceMap[sid] = s.id;
-      tail.push(sourceLine(s, sid));
+      tail.push(sourceLine(s, sid, strict));
     });
   }
   const reverse = Object.fromEntries(Object.entries(sourceMap).map(([k, v]) => [v, k]));
@@ -186,7 +216,7 @@ export async function buildContext(params: {
   const termSource = `${query} ${stage?.title ?? ""} ${stageHeads.slice(-3).join(" ")} ${(project.keywords ?? []).join(" ")}`;
   const terms = [...new Set(termSource.replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter((w) => w.length > 3).map((w) => w.toLocaleLowerCase("tr")))].slice(0, 16).join(" or ");
   if (terms) {
-    const { data: chunks } = await db.rpc("search_project_chunks", { p_project_id: project.id, p_query: terms, p_limit: 14 });
+    const { data: chunks } = await db.rpc("search_project_chunks", { p_project_id: project.id, p_query: terms, p_limit: 18 });
     const list = (chunks ?? []) as any[];
     const fileIds = [...new Set(list.filter((c) => !c.source_id && c.file_id).map((c) => c.file_id))];
     const names: Record<string, string> = {};

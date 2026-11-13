@@ -200,11 +200,11 @@ export const POST = route("ai.chat", async (req) => {
               queries = planned.plan.queries.map((q) => q.query);
               controller.enqueue(sse("phase", { phase: "search" }));
               controller.enqueue(sse("status", { text: T("Akademik veri tabanları taranıyor: {q}", { q: queries.join(" · ") }) }));
-              const { results: rawResults, providers } = await executeSearch(planned.plan.queries, { limitPerQuery: 8, yearFrom: prefs.yearFrom ?? undefined });
+              const { results: rawResults, providers } = await executeSearch(planned.plan.queries, { limitPerQuery: 10, yearFrom: prefs.yearFrom ?? undefined });
               const results = filterByPrefs(rawResults, prefs);
               searchProviders = providers;
               const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
-              const picks = pickForAutoAdd(results, existing, Math.min(8, MAX_PROJECT_SOURCES - bundle.sources.length));
+              const picks = pickForAutoAdd(results, existing, Math.min(8, MAX_PROJECT_SOURCES - bundle.sources.length), bundle.sources);
               if (picks.length) {
                 controller.enqueue(sse("phase", { phase: "verify" }));
                 controller.enqueue(sse("status", { text: T("{n} sonuç bulundu; en uygun {k} kaynak doğrulanıyor…", { n: results.length, k: picks.length }) }));
@@ -344,10 +344,10 @@ export const POST = route("ai.chat", async (req) => {
             if (leftGap != null) gaps = gaps.slice(0, Math.max(1, leftGap));
             controller.enqueue(sse("phase", { phase: "gaps" }));
             controller.enqueue(sse("status", { text: T("Taslakta kaynağı eksik kalan konular aranıyor: {q}", { q: gaps.join(" · ") }) }));
-            const { results: gapRaw, providers: gapProviders } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 8, yearFrom: prefs.yearFrom ?? undefined });
+            const { results: gapRaw, providers: gapProviders } = await executeSearch(gaps.map((q) => ({ query: q })), { limitPerQuery: 10, yearFrom: prefs.yearFrom ?? undefined });
             const results = filterByPrefs(gapRaw, prefs);
             const existing = new Set(bundle.sources.map((x) => x.doi).filter(Boolean));
-            const picks = pickForAutoAdd(results, existing, 6);
+            const picks = pickForAutoAdd(results, existing, 6, bundle.sources);
             if (picks.length) {
               const added = await addSourcesToProject(acc.db, b.projectId, acc.ownerId, picks.map(recordToInput));
               gapAdded = added.sources.length;

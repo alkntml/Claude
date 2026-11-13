@@ -5,8 +5,8 @@ import { useT } from "@/i18n/client";
 
 export const THEME_KEY = "academiana-theme";
 
-/** İlk boyamadan önce çalışan betik: kayıtlı tercih yoksa sistem ayarı (D61) */
-export const THEME_SCRIPT = `try{var t=localStorage.getItem("${THEME_KEY}");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
+/** İlk boyamadan önce çalışan betik: yalnızca kullanıcı gece modunu seçtiyse koyu açılır; varsayılan gündüz modu (D169; eskiden sistem ayarı izleniyordu, D61) */
+export const THEME_SCRIPT = `try{if(localStorage.getItem("${THEME_KEY}")==="dark")document.documentElement.classList.add("dark")}catch(e){}`;
 
 /** Gece / gündüz modu düğmesi */
 export function ThemeToggle({ className = "", label = false }: { className?: string; label?: boolean }) {

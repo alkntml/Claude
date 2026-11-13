@@ -18,6 +18,10 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Gündüz modu varsayılan; kaynak seçimi ve atıf doğruluğu (D169, 13 Kasım 2026)**
+- Gece/gündüz düğmesi telefonda üst çubukta; site gündüz moduyla açılır
+- Tam metni okunabilen, doğrulanmış, künyesi eksiksiz kaynaklar öncelikli; yinelenen kaynak eklenmez; yapay zekâ önce tam metni okunan kaynaklara atıf yapar
+
 **Denetim düzeltmeleri (D168, 13 Kasım 2026)**
 - Koşullarda hak dolunca yalnızca görüntüleme/indirme; yıllık fiyat eşitlemesi (migration 42 kullanıcıda bekliyor); tanıtım sayfaları CDN önbelleğinde; EN/DE’de Türkçe kalan metinler ve hitap düzeltildi
 

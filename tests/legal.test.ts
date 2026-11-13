@@ -23,9 +23,12 @@ const docWords = (sections: LegalSection[]) => sections.map((s) => [s.h, ...s.b.
 describe("hukuki metinler (D154)", () => {
   it("bölüm başlıkları hukukçunun metniyle aynı; Sınırsız Proje bölümü güncel (D162)", () => {
     const all = pdfWords();
-    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) for (const s of TR[id]) expect(all.includes(s.h), `${id}: ${s.h}`).toBe(true);
+    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) for (const s of TR[id]) if (!["Paketlerin yenilenmesi", "Sınırsız Proje paketi"].includes(s.h)) expect(all.includes(s.h), `${id}: ${s.h}`).toBe(true); // D167: iki başlık site sahibince güncellendi
     for (const s of EN.gdpr) expect(all.includes(s.h), `gdpr: ${s.h}`).toBe(true);
     const fu = JSON.stringify(TR.fair_use);
+    const dist = JSON.stringify(TR.distance);
+    for (const x of ["Sınırsız Proje paketi", "%20", "en fazla 60"]) expect(dist, x).toContain(x);
+    expect(dist).not.toContain("%30");
     for (const x of ["Sınırsız Proje paketi", "1 ay geçerlidir", "tamamen sınırsızdır", "ücretsiz araçlar", "en fazla 5", "en fazla 60"]) expect(fu, x).toContain(x);
   });
 

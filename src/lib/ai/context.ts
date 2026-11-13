@@ -172,14 +172,21 @@ export async function buildContext(params: {
   });
   // Yeterli sayıda içeriği okunmuş, doğrulanmış kaynak varsa okunmamış/doğrulanmamış kaynaklara atıf yapılmaz
   const strict = sources.filter((s) => citationPriority(s) <= 3).length >= 3;
+  // D175: kaynak numaraları SABİTTİR (projeye eklenme sırası): aynı kaynak her istekte aynı S numarasını alır.
+  // Önceden numara her istekte seçilen kaynaklara göre yeniden verildiğinden, düzeltme isteklerinde yapay zekâ
+  // önceki mesajlardaki numaraları kullanınca atıf çözülemiyor ve metne “[KAYNAK DOĞRULANAMADI]” düşüyordu.
+  const stableOrder = [...sources].sort((a, b) => String(a.created_at ?? "").localeCompare(String(b.created_at ?? "")) || String(a.id).localeCompare(String(b.id)));
+  const sidOf = new Map(stableOrder.map((x, i) => [x.id, `S${i + 1}`]));
+  const stableSid = (x: any) => sidOf.get(x.id) ?? `S${sidOf.size + 1}`;
   const sourceMap: Record<string, string> = {};
   head.push("\n## KAYNAKLAR (yalnızca bunlara atıf yapabilirsin)");
+  head.push("KAYNAK NUMARALARI SABİTTİR: Her kaynağın S numarası tüm konuşma boyunca aynıdır. Yalnızca aşağıdaki listede bulunan S numaralarını kullan; listede olmayan bir numarayı asla yazma. Önceki mesajlarda geçen bir atıfı korurken numarasını bu listedeki karşılığıyla kontrol et.");
   // D150: atıfların denetimde “destekliyor” çıkması için cümle kaynağın söylediğini söylemeli
   head.push("ATIF DOĞRULUĞU (zorunlu): Bir cümleye yalnızca o cümlenin ANA bilgisini kaynağın özetinde veya okunan metninde açıkça bulduğun kaynakla atıf yap. Sayı, oran, yön, örneklem ve kapsamı kaynaktakiyle aynı yaz; kaynak “ilişkili” diyorsa “etkiler/neden olur” yazma; kaynaktaki temkini (“olabilir”, “işaret etmektedir”) koru; belirli bir örneklemdeki bulguyu genelleştirme. Erişimi “yalnızca künye” olan kaynağa belirli bir bulgu, sayı veya sonuç atfetme (yalnızca konunun ele alındığını belirtmek için kullan). Bir cümlede birden çok bilgi varsa her bilgiyi onu söyleyen kaynağa bağla. Emin değilsen o iddiayı yazma; :::eksik bloğunda bildir.");
   head.push("KAYNAK SEÇİMİ (zorunlu): Bir bilgiyi birden fazla kaynak destekliyorsa atıf önceliği daha iyi (küçük numaralı) olanı seç: önce tam metni okunan, sonra özeti okunan doğrulanmış kaynaklar. Tam metin parçalarında geçen bilgiyi tercih et ve sayfa numarasını kullan. Öncelik 4 kaynaklara yalnızca içeriği hakkında özette açıkça yazanı söylemek için ve başka kaynak yoksa atıf yap; “ATIF YAPMA” yazan kaynaklara hiç atıf yapma. Literatüre dayanan her alt başlıkta en az bir uygun kaynağa atıf yap; uygun kaynak yoksa kesin iddia yazma.");
   if (!sources.length) head.push("Projede henüz kaynak yok. Kaynak gerektiren kesin iddialar yazma; ihtiyaç duyulan konuları :::eksik bloğunda arama sorgusu olarak bildir.");
-  picked.head.forEach((s, idx) => {
-    const sid = `S${idx + 1}`;
+  picked.head.forEach((s) => {
+    const sid = stableSid(s);
     sourceMap[sid] = s.id;
     head.push(sourceLine(s, sid, strict));
   });
@@ -194,8 +201,8 @@ export async function buildContext(params: {
   // ---------- Değişken kısım ----------
   if (picked.extra.length) {
     tail.push("## BU İSTEKLE İLGİLİ EK KAYNAKLAR (bunlara da atıf yapabilirsin)");
-    picked.extra.forEach((s, idx) => {
-      const sid = `S${picked.head.length + idx + 1}`;
+    picked.extra.forEach((s) => {
+      const sid = stableSid(s);
       sourceMap[sid] = s.id;
       tail.push(sourceLine(s, sid, strict));
     });
@@ -288,6 +295,8 @@ export async function buildContext(params: {
   }
 
   const h = head.join("\n"), t = tail.join("\n");
+  // Bağlama girmeyen ama projede bulunan kaynaklar da çözülebilsin (ör. önceki mesajlarda atıf yapılanlar)
+  for (const x of stableOrder) { const sid = sidOf.get(x.id)!; if (!sourceMap[sid]) sourceMap[sid] = x.id; }
   return { text: t ? `${h}\n\n${t}` : h, head: h, tail: t, sourceMap, usedChunks };
 }
 

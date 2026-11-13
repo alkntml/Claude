@@ -609,9 +609,16 @@ export function Workspace(props: Props) {
   sourceIndexRef.current = sourceIndex;
   const stagesRef = useRef(stages);
   stagesRef.current = stages;
+  // D175: atıf yapılan bir kaynak ekranın listesinde yoksa (ör. sohbet sırasında eklendiyse) kaynaklar yeniden yüklenir
+  const ensureSources = useCallback((ids: string[]) => {
+    if (!ids.some((x) => !sourceIndexRef.current[x])) return;
+    api<{ sources: any[] }>(`/api/projects/${project.id}/sources`).then((r) => setSources(r.sources)).catch(() => {});
+  }, [project.id]);
   const insertMarkdown = useCallback((md: string, map: Record<string, string>, mode: "append" | "replace", opts: { silent?: boolean } = {}) => {
     if (!editor || isBibliography) return;
-    const doc = markdownToDoc(md, (sid) => (map[sid] && sourceIndexRef.current[map[sid]] ? map[sid] : null));
+    // D175: haritadaki kimlik sunucuda projenin gerçek kaynağı olarak doğrulanmıştır; ekranda henüz yüklenmemişse liste yenilenir
+    const doc = markdownToDoc(md, (sid) => map[sid] ?? null);
+    ensureSources(citedIdsInOrder([doc]));
     // Bölüm adını tekrar eden ilk başlık eklenmez (belgede başlık zaten bölümden gelir; D76)
     const first = doc.content?.[0];
     const stageNow = stagesRef.current.find((x: { id: string }) => x.id === activeId) as { title: string } | undefined;
@@ -627,7 +634,7 @@ export function Workspace(props: Props) {
     if (opts.silent) return;
     toast({ tone: "success", title: t("Belgeye eklendi"), detail: t("Önceki hâl sürüm geçmişinde saklandı.") });
     setMobilePane("editor");
-  }, [activeId, editor, flush, isBibliography, toast, t]);
+  }, [activeId, editor, ensureSources, flush, isBibliography, toast, t]);
   const insertRef = useRef(insertMarkdown);
   insertRef.current = insertMarkdown;
   const assistantSend = useRef<((text: string, action?: any, selection?: string) => void) | null>(null);
@@ -1307,7 +1314,7 @@ export function Workspace(props: Props) {
         onSources={(rows) => setSources((l) => [...l, ...rows.filter((x) => x && !l.some((y) => y.id === x.id))])} />
       {active && !isBibliography && importOpen && <ImportDocModal open={importOpen} onClose={() => setImportOpen(false)} projectId={project.id} target={focused ? `${focused.number ? `${focused.number} ` : ""}${focused.text}` : `${chapterNumber ? `${chapterNumber} ` : ""}${active.title}`} base={focused ? Math.min(maxLevel, focused.level + 1) : 2} max={maxLevel} dropTitle={focused ? focused.text : active.title} onImported={applyImport} />}
       {active && !isBibliography && subOpen && <SubheadingModal open={subOpen} onClose={() => setSubOpen(false)} projectId={project.id} stage={{ id: active.id, title: active.title }} parent={subParent} suggested={focused ? 3 : Math.max(2, subheadingBudget(active.key, targetOf(active.id)) || 3)} existing={subSiblings} onCreate={createSubheadings} />}
-      <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => !!sourceIndexRef.current[id]} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
+      <FixClaimsModal open={fixOpen} onClose={() => setFixOpen(false)} projectId={project.id} stages={stages} sourceExists={(id) => { ensureSources([id]); return true; }} onSourcesAdded={addSources} applyBlock={(a, b, c) => applyBlockRef.current(a, b, c)} />
       <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
       {journalOpen && <JournalModal open onClose={() => setJournalOpen(false)} projectId={project.id} hasGuideline={!!project.guideline_file_id}
         onCoverLetter={(j) => { setJournalOpen(false); askAssistant(t("Dergi: {name}{issn}. Bu dergiye gönderilecek makale için editöre ön yazı (cover letter) hazırla.", { name: j.name, issn: j.issn ? ` (ISSN ${j.issn})` : "" }), "cover_letter"); }}

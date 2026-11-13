@@ -166,3 +166,19 @@ describe("bölümlerin toplu eklenmesi (araştırma makalesi oluşturma hatası)
     expect(calls[0].opts).toEqual({ defaultToNull: false });
   });
 });
+
+describe("kaynak numaraları sabit (metne “[KAYNAK DOĞRULANAMADI]” düşmesi)", () => {
+  // Her zinciri { data: [], error: null } ile çözen sahte veritabanı
+  const fakeDb: any = new Proxy(() => fakeDb, { get: (_t, k) => (k === "then" ? (r: (v: unknown) => void) => r({ data: [], error: null }) : fakeDb), apply: () => fakeDb });
+  const src = (id: string, title: string, created_at: string) => ({ id, title, created_at, authors: [{ family: "Yılmaz" }], year: 2020, verified: true, access_level: "abstract", abstract: `${title} özet` });
+  const sources = [src("a", "Medya etkisi", "2026-01-01"), src("b", "Propaganda", "2026-01-02"), src("c", "Kitle toplumu", "2026-01-03")];
+  const project = { id: "p", title: "Kitle iletişim kuramları", work_type: "research_article", academic_level: "bachelor", language: "tr", citation_style: "apa7", context: {} };
+  it("aynı kaynak farklı isteklerde aynı numarayı alır; bağlama girmeyen proje kaynakları da çözülür", async () => {
+    const { buildContext } = await import("@/lib/ai/context");
+    const run = async (query: string, maxSources: number) => (await buildContext({ db: fakeDb, project, stage: null, stages: [], sources, memory: [], query, maxSources })).sourceMap;
+    const m1 = await run("propaganda", 1);
+    const m2 = await run("kitle toplumu", 1);
+    expect(m1).toEqual({ S1: "a", S2: "b", S3: "c" });
+    expect(m2).toEqual(m1);
+  });
+});

@@ -31,7 +31,7 @@ describe("markdown -> doc", () => {
     const plain = docToPlain(doc, (a) => `(${a.ids.join(";")}${a.locator ? `, ${a.locator}` : ""})`);
     expect(plain).toContain("çerçevedir (uuid-1).");
     expect(plain).toContain("(uuid-2;uuid-1, 12)");
-    expect(plain).toContain("[KAYNAK DOĞRULANAMADI]");
+    expect(plain).toContain("[KAYNAK GEREKLİ]");
   });
   it("parses headings, lists, tables", () => {
     expect(doc.content?.map((n) => n.type)).toEqual(["heading", "paragraph", "bulletList", "table"]);

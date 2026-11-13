@@ -140,7 +140,8 @@ function inline(text: string, resolve: (shortId: string) => string | null): JSON
     const narrative = /^(anlatı|narrative)$/i.test(opt);
     const locator = !narrative && opt ? opt.replace(/^(s|ss|p|pp)\.\s*/i, "") : null;
     if (ids.length) out.push({ type: "citation", attrs: { ids, locator, narrative } });
-    else out.push({ type: "text", text: "[KAYNAK DOĞRULANAMADI]" });
+    // D175: projede karşılığı olmayan numara (yapay zekâ uydurduysa) atıf yapılmaz; “Kaynakla düzelt” ile giderilebilen standart işaret konur
+    else out.push({ type: "text", text: "[KAYNAK GEREKLİ]" });
     last = (m.index ?? 0) + m[0].length;
   }
   pushFormatted(text.slice(last));

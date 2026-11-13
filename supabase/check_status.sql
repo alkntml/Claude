@@ -81,4 +81,9 @@ union all select '41 Paket adı: Sınırsız Proje',
 union all select '42 Yıllık fiyat eşitlemesi',
   case when exists (select 1 from pg_trigger where tgname = 'plans_sync_yearly_price')
         and not exists (select 1 from public.plans where price_yearly <> round(price_monthly * 0.8) * 12)
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '43 Dinamik yol haritası (bölüm ayarları, şablonlar)',
+  case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'project_stages' and column_name = 'requirement')
+        and exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'user_templates')
+        and exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'template_change_logs')
        then 'YAPILMIŞ' else 'EKSİK' end;

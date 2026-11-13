@@ -238,6 +238,8 @@ export class Autopilot {
         for (const st of stages) {
           this.check();
           if (st.status === "done" && st.word_count > 0) continue;
+          // D171: dergi gereklilikleri ve editöre mektup çalışma notudur (kullanıcının dergisine göre doldurulur); otomatik yazılmaz
+          if (st.key === "journal_requirements" || st.key === "cover_letter" || st.hidden) continue;
           this.setLive({ stage: st.title, step: "", status: "" });
           const ok = await this.writeStage(st, wordsOf(st.id));
           if (ok) this.log(this.t("“{s}” yazıldı.", { s: st.title }));

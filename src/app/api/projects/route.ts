@@ -16,7 +16,11 @@ const CreateSchema = z.object({
   title: z.string().trim().min(1).max(300),
   workType: z.enum(["thesis", "research_article", "journal_article", "capstone", "literature_review", "research_proposal", "grant_proposal", "text_editing", "source_research"]),
   level: z.enum(["bachelor", "master", "doctorate", "postdoc", "other"]).default("master"),
-  methodology: z.enum(["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"]).default("quantitative"),
+  methodology: z.enum(["quantitative", "qualitative", "mixed", "theoretical", "systematic_review", "meta_analysis"]).default("quantitative"),
+  /** D171: araştırma deseni, alt tür ve kullanıcı şablonu */
+  design: z.string().regex(/^[a-z_]{2,40}$/).optional(),
+  variant: z.enum(["research", "software", "business", "education"]).optional(),
+  templateId: z.string().uuid().optional(),
   discipline: z.string().max(200).default(""),
   language: z.enum(["tr", "en", "de"]).default("tr"),
   citationStyle: z.enum(STYLE_IDS as [string, ...string[]]).default("apa7"),

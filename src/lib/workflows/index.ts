@@ -1,11 +1,13 @@
 import { STAGE_LIBRARY, type StageDef } from "./stages";
+import { buildTemplate, type Requirement, type Scope } from "./templates";
+export * from "./templates";
 
 export type WorkType =
   | "thesis" | "research_article" | "journal_article" | "capstone"
   | "literature_review" | "research_proposal" | "grant_proposal" | "text_editing" | "source_research";
 
 export type AcademicLevel = "bachelor" | "master" | "doctorate" | "postdoc" | "other";
-export type Methodology = "quantitative" | "qualitative" | "mixed" | "theoretical" | "systematic_review";
+export type Methodology = "quantitative" | "qualitative" | "mixed" | "theoretical" | "systematic_review" | "meta_analysis";
 
 export interface WorkTypeMeta {
   id: WorkType;
@@ -33,21 +35,9 @@ export const LEVEL_LABELS: Record<AcademicLevel, string> = {
 };
 
 export const METHODOLOGY_LABELS: Record<Methodology, string> = {
-  quantitative: "Nicel", qualitative: "Nitel", mixed: "Karma yöntem", theoretical: "Kuramsal / kavramsal", systematic_review: "Sistematik derleme",
+  quantitative: "Nicel", qualitative: "Nitel", mixed: "Karma yöntem", theoretical: "Kuramsal / kavramsal", systematic_review: "Sistematik derleme", meta_analysis: "Meta-analiz",
 };
 
-const BASE: Record<WorkType, string[]> = {
-  thesis: ["topic", "problem", "purpose", "questions", "concepts", "literature", "theory", "method", "sample", "instruments", "analysis", "findings", "discussion", "conclusion", "references", "appendices"],
-  research_article: ["title_abstract", "introduction", "methods_article", "results_article", "discussion_article", "declarations", "references"],
-  // D170: dergi makalesi kaynaklara dayalı (kuramsal/derleme) yapıdadır: Giriş → içeriğe özgü konu bölümleri → Sonuç
-  journal_article: ["title_abstract", "introduction", "article_body", "conclusion_article", "declarations", "references"],
-  capstone: ["topic", "problem", "purpose", "literature", "method", "design_development", "testing", "conclusion", "references", "appendices"],
-  literature_review: ["topic", "review_protocol", "literature", "review_synthesis", "gaps", "conclusion", "references"],
-  research_proposal: ["topic", "problem", "purpose", "questions", "literature", "theory", "method", "sample", "instruments", "analysis", "proposal_timeline", "risks", "references"],
-  grant_proposal: ["grant_summary", "grant_originality", "grant_method", "grant_management", "grant_impact", "grant_budget", "references"],
-  text_editing: ["editing_input", "editing_language", "editing_structure", "editing_citations", "references"],
-  source_research: ["search_strategy", "source_screening", "annotated_notes", "references"],
-};
 
 /** Proje önerisi programları (başvuru formunun güncel hâli çağrı duyurusundan kontrol edilmelidir) */
 export const GRANT_PROGRAMS = [
@@ -84,52 +74,29 @@ export interface RoadmapInput {
   level: AcademicLevel;
   methodology?: Methodology;
   program?: GrantProgram;
+  /** D171: araştırma deseni (DESIGNS) ve alt tür (bitirme projesi türü) */
+  design?: string | null;
+  variant?: string | null;
 }
 
 export interface RoadmapStage {
   key: string;
   title: string;
   description: string;
+  /** D171: zorunlu / koşullu / isteğe bağlı, gerekçe, kritiklik ve önerilen kapsam */
+  requirement?: Requirement;
+  why?: string;
+  critical?: boolean;
+  scope?: Scope;
 }
 
 /**
- * Çalışma türü, akademik seviye ve yönteme göre yol haritası üretir.
- * Kullanıcı daha sonra aşama ekleyebilir, silebilir, yeniden adlandırabilir ve sıralayabilir;
+ * Çalışma türü, alt tür, akademik seviye, yaklaşım ve desene göre yol haritası üretir (D171: templates.ts motoru).
+ * Kullanıcı daha sonra aşama ekleyebilir, silebilir, yeniden adlandırabilir, sıralayabilir ve gizleyebilir;
  * üniversite kılavuzu yüklendiğinde AI yeni bir düzen önerebilir (bkz. /api/projects/[id]/stages/suggest).
  */
-export function buildRoadmap({ workType, level, methodology = "quantitative", program }: RoadmapInput): RoadmapStage[] {
-  let keys = [...BASE[workType]];
-  // Burs başvurusu ve lise/öğrenci yarışmalarında (2204-A, 2242) bütçe bölümü bulunmaz
-  if (workType === "grant_proposal" && (program === "scholarship" || program === "tubitak_2204a" || program === "tubitak_2242")) keys = keys.filter((k) => k !== "grant_budget");
-
-  // D170: kuramsal veya derleme yaklaşımlı araştırma makalesi Yöntem/Bulgular içermez (veri toplanmaz)
-  if (workType === "research_article" && (methodology === "theoretical" || methodology === "systematic_review")) keys = [...BASE.journal_article];
-
-  if (workType === "thesis" || workType === "research_proposal") {
-    if (methodology === "qualitative") {
-      keys = keys.map((k) => (k === "sample" ? "participants" : k));
-    }
-    if (methodology === "theoretical") {
-      keys = keys.filter((k) => !["sample", "instruments", "analysis", "findings"].includes(k));
-    }
-    if (methodology === "systematic_review") {
-      keys = keys.flatMap((k) => (k === "sample" ? ["review_protocol"] : k === "instruments" ? [] : [k]));
-    }
-    // Lisans tezlerinde kuramsal çerçeve kavramsal çerçeveyle birleştirilir.
-    if (level === "bachelor") keys = keys.filter((k) => k !== "theory");
-  }
-
-  const rename: Record<string, string> = {};
-  if (methodology === "qualitative") {
-    rename.questions = "Araştırma soruları";
-    rename.instruments = "Veri toplama araçları (görüşme / gözlem)";
-    rename.analysis = "Veri analizi (nitel)";
-  }
-
-  return keys.map((k) => {
-    const def = STAGE_LIBRARY[k];
-    return { key: k, title: rename[k] ?? def.title, description: def.purpose };
-  });
+export function buildRoadmap({ workType, level, methodology = "quantitative", program, design, variant }: RoadmapInput): RoadmapStage[] {
+  return buildTemplate({ workType, level, methodology, program, design, variant });
 }
 
 export const EMPIRICAL_METHODS = new Set<string>(["quantitative", "qualitative", "mixed"]);

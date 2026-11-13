@@ -8,7 +8,7 @@ import { citedIdsInOrder, citationAttrs, type JSONNode } from "@/lib/editor/doc"
 import { stageDef } from "@/lib/workflows";
 import { dictFor } from "@/i18n";
 import { LANG_TAG } from "@/lib/writing-lang";
-import { chapterGroup, sameHeading, sectionTitle, UNNUMBERED } from "@/lib/workflows/structure";
+import { chapterGroup, NOT_IN_MANUSCRIPT, sameHeading, sectionTitle, UNNUMBERED } from "@/lib/workflows/structure";
 
 export interface Run {
   text: string;
@@ -206,7 +206,7 @@ export function buildExportDoc(params: {
   // Aşamalar → akademik ana bölümler (D76): ardışık giriş/kuram/yöntem aşamaları tek ana bölümde toplanır
   let currentGroup: string | null = null;
   for (const st of ordered) {
-    if (st.key === "references") continue;
+    if (st.key === "references" || NOT_IN_MANUSCRIPT.has(st.key) || st.hidden) continue;
     const doc = st.content as JSONNode | null;
     const hasText = (st.content_text ?? "").trim().length > 0;
     if (!hasText) continue;

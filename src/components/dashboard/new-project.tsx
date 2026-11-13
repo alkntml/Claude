@@ -3,7 +3,7 @@ import { useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, FileUp, LayoutList, Loader2, PenLine, Sparkles } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WORK_ICONS } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -12,7 +12,19 @@ import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, handlePlanError } from "@/lib/client";
 import { ResearchPrefsForm } from "@/components/research-prefs-form";
 import { DEFAULT_RESEARCH_PREFS, promptStrength, type ResearchPrefs } from "@/lib/research-prefs";
-import { buildRoadmap, GRANT_PROGRAMS, type GrantProgram, LEVEL_LABELS, METHODOLOGY_LABELS, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
+import { buildRoadmap, CAPSTONE_KINDS, designById, designsFor, EMPIRICAL, GRANT_PROGRAMS, type CapstoneKind, type GrantProgram, LEVEL_LABELS, METHODOLOGY_LABELS, REQUIREMENT_LABEL, WORK_TYPES, type AcademicLevel, type Methodology, type WorkType } from "@/lib/workflows";
+
+/** D171: çalışma türüne göre sunulan araştırma yaklaşımları (uygun olmayanlar gösterilmez) */
+function approachOptions(workType: WorkType, variant: CapstoneKind): Methodology[] {
+  if (workType === "literature_review") return ["theoretical", "systematic_review", "meta_analysis"];
+  if (workType === "capstone") return variant === "research" ? ["quantitative", "qualitative", "mixed", "theoretical"] : [];
+  if (workType === "thesis") return ["quantitative", "qualitative", "mixed", "theoretical", "systematic_review", "meta_analysis"];
+  if (["research_article", "journal_article", "research_proposal"].includes(workType)) return ["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"];
+  return [];
+}
+const approachLabel = (workType: WorkType, m: Methodology) => (workType === "literature_review" && m === "theoretical" ? "Anlatı derleme" : METHODOLOGY_LABELS[m]);
+
+interface Suggestion { approach: Methodology; design: string | null; why: string; limits: string; alternatives: string[] }
 
 const STEPS = ["Çalışma türü", "Akademik profil", "Araştırma bilgileri", "Kaynak tercihleri", "Yapı"];
 const LAST = STEPS.length - 1;
@@ -38,21 +50,46 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const [loading, setLoading] = useState(false);
   const [prefs, setPrefs] = useState<ResearchPrefs>(DEFAULT_RESEARCH_PREFS);
   const [structure, setStructure] = useState<"standard" | "smart" | "free">("smart");
+  // D171: desen, bitirme projesi türü, yöntem önerisi ve kullanıcı şablonu
+  const [design, setDesign] = useState<string>("");
+  const [variant, setVariant] = useState<CapstoneKind>("research");
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
+  const [templates, setTemplates] = useState<{ id: string; name: string; work_type: string; count: number }[] | null>(null);
+  const [templateId, setTemplateId] = useState<string>("");
   // D149: “Mevcut çalışmamı içe aktar”
   const [importing, setImporting] = useState<null | "upload" | "analyze">(null);
   const [importErr, setImportErr] = useState<string | null>(null);
   const strength = promptStrength(topic);
 
   const wt = WORK_TYPES.find((w) => w.id === workType)!;
-  const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology, program }), [workType, level, methodology, program]);
-  const showMethod = ["thesis", "research_proposal", "research_article", "journal_article"].includes(workType);
+  const options = approachOptions(workType, variant);
+  const effMethod: Methodology = options.length ? (options.includes(methodology) ? methodology : options[0]) : methodology;
+  const designs = designsFor(effMethod);
+  const effDesign = designs.some((d) => d.id === design) ? design : "";
+  const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology: effMethod, program, design: effDesign || null, variant: workType === "capstone" ? variant : null }), [workType, level, effMethod, program, effDesign, variant]);
+  const showMethod = options.length > 0;
+  useEffect(() => {
+    if (step !== LAST || templates) return;
+    api<{ templates: { id: string; name: string; work_type: string; count: number }[] }>("/api/templates").then((r) => setTemplates(r.templates)).catch(() => setTemplates([]));
+  }, [step, templates]);
+
+  async function suggest() {
+    setSuggesting(true);
+    try {
+      const r = await api<{ suggestion: Suggestion }>("/api/projects/suggest-approach", { method: "POST", json: { workType, level, discipline, topic } });
+      setSuggestion(r.suggestion);
+    } catch (e) {
+      toast({ tone: "error", title: t("Öneri alınamadı"), detail: t((e as Error).message) });
+    } finally { setSuggesting(false); }
+  }
 
   async function create() {
     setLoading(true);
     try {
       const { project } = await api<{ project: { id: string } }>("/api/projects", {
         method: "POST",
-        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology, discipline, language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, research: prefs, structure, ...(workType === "grant_proposal" ? { program } : {}) },
+        json: { title: title.trim() || topic.slice(0, 120) || t(wt.title), workType, level, methodology: effMethod, discipline, ...(effDesign ? { design: effDesign } : {}), ...(workType === "capstone" ? { variant } : {}), ...(templateId ? { templateId } : {}), language, citationStyle: style, topic, keywords: keywords.split(",").map((k) => k.trim()).filter(Boolean), university: university || undefined, research: prefs, structure, ...(workType === "grant_proposal" ? { program } : {}) },
       });
       router.push(`/proje/${project.id}`);
     } catch (e) {
@@ -138,13 +175,47 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                     <p className="mt-1.5 text-xs text-ink-400">{t("Bölümler TÜBİTAK başvuru formlarındaki düzene göre hazırlanır. Kelime sınırları, destek üst sınırları ve form ayrıntıları dönemden döneme değişebilir; başvurmadan önce güncel çağrı duyurusunu kontrol edin.")}</p>
                   </div>
                 )}
+                {workType === "capstone" && (
+                  <div>
+                    <span className="label">{t("Bitirme projesinin türü")}</span>
+                    <div className="flex flex-wrap gap-2">
+                      {CAPSTONE_KINDS.map((k) => <button key={k.id} onClick={() => setVariant(k.id)} className={cn("rounded-xl border px-4 py-2 text-sm font-medium transition", variant === k.id ? "border-brand-500 bg-brand-50 text-brand-700" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300")}>{t(k.label)}</button>)}
+                    </div>
+                    <p className="mt-2 text-xs text-ink-400">{t("Uygulama projelerine sırf akademik görünmesi için hipotez, örneklem veya istatistik başlıkları eklenmez.")}</p>
+                  </div>
+                )}
                 {showMethod && (
                   <div>
                     <span className="label">{t("Araştırma yaklaşımı")}</span>
                     <div className="flex flex-wrap gap-2">
-                      {(Object.keys(METHODOLOGY_LABELS) as Methodology[]).map((m) => <button key={m} onClick={() => setMethodology(m)} className={cn("rounded-xl border px-4 py-2 text-sm font-medium transition", methodology === m ? "border-brand-500 bg-brand-50 text-brand-700" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300")}>{t(METHODOLOGY_LABELS[m])}</button>)}
+                      {options.map((m) => <button key={m} onClick={() => { setMethodology(m); setSuggestion(null); }} className={cn("rounded-xl border px-4 py-2 text-sm font-medium transition", effMethod === m ? "border-brand-500 bg-brand-50 text-brand-700" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300")}>{t(approachLabel(workType, m))}</button>)}
                     </div>
-                    <p className="mt-2 text-xs text-ink-400">{t("Yaklaşım, yol haritasındaki aşamaları değiştirir (ör. nitel çalışmalarda “Evren ve örneklem” yerine “Çalışma grubu”).")}</p>
+                    <p className="mt-2 text-xs text-ink-400">{t("Yaklaşım; bölümleri, yöntem ve bulgu başlıklarını ve kalite ölçütlerini değiştirir (ör. nitel çalışmada “Çalışma grubu” ve “İnandırıcılık”, karma yöntemde “Entegrasyon”).")}</p>
+                    {(EMPIRICAL as string[]).includes(effMethod) && designs.length > 0 && (
+                      <div className="mt-4">
+                        <label className="label" htmlFor="design">{t("Araştırma deseni (isteğe bağlı)")}</label>
+                        <select id="design" className="input" value={effDesign} onChange={(e) => setDesign(e.target.value)}>
+                          <option value="">{t("Henüz belirlemedim")}</option>
+                          {designs.map((d) => <option key={d.id} value={d.id}>{t(d.label)}</option>)}
+                        </select>
+                        <p className="mt-1.5 text-xs text-ink-400">{t("Desen, yöntem ve bulgular bölümündeki alt başlıkları ve raporlama standardını belirler.")}</p>
+                      </div>
+                    )}
+                    <div className="mt-4 rounded-xl border border-ink-200 bg-ink-50/60 p-4">
+                      <p className="text-[14px] font-medium text-ink-900">{t("Yönteminizi henüz bilmiyor musunuz?")}</p>
+                      <p className="mt-1 text-[13px] text-ink-500">{t("Konunuzu, amacınızı ve elinizdeki veri olanaklarını birkaç cümleyle yazın; gerekçeli bir yaklaşım ve desen önerisi alın. Nihai karar sizin ve danışmanınızındır.")}</p>
+                      <textarea className="input mt-2 min-h-[80px]" value={topic} onChange={(e) => setTopic(e.target.value)} placeholder={t("ör. Öğretmenlerin uzaktan eğitim deneyimlerini ve bu deneyimin mesleki tükenmişlikle ilişkisini anlamak istiyorum; okullara erişimim var.")} />
+                      <Button className="mt-2" size="sm" variant="secondary" onClick={suggest} loading={suggesting} disabled={topic.trim().length < 10}><Sparkles className="h-4 w-4" /> {t("Yöntem önerisi al")}</Button>
+                      {suggestion && (
+                        <div className="mt-3 space-y-1.5 rounded-lg bg-white p-3 text-[13px] text-ink-700">
+                          <p><b>{t("Önerilen yaklaşım:")}</b> {t(approachLabel(workType, suggestion.approach))}{suggestion.design ? ` · ${t(designById(suggestion.design)?.label ?? "")}` : ""}</p>
+                          <p><b>{t("Gerekçe:")}</b> {suggestion.why}</p>
+                          {suggestion.limits && <p><b>{t("Sınırlılıklar:")}</b> {suggestion.limits}</p>}
+                          {suggestion.alternatives.length > 0 && <p><b>{t("Alternatifler:")}</b> {suggestion.alternatives.join(" · ")}</p>}
+                          {options.includes(suggestion.approach) && <Button size="sm" onClick={() => { setMethodology(suggestion.approach); setDesign(suggestion.design ?? ""); }}><Check className="h-4 w-4" /> {t("Öneriyi uygula")}</Button>}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -193,11 +264,21 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                     { id: "smart", icon: Sparkles, title: "Akıllı bölüm planı", desc: "Yapay zekâ konunuza göre problem, amaç, yöntem ve bölüm planını hedef uzunluklarıyla önerir; onayladığınız plana göre yazılır." },
                     { id: "free", icon: PenLine, title: "Serbest", desc: "Tek bir metin bölümüyle başlayın; alt başlıkları kendiniz ekleyin." },
                   ] as const).map((o) => (
-                    <button key={o.id} type="button" onClick={() => setStructure(o.id)} className={cn("flex w-full items-start gap-3 rounded-xl border p-4 text-left transition", structure === o.id ? "border-brand-500 ring-2 ring-brand-100" : "border-ink-200 hover:border-ink-300 hover:bg-ink-50")}>
-                      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", structure === o.id ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-600")}><o.icon className="h-5 w-5" /></span>
+                    <button key={o.id} type="button" onClick={() => { setStructure(o.id); setTemplateId(""); }} className={cn("flex w-full items-start gap-3 rounded-xl border p-4 text-left transition", structure === o.id && !templateId ? "border-brand-500 ring-2 ring-brand-100" : "border-ink-200 hover:border-ink-300 hover:bg-ink-50")}>
+                      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", structure === o.id && !templateId ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-600")}><o.icon className="h-5 w-5" /></span>
                       <span><span className="block font-semibold text-ink-900">{t(o.title)}</span><span className="mt-0.5 block text-[13px] text-ink-500">{t(o.desc)}</span></span>
                     </button>
                   ))}
+                  {templates && templates.length > 0 && (
+                    <div className={cn("rounded-xl border p-4", templateId ? "border-brand-500 ring-2 ring-brand-100" : "border-ink-200")}>
+                      <p className="font-semibold text-ink-900">{t("Kayıtlı şablonum")}</p>
+                      <p className="mt-0.5 text-[13px] text-ink-500">{t("Daha önce kaydettiğiniz bölüm yapısıyla başlayın (başlıklar, sıra, zorunluluk ve kapsam; metin kopyalanmaz).")}</p>
+                      <select className="input mt-2" value={templateId} onChange={(e) => { setTemplateId(e.target.value); if (e.target.value) setStructure("standard"); }}>
+                        <option value="">{t("Şablon kullanma")}</option>
+                        {templates.map((x) => <option key={x.id} value={x.id}>{x.name} · {t("{n} bölüm", { n: x.count })}</option>)}
+                      </select>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -221,12 +302,13 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
               {(structure === "free" ? [{ key: "custom_text", title: "Metin" }, ...roadmap.filter((x) => x.key === "references")] : roadmap).map((r, i) => (
                 <motion.li key={r.key} layout initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, height: 0 }} className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-sm">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink-100 text-[11px] font-medium text-ink-600">{i + 1}</span>
-                  <span className="text-ink-700">{t(r.title)}</span>
+                  <span className="min-w-0 flex-1 text-ink-700" title={"why" in r && r.why ? t(r.why) : undefined}>{t(r.title)}</span>
+                  {"requirement" in r && r.requirement && r.requirement !== "required" && <span className="shrink-0 rounded-full bg-ink-100 px-2 py-0.5 text-[10.5px] font-medium text-ink-500">{t(REQUIREMENT_LABEL[r.requirement])}</span>}
                 </motion.li>
               ))}
             </AnimatePresence>
           </ol>
-          <p className="border-t border-ink-100 px-5 py-3 text-xs text-ink-400">{t("Aşamaları sonradan ekleyebilir, silebilir ve sıralayabilirsiniz. Üniversite kılavuzu yüklerseniz yeni bir düzen önerilir.")}</p>
+          <p className="border-t border-ink-100 px-5 py-3 text-xs text-ink-400">{templateId ? t("Kayıtlı şablonunuzun bölüm yapısı kullanılacak.") : t("Aşamaları sonradan ekleyebilir, silebilir ve sıralayabilirsiniz. Üniversite kılavuzu yüklerseniz yeni bir düzen önerilir.")}</p>
         </div>
       </aside>
     </div>

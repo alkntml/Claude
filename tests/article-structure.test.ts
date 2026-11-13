@@ -10,9 +10,10 @@ const h = (level: number, t: string) => ({ type: "heading", attrs: { level }, co
 const st = (id: string, key: string, title: string, position: number, content: unknown[]) => ({ id, key, title, position, content_text: "metin", content: { type: "doc", content } });
 
 describe("makale yapısı (D170)", () => {
-  it("dergi makalesi: Giriş → konu bölümleri → Sonuç; Yöntem/Bulgular yok", () => {
-    const keys = buildRoadmap({ workType: "journal_article", level: "master" }).map((s) => s.key);
-    expect(keys).toEqual(["title_abstract", "introduction", "article_body", "conclusion_article", "declarations", "references"]);
+  it("kuramsal dergi makalesi: Giriş → konu bölümleri → Sonuç; Yöntem/Bulgular yok", () => {
+    // D171: dergi makalesi = yayın uyarlama; yapı yaklaşıma göre (kuramsal → konu bölümleri, ampirik → IMRaD)
+    const keys = buildRoadmap({ workType: "journal_article", level: "master", methodology: "theoretical" }).map((s) => s.key);
+    expect(keys).toEqual(["journal_requirements", "title_abstract", "introduction", "article_body", "conclusion_article", "declarations", "cover_letter", "references"]);
   });
   it("araştırma makalesi: kuramsal/derleme yaklaşımda kaynaklara dayalı, nicel/nitel/karmada IMRaD", () => {
     expect(buildRoadmap({ workType: "research_article", level: "master", methodology: "theoretical" }).map((s) => s.key)).not.toContain("results_article");

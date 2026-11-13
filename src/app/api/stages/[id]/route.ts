@@ -7,6 +7,7 @@ import { compatWrite } from "@/lib/db-compat";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { docToPlain, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { logWords } from "@/lib/goals";
+import { logStructureChange } from "@/lib/structure-server";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -20,6 +21,11 @@ const PatchSchema = z.object({
   baseUpdatedAt: z.string().max(40).optional(),
   /** Çakışmada “benim sürümümle üzerine yaz” */
   force: z.boolean().optional(),
+  /** D171: bölüm ayarları (açıklama, zorunluluk, kapsam, görünürlük) */
+  description: z.string().max(1000).optional(),
+  requirement: z.enum(["required", "conditional", "optional"]).optional(),
+  scope: z.enum(["brief", "standard", "detailed"]).optional(),
+  hidden: z.boolean().optional(),
 });
 
 const MAX_DOC_BYTES = 2_000_000;
@@ -73,6 +79,9 @@ export const PATCH = route<Ctx>("stage.update", async (req, { params }) => {
   const update: Record<string, unknown> = { updated_at: new Date().toISOString(), ...(b.content ? { last_editor: s.user.id } : {}) };
   if (b.title) update.title = b.title;
   if (b.status) update.status = b.status;
+  const settings = { ...(b.description !== undefined ? { description: b.description } : {}), ...(b.requirement ? { requirement: b.requirement } : {}), ...(b.scope ? { scope: b.scope } : {}), ...(b.hidden !== undefined ? { hidden: b.hidden } : {}) };
+  const structural = !!b.title || Object.keys(settings).length > 0;
+  if (structural) Object.assign(update, settings, { modified: true });
   if (b.content) {
     if (JSON.stringify(b.content).length > MAX_DOC_BYTES) throw new ApiError(413, "Bölüm çok büyük (2 MB sınırı)");
     if (b.content.type !== "doc") throw new ApiError(422, "Geçersiz belge");
@@ -90,6 +99,7 @@ export const PATCH = route<Ctx>("stage.update", async (req, { params }) => {
       word_count: data.word_count, note: b.snapshot.note, author: b.snapshot.author,
     }, (row) => db.from("stage_revisions").insert(row));
   }
+  if (structural) await logStructureChange(stage.project_id, s.user.id, "section.update", { stageId: id, title: data.title, ...(b.title ? { renamed: b.title } : {}), ...settings });
   const progress = await recomputeProgress(db, stage.project_id, b.content ? (data.word_count ?? 0) - (stage.word_count ?? 0) : undefined);
   return json({ stage: data, progress });
 });
@@ -98,8 +108,9 @@ export const DELETE = route<Ctx>("stage.delete", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   // Bölüm silme yalnızca sahibe açıktır (ortak yazar silemez; alt başlıkları editörde düzenleyebilir)
-  const { row: stage, access } = await childAccess(s, "project_stages", id, "owner", "id");
+  const { row: stage, access } = await childAccess(s, "project_stages", id, "owner", "id, key, title, word_count");
   assertDeleted(await access.db.from("project_stages").delete().eq("id", id).eq("user_id", access.ownerId).select("id"), "Bölüm bulunamadı");
+  await logStructureChange(stage.project_id, s.user.id, "section.delete", { key: stage.key, title: stage.title, words: stage.word_count ?? 0 });
   await recomputeProgress(access.db, stage.project_id);
   return json({ ok: true });
 });

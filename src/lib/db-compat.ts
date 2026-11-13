@@ -3,7 +3,8 @@ import "server-only";
  * Migration 32 (D115) canlıda henüz çalıştırılmadıysa yeni sütunlar (last_editor, actor_id) yoktur.
  * Yazma bu sütunlar olmadan bir kez daha denenir; böylece bölüm kaydı, sürüm ve yorum migration’dan önce de çalışır.
  */
-const NEW_COLUMNS = ["last_editor", "actor_id"] as const;
+// D171: bölüm ayarları (migration 43) da çalıştırılmadıysa yazmadan çıkarılır
+const NEW_COLUMNS = ["last_editor", "actor_id", "requirement", "scope", "hidden", "why", "critical", "modified"] as const;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function isMissingColumn(error: { code?: string; message?: string } | null | undefined): boolean {

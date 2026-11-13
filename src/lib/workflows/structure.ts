@@ -17,7 +17,8 @@ const G = {
 
 /** Aşama → ana bölüm grubu. Listede olmayan aşamalar kendi başına ana bölümdür. */
 const GROUP_OF: Record<string, ChapterGroup> = {
-  topic: G.intro, problem: G.intro, purpose: G.intro, questions: G.intro,
+  topic: G.intro, problem: G.intro, purpose: G.intro, questions: G.intro, scope_limits: G.intro,
+  ethics: G.method, trustworthiness: G.method, data_extraction: G.method,
   concepts: G.theory, theory: G.theory, literature: G.theory, gaps: G.theory,
   method: G.method, sample: G.method, participants: G.method, instruments: G.method, analysis: G.method,
   design_development: G.method, testing: G.method,
@@ -51,12 +52,20 @@ const DOC_TITLE: Record<string, L2> = {
   conclusion: { tr: "SONUÇ VE ÖNERİLER", en: "CONCLUSION AND RECOMMENDATIONS", de: "FAZIT UND EMPFEHLUNGEN" },
   appendices: { tr: "EKLER", en: "APPENDICES", de: "ANHANG" },
   review_protocol: { tr: "Tarama Protokolü", en: "Review Protocol", de: "Review-Protokoll" },
+  scope_limits: { tr: "Kapsam, Varsayımlar, Sınırlılıklar ve Tanımlar", en: "Scope, Assumptions, Limitations and Definitions", de: "Umfang, Annahmen, Grenzen und Begriffsbestimmungen" },
+  ethics: { tr: "Etik İlkeler", en: "Ethical Considerations", de: "Ethische Aspekte" },
+  trustworthiness: { tr: "Araştırmacının Rolü ve İnandırıcılık", en: "Researcher Role and Trustworthiness", de: "Rolle der Forschenden und Vertrauenswürdigkeit" },
+  data_extraction: { tr: "Veri Çıkarımı ve Çalışma Kalitesi", en: "Data Extraction and Study Quality", de: "Datenextraktion und Studienqualität" },
+  integration: { tr: "ENTEGRASYON VE META-ÇIKARIMLAR", en: "INTEGRATION AND META-INFERENCES", de: "INTEGRATION UND META-INFERENZEN" },
+  meta_analysis: { tr: "META-ANALİZ", en: "META-ANALYSIS", de: "METAANALYSE" },
   search_strategy: { tr: "Arama Stratejisi", en: "Search Strategy", de: "Suchstrategie" },
   source_screening: { tr: "Kaynakların Taranması ve Seçimi", en: "Screening and Selection", de: "Screening und Auswahl der Quellen" },
 };
 
 /** Numarasız ön/son kısımlar (bölüm numarası almaz) */
-export const UNNUMBERED = new Set(["title_abstract", "declarations", "appendices"]);
+export const UNNUMBERED = new Set(["title_abstract", "declarations", "appendices", "journal_requirements", "cover_letter"]);
+/** D171: çalışma notu niteliğindeki aşamalar (dergi gereklilikleri, editöre mektup) makale metnine basılmaz */
+export const NOT_IN_MANUSCRIPT = new Set(["journal_requirements", "cover_letter"]);
 
 export function chapterGroup(stageKey: string): ChapterGroup | null {
   return GROUP_OF[stageKey] ?? null;
@@ -152,12 +161,14 @@ function topLevelHeadings(content: unknown): number {
   return n;
 }
 
-export function stagePrefixes(stages: { id: string; key: string; title: string; position?: number; content?: unknown }[], defaults: Record<string, string | undefined> = {}): Record<string, string> {
+export function stagePrefixes(stages: { id: string; key: string; title: string; position?: number; content?: unknown; hidden?: boolean }[], defaults: Record<string, string | undefined> = {}): Record<string, string> {
   const out: Record<string, string> = {};
   let chapter = 0, section = 0;
   let current: string | null = null;
   for (const st of [...stages].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))) {
     if (st.key === "references") continue;
+    // D171: gizlenen bölüm numara almaz (belgeye de basılmaz)
+    if (st.hidden) { out[st.id] = ""; continue; }
     const group = chapterGroup(st.key);
     if (group) {
       if (current !== group.id) { chapter++; section = 0; current = group.id; }

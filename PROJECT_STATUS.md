@@ -18,6 +18,11 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Dinamik akademik yol haritası (D171, 13 Kasım 2026)**
+- Yol haritası çalışma türü, düzey, yaklaşım, desen ve bitirme projesi türüne göre kurulur; bölümlerde zorunluluk, gerekçe ve kapsam
+- Bölüm ayarları, kopyalama, gizleme, kritik bölüm uyarısı; “Yapıyı yönet” (şablonla karşılaştır, seçilenleri uygula, şablon kaydet, geçmiş); yöntem önerisi
+- Kalite kontrolde Kritik/Önemli/İyileştirme ve puansız “Akademik tutarlılık zinciri” (migration 43 kullanıcıda bekliyor)
+
 **Makale yapısı ve makale çıktısı (D170, 13 Kasım 2026)**
 - Dergi makalesi: Özet → Giriş (alt başlıklı) → içeriğe özgü konu bölümleri → Sonuç; Yöntem/Bulgular ve veri yer tutucusu yok
 - Word/PDF’te makale düzeni (kapaksız, başlık üstte, özet bölünmez); otomatik çalışmada puanı düşüren düzeltme geri alınır

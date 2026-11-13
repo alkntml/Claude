@@ -10,7 +10,7 @@ import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
-  ArrowLeft, ShieldCheck, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload,
+  ArrowLeft, ShieldCheck, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload, EyeOff, SlidersHorizontal, Layers,
   FileUp,
 } from "lucide-react";
 import Link from "next/link";
@@ -58,6 +58,7 @@ import { shouldShowTour, Tour } from "./tour";
 
 
 import { TOOL_FEATURE, ToolsMenu, type ToolId } from "./tools-menu";
+import { defaultSectionOf, RequirementBadge, StageSettingsModal, StructureModal } from "./structure-manager";
 import { SelectionBubble } from "./selection-bubble";
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
 import type { LanguageTab } from "./language-modal";
@@ -130,6 +131,8 @@ export function Workspace(props: Props) {
   const [mobilePane, setMobilePane] = useState<"nav" | "editor" | "panel">("editor");
   const [research, setResearch] = useState<{ open: boolean; prefill: string }>({ open: false, prefill: "" });
   const [addStage, setAddStage] = useState(false);
+  const [stageSettings, setStageSettings] = useState<string | null>(null);
+  const [structureOpen, setStructureOpen] = useState(false);
   const [settings, setSettings] = useState(false);
   const [footnote, setFootnote] = useState<string | null>(null);
   const [histVer, setHistVer] = useState(0);
@@ -882,9 +885,20 @@ export function Workspace(props: Props) {
       .then(() => toast({ tone: "info", title: t("Bölüm sırası akademik düzene göre düzeltildi"), detail: t("Aynı ana bölümün kısımları bir arada, kaynakça ve ekler en sonda kalır.") }))
       .catch(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // D171: yapı uygulandıktan sonra bölüm listesi yenilenir; açık bölümlerin içeriği korunur
+  async function reloadStages() {
+    try {
+      const r = await api<{ stages: any[] }>(`/api/projects/${project.id}/stages`);
+      setStages((cur) => r.stages.map((x) => { const old = cur.find((c) => c.id === x.id); return old ? { ...old, ...x } : { ...x, content: null }; }));
+    } catch { /* bir sonraki açılışta güncellenir */ }
+  }
   async function removeStage(id: string) {
     const st = stages.find((s) => s.id === id);
-    if (!st || !confirm(t("“{title}” bölümü ve içeriği silinsin mi? Bu işlem geri alınamaz.", { title: st.title }))) return;
+    if (!st) return;
+    // D171: kritik bölüm silinirken gerekçeli uyarı (kullanıcı yine de silebilir)
+    const def = defaultSectionOf(project, st.key);
+    if (def?.critical && !confirm(`${t("Dikkat: kritik bölüm")}\n\n${t("“{title}” bu çalışma türü için kritik bir bölümdür.", { title: st.title })} ${st.why || t(def.why)} ${t("Silerseniz çalışmanın akademik bütünlüğü zarar görebilir ve kalite kontrolünde eksik olarak görünebilir.")}\n\n${t("Silmek yerine bölüm ayarlarından gizleyebilirsiniz.")}`)) return;
+    if (!confirm(t("“{title}” bölümü ve içeriği silinsin mi? Bu işlem geri alınamaz.", { title: st.title }))) return;
     try { await api(`/api/stages/${id}`, { method: "DELETE" }); }
     catch (e) { toast({ tone: "error", title: t("Silinemedi"), detail: (e as Error).message }); return; }
     const rest = stages.filter((s) => s.id !== id);
@@ -1049,10 +1063,11 @@ export function Workspace(props: Props) {
               <GripVertical className="hidden h-3.5 w-3.5 shrink-0 cursor-grab text-ink-200 opacity-0 transition group-hover:opacity-100 lg:block" />
               <span title={t("Adım {n}", { n: i + 1 })} className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10.5px] font-semibold lg:h-5 lg:w-5 lg:text-[10px]", s.status === "done" ? "bg-emerald-50 text-emerald-600" : sel ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
-                <span className={cn("block truncate text-[14px] leading-tight lg:text-[13.5px]", sel ? "font-medium text-ink-900" : "text-ink-600")}>{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
-                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}</span>
+                <span className={cn("block truncate text-[14px] leading-tight lg:text-[13.5px]", sel ? "font-medium text-ink-900" : "text-ink-600", s.hidden && "text-ink-400 line-through decoration-ink-300")}>{s.hidden && <EyeOff className="mr-1 inline h-3 w-3 align-[-1px]" aria-label={t("Gizli bölüm")} />}{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
+                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}{s.requirement && s.requirement !== "required" && <RequirementBadge value={s.requirement} />}</span>
               </span>
               {present.some((p) => p.stageId === s.id) && <span className="flex -space-x-1" title={t("Bu bölümde: {n}", { n: present.filter((p) => p.stageId === s.id).map((p) => p.name).join(", ") })}>{present.filter((p) => p.stageId === s.id).slice(0, 2).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>}
+              {isOwner && <button onClick={(e) => { e.stopPropagation(); setStageSettings(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-ink-100 hover:text-ink-700 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölüm ayarları")} title={t("Bölüm ayarları")}><SlidersHorizontal className="h-3.5 w-3.5" /></button>}
               {isOwner && <button onClick={(e) => { e.stopPropagation(); removeStage(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-rose-50 hover:text-rose-500 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölümü sil")}><Trash2 className="h-3.5 w-3.5" /></button>}
               </div>
               {/* Alt başlıklar (D83): her birine ayrı ayrı girilir */}
@@ -1077,7 +1092,7 @@ export function Workspace(props: Props) {
           );
         })}
       </Reorder.Group>
-      <div className="border-t border-ink-100 p-2"><button onClick={() => setAddStage(true)} className="flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-[13px] font-medium text-ink-500 transition hover:bg-ink-50 hover:text-ink-900"><Plus className="h-4 w-4" /> {t("Bölüm ekle")}</button></div>
+      <div className="flex gap-1 border-t border-ink-100 p-2"><button onClick={() => setAddStage(true)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[13px] font-medium text-ink-500 transition hover:bg-ink-50 hover:text-ink-900"><Plus className="h-4 w-4" /> {t("Bölüm ekle")}</button><button onClick={() => setStructureOpen(true)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-[13px] font-medium text-ink-500 transition hover:bg-ink-50 hover:text-ink-900"><Layers className="h-4 w-4" /> {t("Yapıyı yönet")}</button></div>
     </div>
   );
 
@@ -1275,6 +1290,10 @@ export function Workspace(props: Props) {
         {consensusOpen && <ConsensusTool projectId={project.id} signedIn onAdded={addSources} />}
       </Modal>
       <ResearchModal key={research.open ? "open" : "closed"} open={research.open} onClose={() => setResearch({ open: false, prefill: "" })} projectId={project.id} stageId={active?.id ?? null} prefill={research.prefill} existing={existingDois} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setTab("sources"); }} />
+      <StageSettingsModal open={!!stageSettings} stage={stages.find((x) => x.id === stageSettings) ?? null} project={project} afterPosition={Math.max(0, stages.findIndex((x) => x.id === stageSettings))} onClose={() => setStageSettings(null)}
+        onSaved={(st) => setStages((list) => list.map((x) => (x.id === st.id ? { ...x, title: st.title, description: st.description, requirement: st.requirement, scope: st.scope, hidden: st.hidden } : x)))}
+        onDuplicated={(st) => { const i = stages.findIndex((x) => x.id === stageSettings); const n = [...stages]; n.splice(i + 1, 0, st); setStages(n.map((x, j) => ({ ...x, position: j }))); }} />
+      <StructureModal open={structureOpen} onClose={() => setStructureOpen(false)} project={project} isOwner={isOwner} onApplied={reloadStages} />
       <AddStageModal open={addStage} onClose={() => setAddStage(false)} existing={new Set(stages.map((s) => s.key))} projectId={project.id} afterPosition={activeIndex} onAdded={(st) => { const n = [...stages]; n.splice(activeIndex + 1, 0, st); const fixed = academicOrder(n); setStages((fixed ?? n).map((x, i) => ({ ...x, position: i }))); if (fixed) api(`/api/projects/${project.id}/stages`, { method: "PUT", json: { order: fixed.map((x) => x.id) } }).catch(() => {}); setAddStage(false); }} />
       <ImportHub open={hubOpen} onClose={() => setHubOpen(false)} projectId={project.id} onWordToSection={() => setImportOpen(true)}
         onStages={(rows) => { setStages(rows); if (!activeId && rows[0]) selectStage(rows[0].id); }}

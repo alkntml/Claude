@@ -825,4 +825,31 @@ describe("anketler", () => {
     expect(Number((await db.query<{ y: string }>(`select price_yearly as y from public.plans where id = 'basic'`)).rows[0].y)).toBe(9600);
     await db.query(`update public.plans set price_monthly = 749 where id = 'basic'`);
   });
+
+  it("migration 43: bölüm ayarları, kullanıcı şablonları (yalnızca sahibi) ve yapı geçmişi (yalnızca sunucu yazar); tekrar çalıştırılabilir (D171)", async () => {
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'D171 deneme', 'thesis', 'master') returning id`)).rows;
+    const [st] = (await db.query<{ requirement: string; scope: string; hidden: boolean; critical: boolean; modified: boolean }>(
+      `insert into public.project_stages (project_id, user_id, key, title, position) values ('${p.id}', '${A}', 'method', 'Yöntem', 0) returning requirement, scope, hidden, critical, modified`)).rows;
+    expect(st).toEqual({ requirement: "required", scope: "standard", hidden: false, critical: false, modified: false });
+    await expectError(db.query(`update public.project_stages set requirement = 'bogus' where project_id = '${p.id}'`), /requirement_check/);
+    await expectError(db.query(`update public.project_stages set scope = 'huge' where project_id = '${p.id}'`), /scope_check/);
+    // Kullanıcı şablonu: yalnızca sahibi görür; başkası adına eklenemez; bölümler dizi olmalı
+    await as(A, `insert into public.user_templates (user_id, name, work_type, sections) values (auth.uid(), 'Benim yapım', 'thesis', '[{"key":"method","title":"Yöntem"}]')`);
+    expect((await as(A, "select name from public.user_templates")).length).toBe(1);
+    expect((await as(B, "select name from public.user_templates")).length).toBe(0);
+    await expectError(as(B, `insert into public.user_templates (user_id, name, work_type) values ('${A}', 'Sahte', 'thesis')`), /row-level security/);
+    await expectError(as(A, `insert into public.user_templates (user_id, name, work_type, sections) values (auth.uid(), 'x', 'thesis', '{}')`), /check/);
+    expect((await as(B, "delete from public.user_templates returning id")).length).toBe(0);
+    // Yapı geçmişi: kullanıcı yazamaz; sahibi okur, başkası okuyamaz
+    await expectError(as(A, `insert into public.template_change_logs (project_id, user_id, action) values ('${p.id}', auth.uid(), 'section.add')`), /row-level security/);
+    await db.query(`insert into public.template_change_logs (project_id, user_id, action, detail) values ('${p.id}', '${A}', 'section.add', '{"key":"ethics"}')`);
+    expect((await as(A, `select action from public.template_change_logs where project_id = '${p.id}'`)).length).toBe(1);
+    expect((await as(B, `select action from public.template_change_logs where project_id = '${p.id}'`)).length).toBe(0);
+    // Tekrar çalıştırılabilir; mevcut veri korunur
+    const dir = path.resolve(__dirname, "../supabase/migrations");
+    await db.exec(fs.readFileSync(path.join(dir, "20261207000043_dynamic_templates.sql"), "utf8"));
+    expect((await db.query(`select 1 from public.user_templates`)).rows.length).toBe(1);
+    await db.query(`delete from public.projects where id = '${p.id}'`);
+    expect((await db.query(`select 1 from public.template_change_logs where project_id = '${p.id}'`)).rows.length).toBe(0);
+  });
 });

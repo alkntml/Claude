@@ -10,6 +10,7 @@ import { Badge, Empty } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
 import type { CheckItem } from "@/lib/quality/checklist";
+import { CHAIN_LEVEL_LABEL, type ChainItem } from "@/lib/quality/consistency-chain";
 import { penaltyByCategory, SEVERITY_WEIGHTS } from "@/lib/quality/score";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -23,9 +24,11 @@ const CAT: Record<string, { label: string; icon: any }> = {
   repetition: { label: "Tekrarlanan ifadeler", icon: Repeat2 },
   data: { label: "Kullanıcı verisi gereken alanlar", icon: TriangleAlert },
 };
-const SEV = { error: { label: "Kritik", tone: "red" as const }, warning: { label: "Uyarı", tone: "amber" as const }, info: { label: "Bilgi", tone: "ink" as const } };
+// D171: uyarı seviyeleri Kritik / Önemli / İyileştirme (yalnızca etiket; puan ağırlıkları değişmez)
+const SEV = { error: { label: "Kritik", tone: "red" as const }, warning: { label: "Önemli", tone: "amber" as const }, info: { label: "İyileştirme", tone: "ink" as const } };
+const CHAIN_TONE = { critical: "red" as const, important: "amber" as const, improvement: "ink" as const };
 
-export function QualityView({ project, initial, stages, checklist = [] }: { project: any; initial: any; stages: any[]; checklist?: CheckItem[] }) {
+export function QualityView({ project, initial, stages, checklist = [], chain = [] }: { project: any; initial: any; stages: any[]; checklist?: CheckItem[]; chain?: ChainItem[] }) {
   const { t } = useT();
   const toast = useToast();
   const [report, setReport] = useState<any>(initial);
@@ -83,6 +86,26 @@ export function QualityView({ project, initial, stages, checklist = [] }: { proj
         </section>
       )}
 
+      {chain.length > 0 && (
+        <section className="mt-8">
+          <h2 className="flex items-center gap-2 font-semibold text-ink-900"><ScanSearch className="h-4 w-4 text-brand-600" /> {t("Akademik tutarlılık zinciri")}</h2>
+          <p className="mt-1 text-sm text-ink-500">{t("Problem, soru, yöntem, örneklem, analiz, bulgu ve tartışma arasındaki bağlantılar. Bu öneriler puanı etkilemez ve otomatik düzeltme yapılmaz; kabul edip etmemek size kalmıştır.")}</p>
+          <ul className="card mt-3 divide-y divide-ink-100">
+            {chain.map((c) => (
+              <li key={c.id} className="flex items-start gap-3 p-3.5">
+                <Badge tone={CHAIN_TONE[c.level]}>{t(CHAIN_LEVEL_LABEL[c.level])}</Badge>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-ink-900">{t(c.title)}</p>
+                  <p className="text-sm text-ink-600"><b className="font-medium">{t("Kanıt:")}</b> {t(c.evidence, c.vars ? { ...c.vars, s: t(String(c.vars.s ?? "")) } : undefined)}</p>
+                  <p className="text-sm text-ink-600"><b className="font-medium">{t("Öneri:")}</b> {t(c.suggestion)}</p>
+                </div>
+                {c.stageKey && stageByKey[c.stageKey] && <Link href={`/proje/${project.id}?bolum=${stageByKey[c.stageKey].id}`} className="shrink-0 text-sm font-medium text-brand-600">{t("Düzelt →")}</Link>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {!report && !loading && <div className="mt-10"><Empty icon={<ListChecks className="h-5 w-5" />} title={t("Henüz kontrol yapılmadı")}>{t("Çalışmanızın tüm bölümleri ve kaynakları birlikte değerlendirilir.")}</Empty></div>}
       {loading && <div className="mt-10 grid gap-4 md:grid-cols-3">{[0, 1, 2].map((i) => <div key={i} className="skeleton h-32" />)}</div>}
 
@@ -107,7 +130,7 @@ export function QualityView({ project, initial, stages, checklist = [] }: { proj
             <button onClick={() => setShowMethod((v) => !v)} className="flex w-full items-center gap-2 p-4 text-left text-sm font-semibold text-ink-800"><Info className="h-4 w-4 text-brand-500" /> {t("Puan nasıl hesaplanır?")}<ChevronDown className={cn("ml-auto h-4 w-4 transition", showMethod && "rotate-180")} /></button>
             {showMethod && (
               <div className="space-y-3 border-t border-ink-100 p-4 text-sm leading-relaxed text-ink-600">
-                <p>{t("Puan 100’den başlar; kural tabanlı her bulgu önemine göre puan düşürür: Kritik {e}, Uyarı {w}, Bilgi {i} puan. Bazı küçük bulgular (ör. çift boşluk) daha düşük ağırlıkla sayılır. Puan 0–100 arasında sınırlanır.", { e: SEVERITY_WEIGHTS.error, w: SEVERITY_WEIGHTS.warning, i: SEVERITY_WEIGHTS.info })}</p>
+                <p>{t("Puan 100’den başlar; kural tabanlı her bulgu önemine göre puan düşürür: Kritik {e}, Önemli {w}, İyileştirme {i} puan. Bazı küçük bulgular (ör. çift boşluk) daha düşük ağırlıkla sayılır. Puan 0–100 arasında sınırlanır.", { e: SEVERITY_WEIGHTS.error, w: SEVERITY_WEIGHTS.warning, i: SEVERITY_WEIGHTS.info })}</p>
                 <p>{t("Yapay zekâ jürisinin bulguları listede “AI” etiketiyle gösterilir ama puanı değiştirmez; böylece aynı metin her kontrolde aynı puanı alır ve puan karşılaştırılabilir kalır.")}</p>
                 <p>{t("Puan; atıf–kaynakça tutarlılığını, kaynakların doğrulanabilirliğini, eksik bölümleri, akademik dil kurallarını ve tekrarları ölçer. Bilimsel değeri, özgünlüğü veya intihal oranını ölçmez; bir jüri ya da hakem değerlendirmesinin yerine geçmez.")}</p>
                 {Object.keys(lost).length > 0 && (

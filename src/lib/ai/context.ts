@@ -6,7 +6,7 @@ import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
-import { GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
+import { capstoneGuidance, designById, LITERATURE_FUNCTIONS, LITERATURE_STAGES, literatureDepth, reportingStandards, scopeGuidance, GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
 import { missingFields } from "@/lib/citations/checks";
 import { sourceRowToItemClient } from "@/lib/sources/row";
@@ -114,6 +114,13 @@ export async function buildContext(params: {
   head.push(`Başlık: ${project.title}`);
   head.push(`Çalışma türü: ${project.work_type} · Seviye: ${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level} · Disiplin: ${project.discipline || "belirtilmedi"}`);
   if (ctx.methodology) head.push(`Yöntem yaklaşımı: ${METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology}`);
+  // D171: araştırma deseni, raporlama standardı ve bitirme projesi türü
+  const design = designById(ctx.design);
+  if (design) head.push(`Araştırma deseni: ${design.label}. Desen gereği: ${design.guidance}`);
+  const standards = reportingStandards({ workType: project.work_type, approach: ctx.methodology, design: ctx.design });
+  if (standards.length) head.push(`Raporlama standardı (yol gösterici): ${standards.join(", ")}. Standardın gerektirdiği ancak kullanıcının sağlamadığı bilgiyi uydurma; [VERİ GİRİLECEK] ile işaretle.`);
+  const capstone = project.work_type === "capstone" ? capstoneGuidance(ctx.variant) : "";
+  if (capstone) head.push(capstone);
   // D170: kaynaklara dayalı çalışmalarda (dergi makalesi, derleme, kuramsal/derleme yaklaşımlı tez ve makale) veri yer tutucusu yok
   const sourceBased = ["journal_article", "literature_review", "source_research"].includes(project.work_type)
     || (["thesis", "research_article", "capstone"].includes(project.work_type) && !!ctx.methodology && !EMPIRICAL_METHODS.has(ctx.methodology));
@@ -160,6 +167,8 @@ export async function buildContext(params: {
 
   if (memory.length) {
     head.push("\n## PROJE HAFIZASI (önceki kararlar ve bilgiler)");
+    // D171: onaylanmış kararlar, bilgiler ve henüz doğrulanmamış varsayımlar ayrı tutulur
+    head.push("[decision] kullanıcının onayladığı karardır, buna uy; [fact] kayıtlı bilgidir, kaynakla desteklenmiyorsa kesin bulgu gibi sunma; [hypothesis] ve [question] henüz doğrulanmamıştır, sonuç gibi yazma. Araştırma sorusu değiştiyse yöntem, analiz, bulgu ve tartışmanın yeni soruyla uyumunu gözet.");
     for (const m of memory.slice(-60)) head.push(`- [${m.kind}] ${m.content}`);
   }
 
@@ -177,7 +186,8 @@ export async function buildContext(params: {
   if (citedIds.length) tail.push(`\nBu bölümde zaten atıf yapılan kaynaklar: ${citedIds.join(", ")} (düzeltme ve genişletmede bu atıfları koru).`);
 
   // Diğer bölümlerin kısa özetleri (bölümler arası tutarlılık için)
-  const others = stages.filter((s) => s.id !== stage?.id && s.word_count > 0);
+  // D171: gizlenen bölümler bağlama girmez
+  const others = stages.filter((s) => s.id !== stage?.id && !s.hidden && s.word_count > 0);
   if (others.length) {
     tail.push("\n## DİĞER BÖLÜMLERİN DURUMU");
     const lim = params.otherChars ?? 400;
@@ -190,6 +200,11 @@ export async function buildContext(params: {
     tail.push(`Amaç: ${def?.purpose ?? stage.description}`);
     if (def?.rules.length) tail.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
     if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
+    // D171: bölümün gerekçesi, kullanıcının seçtiği kapsam ve literatür derinliği
+    if (stage.why) tail.push(`Bölümün çalışmadaki işlevi: ${stage.why}`);
+    const sg = scopeGuidance(stage.scope);
+    if (sg) tail.push(sg);
+    if (LITERATURE_STAGES.has(stage.key)) tail.push(`${LITERATURE_FUNCTIONS}\nBeklenen derinlik (${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level}): ${literatureDepth({ workType: project.work_type, level: project.academic_level, approach: ctx.methodology })}`);
     if (stageNeedsData(stage.key, project)) tail.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
     const note = blueprintStageNote(bp, stage);
     if (note) tail.push(note);

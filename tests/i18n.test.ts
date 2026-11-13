@@ -4,7 +4,8 @@ import { describe, expect, it } from "vitest";
 import { localeForCountry, normalizeLocale, translate } from "@/i18n";
 import { EN } from "@/i18n/en";
 import { DE } from "@/i18n/de";
-import { LEVEL_LABELS, METHODOLOGY_LABELS, STAGE_LIBRARY, WORK_TYPES } from "@/lib/workflows";
+import { LEVEL_LABELS, METHODOLOGY_LABELS, STAGE_LIBRARY, STRUCTURE_ACTION_LABEL, WORK_TYPES } from "@/lib/workflows";
+import { CHAIN_LEVEL_LABEL } from "@/lib/quality/consistency-chain";
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
 
 function walk(dir: string): string[] {
@@ -53,6 +54,9 @@ describe("i18n", () => {
       ...WORK_TYPES.flatMap((w) => [w.title, w.short, w.description]),
       ...Object.values(LEVEL_LABELS), ...Object.values(METHODOLOGY_LABELS),
       ...Object.values(ASSISTANT_ACTIONS).map((a) => a.label),
+      // D171: yapı geçmişi ve tutarlılık zinciri metinleri
+      ...Object.values(STRUCTURE_ACTION_LABEL), ...Object.values(CHAIN_LEVEL_LABEL),
+      ...[...readFileSync(path.resolve(__dirname, "../src/lib/quality/consistency-chain.ts"), "utf8").matchAll(/(?:title|evidence|suggestion): "((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]),
     ];
     expect(texts.filter((x) => !(x in EN))).toEqual([]);
   });

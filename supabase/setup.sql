@@ -2656,7 +2656,7 @@ select id, name, price_monthly, price_yearly from public.plans order by sort_ord
 -- 1) project_stages: zorunluluk (zorunlu/koşullu/isteğe bağlı), kapsam (kısa/orta/ayrıntılı), gizli, gerekçe,
 --    kritiklik ve kullanıcı değiştirdi bilgisi. Var olan bölümler “zorunlu / orta / görünür” olarak kalır (içerik değişmez).
 -- 2) user_templates: kullanıcının kaydettiği yapı (yalnızca sahibi görür ve değiştirir).
--- 3) template_change_logs: yapı değişikliklerinin geçmişi (proje sahibi ve ortak yazarlar okur; sunucu yazar).
+-- 3) template_change_logs: yapı değişikliklerinin geçmişi (proje sahibi okur; ortak yazarlara sunucu gösterir; yalnızca sunucu yazar).
 -- Mevcut veri silinmez.
 -- =====================================================================
 

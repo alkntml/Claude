@@ -1,3 +1,4 @@
+import { NOT_IN_MANUSCRIPT } from "@/lib/workflows/structure";
 import { AI_LANGUAGE } from "@/i18n/core";
 import { z } from "zod";
 import { assertSingleProject } from "@/lib/single-project";
@@ -54,7 +55,8 @@ export const POST = route<Ctx>("quality.run", async (req, { params }) => {
   const bundle = await loadProjectBundle(acc.db, id, acc.ownerId);
   if (!bundle) throw new ApiError(404, "Proje bulunamadı");
 
-  const stages = bundle.stages.map((st) => {
+  // D171: gizlenen bölümler ve makale metnine girmeyen dergi yazışmaları (kapak mektubu, dergi gereklilikleri) değerlendirmeye girmez
+  const stages = bundle.stages.filter((st) => !(st as { hidden?: boolean }).hidden && !NOT_IN_MANUSCRIPT.has(st.key)).map((st) => {
     const def = stageDef(st.key);
     return { key: st.key, title: st.title, text: st.content_text ?? "", citedIds: citedIdsInOrder([st.content as JSONNode]), needsLiterature: def?.needsLiterature, requiresUserData: def?.requiresUserData, generated: !!def?.generated };
   });

@@ -69,7 +69,7 @@ export const POST = route<Ctx>("stages.add", async (req, { params }) => {
   await logStructureChange(id, s.user.id, b.duplicateOf ? "section.duplicate" : "section.add", { key, title: b.title, position: pos });
   // D109: Tek Proje — bölüm sayısı çalışma türü şablonunun iki katını aşarsa yöneticiye uyarı (engellemez)
   let template = 0;
-  try { template = buildRoadmap({ workType: project.work_type, level: project.academic_level, methodology: project.methodology ?? undefined, program: project.context?.program }).length; } catch { /* bilinmeyen tür */ }
+  try { template = buildRoadmap({ workType: project.work_type, level: project.academic_level, methodology: project.context?.methodology ?? undefined, program: project.context?.program, design: project.context?.design, variant: project.context?.variant }).length; } catch { /* bilinmeyen tür */ }
   if (ownerId === s.user.id) await watchSections({ userId: s.user.id, profile: s.profile, projectId: id, projectTitle: project.title, count: list.length + 1, template }).catch(() => {});
   return json({ stage: data }, 201);
 });

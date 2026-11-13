@@ -261,12 +261,10 @@ export function buildTemplate(p: TemplateInput): TemplateSection[] {
     case "source_research": items = [it("search_strategy", { critical: true }), it("source_screening", { critical: true }), it("source_matrix", { critical: true }), it("annotated_notes"), it("gaps", { title: "Eleştirel sentez ve araştırma boşlukları" }), it("references", { critical: true })]; break;
     default: items = [it("references")];
   }
-  const d = designById(p.design);
   return items.filter((x) => STAGE_LIBRARY[x.key]).map((x) => {
     const def = STAGE_LIBRARY[x.key];
     const req = x.req ?? "required";
-    let why = x.why ?? (req === "required" ? "Bu çalışma türünün temel akademik bölümüdür." : "");
-    if (d && ["method", "methods_article", "analysis", "instruments", "sample", "participants", "findings", "results_article"].includes(x.key)) why = `${why} Desen: ${d.label}.`.trim();
+    const why = x.why ?? (req === "required" ? "Bu çalışma türünün temel akademik bölümüdür." : req === "conditional" ? "Çalışmanın niteliğine ve kılavuzunuza göre gerekebilir." : "İsteğe bağlıdır; ihtiyaç duyulursa kullanılır (ör. ölçek, form veya ek tablolar).");
     return { key: x.key, title: x.title ?? def.title, description: def.purpose, requirement: req, why, critical: !!x.critical, scope: scopeFor(x.key, p.level, p.workType) };
   });
 }
@@ -289,3 +287,45 @@ export function diffTemplate(stages: { id: string; key: string; title: string; w
     rename: stages.flatMap((s) => { const t = target.find((x) => x.key === s.key); return t && t.title !== s.title ? [{ id: s.id, key: s.key, from: s.title, to: t.title }] : []; }),
   };
 }
+
+/* ---------------- D171: yapay zekâ için düzeye/kapsama göre yönergeler ---------------- */
+
+/** Literatür bölümünün işlevleri (referans 6.1); yapay zekâ bağlamına girer */
+export const LITERATURE_FUNCTIONS =
+  "Literatür bölümü: temel kavramları kaynaklarla tanımla; kuramsal yaklaşımları karşılaştır; tarihsel gelişimi yalnızca gerektiği kadar ver; güncel ve temel ampirik çalışmaları araştırma sorularıyla bağlantılı incele; önceki çalışmaların örneklem, yöntem, bağlam ve bulgularını karşılaştır; uzlaşma, çelişki ve yöntemsel sınırlılıkları tartış; araştırma boşluğunu kaynaklarla göster; bu çalışmanın konumunu gerekçelendir. Kaynakları art arda özetleme, tematik sentez yap. Uzunluğu dolgu veya tekrarla artırma; kapsam yetersizse eksik alt temaları, eksik kaynak türlerini ve zayıf sentez noktalarını :::eksik bloğunda ayrı ayrı bildir.";
+
+/** Akademik düzeye ve çalışma türüne göre beklenen literatür derinliği (referans 6.3) */
+export function literatureDepth(p: { workType?: string; level?: string; approach?: string | null }): string {
+  if (p.approach === "systematic_review" || p.approach === "meta_analysis") return "Önceden tanımlanmış ve yeniden üretilebilir arama/eleme yöntemi; literatürün sistematik sentezi (PRISMA 2020 akışına uygun).";
+  if (p.workType === "journal_article" || p.workType === "research_article") return "Derginin kelime sınırı içinde yoğun, seçici ve doğrudan araştırma boşluğuna bağlanan literatür.";
+  if (p.level === "doctorate") return "Derin ve eleştirel sentez, kuramsal tartışma, alan içi çelişkilerin analizi, metodolojik değerlendirme ve özgün katkının güçlü gerekçesi.";
+  if (p.level === "master") return "Genişletilmiş kuramsal çerçeve, tematik ampirik sentez, yöntemsel karşılaştırma ve açık bir araştırma boşluğu.";
+  return "Temel kavramlar, seçilmiş kuramsal dayanaklar, ilgili çalışmaların düzenli özeti ve problemin gerekçesi.";
+}
+
+/** Bölüm kapsamına göre uzunluk yönergesi (kullanıcının seçtiği kapsam) */
+export function scopeGuidance(scope?: string | null): string {
+  if (scope === "brief") return "Kullanıcı bu bölüm için KISA kapsam seçti: yalnızca temel işlevi karşılayan, yoğun ve öz bir metin yaz; alt başlıkları en aza indir.";
+  if (scope === "detailed") return "Kullanıcı bu bölüm için AYRINTILI kapsam seçti: alt temaları ve gerekçeleri tam kapsamlı işle; bölümü erken sonlandırma, ama dolgu ve tekrarla uzatma.";
+  return "";
+}
+
+/** Bitirme projesi alt türüne göre yazım sınırı (uygulama projelerine yapay araştırma başlığı eklenmez) */
+export function capstoneGuidance(variant?: string | null): string {
+  if (!variant || variant === "research") return "";
+  return "Bu bir UYGULAMA türü bitirme projesidir (araştırma projesi değil): sırf akademik görünsün diye hipotez, örneklem, ölçek veya istatistiksel analiz önerme ya da yazma; kanıtı proje çıktısına, gereksinimlere ve değerlendirmeye dayandır.";
+}
+
+/** Literatür ağırlıklı bölümler (derinlik yönergesi bunlara eklenir) */
+export const LITERATURE_STAGES = new Set(["literature", "theory", "concepts", "gaps", "grant_literature", "source_matrix"]);
+
+/** Yapı değişikliği geçmişi eylem adları (template_change_logs.action) */
+export const STRUCTURE_ACTION_LABEL: Record<string, string> = {
+  "section.add": "Bölüm eklendi",
+  "section.duplicate": "Bölüm kopyalandı",
+  "section.delete": "Bölüm silindi",
+  "section.update": "Bölüm ayarları değişti",
+  "section.reorder": "Bölüm sırası değişti",
+  "template.default": "Academiana şablonu uygulandı",
+  "template.apply": "Kayıtlı şablon uygulandı",
+};

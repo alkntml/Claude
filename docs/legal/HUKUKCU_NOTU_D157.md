@@ -38,3 +38,6 @@ Yukarıdaki 2. maddenin yerine geçer: Paketin adı **Sınırsız Kullanım** ol
 
 ## Güncelleme (D159)
 Sınırsız Kullanım’da proje sınırı: **aylık ödemede en fazla 5, yıllık ödemede en fazla 60 aktif proje**. Diğer her şey iki dönemde de sınırsız.
+
+## Güncelleme (D160)
+Akademik Ekip İndirimi **%30’dan %20’ye** düşürüldü. Mesafeli Sözleşmeler ve Ön Bilgilendirme → “Paket türleri” bölümündeki “Akademik Ekip İndirimi (%30)” ifadesi %20 olarak güncellenmeli.

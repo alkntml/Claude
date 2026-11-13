@@ -18,6 +18,8 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Akademik Ekip İndirimi %20 (D160, 13 Kasım 2026)**
+
 **Sınırsız Kullanım yıllıkta 60 proje (D159, 13 Kasım 2026)**
 - Aylıkta en fazla 5, yıllıkta en fazla 60 proje; migration 40 canlıda çalıştırıldı (kullanıcı onayladı, fiyat sayfasında doğrulandı)
 

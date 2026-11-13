@@ -228,7 +228,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   ekip: {
     q: "Gibt es einen Rabatt für akademische Teams oder Forschungsgruppen?",
-    a: "Ja. Mit dem Rabatt für akademische Teams erhalten Lehrstuhlgruppen, Forschungsteams, Labore und Fachbereiche ab 3 Personen 30 % auf alle kostenpflichtigen Tarife. Eine Obergrenze für die Teamgröße gibt es nicht. Kontaktieren Sie uns über den Link „Per WhatsApp anfragen“ auf der Seite „Preise“.",
+    a: "Ja. Mit dem Rabatt für akademische Teams erhalten Lehrstuhlgruppen, Forschungsteams, Labore und Fachbereiche ab 3 Personen 20 % auf alle kostenpflichtigen Tarife. Eine Obergrenze für die Teamgröße gibt es nicht. Kontaktieren Sie uns über den Link „Per WhatsApp anfragen“ auf der Seite „Preise“.",
   },
   kurum: {
     q: "Kann meine Hochschule oder mein Institut eine Gruppenlizenz erhalten?",

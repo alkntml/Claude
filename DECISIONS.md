@@ -793,3 +793,6 @@ Site sahibinin isteği. Paket adı “Sınırsız Kullanım” (iç kimlik `sing
 
 ## D159 — Sınırsız Kullanım yıllıkta 60 proje (2026-11-13)
 Site sahibinin isteği: Sınırsız Kullanım (single) aylık ödemede en fazla 5, yıllık ödemede en fazla 60 aktif proje; diğer her şey her iki dönemde sınırsız. `projectLimitFor` (pricing.ts) yalnızca bu pakette ve yalnızca yıllıkta 60 döndürür; `effectiveLimits` (scaleForPeriod) ve `assertProjectQuota` dönemi dikkate alır. Diğer paketlerin proje sınırı dönemle değişmez. Veritabanı değişikliği yok (paket kaydında 5 kalır; 60 kodda hesaplanır). Fiyat kartı ve yükseltme penceresi yıllıkta “En fazla 60 proje” gösterir.
+
+## D160 — Akademik Ekip İndirimi %20 (2026-11-13)
+Site sahibinin isteği: `TEAM_DISCOUNT.percent` 30 → 20 (en az 3 kişi aynı). Ekip kartı, kurumlar ve hesap sayfası, WhatsApp mesajları sabitten okur; SSS (TR/EN/DE) ve fiyatlar sayfası arama açıklaması güncellendi. Hukukçunun Mesafeli Sözleşmeler metnindeki “(%30)” değiştirilmedi; hukukçu notuna eklendi.

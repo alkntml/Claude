@@ -22,7 +22,7 @@ interface Issue { block: number; original: string; suggestion: string; category:
 const CAT: Record<string, { label: string; tone: string }> = {
   spelling: { label: "Yazım", tone: "bg-rose-50 text-rose-700" },
   grammar: { label: "Dil bilgisi", tone: "bg-amber-50 text-amber-800" },
-  punctuation: { label: "Noktalama", tone: "bg-sky-50 text-sky-700" },
+  punctuation: { label: "Noktalama", tone: "bg-brand-50 text-brand-700" },
   style: { label: "Akademik üslup", tone: "bg-violet-50 text-violet-700" },
   consistency: { label: "Terim tutarlılığı", tone: "bg-emerald-50 text-emerald-700" },
   clarity: { label: "Anlam açıklığı", tone: "bg-ink-100 text-ink-700" },

@@ -61,11 +61,11 @@ export function GiftBox() {
       <AnimatePresence>
         {open && (
           <motion.div initial={{ opacity: 0, y: 12, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.96 }} className="w-[min(92vw,360px)] overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-2xl">
-            <div className="relative bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-500 p-5 text-white">
-              <button onClick={() => setOpen(false)} className="absolute right-3 top-3 rounded-lg p-1 text-white/80 hover:bg-white/15" aria-label={t("Kapat")}><X className="h-4 w-4" /></button>
+            <div className="relative bg-gradient-to-br from-brand-100 via-brand-200 to-brand-300 p-5 text-brand-950">
+              <button onClick={() => setOpen(false)} className="absolute right-3 top-3 rounded-lg p-1 text-brand-900/70 hover:bg-brand-950/5" aria-label={t("Kapat")}><X className="h-4 w-4" /></button>
               <Gift className="h-8 w-8" />
               <p className="mt-2 text-lg font-semibold">{t("Arkadaşını davet et, kazan")}</p>
-              <p className="mt-1 text-sm text-white/85">{t("Davet ettiğin her arkadaş kaydolduğunda sana bir Ücretsiz paket kadar hak tanımlanır: {p} sayfa, {a} yapay zekâ isteği ve {s} kaynak tarama ({d} gün geçerli).", { p: ref.reward.pages ?? 5, a: ref.reward.ai_requests, s: ref.reward.source_searches, d: ref.reward.valid_days })}</p>
+              <p className="mt-1 text-sm text-brand-900/80">{t("Davet ettiğin her arkadaş kaydolduğunda sana bir Ücretsiz paket kadar hak tanımlanır: {p} sayfa, {a} yapay zekâ isteği ve {s} kaynak tarama ({d} gün geçerli).", { p: ref.reward.pages ?? 5, a: ref.reward.ai_requests, s: ref.reward.source_searches, d: ref.reward.valid_days })}</p>
             </div>
             <div className="space-y-3 p-4">
               <div className="flex gap-2">
@@ -94,7 +94,7 @@ export function GiftBox() {
         onClick={() => (open ? setOpen(false) : openBox())}
         animate={badge && !open ? { rotate: [0, -12, 12, -8, 8, 0] } : { rotate: 0 }}
         transition={badge && !open ? { duration: 0.9, repeat: Infinity, repeatDelay: 4 } : undefined}
-        className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-600 to-fuchsia-500 text-white shadow-xl shadow-brand-600/30 hover:brightness-110"
+        className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-200 to-brand-300 text-brand-950 shadow-xl shadow-brand-900/20 ring-1 ring-brand-300 hover:brightness-110"
         aria-label={t("Arkadaşını davet et")}
       >
         <Gift className="h-6 w-6" />

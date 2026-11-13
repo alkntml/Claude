@@ -4,6 +4,7 @@
  */
 export const FAQ_GROUP_DE: Record<string, string> = {
   genel: "Allgemein",
+  neden: "Warum Academiana?",
   kaynaklar: "Quellen und Genauigkeit",
   yazim: "Schreiben, Formatierung und Export",
   intihal: "Plagiat und Originalität",
@@ -13,6 +14,34 @@ export const FAQ_GROUP_DE: Record<string, string> = {
 };
 
 export const FAQ_DE: Record<string, { q: string; a: string }> = {
+  "ayiran": {
+    q: "Was unterscheidet Academiana von anderen KI-Tools?",
+    a: "Academiana ist kein allgemeiner Chatbot, sondern ein Arbeitsbereich, der **von Grund auf für wissenschaftliches Arbeiten entwickelt** wurde. Quellen stammen aus echten wissenschaftlichen Datenbanken, und die KI zitiert nur Quellen, die Ihrem Projekt hinzugefügt wurden und deren bibliografische Angaben überprüfbar sind; keine Quellen, DOIs oder Daten zu erfinden, ist eine Grundregel des Systems. Bei jeder Quelle wird klar angezeigt, ob die Angaben, das Abstract oder der Volltext gelesen wurden. Alle Schritte – von der Themenwahl über Konzept, Recherche, Schreiben und Statistik bis zur Prüfung vor der Abgabe – laufen an einem Ort und greifen ineinander.",
+  },
+  "veri-tabanlari": {
+    q: "In welchen wissenschaftlichen Datenbanken wird gesucht?",
+    a: "Eine einzige Suche durchsucht **16 wissenschaftliche Quellen** gleichzeitig: OpenAlex, Crossref, PubMed / Europe PMC, arXiv, DOAJ, OpenAIRE, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, INSPIRE-HEP, Unpaywall, Google Books und Open Library. Sind Zugangsschlüssel hinterlegt, kommen Springer Nature, IEEE Xplore und NASA ADS hinzu. Die Ergebnisse werden zusammengeführt, Dubletten entfernt und nach Relevanz für Ihr Thema sortiert; für türkischsprachige und in der Türkei verortete Publikationen gibt es eine eigene Option. DOIs werden über Crossref und DataCite, PMIDs über Europe PMC und arXiv-Kennungen über arXiv verifiziert.",
+  },
+  "altyapi": {
+    q: "Wie sicher und zuverlässig ist Ihre Infrastruktur?",
+    a: "Anwendung, Datenbank und Dateispeicher laufen **innerhalb der Europäischen Union, in der Rechenzentrumsregion Frankfurt**. Die Daten jeder Nutzerin und jedes Nutzers werden auf Datenbankebene durch zeilenbasierte Zugriffsregeln (RLS) voneinander getrennt; diese Regeln werden durch automatisierte Tests überprüft. Verbindungen sind mit HTTPS und HSTS verschlüsselt; eine Content Security Policy (CSP), Prüfungen der Anfrageherkunft und Schutz vor Angriffen auf interne Netze sind aktiv. Hochgeladene Dateien liegen in privatem Speicher und öffnen sich nur über zeitlich begrenzte Links; geheime Schlüssel werden nie an den Browser gesendet. Die Funktionsweise der Plattform wird durch mehr als 500 automatisierte Tests überprüft. Einzelheiten finden Sie in der Datenschutzinformation nach KVKK und auf der Seite Methode und Transparenz.",
+  },
+  "modeller": {
+    q: "Welche KI-Modelle verwenden Sie?",
+    a: "Academiana nutzt die **Claude**-Modellfamilie von Anthropic und wählt das Modell nach dem Anspruch der Aufgabe: das leistungsstärkste Modell für komplexe Arbeiten wie das Schreiben von Abschnitten und eingehende Prüfungen, ein ausgewogenes Modell für mittlere Aufgaben und ein schnelles Modell für kurze, einfache Aufgaben. So erhalten Sie bei jeder Aufgabe passende Qualität und Geschwindigkeit. Der Assistent nutzt das Konzept Ihrer Arbeit, das Projektgedächtnis und die Ihrem Projekt hinzugefügten Quellen als Kontext; er schreibt nicht nur aus allgemeinem Wissen.",
+  },
+  "tek-yerde": {
+    q: "Was kann ich alles an einem Ort erledigen?",
+    a: "Von der Themenfindung und Titelvorschlägen über das Konzept Ihrer Arbeit und die Quellenrecherche bis zum abschnittsweisen Schreiben geschieht alles im selben Arbeitsbereich. Hinzu kommen **statistische Analysen** (t-Tests, ANOVA, Korrelation, Regression, Chi-Quadrat, Cronbachs Alpha, Mann-Whitney, Kruskal-Wallis – mit Tabellen und Sätzen nach APA 7), Erstellung und Durchführung von Umfragen, systematische Reviews nach PRISMA 2020, eine Literaturkarte, die Aussagenprüfung, die zeigt, ob zitierte Sätze von ihren Quellen gestützt werden, Verteidigungsprobe und Präsentationserstellung, gemeinsames Live-Schreiben mit Mitautorinnen und Mitautoren sowie schreibgeschützte Freigabe an die Betreuung. Ihre Arbeit können Sie als Word, PDF oder LaTeX herunterladen und mit einem Klick an Overleaf senden.",
+  },
+  "bicim-guclu": {
+    q: "Was bietet es bei wissenschaftlicher Formatierung und Zitation?",
+    a: "Unterstützt werden **10 Zitierstile**, darunter APA 7 und 6, ISNAD 2, Chicago, Turabian, MLA, Harvard, Vancouver, IEEE und AMA. Zitate werden nicht als einfacher Text, sondern als mit der Quelle verknüpfte Elemente gespeichert; wechseln Sie den Stil, werden der gesamte Text und das Literaturverzeichnis sofort umgestellt. Auch Tabellen- und Abbildungsbeschriftungen werden passend zum gewählten Stil formatiert. Sie können die Schreibrichtlinie Ihrer Hochschule hochladen, um eine Gliederung und Formatierungsregeln vorgeschlagen zu bekommen, und Ihre Arbeit mit Titelblatt, Inhaltsverzeichnis, nummerierten Überschriften, Fußnoten und Literaturverzeichnis exportieren.",
+  },
+  "seffaflik": {
+    q: "Warum ist Ihnen Transparenz so wichtig?",
+    a: "Weil Vertrauen in wissenschaftliche Arbeit davon abhängt, nachvollziehen zu können, was getan wurde. Auf der Seite **Methode und Transparenz** erklären wir offen, woher die Quellen stammen, wie sie verifiziert werden, wie der Qualitätswert berechnet wird und wo die Grenzen des Systems liegen; KI-Befunde beeinflussen den Qualitätswert nicht. Da wir keinen lizenzierten Plagiatsdienst nutzen, zeigen wir keinen Plagiatsprozentsatz an und erwecken nicht den Anschein, etwas zu tun, was wir nicht tun. Was unsere Nutzerinnen und Nutzer in ihren eigenen Worten sagen, lesen Sie auf der Startseite.",
+  },
   nedir: {
     q: "Was ist Academiana?",
     a: "Ein Arbeitsbereich für alle, die eine Abschlussarbeit, einen Fachartikel, eine Literaturübersicht oder ein Forschungsexposé erstellen. Academiana erstellt für Ihre Art von Arbeit einen Fahrplan Abschnitt für Abschnitt, findet und verifiziert Quellen in echten wissenschaftlichen Datenbanken, formatiert Zitate automatisch im gewählten Stil und stellt Ihnen beim Schreiben einen wissenschaftlichen Assistenten zur Seite. Am Ende laden Sie Ihre Arbeit mit Titelblatt und Inhaltsverzeichnis als Word oder PDF herunter.",

@@ -15,9 +15,9 @@ export function WorkTypePicker({ signedIn, compact = false }: { signedIn: boolea
         return (
           <div key={w.id}>
             <Link href={href} className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-ink-100 bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-brand-200 hover:shadow-glow">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[radial-gradient(circle,rgb(219_228_255),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[radial-gradient(circle,rgb(243_229_199),transparent_70%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="relative flex items-start justify-between">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-50 to-indigo-50 text-brand-600 ring-1 ring-brand-100 transition duration-300 group-hover:scale-110 group-hover:from-brand-500 group-hover:to-indigo-500 group-hover:text-white">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-50 to-brand-50 text-brand-600 ring-1 ring-brand-100 transition duration-300 group-hover:scale-110 group-hover:from-brand-500 group-hover:to-brand-500 group-hover:text-white">
                   <Icon className="h-5 w-5" />
                 </span>
                 <ArrowUpRight className="h-4 w-4 text-ink-300 transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand-600" />

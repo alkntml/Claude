@@ -46,7 +46,7 @@ export function TitleChooser({ open, onClose, projectId, currentTitle, onChoose 
             {ideas.map((i) => (
               <li key={i.title}>
                 <button type="button" onClick={() => setPick(i.title)} className={cn("flex w-full items-start gap-3 rounded-2xl border p-3.5 text-left transition", pick === i.title ? "border-brand-400 bg-brand-50/60 ring-2 ring-brand-100" : "border-ink-100 hover:border-ink-200")}>
-                  <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border", pick === i.title ? "border-brand-600 bg-brand-600 text-white" : "border-ink-300")}>{pick === i.title && <Check className="h-3 w-3" />}</span>
+                  <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border", pick === i.title ? "border-brand-300 bg-brand-200 text-brand-950" : "border-ink-300")}>{pick === i.title && <Check className="h-3 w-3" />}</span>
                   <span><span className="block font-serif text-[16.5px] font-medium leading-snug text-ink-950">{i.title}</span>{i.note && <span className="mt-0.5 block text-[12.5px] text-ink-500">{i.note}</span>}</span>
                 </button>
               </li>

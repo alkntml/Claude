@@ -83,10 +83,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t("{n} dk okuma", { n: readingMinutes(p) })}</span>
             </p>
             <div className="mt-8"><BlogBody blocks={blocks} /></div>
-            <div className="mt-12 rounded-3xl bg-gradient-to-br from-brand-600 to-indigo-600 p-7 text-white shadow-glow">
+            <div className="mt-12 rounded-3xl border border-brand-200 bg-gradient-to-br from-brand-50 to-brand-200 p-7 text-brand-950 shadow-soft">
               <p className="font-serif text-2xl font-semibold leading-snug">{t("Bunu Academiana ile kolayca yapın")}</p>
-              <p className="mt-2 text-[15px] leading-relaxed text-white/85">{p.cta.text}</p>
-              <Link href={p.cta.href} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-brand-700 hover:bg-brand-50">{p.cta.label} <ArrowRight className="h-4 w-4" /></Link>
+              <p className="mt-2 text-[15px] leading-relaxed text-brand-900/80">{p.cta.text}</p>
+              <Link href={p.cta.href} className="mt-5 inline-flex items-center gap-2 rounded-xl bg-brand-950 px-5 py-2.5 text-sm font-semibold text-brand-50 hover:bg-brand-900">{p.cta.label} <ArrowRight className="h-4 w-4" /></Link>
             </div>
           </article>
           <aside className="hidden lg:block">

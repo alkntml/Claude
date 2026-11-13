@@ -49,6 +49,68 @@ export const FAQ: FaqGroup[] = [
     ],
   },
   {
+    id: "neden",
+    title: { tr: "Neden Academiana?", en: "Why Academiana?" },
+    items: [
+      {
+        id: "ayiran",
+        q: { tr: "Academiana’yı diğer yapay zekâ araçlarından ayıran ne?", en: "What sets Academiana apart from other AI tools?" },
+        a: {
+          tr: "Academiana genel amaçlı bir sohbet botu değil, baştan sona **akademik çalışma için tasarlanmış** bir çalışma alanıdır. Kaynaklar gerçek akademik veri tabanlarından gelir ve yapay zekâ yalnızca projenize eklenmiş, künyesi doğrulanabilen kaynaklara atıf yapar; kaynak, DOI veya veri uydurmamak sistemin temel kuralıdır. Her kaynağın künyesinin mi, özetinin mi, tam metninin mi okunduğu açıkça gösterilir. Konu seçiminden kurguya, kaynak taramasından yazıma, istatistikten teslim öncesi denetime kadar bütün adımlar tek yerde, birbirine bağlı ilerler.",
+          en: "Academiana is not a general-purpose chatbot but a workspace **designed for academic work** from start to finish. Sources come from real academic databases, and the AI cites only sources added to your project whose records can be verified; not fabricating sources, DOIs or data is a core rule of the system. For every source it shows clearly whether the record, the abstract or the full text was read. Every step, from choosing a topic to planning, searching, writing, statistics and the pre-submission check, happens in one place and stays connected.",
+        },
+      },
+      {
+        id: "veri-tabanlari",
+        q: { tr: "Hangi akademik veri tabanlarında arama yapıyor?", en: "Which academic databases does it search?" },
+        a: {
+          tr: "Tek bir aramada **16 akademik kaynak** birlikte taranır: OpenAlex, Crossref, PubMed / Europe PMC, arXiv, DOAJ, OpenAIRE, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, INSPIRE-HEP, Unpaywall, Google Books ve Open Library. Erişim anahtarı tanımlandığında Springer Nature, IEEE Xplore ve NASA ADS de eklenir. Sonuçlar birleştirilir, yinelenen kayıtlar ayıklanır ve konunuza uygunluğuna göre sıralanır; Türkçe ve Türkiye adresli yayınlar için ayrı bir seçenek vardır. DOI’ler Crossref ve DataCite, PMID’ler Europe PMC, arXiv kimlikleri arXiv üzerinden doğrulanır.",
+          en: "A single search covers **16 academic sources** at once: OpenAlex, Crossref, PubMed / Europe PMC, arXiv, DOAJ, OpenAIRE, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, INSPIRE-HEP, Unpaywall, Google Books and Open Library. When access keys are configured, Springer Nature, IEEE Xplore and NASA ADS are added too. Results are merged, duplicates are removed and they are ranked by relevance to your topic; there is a separate option for Turkish-language and Türkiye-affiliated publications. DOIs are verified through Crossref and DataCite, PMIDs through Europe PMC and arXiv IDs through arXiv.",
+        },
+      },
+      {
+        id: "altyapi",
+        q: { tr: "Altyapınız ne kadar güvenli ve güvenilir?", en: "How secure and reliable is your infrastructure?" },
+        a: {
+          tr: "Uygulama, veritabanı ve dosya depolama **Avrupa Birliği sınırları içinde, Frankfurt veri merkezi bölgesinde** çalışır. Her kullanıcının verisi veritabanı düzeyinde satır bazlı erişim kurallarıyla (RLS) birbirinden ayrılır ve bu kurallar otomatik testlerle doğrulanır. Bağlantılar HTTPS ve HSTS ile şifrelenir; içerik güvenlik politikası (CSP), istek kaynağı denetimi ve iç ağa yönelik saldırılara karşı korumalar kullanılır. Yüklediğiniz dosyalar özel depolama alanında tutulur ve yalnızca süreli bağlantılarla açılır; gizli anahtarlar hiçbir zaman tarayıcıya gönderilmez. Platformun işleyişi 500’ü aşkın otomatik testle denetlenir. Ayrıntılar KVKK Aydınlatma Metni’nde ve Yöntem ve şeffaflık sayfasındadır.",
+          en: "The application, database and file storage run **within the European Union, in the Frankfurt data centre region**. Each user’s data is isolated at database level with row-level security (RLS) rules, and these rules are verified by automated tests. Connections are encrypted with HTTPS and HSTS; a content security policy (CSP), request-origin checks and protection against attacks on internal networks are in place. Files you upload are kept in private storage and open only through time-limited links; secret keys are never sent to the browser. The platform’s behaviour is checked by more than 500 automated tests. Details are in the KVKK Privacy Notice and on the Method and transparency page.",
+        },
+      },
+      {
+        id: "modeller",
+        q: { tr: "Hangi yapay zekâ modellerini kullanıyorsunuz?", en: "Which AI models do you use?" },
+        a: {
+          tr: "Academiana, Anthropic’in **Claude** model ailesini kullanır ve modeli işin zorluğuna göre seçer: bölüm yazımı ve kapsamlı inceleme gibi karmaşık işlerde en güçlü model, orta zorluktaki işlerde dengeli model, kısa ve basit işlerde hızlı model devreye girer. Böylece her işte uygun kalite ve hız elde edilir. Asistan, çalışmanızın kurgusunu, proje hafızasını ve projenize eklediğiniz kaynakları bağlam olarak kullanır; yalnızca genel bilgiye dayanarak yazmaz.",
+          en: "Academiana uses Anthropic’s **Claude** model family and picks the model by how demanding the task is: the most capable model for complex work such as drafting sections and in-depth review, a balanced model for medium tasks and a fast model for short, simple ones. This gives the right quality and speed for every task. The assistant uses your work’s plan, the project memory and the sources added to your project as context; it does not write from general knowledge alone.",
+        },
+      },
+      {
+        id: "tek-yerde",
+        q: { tr: "Tek bir yerde neler yapabilirim?", en: "What can I do in one place?" },
+        a: {
+          tr: "Konu bulma ve başlık önerisinden çalışma kurgusuna, kaynak taramasından bölüm bölüm yazıma kadar her şey aynı çalışma alanındadır. Bunlara ek olarak **istatistik analizleri** (t testleri, ANOVA, korelasyon, regresyon, ki-kare, Cronbach alfa, Mann-Whitney, Kruskal-Wallis; APA 7 tablo ve cümlesiyle), anket hazırlama ve toplama, PRISMA 2020 sistematik derleme, literatür haritası, atıflı cümlelerin kaynağında desteklenip desteklenmediğini gösteren iddia denetimi, savunma provası ve sunum hazırlama, ortak yazarlarla canlı yazım ve danışmanla salt okunur paylaşım bulunur. Çalışmanızı Word, PDF veya LaTeX olarak indirebilir, tek tıkla Overleaf’e aktarabilirsiniz.",
+          en: "Everything from topic discovery and title suggestions to planning your work, searching sources and writing section by section happens in the same workspace. On top of that there are **statistical analyses** (t-tests, ANOVA, correlation, regression, chi-square, Cronbach’s alpha, Mann-Whitney, Kruskal-Wallis, with APA 7 tables and sentences), survey design and collection, PRISMA 2020 systematic reviews, a literature map, claim checking that shows whether cited sentences are supported by their sources, defence rehearsal and presentation preparation, live co-writing with co-authors and read-only sharing with your advisor. You can download your work as Word, PDF or LaTeX and send it to Overleaf in one click.",
+        },
+      },
+      {
+        id: "bicim-guclu",
+        q: { tr: "Akademik biçim ve atıf konusunda neler sunuyor?", en: "What does it offer for academic formatting and citations?" },
+        a: {
+          tr: "APA 7 ve 6, ISNAD 2, Chicago, Turabian, MLA, Harvard, Vancouver, IEEE ve AMA dâhil **10 atıf stili** desteklenir. Atıflar metinde düz yazı olarak değil, kaynağa bağlı öğeler olarak tutulur; stili değiştirdiğinizde bütün metin ve kaynakça anında yeni stile dönüşür. Tablo ve şekil başlıkları da seçtiğiniz stile göre biçimlenir. Üniversitenizin yazım kılavuzunu yükleyerek bölüm yapısı ve biçim kuralı önerisi alabilir; çalışmanızı kapak sayfası, içindekiler, numaralı başlıklar, dipnotlar ve kaynakçayla dışa aktarabilirsiniz.",
+          en: "**10 citation styles** are supported, including APA 7 and 6, ISNAD 2, Chicago, Turabian, MLA, Harvard, Vancouver, IEEE and AMA. Citations are stored not as plain text but as elements linked to their sources; when you change the style, the entire text and reference list switch to the new style instantly. Table and figure captions are formatted for the chosen style too. You can upload your university’s writing guide to get a suggested chapter structure and formatting rules, and export your work with a cover page, table of contents, numbered headings, footnotes and references.",
+        },
+      },
+      {
+        id: "seffaflik",
+        q: { tr: "Neden şeffaflığa bu kadar önem veriyorsunuz?", en: "Why do you care so much about transparency?" },
+        a: {
+          tr: "Çünkü akademik çalışmada güven, ne yapıldığını görebilmekten geçer. Kaynakların nereden geldiğini, nasıl doğrulandığını, kalite puanının nasıl hesaplandığını ve sistemin sınırlamalarını **Yöntem ve şeffaflık** sayfasında açıkça anlatıyoruz; yapay zekâ bulguları kalite puanını etkilemez. Lisanslı bir intihal servisi kullanmadığımız için intihal yüzdesi göstermiyoruz ve yapmadığımız bir şeyi yapıyormuş gibi görünmüyoruz. Kullanıcılarımızın kendi sözleriyle görüşlerini ana sayfada okuyabilirsiniz.",
+          en: "Because trust in academic work comes from being able to see what was done. On the **Method and transparency** page we explain clearly where sources come from, how they are verified, how the quality score is calculated and what the system’s limitations are; AI findings do not affect the quality score. As we do not use a licensed plagiarism service, we do not show a plagiarism percentage and we do not appear to do something we don’t. You can read what our users say in their own words on the home page.",
+        },
+      },
+    ],
+  },
+  {
     id: "kaynaklar",
     title: { tr: "Kaynaklar ve doğruluk", en: "Sources and accuracy" },
     items: [

@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D155)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D156)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -53,7 +53,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
 - **API rotaları:** `route(name, handler)` sarmalayıcısı (CSRF + hata kaydı), gövde `parseBody(req, zodSchema)`. Route dosyasından yalnızca HTTP metotları ve Next config export edilir; yardımcılar `src/lib`’e. Çalışmaya bağlı yeni uçlar `projectAccess` kullanır (ortak yazım, D115).
 - Sunucuya özel modüller `import "server-only"` ile başlar.
 - **Metinler:** Türkçe yaz, `t("…")` ile sar (istemci `useT()`, sunucu `getT()`, API `makeT(localeFromRequest(req))`). İngilizcesi `src/i18n/en.ts`, Almancası `src/i18n/de.ts` (içerik dosyalarında `*-de.ts`); `tests/i18n.test.ts` denetler. Kesme işareti `’`.
-- **Renkler:** `ink-*` / marka sınıfları, sabit hex yok (gece modu). Görünüm dili D148.
+- **Renkler:** `ink-*` / marka sınıfları, sabit hex yok (gece modu). Görünüm dili D148; vurgu rengi krem (D156): dolgu `bg-brand-200` + `text-brand-950`, bağlantı `text-brand-600/700`; mavi (indigo/sky/blue) kullanma.
 - **Atıflar** editörde `citation` düğümüdür; düz metin “(Yazar, Yıl)” üretme.
 - **Yapay zekâ:**
   - Model işe göre seçilir (D47): `fast` Haiku, `balanced` Sonnet, `default` Opus — `resolveModel(planId, tier)`, eylemler `ACTION_TIER`.

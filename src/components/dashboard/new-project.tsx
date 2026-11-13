@@ -85,7 +85,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-3">
               <button onClick={() => i < step && setStep(i)} className={cn("flex items-center gap-2 text-sm font-medium transition", i === step ? "text-ink-900" : i < step ? "text-brand-600" : "text-ink-400")}>
-                <span className={cn("flex h-7 w-7 items-center justify-center rounded-full text-xs transition", i < step ? "bg-brand-600 text-white" : i === step ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}</span>
+                <span className={cn("flex h-7 w-7 items-center justify-center rounded-full text-xs transition", i < step ? "bg-brand-200 text-brand-950" : i === step ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-500")}>{i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}</span>
                 <span className="hidden sm:inline">{t(s)}</span>
               </button>
               {i < STEPS.length - 1 && <span className="h-px w-8 bg-ink-200" />}
@@ -100,7 +100,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                 <h1 className="font-serif text-3xl font-medium tracking-tight">{t("Bugün hangi akademik çalışmayı hazırlamak istiyorsunuz?")}</h1>
                 <label className={cn("mt-6 flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed p-4 transition", importing ? "border-brand-300 bg-brand-50/60" : "border-ink-300 hover:border-brand-300 hover:bg-brand-50/40")}>
                   <input type="file" accept=".docx,.pdf,.txt,.md" className="hidden" disabled={!!importing} onChange={(e) => { const f = e.target.files?.[0]; if (f) importWork(f); e.target.value = ""; }} />
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-600 text-white">{importing ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileUp className="h-5 w-5" />}</span>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-200 text-brand-950">{importing ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileUp className="h-5 w-5" />}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold text-ink-900">{t("Mevcut çalışmamı içe aktar")}</span>
                     <span className="mt-0.5 block text-[13px] leading-snug text-ink-500">{importing === "upload" ? t("Dosya yükleniyor…") : importing === "analyze" ? t("Yapay zekâ çalışmanızı analiz ediyor; bölümler, kaynaklar ve atıflar hazırlanıyor… Büyük belgelerde bir dakika sürebilir.") : t("Word (.docx), PDF veya metin dosyası. Yapay zekâ türünü ve konusunu çıkarır, bölümlere ayırır, kaynakçayı ekler, atıfları bağlar ve çalışma ekranını açar. Metniniz yeniden yazılmaz.")}</span>
@@ -114,7 +114,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                     const sel = w.id === workType;
                     return (
                       <button key={w.id} onClick={() => { setWorkType(w.id); if (!w.levels.includes(level)) setLevel(w.levels[0]); }} className={cn("flex items-start gap-3 rounded-2xl border p-4 text-left transition duration-200", sel ? "border-brand-300 bg-brand-50/60 ring-4 ring-brand-100" : "border-ink-100 bg-white hover:-translate-y-0.5 hover:border-ink-200 hover:shadow-soft")}>
-                        <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition", sel ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-600")}><Icon className="h-5 w-5" /></span>
+                        <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition", sel ? "bg-brand-200 text-brand-950" : "bg-ink-100 text-ink-600")}><Icon className="h-5 w-5" /></span>
                         <span><span className="block font-semibold text-ink-900">{t(w.title)}</span><span className="mt-0.5 block text-[13px] leading-snug text-ink-500">{t(w.description)}</span></span>
                       </button>
                     );
@@ -194,7 +194,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
                     { id: "free", icon: PenLine, title: "Serbest", desc: "Tek bir metin bölümüyle başlayın; alt başlıkları kendiniz ekleyin." },
                   ] as const).map((o) => (
                     <button key={o.id} type="button" onClick={() => setStructure(o.id)} className={cn("flex w-full items-start gap-3 rounded-xl border p-4 text-left transition", structure === o.id ? "border-brand-500 ring-2 ring-brand-100" : "border-ink-200 hover:border-ink-300 hover:bg-ink-50")}>
-                      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", structure === o.id ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-600")}><o.icon className="h-5 w-5" /></span>
+                      <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", structure === o.id ? "bg-brand-200 text-brand-950" : "bg-ink-100 text-ink-600")}><o.icon className="h-5 w-5" /></span>
                       <span><span className="block font-semibold text-ink-900">{t(o.title)}</span><span className="mt-0.5 block text-[13px] text-ink-500">{t(o.desc)}</span></span>
                     </button>
                   ))}

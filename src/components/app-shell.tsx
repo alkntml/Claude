@@ -81,7 +81,7 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
     <div className="flex h-full flex-col">
       <div className="relative flex items-center gap-2 px-3 pb-2 pt-4">
         <button onClick={() => setMenu((v) => !v)} className="flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition hover:bg-ink-100" aria-expanded={menu}>
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[12.5px] font-semibold text-white">{initial}</span>
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-200 text-[12.5px] font-semibold text-brand-950">{initial}</span>
           <span className="truncate text-[14.5px] font-semibold text-ink-900">{user.name || user.email}</span>
         </button>
         <NotificationBell className="hidden lg:block" />
@@ -123,7 +123,7 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
         <Link href="/yardim" onClick={() => setOpen(false)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] text-ink-700 transition hover:bg-ink-50"><BookOpen className="h-[18px] w-[18px] text-ink-500" strokeWidth={1.75} /> {t("Kullanım rehberi")}</Link>
         <button onClick={() => setFb(true)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] text-ink-700 transition hover:bg-ink-50"><MessageSquarePlus className="h-[18px] w-[18px] text-ink-500" strokeWidth={1.75} /> {t("Geri bildirim")}</button>
         {user.plan !== "premium" && user.plan !== "single" && (
-          <button onClick={() => { setOpen(false); openUpgrade({}); }} className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-3 py-2.5 text-[14px] font-medium text-white transition hover:bg-brand-700"><Zap className="h-4 w-4" /> {paid ? t("Paketi yükselt") : t("Paketleri gör")}</button>
+          <button onClick={() => { setOpen(false); openUpgrade({}); }} className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-200 px-3 py-2.5 text-[14px] font-medium text-brand-950 transition hover:bg-brand-300"><Zap className="h-4 w-4" /> {paid ? t("Paketi yükselt") : t("Paketleri gör")}</button>
         )}
       </div>
     </div>

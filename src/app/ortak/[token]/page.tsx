@@ -51,13 +51,13 @@ export default async function CoauthorInvite({ params }: { params: Promise<{ tok
             </div>
           )}
           {member && project ? (
-            <Link href={`/proje/${project.id}`} className="flex h-11 w-full items-center justify-center rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 text-[14px] font-medium text-white hover:to-brand-700">{t("Çalışmayı aç")}</Link>
+            <Link href={`/proje/${project.id}`} className="flex h-11 w-full items-center justify-center rounded-xl bg-brand-200 text-[14px] font-medium text-brand-950 hover:bg-brand-300">{t("Çalışmayı aç")}</Link>
           ) : problem && !(problem === "wrong_email" && !s) ? (
             <p className="rounded-xl bg-amber-50 px-4 py-3 text-[14px] text-amber-800">{t(INVITE_PROBLEM_TEXT[problem])}{problem === "wrong_email" && s?.user.email ? ` ${t("Şu an {e} ile giriş yaptınız.", { e: s.user.email })}` : ""}</p>
           ) : !s ? (
             <div className="space-y-2">
               <p className="text-[14px] text-ink-600">{t("Daveti kabul etmek için davetin gönderildiği e-posta adresiyle giriş yapın. Hesabınız yoksa aynı adresle ücretsiz kaydolun.")}</p>
-              <Link href={`/giris?next=${next}`} className="flex h-11 w-full items-center justify-center rounded-xl bg-gradient-to-b from-brand-500 to-brand-600 text-[14px] font-medium text-white hover:to-brand-700">{t("Giriş yap")}</Link>
+              <Link href={`/giris?next=${next}`} className="flex h-11 w-full items-center justify-center rounded-xl bg-brand-200 text-[14px] font-medium text-brand-950 hover:bg-brand-300">{t("Giriş yap")}</Link>
               <Link href={`/kayit?next=${next}`} className="flex h-11 w-full items-center justify-center rounded-xl border border-ink-200 text-[14px] font-medium text-ink-700 hover:border-ink-300">{t("Ücretsiz kaydol")}</Link>
             </div>
           ) : (

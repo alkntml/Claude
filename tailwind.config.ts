@@ -8,7 +8,8 @@ export default {
       colors: {
         // Gece modu (D61): ink tonları CSS değişkeni; .dark sınıfında ters çevrilir
         ink: Object.fromEntries([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((k) => [k, `rgb(var(--ink-${k}) / <alpha-value>)`])),
-        brand: { 50: "#eef2ff", 100: "#e0e7ff", 200: "#c7d2fe", 300: "#a5b4fc", 400: "#818cf8", 500: "#6366f1", 600: "#4f46e5", 700: "#4338ca", 800: "#3730a3", 900: "#312e81" },
+        // D156: krem marka ölçeği — açık tonlar krem dolgu (düğme, rozet, vurgu), koyu tonlar okunur karamel-kahve (bağlantı, yazı)
+        brand: { 50: "#fdfaf3", 100: "#faf3e4", 200: "#f3e5c7", 300: "#e9d4a7", 400: "#dabe87", 500: "#c4a066", 600: "#8c6b3a", 700: "#6f5430", 800: "#574126", 900: "#3f2f1b", 950: "#2a1f12" },
         amberx: { 400: "#f5b84b", 500: "#e89e1f" },
         sage: { 400: "#4fc7a1", 500: "#23a983" },
       },
@@ -20,7 +21,7 @@ export default {
       boxShadow: {
         // D148: daha hafif gölge (ince çizgi + çok yumuşak derinlik)
         soft: "0 1px 2px rgb(16 24 40 / 0.04), 0 4px 14px -6px rgb(16 24 40 / 0.06)",
-        glow: "0 0 0 1px rgb(99 102 241 / 0.25), 0 10px 40px -10px rgb(99 102 241 / 0.45)",
+        glow: "0 0 0 1px rgb(196 160 102 / 0.3), 0 10px 40px -10px rgb(140 107 58 / 0.35)",
       },
       keyframes: {
         shimmer: { "0%": { backgroundPosition: "-400px 0" }, "100%": { backgroundPosition: "400px 0" } },

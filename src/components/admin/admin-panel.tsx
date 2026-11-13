@@ -496,7 +496,7 @@ function SourcesTab() {
       {Object.entries(PROVIDER_LABELS).map(([k, l]) => (
         <div key={k} className="card flex items-center justify-between gap-4 p-4">
           <div><p className="font-medium">{l}</p><p className="text-[13px] text-ink-500">{notes[k] ?? "Ücretsiz, açık API."}</p></div>
-          <button onClick={() => toggle(k)} role="switch" aria-checked={!!enabled[k]} className={cn("relative h-6 w-11 shrink-0 rounded-full transition", enabled[k] ? "bg-brand-600" : "bg-ink-200")}><motion.span layout className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow" style={{ left: enabled[k] ? 22 : 2 }} /></button>
+          <button onClick={() => toggle(k)} role="switch" aria-checked={!!enabled[k]} className={cn("relative h-6 w-11 shrink-0 rounded-full transition", enabled[k] ? "bg-brand-500" : "bg-ink-200")}><motion.span layout className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow" style={{ left: enabled[k] ? 22 : 2 }} /></button>
         </div>
       ))}
     </div>

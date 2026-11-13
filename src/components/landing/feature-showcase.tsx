@@ -48,7 +48,7 @@ function WritingVisual() {
   const stages = ["Kurgu", "Giriş", "Kuramsal çerçeve", "Yöntem", "Bulgular", "Tartışma"];
   return (
     <Frame label={t("Çalışma alanı")}>
-      <div className="flex gap-1">{stages.map((s, i) => <span key={s} className={cn("flex-1 truncate rounded-lg px-1.5 py-1.5 text-center text-[10.5px] font-semibold", i < 2 ? "bg-emerald-50 text-emerald-700" : i === 2 ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-400")}>{t(s)}</span>)}</div>
+      <div className="flex gap-1">{stages.map((s, i) => <span key={s} className={cn("flex-1 truncate rounded-lg px-1.5 py-1.5 text-center text-[10.5px] font-semibold", i < 2 ? "bg-emerald-50 text-emerald-700" : i === 2 ? "bg-brand-200 text-brand-950" : "bg-ink-50 text-ink-400")}>{t(s)}</span>)}</div>
       <div className="mt-4 rounded-2xl border border-ink-100 p-4">
         <p className="text-[11px] font-semibold text-ink-400">2.1 {t("Kuramsal çerçeve")}</p>
         <p className="mt-2 font-serif text-[14px] leading-7 text-ink-800">{t("Öz düzenleme, uzaktan eğitimde başarının güçlü bir yordayıcısıdır")} <span className="rounded-md border border-brand-100 bg-brand-50 px-1.5 font-sans text-[11px] text-brand-700">(Kaya, 2021, s. 211)</span>. {t("Geri bildirimin zamanlaması bu ilişkide")}<span className="text-ink-300"> {t("aracı rol üstlenir…")}</span><span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 bg-brand-500" /></p>
@@ -72,7 +72,7 @@ function SourcesVisual() {
           <li key={a} className="flex items-center gap-2 rounded-xl border border-ink-100 px-3 py-2"><BookCheck className="h-4 w-4 shrink-0 text-ink-400" /><span className="min-w-0 flex-1 truncate font-serif text-[12.5px] text-ink-800">{a}</span><span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold", c)}>{t(b)}</span></li>
         ))}
       </ul>
-      <div className="mt-3 rounded-xl bg-ink-900 px-3 py-2.5 text-[11.5px] text-white/90"><MessagesSquare className="mr-1.5 inline h-3.5 w-3.5 text-sky-300" />{t("Kaynağa sor: “Örneklem nasıl seçilmiş?”")} <span className="text-white/50">→ {t("cevap s. 205’ten")}</span></div>
+      <div className="mt-3 rounded-xl bg-ink-900 px-3 py-2.5 text-[11.5px] text-white/90"><MessagesSquare className="mr-1.5 inline h-3.5 w-3.5 text-brand-300" />{t("Kaynağa sor: “Örneklem nasıl seçilmiş?”")} <span className="text-white/50">→ {t("cevap s. 205’ten")}</span></div>
     </Frame>
   );
 }
@@ -278,7 +278,7 @@ export function FeatureShowcase() {
                 <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                   {c.features.map((f) => (
                     <li key={f.title} className="group rounded-2xl border border-ink-100 bg-white p-4 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-soft">
-                      <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white"><f.icon className="h-4 w-4" /></span><PlanBadge plan={planOf(f.plan)} /></div>
+                      <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-200 group-hover:text-brand-950"><f.icon className="h-4 w-4" /></span><PlanBadge plan={planOf(f.plan)} /></div>
                       <p className="mt-3 text-[14.5px] font-semibold text-ink-900">{t(f.title)}</p>
                       <p className="mt-1 text-[13px] leading-relaxed text-ink-500">{t(f.text)}</p>
                     </li>

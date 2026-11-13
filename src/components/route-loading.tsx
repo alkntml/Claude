@@ -3,7 +3,7 @@ export function RouteLoading({ variant = "page" }: { variant?: "page" | "app" | 
   return (
     <div aria-busy="true" aria-live="polite">
       <div className="fixed inset-x-0 top-0 z-[60] h-0.5 overflow-hidden bg-brand-100">
-        <div className="h-full w-1/3 animate-progress bg-gradient-to-r from-brand-500 to-sky-400" />
+        <div className="h-full w-1/3 animate-progress bg-gradient-to-r from-brand-500 to-brand-400" />
       </div>
       {variant === "page" && (
         <div className="mx-auto max-w-6xl px-6 pb-24 pt-36">

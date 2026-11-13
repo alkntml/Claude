@@ -27,14 +27,14 @@ export function CompareSection() {
         {/* Her satır iki hücre: masaüstünde yan yana hizalı, mobilde alt alta */}
         <div className="overflow-hidden rounded-3xl border border-ink-100 bg-white shadow-soft">
           <div className="grid md:grid-cols-2">
-            <div className="flex items-center gap-2 bg-gradient-to-r from-brand-600 to-indigo-600 px-7 pb-4 pt-7 sm:px-9 [&_img]:brightness-0 [&_img]:invert [&_span]:!text-white"><Logo /></div>
+            <div className="flex items-center gap-2 bg-brand-100 px-7 pb-4 pt-7 sm:px-9"><Logo /></div>
             <p className="hidden items-center gap-2.5 px-7 pb-4 pt-7 text-lg font-semibold text-ink-800 sm:px-9 md:flex"><span className="flex h-8 w-8 items-center justify-center rounded-xl bg-ink-100 text-ink-500"><MessageSquare className="h-4 w-4" /></span>{t("ChatGPT ve genel sohbet botları")}</p>
           </div>
           {ROWS.map(([good, bad], i) => (
             <div key={good} className="grid md:grid-cols-2">
-              <div className={`flex items-start gap-3 bg-gradient-to-r from-brand-600 to-indigo-600 px-7 py-4 sm:px-9 ${i === ROWS.length - 1 ? "pb-7" : ""}`}>
-                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
-                <span className="text-[15px] leading-relaxed text-white">{t(good)}</span>
+              <div className={`flex items-start gap-3 bg-brand-100 px-7 py-4 sm:px-9 ${i === ROWS.length - 1 ? "pb-7" : ""}`}>
+                <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <span className="text-[15px] leading-relaxed text-brand-950">{t(good)}</span>
               </div>
               <div className={`flex items-start gap-3 border-t border-ink-100 px-7 py-4 sm:px-9 md:border-t-0 ${i ? "md:border-t" : ""} ${i === ROWS.length - 1 ? "md:pb-7" : ""}`}>
                 <X className="mt-0.5 h-5 w-5 shrink-0 text-ink-300" />

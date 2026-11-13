@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Krem tema ve SSS “Neden Academiana?” (D156, 13 Kasım 2026)**
+- Mavi vurgu krem tonlarına çevrildi (açık ve gece modu); SSS’ye 7 soruluk tanıtım grubu (TR/EN/DE)
+
 **Hak dolunca salt okunur (D155, 13 Kasım 2026)**
 - 100 TL indirme hakkı kaldırıldı; herkes paket biçimlerinde ücretsiz indirir. Sayfa/yapay zekâ hakkı dolunca yalnızca görüntüleme, indirme, hesap/KVKK işlemleri ve ücretsiz araçlar (lib/read-only.ts). Kullanım Koşulları değişikliği hukukçuda
 

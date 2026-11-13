@@ -13,6 +13,7 @@ Büyük değişiklik commit’lerinde ve kullanıcı “yedekle” dediğinde bu
 ## Ortam
 - **Canlı:** https://www.academiana.com.tr (Vercel, `fra1`). Ad/adres: `src/lib/site.ts`.
 - **Depo:** github.com/alkntml/Claude, `main`’e push = otomatik yayın.
+- **Yayın izni (13 Kasım 2026, kullanıcı):** “Yayınla dememi bekleme.” Her iş bittiğinde kontroller (tsc, test, lint, gerekiyorsa build) geçerse ayrıca sormadan `main`’e gönder ve kullanıcıya bildir. Veritabanı migration’ını kullanıcı Supabase’de elle çalıştırır (adımları yaz).
 - **Veritabanı:** Supabase, Frankfurt.
 - **Ortam değişkenleri** (yalnızca Vercel; değişince Redeploy): zorunlu `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`; isteğe bağlı `OPENAI_API_KEY`, `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY`, `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`.
 - Bulut oturumunda akademik API’lere (OpenAlex, Crossref…) erişim yok: fixture testleri kullan. Anthropic API ve npm açık. Tünel açmak yasak.

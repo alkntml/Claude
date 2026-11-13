@@ -782,7 +782,7 @@ describe("anketler", () => {
     await db.query(`insert into auth.users (id, email, raw_user_meta_data) values ($1, 'n40@ornek.com', '{}'), ($2, 'l40@ornek.com', '{}')`, [N, L]);
     // Paket: 1 ay, her şey sınırsız
     const plan = (await db.query<{ limits: Record<string, unknown>; features: string[] }>(`select limits, features from public.plans where id = 'single'`)).rows[0];
-    // D158: Sınırsız Kullanım — tek sınır 5 proje
+    // D158: Sınırsız Proje — tek sınır 5 proje
     expect(plan.limits.projects).toBe(5);
     expect(plan.limits.ai_requests_month).toBeNull();
     expect(plan.limits.pages_month).toBeNull();
@@ -791,7 +791,7 @@ describe("anketler", () => {
     expect(plan.limits.cost_usd_month).toBeNull();
     expect(plan.features).toContain("En fazla 5 proje");
     const sp = (await db.query<{ name: string; y: string; m: string }>(`select name, price_yearly as y, price_monthly as m from public.plans where id = 'single'`)).rows[0];
-    expect(sp.name).toBe("Sınırsız Kullanım");
+    expect(sp.name).toBe("Sınırsız Proje");
     expect(Number(sp.y)).toBe(Math.round(Number(sp.m) * 0.8) * 12);
     // Yönetici atar: yeni Tek Proje bitiş tarihli → çalışmaya bağlanmaz, birden çok çalışma açılır ve silinebilir
     await db.query(`update public.profiles set plan_id = 'single', plan_expires_at = now() + interval '30 days', plan_period = 'monthly', plan_started_at = now() where id = $1`, [N]);

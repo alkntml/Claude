@@ -1,6 +1,6 @@
 import type { LegalContent } from "./types";
 
-/** Hukuki metinler (TR). Türkçe metinler PDF’ten (13 Kasım 2026) olduğu gibi alınmıştır; GDPR metni İngilizce aslından çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). */
+/** Hukuki metinler (TR). Türkçe metinler PDF’ten (13 Kasım 2026) olduğu gibi alınmıştır; GDPR metni İngilizce aslından çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). D162: Adil Kullanım Politikası’ndaki “Sınırsız Proje paketi” bölümü ve “İhlal sayılabilecek davranışlar” giriş cümlesi site sahibinin talimatıyla güncellendi (hukukçunun PDF metninden farklıdır). */
 export const CONTENT: LegalContent = {
  "kvkk": [
   {
@@ -226,10 +226,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Tek Proje paketi",
+   "h": "Sınırsız Proje paketi",
    "b": [
     {
-     "p": "Tek Proje paketi, tanımlama sırasında seçilen tek bir akademik çalışma için geçerlidir ve süre sınırı bulunmaz. Sınırsız kullanım yalnızca bu çalışmanın kapsamındaki özellikler için geçerlidir. Çalışma dışındaki yapay zekâ kullanımları (örneğin anket yardımcısı veya konu bulma) aylık Ücretsiz paket düzeyindeki haklarla sınırlıdır. Pakete bağlı çalışma silinemez ve türü değiştirilemez; ikinci bir çalışma açılamaz."
+     "p": "Sınırsız Proje paketi, tanımlandığı tarihten itibaren 1 ay geçerlidir; yıllık ödemede süre 1 yıldır. Bu süre boyunca proje sayısı dışında her şey tamamen sınırsızdır: yapay zekâ kullanımı, sayfa yazımı, kaynak taraması, depolama, ücretsiz araçlar ve tüm özellikler herhangi bir kota uygulanmadan kullanılabilir. Proje sayısı aylık ödemede en fazla 5, yıllık ödemede en fazla 60 aktif projedir. Süre sona erdiğinde paket kendiliğinden yenilenmez ve hesap Ücretsiz pakete geçer; çalışmalar silinmez. Daha önce eski koşullarla (süresiz ve tek bir çalışma için) satın alınmış Tek Proje paketleri, satın alındıkları koşullarla devam eder."
     }
    ]
   },
@@ -237,7 +237,7 @@ export const CONTENT: LegalContent = {
    "h": "İhlal sayılabilecek davranışlar",
    "b": [
     {
-     "p": "Aşağıdaki davranışlar Tek Proje paketinin amacıyla bağdaşmaz: çalışmayı tamamlayıp silerek yeni çalışma başlatmak veya aynı çalışma üzerine yazarak başka bir konu/çalışma üretmek; çalışmanın konusunu esaslı biçimde değiştirmek; paket kapsamında başkaları için çalışma hazırlamak; hesabı başka kişilerle paylaşmak; Tek Proje hakkını birden fazla bağımsız akademik çalışma için kullanmak."
+     "p": "Aşağıdaki davranışlar, eski koşullarla satın alınmış Tek Proje paketinin amacıyla bağdaşmaz: çalışmayı tamamlayıp silerek yeni çalışma başlatmak veya aynı çalışma üzerine yazarak başka bir konu/çalışma üretmek; çalışmanın konusunu esaslı biçimde değiştirmek; paket kapsamında başkaları için çalışma hazırlamak; hesabı başka kişilerle paylaşmak; Tek Proje hakkını birden fazla bağımsız akademik çalışma için kullanmak."
     }
    ]
   },

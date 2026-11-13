@@ -799,3 +799,6 @@ Site sahibinin isteği: `TEAM_DISCOUNT.percent` 30 → 20 (en az 3 kişi aynı).
 
 ## D161 — Sınırsız Kullanım kart açıklaması yıllıkta 60 proje (2026-11-13)
 Paket açıklaması veritabanından gelir (“En fazla 5 proje dışında…”); yıllık görünümde `yearlyDescription` bu paket için “En fazla 60 proje dışında…” gösterir (TR/EN/DE). Veritabanı değişikliği yok.
+
+## D162 — “Sınırsız Proje” adı, ekip indirimi kapsamı, ücretsiz araçlar, Adil Kullanım metni (2026-11-13)
+Site sahibinin isteği: (1) Paketin adı her yerde “Sınırsız Proje” (EN Unlimited Project, DE Projekt Unbegrenzt); migration 41 veritabanındaki adı değiştirir. (2) Akademik Ekip İndirimi yalnızca Basic, Pro, Premium (`TEAM_PLANS`, ekip kartı ve metinler). (3) Sınırsız Proje üyeleri ücretsiz araçları saatlik sınır olmadan kullanır (`hasUnlimitedTools`; consensus, fake-check, lookup). (4) Adil Kullanım Politikası’nda “Tek Proje paketi” bölümü site sahibinin talimatıyla “Sınırsız Proje paketi” olarak yeniden yazıldı: 1 ay geçerli (yıllıkta 1 yıl), proje sayısı (aylıkta 5, yıllıkta 60) dışında her şey ve ücretsiz araçlar tamamen sınırsız; eski Tek Proje satın alımları eski koşullarla sürer. “İhlal sayılabilecek davranışlar” giriş cümlesi eski Tek Proje’ye daraltıldı. TR/EN/DE. Bu bölümler hukukçunun PDF metninden farklıdır; tests/legal.test.ts diğer bölümlerin PDF ile aynı olduğunu denetler.

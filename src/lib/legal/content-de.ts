@@ -226,10 +226,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Tarif „Tek Proje“ (Einzelprojekt)",
+   "h": "Tarif „Sınırsız Proje“ (Projekt Unbegrenzt)",
    "b": [
     {
-     "p": "Der Tarif „Tek Proje“ gilt für eine einzige, bei der Zuweisung ausgewählte wissenschaftliche Arbeit und ist zeitlich unbegrenzt. Die unbegrenzte Nutzung gilt nur für die Funktionen im Rahmen dieser Arbeit. KI-Nutzungen außerhalb der Arbeit (zum Beispiel der Umfrageassistent oder die Themensuche) sind auf monatliche Rechte in Höhe des kostenlosen Tarifs begrenzt. Die an den Tarif gebundene Arbeit kann nicht gelöscht und ihre Art nicht geändert werden; eine zweite Arbeit kann nicht angelegt werden."
+     "p": "Der Tarif „Sınırsız Proje“ (Projekt Unbegrenzt) gilt ab dem Tag der Zuweisung 1 Monat; bei jährlicher Zahlung beträgt die Laufzeit 1 Jahr. In diesem Zeitraum ist außer der Zahl der Projekte alles vollständig unbegrenzt: KI-Nutzung, Seitenentwürfe, Quellensuche, Speicher, die kostenlosen Tools und alle Funktionen können ohne jedes Kontingent genutzt werden. Die Zahl der Projekte beträgt bei monatlicher Zahlung höchstens 5 und bei jährlicher Zahlung höchstens 60 aktive Projekte. Nach Ablauf verlängert sich der Tarif nicht automatisch, und das Konto wechselt in den kostenlosen Tarif; Arbeiten werden nicht gelöscht. Früher zu den bisherigen Bedingungen (unbefristet und für eine einzige Arbeit) erworbene Tarife „Tek Proje“ gelten zu den Bedingungen weiter, zu denen sie erworben wurden."
     }
    ]
   },
@@ -237,7 +237,7 @@ export const CONTENT: LegalContent = {
    "h": "Verhaltensweisen, die einen Verstoß darstellen können",
    "b": [
     {
-     "p": "Folgende Verhaltensweisen sind mit dem Zweck des Tarifs „Tek Proje“ unvereinbar: die Arbeit abzuschließen und zu löschen, um eine neue Arbeit zu beginnen, oder durch Überschreiben derselben Arbeit ein anderes Thema bzw. eine andere Arbeit zu erstellen; das Thema der Arbeit wesentlich zu ändern; im Rahmen des Tarifs Arbeiten für andere zu erstellen; das Konto mit anderen Personen zu teilen; das Recht aus „Tek Proje“ für mehr als eine unabhängige wissenschaftliche Arbeit zu nutzen."
+     "p": "Folgende Verhaltensweisen sind mit dem Zweck eines zu den bisherigen Bedingungen erworbenen Tarifs „Tek Proje“ unvereinbar: die Arbeit abzuschließen und zu löschen, um eine neue Arbeit zu beginnen, oder durch Überschreiben derselben Arbeit ein anderes Thema bzw. eine andere Arbeit zu erstellen; das Thema der Arbeit wesentlich zu ändern; im Rahmen des Tarifs Arbeiten für andere zu erstellen; das Konto mit anderen Personen zu teilen; das Recht aus „Tek Proje“ für mehr als eine unabhängige wissenschaftliche Arbeit zu nutzen."
     }
    ]
   },

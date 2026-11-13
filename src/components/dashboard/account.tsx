@@ -113,7 +113,7 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
         <div className="card mt-4 flex flex-wrap items-center justify-between gap-3 p-5">
           <div className="max-w-2xl">
             <p className="flex items-center gap-2 font-semibold text-ink-900"><Users className="h-4 w-4" /> {t("Akademik Ekip İndirimi: %{p}", { p: TEAM_DISCOUNT.percent })}</p>
-            <p className="mt-1 text-sm text-ink-500">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde tüm ücretli paketlerde %{p} indirim.", { n: TEAM_DISCOUNT.minMembers, p: TEAM_DISCOUNT.percent })}</p>
+            <p className="mt-1 text-sm text-ink-500">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde Basic, Pro ve Premium paketlerde %{p} indirim.", { n: TEAM_DISCOUNT.minMembers, p: TEAM_DISCOUNT.percent })}</p>
           </div>
           <a href={teamHref} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><MessageCircle className="h-4 w-4" /> {t("WhatsApp’tan bilgi al")}</a>
         </div>

@@ -41,3 +41,8 @@ Sınırsız Kullanım’da proje sınırı: **aylık ödemede en fazla 5, yıll�
 
 ## Güncelleme (D160)
 Akademik Ekip İndirimi **%30’dan %20’ye** düşürüldü. Mesafeli Sözleşmeler ve Ön Bilgilendirme → “Paket türleri” bölümündeki “Akademik Ekip İndirimi (%30)” ifadesi %20 olarak güncellenmeli.
+
+## Güncelleme (D162)
+- Paketin adı **Sınırsız Proje** oldu.
+- **Adil Kullanım Politikası** site sahibinin talimatıyla değiştirildi. “Tek Proje paketi” bölümü “Sınırsız Proje paketi” oldu: 1 ay geçerli (yıllıkta 1 yıl); proje sayısı (aylıkta 5, yıllıkta 60) dışında her şey ve ücretsiz araçlar tamamen sınırsız; eski Tek Proje satın alımları eski koşullarla sürer. “İhlal sayılabilecek davranışlar” bölümünün giriş cümlesi yalnızca eski koşullu Tek Proje’yi kapsayacak biçimde daraltıldı. Hukukçunun bu değişikliği gözden geçirmesi gerekir.
+- Akademik Ekip İndirimi yalnızca Basic, Pro ve Premium için geçerli; Mesafeli Sözleşmeler metnindeki ilgili ifade buna göre güncellenmeli.

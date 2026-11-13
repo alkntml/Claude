@@ -1,19 +1,19 @@
 /** Fiyatlandırma ve paket yardımcıları (istemci ve sunucu ortak, saf fonksiyonlar). */
 
-// D158: “Sınırsız Kullanım” (iç kimlik: single) en üst pakettir
+// D158: “Sınırsız Proje” (iç kimlik: single) en üst pakettir
 export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 4 };
 /**
- * Tek ödemeli paketler (fiyat aylık değil tek seferlik). D158: eski “Tek Proje” artık “Sınırsız Kullanım” adıyla
+ * Tek ödemeli paketler (fiyat aylık değil tek seferlik). D158: eski “Tek Proje” artık “Sınırsız Proje” adıyla
  * aylık/yıllık ödenen bir pakettir (iç kimliği “single” kaldı); tek ödemeli paket kalmadı.
  */
 export const ONE_TIME_PLANS = new Set<string>();
-/** D157/D158: Sınırsız Kullanım (single) aylık dönemi (gün) */
+/** D157/D158: Sınırsız Proje (single) aylık dönemi (gün) */
 export const SINGLE_PLAN_DAYS = 30;
-/** D158: Sınırsız Kullanım’da tek sınır: en fazla 5 proje (aylık) */
+/** D158: Sınırsız Proje’de tek sınır: en fazla 5 proje (aylık) */
 export const UNLIMITED_PLAN_PROJECTS = 5;
-/** D159: Sınırsız Kullanım yıllık ödemede en fazla 60 proje */
+/** D159: Sınırsız Proje yıllık ödemede en fazla 60 proje */
 export const UNLIMITED_PLAN_PROJECTS_YEARLY = 60;
-/** Dönemine göre proje sınırı: yalnızca Sınırsız Kullanım (single) yıllıkta 60; diğer paketlerde proje sınırı dönemle değişmez */
+/** Dönemine göre proje sınırı: yalnızca Sınırsız Proje (single) yıllıkta 60; diğer paketlerde proje sınırı dönemle değişmez */
 export function projectLimitFor(planId: string, projects: number | null | undefined, yearly: boolean): number | null | undefined {
   return planId === "single" && yearly && projects != null ? UNLIMITED_PLAN_PROJECTS_YEARLY : projects;
 }
@@ -21,7 +21,7 @@ export function projectLimitFor(planId: string, projects: number | null | undefi
 /* ---------------------------------------------------------------------
  * D157: Aylık / yıllık ödeme. Yıllık ödeme güncel aylık fiyatın %20 indirimlisidir; kullanım hakları düşmez:
  * aylık hakların 12 katı paket başında tek seferde tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır (aylık kısıt yok).
- * Ücretsiz paketin yıllık seçeneği yoktur (D158: Sınırsız Kullanım’ın vardır). Yıllık fiyat indirim kodu / ekip indirimiyle birleştirilmez.
+ * Ücretsiz paketin yıllık seçeneği yoktur (D158: Sınırsız Proje’nin vardır). Yıllık fiyat indirim kodu / ekip indirimiyle birleştirilmez.
  * ------------------------------------------------------------------- */
 export type BillingPeriod = "monthly" | "yearly";
 export const YEARLY_DISCOUNT_PERCENT = 20;
@@ -38,7 +38,7 @@ export function yearlyMonthlyPrice(priceMonthly: number): number {
 export function yearlyTotalPrice(priceMonthly: number): number {
   return yearlyMonthlyPrice(priceMonthly) * 12;
 }
-/** D161: Yıllık görünümde paket açıklaması — Sınırsız Kullanım’da “En fazla 5 proje” yerine yıllık sınır (60) */
+/** D161: Yıllık görünümde paket açıklaması — Sınırsız Proje’de “En fazla 5 proje” yerine yıllık sınır (60) */
 export function yearlyDescription(planId: string, d: string): { key: string; vars?: Record<string, string | number> } {
   if (planId === "single" && d.startsWith("En fazla 5 proje dışında")) return { key: "En fazla {n} proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).", vars: { n: UNLIMITED_PLAN_PROJECTS_YEARLY } };
   return { key: d };
@@ -49,7 +49,7 @@ export function yearlyFeature(f: string): { key: string; vars?: Record<string, s
   if (m) return { key: "Yılda {n} sayfa yapay zekâ destekli akademik metin (12 aylık hak baştan tanımlanır, 1 yıl geçerli)", vars: { n: Number(m[1]) * 12 } };
   m = f.match(/^Aylık (\d+) kaynak taraması$/);
   if (m) return { key: "Yılda {n} kaynak taraması", vars: { n: Number(m[1]) * 12 } };
-  // D159: Sınırsız Kullanım yıllıkta en fazla 60 proje
+  // D159: Sınırsız Proje yıllıkta en fazla 60 proje
   if (f === "En fazla 5 proje") return { key: "En fazla {n} proje", vars: { n: UNLIMITED_PLAN_PROJECTS_YEARLY } };
   return { key: f };
 }
@@ -89,8 +89,12 @@ export const WHATSAPP_NUMBER = "905425266650";
 
 /** Akademik Ekip İndirimi: akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler */
 /** En az 3 kişi; üst sınır yok (kurum lisansında kişi sayısı sınırsız, D70) */
-/** D160: Akademik Ekip İndirimi %20 (önceden %30) */
+/** D160: Akademik Ekip İndirimi %20 (önceden %30). D162: yalnızca Basic, Pro ve Premium (Sınırsız Proje ekip indirimine dâhil değil) */
 export const TEAM_DISCOUNT = { percent: 20, minMembers: 3 } as const;
+export const TEAM_PLANS = ["basic", "pro", "premium"] as const;
+export const isTeamPlan = (id: string) => (TEAM_PLANS as readonly string[]).includes(id);
+/** D162: Sınırsız Proje (single) üyeleri ücretsiz araçları saatlik sınır olmadan kullanır */
+export const hasUnlimitedTools = (planId: string | null | undefined, isAdmin = false) => isAdmin || planId === "single";
 
 export function whatsappLink(text: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;

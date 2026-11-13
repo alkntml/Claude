@@ -23,7 +23,11 @@ const docWords = (sections: LegalSection[]) => sections.map((s) => [s.h, ...s.b.
 describe("hukuki metinler (D154)", () => {
   it("Türkçe metinler (1–6) ve GDPR’ın İngilizce aslı PDF’teki metinle kelimesi kelimesine aynı", () => {
     const all = pdfWords();
-    for (const id of ["kvkk", "terms", "fair_use", "cookies", "integrity", "distance"] as const) expect(all.includes(docWords(TR[id])), id).toBe(true);
+    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) expect(all.includes(docWords(TR[id])), id).toBe(true);
+    // D162: Adil Kullanım’da “Sınırsız Proje paketi” bölümü ve ihlal bölümünün giriş cümlesi site sahibince güncellendi; diğer bölümler PDF ile aynı
+    for (const [i, s] of TR.fair_use.entries()) if (i !== 1 && i !== 2) expect(all.includes(docWords([s])), s.h).toBe(true);
+    const fu = JSON.stringify(TR.fair_use);
+    for (const x of ["Sınırsız Proje paketi", "1 ay geçerlidir", "tamamen sınırsızdır", "ücretsiz araçlar", "en fazla 5", "en fazla 60"]) expect(fu, x).toContain(x);
     expect(all.includes(docWords(EN.gdpr)), "gdpr").toBe(true);
   });
 

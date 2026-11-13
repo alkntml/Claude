@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D162) Supabase SQL Editor’de migration 41’i çalıştır (paket adı “Sınırsız Proje”)
 - [x] (2026-11-13) (D157/D158) Supabase SQL Editor’de migration 40’ı çalıştır (yıllık ödeme + “Sınırsız Kullanım” paketi); kullanıcı “belki değişiklik olur” diye bekletiyor. Çalıştırılana kadar paket kartı eski adı/metni gösterir ve yıllık paket atanamaz
 - [ ] (D157) docs/legal/HUKUKCU_NOTU_D157.md’yi hukukçuya ilet (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler; yıllık ödeme ve yeni Tek Proje)
 - [ ] (D155) docs/legal/HUKUKCU_NOTU_D155.md’yi hukukçuya ilet: Kullanım Koşulları’ndaki “hak dolduğunda … düzenleyebilir” cümlesi yeni salt okunur kuralla çelişiyor; yeni metin gelince sürüm artırılıp yayımlanacak. Hukukçunun yeni metni gelmeden main’e alınmamalı

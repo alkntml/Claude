@@ -21,7 +21,7 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(hasYearlyOption("basic", 749)).toBe(true);
     expect(hasYearlyOption("premium", 2249)).toBe(true);
     expect(hasYearlyOption("free", 0)).toBe(false);
-    // D158: Sınırsız Kullanım (single) aylık/yıllık ödenir
+    // D158: Sınırsız Proje (single) aylık/yıllık ödenir
     expect(hasYearlyOption("single", 3999)).toBe(true);
     expect(yearlyMonthlyPrice(3999)).toBe(3199);
     expect(yearlyTotalPrice(3999)).toBe(38388);
@@ -32,7 +32,7 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(scaleForPeriod(l, false)).toEqual(l);
     expect(scaleForPeriod(l, true)).toEqual({ ...l, pages_month: 300, ai_requests_month: 3600, tokens_month: 9600000, source_searches_month: 1200, cost_usd_month: 54 });
     expect(scaleForPeriod({ ...l, pages_month: null, source_searches_month: null }, true)).toMatchObject({ pages_month: null, source_searches_month: null });
-    // D159: proje sınırı yalnızca Sınırsız Kullanım’da ve yalnızca yıllıkta değişir (5 → 60)
+    // D159: proje sınırı yalnızca Sınırsız Proje’de ve yalnızca yıllıkta değişir (5 → 60)
     const unl = { pages_month: null, ai_requests_month: null, projects: 5 };
     expect(scaleForPeriod(unl, true, "single").projects).toBe(60);
     expect(scaleForPeriod(unl, false, "single").projects).toBe(5);
@@ -58,7 +58,7 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(yearlyFeature("Ayda 25 sayfa yapay zekâ destekli akademik metin (ör. 1 makale veya tezin 2–3 bölümü)")).toMatchObject({ vars: { n: 300 } });
     expect(yearlyFeature("Aylık 100 kaynak taraması")).toMatchObject({ key: "Yılda {n} kaynak taraması", vars: { n: 1200 } });
     expect(yearlyFeature("Word dışa aktarma")).toEqual({ key: "Word dışa aktarma" });
-    // D159: Sınırsız Kullanım yıllıkta 60 proje
+    // D159: Sınırsız Proje yıllıkta 60 proje
     expect(yearlyFeature("En fazla 5 proje")).toEqual({ key: "En fazla {n} proje", vars: { n: 60 } });
     // D161: kart açıklaması da yıllıkta 60 proje der
     const desc = FALLBACK_PLANS.find((p) => p.id === "single")!.description;
@@ -66,15 +66,15 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(yearlyDescription("pro", "Gelişmiş araştırma")).toEqual({ key: "Gelişmiş araştırma" });
   });
 
-  it("Sınırsız Kullanım: 5 proje dışında her şey sınırsız, aylık 30 gün; tek çalışma kuralları yalnızca eski (süresiz) Tek Proje’de", () => {
+  it("Sınırsız Proje: 5 proje dışında her şey sınırsız, aylık 30 gün; tek çalışma kuralları yalnızca eski (süresiz) Tek Proje’de", () => {
     expect(SINGLE_PLAN_DAYS).toBe(30);
     expect(UNLIMITED_PLAN_PROJECTS).toBe(5);
     expect(isOneTimePlan("single")).toBe(false);
     expect(PLAN_RANK.single).toBeGreaterThan(PLAN_RANK.premium);
-    expect(PLAN_NAME.single).toBe("Sınırsız Kullanım");
+    expect(PLAN_NAME.single).toBe("Sınırsız Proje");
     expect(hasFeature("single", "coauthors")).toBe(true);
     const single = FALLBACK_PLANS.find((p) => p.id === "single")!;
-    expect(single.name).toBe("Sınırsız Kullanım");
+    expect(single.name).toBe("Sınırsız Proje");
     expect(single.features).toContain("En fazla 5 proje");
     expect(single.features).toContain("Ortak yazarlarla birlikte yazım");
     expect(isLegacySingle({ plan_id: "single", plan_expires_at: null })).toBe(true);

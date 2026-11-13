@@ -5,7 +5,7 @@ import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
 import type { PlanLike } from "@/lib/plans-fallback";
 import { usePrice } from "@/components/price-context";
-import { discounted, TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyFeature, yearlyDescription, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
+import { discounted, isTeamPlan, TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyFeature, yearlyDescription, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
 import { useState } from "react";
 import { PeriodToggle } from "@/components/pricing/period-toggle";
 
@@ -157,7 +157,8 @@ export function PricingCards({ plans, signedIn }: { plans: PlanLike[]; signedIn:
 function TeamCard({ plans }: { plans: PlanLike[] }) {
   const { t } = useT();
   const price = usePrice();
-  const paid = plans.filter((p) => Number(p.price_monthly) > 0 && !isOneTimePlan(p.id));
+  // D162: Akademik Ekip yalnızca Basic, Pro ve Premium içindir
+  const paid = plans.filter((p) => Number(p.price_monthly) > 0 && isTeamPlan(p.id));
   const href = whatsappLink(t("Merhaba, Academiana Akademik Ekip paketi (%{p} indirim) için teklif almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket (Basic / Pro / Premium): ", { p: TEAM_DISCOUNT.percent }));
   const features = [
     t("En az {n} kişi; kişi sayısında üst sınır yok", { n: TEAM_DISCOUNT.minMembers }),

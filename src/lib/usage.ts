@@ -82,7 +82,7 @@ export async function usagePeriod(userId: string): Promise<UsagePeriod> {
 /** Yıllık dönemde aylık haklar 12 katı (sayfa, yapay zekâ isteği, token, tarama, maliyet tavanı); proje ve depolama değişmez */
 export function scaleForPeriod(l: PlanLimits, yearly: boolean, planId?: string): PlanLimits {
   if (!yearly) return l;
-  // D159: Sınırsız Kullanım (single) yıllıkta en fazla 60 proje
+  // D159: Sınırsız Proje (single) yıllıkta en fazla 60 proje
   if (planId) l = { ...l, projects: projectLimitFor(planId, l.projects, true) };
   const x = (v: number | null | undefined) => (v == null ? v : v * 12);
   return { ...l, pages_month: x(l.pages_month), ai_requests_month: x(l.ai_requests_month), tokens_month: x(l.tokens_month), source_searches_month: x(l.source_searches_month), cost_usd_month: l.cost_usd_month == null ? l.cost_usd_month : Math.round(l.cost_usd_month * 12 * 100) / 100 };
@@ -297,7 +297,7 @@ export async function assertWithinLimits(userId: string, planId: string, kind: U
 export async function assertProjectQuota(userId: string, planId: string) {
   if (await isAdminUser(userId).catch(() => false)) return;
   const [base, usage, period] = await Promise.all([planLimits(planId), usageSummary(userId), usagePeriod(userId)]);
-  // D159: proje sınırı ödeme dönemine göre (Sınırsız Kullanım yıllıkta 60)
+  // D159: proje sınırı ödeme dönemine göre (Sınırsız Proje yıllıkta 60)
   const limits = { ...base, projects: projectLimitFor(planId, base.projects, period.yearly) };
   if (limits.projects != null && usage.projects >= limits.projects) throw new ApiError(402, `Paketiniz en fazla ${limits.projects} aktif projeye izin veriyor.`, "limit_projects");
 }

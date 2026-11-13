@@ -1926,7 +1926,7 @@ export const EN: Record<string, string> = {
   "Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} ({price}/ay)\nÜye no: {no}\nHesap e-postam: {email}": "Hello, I would like to upgrade my Academiana plan.\nCurrent plan: {current}\nPlan I want: {target} ({price}/month)\nMember no: {no}\nAccount e-mail: {email}",
   "Limitler yapay zekâ istekleri, kaynak taramaları, proje sayısı ve depolama üzerinden belirlenir. Taahhüt yok; ücretsiz paketle başlayıp istediğiniz zaman yükseltebilirsiniz.": "Limits are based on AI requests, source searches, number of projects and storage. No commitment: start free and upgrade whenever you like.",
   "Akademik Ekip İndirimi: %{p}": "Academic Team Discount: {p}%",
-  "Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde tüm ücretli paketlerde %{p} indirim.": "For faculty groups, research teams, labs and departments: {p}% off all paid plans for teams of at least {n} people.",
+  "Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde Basic, Pro ve Premium paketlerde %{p} indirim.": "For faculty groups, research teams, labs and departments: {p}% off the Basic, Pro and Premium plans for teams of at least {n} people.",
   "WhatsApp’tan bilgi al →": "Ask on WhatsApp →",
   "WhatsApp’tan bilgi al": "Ask on WhatsApp",
   "WhatsApp:": "WhatsApp:",
@@ -3818,10 +3818,10 @@ export const EN: Record<string, string> = {
   "Sınırsız çalışma (tez, makale, proje önerisi…)": "Unlimited works (thesis, article, proposal…)",
   "Sınırsız yapay zekâ kullanımı ve sayfa (adil kullanım)": "Unlimited AI use and pages (fair use)",
   "1 ay boyunca her şey sınırsız: tek ödeme, sınırsız çalışma, adil kullanımla sınırsız yapay zekâ ve kaynak taraması.": "Everything unlimited for 1 month: one-time payment, unlimited works, unlimited AI and source searches under fair use.",
-  // D158: Sınırsız Kullanım paketi
-  "Sınırsız Kullanım": "Unlimited",
-  "Sınırsız Kullanım maliyet uyarısı": "Unlimited plan cost alert",
-  "Kötüye kullanım uyarısı (Sınırsız Kullanım)": "Abuse alert (Unlimited)",
+  // D158: Sınırsız Proje paketi
+  "Sınırsız Proje": "Unlimited Project",
+  "Sınırsız Proje maliyet uyarısı": "Unlimited Project cost alert",
+  "Kötüye kullanım uyarısı (Sınırsız Proje)": "Abuse alert (Unlimited Project)",
   "Sınırsız sayfa yazımı (adil kullanım)": "Unlimited page drafting (fair use)",
   "En fazla 5 proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Everything unlimited except a maximum of 5 projects: AI, page drafting, source searches, storage and every feature (fair use).",
   "Premium paketteki her şey": "Everything in Premium",

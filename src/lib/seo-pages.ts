@@ -134,10 +134,10 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   "/adil-kullanim": {
     title: { tr: "Adil Kullanım Politikası | Academiana", en: "Fair Use Policy | Academiana", de: "Richtlinie zur fairen Nutzung | Academiana" },
     description: {
-      tr: "“Sınırsız” ne demek? Tek Proje paketinin kuralları, kötüye kullanım sinyalleri, insan incelemesi, itiraz ve davet programına ilişkin adil kullanım ilkeleri.",
-      en: "What “unlimited” means: Single Project plan rules, abuse signals, human review, objections and the referral programme under our fair use principles.", de: "Was „unbegrenzt“ bedeutet: Regeln des Tarifs „Tek Proje“, Missbrauchssignale, menschliche Prüfung, Einspruch und Einladungsprogramm.",
+      tr: "“Sınırsız” ne demek? Sınırsız Proje paketinin kuralları, kötüye kullanım sinyalleri, insan incelemesi, itiraz ve davet programına dair adil kullanım ilkeleri.",
+      en: "What “unlimited” means: Unlimited Project plan rules, abuse signals, human review, objections and the referral programme under our fair use principles.", de: "Was „unbegrenzt“ bedeutet: Regeln des Tarifs „Sınırsız Proje“, Missbrauchssignale, menschliche Prüfung, Einspruch und Einladungsprogramm.",
     },
-    keywords: { tr: ["adil kullanım politikası", "sınırsız kullanım", "Tek Proje paketi"], en: ["fair use policy", "unlimited plan fair use"], de: ["Fair-Use-Richtlinie", "faire Nutzung"] },
+    keywords: { tr: ["adil kullanım politikası", "sınırsız kullanım", "Sınırsız Proje paketi"], en: ["fair use policy", "unlimited plan fair use"], de: ["Fair-Use-Richtlinie", "faire Nutzung"] },
   },
   "/cerez-politikasi": {
     title: { tr: "Çerez ve Cihaz Tanımlayıcıları Politikası | Academiana", en: "Cookie and Device Identifier Policy | Academiana", de: "Cookies und Gerätekennungen | Academiana" },

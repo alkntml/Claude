@@ -226,10 +226,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Single Project plan",
+   "h": "Unlimited Project plan",
    "b": [
     {
-     "p": "The Single Project plan is valid for a single academic work selected at the time of assignment and has no time limit. Unlimited use applies only to the features within the scope of this work. AI uses outside the work (for example the survey assistant or topic finder) are limited to monthly rights at the level of the Free plan. The work bound to the plan cannot be deleted and its type cannot be changed; a second work cannot be opened."
+     "p": "The Unlimited Project plan is valid for 1 month from the date it is assigned; with annual payment the period is 1 year. During this period everything except the number of projects is completely unlimited: AI use, page drafting, source searches, storage, the free tools and all features can be used without any quota. The number of projects is at most 5 active projects with monthly payment and at most 60 with annual payment. When the period ends, the plan does not renew automatically and the account moves to the Free plan; works are not deleted. Single Project plans previously purchased under the earlier terms (open-ended and for a single work) continue under the terms on which they were purchased."
     }
    ]
   },
@@ -237,7 +237,7 @@ export const CONTENT: LegalContent = {
    "h": "Behaviours that may constitute a breach",
    "b": [
     {
-     "p": "The following behaviours are incompatible with the purpose of the Single Project plan: completing the work and deleting it to start a new work, or producing another topic/work by writing over the same work; substantially changing the topic of the work; preparing works for others within the plan; sharing the account with other people; using the Single Project right for more than one independent academic work."
+     "p": "The following behaviours are incompatible with the purpose of a Single Project plan purchased under the earlier terms: completing the work and deleting it to start a new work, or producing another topic/work by writing over the same work; substantially changing the topic of the work; preparing works for others within the plan; sharing the account with other people; using the Single Project right for more than one independent academic work."
     }
    ]
   },

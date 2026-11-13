@@ -72,7 +72,9 @@ union all select '39 Hukuki belge kabul kayıtları',
   case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'legal_acceptances')
         and exists (select 1 from pg_trigger where tgname = 'on_auth_user_legal')
        then 'YAPILMIŞ' else 'EKSİK' end
-union all select '40 Yıllık ödeme ve Sınırsız Kullanım paketi',
+union all select '40 Yıllık ödeme ve Sınırsız Proje paketi',
   case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'profiles' and column_name = 'plan_period')
-        and exists (select 1 from public.plans where id = 'single' and name = 'Sınırsız Kullanım' and limits->>'projects' = '5')
-       then 'YAPILMIŞ' else 'EKSİK' end;
+        and exists (select 1 from public.plans where id = 'single' and limits->>'projects' = '5')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '41 Paket adı: Sınırsız Proje',
+  case when exists (select 1 from public.plans where id = 'single' and name = 'Sınırsız Proje') then 'YAPILMIŞ' else 'EKSİK' end;

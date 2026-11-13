@@ -1927,7 +1927,7 @@ export const DE: Dict = {
   "Merhaba, Academiana’da paketimi yükseltmek istiyorum.\nMevcut paketim: {current}\nGeçmek istediğim paket: {target} ({price}/ay)\nÜye no: {no}\nHesap e-postam: {email}": "Hallo, ich möchte meinen Academiana-Tarif upgraden.\nAktueller Tarif: {current}\nGewünschter Tarif: {target} ({price}/Monat)\nMitgliedsnummer: {no}\nE-Mail-Adresse des Kontos: {email}",
   "Limitler yapay zekâ istekleri, kaynak taramaları, proje sayısı ve depolama üzerinden belirlenir. Taahhüt yok; ücretsiz paketle başlayıp istediğiniz zaman yükseltebilirsiniz.": "Die Limits richten sich nach KI-Anfragen, Quellensuchen, Anzahl der Projekte und Speicherplatz. Keine Vertragsbindung: Starten Sie kostenlos und upgraden Sie, wann Sie möchten.",
   "Akademik Ekip İndirimi: %{p}": "Rabatt für akademische Teams: {p} %",
-  "Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde tüm ücretli paketlerde %{p} indirim.": "Für Lehrstuhlgruppen, Forschungsteams, Labore und Fachbereiche: {p} % Rabatt auf alle kostenpflichtigen Tarife für Teams ab {n} Personen.",
+  "Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde Basic, Pro ve Premium paketlerde %{p} indirim.": "Für Lehrstuhlgruppen, Forschungsteams, Labore und Fachbereiche: {p} % Rabatt auf die Tarife Basic, Pro und Premium für Teams ab {n} Personen.",
   "WhatsApp’tan bilgi al →": "Per WhatsApp anfragen →",
   "WhatsApp’tan bilgi al": "Per WhatsApp anfragen",
   "WhatsApp:": "WhatsApp:",
@@ -3810,10 +3810,10 @@ export const DE: Dict = {
   "Sınırsız çalışma (tez, makale, proje önerisi…)": "Unbegrenzt viele Arbeiten (Abschlussarbeit, Artikel, Exposé …)",
   "Sınırsız yapay zekâ kullanımı ve sayfa (adil kullanım)": "Unbegrenzte KI-Nutzung und Seiten (Fair Use)",
   "1 ay boyunca her şey sınırsız: tek ödeme, sınırsız çalışma, adil kullanımla sınırsız yapay zekâ ve kaynak taraması.": "Einen Monat lang alles unbegrenzt: Einmalzahlung, unbegrenzt viele Arbeiten, unbegrenzte KI und Quellensuche im Rahmen der fairen Nutzung.",
-  // D158: Sınırsız Kullanım paketi
-  "Sınırsız Kullanım": "Unbegrenzt",
-  "Sınırsız Kullanım maliyet uyarısı": "Kostenwarnung Tarif Unbegrenzt",
-  "Kötüye kullanım uyarısı (Sınırsız Kullanım)": "Missbrauchswarnung (Unbegrenzt)",
+  // D158: Sınırsız Proje paketi
+  "Sınırsız Proje": "Projekt Unbegrenzt",
+  "Sınırsız Proje maliyet uyarısı": "Kostenwarnung Tarif Projekt Unbegrenzt",
+  "Kötüye kullanım uyarısı (Sınırsız Proje)": "Missbrauchswarnung (Projekt Unbegrenzt)",
   "Sınırsız sayfa yazımı (adil kullanım)": "Unbegrenzte Seitenentwürfe (Fair Use)",
   "En fazla 5 proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Alles unbegrenzt außer höchstens 5 Projekten: KI, Seitenentwürfe, Quellensuche, Speicher und alle Funktionen (Fair Use).",
   "Premium paketteki her şey": "Alles aus Premium",

@@ -26,7 +26,7 @@ export default async function Institutions() {
     <StaticPage path="/kurumlar" title={t("Kurumlar için Academiana")} lead={t("Üniversiteler, enstitüler ve araştırma grupları için toplu lisans.")}>
       <div className="card mb-4 border-brand-200 bg-brand-50/60 p-5">
         <p className="font-semibold text-ink-900">{t("Akademik Ekip İndirimi: %{p}", { p: TEAM_DISCOUNT.percent })}</p>
-        <p className="mt-1 text-[14.5px] text-ink-600">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde tüm ücretli paketlerde %{p} indirim.", { n: TEAM_DISCOUNT.minMembers, p: TEAM_DISCOUNT.percent })}</p>
+        <p className="mt-1 text-[14.5px] text-ink-600">{t("Akademisyen grupları, araştırma ekipleri, laboratuvarlar ve bölümler için: en az {n} kişilik ekiplerde Basic, Pro ve Premium paketlerde %{p} indirim.", { n: TEAM_DISCOUNT.minMembers, p: TEAM_DISCOUNT.percent })}</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {items.map(([h, b]) => <div key={h} className="card p-5"><p className="font-semibold text-ink-900">{t(h)}</p><p className="mt-1 text-[14.5px] text-ink-600">{t(b)}</p></div>)}

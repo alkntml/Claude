@@ -115,7 +115,7 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
       ...(b.pages ? [{ user_id: id, kind: "pages", amount: b.pages, reason: `admin:${b.note}`.slice(0, 200), expires_at: expires }] : []),
     ];
     if (!rows.length) throw new ApiError(422, "En az bir hak miktarı girin");
-    const { error } = await db.from("usage_credits").insert(rows);
+    const { error } = await db.from("usage_credits").insert(rows, { defaultToNull: false });
     if (error) throw error;
   }
   if (b.action === "notify") {

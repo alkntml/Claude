@@ -46,6 +46,6 @@ export function acceptanceSource(user: Session["user"]): AcceptanceSource {
 export async function recordLegal(userId: string, items: { doc: LegalDocId; kind: "accept" | "notice" }[], source: AcceptanceSource, context: Record<string, string> = {}): Promise<void> {
   if (!items.length) return;
   const rows = items.map((i) => ({ user_id: userId, doc: i.doc, version: legalDoc(i.doc).version, kind: i.kind, source, context }));
-  const { error } = await adminClient().from("legal_acceptances").insert(rows);
+  const { error } = await adminClient().from("legal_acceptances").insert(rows, { defaultToNull: false });
   if (error) throw error;
 }

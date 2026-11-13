@@ -318,7 +318,7 @@ export const POST = route("ai.chat", async (req) => {
         if (stopReason === "refusal" && !answer) answer = T("Bu istek güvenlik nedeniyle yanıtlanamadı. Lütfen isteğinizi farklı ifade edin.");
         const memory = extractMemory(answer);
         if (memory.length) {
-          await acc.db.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: acc.ownerId, kind: m.kind, content: m.content, source: "ai" })));
+          await acc.db.from("project_memory").insert(memory.map((m) => ({ project_id: b.projectId, user_id: acc.ownerId, kind: m.kind, content: m.content, source: "ai" })), { defaultToNull: false });
         }
         const cost = await estimateCost(servedModel, usage.input, usage.output, usage);
         usageRecorded = true;

@@ -1,4 +1,5 @@
 import "server-only";
+import { ApiError, logError } from "@/lib/api";
 import { pick, type Locale } from "@/i18n/core";
 import { translate } from "@/i18n";
 import type { Session } from "@/lib/auth";
@@ -106,7 +107,9 @@ export async function createProject(s: Session, body: CreateInput, uiLocale: Loc
   const { error: stErr } = await insertStageRows(s.supabase, rows);
   if (stErr) {
     await s.supabase.from("projects").delete().eq("id", project.id);
-    throw stErr;
+    // Teknik ayrıntı hata kaydına yazılır; kullanıcıya anlaşılır mesaj gider (yarım çalışma kalmaz)
+    await logError("project.create.stages", new Error(`${stErr.code ?? ""} ${stErr.message ?? ""}`.trim()), s.user.id);
+    throw new ApiError(500, "Çalışmanın bölümleri oluşturulamadı. Lütfen tekrar deneyin; sorun sürerse Geri bildirim ile bize yazın.");
   }
   // D173: ortak proje hafızası — kullanıcının bildiği araştırma soruları (onaylı bilgi olarak)
   if (body.researchQuestions?.trim()) {

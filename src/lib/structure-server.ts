@@ -30,8 +30,8 @@ export async function logStructureChange(projectId: string, userId: string, acti
 
 /** Bölüm satırlarını ekler; migration 43 öncesinde yeni sütunlar yoksa onlarsız yeniden dener */
 export async function insertStageRows(db: SupabaseClient, rows: Record<string, unknown>[]) {
-  const r = await db.from("project_stages").insert(rows).select();
-  if (isMissingColumn(r.error)) return db.from("project_stages").insert(rows.map(withoutNewColumns)).select();
+  const r = await db.from("project_stages").insert(rows, { defaultToNull: false }).select();
+  if (isMissingColumn(r.error)) return db.from("project_stages").insert(rows.map(withoutNewColumns), { defaultToNull: false }).select();
   return r;
 }
 

@@ -4556,4 +4556,5 @@ export const DE: Dict = {
   "Bu çalışma türü ve yaklaşım için varsayılan olarak gerekmez; isterseniz ekleyebilirsiniz.": "Für diese Arbeitsart und diesen Ansatz standardmäßig nicht erforderlich; Sie können es bei Bedarf hinzufügen.",
   "Veriye dayalı makalede konu bölümleri yerine Yöntem, Bulgular ve Tartışma kullanılır.": "Ein datenbasierter Artikel verwendet statt thematischer Kapitel Methode, Ergebnisse und Diskussion.",
   "Araştırma önerisinde veri henüz toplanmadığından gerçek bulgu ve tamamlanmış tartışma yer almaz.": "Da in einem Forschungsexposé noch keine Daten erhoben wurden, enthält es keine echten Ergebnisse und keine abgeschlossene Diskussion.",
+  "Çalışmanın bölümleri oluşturulamadı. Lütfen tekrar deneyin; sorun sürerse Geri bildirim ile bize yazın.": "Die Kapitel der Arbeit konnten nicht angelegt werden. Bitte versuchen Sie es erneut; falls das Problem bleibt, schreiben Sie uns über Feedback.",
 };

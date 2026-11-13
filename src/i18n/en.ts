@@ -4564,4 +4564,5 @@ export const EN: Record<string, string> = {
   "Bu çalışma türü ve yaklaşım için varsayılan olarak gerekmez; isterseniz ekleyebilirsiniz.": "Not required by default for this type of work and approach; you can add it if you wish.",
   "Veriye dayalı makalede konu bölümleri yerine Yöntem, Bulgular ve Tartışma kullanılır.": "A data-based article uses Methods, Results and Discussion instead of topical sections.",
   "Araştırma önerisinde veri henüz toplanmadığından gerçek bulgu ve tamamlanmış tartışma yer almaz.": "As no data have been collected yet in a research proposal, it contains no real findings or completed discussion.",
+  "Çalışmanın bölümleri oluşturulamadı. Lütfen tekrar deneyin; sorun sürerse Geri bildirim ile bize yazın.": "The sections of the work could not be created. Please try again; if the problem persists, write to us via Feedback.",
 };

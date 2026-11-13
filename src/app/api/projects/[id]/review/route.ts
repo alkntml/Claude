@@ -78,7 +78,7 @@ export const POST = route<Ctx>("review.add", async (req, { params }) => {
     const dup = exact || !!near;
     return { project_id: id, user_id: acc.ownerId, key: key.slice(0, 600), origin: b.origin, stage: dup ? "duplicate" : "identified", reason: near ? "Olası yinelenen (benzer başlık ve yıl)" : null, record: r, decided_by: null };
   });
-  const { error } = await serverDb().from("review_records").insert(rows);
+  const { error } = await serverDb().from("review_records").insert(rows, { defaultToNull: false });
   if (error) throw error;
   if (b.search) {
     const proto = { ...EMPTY_PROTOCOL, ...(acc.project.context?.review ?? {}) };

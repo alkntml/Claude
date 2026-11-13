@@ -154,3 +154,15 @@ describe("4.1 ön sayfalar: tablo ve şekil listeleri dışa aktarmada", () => {
     expect(tex).toContain("\\label{lot:1}");
   });
 });
+
+describe("bölümlerin toplu eklenmesi (araştırma makalesi oluşturma hatası)", () => {
+  it("eksik alanlar NULL değil veritabanı varsayılanıyla eklenir (defaultToNull: false)", async () => {
+    const { insertStageRows } = await import("@/lib/structure-server");
+    const calls: { rows: unknown; opts: unknown }[] = [];
+    const db = { from: () => ({ insert: (rows: unknown, opts: unknown) => { calls.push({ rows, opts }); return { select: async () => ({ data: [], error: null }) }; } }) };
+    // Araştırma makalesinde “Ek materyal”in gerekçesi var, “Beyanlar” kritik değil: satırların alanları farklı
+    const rows = [{ key: "title_abstract", critical: true, why: "x" }, { key: "declarations", requirement: "conditional" }];
+    await insertStageRows(db as never, rows);
+    expect(calls[0].opts).toEqual({ defaultToNull: false });
+  });
+});

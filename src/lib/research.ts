@@ -85,7 +85,7 @@ export async function addSourcesToProject(db: SupabaseClient, projectId: string,
       return { ...row, ...filled, project_id: projectId, user_id: userId, verified: v.status === "verified", verification: { ...("verification" in row ? (row as any).verification : {}), ...vMeta } };
   });
   if (!rows.length) return { sources: [] as any[], skipped: inputs.length, openAccess: [] as any[] };
-  const { data, error } = await db.from("sources").insert(rows).select();
+  const { data, error } = await db.from("sources").insert(rows, { defaultToNull: false }).select();
   if (error) throw error;
   const oa = (data ?? []).filter(hasOpenAccessCandidate).slice(0, 10);
   if (oa.length) {

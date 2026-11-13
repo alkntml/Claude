@@ -13,10 +13,10 @@ export async function insertChunks(db: SupabaseClient, rows: Record<string, any>
   let withSection = true;
   for (let k = 0; k < rows.length; k += 200) {
     const slice = rows.slice(k, k + 200);
-    let { error } = await db.from("source_chunks").insert(withSection ? slice : slice.map(stripSection));
+    let { error } = await db.from("source_chunks").insert(withSection ? slice : slice.map(stripSection), { defaultToNull: false });
     if (error && withSection && isMissingColumn(error)) {
       withSection = false;
-      ({ error } = await db.from("source_chunks").insert(slice.map(stripSection)));
+      ({ error } = await db.from("source_chunks").insert(slice.map(stripSection), { defaultToNull: false }));
     }
     if (error) throw error;
   }

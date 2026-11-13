@@ -131,7 +131,7 @@ export const CONTENT: LegalContent = {
    "h": "Paketler, ücretler ve kullanım hakları",
    "b": [
     {
-     "p": "Platformda Ücretsiz paket, aylık ücretli paketler, tek seferlik Tek Proje paketi ve kurum lisansı sunulabilir. Paketlerin kapsamı, fiyatı, süresi, kullanım limitleri ve indirme hakları satın alma veya paket tanımlama öncesinde kullanıcıya bildirilen güncel paket açıklamasına göre belirlenir. Aylık kullanım hakları; yapay zekâ kullanımı, kaynak tarama ve yapay zekâ ile oluşturulan sayfa sayısı üzerinden hesaplanabilir. Sayfa hesabında 1 sayfa 344 kelime olarak kabul edilir. Hak dolduğunda yalnızca ilgili özellik durur; çalışma silinmez veya kilitlenmez. Kullanıcı çalışmasını görüntüleyebilir, düzenleyebilir ve paketin izin verdiği biçimlerde indirebilir. Yapay zekâ tarafından üretilen metin sonradan silinse dahi ilgili kullanım hakkı geri yüklenmez."
+     "p": "Platformda Ücretsiz paket, aylık veya yıllık ödenen ücretli paketler (Basic, Pro, Premium ve Sınırsız Proje) ve kurum lisansı sunulabilir. Paketlerin kapsamı, fiyatı, süresi, kullanım limitleri ve indirme hakları satın alma veya paket tanımlama öncesinde kullanıcıya bildirilen güncel paket açıklamasına göre belirlenir. Aylık kullanım hakları; yapay zekâ kullanımı, kaynak tarama ve yapay zekâ ile oluşturulan sayfa sayısı üzerinden hesaplanabilir. Sayfa hesabında 1 sayfa 344 kelime olarak kabul edilir. Hak dolduğunda yalnızca ilgili özellik durur; çalışma silinmez veya kilitlenmez. Kullanıcı çalışmasını görüntüleyebilir, düzenleyebilir ve paketin izin verdiği biçimlerde indirebilir. Yapay zekâ tarafından üretilen metin sonradan silinse dahi ilgili kullanım hakkı geri yüklenmez."
     }
    ]
   },
@@ -449,7 +449,7 @@ export const CONTENT: LegalContent = {
    "h": "Paket türleri",
    "b": [
     {
-     "p": "Platformda Ücretsiz paket, aylık ücretli paketler, tek seferlik ve tek bir çalışma için süresiz Tek Proje paketi ve kurum lisansı bulunabilir. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim kodları, davet programı ödülleri ve en az üç kişilik Akademik Ekip İndirimi (%30) uygulanabilir. İndirimin kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilir."
+     "p": "Platformda Ücretsiz paket, aylık veya yıllık ödenen ücretli paketler (Basic, Pro, Premium ve Sınırsız Proje) ve kurum lisansı bulunabilir. Yıllık ödemede aylık fiyata %20 indirim uygulanır; aylık hakların 12 katı paket başında tanımlanır ve 1 yıl içinde kullanılır. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim kodları, davet programı ödülleri ve Basic, Pro ve Premium paketlerde en az üç kişilik Akademik Ekip İndirimi (%20) uygulanabilir. İndirimin kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilir."
     }
    ]
   },
@@ -462,10 +462,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Aylık paketlerin yenilenmesi",
+   "h": "Paketlerin yenilenmesi",
    "b": [
     {
-     "p": "Aylık paketlerde otomatik yenileme bulunmamaktadır. Dönem sonunda devam etmek isteyen kullanıcı yenilemeyi kendisi başlatır. Kullanıcıdan ayrıca onay alınmadan yeni dönem ücreti tahsil edilmez."
+     "p": "Aylık ve yıllık paketlerde otomatik yenileme bulunmamaktadır. Dönem sonunda devam etmek isteyen kullanıcı yenilemeyi kendisi başlatır. Kullanıcıdan ayrıca onay alınmadan yeni dönem ücreti tahsil edilmez."
     }
    ]
   },
@@ -486,10 +486,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Tek Proje paketi",
+   "h": "Sınırsız Proje paketi",
    "b": [
     {
-     "p": "Tek Proje paketi, tanımlama sırasında seçilen tek bir çalışma için geçerlidir ve süre sınırı bulunmaz. Paketin çalışma dışındaki yapay zekâ kullanımı, çalışma silme/değiştirme ve ikinci çalışma açma bakımından sınırlamaları Adil Kullanım Politikası'nda açıklanır. Kullanıcı satın almadan önce bu sınırlamaları incelemelidir."
+     "p": "Sınırsız Proje paketi, aylık ödemede tanımlandığı tarihten itibaren 1 ay, yıllık ödemede 1 yıl geçerlidir. Bu süre boyunca proje sayısı dışında her şey sınırsızdır; proje sayısı aylık ödemede en fazla 5, yıllık ödemede en fazla 60'tır. Ayrıntılar Adil Kullanım Politikası'nda açıklanır. Daha önce eski koşullarla satın alınmış Tek Proje paketleri, satın alındıkları koşullarla devam eder. Kullanıcı satın almadan önce bu sınırlamaları incelemelidir."
     }
    ]
   },

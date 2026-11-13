@@ -131,7 +131,7 @@ export const CONTENT: LegalContent = {
    "h": "Tarife, Entgelte und Nutzungsrechte",
    "b": [
     {
-     "p": "Auf der Plattform können ein kostenloser Tarif, monatliche kostenpflichtige Tarife, ein einmaliger Tarif „Tek Proje“ (Einzelprojekt) und eine institutionelle Lizenz angeboten werden. Umfang, Preis, Dauer, Nutzungsgrenzen und Download-Rechte der Tarife richten sich nach der aktuellen Tarifbeschreibung, die der Nutzerin bzw. dem Nutzer vor dem Kauf oder der Tarifzuweisung mitgeteilt wird. Monatliche Nutzungsrechte können anhand der KI-Nutzung, der Quellenrecherchen und der Anzahl der mit KI erstellten Seiten berechnet werden. Bei der Seitenberechnung gilt 1 Seite als 344 Wörter. Ist ein Kontingent aufgebraucht, stoppt nur die betreffende Funktion; die Arbeit wird weder gelöscht noch gesperrt. Die Nutzerin bzw. der Nutzer kann die Arbeit ansehen, bearbeiten und in den vom Tarif erlaubten Formaten herunterladen. Auch wenn der von der KI erzeugte Text später gelöscht wird, wird das entsprechende Nutzungsrecht nicht wiederhergestellt."
+     "p": "Auf der Plattform können ein kostenloser Tarif, monatlich oder jährlich bezahlte Tarife (Basic, Pro, Premium und Projekt Unbegrenzt) und eine institutionelle Lizenz angeboten werden. Umfang, Preis, Dauer, Nutzungsgrenzen und Download-Rechte der Tarife richten sich nach der aktuellen Tarifbeschreibung, die der Nutzerin bzw. dem Nutzer vor dem Kauf oder der Tarifzuweisung mitgeteilt wird. Monatliche Nutzungsrechte können anhand der KI-Nutzung, der Quellenrecherchen und der Anzahl der mit KI erstellten Seiten berechnet werden. Bei der Seitenberechnung gilt 1 Seite als 344 Wörter. Ist ein Kontingent aufgebraucht, stoppt nur die betreffende Funktion; die Arbeit wird weder gelöscht noch gesperrt. Die Nutzerin bzw. der Nutzer kann die Arbeit ansehen, bearbeiten und in den vom Tarif erlaubten Formaten herunterladen. Auch wenn der von der KI erzeugte Text später gelöscht wird, wird das entsprechende Nutzungsrecht nicht wiederhergestellt."
     }
    ]
   },
@@ -449,7 +449,7 @@ export const CONTENT: LegalContent = {
    "h": "Tarifarten",
    "b": [
     {
-     "p": "Auf der Plattform können ein kostenloser Tarif, monatliche kostenpflichtige Tarife, ein einmaliger und für eine einzelne Arbeit unbefristeter Tarif „Tek Proje“ (Einzelprojekt) sowie eine institutionelle Lizenz angeboten werden. Institutionelle Lizenzen können einer gesonderten Vereinbarung mit der Institution unterliegen. Rabattcodes, Prämien aus dem Einladungsprogramm und der Akademische Teamrabatt (30 %) für mindestens drei Personen können angewendet werden. Umfang des Rabatts und der Preis, auf dessen Grundlage er berechnet wird, werden der Nutzerin bzw. dem Nutzer vor dem Kauf deutlich mitgeteilt."
+     "p": "Auf der Plattform können ein kostenloser Tarif, monatlich oder jährlich bezahlte Tarife (Basic, Pro, Premium und Projekt Unbegrenzt) sowie eine institutionelle Lizenz angeboten werden. Bei jährlicher Zahlung gilt ein Rabatt von 20 % auf den Monatspreis; das 12-Fache der monatlichen Kontingente wird zu Beginn des Tarifs bereitgestellt und kann innerhalb eines Jahres genutzt werden. Institutionelle Lizenzen können einer gesonderten Vereinbarung mit der Institution unterliegen. Rabattcodes, Prämien aus dem Einladungsprogramm und bei den Tarifen Basic, Pro und Premium der Akademische Teamrabatt (20 %) für mindestens drei Personen können angewendet werden. Umfang des Rabatts und der Preis, auf dessen Grundlage er berechnet wird, werden der Nutzerin bzw. dem Nutzer vor dem Kauf deutlich mitgeteilt."
     }
    ]
   },
@@ -462,10 +462,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Verlängerung monatlicher Tarife",
+   "h": "Verlängerung der Tarife",
    "b": [
     {
-     "p": "Bei monatlichen Tarifen gibt es keine automatische Verlängerung. Wer am Ende des Zeitraums fortfahren möchte, veranlasst die Verlängerung selbst. Ohne gesonderte Zustimmung der Nutzerin bzw. des Nutzers wird kein Entgelt für einen neuen Zeitraum erhoben."
+     "p": "Bei monatlichen und jährlichen Tarifen gibt es keine automatische Verlängerung. Wer am Ende des Zeitraums fortfahren möchte, veranlasst die Verlängerung selbst. Ohne gesonderte Zustimmung der Nutzerin bzw. des Nutzers wird kein Entgelt für einen neuen Zeitraum erhoben."
     }
    ]
   },
@@ -486,10 +486,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Tarif „Tek Proje“ (Einzelprojekt)",
+   "h": "Tarif Projekt Unbegrenzt",
    "b": [
     {
-     "p": "Der Tarif „Tek Proje“ gilt für eine einzige, bei der Zuweisung ausgewählte Arbeit und ist zeitlich unbegrenzt. Die Einschränkungen des Tarifs hinsichtlich KI-Nutzung außerhalb der Arbeit, Löschen/Ändern der Arbeit und Anlegen einer zweiten Arbeit sind in der Richtlinie zur fairen Nutzung erläutert. Die Nutzerin bzw. der Nutzer sollte diese Einschränkungen vor dem Kauf prüfen."
+     "p": "Der Tarif Projekt Unbegrenzt gilt bei monatlicher Zahlung 1 Monat und bei jährlicher Zahlung 1 Jahr ab der Zuweisung. In diesem Zeitraum ist alles außer der Zahl der Projekte unbegrenzt; die Zahl der Projekte beträgt bei monatlicher Zahlung höchstens 5 und bei jährlicher Zahlung höchstens 60. Einzelheiten sind in der Richtlinie zur fairen Nutzung erläutert. Früher zu den bisherigen Bedingungen erworbene Tarife „Tek Proje“ gelten zu den Bedingungen weiter, zu denen sie erworben wurden. Die Nutzerin bzw. der Nutzer sollte diese Einschränkungen vor dem Kauf prüfen."
     }
    ]
   },

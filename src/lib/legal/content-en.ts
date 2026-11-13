@@ -131,7 +131,7 @@ export const CONTENT: LegalContent = {
    "h": "Plans, fees and usage rights",
    "b": [
     {
-     "p": "The platform may offer a Free plan, monthly paid plans, a one-time Single Project plan and an institutional licence. The scope, price, duration, usage limits and download rights of the plans are determined according to the current plan description communicated to the user before purchase or plan assignment. Monthly usage rights may be calculated on the basis of AI usage, source searches and the number of pages created with AI. For page calculation, 1 page is taken as 344 words. When an allowance is used up, only the relevant feature stops; the work is not deleted or locked. The user can view and edit their work and download it in the formats permitted by the plan. Even if the text produced by AI is later deleted, the relevant usage right is not restored."
+     "p": "The platform may offer a Free plan, paid plans billed monthly or annually (Basic, Pro, Premium and Unlimited Project) and an institutional licence. The scope, price, duration, usage limits and download rights of the plans are determined according to the current plan description communicated to the user before purchase or plan assignment. Monthly usage rights may be calculated on the basis of AI usage, source searches and the number of pages created with AI. For page calculation, 1 page is taken as 344 words. When an allowance is used up, only the relevant feature stops; the work is not deleted or locked. The user can view and edit their work and download it in the formats permitted by the plan. Even if the text produced by AI is later deleted, the relevant usage right is not restored."
     }
    ]
   },
@@ -449,7 +449,7 @@ export const CONTENT: LegalContent = {
    "h": "Plan types",
    "b": [
     {
-     "p": "The platform may offer a Free plan, monthly paid plans, a one-time Single Project plan that is indefinite for a single work, and an institutional licence. Institutional licences may be subject to a separate agreement with the institution. Discount codes, referral programme rewards and the Academic Team Discount (30%) for at least three people may apply. The scope of the discount and the price on which it is calculated are clearly communicated to the user before purchase."
+     "p": "The platform may offer a Free plan, paid plans billed monthly or annually (Basic, Pro, Premium and Unlimited Project) and an institutional licence. With annual payment a 20% discount on the monthly price applies; 12 times the monthly allowances are granted at the start of the plan and can be used within 1 year. Institutional licences may be subject to a separate agreement with the institution. Discount codes, referral programme rewards and, for the Basic, Pro and Premium plans, the Academic Team Discount (20%) for at least three people may apply. The scope of the discount and the price on which it is calculated are clearly communicated to the user before purchase."
     }
    ]
   },
@@ -462,10 +462,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Renewal of monthly plans",
+   "h": "Renewal of plans",
    "b": [
     {
-     "p": "There is no automatic renewal for monthly plans. A user who wishes to continue at the end of the period initiates the renewal themselves. No fee for a new period is charged without separate approval from the user."
+     "p": "There is no automatic renewal for monthly or annual plans. A user who wishes to continue at the end of the period initiates the renewal themselves. No fee for a new period is charged without separate approval from the user."
     }
    ]
   },
@@ -486,10 +486,10 @@ export const CONTENT: LegalContent = {
    ]
   },
   {
-   "h": "Single Project plan",
+   "h": "Unlimited Project plan",
    "b": [
     {
-     "p": "The Single Project plan is valid for a single work selected at the time of assignment and has no time limit. The plan’s restrictions regarding AI use outside the work, deleting/changing the work and opening a second work are explained in the Fair Use Policy. The user should review these restrictions before purchasing."
+     "p": "The Unlimited Project plan is valid for 1 month from the date of assignment with monthly payment and for 1 year with annual payment. During this period everything except the number of projects is unlimited; the number of projects is at most 5 with monthly payment and at most 60 with annual payment. Details are explained in the Fair Use Policy. Single Project plans previously purchased under the earlier terms continue under the terms on which they were purchased. The user should review these restrictions before purchasing."
     }
    ]
   },

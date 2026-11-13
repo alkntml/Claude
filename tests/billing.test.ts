@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/supabase/admin", () => ({ adminClient: () => { throw new Error("veritabanı yok"); } }));
-import { hasYearlyOption, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, SINGLE_PLAN_DAYS } from "@/lib/pricing";
+import { hasYearlyOption, isOneTimePlan, PLAN_RANK, yearlyFeature, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, SINGLE_PLAN_DAYS, UNLIMITED_PLAN_PROJECTS } from "@/lib/pricing";
+import { hasFeature, PLAN_NAME } from "@/lib/features";
 import { monthStart, periodFor, scaleForPeriod } from "@/lib/usage";
 import { isLegacySingle } from "@/lib/single-project";
 import { FALLBACK_PLANS } from "@/lib/plans-fallback";
@@ -20,7 +21,10 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(hasYearlyOption("basic", 749)).toBe(true);
     expect(hasYearlyOption("premium", 2249)).toBe(true);
     expect(hasYearlyOption("free", 0)).toBe(false);
-    expect(hasYearlyOption("single", 3999)).toBe(false);
+    // D158: Sınırsız Kullanım (single) aylık/yıllık ödenir
+    expect(hasYearlyOption("single", 3999)).toBe(true);
+    expect(yearlyMonthlyPrice(3999)).toBe(3199);
+    expect(yearlyTotalPrice(3999)).toBe(38388);
   });
 
   it("yıllık pakette haklar düşmez: aylık hakların 12 katı (proje ve depolama aynı); aylıkta değişmez", () => {
@@ -48,11 +52,17 @@ describe("aylık / yıllık ödeme ve Tek Proje (D157)", () => {
     expect(yearlyFeature("Word dışa aktarma")).toEqual({ key: "Word dışa aktarma" });
   });
 
-  it("Tek Proje: 1 ay, her şey sınırsız; tek çalışma kuralları yalnızca eski (süresiz) paketlerde", () => {
+  it("Sınırsız Kullanım: 5 proje dışında her şey sınırsız, aylık 30 gün; tek çalışma kuralları yalnızca eski (süresiz) Tek Proje’de", () => {
     expect(SINGLE_PLAN_DAYS).toBe(30);
+    expect(UNLIMITED_PLAN_PROJECTS).toBe(5);
+    expect(isOneTimePlan("single")).toBe(false);
+    expect(PLAN_RANK.single).toBeGreaterThan(PLAN_RANK.premium);
+    expect(PLAN_NAME.single).toBe("Sınırsız Kullanım");
+    expect(hasFeature("single", "coauthors")).toBe(true);
     const single = FALLBACK_PLANS.find((p) => p.id === "single")!;
-    expect(single.features.join(" ")).toMatch(/1 ay/);
-    expect(single.features.join(" ")).toMatch(/Sınırsız çalışma/);
+    expect(single.name).toBe("Sınırsız Kullanım");
+    expect(single.features).toContain("En fazla 5 proje");
+    expect(single.features).toContain("Ortak yazarlarla birlikte yazım");
     expect(isLegacySingle({ plan_id: "single", plan_expires_at: null })).toBe(true);
     expect(isLegacySingle({ plan_id: "single", plan_expires_at: "2026-12-13T00:00:00Z" })).toBe(false);
     expect(isLegacySingle({ plan_id: "single", plan_expires_at: null, role: "admin" })).toBe(false);

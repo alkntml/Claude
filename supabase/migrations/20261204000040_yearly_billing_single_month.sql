@@ -2,7 +2,7 @@
 -- D157: Aylık / yıllık ödeme ve yeni Tek Proje
 -- 1) Yıllık ödeme: profilde ödeme dönemi (plan_period) ve paket başlangıcı (plan_started_at).
 --    Yıllık pakette aylık hakların 12 katı paket başında tanımlanır ve 1 yıl içinde kullanılır (sunucu hesaplar).
--- 2) Tek Proje: 1 ay geçerli, her şey sınırsız (çalışma, yapay zekâ, tarama, depolama; adil kullanım).
+-- 2) Tek Proje → “Sınırsız Kullanım” (D158): en fazla 5 proje, geri kalan her şey sınırsız; aylık (1 ay) veya yıllık.
 --    Eski koşullarla (süresiz, tek çalışma) atanmış Tek Proje paketleri bitiş tarihi olmadığından tanınır ve
 --    eski kurallarıyla aynen devam eder (geriye dönük değişiklik yok).
 -- Mevcut veri silinmez.
@@ -95,12 +95,15 @@ begin
   return new;
 end $$;
 
--- Yeni Tek Proje: 1 ay, her şey sınırsız (maliyet tavanı da yok; adil kullanım)
+-- D158: “Sınırsız Kullanım” (eski adı Tek Proje; iç kimlik single): tek sınır en fazla 5 proje, geri kalan her şey sınırsız
+-- (yapay zekâ, sayfa, tarama, depolama, maliyet tavanı yok; adil kullanım). Aylık (1 ay) veya yıllık (%20 indirimli) ödenir.
 update public.plans set
-  description = '1 ay boyunca her şey sınırsız: tek ödeme, sınırsız çalışma, adil kullanımla sınırsız yapay zekâ ve kaynak taraması.',
-  limits = '{"pages_month": null, "ai_requests_month": null, "tokens_month": null, "source_searches_month": null, "projects": null, "storage_mb": null, "cost_usd_month": null, "one_time": true, "export_formats": ["txt","md","docx","pdf"]}'::jsonb,
-  features = array['Tek seferlik ödeme, 1 ay geçerli', 'Sınırsız çalışma (tez, makale, proje önerisi…)', 'Sınırsız yapay zekâ kullanımı ve sayfa (adil kullanım)', 'Sınırsız kaynak taraması (adil kullanım)', 'Tüm özellikler (Premium dahil)', 'Sınırsız depolama', 'Ortak yazarlarla birlikte yazım'],
+  name = 'Sınırsız Kullanım',
+  description = 'En fazla 5 proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).',
+  price_yearly = round(price_monthly * 0.8) * 12,
+  limits = '{"pages_month": null, "ai_requests_month": null, "tokens_month": null, "source_searches_month": null, "projects": 5, "storage_mb": null, "cost_usd_month": null, "export_formats": ["txt","md","docx","pdf"]}'::jsonb,
+  features = array['Premium paketteki her şey', 'En fazla 5 proje', 'Sınırsız yapay zekâ kullanımı ve sayfa (adil kullanım)', 'Sınırsız kaynak taraması (adil kullanım)', 'Sınırsız depolama', 'Ortak yazarlarla birlikte yazım', 'Tüm özellikler sınırsız'],
   updated_at = now()
 where id = 'single';
 
-select id, price_monthly, description, limits->>'projects' as proje from public.plans where id = 'single';
+select id, name, price_monthly, price_yearly, limits->>'projects' as proje from public.plans where id = 'single';

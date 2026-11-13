@@ -69,7 +69,7 @@ export function UpgradeDialogHost() {
   const currentRank = PLAN_RANK[data?.current ?? "free"] ?? 0;
   const minRank = req.plan ? PLAN_RANK[req.plan] ?? 0 : 0;
   const yearlyMode = period === "yearly";
-  // Yıllıkta: aynı paketin yıllığına geçiş de seçilebilir (zaten yıllıksa değil); Tek Proje’nin yıllığı yoktur
+  // Yıllıkta: aynı paketin yıllığına geçiş de seçilebilir (zaten yıllıksa değil)
   const options = (data?.plans ?? []).filter((p) => yearlyMode
     ? hasYearlyOption(p.id, p.price_monthly) && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && !(p.id === data?.current && data?.currentPeriod === "yearly")
     : (PLAN_RANK[p.id] ?? 0) > currentRank && (PLAN_RANK[p.id] ?? 0) >= minRank && p.price_monthly > 0);
@@ -84,13 +84,13 @@ export function UpgradeDialogHost() {
   // D157: yıllıkta aylık hakların 12 katı, baştan ve 1 yıl geçerli
   const y12 = (n: number | null | undefined) => (n == null ? null : n * 12);
   const lines = (p: PlanRow) => yearlyMode && hasYearlyOption(p.id, p.price_monthly) ? [
-    ...(p.limits.pages_month ? [t("Yılda {n} sayfa yapay zekâ destekli akademik metin", { n: num(y12(p.limits.pages_month)) })] : []),
+    ...(p.limits.pages_month ? [t("Yılda {n} sayfa yapay zekâ destekli akademik metin", { n: num(y12(p.limits.pages_month)) })] : p.limits.pages_month === null ? [t("Sınırsız sayfa yazımı (adil kullanım)")] : []),
     p.limits.ai_requests_month == null ? t("Sınırsız yapay zekâ isteği") : t("Yılda {n} yapay zekâ isteği", { n: num(y12(p.limits.ai_requests_month)) }),
     p.limits.source_searches_month == null ? t("Sınırsız kaynak taraması") : p.limits.source_searches_month >= 1000 ? t("Sınırsız kaynak taraması (adil kullanım)") : t("Yılda {n} kaynak taraması", { n: num(y12(p.limits.source_searches_month)) }),
     p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: p.limits.projects }),
     storage(p.limits.storage_mb),
   ] : [
-    ...(p.limits.pages_month ? [t("Ayda {n} sayfa yapay zekâ destekli akademik metin", { n: num(p.limits.pages_month) })] : []),
+    ...(p.limits.pages_month ? [t("Ayda {n} sayfa yapay zekâ destekli akademik metin", { n: num(p.limits.pages_month) })] : p.limits.pages_month === null ? [t("Sınırsız sayfa yazımı (adil kullanım)")] : []),
     p.limits.ai_requests_month == null ? t("Sınırsız yapay zekâ isteği") : t("Aylık {n} yapay zekâ isteği", { n: num(p.limits.ai_requests_month) }),
     p.limits.source_searches_month == null ? t("Sınırsız kaynak taraması") : p.limits.source_searches_month >= 1000 ? t("Sınırsız kaynak taraması (adil kullanım)") : t("Aylık {n} kaynak taraması", { n: num(p.limits.source_searches_month) }),
     p.limits.projects == null ? t("Sınırsız proje") : t("{n} proje", { n: p.limits.projects }),

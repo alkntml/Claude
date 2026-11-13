@@ -297,7 +297,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
           <div className="space-y-4">
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="font-semibold">Paket ve süre</p>
-              <label className="mt-2 block text-xs text-ink-500">Paket ata — Aylık: gün sayısı kadar geçerli; Yıllık: 365 gün, 12 aylık hak baştan; Tek Proje: 1 ay, her şey sınırsız</label>
+              <label className="mt-2 block text-xs text-ink-500">Paket ata — Aylık: gün sayısı kadar geçerli; Yıllık: 365 gün, 12 aylık hak baştan; Sınırsız Kullanım: 5 proje dışında her şey sınırsız (aylık 30 gün / yıllık 365 gün)</label>
               {d.profile.plan_period === "yearly" && d.profile.plan_id !== "free" && <p className="mt-1 text-[12px] text-emerald-700">Yıllık paket · başlangıç {d.profile.plan_started_at ? new Date(d.profile.plan_started_at).toLocaleDateString("tr-TR") : "—"}</p>}
               <div className="mt-1 flex gap-2">
                 <select id="plan-pick" className="input !py-2" defaultValue={d.profile.plan_id}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>

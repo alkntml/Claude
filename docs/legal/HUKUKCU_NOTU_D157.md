@@ -28,3 +28,10 @@
 
 ## Ayrıca
 KVKK Aydınlatma Metni’ndeki akademik veri tabanı listesinde **OpenAIRE ve Google Books** eksik; site arama terimlerini bunlara da gönderiyor.
+
+## Güncelleme (D158) — “Tek Proje” → “Sınırsız Kullanım”
+Yukarıdaki 2. maddenin yerine geçer: Paketin adı **Sınırsız Kullanım** oldu.
+- Tek sınırı **en fazla 5 aktif proje**dir. Geri kalan her şey sınırsızdır (adil kullanım): yapay zekâ, sayfa, kaynak taraması, depolama, Premium dâhil tüm özellikler ve ortak yazarlarla yazım.
+- **Aylık** (₺3.999, 1 ay) veya **yıllık** (%20 indirimli: ₺3.199/ay, toplam ₺38.388, 1 yıl) ödenir. Kendiliğinden yenilenmez.
+- Metinlerdeki “Tek Proje” geçen bütün yerler (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler) bu pakete göre yeniden yazılmalı.
+- Eski süresiz “Tek Proje” satın alımları eski koşullarla devam eder.

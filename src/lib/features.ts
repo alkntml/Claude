@@ -54,7 +54,7 @@ export const FEATURE_LABEL: Record<FeatureId, string> = {
   litmap: "Literatür haritası",
 };
 
-export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium", single: "Tek Proje" };
+export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium", single: "Sınırsız Kullanım" };
 
 export function hasFeature(planId: string | null | undefined, feature: FeatureId): boolean {
   return (PLAN_RANK[planId ?? "free"] ?? 0) >= PLAN_RANK[FEATURE_MIN_PLAN[feature]];

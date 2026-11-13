@@ -3818,4 +3818,13 @@ export const EN: Record<string, string> = {
   "Sınırsız çalışma (tez, makale, proje önerisi…)": "Unlimited works (thesis, article, proposal…)",
   "Sınırsız yapay zekâ kullanımı ve sayfa (adil kullanım)": "Unlimited AI use and pages (fair use)",
   "1 ay boyunca her şey sınırsız: tek ödeme, sınırsız çalışma, adil kullanımla sınırsız yapay zekâ ve kaynak taraması.": "Everything unlimited for 1 month: one-time payment, unlimited works, unlimited AI and source searches under fair use.",
+  // D158: Sınırsız Kullanım paketi
+  "Sınırsız Kullanım": "Unlimited",
+  "Sınırsız Kullanım maliyet uyarısı": "Unlimited plan cost alert",
+  "Kötüye kullanım uyarısı (Sınırsız Kullanım)": "Abuse alert (Unlimited)",
+  "Sınırsız sayfa yazımı (adil kullanım)": "Unlimited page drafting (fair use)",
+  "En fazla 5 proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Everything unlimited except a maximum of 5 projects: AI, page drafting, source searches, storage and every feature (fair use).",
+  "Premium paketteki her şey": "Everything in Premium",
+  "En fazla 5 proje": "Up to 5 projects",
+  "Tüm özellikler sınırsız": "All features unlimited",
 };

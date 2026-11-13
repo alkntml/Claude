@@ -75,7 +75,7 @@ export function NotificationBell({ className, align = "left" }: { className?: st
         off_topic: t("{u} için üretilen {w} kelimelik metinde çalışmanın konusuyla ilgili hiçbir terim geçmiyor (“{s}”). Pakete bağlı çalışma dışında bir metin yazdırılıyor olabilir.", { u: who, w: Number(d.words ?? 0).toLocaleString(dateLocale(locale)), s: d.stage_title || d.project_title || "" }),
         cost_40: t("{u} için yapay zekâ maliyeti paket gelirinin %{p}’ine ulaştı ({c} $; %40 sınırı {b} $). Kullanım kısıtlanmadı.", { u: who, p: d.pct ?? 40, c: d.cost ?? 0, b: d.budget ?? 0 }),
       };
-      return { title: d.rule === "cost_40" ? t("Tek Proje maliyet uyarısı") : t("Kötüye kullanım uyarısı (Tek Proje)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
+      return { title: d.rule === "cost_40" ? t("Sınırsız Kullanım maliyet uyarısı") : t("Kötüye kullanım uyarısı (Sınırsız Kullanım)"), body: `${body[d.rule] ?? d.rule} ${t("Ayrıntı: Yönetim → Kullanıcılar → kullanıcı → Kullanım geçmişi.")}` };
     }
     // D146: yöneticinin bu kullanıcıya özel mesajı (yazıldığı gibi gösterilir)
     if (n.kind === "admin_message") { const l = String(d0(n).link ?? ""); return { title: String(d0(n).title || t("Academiana’dan mesaj")), body: String(d0(n).message ?? ""), ...(isSafeInternalLink(l) ? { href: l, cta: t("Aç") } : {}) }; }

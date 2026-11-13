@@ -94,15 +94,16 @@ export const POST = route<Ctx>("admin.user.action", async (req, { params }) => {
   if (b.action === "set_plan") {
     const { data: plan } = await db.from("plans").select("id").eq("id", b.planId).maybeSingle();
     if (!plan) throw new ApiError(404, "Paket bulunamadı");
-    if (b.planId === "single" && !b.purchase?.payerName) throw new ApiError(422, "Tek Proje atarken ödeyen kişinin adını yazın");
+    if (b.planId === "single" && !b.purchase?.payerName) throw new ApiError(422, "Sınırsız Kullanım atarken ödeyen kişinin adını yazın");
     const pu = b.purchase;
     if (b.planId !== "free" && pu && (pu.payerName || pu.payerPhone || pu.amountTry != null || pu.note)) {
       const { error } = await db.from("plan_purchases").insert({ user_id: id, plan_id: b.planId, payer_name: pu.payerName, payer_phone: pu.payerPhone, amount_try: pu.amountTry, note: pu.note, created_by: admin.user.id });
       if (error) throw new ApiError(500, "Satın alma kaydı yazılamadı (migration 31 çalıştırıldı mı?)");
     }
     // D157: Tek Proje 1 ay; yıllık ödemede 365 gün ve 12 aylık hak baştan; ücretsiz pakette süre yok
-    const yearly = b.period === "yearly" && b.planId !== "free" && b.planId !== "single";
-    const days = b.planId === "free" ? null : b.planId === "single" ? (b.days ?? SINGLE_PLAN_DAYS) : yearly ? YEARLY_DAYS : b.days;
+    // D158: Sınırsız Kullanım (single) da aylık (30 gün) veya yıllık (365 gün) atanır
+    const yearly = b.period === "yearly" && b.planId !== "free";
+    const days = b.planId === "free" ? null : yearly ? YEARLY_DAYS : b.planId === "single" ? (b.days ?? SINGLE_PLAN_DAYS) : b.days;
     update = { plan_id: b.planId, plan_expires_at: days == null ? null : addDays(null, days) };
     periodUpdate = { plan_period: yearly ? "yearly" : "monthly", plan_started_at: new Date().toISOString() };
   }

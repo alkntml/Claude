@@ -176,7 +176,7 @@ describe("migration'lar ve seed", () => {
     expect(bound).toBe(p1.id);
     const plan = (await db.query<{ limits: { ai_requests_month: null; projects: number; cost_usd_month: null; one_time: boolean } }>("select limits from public.plans where id = 'single'")).rows[0];
     // D157: güncel paket 1 aylık ve her şey sınırsız (projects: null); bu kullanıcının paketi süresiz (eski koşullar) olduğundan tek çalışma kuralları geçerli
-    expect(plan.limits).toMatchObject({ ai_requests_month: null, projects: null, cost_usd_month: null, one_time: true });
+    expect(plan.limits).toMatchObject({ ai_requests_month: null, projects: 5, cost_usd_month: null });
     // Engeller (kullanıcı kendisi)
     await expectError(as(U, "insert into public.projects (user_id, title, work_type, academic_level) values (auth.uid(), 'İkinci', 'research_article', 'master')"), /row-level security|yalnızca bir çalışma/);
     await expectError(as(U, `delete from public.projects where id = '${p1.id}'`), /silinemez/);
@@ -782,10 +782,17 @@ describe("anketler", () => {
     await db.query(`insert into auth.users (id, email, raw_user_meta_data) values ($1, 'n40@ornek.com', '{}'), ($2, 'l40@ornek.com', '{}')`, [N, L]);
     // Paket: 1 ay, her şey sınırsız
     const plan = (await db.query<{ limits: Record<string, unknown>; features: string[] }>(`select limits, features from public.plans where id = 'single'`)).rows[0];
-    expect(plan.limits.projects).toBeNull();
+    // D158: Sınırsız Kullanım — tek sınır 5 proje
+    expect(plan.limits.projects).toBe(5);
     expect(plan.limits.ai_requests_month).toBeNull();
+    expect(plan.limits.pages_month).toBeNull();
+    expect(plan.limits.source_searches_month).toBeNull();
+    expect(plan.limits.storage_mb).toBeNull();
     expect(plan.limits.cost_usd_month).toBeNull();
-    expect(plan.features).toContain("Tek seferlik ödeme, 1 ay geçerli");
+    expect(plan.features).toContain("En fazla 5 proje");
+    const sp = (await db.query<{ name: string; y: string; m: string }>(`select name, price_yearly as y, price_monthly as m from public.plans where id = 'single'`)).rows[0];
+    expect(sp.name).toBe("Sınırsız Kullanım");
+    expect(Number(sp.y)).toBe(Math.round(Number(sp.m) * 0.8) * 12);
     // Yönetici atar: yeni Tek Proje bitiş tarihli → çalışmaya bağlanmaz, birden çok çalışma açılır ve silinebilir
     await db.query(`update public.profiles set plan_id = 'single', plan_expires_at = now() + interval '30 days', plan_period = 'monthly', plan_started_at = now() where id = $1`, [N]);
     // Çalışmaları sunucu oluşturur (D51); kullanıcı silme/düzenleme yapar

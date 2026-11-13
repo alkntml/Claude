@@ -1,15 +1,21 @@
 /** Fiyatlandırma ve paket yardımcıları (istemci ve sunucu ortak, saf fonksiyonlar). */
 
-export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 3 };
-/** Tek ödemeli paketler: fiyat aylık değil tek seferliktir. D157: Tek Proje = 1 ay, her şey sınırsız (yenilenmez) */
-export const ONE_TIME_PLANS = new Set(["single"]);
-/** D157: Tek Proje’nin süresi (gün) */
+// D158: “Sınırsız Kullanım” (iç kimlik: single) en üst pakettir
+export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 4 };
+/**
+ * Tek ödemeli paketler (fiyat aylık değil tek seferlik). D158: eski “Tek Proje” artık “Sınırsız Kullanım” adıyla
+ * aylık/yıllık ödenen bir pakettir (iç kimliği “single” kaldı); tek ödemeli paket kalmadı.
+ */
+export const ONE_TIME_PLANS = new Set<string>();
+/** D157/D158: Sınırsız Kullanım (single) aylık dönemi (gün) */
 export const SINGLE_PLAN_DAYS = 30;
+/** D158: Sınırsız Kullanım’da tek sınır: en fazla 5 proje */
+export const UNLIMITED_PLAN_PROJECTS = 5;
 
 /* ---------------------------------------------------------------------
  * D157: Aylık / yıllık ödeme. Yıllık ödeme güncel aylık fiyatın %20 indirimlisidir; kullanım hakları düşmez:
  * aylık hakların 12 katı paket başında tek seferde tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır (aylık kısıt yok).
- * Tek Proje ve Ücretsiz paketin yıllık seçeneği yoktur. Yıllık fiyat indirim kodu / ekip indirimiyle birleştirilmez.
+ * Ücretsiz paketin yıllık seçeneği yoktur (D158: Sınırsız Kullanım’ın vardır). Yıllık fiyat indirim kodu / ekip indirimiyle birleştirilmez.
  * ------------------------------------------------------------------- */
 export type BillingPeriod = "monthly" | "yearly";
 export const YEARLY_DISCOUNT_PERCENT = 20;

@@ -3810,4 +3810,13 @@ export const DE: Dict = {
   "Sınırsız çalışma (tez, makale, proje önerisi…)": "Unbegrenzt viele Arbeiten (Abschlussarbeit, Artikel, Exposé …)",
   "Sınırsız yapay zekâ kullanımı ve sayfa (adil kullanım)": "Unbegrenzte KI-Nutzung und Seiten (Fair Use)",
   "1 ay boyunca her şey sınırsız: tek ödeme, sınırsız çalışma, adil kullanımla sınırsız yapay zekâ ve kaynak taraması.": "Einen Monat lang alles unbegrenzt: Einmalzahlung, unbegrenzt viele Arbeiten, unbegrenzte KI und Quellensuche im Rahmen der fairen Nutzung.",
+  // D158: Sınırsız Kullanım paketi
+  "Sınırsız Kullanım": "Unbegrenzt",
+  "Sınırsız Kullanım maliyet uyarısı": "Kostenwarnung Tarif Unbegrenzt",
+  "Kötüye kullanım uyarısı (Sınırsız Kullanım)": "Missbrauchswarnung (Unbegrenzt)",
+  "Sınırsız sayfa yazımı (adil kullanım)": "Unbegrenzte Seitenentwürfe (Fair Use)",
+  "En fazla 5 proje dışında her şey sınırsız: yapay zekâ, sayfa yazımı, kaynak taraması, depolama ve tüm özellikler (adil kullanım).": "Alles unbegrenzt außer höchstens 5 Projekten: KI, Seitenentwürfe, Quellensuche, Speicher und alle Funktionen (Fair Use).",
+  "Premium paketteki her şey": "Alles aus Premium",
+  "En fazla 5 proje": "Bis zu 5 Projekte",
+  "Tüm özellikler sınırsız": "Alle Funktionen unbegrenzt",
 };

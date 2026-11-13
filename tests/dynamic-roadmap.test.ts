@@ -5,7 +5,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildTemplate, deletionWarning, diffTemplate, literatureDepth, reportingStandards, scopeGuidance, capstoneGuidance,
-  TEMPLATE_VERSION, type TemplateInput,
+  TEMPLATE_VERSION, type TemplateInput, approachRules, approachSectionGuidance, workTypeGuidance, stageNeedsData,
 } from "@/lib/workflows";
 import { cleanSavedSections } from "@/lib/structure-server";
 import { consistencyChain } from "@/lib/quality/consistency-chain";
@@ -51,9 +51,15 @@ describe("12.1 zorunlu senaryolar", () => {
     const quant = buildTemplate({ workType: "research_article", level: "master", methodology: "quantitative" } as TemplateInput);
     const qual = buildTemplate({ workType: "research_article", level: "master", methodology: "qualitative" } as TemplateInput);
     const mixed = keys({ workType: "research_article", level: "master", methodology: "mixed" });
-    expect(quant.map((x) => x.key)).toEqual(["title_abstract", "introduction", "methods_article", "results_article", "discussion_article", "declarations", "references"]);
-    expect(qual.find((x) => x.key === "methods_article")!.title).not.toBe(quant.find((x) => x.key === "methods_article")!.title);
-    expect(qual.find((x) => x.key === "results_article")!.title).not.toBe(quant.find((x) => x.key === "results_article")!.title);
+    expect(quant.map((x) => x.key)).toEqual(["title_abstract", "introduction", "methods_article", "results_article", "discussion_article", "declarations", "references", "appendices"]);
+    // Başlıklar doğal kalır (“Yöntem”, “Bulgular”); yaklaşım farkı gerekçede ve yapay zekâ kurallarında
+    expect(qual.find((x) => x.key === "methods_article")!.title).toBe("Yöntem");
+    expect(qual.find((x) => x.key === "methods_article")!.why).toMatch(/refleksivite/);
+    expect(quant.find((x) => x.key === "methods_article")!.why).toMatch(/istatistiksel raporlama/);
+    expect(qual.find((x) => x.key === "results_article")!.why).toMatch(/tema/);
+    expect(quant.find((x) => x.key === "appendices")).toMatchObject({ title: "Ek materyal", requirement: "optional" });
+    // Makale tez kopyası değildir: bağımsız kuramsal çerçeve, örneklem bölümü vb. yok
+    for (const x of ["theory", "concepts", "sample", "participants", "literature"]) expect(quant.map((y) => y.key)).not.toContain(x);
     expect(mixed).toContain("integration");
     expect(quant.map((x) => x.key)).not.toContain("integration");
   });
@@ -141,6 +147,25 @@ describe("12.1 zorunlu senaryolar", () => {
     }
   });
 
+  it("Yaklaşım kuralları (5 ve 5.1): nitelde hipotez/normallik yok, alıntı uydurulmaz; karmada entegrasyon ve meta-çıkarım; makale ve dergi yönergeleri", () => {
+    expect(approachRules("qualitative")).toMatch(/Hipotez kullanılmaz/);
+    expect(approachRules("qualitative")).toMatch(/ASLA uydurulmaz/);
+    expect(approachRules("quantitative")).toMatch(/Kodlama, tema ve katılımcı alıntısı başlıkları kullanılmaz/);
+    expect(approachRules("mixed")).toMatch(/meta-çıkarımlar entegrasyondan üretilir/);
+    expect(approachRules("theoretical")).toBe("");
+    expect(approachSectionGuidance("results_article", "qualitative")).toMatch(/hipotez testi YAZMA/);
+    expect(approachSectionGuidance("findings", "mixed")).toMatch(/bütünleştirilmiş|birleştirilmiş/);
+    expect(approachSectionGuidance("introduction", "quantitative")).toBe("");
+    expect(workTypeGuidance("research_article")).toMatch(/kuramsal çerçeve bölümü makaleye eklenmez/);
+    expect(workTypeGuidance("journal_article")).toMatch(/yazar rehberi/);
+  });
+
+  it("Dergi makalesi: veri yalnızca nicel/nitel/karma seçilirse istenir", () => {
+    expect(stageNeedsData("results_article", { work_type: "journal_article", context: { methodology: "quantitative" } })).toBe(true);
+    expect(stageNeedsData("results_article", { work_type: "journal_article", context: { methodology: "theoretical" } })).toBe(false);
+    expect(stageNeedsData("results_article", { work_type: "journal_article", context: {} })).toBe(false);
+  });
+
   it("Literatür derinliği akademik düzeye göre artar (6.3)", () => {
     expect(literatureDepth({ workType: "thesis", level: "bachelor" })).toMatch(/Temel kavramlar/);
     expect(literatureDepth({ workType: "thesis", level: "master" })).toMatch(/tematik ampirik sentez/);
@@ -218,6 +243,14 @@ describe("10. tutarlılık zinciri (puanı etkilemez)", () => {
     expect(items.some((x) => x.title === "Tartışma bulgulardan önce yazılmış")).toBe(true);
     expect(items.some((x) => x.title === "Kritik bölüm yapıda yok" && x.stageKey === "ethics")).toBe(true);
     expect(items.some((x) => x.title === "Kritik bölüm gizlenmiş" && x.stageKey === "method")).toBe(true);
+  });
+
+  it("literatür yüzeyselse İyileştirme; yeterli kaynakta uyarı yok; boşluk bölümü boşsa bildirilir", () => {
+    const thin = consistencyChain({ ...base, workType: "thesis", methodology: "quantitative", stages: [{ ...st("literature", "Metin."), citations: 3 }, st("gaps", "")] });
+    expect(thin.find((x) => x.title === "Literatür kapsamı sınırlı görünüyor")).toMatchObject({ level: "improvement", vars: { n: 3 } });
+    expect(thin.some((x) => x.title === "Araştırma boşluğu gösterilmemiş")).toBe(true);
+    const rich = consistencyChain({ ...base, workType: "thesis", methodology: "quantitative", stages: [{ ...st("literature", "Metin."), citations: 14 }, st("gaps", "Boşluk.")] });
+    expect(rich.some((x) => x.title === "Literatür kapsamı sınırlı görünüyor" || x.title === "Araştırma boşluğu gösterilmemiş")).toBe(false);
   });
 
   it("kuramsal çalışmada veri zinciri uyarısı çıkmaz", () => {

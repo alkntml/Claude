@@ -19,10 +19,12 @@ function approachOptions(workType: WorkType, variant: CapstoneKind): Methodology
   if (workType === "literature_review") return ["theoretical", "systematic_review", "meta_analysis"];
   if (workType === "capstone") return variant === "research" ? ["quantitative", "qualitative", "mixed", "theoretical"] : [];
   if (workType === "thesis") return ["quantitative", "qualitative", "mixed", "theoretical", "systematic_review", "meta_analysis"];
-  if (["research_article", "journal_article", "research_proposal"].includes(workType)) return ["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"];
+  // D172: dergi makalesi varsayılan olarak kaynaklara dayalıdır (kuramsal); veri toplanmışsa nicel/nitel/karma seçilir
+  if (workType === "journal_article") return ["theoretical", "quantitative", "qualitative", "mixed", "systematic_review"];
+  if (["research_article", "research_proposal"].includes(workType)) return ["quantitative", "qualitative", "mixed", "theoretical", "systematic_review"];
   return [];
 }
-const approachLabel = (workType: WorkType, m: Methodology) => (workType === "literature_review" && m === "theoretical" ? "Anlatı derleme" : METHODOLOGY_LABELS[m]);
+const approachLabel = (workType: WorkType, m: Methodology) => (workType === "literature_review" && m === "theoretical" ? "Anlatı derleme" : workType === "journal_article" && m === "theoretical" ? "Kaynaklara dayalı (veri toplanmadı)" : METHODOLOGY_LABELS[m]);
 
 interface Suggestion { approach: Methodology; design: string | null; why: string; limits: string; alternatives: string[] }
 
@@ -64,6 +66,8 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
 
   const wt = WORK_TYPES.find((w) => w.id === workType)!;
   const options = approachOptions(workType, variant);
+  // Dergi makalesine geçilince yaklaşım “kaynaklara dayalı” ile başlar (kullanıcı değiştirebilir)
+  useEffect(() => { if (workType === "journal_article") setMethodology("theoretical"); }, [workType]);
   const effMethod: Methodology = options.length ? (options.includes(methodology) ? methodology : options[0]) : methodology;
   const designs = designsFor(effMethod);
   const effDesign = designs.some((d) => d.id === design) ? design : "";

@@ -10,7 +10,7 @@
 import { STAGE_LIBRARY } from "./stages";
 
 /** Şablon sürümü: yol haritası kuralları değişince artırılır; mevcut projeler kendiliğinden değişmez (karşılaştırıp uygulanır) */
-export const TEMPLATE_VERSION = 2;
+export const TEMPLATE_VERSION = 3;
 
 export type Requirement = "required" | "conditional" | "optional";
 export type Scope = "brief" | "standard" | "detailed";
@@ -154,11 +154,12 @@ function article(m: string): Item[] {
   }
   return [
     it("title_abstract", { critical: true }), it("introduction", { critical: true, why: "Problem, literatür boşluğu, gerekçe ve amaç; tezdeki uzun kuramsal çerçeve makaleye eklenmez." }),
-    it("methods_article", { critical: true, title: m === "qualitative" ? "Yöntem (bağlam, katılımcılar, veri üretimi ve analiz)" : m === "mixed" ? "Yöntem (karma desen, aşamalar ve entegrasyon)" : undefined }),
-    it("results_article", { critical: true, title: m === "qualitative" ? "Bulgular (temalar)" : undefined }),
+    it("methods_article", { critical: true, why: m === "qualitative" ? "Nitel makalede bağlam, katılımcı seçimi, veri üretimi, analiz ve araştırmacının konumu (refleksivite) görünür olmalıdır." : m === "mixed" ? "Karma makalede desen, aşamalar, her aşamanın örneklemi ve analizi ile entegrasyon stratejisi görünür olmalıdır." : "Nicel makalede ölçüm, örneklem ve istatistiksel raporlama görünür olmalıdır." }),
+    it("results_article", { critical: true, why: m === "qualitative" ? "Bulgular tema, alt tema ve kullanıcının gerçek verisinden alıntılarla sunulur." : m === "mixed" ? "Nicel ve nitel bulgular ayrı, ardından bütünleştirilmiş olarak sunulur." : "Bulgular araştırma sorularına/hipotezlere göre istatistik, tablo ve etki ölçüleriyle sunulur." }),
     ...(m === "mixed" ? [it("integration", { critical: true, why: "Karma yöntem makalesinde entegrasyon ve meta-çıkarımlar görünür olmalıdır." })] : []),
-    it("discussion_article", { critical: true }),
+    it("discussion_article", { critical: true, why: "Temel bulgular literatürle değerlendirilir; sonuç ve çıkarımlar derginin yapısına göre tartışmaya entegre edilir." }),
     it("declarations", { req: "conditional", why: "Derginin istediği etik, çıkar çatışması, fon ve yazar katkısı beyanları." }), it("references", { critical: true }),
+    it("appendices", { req: "optional", title: "Ek materyal", why: "Derginin kabul ettiği ek materyal (ölçek, ek tablolar, veri erişimi) varsa eklenir." }),
   ];
 }
 
@@ -329,3 +330,47 @@ export const STRUCTURE_ACTION_LABEL: Record<string, string> = {
   "template.default": "Academiana şablonu uygulandı",
   "template.apply": "Kayıtlı şablon uygulandı",
 };
+
+/* ---------------- D172: yaklaşıma göre yöntem kuralları (referans 5 ve 5.1) ---------------- */
+
+/** Yaklaşımın genel kuralları (araştırma odağı, hipotez, örnekleme, veri, analiz, kalite, bulgu, tartışma) */
+export function approachRules(approach?: string | null): string {
+  if (approach === "quantitative") return "NİCEL YAKLAŞIM KURALLARI: Odak ölçüm, dağılım, ilişki, fark veya etkidir. Hipotez yalnızca gerektiğinde (koşullu) yazılır. Örneklemede istatistiksel gerekçe ve örneklem stratejisi verilir. Veri sayısal ölçümdür; ölçme araçlarının geçerlik ve güvenirliği raporlanır. Analiz istatistiksel yöntemlerle yapılır; normallik ve diğer varsayımlar analize göre ele alınır. Bulgular istatistik, tablo ve etki ölçüleriyle sunulur. Tartışma bulguları kuram ve literatürle yorumlar. Kodlama, tema ve katılımcı alıntısı başlıkları kullanılmaz.";
+  if (approach === "qualitative") return "NİTEL YAKLAŞIM KURALLARI: Odak deneyim, anlam, süreç ve bağlamdır. Hipotez kullanılmaz; keşfedici araştırma soruları kullanılır. “Evren/örneklem” yerine amaçlı seçim ve bilgi zenginliğine dayalı katılımcı/çalışma grubu anlatılır. Veri görüşme, gözlem, doküman vb.dir. Analiz kodlama ve tematik/içerik analizi gibi yöntemlerle yapılır (kodlama yaklaşımı seçilen analize göre). Kalite ölçütleri inandırıcılık, aktarılabilirlik, tutarlılık, teyit edilebilirlik ve araştırmacının konumu (refleksivite)dır. Bulgular tema, alt tema ve veri örnekleriyle sunulur; katılımcı alıntısı yalnızca kullanıcının gerçek verisinden alınır, ASLA uydurulmaz ([VERİ GİRİLECEK]). Normallik, istatistiksel varsayım, p değeri, etki büyüklüğü başlıkları kullanılmaz. Tartışma bağlamsal ve anlam odaklıdır.";
+  if (approach === "mixed") return "KARMA YÖNTEM KURALLARI: Nicel ve nitel odağın birleşimi gerekçelendirilir. Hipotez yalnızca nicel bileşende olabilir. Örnekleme her aşama için ayrı anlatılır. Normallik/varsayımlar yalnızca nicel aşamada, kodlama ve temalar ile katılımcı alıntıları yalnızca nitel aşamada yer alır. Her bileşene uygun kalite ölçütleri kullanılır. Bulgular ayrı ve bütünleştirilmiş olarak sunulur; entegrasyon temel gerekliliktir ve meta-çıkarımlar entegrasyondan üretilir. Tartışma entegrasyon ve meta-çıkarımlar üzerine kurulur.";
+  return "";
+}
+
+/** Bölüme ve yaklaşıma özgü içerik yönergesi (tez ve makalenin yöntem, analiz, bulgu, tartışma bölümleri) */
+export function approachSectionGuidance(key: string, approach?: string | null): string {
+  const method = ["method", "methods_article", "sample", "participants", "instruments"].includes(key);
+  const analysis = key === "analysis";
+  const findings = ["findings", "results_article"].includes(key);
+  const discussion = ["discussion", "discussion_article"].includes(key);
+  if (approach === "quantitative") {
+    if (method) return "Bu bölümde (nicel): desen, evren-örneklem ve örneklem büyüklüğünün gerekçesi, ölçme araçları ve geçerlik/güvenirlik kanıtları, veri toplama süreci, analiz planı ve etik onay.";
+    if (analysis) return "Bu bölümde (nicel): hangi istatistiksel testlerin hangi araştırma sorusu/hipotez için kullanılacağı, varsayım kontrolleri (normallik vb.), anlamlılık düzeyi ve etki büyüklüğü.";
+    if (findings) return "Bu bölümde (nicel): önce tanımlayıcı istatistikler, ardından araştırma sorularına/hipotezlere göre sırayla test sonuçları, tablo ve etki ölçüleri; değerler yalnızca kullanıcının analiz çıktısından.";
+    if (discussion) return "Bu bölümde (nicel): bulguları kuram ve literatürle karşılaştır; ilişkiyi nedensellik gibi sunma; sınırlılıklar ve genellenebilirlik.";
+  }
+  if (approach === "qualitative") {
+    if (method) return "Bu bölümde (nitel): araştırma bağlamı, desen, katılımcıların amaçlı seçimi ve özellikleri, veri üretimi (görüşme/gözlem/doküman), analiz yaklaşımı, inandırıcılık önlemleri, araştırmacının konumu (refleksivite) ve etik.";
+    if (analysis) return "Bu bölümde (nitel): kodlama süreci, temaların nasıl geliştirildiği, kodlayıcılar arası tutarlılık veya uzman incelemesi, kullanılan yazılım (varsa).";
+    if (findings) return "Bu bölümde (nitel): araştırma sorularına göre tema ve alt temalar, her tema için açıklama ve kullanıcının gerçek verisinden alıntılar; istatistik, tanımlayıcı test veya hipotez testi YAZMA.";
+    if (discussion) return "Bu bölümde (nitel): temaları bağlam ve anlam odaklı yorumla, literatürle ilişkilendir; aktarılabilirlik sınırlarını belirt.";
+  }
+  if (approach === "mixed") {
+    if (method) return "Bu bölümde (karma): karma desenin türü ve gerekçesi, aşamaların sırası ve önceliği, her aşamanın örneklemi/katılımcıları, araçları ve analizi, aşamalar arası bağlantı noktası, etik.";
+    if (analysis) return "Bu bölümde (karma): nicel analiz, nitel analiz ve bunların nasıl birleştirileceği (entegrasyon stratejisi, ortak gösterim).";
+    if (findings) return "Bu bölümde (karma): nicel ve nitel bulguları ayrı alt başlıklarla sun; ardından birleştirilmiş bulgular (ortak gösterim) ve meta-çıkarımlar.";
+    if (discussion) return "Bu bölümde (karma): entegrasyon ve meta-çıkarımlar üzerinden tartış; bileşenlerin uyuştuğu ve ayrıştığı noktaları açıkla.";
+  }
+  return "";
+}
+
+/** Çalışma türüne özgü yapı yönergesi (makale tez kopyası değildir; dergi uyarlamasında dergi kuralları önceliklidir) */
+export function workTypeGuidance(workType?: string): string {
+  if (workType === "research_article") return "ARAŞTIRMA MAKALESİ: Tez iskeletinin kısaltılmış kopyası değildir; hedef dergi ve desene göre giriş–yöntem–bulgular–tartışma ekseninde yoğun yazılır. Tezlerdeki uzun ve bağımsız kuramsal çerçeve bölümü makaleye eklenmez; kuramsal dayanak girişte kısa ve araştırma boşluğuna bağlı verilir.";
+  if (workType === "journal_article") return "DERGİ MAKALESİ / YAYIN UYARLAMA: Hedef derginin yazar rehberi, kelime sınırı, bölüm sırası, tablo/şekil ve atıf biçimi önceliklidir. Derginin talep etmediği tez tipi uzun bölümler eklenmez; derginin zorunlu başlıkları ve raporlama standartları korunur. Dergi kuralları bilinmiyorsa uydurma, kullanıcıya yazar rehberini sor.";
+  return "";
+}

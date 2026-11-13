@@ -6,7 +6,7 @@ import { collectCitations, headings, type JSONNode } from "@/lib/editor/doc";
 import { analyzeRepetition, avoidListForPrompt } from "@/lib/quality/repetition";
 import { blueprintContext, blueprintStageNote, readBlueprint } from "@/lib/blueprint";
 import { structureRule } from "@/lib/workflows/structure";
-import { capstoneGuidance, designById, LITERATURE_FUNCTIONS, LITERATURE_STAGES, literatureDepth, reportingStandards, scopeGuidance, GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
+import { approachRules, approachSectionGuidance, workTypeGuidance, capstoneGuidance, designById, LITERATURE_FUNCTIONS, LITERATURE_STAGES, literatureDepth, reportingStandards, scopeGuidance, GRANT_PROGRAMS, PROGRAM_NOTES, stageDef, stageNeedsData, EMPIRICAL_METHODS, METHODOLOGY_LABELS, LEVEL_LABELS, type Methodology, type AcademicLevel } from "@/lib/workflows";
 import { LANG_NAME_TR, writingLang } from "@/lib/writing-lang";
 import { missingFields } from "@/lib/citations/checks";
 import { sourceRowToItemClient } from "@/lib/sources/row";
@@ -122,9 +122,16 @@ export async function buildContext(params: {
   const capstone = project.work_type === "capstone" ? capstoneGuidance(ctx.variant) : "";
   if (capstone) head.push(capstone);
   // D170: kaynaklara dayalı çalışmalarda (dergi makalesi, derleme, kuramsal/derleme yaklaşımlı tez ve makale) veri yer tutucusu yok
-  const sourceBased = ["journal_article", "literature_review", "source_research"].includes(project.work_type)
+  // D172: dergi makalesinde nicel/nitel/karma yaklaşım seçildiyse yapı IMRaD’dır ve veri kuralları geçerlidir
+  const empiricalJournal = project.work_type === "journal_article" && !!ctx.methodology && EMPIRICAL_METHODS.has(ctx.methodology);
+  const sourceBased = (["journal_article", "literature_review", "source_research"].includes(project.work_type) && !empiricalJournal)
     || (["thesis", "research_article", "capstone"].includes(project.work_type) && !!ctx.methodology && !EMPIRICAL_METHODS.has(ctx.methodology));
   if (sourceBased) head.push("ÇALIŞMANIN NİTELİĞİ: Bu çalışma kullanıcının topladığı veriye değil, KAYNAKLAR’daki yayınlara dayanır. Yöntem/Bulgular/örneklem/veri analizi anlatma, “bu çalışmada veri toplanmıştır” gibi cümle kurma ve [VERİ GİRİLECEK] işaretini HİÇ KULLANMA; olgusal her bilgiyi kaynaklarla ver.");
+  // D172: yaklaşım kuralları (referans 5/5.1) ve çalışma türüne özgü yapı (makale tez kopyası değildir)
+  const rules = sourceBased ? "" : approachRules(ctx.methodology);
+  if (rules) head.push(rules);
+  const wt = workTypeGuidance(project.work_type);
+  if (wt) head.push(wt);
   head.push(`Çalışma dili: ${LANG_NAME_TR[writingLang(project.language)]} · Atıf stili: ${project.citation_style}`);
   // D144: Almanca yazım — akademik Almanca kuralları; sistem işaretleri ve özet biçimi
   if (writingLang(project.language) === "de") head.push("ALMANCA YAZIM: Taslakların tamamını akademik Almancayla (wissenschaftliches Deutsch) yaz: nesnel üslup, birinci tekil şahıs yerine edilgen veya “in der vorliegenden Arbeit” yapıları, doğru büyük harf ve virgül kuralları, yerleşik Almanca terimler. Sistem işaretlerini ([[kaynak:S1]], [KAYNAK GEREKLİ], [VERİ GİRİLECEK], :::taslak) asla çevirme, aynen kullan. Özet istendiğinde Türkçe Özet yerine “## Zusammenfassung” (Almanca, 150–250 kelime) ve “Schlüsselwörter:” satırı, ardından “## Abstract” ve “Keywords:” yaz.");
@@ -202,6 +209,8 @@ export async function buildContext(params: {
     if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
     // D171: bölümün gerekçesi, kullanıcının seçtiği kapsam ve literatür derinliği
     if (stage.why) tail.push(`Bölümün çalışmadaki işlevi: ${stage.why}`);
+    const ag = sourceBased ? "" : approachSectionGuidance(stage.key, ctx.methodology);
+    if (ag) tail.push(ag);
     const sg = scopeGuidance(stage.scope);
     if (sg) tail.push(sg);
     if (LITERATURE_STAGES.has(stage.key)) tail.push(`${LITERATURE_FUNCTIONS}\nBeklenen derinlik (${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level}): ${literatureDepth({ workType: project.work_type, level: project.academic_level, approach: ctx.methodology })}`);

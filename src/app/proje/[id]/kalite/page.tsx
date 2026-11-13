@@ -6,7 +6,7 @@ import { projectAccessOrNull } from "@/lib/project-access";
 import { requireLegalAcceptance } from "@/lib/legal/server";
 import { buildChecklist } from "@/lib/quality/checklist";
 import { consistencyChain } from "@/lib/quality/consistency-chain";
-import type { JSONNode } from "@/lib/editor/doc";
+import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { stageDef } from "@/lib/workflows";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const ctx = acc.project.context ?? {};
   const chain = consistencyChain({
     workType: acc.project.work_type, level: acc.project.academic_level, methodology: ctx.methodology ?? null, program: ctx.program ?? null, design: ctx.design ?? null, variant: ctx.variant ?? null,
-    stages: list.map((st: any) => ({ key: st.key, title: st.title, text: String(st.content_text ?? ""), hidden: !!st.hidden })),
+    stages: list.map((st: any) => ({ key: st.key, title: st.title, text: String(st.content_text ?? ""), hidden: !!st.hidden, citations: new Set(citedIdsInOrder([st.content as JSONNode])).size })),
   });
   return <QualityView project={{ id: acc.project.id, title: acc.project.title }} initial={report} stages={list.map(({ id: sid, key, title }) => ({ id: sid, key, title }))} checklist={checklist} chain={chain} />;
 }

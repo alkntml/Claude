@@ -4,7 +4,7 @@
  * (puan yazılımı aynen kalır); yalnızca öneridir. Otomatik düzeltme yapmaz: sorunu, kanıtını ve önerilen
  * çözümü gösterir, karar kullanıcınındır. Yapay zekâ kullanmaz.
  */
-import { buildTemplate, EMPIRICAL_METHODS, type TemplateInput } from "@/lib/workflows";
+import { buildTemplate, EMPIRICAL_METHODS, LITERATURE_STAGES, type TemplateInput } from "@/lib/workflows";
 
 export type ChainLevel = "critical" | "important" | "improvement";
 export const CHAIN_LEVEL_LABEL: Record<ChainLevel, string> = { critical: "Kritik", important: "Önemli", improvement: "İyileştirme" };
@@ -20,7 +20,7 @@ export interface ChainItem {
   stageKey?: string;
 }
 
-export interface ChainStage { key: string; title: string; text: string; hidden?: boolean }
+export interface ChainStage { key: string; title: string; text: string; hidden?: boolean; /** Bölümde atıf yapılan farklı kaynak sayısı */ citations?: number }
 
 const words = (s: string) => (s.trim() ? s.trim().split(/\s+/).length : 0);
 const HYPOTHESIS = /\bH[0-9₀-₉]\b|\bhipotez|\bhypothes|\bHypothese/i;
@@ -78,6 +78,16 @@ export function consistencyChain(input: TemplateInput & { stages: ChainStage[] }
   // 10) Karma yöntem → entegrasyon
   if (m === "mixed" && findingsWritten && !filled("integration"))
     add({ level: "critical", title: "Karma yöntemde veri entegrasyonu yok", evidence: "Karma yöntem seçilmiş, bulgular yazılmış; ancak nicel ve nitel sonuçların birleştirildiği entegrasyon bölümü boş veya yok.", suggestion: "Nicel ve nitel bulguları karşılaştıran ortak gösterim ve meta-çıkarımlar içeren bir entegrasyon bölümü ekleyin.", stageKey: "integration" });
+
+  // Literatür kapsamı (referans 6.2–6.4): kaynak sayısı tek başına ölçüt değildir; yalnızca yüzeysellik işareti olarak İyileştirme düzeyinde
+  const minSources = input.workType === "thesis" ? (input.level === "doctorate" ? 15 : input.level === "master" ? 10 : 5) : 5;
+  const litKeys = input.workType === "research_article" || input.workType === "journal_article" ? new Set(["introduction", "article_body"]) : LITERATURE_STAGES;
+  for (const s of visible.filter((x) => litKeys.has(x.key) && x.key !== "gaps" && words(x.text) > 0 && x.citations !== undefined)) {
+    if ((s.citations ?? 0) < minSources)
+      add({ level: "improvement", title: "Literatür kapsamı sınırlı görünüyor", evidence: "“{s}” bölümünde {n} farklı kaynağa atıf var.", vars: { s: s.title, n: s.citations ?? 0 }, suggestion: "Eksik alt temaları, temel ve güncel çalışmaları, yöntem farklılıklarını ve çelişen bulguları karşılaştırmalı olarak ekleyin; uzunluğu dolgu metniyle değil sentezle artırın.", stageKey: s.key });
+  }
+  if (input.workType === "thesis" && (input.level === "master" || input.level === "doctorate") && filled("literature") && byKey("gaps") && !filled("gaps"))
+    add({ level: "improvement", title: "Araştırma boşluğu gösterilmemiş", evidence: "Literatür yazılmış, ancak araştırma boşluğu bölümü boş.", suggestion: "Literatürdeki boşluğu kaynaklara dayanarak gösterin ve çalışmanızın konumunu gerekçelendirin.", stageKey: "gaps" });
 
   // Kritik bölüm eksik veya gizlenmiş
   let template: ReturnType<typeof buildTemplate> = [];

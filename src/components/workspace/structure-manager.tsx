@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, Copy, Info, RotateCcw, Save, Trash2 } from "lucide-react";
+import { AlertTriangle, Copy, Download, Info, RotateCcw, Save, Trash2, Upload } from "lucide-react";
 import { useT } from "@/i18n/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -174,6 +174,31 @@ export function StructureModal({ open, onClose, project, isOwner, onApplied }: {
       loadTemplates();
     } catch (e) { toast({ tone: "error", title: t("Şablon kaydedilemedi"), detail: (e as Error).message }); } finally { setBusy(false); }
   }
+  // D172: şablon paylaşma/aktarma — dosya olarak indir, dosyadan içe aktar (metin içermez)
+  async function exportTemplate(id: string, tname: string) {
+    try {
+      const r = await api<any>(`/api/templates/${id}`);
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(r, null, 2)], { type: "application/json" }));
+      a.download = `${tname.replace(/[^\p{L}\p{N}]+/gu, "-").slice(0, 60) || "sablon"}.academiana.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    } catch (e) { toast({ tone: "error", title: t("Şablon indirilemedi"), detail: (e as Error).message }); }
+  }
+  async function importTemplate(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    e.target.value = "";
+    if (!f) return;
+    try {
+      if (f.size > 300_000) throw new Error(t("Şablon dosyası geçersiz"));
+      const raw = JSON.parse(await f.text());
+      const tpl = raw?.format === "academiana-template" ? raw.template : null;
+      if (!tpl) throw new Error(t("Şablon dosyası geçersiz"));
+      await api("/api/templates", { method: "PUT", json: { name: String(tpl.name ?? f.name).slice(0, 120), work_type: tpl.work_type, methodology: tpl.methodology ?? null, sections: tpl.sections } });
+      toast({ tone: "success", title: t("Şablon içe aktarıldı") });
+      loadTemplates();
+    } catch (err) { toast({ tone: "error", title: t("Şablon içe aktarılamadı"), detail: (err as Error).message }); }
+  }
   async function removeTemplate(id: string, tname: string) {
     if (!confirm(t("“{name}” şablonu silinsin mi? Bu şablonla oluşturulmuş projeler etkilenmez.", { name: tname }))) return;
     try { await api(`/api/templates/${id}`, { method: "DELETE" }); if (source === id) setSource("default"); loadTemplates(); }
@@ -255,11 +280,18 @@ export function StructureModal({ open, onClose, project, isOwner, onApplied }: {
         {unavailable ? <p className="mt-2 text-[12px] text-amber-700">{t("Şablon kaydı için veritabanı güncellemesi henüz yapılmamış.")}</p> : (
           <div className="mt-2 flex gap-2"><input className="input" maxLength={120} placeholder={t("ör. Nitel yüksek lisans tezi yapım")} value={name} onChange={(e) => setName(e.target.value)} /><Button onClick={saveTemplate} loading={busy} disabled={!name.trim()}><Save className="h-4 w-4" /> {t("Kaydet")}</Button></div>
         )}
+        {!unavailable && (
+          <label className="mt-2 inline-flex cursor-pointer items-center gap-1.5 text-[12.5px] font-medium text-brand-700 hover:underline">
+            <Upload className="h-3.5 w-3.5" /> {t("Şablon dosyası içe aktar")}
+            <input type="file" accept=".json,application/json" className="hidden" onChange={importTemplate} />
+          </label>
+        )}
         {templates.length > 0 && (
           <ul className="mt-3 space-y-1">
             {templates.map((x) => (
               <li key={x.id} className="flex items-center gap-2 rounded-lg px-2 py-1 text-[13px] text-ink-700 hover:bg-ink-50">
                 <span className="min-w-0 flex-1 truncate">{x.name} <span className="text-ink-400">· {t("{n} bölüm", { n: x.count })}</span></span>
+                <button onClick={() => exportTemplate(x.id, x.name)} className="rounded-md p-1 text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label={t("Şablonu dosya olarak indir")} title={t("Şablonu dosya olarak indir")}><Download className="h-3.5 w-3.5" /></button>
                 <button onClick={() => removeTemplate(x.id, x.name)} className="rounded-md p-1 text-ink-400 hover:bg-rose-50 hover:text-rose-500" aria-label={t("Şablonu sil")}><Trash2 className="h-3.5 w-3.5" /></button>
               </li>
             ))}

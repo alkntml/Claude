@@ -21,7 +21,7 @@ export interface WorkTypeMeta {
 export const WORK_TYPES: WorkTypeMeta[] = [
   { id: "thesis", title: "Tez hazırlama", short: "Lisans / yüksek lisans / doktora", description: "Konu seçiminden kaynakçaya kadar tezinizin tüm bölümlerini yönetin.", icon: "GraduationCap", levels: ["bachelor", "master", "doctorate"] },
   { id: "research_article", title: "Araştırma makalesi", short: "Özgün araştırma", description: "Giriş–Yöntem–Bulgular–Tartışma yapısında özgün araştırma makalesi.", icon: "FlaskConical", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
-  { id: "journal_article", title: "Bilimsel dergi makalesi", short: "Hedef dergiye uygun", description: "Kaynaklara dayalı; Giriş, içeriğe özgü konu bölümleri ve Sonuçtan oluşan, hedef derginin yazım kurallarına uygun makale.", icon: "BookOpenText", levels: ["master", "doctorate", "postdoc", "other"] },
+  { id: "journal_article", title: "Bilimsel dergi makalesi", short: "Hedef dergiye uygun", description: "Hedef derginin kurallarına uygun makale: kaynaklara dayalıysa Giriş, içeriğe özgü konu bölümleri ve Sonuç; veri topladıysanız Giriş, Yöntem, Bulgular ve Tartışma.", icon: "BookOpenText", levels: ["master", "doctorate", "postdoc", "other"] },
   { id: "capstone", title: "Bitirme projesi", short: "Proje ve rapor", description: "Tasarım, uygulama ve değerlendirme süreçleriyle bitirme projesi raporu.", icon: "Rocket", levels: ["bachelor", "master"] },
   { id: "literature_review", title: "Literatür taraması", short: "Sistematik / anlatı derleme", description: "Arama stratejisi, tarama ve tematik sentez ile derleme çalışması.", icon: "Library", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "research_proposal", title: "Araştırma önerisi", short: "Research proposal", description: "Tez önerisi, proje başvurusu veya burs için araştırma önerisi.", icon: "Lightbulb", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
@@ -113,8 +113,10 @@ export function stageNeedsData(key: string, project?: { work_type?: string | nul
   if (!def?.requiresUserData) return false;
   if (key === "grant_budget") return true;
   const wt = project?.work_type ?? "";
-  if (!DATA_WORKS.has(wt)) return false;
   const m = project?.context?.methodology;
+  // D172: dergi makalesi varsayılan olarak kaynaklara dayalıdır; yalnızca nicel/nitel/karma seçilmişse veri ister
+  if (wt === "journal_article") return !!m && EMPIRICAL_METHODS.has(m);
+  if (!DATA_WORKS.has(wt)) return false;
   if (m && !EMPIRICAL_METHODS.has(m)) return false;
   return true;
 }

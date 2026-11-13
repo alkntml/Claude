@@ -18,6 +18,10 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Referans belgesine ikinci tur uyum (D172, 13 Kasım 2026)**
+- Makale: doğal başlıklar, yaklaşıma göre yöntem/bulgu içeriği, ek materyal; dergi makalesi varsayılan kaynaklara dayalı, veri varsa IMRaD
+- Nicel/nitel/karma kuralları yapay zekâda; literatür kapsamı uyarısı; şablon dosyası indir/içe aktar; bölüm eklerken açıklama, zorunluluk, kapsam
+
 **Dinamik akademik yol haritası (D171, 13 Kasım 2026)**
 - Yol haritası çalışma türü, düzey, yaklaşım, desen ve bitirme projesi türüne göre kurulur; bölümlerde zorunluluk, gerekçe ve kapsam
 - Bölüm ayarları, kopyalama, gizleme, kritik bölüm uyarısı; “Yapıyı yönet” (şablonla karşılaştır, seçilenleri uygula, şablon kaydet, geçmiş); yöntem önerisi

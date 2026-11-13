@@ -29,7 +29,7 @@ import { api, handlePlanError, openUpgrade, setCurrentProject } from "@/lib/clie
 import { FEATURE_MIN_PLAN, hasFeature } from "@/lib/features";
 import { citedIdsInOrder, docToPlain, findPlaceholderBlocks, markdownToDoc, replaceBlockByText, wordCount, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItemClient } from "@/lib/sources/row";
-import { customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, stageNeedsData, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
+import { REQUIREMENT_LABEL, SCOPE_LABEL, type Requirement, type Scope, customStageDef, LEVEL_LABELS, STAGE_LIBRARY, stageDef, stageNeedsData, WORK_TYPES, type AcademicLevel } from "@/lib/workflows";
 import { AssistantPanel } from "./assistant";
 import { CitationContext } from "./citation-context";
 import { AcademicEditor, SuggestSwitch, Toolbar, useAcademicEditor } from "./editor";
@@ -1440,20 +1440,34 @@ function AddStageModal({ open, onClose, existing, projectId, afterPosition, onAd
   const { t } = useT();
   const toast = useToast();
   const [title, setTitle] = useState("");
+  // D172: özel bölümde açıklama, zorunluluk ve kapsam eklerken belirlenir
+  const [description, setDescription] = useState("");
+  const [requirement, setRequirement] = useState<Requirement>("optional");
+  const [scope, setScope] = useState<Scope>("standard");
   const [busy, setBusy] = useState(false);
   const lib = Object.values(STAGE_LIBRARY).filter((s) => !existing.has(s.key));
   async function add(libraryKey?: string, libTitle?: string) {
     setBusy(true);
     try {
-      const { stage } = await api<{ stage: any }>(`/api/projects/${projectId}/stages`, { method: "POST", json: { title: libTitle ?? title, libraryKey, afterPosition } });
+      const { stage } = await api<{ stage: any }>(`/api/projects/${projectId}/stages`, { method: "POST", json: libraryKey ? { title: libTitle ?? title, libraryKey, afterPosition } : { title, description, requirement, scope, afterPosition } });
       onAdded(stage);
-      setTitle("");
+      setTitle(""); setDescription("");
     } catch (e) { toast({ tone: "error", title: t("Bölüm eklenemedi"), detail: (e as Error).message }); } finally { setBusy(false); }
   }
   return (
     <Modal open={open} onClose={onClose} title={t("Bölüm ekle")}>
       <label className="label">{t("Özel bölüm")}</label>
       <div className="flex gap-2"><input className="input" placeholder={t("ör. Kısaltmalar listesi")} value={title} onChange={(e) => setTitle(e.target.value)} /><Button onClick={() => add()} loading={busy} disabled={!title.trim()}>{t("Ekle")}</Button></div>
+      {title.trim() && (
+        <div className="mt-2 space-y-2">
+          <textarea className="input min-h-[60px]" maxLength={1000} placeholder={t("Bölümün amacı / açıklaması (isteğe bağlı)")} value={description} onChange={(e) => setDescription(e.target.value)} />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <select className="input" aria-label={t("Zorunluluk düzeyi")} value={requirement} onChange={(e) => setRequirement(e.target.value as Requirement)}>{(Object.keys(REQUIREMENT_LABEL) as Requirement[]).map((k) => <option key={k} value={k}>{t(REQUIREMENT_LABEL[k])}</option>)}</select>
+            <select className="input" aria-label={t("Kapsam")} value={scope} onChange={(e) => setScope(e.target.value as Scope)}>{(Object.keys(SCOPE_LABEL) as Scope[]).map((k) => <option key={k} value={k}>{t(SCOPE_LABEL[k])}</option>)}</select>
+          </div>
+          <p className="text-[11.5px] text-ink-500">{t("Bölüm, şu an açık bölümün arkasına eklenir; sonra sürükleyerek yerini değiştirebilirsiniz.")}</p>
+        </div>
+      )}
       <p className="mb-2 mt-6 text-sm font-medium text-ink-700">{t("Hazır bölüm şablonları")}</p>
       <div className="max-h-80 space-y-1 overflow-y-auto">
         {lib.map((s) => <button key={s.key} onClick={() => add(s.key, t(s.title))} disabled={busy} className="block w-full rounded-xl border border-ink-100 px-3 py-2 text-left transition hover:border-brand-200 hover:bg-brand-50/40"><span className="block text-sm font-medium text-ink-800">{t(s.title)}</span><span className="block text-xs text-ink-500">{t(s.purpose)}</span></button>)}

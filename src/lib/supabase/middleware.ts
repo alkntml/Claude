@@ -4,9 +4,6 @@ import { LOCALE_COOKIE, localeForCountry, normalizeLocale } from "@/i18n/core";
 import { SITE_URL } from "@/lib/site";
 import { BOT_UA, isPublicPath, splitLocale } from "@/lib/seo";
 
-/** D168: tanıtım sayfaları için CDN önbellek süresi */
-export const PUBLIC_CDN_CACHE = "s-maxage=300, stale-while-revalidate=86400";
-
 const PROTECTED = ["/sozlesme-onayi", "/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni", "/anketler", "/kurum", "/konu-bul"];
 
 /** İlk ziyarette ülkeye göre dil: Türkiye (veya bilinmeyen) → tr, Almanca konuşulan ülkeler → de, diğerleri → en. Kullanıcı seçimi (çerez) her zaman önceliklidir. */
@@ -41,11 +38,6 @@ export async function updateSession(request: NextRequest) {
     // Oturum, uygulama sayfasına geçildiğinde yenilenir.
     const res = build();
     if (cookieLang !== urlLocale && (prefixed || !cookieLang)) setLang(res, urlLocale);
-    // D168: giriş yapmamış ziyaretçiye giden tanıtım sayfası Vercel CDN’inde 5 dk önbelleklenir (süresi dolunca 1 gün eskisi
-    // sunulurken arka planda yenilenir; her yayında önbellek sıfırlanır). Sayfa içeriği kişiye özel değildir; giriş yapmış
-    // kullanıcıda düğmeler tarayıcıda düzeltilir (useSignedIn). Çerez yazılan yanıtlar Vercel tarafından önbelleklenmez.
-    const anonymous = !request.cookies.getAll().some((c) => /^sb-.+-auth-token(\.\d+)?$/.test(c.name));
-    if (anonymous && request.method === "GET") res.headers.set("Vercel-CDN-Cache-Control", PUBLIC_CDN_CACHE);
     return res;
   }
 

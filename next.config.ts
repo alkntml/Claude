@@ -1,4 +1,28 @@
+import fs from "node:fs";
+import path from "node:path";
 import type { NextConfig } from "next";
+
+/**
+ * D168: Tanıtım sayfaları giriş yapmamış ziyaretçiye Vercel CDN’inden sunulur (5 dk taze, süresi dolunca 1 gün boyunca eskisi
+ * gösterilirken arka planda yenilenir; her yayında önbellek sıfırlanır). Sayfa HTML’i kişiye özel değildir (giriş durumuna bağlı
+ * düğmeler tarayıcıda düzeltilir: useSignedIn). Oturum çerezi olan isteklere başlık eklenmez.
+ */
+function publicCacheHeaders() {
+  const seo = fs.readFileSync(path.join(process.cwd(), "src/lib/seo.ts"), "utf8");
+  const list = seo.match(/export const PUBLIC_PATHS = \[([^\]]+)\]/);
+  const paths = list ? [...list[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
+  const all = [...paths, "/blog/:slug"];
+  let ref = "";
+  try { ref = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").host.split(".")[0]; } catch { /* yapılandırılmamış */ }
+  const missing = ref ? [{ type: "cookie" as const, key: `sb-${ref}-auth-token` }, { type: "cookie" as const, key: `sb-${ref}-auth-token.0` }] : [];
+  const value = [{ key: "Vercel-CDN-Cache-Control", value: "s-maxage=300, stale-while-revalidate=86400" }];
+  const out: { source: string; headers: typeof value; missing?: typeof missing }[] = [];
+  for (const p of all) for (const pre of ["", "/en", "/de"]) {
+    const source = p === "/" ? (pre || "/") : `${pre}${p}`;
+    out.push({ source, headers: value, ...(missing.length ? { missing } : {}) });
+  }
+  return out;
+}
 
 /**
  * İçerik Güvenlik Politikası (CSP, D106): betik, stil, bağlantı ve çerçeve kaynakları kendi alan adımızla sınırlı.
@@ -67,6 +91,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },
+      ...publicCacheHeaders(),
       // Servis çalışanı her zaman güncel sürümüyle yüklensin
       { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }, { key: "Service-Worker-Allowed", value: "/" }] },
     ];

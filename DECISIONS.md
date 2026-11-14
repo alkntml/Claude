@@ -969,3 +969,31 @@ Site sahibi kapak istedi: başlık “80 saniyede Academiana”, altında “ça
 - Oynat düğmesinin durduğu sol alt köşe boş.
 
 **Dosya:** `public/video/academiana-tanitim-kapak.jpg`; `PROMO_VIDEO.poster` güncellendi. Eski kapak silindi. Kapak görseli VideoObject şemasında (`thumbnailUrl`) da kullanılır.
+
+## D188 — Yönetici erişimi rehber videosu (2026-11-14, iç kullanım)
+Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve hangi önlemlerin alındığını anlatan, uzun ve ayrıntılı bir video istedi.
+
+**Video:** 5,5 dakika, 15 bölüm, sessiz, ekranda yazılı anlatım. Kaynağı `media/yonetici-rehberi/`; siteye konmadı.
+
+**Bölümler:**
+1. Kapı
+2. Panel haritası (16 sekme)
+3. Genel bakış
+4. Ziyaretçiler
+5. Kullanıcılar
+6. Kullanıcı ayrıntısı
+7. İşlemler ve sınırlar
+8. Kanıt kaydı
+9. Uyarılar
+10. Hata kayıtları
+11. KVKK talepleri
+12. Diğer sekmeler
+13. Görmedikleriniz
+14. Teknik katmanlar
+15. Sorumluluk
+
+**Açıkça belirtilen noktalar:**
+- Tam içeriğe en yakın erişim kanıt kaydı ve KVKK JSON indirmesidir.
+- Çalışma alanı yöneticiye açılmaz.
+- Veritabanı kuralları destek amacıyla yöneticiye okuma izni verir; panel bunu belirli ekranlarla sınırlar.
+- Genel bir yönetici işlem günlüğü yoktur. Yalnızca bazı işlemler kimin yaptığıyla kaydedilir: ayarlar, uyarı kararları, satın alma kaydı, mesajlar.

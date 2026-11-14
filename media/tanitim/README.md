@@ -57,3 +57,5 @@ ffmpeg -framerate 30 -i framesv/f%05d.jpg -i mix.wav -c:v libx264 -preset slow -
 - **Başlık ve slogan:** “80 saniyede Academiana”, altında “Eksiksiz Akademik Araştırma Çalışma Alanı”.
 - **Kaynak:** `cover.html`; `node cover.cjs` ile `cover.png` üretilir, JPG’ye çevrilip `public/video/academiana-tanitim-kapak.jpg` olur.
 - **Yerleşim:** sol alt köşe boş bırakılır, çünkü sitedeki oynat düğmesi orada durur.
+
+Reels kapağı: `cover-v.html` (1080×1920). Ana içerik ortadaki kare alanda kalır, böylece profil ızgarasındaki 3:4 ve 1:1 kırpmada tam görünür. Üretmek için `node cover-v.cjs` çalıştırın.

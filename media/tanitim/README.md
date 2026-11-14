@@ -52,3 +52,8 @@ ffmpeg -framerate 30 -i framesv/f%05d.jpg -i mix.wav -c:v libx264 -preset slow -
 ```
 
 - **Saklama:** Reels dosyası sosyal medya içindir; repoya ve siteye konmaz.
+
+## Kapak görseli (D187)
+- **Başlık ve slogan:** “80 saniyede Academiana”, altında “Eksiksiz Akademik Araştırma Çalışma Alanı”.
+- **Kaynak:** `cover.html`; `node cover.cjs` ile `cover.png` üretilir, JPG’ye çevrilip `public/video/academiana-tanitim-kapak.jpg` olur.
+- **Yerleşim:** sol alt köşe boş bırakılır, çünkü sitedeki oynat düğmesi orada durur.

@@ -957,3 +957,15 @@ Site sahibi istedi: güven kazandıran bir reklam filmi. İlk fikirden kaynakça
 - **Yerleşim** (`?v=1`): başlık blokları üstte, uygulama kartları altta ve %90 boyutta. Sahne adları yolculuk çubuğunda gösterilmez (kicker zaten yazar). Güven kartları 2 sütun × 3 satır, kapanış ortada.
 - **Güvenli alan:** Instagram arayüzü için üst, alt ve sağ kenarlar boş bırakıldı.
 - **Çıktı:** H.264 High (CRF 20), AAC 192 kb/sn, 13,5 MB; kapak görseli kapanış karesi. Dosya repoya ve siteye konmadı.
+
+## D187 — Tanıtım filmine kapak görseli (2026-11-14)
+Site sahibi kapak istedi: başlık “80 saniyede Academiana”, altında “çalışma alanı” sloganı.
+
+**Görsel:** 1920×1080.
+- Ortada amblem ve büyük serif başlık; “Academiana” kelimesi marka renginde.
+- Altında altın çizgiler arasında “EKSİKSİZ AKADEMİK ARAŞTIRMA ÇALIŞMA ALANI”; bu, sitenin Türkçe başlığındaki sloganla aynı.
+- Sürecin adımları: Fikir → Kaynak → Yazım → Doğrulama → Kaynakça → Savunma.
+- Köşelerde filmdeki üç küçük temsilî kart (atıf, kalite puanı, jüri sorusu).
+- Oynat düğmesinin durduğu sol alt köşe boş.
+
+**Dosya:** `public/video/academiana-tanitim-kapak.jpg`; `PROMO_VIDEO.poster` güncellendi. Eski kapak silindi. Kapak görseli VideoObject şemasında (`thumbnailUrl`) da kullanılır.

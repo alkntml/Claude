@@ -50,7 +50,7 @@ const p = (...content: any[]) => ({ type: "paragraph", content });
 const h = (level: number, text: string) => ({ type: "heading", attrs: { level }, content: [t(text)] });
 const cite = (ids: string[], locator: string | null = null, narrative = false) => ({ type: "citation", attrs: { ids, locator, narrative } });
 
-interface DB { projects: any[]; stages: any[]; sources: any[]; memory: any[]; comments: any[]; revisions: any[]; reports: any[]; feedback: any[]; files?: any[] }
+interface DB { projects: any[]; stages: any[]; sources: any[]; memory: any[]; comments: any[]; revisions: any[]; reports: any[]; feedback: any[] }
 
 function seed(): DB {
   const projectId = uid();
@@ -89,8 +89,6 @@ function load(): DB {
   return seed();
 }
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch { /* yoksay */ } }
-/** Dışarıdan (film katmanı) yapılan değişiklikleri kaydeder ve arayüzü yeniler */
-export function commitDemo() { persist(); emit(); }
 export function resetDemo() { db = seed(); persist(); emit(); }
 
 const subs = new Set<() => void>();

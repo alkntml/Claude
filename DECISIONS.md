@@ -934,7 +934,7 @@ Site sahibi istedi: güven kazandıran bir reklam filmi. İlk fikirden kaynakça
 **Ses:** film sessizdir; anlatım ekrandaki yazılarla yapılır.
 
 **Teknik:**
-- Kaynak `media/tanitim/` içindedir. Yazı tipleri, kayıt betiği ve README orada. Kareler `render(t)` ile deterministik çizilir.
+- Kareler `render(t)` ile deterministik çizildi. Üretim kaynağı D195 ile repodan kaldırıldı; sitede yalnızca `public/video/` dosyaları var.
 - Kayıt: Playwright ile 2400 kare, ffmpeg H.264 (CRF 24, faststart), 5,6 MB.
 - Dosyalar yeni adla kaydedildi (`academiana-tanitim-80.mp4/.jpg`), böylece eski önbellek kullanılmaz; eski dosyalar silindi.
 - `PROMO_VIDEO` 80 sn (PT1M20S) olarak güncellendi; ana sayfa başlığı “80 saniyede Academiana”, VideoObject açıklaması yenilendi.
@@ -950,7 +950,7 @@ Site sahibi istedi: güven kazandıran bir reklam filmi. İlk fikirden kaynakça
 - **Müzik:** telif sorunu olmasın diye kodla sentezlendi; çok hafif bir pad (C–Am–F–G), yaklaşık −35 LUFS. Konuşma sırasında ayrıca kısılır.
 - **Ses düzeyi:** konuşma −16 LUFS; toplam yaklaşık −15 LUFS. Dosya AAC 160 kb/sn.
 - **Dosya:** `public/video/academiana-tanitim-80-ses.mp4` (7,3 MB). Yeni ad sayesinde eski önbellek kullanılmaz. Kapak görseli aynı.
-- **Kaynak:** ayrıntı `media/tanitim/README.md`. Ham ses repoya girmez.
+- **Kaynak:** Ham ses ve üretim dosyaları repoda tutulmaz (D195).
 
 ## D186 — Tanıtım filminin Reels sürümü (2026-11-14)
 - **Ne:** Site sahibi aynı sesle Reels videosu istedi. Aynı animasyondan 1080×1920 (9:16) dikey sürüm üretildi; seslendirme, müzik ve sese göre zaman eşlemesi (D185) aynı.
@@ -973,7 +973,7 @@ Site sahibi kapak istedi: başlık “80 saniyede Academiana”, altında “ça
 ## D188 — Yönetici erişimi rehber videosu (2026-11-14, iç kullanım)
 Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve hangi önlemlerin alındığını anlatan, uzun ve ayrıntılı bir video istedi.
 
-**Video:** 5,5 dakika, 15 bölüm, sessiz, ekranda yazılı anlatım. Kaynağı `media/yonetici-rehberi/`; siteye konmadı.
+**Video:** 5,5 dakika, 15 bölüm, sessiz, ekranda yazılı anlatım. Siteye konmadı; üretim kaynağı D195 ile repodan kaldırıldı.
 
 **Bölümler:**
 1. Kapı
@@ -1097,14 +1097,23 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
   - kalite kontrolü ve eksik verinin “Bul ve değiştir” ile doldurulması;
   - savunma provası, danışman daveti ve ilerleme paneli, PDF teslimi.
 - **Yapı:**
-  - `demo/film/` demonun üstüne bir film katmanıdır. `film-api.ts` filmdeki uçları yanıtlar; istatistik, grafik, iddia, kalite, ilerleme ve harita hesaplarını sitenin motorlarıyla yapar.
-  - Kayıt betikleri `media/tez-filmi/` içindedir. Siteye derlenmez.
+  - Film, demonun üstüne kurulan bir film katmanıyla kaydedildi; istatistik, grafik, iddia, kalite, ilerleme ve harita hesapları sitenin motorlarıyla yapıldı.
+  - Film katmanı ve kayıt betikleri D195 ile repodan kaldırıldı.
 - **Dürüstlük:**
   - Kaynaklar, veri ve yapay zekâ yanıtları kurgusaldır ve hazırlanmıştır. Açılış kartında ve kalıcı ekran notunda yazar.
   - Kaynaklarda DOI yoktur.
   - Kalite raporunda yalnızca DOI/doğrulama bulguları çıkarılır ve bu raporda yazılır.
-  - Metindeki sayılar motorla aynıdır (`tests/film-thesis.test.ts`).
+  - Metindeki sayılar motorla aynıydı (kayıt sırasında testle denetlendi).
 - **Hata düzeltmesi (ürün):**
   - Sorun: Yapay zekâ taslağındaki `##` alt başlıklar 3. düzeye dönüşüyordu (`markdownToDoc`). Kardeş alt başlıklar iç içe numaralanıyordu: 2.3.1, 2.3.1.1, 2.3.1.2 …
   - Düzeltme: Artık `##` = 2. düzey (`docToMarkdown` ile aynı), `###` = 3. düzey. Çeviri dönüşümü de aynı kurala getirildi.
   - Test: `tests/sections.test.ts`.
+
+## D195 — Repoda video üretim dosyaları tutulmaz (2026-11-14)
+- **Karar (kullanıcı):** Repoda yalnızca sitede gösterilen video dosyaları kalır: `public/video/academiana-tanitim-80-ses.mp4` ve kapağı.
+- **Kaldırılanlar:**
+  - Video üretim kaynakları: `media/` (tanıtım, yönetici rehberi, tez filmi).
+  - Film katmanı: `demo/film/`.
+  - Film testi.
+  - Demodaki film ayarları.
+- **Değişmeyen:** D194’teki `##` alt başlık düzeltmesi ürün kodudur, kalır.

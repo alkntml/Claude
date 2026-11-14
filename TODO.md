@@ -162,7 +162,7 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 
 ## SEO (D164 sonrası, ayrıntı docs/seo/SEO_PLAN.md)
 - [ ] İçerik dalgası 2: DOI rehberi, literatür matrisi, ANOVA, korelasyon, regresyon raporlama, YZ kullanım beyanı, örneklem hazır tablosu (TR/EN/DE, motorla doğrulanmış örnekler)
-- [x] (2026-11-14, D194) Uzun tanıtım filmi: örnek nicel tez baştan sona (media/tez-filmi); `##` alt başlık numaralandırma hatası düzeltildi
+- [x] (2026-11-14, D194) Uzun tanıtım filmi: örnek nicel tez baştan sona (video dosyası repoda değil); `##` alt başlık numaralandırma hatası düzeltildi
 - [x] (2026-11-14, D193) Yazı tipi önyüklemesi 6 dosya/597 KB → 4 dosya/357 KB (italik serif gerektiğinde iner)
 - [x] (2026-11-14, D193) SSS HTML’i 312 → 231 KB (kısa CSS sınıfları, CSS ok); JSON-LD ve RSC tekrarı Next.js yapısı gereği kalır
 - [ ] Eski yazılara `updated` + `sources` ekle (önce en çok gösterim alan 10 yazı; Search Console verisiyle)

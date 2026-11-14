@@ -19,7 +19,7 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 
 ## Tamamlanan özellikler
 **Uzun tanıtım filmi (D194, 14 Kasım 2026)**
-- Örnek nicel tezin sitenin gerçek ekranlarında baştan sona yazıldığı film (`demo/film/`, `media/tez-filmi/`); kaynak, veri ve yapay zekâ yanıtları kurgusal ve ekranda belirtilir
+- Örnek nicel tezin sitenin gerçek ekranlarında baştan sona yazıldığı film (video ve üretim betikleri repoda tutulmuyor); kaynak, veri ve yapay zekâ yanıtları kurgusal ve ekranda belirtilir
 - Düzeltme: yapay zekâ taslağındaki `##` alt başlıklar artık kardeş olarak numaralanır (2.3.1, 2.3.2 …)
 
 **Maliyet, ISNAD dipnot, danışman, Zotero/ORCID, hız (D189–D193, 14 Kasım 2026)**
@@ -208,7 +208,7 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - D130 (2026-11-07): CORE veri kaynağı kaldırıldı; 16 anahtarsız veri tabanı
 - D129 (2026-11-07): Kaynak kapsamı 17 veri tabanı (PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP eklendi) + anahtarla NASA ADS, Springer Nature, IEEE Xplore
 - D128 (2026-11-07): PRISMA ve literatür haritası Pro ve üstü paketlere taşındı (migration 35)
-- D127 (2026-11-07) → D184 (2026-11-14): Ana sayfada 80 sn tanıtım filmi (kaynağı `media/tanitim/`) (yalnız TR, tıklayınca yüklenir, VideoObject şeması)
+- D127 (2026-11-07) → D184 (2026-11-14): Ana sayfada 80 sn tanıtım filmi (yalnız TR, tıklayınca yüklenir, VideoObject şeması)
 - D126 (2026-11-07): Vitrin — ana sayfada “Teslim etmeden önce emin olun” bölümü, hero/adım/ekip/kurumlar metinleri, menüde Yöntem, paket kartlarına iddia denetimi/PRISMA/harita. Migration 34 çalıştırılmalı
 - D118–D125 (2026-11-08, rakip analizi sonrası): fiyat/limit tek kaynak + test; kaynak destekli iddia denetimi (bölüm geneli, pasaj+sayfa, editörde işaret); kalite puanı yöntemi + /yontem şeffaflık sayfası (TR/EN); teslim öncesi kontrol listesi; PRISMA 2020 sistematik derleme modülü; literatür haritası; görev bazlı başlangıç; ürün analitiği (aktivasyon hunisi, YZ güvenilirliği), kurum denetim kaydı ve rol yönetimi. Migration 33 çalıştırılmalı
 - D117 (2026-11-08): Uzman desteği tamamen kaldırıldı; eski adres ana sayfaya yönlenir

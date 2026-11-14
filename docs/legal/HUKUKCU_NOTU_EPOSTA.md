@@ -11,7 +11,7 @@ Hukuki metinler değiştirilmedi. Aşağıdaki yeni hizmetlerin mevcut metinlerl
      - e-posta değişikliği,
      - davet.
    - Hizmete aktarılan veriler: alıcının e-posta adresi ve e-postanın içeriği (doğrulama bağlantısı).
-2. **Kurumsal e-posta kutusu: Zoho Mail (Zoho Corporation; AB veri merkezi)**
+2. **Kurumsal e-posta kutusu: Google Workspace / Gmail (Google LLC, ABD)**
    - Örnek adres: iletisim@academiana.com.tr.
    - Kullanıcıların ve kurumların bize yazdığı e-postalar burada saklanacak.
 
@@ -19,7 +19,7 @@ Hukuki metinler değiştirilmedi. Aşağıdaki yeni hizmetlerin mevcut metinlerl
 
 - **KVKK Aydınlatma Metni ve Gizlilik Politikası**
   - “Verilerin aktarıldığı alıcı grupları ve yurt dışına aktarım” bölümünde Supabase, Vercel ve Anthropic sayılıyor.
-  - E-posta gönderim hizmeti (Resend) ve kurumsal e-posta sağlayıcısı (Zoho) eklenmeli mi?
+  - E-posta gönderim hizmeti (Resend) ve kurumsal e-posta sağlayıcısı (Google Workspace) eklenmeli mi?
 - **Yurt dışına aktarım dayanağı**
   - Her iki şirket de yurt dışında.
   - Mevcut aktarım güvencesi ifadeleri bu hizmetleri de kapsıyor mu?

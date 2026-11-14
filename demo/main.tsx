@@ -38,7 +38,9 @@ function useDB() {
   return getDB();
 }
 
-const USER = { name: "Demo Kullanıcı", email: "demo@akademi.ai", plan: "pro", isAdmin: true };
+/** Film modu (D194): demo/film/entry.tsx ayarlar; tanıtım filminde demo kutusu ve duyuru gizlenir */
+const FILM = !!(window as unknown as { __FILM__?: boolean }).__FILM__;
+const USER = FILM ? { name: "Elif Aydın", email: "elif@ornek.edu.tr", plan: "pro", isAdmin: false } : { name: "Demo Kullanıcı", email: "demo@akademi.ai", plan: "pro", isAdmin: true };
 
 function DemoBanner() {
   const [open, setOpen] = useState(true);
@@ -115,17 +117,17 @@ function App() {
     const stages = db.stages.filter((s) => s.project_id === project.id).sort((a, b) => a.position - b.position);
     if (proj[2]) return <div className="min-h-screen bg-[rgb(var(--bg))]"><QualityView project={project} initial={db.reports.find((r) => r.project_id === project.id) ?? null} stages={stages} /></div>;
     return (
-      <Workspace key={project.id} project={project} stages={stages} sources={db.sources.filter((s) => s.project_id === project.id)} memory={db.memory.filter((m) => m.project_id === project.id)} files={[]} initialStageId={route.query.get("bolum")} planId="pro" />
+      <Workspace key={project.id} project={project} stages={stages} sources={db.sources.filter((s) => s.project_id === project.id)} memory={db.memory.filter((m) => m.project_id === project.id)} files={(db.files ?? []).filter((f) => f.project_id === project.id)} initialStageId={route.query.get("bolum")} planId="pro" />
     );
   }
 
   let page: React.ReactNode = null;
   if (path === "/panel") {
     const recentStages = db.stages.filter((s) => s.word_count > 0).sort((a, b) => b.updated_at.localeCompare(a.updated_at)).slice(0, 6);
-    page = <Dashboard name="Demo" plan="pro" projects={db.projects} recentStages={recentStages} sourcesCount={db.sources.length} conversations={[]} files={[]} announcements={[{ id: "d", title: "Demo sürümüne hoş geldiniz", body: "Örnek tez projesini açıp bölümler arasında gezinin, atıf stilini değiştirin ve kalite kontrolünü çalıştırın.", level: "info" }]} usage={{ ai_requests: 0, source_searches: 0, projects: db.projects.length, storage_mb: 0 }} limits={{ ai_requests_month: 75, source_searches_month: 2000, projects: 10, storage_mb: 3000 }} />;
+    page = <Dashboard name={FILM ? "Elif" : "Demo"} plan="pro" projects={db.projects} recentStages={recentStages} sourcesCount={db.sources.length} conversations={[]} files={db.files ?? []} announcements={FILM ? [] : [{ id: "d", title: "Demo sürümüne hoş geldiniz", body: "Örnek tez projesini açıp bölümler arasında gezinin, atıf stilini değiştirin ve kalite kontrolünü çalıştırın.", level: "info" }]} usage={{ ai_requests: 0, source_searches: 0, projects: db.projects.length, storage_mb: 0 }} limits={{ ai_requests_month: 75, source_searches_month: 2000, projects: 10, storage_mb: 3000 }} />;
   } else if (path === "/yeni") page = <NewProjectWizard key={route.query.toString()} defaultStyle="apa7" />;
   else if (path === "/kaynaklar") page = <LibraryView projects={db.projects} sources={db.sources} />;
-  else if (path === "/dosyalar") page = <FilesView files={[]} projects={db.projects} />;
+  else if (path === "/dosyalar") page = <FilesView files={db.files ?? []} projects={db.projects} />;
   else if (path === "/hesap") page = <AccountView profile={{ full_name: "Demo Kullanıcı", email: "demo@akademi.ai", institution: "Örnek Üniversitesi", plan_id: "pro", default_citation_style: "apa7" }} usage={{ ai_requests: 0, tokens: 0, source_searches: 0, projects: db.projects.length, storage_mb: 0 }} limits={{ ai_requests_month: 75, source_searches_month: 2000, projects: 10, storage_mb: 3000, export_formats: ["txt", "md", "docx", "pdf"] }} plans={DEMO_PLANS} />;
   else if (path === "/yonetim") page = <><p className="mb-4 rounded-xl bg-amber-50 px-4 py-2.5 text-sm text-amber-800">Demo: Genel bakıştaki sayılar örnek verilerdir; gerçek kullanım değildir. Değişiklikler kaydedilmez.</p><AdminPanel selfId="demo" /></>;
   else { navigate("/panel", true); return null; }
@@ -142,7 +144,7 @@ const demoLocale = (() => {
 createRoot(document.getElementById("root")!).render(
   <I18nProvider locale={demoLocale} dict={demoLocale === "en" ? EN : null}>
     <ToastProvider>
-      <DemoBanner />
+      {!FILM && <DemoBanner />}
       <App />
       <UpgradeDialogHost />
     </ToastProvider>

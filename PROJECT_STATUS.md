@@ -18,6 +18,10 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Uzun tanıtım filmi (D194, 14 Kasım 2026)**
+- Örnek nicel tezin sitenin gerçek ekranlarında baştan sona yazıldığı film (`demo/film/`, `media/tez-filmi/`); kaynak, veri ve yapay zekâ yanıtları kurgusal ve ekranda belirtilir
+- Düzeltme: yapay zekâ taslağındaki `##` alt başlıklar artık kardeş olarak numaralanır (2.3.1, 2.3.2 …)
+
 **Maliyet, ISNAD dipnot, danışman, Zotero/ORCID, hız (D189–D193, 14 Kasım 2026)**
 - İstem önbelleği: bölüm boyunca sabit bağlam (diğer bölümler, ana hat, bölüm talimatları) ayrıca önbellekte; içerik ve rol aynı (kalite değişmez)
 - ISNAD 2 (dipnotlu) atıf stili: ilk atıfta tam künye, sonra kısa atıf; editörde üst simge, Word/PDF/LaTeX’te sayfa altı dipnot

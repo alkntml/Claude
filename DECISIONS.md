@@ -1085,3 +1085,26 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
   - Kısa CSS sınıfları (`.faq-list`) ve CSS ile çizilen ok kullanıldı; madde başına uzun sınıflar ve SVG, HTML ile RSC’de iki kez taşınıyordu.
   - /sss 312 → 231 KB ham, 66 → 63 KB sıkıştırılmış. Ana sayfa 375 → 362 KB.
 - **Değişmeyen:** JSON-LD ve RSC tekrarı Next.js yapısı gereğidir.
+
+## D194 — Uzun tanıtım filmi: örnek nicel tez baştan sona (2026-11-14)
+- **Amaç:** Müşteri tek videoda bütün sistemi görsün. Bir yüksek lisans tezi sitenin gerçek ekranlarında, sırayla ve canlı imleçle yazılır:
+  - yeni çalışma sihirbazı, kurgu, başlık seçimi;
+  - kaynak araması (14 kaynak), kaynağa sor, literatür matrisi ve haritası;
+  - bölüm bölüm yazım ve bölüm kontrolü;
+  - veri yükleme, Cronbach alfa, betimsel, korelasyon, regresyon, t testi, ANOVA; saçılım ve sütun grafikleri;
+  - bulguların yorumu, tartışma, sonuç, özet;
+  - iddia denetimi, ISNAD dipnotlu stil;
+  - kalite kontrolü ve eksik verinin “Bul ve değiştir” ile doldurulması;
+  - savunma provası, danışman daveti ve ilerleme paneli, PDF teslimi.
+- **Yapı:**
+  - `demo/film/` demonun üstüne bir film katmanıdır. `film-api.ts` filmdeki uçları yanıtlar; istatistik, grafik, iddia, kalite, ilerleme ve harita hesaplarını sitenin motorlarıyla yapar.
+  - Kayıt betikleri `media/tez-filmi/` içindedir. Siteye derlenmez.
+- **Dürüstlük:**
+  - Kaynaklar, veri ve yapay zekâ yanıtları kurgusaldır ve hazırlanmıştır. Açılış kartında ve kalıcı ekran notunda yazar.
+  - Kaynaklarda DOI yoktur.
+  - Kalite raporunda yalnızca DOI/doğrulama bulguları çıkarılır ve bu raporda yazılır.
+  - Metindeki sayılar motorla aynıdır (`tests/film-thesis.test.ts`).
+- **Hata düzeltmesi (ürün):**
+  - Sorun: Yapay zekâ taslağındaki `##` alt başlıklar 3. düzeye dönüşüyordu (`markdownToDoc`). Kardeş alt başlıklar iç içe numaralanıyordu: 2.3.1, 2.3.1.1, 2.3.1.2 …
+  - Düzeltme: Artık `##` = 2. düzey (`docToMarkdown` ile aynı), `###` = 3. düzey. Çeviri dönüşümü de aynı kurala getirildi.
+  - Test: `tests/sections.test.ts`.

@@ -34,7 +34,7 @@ export function tokenizeForLanguage(doc: JSONNode | null | undefined): Tokenized
   }).join("");
   const out: string[] = [];
   const block = (b: JSONNode) => {
-    if (b.type === "heading") out.push(`${"#".repeat(Math.min(3, Math.max(1, Number(b.attrs?.level ?? 2) - 1)))} ${inline(b.content).trim()}`);
+    if (b.type === "heading") out.push(`${"#".repeat(Math.min(4, Math.max(2, Number(b.attrs?.level ?? 2))))} ${inline(b.content).trim()}`);
     else if (b.type === "paragraph") { const t = inline(b.content).trim(); if (t) out.push(t); }
     else if (b.type === "bulletList" || b.type === "orderedList") {
       out.push((b.content ?? []).map((li, i) => `${b.type === "orderedList" ? `${i + 1}.` : "-"} ${(li.content ?? []).map((p) => (p.type === "paragraph" ? inline(p.content) : "")).join(" ").trim()}`).join("\n"));

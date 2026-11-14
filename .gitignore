@@ -15,3 +15,11 @@ media/tanitim/framesv/
 media/yonetici-rehberi/frames/
 media/yonetici-rehberi/fonts/
 media/yonetici-rehberi/*.png
+demo/film/dist
+media/tez-filmi/www/
+media/tez-filmi/*.png
+media/tez-filmi/*.json
+media/tez-filmi/*.mp4
+media/tez-filmi/*.pdf
+media/tez-filmi/*.csv
+media/tez-filmi/out.txt

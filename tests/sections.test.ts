@@ -119,3 +119,14 @@ describe("seçimli dışa aktarma (D91)", () => {
     expect(JSON.stringify(d.blocks)).not.toContain("Yöntem.");
   });
 });
+
+describe("yapay zekâ taslağındaki ## alt başlıklar (D194)", () => {
+  it("kardeş olarak numaralanır (2.3.1, 2.3.2 …), iç içe geçmez; ### bir alt düzeydir", async () => {
+    const { markdownToDoc, docToTokenMarkdown } = await import("@/lib/editor/doc");
+    const docToMarkdown = (d: JSONNode) => docToTokenMarkdown(d).md;
+    const doc = markdownToDoc("## Kişisel bilgi formu\n\nMetin.\n\n## Ölçek A\n\nMetin.\n\n### Güvenirlik\n\nMetin.\n\n## Ölçek B\n\nMetin.", () => null);
+    expect(sectionTree(doc, "2.3").map((s) => s.number)).toEqual(["2.3.1", "2.3.2", "2.3.2.1", "2.3.3"]);
+    expect(docToMarkdown(doc)).toContain("## Ölçek A");
+    expect(docToMarkdown(doc)).toContain("### Güvenirlik");
+  });
+});

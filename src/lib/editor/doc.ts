@@ -184,7 +184,8 @@ export function markdownToDoc(md: string, resolve: (shortId: string) => string |
     const line = raw.trimEnd();
     if (!line.trim()) { flushAll(); continue; }
     const h = line.match(/^(#{1,4})\s+(.*)$/);
-    if (h) { flushAll(); content.push({ type: "heading", attrs: { level: Math.min(h[1].length + 1, 4) }, content: inline(h[2], resolve) }); continue; }
+    // ## = 2. düzey (docToMarkdown ile aynı; D194): yapay zekânın ## alt başlıkları kardeş olarak numaralanır
+    if (h) { flushAll(); content.push({ type: "heading", attrs: { level: Math.min(Math.max(h[1].length, 2), 4) }, content: inline(h[2], resolve) }); continue; }
     if (/^\s*\|.*\|\s*$/.test(line)) {
       flushPara(); flushList();
       table = table ?? [];

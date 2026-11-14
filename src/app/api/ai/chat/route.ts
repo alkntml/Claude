@@ -265,7 +265,9 @@ export const POST = route("ai.chat", async (req) => {
       let promptChars = 0;
       try {
         controller.enqueue(sse("phase", { phase: "write" }));
-        const wholeWork = b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist" || b.action === "reviewer_response";
+        // D181: serbest istek çalışmanın bütünüyle ilgiliyse (tüm bölümler, tutarlılık, genel değerlendirme…) öbür bölümler geniş verilir
+        const aboutWhole = b.action === "chat" && /(tüm|bütün|tamam[ıi]|genel|her)\s+(çalışma|bölüm|metin|tez|makale)|çalışmanın\s+(tamam|bütün)|tutarl[ıi]l[ıi]k|whole|entire|all\s+(sections|chapters)|gesamte|alle\s+kapitel/i.test(b.message);
+        const wholeWork = aboutWhole || b.action === "abstract" || b.action === "ethics_docs" || b.action === "cover_letter" || b.action === "journal_checklist" || b.action === "reviewer_response";
         // Bölümün tamamı seçili metin olarak geldiyse (ör. toplu düzeltme) mevcut metin bağlama ikinci kez eklenmez
         const currentLen = String(stage?.content_text ?? "").length;
         const omitCurrentText = !!b.selection && currentLen > 0 && b.selection.length >= currentLen * 0.8;

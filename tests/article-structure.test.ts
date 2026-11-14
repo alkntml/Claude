@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildRoadmap, stageNeedsData } from "@/lib/workflows";
-import { subheadingBudget, sectionTitle, stagePrefixes } from "@/lib/workflows/structure";
+import { articleBodyStarts, subheadingBudget, sectionTitle, stagePrefixes } from "@/lib/workflows/structure";
+import { sectionTree } from "@/lib/editor/sections";
 import { buildExportDoc } from "@/lib/export/model";
 import { toPdf } from "@/lib/export/render-pdf";
 import { toDocx } from "@/lib/export/render-docx";
@@ -57,6 +58,12 @@ describe("makale yapısı (D170)", () => {
   it("editördeki bölüm numaraları belgeyle aynı (konu bölümleri 1–2, Sonuç 3)", () => {
     const pre = stagePrefixes(stages);
     expect(pre.d).toBe("3");
+  });
+  it("sol menüde konu bölümlerinin başlıkları belgedeki numarayla görünür (D181)", () => {
+    const starts = articleBodyStarts(stages);
+    const body = stages.find((x) => x.key === "article_body")!;
+    const nums = sectionTree(body.content as never, "", { chapterStart: starts[body.id] }).map((x) => `${x.number} ${x.text}`);
+    expect(nums).toEqual(toc.filter((x) => /Dönemi|Toplumu/.test(x)));
   });
   it("PDF ve Word: kapak ve içindekiler olmadan üretilir", async () => {
     const pdf = await toPdf(d);

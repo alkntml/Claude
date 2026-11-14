@@ -30,7 +30,7 @@ const headingText = (n: JSONNode) => docToPlain({ type: "doc", content: n.conten
  * tek başına bölümde “3”); boşsa numara verilmez. Düzey atlanırsa (## olmadan ###) bir üst düzeye çekilir
  * (dışa aktarma ve editörle aynı kural, D76).
  */
-export function sectionTree(doc: JSONNode | null | undefined, prefix = ""): SectionInfo[] {
+export function sectionTree(doc: JSONNode | null | undefined, prefix = "", opts: { chapterStart?: number } = {}): SectionInfo[] {
   const nodes = nodesOf(doc);
   const out: SectionInfo[] = [];
   const counters = [0, 0, 0];
@@ -45,7 +45,9 @@ export function sectionTree(doc: JSONNode | null | undefined, prefix = ""): Sect
     const rel = counters.slice(0, k + 1).join(".");
     let end = i + 1;
     while (end < nodes.length && !(isHeading(nodes[end]) && Math.min(levelOf(nodes[end]), 4) <= lvl)) end++;
-    out.push({ index: i, level: lvl, text: headingText(n), number: prefix ? `${prefix}.${rel}` : "", words: 0, end });
+    // D181: makale konu bölümlerinde ## başlık ana bölüm numarasıdır (belgedeki gibi: 1, 1.1 …)
+    const number = opts.chapterStart ? [opts.chapterStart - 1 + counters[0], ...counters.slice(1, k + 1)].join(".") : prefix ? `${prefix}.${rel}` : "";
+    out.push({ index: i, level: lvl, text: headingText(n), number, words: 0, end });
   });
   for (const s of out) s.words = wordCount(docToPlain({ type: "doc", content: sectionBody(doc, s.index) }));
   return out;

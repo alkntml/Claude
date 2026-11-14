@@ -130,7 +130,7 @@ export function structureRule(stageKey: string, stageTitle: string, targetWords 
   const n = subheadingBudget(stageKey, targetWords);
   if (stageKey === "article_body") {
     return [
-      "BÖLÜM YAPISI (makalenin ana gövdesi): Bu kısmın kendi başlığı yoktur; buraya yazdığın her ## başlık makalede Giriş’ten sonra gelen ayrı, numaralı bir ana bölüm olur (2, 3, 4…). Gerekirse alt kısımlar ### ile açılır.",
+      "BÖLÜM YAPISI (makalenin ana gövdesi): Bu kısmın kendi başlığı yoktur; buraya yazdığın her ## başlık makalede Giriş’ten sonra gelen ayrı, numaralı bir ana bölüm olur (Giriş numarasızdır; konu bölümleri 1, 2, 3… diye numaralanır). Gerekirse alt kısımlar ### ile açılır.",
       `${n} kadar ## ana başlık kullan (en az 3). Başlıklar çalışmanın konusuna ÖZGÜ olmalı (ör. kavramlar, dönemler, kuramlar, tartışmalar); “Giriş”, “Yöntem”, “Bulgular”, “Tartışma”, “Sonuç”, “Literatür taraması” gibi genel başlıklar KULLANMA. Her ana başlığın altında en az 3–4 dolu, kaynaklı paragraf olmalı; başlıklar arasında konu tekrarı olmamalı.`,
       "Bu bir kaynaklara dayalı makaledir: veri toplanmaz, [VERİ GİRİLECEK] kullanılmaz; her olgusal cümle KAYNAKLAR’daki bir çalışmayla desteklenir.",
     ].join("\n");
@@ -166,7 +166,20 @@ function topLevelHeadings(content: unknown): number {
 }
 
 export function stagePrefixes(stages: { id: string; key: string; title: string; position?: number; content?: unknown; hidden?: boolean }[], defaults: Record<string, string | undefined> = {}): Record<string, string> {
+  return numberStages(stages, defaults).prefixes;
+}
+
+/**
+ * D181: makalenin “Konu bölümleri” aşamasında her ## başlık belgede ayrı numaralı ana bölümdür; sol menüde de aynı
+ * numarayı göstermek için o aşamadaki ilk ana bölümün numarası (aşama kimliği → numara).
+ */
+export function articleBodyStarts(stages: { id: string; key: string; title: string; position?: number; content?: unknown; hidden?: boolean }[], defaults: Record<string, string | undefined> = {}): Record<string, number> {
+  return numberStages(stages, defaults).bodyStart;
+}
+
+function numberStages(stages: { id: string; key: string; title: string; position?: number; content?: unknown; hidden?: boolean }[], defaults: Record<string, string | undefined> = {}): { prefixes: Record<string, string>; bodyStart: Record<string, number> } {
   const out: Record<string, string> = {};
+  const bodyStart: Record<string, number> = {};
   let chapter = 0, section = 0;
   let current: string | null = null;
   for (const st of [...stages].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))) {
@@ -184,12 +197,12 @@ export function stagePrefixes(stages: { id: string; key: string; title: string; 
       current = null;
       if (UNNUMBERED.has(st.key)) { out[st.id] = ""; continue; }
       // D170: konu bölümleri başlıksızdır; içindeki her ## başlık ayrı ana bölüm numarası alır
-      if (st.key === "article_body") { out[st.id] = ""; chapter += topLevelHeadings(st.content); continue; }
+      if (st.key === "article_body") { out[st.id] = ""; bodyStart[st.id] = chapter + 1; chapter += topLevelHeadings(st.content); continue; }
       chapter++;
       out[st.id] = String(chapter);
     }
   }
-  return out;
+  return { prefixes: out, bodyStart };
 }
 
 /**

@@ -4,7 +4,7 @@ import { ClaimMarks, findSentence } from "./claim-marks";
 import { captionNodes, formatCaption, maxCaptionNo, noteLabel } from "@/lib/citations/captions";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { minSourcesFor } from "@/lib/workflows/quick-actions";
-import { academicOrder, chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
+import { academicOrder, articleBodyStarts, chapterGroup, sameHeading, stagePrefixes, subheadingBudget } from "@/lib/workflows/structure";
 import { addSiblingAfter, addSubheadings, insertImported, maxSectionLevel, removeSection, renameSection, replaceSectionBody, sectionDoc, sectionTree, type SectionInfo } from "@/lib/editor/sections";
 import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import type { ImportResult } from "./import-doc";
@@ -623,8 +623,18 @@ export function Workspace(props: Props) {
     const first = doc.content?.[0];
     const stageNow = stagesRef.current.find((x: { id: string }) => x.id === activeId) as { title: string } | undefined;
     if (first?.type === "heading" && stageNow && sameHeading((first.content ?? []).map((c) => c.text ?? "").join(""), stageNow.title)) doc.content = doc.content!.slice(1);
-    // Alt başlığa odaklanılmışken eklenen metindeki başlıklar atılır (metin bu alt başlığa aittir; D83)
-    if (focusRef.current != null) doc.content = (doc.content ?? []).filter((n) => n.type !== "heading");
+    // Alt başlığa odaklanılmışken (D83) eklenen metindeki başlıklar silinmez (D181): açık alt başlığın bir alt düzeyine
+    // yerleştirilir (ör. 1.2 açıkken eklenen başlıklar 1.2.1, 1.2.2 olur). En derin düzeyde (4) kalın paragrafa dönüşür.
+    if (focusRef.current != null) {
+      const focusLevel = sectionTree(fullDocRef.current()).find((x) => x.index === focusRef.current)?.level ?? 2;
+      const heads = (doc.content ?? []).filter((n) => n.type === "heading");
+      const minLevel = Math.min(...heads.map((n) => Number(n.attrs?.level ?? 2)), 6);
+      doc.content = (doc.content ?? []).map((n) => {
+        if (n.type !== "heading") return n;
+        const level = focusLevel + 1 + (Number(n.attrs?.level ?? 2) - minLevel);
+        return level <= 4 ? { ...n, attrs: { ...(n.attrs ?? {}), level } } : { type: "paragraph", content: (n.content ?? []).map((c) => ({ ...c, marks: [...(c.marks ?? []), { type: "bold" }] })) };
+      });
+    }
     const { from, to } = editor.state.selection;
     if (mode === "replace" && from !== to) editor.chain().focus().insertContentAt({ from, to }, doc.content ?? []).run();
     else if (mode === "replace") { toast({ tone: "info", title: t("Önce editörde değiştirilecek metni seçin") }); return; }
@@ -1011,7 +1021,8 @@ export function Workspace(props: Props) {
   const prefixes = useMemo(() => stagePrefixes(stages, Object.fromEntries(stages.map((s) => [s.key, stageDef(s.key)?.title]))), [stages]);
   const chapterNumber = active ? prefixes[active.id] ?? "" : "";
   // Alt başlıklar (D83): her aşamanın alt başlık ağacı, belgedeki numaralarıyla
-  const trees = useMemo<Record<string, SectionInfo[]>>(() => Object.fromEntries(stages.map((s) => [s.id, sectionTree(s.content as JSONNode, prefixes[s.id] ?? "")])), [stages, prefixes]);
+  const bodyStarts = useMemo(() => articleBodyStarts(stages, Object.fromEntries(stages.map((s) => [s.key, stageDef(s.key)?.title]))), [stages]);
+  const trees = useMemo<Record<string, SectionInfo[]>>(() => Object.fromEntries(stages.map((s) => [s.id, sectionTree(s.content as JSONNode, prefixes[s.id] ?? "", { chapterStart: bodyStarts[s.id] })])), [stages, prefixes, bodyStarts]);
   const activeTree: SectionInfo[] = active ? trees[active.id] ?? [] : [];
   const focused = focus != null ? activeTree.find((x) => x.index === focus) ?? null : null;
   suggestCtx.current.stageTitle = !isBibliography && active ? active.title : "";

@@ -39,3 +39,16 @@ ffmpeg -i music.wav -af "lowpass=f=2200,aecho=0.8:0.6:120|260:0.25|0.15,loudnorm
 ffmpeg -i voice_n.wav -i music_n.wav -filter_complex "[0][1]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.9" -ac 2 mix.wav
 node rec.cjs && ffmpeg -framerate 30 -i frames/f%05d.jpg -i mix.wav -c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p -tune animation -c:a aac -b:a 160k -shortest -movflags +faststart ../../public/video/academiana-tanitim-80-ses.mp4
 ```
+
+## Reels sürümü (D186)
+1080×1920 (9:16), 30 fps, 80 sn; ses aynı (`mix.wav`).
+
+- **Yerleşim:** `index.html?v=1` dikey düzeni açar. Instagram arayüzü kapatmasın diye üstte yaklaşık 220 px, altta yaklaşık 400 px, sağda yaklaşık 120 px boş bırakılır.
+- **Üretim:**
+
+```bash
+V=1 node rec.cjs
+ffmpeg -framerate 30 -i framesv/f%05d.jpg -i mix.wav -c:v libx264 -preset slow -crf 20 -profile:v high -pix_fmt yuv420p -tune animation -c:a aac -b:a 192k -ar 48000 -shortest -movflags +faststart academiana-reels.mp4
+```
+
+- **Saklama:** Reels dosyası sosyal medya içindir; repoya ve siteye konmaz.

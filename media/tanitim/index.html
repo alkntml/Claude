@@ -57,6 +57,43 @@ table.apa tr:last-child td{border-bottom:3px solid var(--i800)}
 .trust b{display:block;font-family:"SS4",Georgia,serif;font-size:60px;font-weight:600;line-height:1;color:#fff}
 .trust p{margin-top:14px;font-size:21px;line-height:1.4;color:rgba(255,255,255,.72)}
 .trust .t{font-size:24px;font-weight:600;color:#fff;margin-top:0}
+/* D186: dikey (Reels, 1080×1920) yerleşim — ?v=1. Instagram güvenli alanı: üst ~220, alt ~400, sağ ~120 px boş kalır */
+html.v,html.v body{width:1080px;height:1920px}
+html.v #topbar{left:70px;right:70px;top:110px}
+html.v #topbar img{height:56px}
+html.v #topbar .tag{display:none}
+html.v #journey{left:70px;right:70px;top:212px;bottom:auto;height:40px}
+html.v #journey .lb{display:none}
+html.v .left{left:70px;top:290px;width:900px}
+html.v .kicker{font-size:22px}
+html.v .h1{font-size:76px;margin-top:16px}
+html.v .sub{font-size:31px;margin-top:20px}
+html.v .win{zoom:.9;left:78px;top:889px}
+html.v #s7rep{zoom:.9;left:78px!important;top:889px!important}
+html.v #s7pages{zoom:.9;left:620px!important;top:889px!important}
+html.v #s7ex{left:70px!important;top:1510px!important;width:900px!important}
+html.v #s8slides{zoom:.9;left:78px!important;top:889px!important}
+html.v #s8jury{zoom:.9;left:78px!important;top:1106px!important}
+html.v #s9>div:first-child{left:70px!important;top:290px!important;width:940px!important}
+html.v #s9>div:first-child .serif{font-size:64px!important}
+html.v .trust{width:455px!important;padding:26px 26px!important}
+html.v .trust b{font-size:54px}
+html.v .trust p{font-size:22px}
+html.v #t1{left:70px!important;top:600px!important;height:280px!important}
+html.v #t2{left:555px!important;top:600px!important;height:280px!important}
+html.v #t3{left:70px!important;top:900px!important;height:280px!important}
+html.v #t4{left:555px!important;top:900px!important;height:280px!important}
+html.v #t5{left:70px!important;top:1200px!important;height:250px!important}
+html.v #t6{left:555px!important;top:1200px!important;height:250px!important}
+html.v #s0>div{top:600px!important;padding:0 70px}
+html.v #s0a{font-size:82px!important}
+html.v #s0b{font-size:36px!important}
+html.v #s0c{font-size:52px!important}
+html.v #s10>div{top:560px!important;padding:0 70px}
+html.v #s10logo{width:860px!important}
+html.v #s10a{font-size:64px!important}
+html.v #s10b{font-size:28px!important}
+html.v #s10c{flex-direction:column}
 </style>
 </head>
 <body>
@@ -286,6 +323,7 @@ table.apa tr:last-child td{border-bottom:3px solid var(--i800)}
 </div>
 
 <script>
+if (new URLSearchParams(location.search).has("v")) document.documentElement.classList.add("v");
 const $ = (id) => document.getElementById(id);
 const cl = (x) => Math.max(0, Math.min(1, x));
 const pr = (t, a, b) => cl((t - a) / (b - a));

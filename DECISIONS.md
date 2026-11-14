@@ -951,3 +951,9 @@ Site sahibi istedi: güven kazandıran bir reklam filmi. İlk fikirden kaynakça
 - **Ses düzeyi:** konuşma −16 LUFS; toplam yaklaşık −15 LUFS. Dosya AAC 160 kb/sn.
 - **Dosya:** `public/video/academiana-tanitim-80-ses.mp4` (7,3 MB). Yeni ad sayesinde eski önbellek kullanılmaz. Kapak görseli aynı.
 - **Kaynak:** ayrıntı `media/tanitim/README.md`. Ham ses repoya girmez.
+
+## D186 — Tanıtım filminin Reels sürümü (2026-11-14)
+- **Ne:** Site sahibi aynı sesle Reels videosu istedi. Aynı animasyondan 1080×1920 (9:16) dikey sürüm üretildi; seslendirme, müzik ve sese göre zaman eşlemesi (D185) aynı.
+- **Yerleşim** (`?v=1`): başlık blokları üstte, uygulama kartları altta ve %90 boyutta. Sahne adları yolculuk çubuğunda gösterilmez (kicker zaten yazar). Güven kartları 2 sütun × 3 satır, kapanış ortada.
+- **Güvenli alan:** Instagram arayüzü için üst, alt ve sağ kenarlar boş bırakıldı.
+- **Çıktı:** H.264 High (CRF 20), AAC 192 kb/sn, 13,5 MB; kapak görseli kapanış karesi. Dosya repoya ve siteye konmadı.

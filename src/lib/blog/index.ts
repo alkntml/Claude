@@ -5,6 +5,7 @@ import { POSTS_4 } from "./posts-4";
 import { POSTS_5 } from "./posts-5";
 import { POSTS_6 } from "./posts-6";
 import { POSTS_7 } from "./posts-7";
+import { POSTS_8 } from "./posts-8";
 import { EN_1 } from "./en-1";
 import { EN_2 } from "./en-2";
 import { EN_3 } from "./en-3";
@@ -12,17 +13,18 @@ import { EN_4 } from "./en-4";
 import { EN_5 } from "./en-5";
 import { EN_6 } from "./en-6";
 import { EN_7 } from "./en-7";
+import { EN_8 } from "./en-8";
 import { DE_POSTS as DE_ALL } from "./de";
 import type { BlogPost, BlogPostEn } from "./types";
 import type { Locale } from "@/i18n";
 
 export type { BlogPost, BlogPostEn } from "./types";
 
-export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5, ...POSTS_6, ...POSTS_7];
+export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5, ...POSTS_6, ...POSTS_7, ...POSTS_8];
 export const CATEGORIES = [...new Set(POSTS.map((p) => p.category))];
 
 /** İngilizce sürümler (anahtar: Türkçe adres) */
-export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5, ...EN_6, ...EN_7 };
+export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5, ...EN_6, ...EN_7, ...EN_8 };
 /** Almanca sürümler (anahtar: Türkçe adres; D143). Almancası olmayan yazı Almanca sitede İngilizce gösterilir. */
 export const DE_POSTS: Record<string, BlogPostEn> = DE_ALL;
 const TRANSLATED: Record<"en" | "de", Record<string, BlogPostEn>> = { en: EN_POSTS, de: DE_POSTS };
@@ -91,7 +93,9 @@ export function relatedPosts(p: BlogPost, n = 3): BlogPost[] {
 
 export type Block =
   | { t: "h2" | "h3" | "p" | "quote"; text: string }
-  | { t: "ul" | "ol"; items: string[] };
+  | { t: "ul" | "ol"; items: string[] }
+  /** D197: | başlık | … | tablosu (ikinci satır --- ayırıcıdır) */
+  | { t: "table"; head: string[]; rows: string[][] };
 
 /** Yazı gövdesini bloklara ayırır (basit Markdown alt kümesi) */
 export function parseBody(md: string): Block[] {
@@ -104,6 +108,14 @@ export function parseBody(md: string): Block[] {
     if (l.startsWith("### ")) { out.push({ t: "h3", text: l.slice(4) }); i++; continue; }
     if (l.startsWith("## ")) { out.push({ t: "h2", text: l.slice(3) }); i++; continue; }
     if (l.startsWith("> ")) { out.push({ t: "quote", text: l.slice(2) }); i++; continue; }
+    if (l.startsWith("|")) {
+      const cells = (x: string) => x.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+      const lines2: string[][] = [];
+      while (i < lines.length && lines[i].trim().startsWith("|")) { lines2.push(cells(lines[i])); i++; }
+      const body = lines2.slice(1).filter((r) => !r.every((c) => /^:?-{3,}:?$/.test(c)));
+      out.push({ t: "table", head: lines2[0], rows: body });
+      continue;
+    }
     if (/^\s*- /.test(l)) {
       const items: string[] = [];
       while (i < lines.length && /^\s*- /.test(lines[i])) { items.push(lines[i].replace(/^\s*- /, "")); i++; }
@@ -121,11 +133,11 @@ export function parseBody(md: string): Block[] {
       continue;
     }
     const para: string[] = [];
-    while (i < lines.length && lines[i].trim() && !/^(#{2,3} |> |\s*- |\d+\. )/.test(lines[i])) { para.push(lines[i].trim()); i++; }
+    while (i < lines.length && lines[i].trim() && !/^(#{2,3} |> |\s*- |\d+\. |\s*\|)/.test(lines[i])) { para.push(lines[i].trim()); i++; }
     out.push({ t: "p", text: para.join(" ") });
   }
   return out;
 }
 
 /** Yazının düz metni (arama ve yapılandırılmış veri için) */
-export const plainText = (md: string) => md.replace(/[#*>]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
+export const plainText = (md: string) => md.replace(/^\s*\|?\s*:?-{3,}.*$/gm, "").replace(/\s*\|\s*/g, " ").replace(/[#*>]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");

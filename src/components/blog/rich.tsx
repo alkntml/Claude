@@ -27,6 +27,14 @@ export function BlogBody({ blocks }: { blocks: Block[] }) {
         if (b.t === "quote") return <blockquote key={i} className="rounded-r-xl border-l-4 border-brand-400 bg-brand-50/60 px-4 py-3 text-ink-700"><Inline text={b.text} /></blockquote>;
         if (b.t === "ul") return <ul key={i} className="ml-5 list-disc space-y-2 marker:text-brand-500">{b.items.map((it, k) => <li key={k} className="pl-1"><Inline text={it} /></li>)}</ul>;
         if (b.t === "ol") return <ol key={i} className="ml-5 list-decimal space-y-2 marker:font-semibold marker:text-brand-600">{b.items.map((it, k) => <li key={k} className="whitespace-pre-line pl-1"><Inline text={it} /></li>)}</ol>;
+        if (b.t === "table") return (
+          <div key={i} className="overflow-x-auto rounded-xl border border-ink-200">
+            <table className="w-full min-w-[480px] border-collapse text-left text-[14.5px] leading-snug">
+              <thead className="bg-ink-50 text-[13px] font-semibold text-ink-800"><tr>{b.head.map((h, k) => <th key={k} scope="col" className="border-b border-ink-200 px-3 py-2"><Inline text={h} /></th>)}</tr></thead>
+              <tbody>{b.rows.map((r, k) => <tr key={k} className="border-b border-ink-100 last:border-0">{r.map((c, j) => <td key={j} className="px-3 py-2 tabular-nums text-ink-700"><Inline text={c} /></td>)}</tr>)}</tbody>
+            </table>
+          </div>
+        );
         return <p key={i}><Inline text={(b as { text: string }).text} /></p>;
       })}
     </div>

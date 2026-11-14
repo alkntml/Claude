@@ -1128,3 +1128,21 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
   - Bu iki işlemin maliyeti ve token’ı yine kaydedilir; maliyet ve token tavanları geçerlidir.
   - Aynı çalışmada tekrar üretim ve alan bazında “Yeniden öner” normal istek sayılır.
 - **Test:** `tests/usage-month.test.ts`.
+
+## D197 — Üç yeni blog yazısı ve sıkı blog listesi (2026-11-14)
+- **Yazılar** (SEO planı 1, 3, 21; TR/EN/DE; `src/lib/blog/posts-8.ts`, `en-8.ts`, `de-8.ts`):
+  - Tek yönlü ANOVA: Levene, F tablosu, η²/ω², Bonferroni, APA 7 raporlama.
+  - Regresyonun APA 7’ye göre raporlanması: basit ve çoklu regresyon, B/β, R²/düzeltilmiş R², çoklu doğrusallık.
+  - Literatür matrisi: sütunlar, adımlar, kurgusal örnek matris, matristen sentez paragrafına.
+- **Sayılar:** Örnek veriler gerçekçi seçildi (η² = .33, R² = .65). Tüm değerler istatistik motorundan geldi; `tests/blog-d197.test.ts` üç dilde denetler.
+- **Kaynaklar:** Literatür matrisi örneğindeki çalışmalar “kurgusal” diye etiketlidir. Kaynak listeleri gerçek eserlerdir.
+- **Blog biçimi:**
+  - Blog Markdown’ına tablo desteği eklendi (`| … |`; `parseBody` → `table`, `BlogBody` kaydırılabilir tablo).
+  - `plainText` tablo çizgilerini temizler.
+- **Blog listesi:**
+  - Büyük kartlar yerine üstte “En yeni yazılar” şeridi (3 yazı, tarih ve okuma süresiyle).
+  - Altında kategori kategori iki sütunlu satır listesi (başlık, iki satırlık açıklama, okuma süresi) ve “Tümünü gör”.
+  - Kategori seçilince yalnızca o kategori listelenir.
+- **İç bağlantı ve site haritası:**
+  - Araçlar sayfasındaki rehber listelerine yeni yazılar eklendi.
+  - Site haritası yazı listesinden üretildiği için yeni yazılar üç dil ve hreflang ile kendiliğinden girdi.

@@ -18,6 +18,10 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Blog (D197, 14 Kasım 2026)**
+- 3 yeni yazı (ANOVA, regresyon raporlama, literatür matrisi; TR/EN/DE, motorla doğrulanmış sayılar); toplam 44 yazı
+- Blog listesi: en yeni yazılar şeridi + kategori kategori sıkı satır listesi; yazılarda tablo desteği
+
 **İlk kullanım (D196, 14 Kasım 2026)**
 - Rehberli tur kendiliğinden açılmıyor; her çalışmada ilk kurgu ve ilk başlık önerisi yapay zekâ hakkından düşülmüyor
 

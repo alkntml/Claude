@@ -79,9 +79,9 @@ Kurallar: her yazı gerçek bir ürün özelliğine veya ücretsiz araca bağlan
 
 | # | Başlık (çalışma adı) | Küme | Niyet | Bağlanan özellik / araç | Öncelik |
 |---|---|---|---|---|---|
-| 1 | Tek yönlü ANOVA nasıl yapılır ve raporlanır (Bonferroni ile) | İstatistik | B | İstatistik analizi (ANOVA + post hoc) | Yüksek |
+| 1 | ✅ (D197) Tek yönlü ANOVA nasıl yapılır ve raporlanır (Bonferroni ile) | İstatistik | B | İstatistik analizi (ANOVA + post hoc) | Yüksek |
 | 2 | Pearson ve Spearman korelasyonu yorumlama | İstatistik | B | İstatistik analizi | Yüksek |
-| 3 | Doğrusal regresyon sonuçları APA 7’ye göre nasıl raporlanır | İstatistik | B | İstatistik analizi (regresyon) | Yüksek |
+| 3 | ✅ (D197) Doğrusal regresyon sonuçları APA 7’ye göre nasıl raporlanır | İstatistik | B | İstatistik analizi (regresyon) | Yüksek |
 | 4 | Ki-kare bağımsızlık testi: çapraz tablo yorumlama | İstatistik | B | İstatistik analizi | Orta |
 | 5 | Mann–Whitney U ve Kruskal–Wallis: parametrik olmayan testler | İstatistik | B | İstatistik analizi | Orta |
 | 6 | Etki büyüklüğü rehberi: Cohen d, eta kare, r | İstatistik | B | İstatistik analizi | Orta |
@@ -99,7 +99,7 @@ Kurallar: her yazı gerçek bir ürün özelliğine veya ücretsiz araca bağlan
 | 18 | Tezde sınırlılıklar ve varsayımlar nasıl yazılır | Tez | B | Bölüm şablonları | Orta |
 | 19 | Tez sonuç ve öneriler bölümü nasıl yazılır | Tez | B | Bölüm yazımı | Orta |
 | 20 | Tez yazım kılavuzlarında ortak biçim kuralları (enstitüye özgü değerler verilmez) | Tez | B | Şablon / kapak / içindekiler | Orta |
-| 21 | Literatür matrisi (karşılaştırma tablosu) nasıl hazırlanır | Tez | B | Literatür matrisi özelliği | Yüksek |
+| 21 | ✅ (D197) Literatür matrisi (karşılaştırma tablosu) nasıl hazırlanır | Tez | B | Literatür matrisi özelliği | Yüksek |
 | 22 | Tez izleme komitesi raporu nasıl hazırlanır | Tez | B | Çalışma planı | Düşük-orta |
 | 23 | Dergi seçimi: dizin türleri ve kontrol listesi | Makale | B | Dergi önerisi | Orta |
 | 24 | Editöre mektup (cover letter) nasıl yazılır | Makale | B | Asistan | Orta |

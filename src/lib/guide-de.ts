@@ -313,6 +313,7 @@ export const GUIDE_DE: Record<string, string> = {
   "Hemen devam etmek için “Hesap ve abonelik” → “Yükselt”.": "Um sofort weiterzumachen: „Konto und Abonnement“ → „Upgrade“.",
   "Bulamadığım bir şey var": "Ich finde etwas nicht",
   "Asistana “Nereden grafik oluşturabilirim?” gibi kullanım soruları sorabilirsiniz; menü adlarıyla adım adım cevap verir.": "Stellen Sie dem Assistenten Bedienungsfragen wie „Wo erstelle ich ein Diagramm?“; er antwortet Schritt für Schritt mit den Menünamen.",
+  "Her çalışmada ilk kurgu ve ilk başlık önerisi yapay zekâ hakkınızdan düşülmez; hakkınız ilk bölümleri yazmaya kalır.": "In jeder Arbeit werden der erste Entwurfsplan und die ersten Titelvorschläge nicht auf Ihr KI-Kontingent angerechnet; es bleibt für das Schreiben der ersten Kapitel.",
   "Çalışma alanında “?” simgesiyle “Rehberli tur”u yeniden başlatın.": "Starten Sie die „Geführte Tour“ im Arbeitsbereich über das Symbol „?“ neu.",
   "Sol menüde “Geri bildirim” ile bize yazın.": "Schreiben Sie uns über „Feedback“ im linken Menü.",
   "Çalışmayı oluşturun": "Arbeit anlegen",

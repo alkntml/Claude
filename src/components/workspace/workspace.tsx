@@ -52,7 +52,7 @@ import { ClientApiError } from "@/lib/client";
 
 
 import { GoalModal, GoalWidget } from "./goals";
-import { shouldShowTour, Tour } from "./tour";
+import { Tour } from "./tour";
 
 
 
@@ -796,8 +796,7 @@ export function Workspace(props: Props) {
   // Sonraki numara: tüm bölümlerdeki tablo/şekil başlıklarının (hangi stilde yazılmış olursa olsun) en büyüğü + 1
   const nextFigureNo = useMemo(() => 1 + Math.max(0, ...stages.map((st) => maxCaptionNo(String(st.content_text ?? ""), "figure"))), [stages]);
   const nextTableNo = useMemo(() => 1 + Math.max(0, ...stages.map((st) => maxCaptionNo(String(st.content_text ?? ""), "table"))), [stages]);
-  // Rehberli tur, başlık seçim penceresi kapandıktan sonra başlar (iki pencere üst üste açılmasın)
-  useEffect(() => { if (!titleOpen && !bpOpen && shouldShowTour()) { const tm = setTimeout(() => setTourOpen(true), 900); return () => clearTimeout(tm); } }, [titleOpen, bpOpen]);
+  // D196: Rehberli tur kendiliğinden açılmaz (yeni kullanıcı kurgu ve başlıktan sonra doğrudan yazmaya geçsin); “?” simgesinden başlatılır
 
   /** Editörde bir metni bulup seçer (danışman yorumunun alıntısı için). Bulursa seçili metni döndürür. */
   function selectQuote(quote: string): string | null {

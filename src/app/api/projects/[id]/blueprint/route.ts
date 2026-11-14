@@ -5,7 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { projectAccess } from "@/lib/project-access";
 import { alignChapters, BLUEPRINT_FIELDS, BlueprintSchema, readBlueprint } from "@/lib/blueprint";
 import { generateBlueprint, refineField } from "@/lib/blueprint-ai";
-import { assertWithinLimits, recordUsage } from "@/lib/usage";
+import { assertWithinLimits, recordUsage, setupRequestQuantity } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
 export const maxDuration = 120;
@@ -23,8 +23,10 @@ export const POST = route<Ctx>("project.blueprint.ai", async (req, { params }) =
   const { project, db, ownerId } = await projectAccess(s, id, "edit");
   await assertWithinLimits(s.user.id, s.profile.plan_id, "ai_request");
   await assertSingleProject(s, id);
-  const record = (o: { usage: { input: number; output: number }; cost: number; provider: string; model: string }, action: string) =>
-    recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action, projectId: id } });
+  const record = async (o: { usage: { input: number; output: number }; cost: number; provider: string; model: string }, action: string) =>
+    recordUsage(s.user.id, "ai_request", { usage: o.usage, costUsd: o.cost, provider: o.provider, model: o.model, meta: { action, projectId: id },
+      // D196: çalışmanın ilk kurgusu haktan düşülmez
+      quantity: action === "blueprint" ? await setupRequestQuantity(s.user.id, id, "blueprint") : 1 });
   try {
     if (b.mode === "generate") {
       const { data: stages } = await db.from("project_stages").select("id, key, title, description").eq("project_id", id).eq("user_id", ownerId).order("position");

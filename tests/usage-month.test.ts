@@ -53,3 +53,13 @@ describe("dolar fiyatı (İngilizce sayfalar)", () => {
     expect(formatPrice(1499, "tr", 48)).toBe("₺1.499");
   });
 });
+
+describe("D196 — ilk kurgu ve ilk başlık önerisi haktan düşülmez", () => {
+  it("çalışmada önceki kayıt yoksa 0, varsa veya okunamadıysa 1", async () => {
+    const { setupQuantity } = await import("@/lib/usage");
+    expect(setupQuantity(0)).toBe(0);
+    expect(setupQuantity(1)).toBe(1);
+    expect(setupQuantity(null)).toBe(1);
+    expect(setupQuantity(0, true)).toBe(1);
+  });
+});

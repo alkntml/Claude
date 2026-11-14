@@ -306,6 +306,19 @@ export async function assertProjectQuota(userId: string, planId: string) {
  * Kullanım kaydı. `usage` verilirse token sayıları ondan alınır ve önbellek okuma/yazma tokenları meta.cache’e
  * yazılır (yönetimde önbellek isabeti ve tasarrufu, D94).
  */
+/**
+ * D196: Çalışma başına ilk kurgu ve ilk başlık önerisi yapay zekâ isteği hakkından düşülmez (quantity 0); yeni
+ * kullanıcının hakkı ilk bölüm yazımına kalsın. Maliyet ve token yine kaydedilir; maliyet ve token tavanları geçerlidir.
+ * Aynı çalışmada tekrar üretim normal istek sayılır.
+ */
+export type SetupAction = "blueprint" | "titles";
+export const setupQuantity = (priorCount: number | null, failed = false): 0 | 1 => (failed || priorCount == null || priorCount > 0 ? 1 : 0);
+export async function setupRequestQuantity(userId: string, projectId: string, action: SetupAction): Promise<0 | 1> {
+  const { count, error } = await adminClient().from("usage_events").select("id", { count: "exact", head: true })
+    .eq("user_id", userId).eq("kind", "ai_request").contains("meta", { action, projectId });
+  return setupQuantity(count, !!error);
+}
+
 export async function recordUsage(userId: string, kind: UsageKind, data: { quantity?: number; tokensIn?: number; tokensOut?: number; usage?: { input: number; output: number; cacheRead?: number; cacheWrite?: number }; costUsd?: number; provider?: string; model?: string; meta?: Record<string, unknown> } = {}) {
   const u = data.usage;
   const cache = u && (u.cacheRead || u.cacheWrite) ? { r: u.cacheRead ?? 0, w: u.cacheWrite ?? 0 } : null;

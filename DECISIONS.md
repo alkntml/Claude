@@ -1117,3 +1117,14 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
   - Film testi.
   - Demodaki film ayarları.
 - **Değişmeyen:** D194’teki `##` alt başlık düzeltmesi ürün kodudur, kalır.
+
+## D196 — Yeni kullanıcının ilk adımları: tur kendiliğinden açılmaz, ilk kurgu ve başlık haktan düşülmez (2026-11-14)
+- **Sorun:** Ücretsiz kayıtların çoğu çalışma oluşturup 0–10 sent maliyette bırakıyordu. Bu, en fazla kurgu ve başlık önerisi kadar kullanım demek.
+  - Kurulumdan sonra arka arkaya kurgu, başlık ve 15 adımlı tur açılıyordu.
+  - 10 isteklik ücretsiz hakkın 2’si yazmaya başlamadan bitiyordu.
+- **Karar:**
+  - Rehberli tur kendiliğinden açılmaz; “?” simgesinden (mobilde menüden) başlatılır.
+  - Her çalışmada ilk kurgu üretimi ve ilk başlık önerisi yapay zekâ isteği hakkından düşülmez (`quantity: 0`, `setupRequestQuantity`).
+  - Bu iki işlemin maliyeti ve token’ı yine kaydedilir; maliyet ve token tavanları geçerlidir.
+  - Aynı çalışmada tekrar üretim ve alan bazında “Yeniden öner” normal istek sayılır.
+- **Test:** `tests/usage-month.test.ts`.

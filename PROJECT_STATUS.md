@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**İlk kullanım (D196, 14 Kasım 2026)**
+- Rehberli tur kendiliğinden açılmıyor; her çalışmada ilk kurgu ve ilk başlık önerisi yapay zekâ hakkından düşülmüyor
+
 **Uzun tanıtım filmi (D194, 14 Kasım 2026)**
 - Örnek nicel tezin sitenin gerçek ekranlarında baştan sona yazıldığı film (video ve üretim betikleri repoda tutulmuyor); kaynak, veri ve yapay zekâ yanıtları kurgusal ve ekranda belirtilir
 - Düzeltme: yapay zekâ taslağındaki `##` alt başlıklar artık kardeş olarak numaralanır (2.3.1, 2.3.2 …)

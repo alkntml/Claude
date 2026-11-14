@@ -39,10 +39,6 @@ function visible(sel: string): HTMLElement | null {
   return r.width > 0 && r.height > 0 ? el : null;
 }
 
-export function shouldShowTour(): boolean {
-  try { return !localStorage.getItem(KEY); } catch { return false; }
-}
-
 /** Çalışma alanını tanıtan rehberli tur */
 export function Tour({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useT();

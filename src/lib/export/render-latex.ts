@@ -203,6 +203,7 @@ ${f.justify ? "" : "\\usepackage[document]{ragged2e}\n"}
 \\usepackage[backend=biber,style=${bl.style}${bs.options}]{biblatex}
 ${bs.preamble}\\addbibresource{references.bib}
 \\usepackage[hidelinks]{hyperref}
+${f.chapterTitleCenter ? "\\usepackage{sectsty}\n\\sectionfont{\\centering}\n" : ""}
 
 \\title{${texEscape(doc.title)}${meta}}
 \\author{${texEscape(doc.author)}${doc.institution ? `\\\\ \\normalsize ${texEscape(doc.institution)}` : ""}}

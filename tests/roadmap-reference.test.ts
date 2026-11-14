@@ -11,6 +11,7 @@ import {
 import { consistencyChain } from "@/lib/quality/consistency-chain";
 import { buildExportDoc } from "@/lib/export/model";
 import { toLatexFiles } from "@/lib/export/render-latex";
+import { effectiveFormat } from "@/lib/export/format";
 
 const keys = (p: Partial<TemplateInput>) => buildTemplate(p as TemplateInput).map((x) => x.key);
 
@@ -241,11 +242,15 @@ describe("makale teslim düzeni (D178): kapak, içindekiler, listeler, sola yasl
     expect(d.toc.map((x) => `${x.number} ${x.text}`.trim())).toEqual(["Giriş", "1 Yöntem"]);
     const { toDocx } = await import("@/lib/export/render-docx");
     const JSZip = (await import("jszip")).default;
-    const xml = await (await JSZip.loadAsync(await toDocx(d))).file("word/document.xml")!.async("string");
+    const xml = await (await JSZip.loadAsync(await toDocx(d, effectiveFormat(project)))).file("word/document.xml")!.async("string");
     for (const x of ["Üniversite logosu", "T.C.", "ANKARA ÜNİVERSİTESİ", "[FAKÜLTE / ENSTİTÜ ADI]", "ARAŞTIRMA MAKALESİ", "İÇİNDEKİLER", "TABLOLAR LİSTESİ", "ŞEKİLLER LİSTESİ"]) expect(xml, x).toContain(x);
-    // Bölüm başlıkları sola yaslı (ortalı değil)
-    const head = xml.slice(xml.lastIndexOf("<w:p>", xml.indexOf(">1 Yöntem<")), xml.indexOf(">1 Yöntem<"));
-    expect(head).not.toContain('w:val="center"');
+    // D180: APA projesinde 1. düzey başlık ortalı (APA 7 resmî kuralı)
+    const head = xml.slice(xml.lastIndexOf("<w:p>", xml.lastIndexOf(">1 Yöntem<")), xml.lastIndexOf(">1 Yöntem<"));
+    expect(head).toContain('w:val="center"');
+    const isnad = buildExportDoc({ project: { ...project, citation_style: "isnad" }, stages, sources: [], engineItems: [], authorName: "Ali Veli" });
+    const xml2 = await (await JSZip.loadAsync(await toDocx(isnad, effectiveFormat({ ...project, citation_style: "isnad" })))).file("word/document.xml")!.async("string");
+    const head2 = xml2.slice(xml2.lastIndexOf("<w:p>", xml2.lastIndexOf(">1 Yöntem<")), xml2.lastIndexOf(">1 Yöntem<"));
+    expect(head2).not.toContain('w:val="center"');
     const { toPdf } = await import("@/lib/export/render-pdf");
     const pdf = await toPdf(d);
     expect((pdf.toString("latin1").match(/\/Type \/Page\b/g) ?? []).length).toBeGreaterThanOrEqual(4); // kapak + içindekiler + listeler + metin

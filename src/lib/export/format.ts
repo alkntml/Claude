@@ -50,8 +50,9 @@ export const FORMAT_PRESETS: Record<string, { label: string; format: Omit<DocFor
     format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 1.5, margins: { top: 3, bottom: 2.5, left: 3.5, right: 2.5 }, firstLineIndentCm: 1.25, paragraphAfterPt: 6, justify: true, chapterOnNewPage: true, chapterTitleUppercase: true, chapterTitleCenter: false, pageNumber: "bottom-center" },
   },
   "apa7-student": {
+    // D180: APA 7 resmî kuralı — 1. düzey başlık ortalı, kalın; alt düzeyler sola yaslı
     label: "APA 7 — öğrenci ödevi / tez",
-    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 2, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 1.27, paragraphAfterPt: 0, justify: false, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "top-right" },
+    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 2, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 1.27, paragraphAfterPt: 0, justify: false, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: true, pageNumber: "top-right" },
   },
   // D179: yazım stillerinin öğrenci/el yazması biçimi (stilin resmî kılavuzundaki temel değerler)
   mla9: {

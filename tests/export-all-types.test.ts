@@ -45,8 +45,9 @@ describe("bütün proje türlerinde kapak ve içindekiler (D179)", () => {
         expect(xml).not.toContain("İÇİNDEKİLER");
         expect(xml).not.toContain("Üniversite logosu");
       }
-      // Bölüm başlıkları sola yaslı (kılavuz/kullanıcı aksini seçmedikçe)
-      expect(effectiveFormat(project).chapterTitleCenter).toBe(false);
+      // D180: 1. düzey başlık APA öğrenci biçiminde ortalı (resmî kural), diğer şablonlarda sola yaslı
+      const fmt = effectiveFormat(project);
+      expect(fmt.chapterTitleCenter).toBe(fmt.preset === "apa7-student");
       // PDF
       const pdf = await toPdf(d, effectiveFormat(project));
       expect(pdf.subarray(0, 4).toString()).toBe("%PDF");
@@ -72,7 +73,9 @@ describe("bütün proje türlerinde kapak ve içindekiler (D179)", () => {
     expect(defaultPreset({ workType: "research_article", citationStyle: "vancouver" })).toBe("medical");
     expect(defaultPreset({ workType: "research_article", citationStyle: "isnad" })).toBe("isnad");
     const apa = effectiveFormat({ work_type: "research_article", citation_style: "apa7", context: {} });
-    expect([apa.fontFamily, apa.fontSizePt, apa.lineSpacing, apa.margins.left, apa.firstLineIndentCm, apa.pageNumber]).toEqual(["Times New Roman", 12, 2, 2.54, 1.27, "top-right"]);
+    expect([apa.fontFamily, apa.fontSizePt, apa.lineSpacing, apa.margins.left, apa.firstLineIndentCm, apa.pageNumber, apa.chapterTitleCenter]).toEqual(["Times New Roman", 12, 2, 2.54, 1.27, "top-right", true]);
+    for (const style of ["mla", "chicago", "harvard", "ieee", "vancouver", "isnad"]) expect(effectiveFormat({ work_type: "research_article", citation_style: style, context: {} }).chapterTitleCenter, style).toBe(false);
+    expect(effectiveFormat({ work_type: "thesis", citation_style: "apa7", context: {} }).chapterTitleCenter).toBe(false);
     // Kullanıcının seçtiği şablon korunur
     expect(effectiveFormat({ work_type: "research_article", citation_style: "apa7", context: { format: { preset: "tez-tr" } } }).preset).toBe("tez-tr");
   });

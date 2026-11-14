@@ -103,8 +103,11 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       }
       need(h);
       headingPages.push(currentPage());
-      const label = `${b.number ? `${b.number}  ` : ""}${b.runs.map((r) => r.text).join("")}`;
-      doc.font("b").fontSize(b.level === 1 ? 15 : b.level === 2 ? 13 : 12).text(label, { align: "left" });
+      // D180: 1. düzey başlıkta büyük harf ve hiza biçimden (Word ile aynı): APA’da ortalı, diğer şablonlarda sola yaslı, kılavuz varsa kılavuz
+      const htext = b.runs.map((r) => r.text).join("");
+      const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language === "tr" ? "tr" : d.language) : htext;
+      const label = `${b.number ? `${b.number}  ` : ""}${shown}`;
+      doc.font("b").fontSize(b.level === 1 ? 15 : b.level === 2 ? 13 : 12).text(label, M.left, doc.y, { align: b.level === 1 && f.chapterTitleCenter ? "center" : "left", width: doc.page.width - M.left - M.right });
       if (b.level <= 2) doc.outline.addItem(label);
       doc.moveDown(0.5);
     } else if (b.kind === "paragraph") {

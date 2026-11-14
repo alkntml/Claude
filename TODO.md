@@ -1,5 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] (D190–D192) Supabase SQL Editor’de migration 44’ü çalıştır (`supabase/migrations/20261208000044_isnad_note_advisor_sync.sql`: ISNAD dipnotlu stil, danışman rolü, Zotero/ORCID bağlantıları); check_status.sql’de “44” YAPILMIŞ görünmeli. Çalıştırılmadan ISNAD dipnotlu seçilemez, danışman daveti ve eşitleme kaydedilemez
+- [x] (2026-11-14) (D190–D192) Supabase SQL Editor’de migration 44’ü çalıştır (`supabase/migrations/20261208000044_isnad_note_advisor_sync.sql`: ISNAD dipnotlu stil, danışman rolü, Zotero/ORCID bağlantıları); check_status.sql’de “44” YAPILMIŞ görünmeli. Çalıştırılmadan ISNAD dipnotlu seçilemez, danışman daveti ve eşitleme kaydedilemez
 - [ ] (D192, isteğe bağlı) Vercel’e `INTEGRATION_SECRET` (uzun rastgele metin) ekle → Redeploy. Eklenmezse Zotero anahtarları veritabanı sunucu anahtarından türetilen anahtarla şifrelenir (çalışır; sunucu anahtarı yenilenirse kullanıcılar Zotero bağlantısını yeniden kurar)
 - [ ] (D192) docs/legal/HUKUKCU_NOTU_D192.md’yi hukukçuya ilet (Zotero anahtarının şifreli saklanması, ORCID, danışman rolü)
 - [ ] (D190–D192) Canlıda dene: atıf stilini “ISNAD 2 (dipnotlu)” yapıp Word/PDF indir (dipnotlar sayfa altında); “Ortak yazarlar” → rol “Danışman” ile davet, danışman hesabıyla “İlerleme”; “İçe aktar” → Zotero “Eşitle” işaretli ve ORCID ile aktarma, “Eşitlenen hesaplar”

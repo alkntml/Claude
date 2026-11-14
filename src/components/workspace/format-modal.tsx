@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
-import { FONT_CHOICES, FORMAT_PRESETS, resolveFormat, resolveLayout, workTypeLabel, type DocFormat } from "@/lib/export/format";
+import { effectiveFormat, FONT_CHOICES, FORMAT_PRESETS, resolveLayout, workTypeLabel, type DocFormat } from "@/lib/export/format";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /** Word/PDF biçim şablonu ve kapak bilgileri */
@@ -12,7 +12,7 @@ export function FormatModal({ open, onClose, project, patch }: { open: boolean; 
   const { t } = useT();
   const toast = useToast();
   // D178: üniversite adı proje oluştururken yazıldıysa kapağa önceden doldurulur
-  const [f, setF] = useState<DocFormat>(() => { const r = resolveFormat(project.context?.format); return { ...r, cover: { ...r.cover, university: r.cover.university || project.context?.university || "" } }; });
+  const [f, setF] = useState<DocFormat>(() => { const r = effectiveFormat(project); return { ...r, cover: { ...r.cover, university: r.cover.university || project.context?.university || "" } }; });
   const [saving, setSaving] = useState(false);
   const set = <K extends keyof DocFormat>(k: K, v: DocFormat[K]) => setF((x) => ({ ...x, [k]: v }));
   const setM = (k: keyof DocFormat["margins"], v: number) => setF((x) => ({ ...x, margins: { ...x.margins, [k]: v } }));
@@ -42,7 +42,8 @@ export function FormatModal({ open, onClose, project, patch }: { open: boolean; 
           <label className="block"><span className="label">{t("Hazır şablon")}</span>
             <select className="input" value={f.preset} onChange={(e) => applyPreset(e.target.value)}>{Object.entries(FORMAT_PRESETS).map(([id, p]) => <option key={id} value={id}>{t(p.label)}</option>)}</select>
           </label>
-          <p className="text-xs text-ink-400">{t("Şablonu seçin, sonra üniversitenizin yazım kılavuzuna göre değerleri düzenleyin. Kılavuzu Proje ayarları’ndan yüklerseniz asistan da değerleri önerir.")}</p>
+          <p className="text-xs text-ink-400">{t("Varsayılan şablon çalışma türünüze ve yazım stilinize göre seçilir (tez ve bitirme projesinde Türk üniversitesi tez düzeni; diğerlerinde APA, MLA, Chicago, Harvard, IEEE, Vancouver/AMA veya ISNAD öğrenci biçimi). Yazım kılavuzunuzu yüklerseniz kılavuzdaki kurallar kendiliğinden uygulanır.")}</p>
+          {project.context?.guide?.fields?.length > 0 && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-[12.5px] text-emerald-800">{t("Yazım kılavuzunuzdan ({name}) alınan kurallar:", { name: project.context.guide.fileName ?? "" })} {project.context.guide.fields.map((x: string) => t(x)).join(", ")}</p>}
           <div className="grid grid-cols-2 gap-2">
             <label className="col-span-2 block"><span className="label">{t("Yazı tipi")}</span><select className="input" value={f.fontFamily} onChange={(e) => set("fontFamily", e.target.value)}>{[...new Set([f.fontFamily, ...FONT_CHOICES])].map((x) => <option key={x}>{x}</option>)}</select></label>
             {num(t("Punto"), f.fontSizePt, (v) => set("fontSizePt", v), 0.5, "pt")}

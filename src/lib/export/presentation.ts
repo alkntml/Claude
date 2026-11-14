@@ -5,7 +5,7 @@ import { richToPlain } from "@/lib/citations/util";
 import { complete, estimateCost, resolveModel } from "@/lib/ai/registry";
 import { spentError } from "@/lib/ai/spent";
 import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
-import { resolveFormat } from "./format";
+import { effectiveFormat } from "./format";
 import { LANG_NAME, writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -80,7 +80,7 @@ export async function renderPptx(params: { deck: Deck; sourceMap: Record<string,
   const { deck, project } = params;
   const locale = writingLang(project.language);
   const engine = new CitationEngine(project.citation_style as CitationStyleId, params.items, { locale });
-  const fmt = resolveFormat(project.context?.format);
+  const fmt = effectiveFormat(project);
   const used = new Set<string>();
   const C = { ink: "151829", brand: "2F4BE0", soft: "EEF2FF", muted: "6B7194" };
 

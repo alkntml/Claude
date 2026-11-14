@@ -1185,6 +1185,15 @@ export function Workspace(props: Props) {
           <aside data-tour="nav" className={cn("min-h-0 border-r border-ink-200/70 bg-white", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
 
           <section className={cn("min-h-0 overflow-y-auto", mobilePane === "editor" ? "block" : "hidden lg:block")}>
+            {/* D179: kılavuz arka planda analiz edilip uygulandıysa kullanıcı bilgilendirilir */}
+            {project.context?.guide && !project.context.guide.seen && isOwner && (
+              <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-900 sm:mx-10 lg:mx-auto">
+                <Check className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 flex-1">{t("Yazım kılavuzunuz ({name}) uygulandı.", { name: project.context.guide.fileName ?? "" })} {project.context.guide.fields?.length ? `${t("Kılavuzdan uygulanan biçim kuralları:")} ${project.context.guide.fields.map((x: string) => t(x)).join(", ")}.` : t("Kılavuzda açık biçim kuralı bulunamadı; yazım stilinizin varsayılanları geçerli.")}</span>
+                {project.context.guide.stages?.length > 0 && !project.context.guide.stagesApplied && <button onClick={() => setSettings(true)} className="font-medium underline">{t("Bölüm önerisini gör")}</button>}
+                <button onClick={() => patchProject({ context: { guide: { ...project.context.guide, seen: true } } })} className="font-medium">{t("Tamam")}</button>
+              </div>
+            )}
             {active && (
               <div className="mx-auto max-w-[780px] px-4 pb-10 pt-4 sm:px-10 sm:pt-6">
                 {isBibliography ? (
@@ -1363,7 +1372,7 @@ export function Workspace(props: Props) {
       {titleOpen && <TitleChooser open={titleOpen} onClose={closeTitle} projectId={project.id} currentTitle={project.title} onChoose={chooseTitle} />}
       {goalOpen && <GoalModal open onClose={() => setGoalOpen(false)} project={project} stages={stages} patch={patchProject} />}
       {formatOpen && <FormatModal open onClose={() => setFormatOpen(false)} project={project} patch={patchProject} />}
-      <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} />
+      <SettingsModal open={settings} onClose={() => setSettings(false)} project={project} patch={patchProject} files={files} setFiles={setFiles} onStagesAdded={(rows) => setStages((l) => [...l, ...rows])} hasGuideFeature={hasFeature(props.planId, "guideline")} />
       <Modal open={!!sibling} onClose={() => setSibling(null)} title={t("Alt başlık ekle")} footer={<><Button variant="ghost" onClick={() => setSibling(null)}>{t("Vazgeç")}</Button><Button disabled={!siblingName.trim()} onClick={addSibling}><Plus className="h-4 w-4" /> {t("Ekle")}</Button></>}>
         <p className="mb-3 text-[13.5px] text-ink-600">{t("“{p}” başlığından sonra aynı düzeyde yeni bir alt başlık eklenecek. Numaralar kendiliğinden güncellenir.", { p: sibling ? `${sibling.number ? `${sibling.number} ` : ""}${sibling.title}` : "" })}</p>
         <input autoFocus className="input" value={siblingName} onChange={(e) => setSiblingName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) addSibling(); }} placeholder={t("Alt başlığın adı")} aria-label={t("Alt başlığın adı")} />
@@ -1524,7 +1533,7 @@ function AddStageModal({ open, onClose, existing, projectId, afterPosition, onAd
   );
 }
 
-function SettingsModal({ open, onClose, project, patch, files, setFiles, onStagesAdded }: { open: boolean; onClose: () => void; project: any; patch: (u: Record<string, unknown>) => Promise<any>; files: any[]; setFiles: (fn: (f: any[]) => any[]) => void; onStagesAdded: (rows: any[]) => void }) {
+function SettingsModal({ open, onClose, project, patch, files, setFiles, onStagesAdded, hasGuideFeature }: { open: boolean; onClose: () => void; project: any; patch: (u: Record<string, unknown>) => Promise<any>; files: any[]; setFiles: (fn: (f: any[]) => any[]) => void; onStagesAdded: (rows: any[]) => void; hasGuideFeature: boolean }) {
   const { t } = useT();
   const toast = useToast();
   const router = useRouter();
@@ -1535,7 +1544,8 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
   const [language, setLanguage] = useState(project.language);
   const [uploading, setUploading] = useState(false);
   const [suggesting, setSuggesting] = useState(false);
-  const [suggestion, setSuggestion] = useState<any | null>(null);
+  // D179: arka planda (Dosyalar’dan) analiz edilmiş kılavuzun bölüm önerisi de burada görünür
+  const [suggestion, setSuggestion] = useState<any | null>(() => (project.context?.guide?.stages?.length && !project.context?.guide?.stagesApplied ? { stages: project.context.guide.stages, notes: project.context.guide.notes ?? [], formatting: null } : null));
   const guideline = files.find((f) => f.id === project.guideline_file_id);
 
   async function saveAll() {
@@ -1556,12 +1566,19 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
       setFiles((l) => [j.file, ...l]);
       await patch({});
       router.refresh();
-      toast({ tone: "success", title: t("Kılavuz yüklendi"), detail: t("Asistan artık kılavuzdaki kuralları dikkate alır.") });
+      // D179: kılavuz yüklenince biçim kuralları kendiliğinden çıkarılıp uygulanır; bölüm önerisi onaya sunulur
+      if (hasGuideFeature) { toast({ tone: "info", title: t("Kılavuz yüklendi; kurallar okunuyor…") }); await suggest(); }
+      else toast({ tone: "success", title: t("Kılavuz yüklendi"), detail: t("Asistan kılavuzdaki kuralları dikkate alır. Biçim kurallarının otomatik uygulanması Pro paketindedir; o zamana kadar yazım stilinizin varsayılan kuralları kullanılır.") });
     } catch (err) { toast({ tone: "error", title: t("Yüklenemedi"), detail: (err as Error).message }); } finally { setUploading(false); }
   }
   async function suggest() {
     setSuggesting(true);
-    try { setSuggestion((await api<{ suggestion: any }>(`/api/projects/${project.id}/stages/suggest`, { method: "POST" })).suggestion); }
+    try {
+      const r = await api<{ suggestion: any; fields: string[] }>(`/api/projects/${project.id}/stages/suggest`, { method: "POST" });
+      setSuggestion(r.suggestion);
+      await patch({});
+      toast({ tone: "success", title: t("Kılavuzdaki biçim kuralları uygulandı"), detail: r.fields.length ? r.fields.map((x) => t(x)).join(", ") : t("Kılavuzda açık biçim kuralı bulunamadı; yazım stilinizin varsayılanları geçerli.") });
+    }
     catch (e) { toast({ tone: "error", title: t("Analiz yapılamadı"), detail: (e as Error).message }); } finally { setSuggesting(false); }
   }
   async function applySuggestion() {
@@ -1572,8 +1589,8 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
         added.push(stage);
       } catch { /* aynı anahtar varsa atla */ }
     }
-    const f = suggestion.formatting;
-    await patch({ context: { format: { ...(project.context?.format ?? {}), fontFamily: f.fontFamily, fontSizePt: f.fontSizePt, lineSpacing: f.lineSpacing } }, ...(STYLE_IDS.includes(f.citationStyle) ? { citationStyle: f.citationStyle } : {}) });
+    // Biçim kuralları analizde zaten uygulandı (D179); burada yalnızca onaylanan bölümler eklenir
+    await patch({ context: { guide: { ...(project.context?.guide ?? {}), stagesApplied: true, seen: true } } });
     onStagesAdded(added);
     toast({ tone: "success", title: t("Kılavuz uygulandı"), detail: t("{n} bölüm eklendi; biçim kuralları dışa aktarmada kullanılacak. Gereksiz bölümleri silebilir, sırayı değiştirebilirsiniz.", { n: added.length }) });
     setSuggestion(null);
@@ -1607,17 +1624,19 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
             <p className="font-medium text-ink-900">{t("Üniversite / dergi yazım kılavuzu")}</p>
             <p className="mt-1 text-[13px] text-ink-500">{t("Kılavuzu (PDF/DOCX) yükleyin. Asistan bölüm yapısını ve biçim kurallarını kılavuza göre önersin.")}</p>
             {guideline && <p className="mt-2 text-[13px] text-emerald-700">✓ {guideline.name}</p>}
+            {project.context?.guide?.fields?.length > 0 && <p className="mt-1 text-[12.5px] text-ink-600">{t("Kılavuzdan uygulanan biçim kuralları:")} {project.context.guide.fields.map((x: string) => t(x)).join(", ")}</p>}
+            {project.guideline_file_id && !hasGuideFeature && <p className="mt-1 text-[12.5px] text-amber-700">{t("Biçim kurallarının kılavuzdan otomatik uygulanması Pro paketindedir; şu an yazım stilinizin varsayılan kuralları kullanılıyor.")}</p>}
             <div className="mt-3 flex flex-wrap gap-2">
               <label className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-[10px] border border-ink-200 bg-white px-3 text-[13px] font-medium text-ink-700 hover:bg-ink-50">{uploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />} {t("Kılavuz yükle")}<input type="file" accept=".pdf,.docx,.txt" className="hidden" onChange={upload} /></label>
-              {project.guideline_file_id && <Button size="sm" variant="soft" loading={suggesting} onClick={suggest}>{t("Bölüm yapısı öner")}</Button>}
+              {project.guideline_file_id && hasGuideFeature && <Button size="sm" variant="soft" loading={suggesting} onClick={suggest}>{t("Kılavuzu yeniden analiz et")}</Button>}
             </div>
             {suggestion && (
               <div className="mt-4 space-y-2 rounded-xl bg-ink-50 p-3 text-[13px]">
                 <p className="font-medium">{t("Önerilen bölümler")}</p>
                 <ol className="list-decimal pl-5 text-ink-600">{suggestion.stages.map((s: any) => <li key={s.title}>{s.title}</li>)}</ol>
-                <p className="text-ink-600">{t("Biçim: {font}, {size} punto, {spacing} satır aralığı, {style}", { font: suggestion.formatting.fontFamily, size: suggestion.formatting.fontSizePt, spacing: suggestion.formatting.lineSpacing, style: suggestion.formatting.citationStyle })}</p>
+                {suggestion.formatting && <p className="text-ink-600">{t("Biçim: {font}, {size} punto, {spacing} satır aralığı, {style}", { font: suggestion.formatting.fontFamily, size: suggestion.formatting.fontSizePt, spacing: suggestion.formatting.lineSpacing, style: suggestion.formatting.citationStyle })}</p>}
                 {suggestion.notes?.map((n: string) => <p key={n} className="text-ink-500">• {n}</p>)}
-                <Button size="sm" onClick={applySuggestion}>{t("Öneriyi uygula")}</Button>
+                <Button size="sm" onClick={applySuggestion}>{t("Bölüm önerisini uygula")}</Button>
               </div>
             )}
           </div>

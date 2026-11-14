@@ -53,6 +53,31 @@ export const FORMAT_PRESETS: Record<string, { label: string; format: Omit<DocFor
     label: "APA 7 — öğrenci ödevi / tez",
     format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 2, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 1.27, paragraphAfterPt: 0, justify: false, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "top-right" },
   },
+  // D179: yazım stillerinin öğrenci/el yazması biçimi (stilin resmî kılavuzundaki temel değerler)
+  mla9: {
+    label: "MLA 9 — öğrenci ödevi",
+    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 2, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 1.27, paragraphAfterPt: 0, justify: false, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "top-right" },
+  },
+  chicago: {
+    label: "Chicago 17 / Turabian 9 — öğrenci ödevi",
+    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 2, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 1.27, paragraphAfterPt: 0, justify: false, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "bottom-center" },
+  },
+  harvard: {
+    label: "Harvard — öğrenci ödevi",
+    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 1.5, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 0, paragraphAfterPt: 12, justify: true, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "bottom-center" },
+  },
+  ieee: {
+    label: "IEEE — teknik rapor",
+    format: { fontFamily: "Times New Roman", fontSizePt: 10, lineSpacing: 1, margins: { top: 1.9, bottom: 2.54, left: 1.9, right: 1.9 }, firstLineIndentCm: 0.36, paragraphAfterPt: 0, justify: true, chapterOnNewPage: false, chapterTitleUppercase: true, chapterTitleCenter: false, pageNumber: "bottom-center" },
+  },
+  medical: {
+    label: "Vancouver / AMA — el yazması",
+    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 2, margins: { top: 2.54, bottom: 2.54, left: 2.54, right: 2.54 }, firstLineIndentCm: 0, paragraphAfterPt: 0, justify: false, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "top-right" },
+  },
+  isnad: {
+    label: "ISNAD 2 — Türkçe makale/ödev",
+    format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 1.5, margins: { top: 2.5, bottom: 2.5, left: 2.5, right: 2.5 }, firstLineIndentCm: 1.25, paragraphAfterPt: 6, justify: true, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "bottom-center" },
+  },
   article: {
     label: "Dergi makalesi taslağı",
     format: { fontFamily: "Times New Roman", fontSizePt: 12, lineSpacing: 1.15, margins: { top: 2.5, bottom: 2.5, left: 2.5, right: 2.5 }, firstLineIndentCm: 1, paragraphAfterPt: 6, justify: true, chapterOnNewPage: false, chapterTitleUppercase: false, chapterTitleCenter: false, pageNumber: "bottom-center" },
@@ -83,6 +108,34 @@ export function resolveFormat(raw: Partial<DocFormat> | null | undefined): DocFo
     chapterTitleCenter: raw?.v === 2 && typeof raw.chapterTitleCenter === "boolean" ? raw.chapterTitleCenter : base.chapterTitleCenter,
     cover: { logoSpace: true, showTC: true, ...(raw?.cover ?? {}) },
   };
+}
+
+/**
+ * D179: projenin varsayılan biçim şablonu — tez ve bitirme projesi Türk üniversitesi tez kılavuzu düzeninde; dergi
+ * gönderiminde dergi taslağı; diğerlerinde seçilen yazım stilinin (APA, MLA, Chicago, Harvard, IEEE, Vancouver/AMA,
+ * ISNAD) öğrenci ödevi biçimi. Kullanıcı biçim penceresinden veya yazım kılavuzu yükleyerek değiştirir.
+ */
+export function defaultPreset(p: { workType?: string | null; citationStyle?: string | null; documentPurpose?: string | null }): string {
+  if (p.documentPurpose === "journal" || p.workType === "journal_article") return "article";
+  if (p.workType === "thesis" || p.workType === "capstone" || p.documentPurpose === "institute") return "tez-tr";
+  switch (p.citationStyle) {
+    case "apa7": case "apa6": return "apa7-student";
+    case "mla": return "mla9";
+    case "chicago": case "turabian": return "chicago";
+    case "harvard": return "harvard";
+    case "ieee": return "ieee";
+    case "vancouver": case "ama": return "medical";
+    case "isnad": return "isnad";
+    default: return "tez-tr";
+  }
+}
+
+/** D179: projenin dışa aktarmada kullanılan tam biçimi (kayıtlı ayarlar + varsayılan şablon) */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function effectiveFormat(project: any): DocFormat {
+  const raw = (project?.context?.format ?? {}) as Partial<DocFormat>;
+  const preset = raw.preset && FORMAT_PRESETS[raw.preset] ? raw.preset : defaultPreset({ workType: project?.work_type, citationStyle: project?.citation_style, documentPurpose: project?.context?.documentPurpose });
+  return resolveFormat({ ...raw, preset });
 }
 
 /** D178: çalışma türü ve düzeyden kapaktaki tür satırı (kullanıcı “Çalışma türü”nü yazmadıysa) */

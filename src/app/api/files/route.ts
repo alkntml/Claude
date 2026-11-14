@@ -1,4 +1,7 @@
-import { ApiError, json, route } from "@/lib/api";
+import { after } from "next/server";
+import { looksLikeGuideline, runGuidelineAnalysis } from "@/lib/guideline";
+import { adminClient } from "@/lib/supabase/admin";
+import { ApiError, json, logError, route } from "@/lib/api";
 import { requireProject, requireUser } from "@/lib/auth";
 import { chunkText } from "@/lib/files/chunk";
 import { checkMagic, extract, kindOf } from "@/lib/files/extract";
@@ -73,7 +76,20 @@ export const POST = route("files.upload", async (req) => {
   if (projectId && status === "done" && kind !== "csv" && kind !== "xlsx" && text) {
     const chunks = chunkText({ pages, text, segments }).slice(0, 3000);
     await insertChunks(s.supabase, chunks.map((c, idx) => ({ file_id: row.id, project_id: projectId, user_id: s.user.id, chunk_index: idx, page_hint: c.pageHint, content: c.content, section: c.section ?? null })));
-    if (purpose === "guideline") await s.supabase.from("projects").update({ guideline_file_id: row.id }).eq("id", projectId);
+  }
+  // D179: yazım kılavuzu — “kılavuz” olarak yüklendiyse veya adı/içeriği kılavuz gibiyse (proje henüz kılavuzsuzsa) tanınır
+  // ve arka planda analiz edilir: biçim kuralları hemen uygulanır, bölüm yapısı önerisi kullanıcıya sunulur.
+  if (projectId && status === "done" && text) {
+    const { data: proj } = await s.supabase.from("projects").select("id, user_id, guideline_file_id").eq("id", projectId).maybeSingle();
+    const isGuide = purpose === "guideline" || (!proj?.guideline_file_id && proj?.user_id === s.user.id && looksLikeGuideline(file.name, text));
+    if (proj && isGuide) {
+      await s.supabase.from("projects").update({ guideline_file_id: row.id }).eq("id", projectId);
+      if (purpose !== "guideline") await s.supabase.from("files").update({ purpose: "guideline" }).eq("id", row.id).eq("user_id", s.user.id);
+      // Proje ayarlarından “kılavuz” olarak yüklendiyse analizi o ekran hemen başlatır (çift çalışma olmasın)
+      const ctx = { userId: s.user.id, planId: s.profile.plan_id, projectId, ownerId: proj.user_id };
+      if (purpose !== "guideline") after(() => runGuidelineAnalysis(adminClient(), ctx).catch((e) => logError("files.guideline", e, ctx.userId)));
+      (row as Record<string, unknown>).guideline = true;
+    }
   }
   await recordUsage(s.user.id, "upload", { meta: { bytes: file.size, kind } });
   return json({ file: row }, 201);

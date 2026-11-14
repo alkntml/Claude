@@ -3,6 +3,7 @@ import { watchExport } from "@/lib/single-watch";
 import { requireUser } from "@/lib/auth";
 import { buildExportDoc } from "@/lib/export/model";
 import { toDocx } from "@/lib/export/render-docx";
+import { effectiveFormat } from "@/lib/export/format";
 import { toPdf } from "@/lib/export/render-pdf";
 import { toMarkdown, toText } from "@/lib/export/render-text";
 import { toLatexZip } from "@/lib/export/render-latex";
@@ -52,8 +53,8 @@ export const GET = route<Ctx>("project.export", async (req, { params }) => {
   });
 
   let body: Buffer | string;
-  if (format === "docx") body = await toDocx(doc, bundle.project.context?.format ?? {});
-  else if (format === "pdf") body = await toPdf(doc, bundle.project.context?.format ?? {});
+  if (format === "docx") body = await toDocx(doc, effectiveFormat(bundle.project));
+  else if (format === "pdf") body = await toPdf(doc, effectiveFormat(bundle.project));
   else if (format === "md") body = toMarkdown(doc);
   else if (format === "latex") body = await toLatexZip(doc, { style: (bundle.project.citation_style ?? "apa7") as CitationStyleId, items: bundle.sources.map(sourceRowToItem) });
   else body = toText(doc);

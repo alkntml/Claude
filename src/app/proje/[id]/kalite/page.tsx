@@ -45,6 +45,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const ctx = acc.project.context ?? {};
   const chain = consistencyChain({
     workType: acc.project.work_type, level: acc.project.academic_level, methodology: ctx.methodology ?? null, program: ctx.program ?? null, design: ctx.design ?? null, variant: ctx.variant ?? null,
+    title: acc.project.title, keywords: acc.project.keywords ?? [], researchQuestions: typeof ctx.researchQuestions === "string" ? ctx.researchQuestions : null,
     stages: list.map((st: any) => {
       const cited = [...new Set(citedIdsInOrder([st.content as JSONNode]))];
       const paras = ((st.content as JSONNode | null)?.content ?? []).filter((n: any) => n.type === "paragraph").map((n: any) => new Set(collectCitations(n).flatMap((c) => c.ids)).size).filter((n: number) => n > 0);

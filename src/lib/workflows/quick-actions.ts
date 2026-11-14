@@ -6,7 +6,7 @@
 export type QuickId =
   | "outline" | "analysis" | "research"
   | "draft" | "plan" | "synthesize" | "research_questions" | "hypotheses" | "methodology"
-  | "interpret" | "discussion" | "consistency" | "abstract" | "ethics_docs";
+  | "interpret" | "discussion" | "consistency" | "abstract" | "ethics_docs" | "align";
 
 const GROUPS: { keys: string[]; actions: QuickId[] }[] = [
   { keys: ["topic"], actions: ["draft", "plan"] },
@@ -43,6 +43,8 @@ export function quickActions(stageKey: string | undefined, ctx: { lowSources: bo
   else if (!list.includes("outline") && list.includes("draft")) list.unshift("outline");
   // “Bölümü yaz” her yerde bulunur (özet bölümü hariç)
   if (!list.includes("draft") && stageKey !== "title_abstract") list.push("draft");
+  // D182: bölümler arası bütünlük — tutarlılık kontrolü yazılabilen her bölümde
+  if (stageKey && stageKey !== "references" && !list.includes("consistency")) list.push("consistency");
   return [...new Set(list)];
 }
 

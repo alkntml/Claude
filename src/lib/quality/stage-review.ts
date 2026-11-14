@@ -6,6 +6,7 @@ import { citedIdsInOrder, type JSONNode } from "@/lib/editor/doc";
 import { sourceRowToItem } from "@/lib/projects";
 import { runQualityChecks, type QualityIssue } from "@/lib/quality/checks";
 import { stageDef } from "@/lib/workflows";
+import { spineBlock } from "@/lib/coherence";
 import { makeT, type Locale } from "@/i18n";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -86,6 +87,7 @@ export async function aiStageReview(params: { planId: string; bundle: any; stage
 DEĞERLENDİR:
 - Bölüm, amacını ve yazım kurallarını karşılıyor mu? Beklenen alt konular eksik mi?
 - Çalışma başlığı ve konusuyla uyumlu mu; bölüme ait olmayan içerik (ör. özet bölümünde ana metin, yöntemde bulgu) var mı?
+- BÜTÜNLÜK: Bölüm ÇALIŞMANIN OMURGASINDAKİ amaç ve araştırma sorularına/hipotezlere hizmet ediyor mu; kavramları diğer bölümlerle aynı adla ve anlamda kullanıyor mu; diğer bölümlerle çelişen, onları gereksizce tekrar eden veya bütünden kopuk kısım var mı? (Yalnızca metinde gerçekten görülen kopukluğu yaz.)
 - Akademik dil, paragraf yapısı ve mantıksal akış yeterli mi? Desteklenmeyen kesin iddia var mı?
 KURALLAR:
 - Yalnızca verilen metne dayan; kaynakların doğruluğunu veya içeriğini yorumlama (sistem ayrıca kontrol ediyor).
@@ -95,7 +97,12 @@ KURALLAR:
 - ÖLÇÜLEN DEĞERLER sistem tarafından kesin olarak hesaplanmıştır: kelime sayısını yeniden saymayı veya “doğrulanmamış” demeyi ÖNERME; uzunluk sorununu sistem ayrıca bildirir.
 - Göremediğin veya doğrulayamadığın bir şeyi sorun olarak YAZMA (“doğrulanamıyor”, “kontrol edilmemiş”, “belirtilmemiş olabilir” gibi). Yalnızca metinde gerçekten bulunan, yazarın düzeltebileceği somut sorunları yaz.
 - Henüz yazılmamış ana bölümler varsa, o bölümlere bağlı eksiklikleri (ör. özette sonuç yok) ayrı ayrı sorun olarak yazma; en fazla tek bir “info” ile “ana metin tamamlanınca bu bölüm güncellenmeli” de.`,
-    messages: [{ role: "user", content: `ÇALIŞMA: ${bundle.project.title}\nTür: ${bundle.project.work_type} · Seviye: ${bundle.project.academic_level}\n\nBÖLÜM: ${stage.title}\nAmaç: ${def?.purpose ?? stage.description ?? ""}\nYazım kuralları:\n${(def?.rules ?? []).map((r: string) => `- ${r}`).join("\n") || "-"}\n\nÖLÇÜLEN DEĞERLER:\n${measured}\n\nDİĞER BÖLÜMLER${whole ? "" : " (kısa)"}:\n${others || "-"}\n\nBÖLÜM METNİ:\n"""\n${String(stage.content_text ?? "").slice(0, 24000)}\n"""` }],
+    messages: [{ role: "user", content: `${spineBlock({
+      title: bundle.project.title, topic: bundle.project.topic, keywords: bundle.project.keywords ?? [],
+      methodologyLabel: bundle.project.context?.methodology ?? null, blueprint: bundle.project.context?.blueprint ?? null,
+      researchQuestions: typeof bundle.project.context?.researchQuestions === "string" ? bundle.project.context.researchQuestions : null,
+      memory: bundle.memory ?? [], stages: bundle.stages.map((x: any) => ({ key: x.key, title: x.title, text: String(x.content_text ?? ""), hidden: !!x.hidden })),
+    })}\n\nÇALIŞMA: ${bundle.project.title}\nTür: ${bundle.project.work_type} · Seviye: ${bundle.project.academic_level}\n\nBÖLÜM: ${stage.title}\nAmaç: ${def?.purpose ?? stage.description ?? ""}\nYazım kuralları:\n${(def?.rules ?? []).map((r: string) => `- ${r}`).join("\n") || "-"}\n\nÖLÇÜLEN DEĞERLER:\n${measured}\n\nDİĞER BÖLÜMLER${whole ? "" : " (kısa)"}:\n${others || "-"}\n\nBÖLÜM METNİ:\n"""\n${String(stage.content_text ?? "").slice(0, 24000)}\n"""` }],
     maxTokens: 2500,
     effort: "medium",
     jsonSchema: SCHEMA,

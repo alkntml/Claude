@@ -53,7 +53,7 @@ interface Props {
 
 /** Uzun bölümler: alt başlıklarla yazım kısayolu */
 const LONG_STAGES = new Set(["article_body", "literature", "theory", "concepts", "review_synthesis", "method", "methods_article", "findings", "results_article", "discussion", "discussion_article", "grant_method"]);
-const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure", "reduce_repetition"];
+const SELECTION_ACTIONS: AssistantAction[] = ["expand", "shorten", "academic_tone", "restructure", "reduce_repetition", "align"];
 const USAGE_LABEL: Record<string, string> = { ai_requests: "yapay zekâ isteği", tokens: "token", source_searches: "kaynak tarama", storage_mb: "depolama" };
 const PHASE_LABEL: Record<ChatPhase, string> = { plan: "Karar", search: "Arama", verify: "Doğrulama", read: "Okuma", write: "Yazım", gaps: "Eksikler" };
 

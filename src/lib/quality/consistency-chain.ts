@@ -5,6 +5,9 @@
  * çözümü gösterir, karar kullanıcınındır. Yapay zekâ kullanmaz.
  */
 import { buildTemplate, EMPIRICAL_METHODS, LITERATURE_STAGES, type TemplateInput } from "@/lib/workflows";
+import { hypothesisLabels, keyTerms, researchQuestionsOf, termCoverage } from "@/lib/coherence";
+
+const CORE_KEYS = new Set(["literature", "theory", "method", "methods_article", "findings", "results_article", "discussion", "discussion_article", "conclusion", "conclusion_article", "article_body", "introduction", "review_synthesis"]);
 
 export type ChainLevel = "critical" | "important" | "improvement";
 export const CHAIN_LEVEL_LABEL: Record<ChainLevel, string> = { critical: "Kritik", important: "Önemli", improvement: "İyileştirme" };
@@ -27,7 +30,7 @@ const HYPOTHESIS = /\bH[0-9₀-₉]\b|\bhipotez|\bhypothes|\bHypothese/i;
 const STATS = /t[- ]?test|anova|ancova|manova|regresyon|regression|korelasyon|correlation|ki[- ]?kare|chi[- ]?square|mann|wilcoxon|kruskal|faktör analizi|factor analysis|sem\b|yapısal eşitlik/i;
 const QUAL = /tema|theme|kodla|coding|içerik analizi|content analysis|betimsel analiz|thematic|söylem|discourse|fenomenoloj|phenomenolog|gömülü teori|grounded/i;
 
-export function consistencyChain(input: TemplateInput & { stages: ChainStage[]; now?: number }): ChainItem[] {
+export function consistencyChain(input: TemplateInput & { stages: ChainStage[]; now?: number; title?: string; keywords?: string[]; researchQuestions?: string | null }): ChainItem[] {
   const out: ChainItem[] = [];
   const visible = input.stages.filter((s) => !s.hidden);
   const byKey = (k: string) => visible.find((s) => s.key === k);
@@ -117,6 +120,38 @@ export function consistencyChain(input: TemplateInput & { stages: ChainStage[]; 
     if (k.length < 3) continue;
     if (seenH.has(k) && seenH.get(k) !== s.key && !dup.has(k)) { dup.add(k); add({ level: "improvement", title: "Yinelenen başlık", evidence: "“{h}” başlığı birden fazla yerde geçiyor.", vars: { h }, suggestion: "Aynı işlevi gören başlıkları birleştirin veya içeriğe özgü, ayırt edici adlar verin.", stageKey: s.key }); }
     else seenH.set(k, s.key);
+  }
+
+  // D182: bölümler arası bütünlük — anahtar kavram kapsaması, hipotezlerin izlenmesi, sonuçta soruların yanıtlanması
+  if (input.title) {
+    const sp = { title: input.title, keywords: input.keywords ?? [], researchQuestions: input.researchQuestions ?? null, stages: visible.map((x) => ({ key: x.key, title: x.title, text: x.text })) };
+    const terms = keyTerms(sp);
+    if (terms.length >= 3) {
+      for (const s of visible.filter((x) => CORE_KEYS.has(x.key) && words(x.text) >= 150)) {
+        const c = termCoverage(s.text, terms);
+        if (c.share < 0.3) add({ level: "improvement", title: "Bölümün çalışmanın amacıyla bağı zayıf görünüyor", evidence: "“{s}” bölümünde çalışmanın başlığı, amacı ve araştırma sorularındaki anahtar kavramların yalnızca %{p}’i geçiyor.", vars: { s: s.title, p: Math.round(c.share * 100) }, suggestion: "Bölümün amaçla ve araştırma sorularıyla ilişkisini açıkça kurun; Asistan’da “Tutarlılık kontrolü” veya metni seçip “Bütünle uyumla” kullanabilirsiniz.", stageKey: s.key });
+      }
+    }
+    const hyps = hypothesisLabels(`${text("questions")}\n${text("purpose")}`);
+    if (hyps.length && empirical) {
+      for (const k of ["findings", "results_article", "discussion", "discussion_article"]) {
+        const st = byKey(k);
+        if (!st || words(st.text) < 80) continue;
+        const missing = hyps.filter((h) => !hypothesisLabels(st.text).includes(h));
+        if (missing.length) add({ level: "important", title: "Hipotez ilgili bölümde ele alınmamış", evidence: "{h} “{s}” bölümünde geçmiyor.", vars: { h: missing.join(", "), s: st.title }, suggestion: "Her hipotezin bulgularda test sonucunu, tartışmada yorumunu açıkça (H1, H2 … diye anarak) verin.", stageKey: k });
+      }
+    }
+    const rqs = researchQuestionsOf(sp).filter((q) => /\?$/.test(q.trim()));
+    const concl = byKey("conclusion") ?? byKey("conclusion_article");
+    if (rqs.length >= 2 && concl && words(concl.text) >= 80) {
+      // Her sorunun kendine özgü kavramları (başlıkta ve tüm sorularda ortak olanlar hariç) sonuçta geçmeli
+      const common = new Set(keyTerms({ title: input.title, stages: [] }));
+      const unanswered = rqs.map((q, i) => {
+        const own = keyTerms({ title: q, stages: [] }).filter((t) => !common.has(t));
+        return { i: i + 1, own, share: own.length ? termCoverage(concl.text, own).share : 1 };
+      }).filter((x) => x.own.length > 0 && x.share < 0.5).map((x) => x.i);
+      if (unanswered.length) add({ level: "improvement", title: "Sonuçta yanıtlanmamış görünen araştırma soruları", evidence: "{list}. araştırma sorusunun kavramları “{s}” bölümünde geçmiyor.", vars: { list: unanswered.join(", "), s: concl.title }, suggestion: "Sonuçta her araştırma sorusunu sırasıyla kısaca yanıtlayın.", stageKey: concl.key });
+    }
   }
 
   // Kritik bölüm eksik veya gizlenmiş

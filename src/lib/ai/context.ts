@@ -1,4 +1,5 @@
 import { getSetting } from "@/lib/settings";
+import { coherenceRule, outlineBlock, spineBlock } from "@/lib/coherence";
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { scoreRecord } from "@/lib/sources/aggregate";
@@ -156,6 +157,16 @@ export async function buildContext(params: {
   // Öğrencinin kurgusu (D67): yazım bu plana göre ilerler (bölüme özel not değişken kısımda)
   const plan = blueprintContext(bp, null);
   if (plan) head.push(`\n${plan}`);
+  // D182: çalışmanın omurgası — amaç, araştırma soruları/hipotezler, kavramlar, yöntem (her bölüm buna hizmet eder)
+  const spineStages = stages.map((x: any) => ({ key: x.key, title: x.title, text: String(x.content_text ?? ""), hidden: !!x.hidden, headings: headings(x.content as JSONNode).map((h) => h.text) }));
+  head.push(`\n${spineBlock({
+    title: project.title, topic: project.topic, keywords: project.keywords ?? [],
+    methodologyLabel: ctx.methodology ? METHODOLOGY_LABELS[ctx.methodology as Methodology] ?? ctx.methodology : null,
+    designLabel: designById(ctx.design)?.label ?? null,
+    blueprint: bp ? { purpose: (bp as any).purpose, problem: (bp as any).problem, questions: (bp as any).questions } : null,
+    researchQuestions: typeof ctx.researchQuestions === "string" ? ctx.researchQuestions : null,
+    memory, stages: spineStages,
+  })}`);
 
   // Kaynaklar (D78: sabit sırada; bölüme özgü ekler değişken kısımda)
   const stageHeads = stage ? headings(stage.content as JSONNode).map((h) => h.text) : [];
@@ -217,8 +228,16 @@ export async function buildContext(params: {
   if (others.length) {
     tail.push("\n## DİĞER BÖLÜMLERİN DURUMU");
     const lim = params.otherChars ?? 400;
-    for (const s of others) tail.push(`- ${s.title} (${s.word_count} kelime): ${String(s.content_text).slice(0, lim).replace(/\s+/g, " ")}${s.content_text.length > lim ? "…" : ""}`);
+    // D182: bölümün başı ve vardığı sonuç (son kısmı) birlikte verilir; bölümler birbirine bağlansın
+    for (const s of others) {
+      const txt = String(s.content_text).replace(/\s+/g, " ");
+      const tailPart = txt.length > lim + 300 ? ` … [bölümün sonu:] ${txt.slice(-280)}` : "";
+      tail.push(`- ${s.title} (${s.word_count} kelime): ${txt.slice(0, lim)}${txt.length > lim ? "…" : ""}${tailPart}`);
+    }
   }
+
+  // D182: çalışmanın ana hattı (bütün bölümlerin başlıkları)
+  { const ol = outlineBlock(spineStages, stage?.key); if (ol) tail.push(`\n${ol}`); }
 
   if (stage) {
     const def = stageDef(stage.key);
@@ -228,6 +247,8 @@ export async function buildContext(params: {
     if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
     // D171: bölümün gerekçesi, kullanıcının seçtiği kapsam ve literatür derinliği
     if (stage.why) tail.push(`Bölümün çalışmadaki işlevi: ${stage.why}`);
+    // D182: bu bölümün bütünle bağı
+    tail.push(coherenceRule(stage.key));
     // D173: bölümden sorumlu asistan rolü ve bölümde karşılanması beklenen işlevler (başlık olarak birebir kopyalanmaz)
     const role = assistantFor(stage.key, ctx.methodology);
     tail.push(`Bu bölümde ${role.name} rolündesin: ${role.duty}.`);

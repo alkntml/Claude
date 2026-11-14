@@ -3197,8 +3197,7 @@ export const EN: Record<string, string> = {
   "İddia denetimi (atıflı her cümle kaynağıyla karşılaştırılır), PRISMA 2020 sistematik derleme, literatür haritası ve teslim öncesi kontrol listesi. Kalite puanının yöntemi herkese açıktır.": "Claim audit (every cited sentence compared with its source), PRISMA 2020 systematic review, literature map and a pre-submission checklist. The quality score method is public.",
   "İddia denetimi ve teslim öncesi kontrol listesi": "Claim audit and pre-submission checklist",
   "PRISMA 2020 sistematik derleme": "PRISMA 2020 systematic review",
-  "68 saniyede Academiana": "Academiana in 68 seconds",
-  "Kaynak taramasından teslim öncesi kontrole kadar bütün süreci izleyin.": "Watch the whole process, from source search to the pre-submission check.",
+  "80 saniyede Academiana": "Academiana in 80 seconds",
   "Academiana tanıtım videosu": "Academiana introduction video",
   "Tanıtım videosunu oynat": "Play the introduction video",
   "Tanıtımı izle": "Watch the intro",
@@ -4688,4 +4687,5 @@ export const EN: Record<string, string> = {
   "Yazım kılavuzunuza göre biçim": "Formatting from your guideline",
   "Üniversitenizin veya derginizin kılavuzunu yükleyin; kılavuzda yazan kenar boşlukları, yazı tipi, satır aralığı, başlık ve kapak kuralları kendiliğinden uygulanır.": "Upload your university’s or journal’s guideline; the margins, font, line spacing, heading and cover rules it states are applied automatically.",
   "600’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır.": "More than 600 automated tests run before every update; data isolation is tested on a real database.",
+  "İlk fikirden kaynakçaya, kaynakçadan savunma provasına kadar bütün süreci izleyin.": "Watch the whole process, from the first idea to the reference list and from the reference list to defence rehearsal.",
 };

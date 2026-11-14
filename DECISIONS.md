@@ -914,3 +914,28 @@ Yeni sekme açılmadı; var olan alanlar zenginleştirildi. (1) Özellikler (`la
 - Word/PDF örneğine şunlar eklendi: logo yeri, T.C., [Üniversite adı] doldurma alanı, enstitü ve anabilim dalı, ay–yıl kapağı, Tablolar ve Şekiller Listesi. İçindekilerde Giriş numarasızdır (D178).
 
 Bütün sayılar örnek ve temsilîdir; EN/DE çevirileri eklendi.
+
+## D184 — 80 saniyelik tanıtım filmi (2026-11-14)
+Site sahibi istedi: güven kazandıran bir reklam filmi. İlk fikirden kaynakçaya, kaynakçadan savunma provasına kadar sürecin ne kadar kolay olduğunu göstermeli; teknik ayrıntılara ve testlere de değinmeli.
+
+**Akış:** sekiz adımlı bir yolculuk çubuğu sürekli ekranda kalır (Fikir → Kaynak → Yazım → Doğrulama → Analiz → Kaynakça → Kalite → Savunma). Sahneler:
+1. **Açılış:** “Her şey bir fikirle başlar.”
+2. **Fikir ve kurgu:** bir cümleden yol haritası çıkar; 9 çalışma türü.
+3. **Kaynak:** 16 veri tabanı, 250M+ yayın; erişim düzeyi rozetleri.
+4. **Yazım:** [KAYNAK GEREKLİ] işareti, tam metni okunan kaynakla düzeltilir; bütünlük omurgası görünür.
+5. **İddia denetimi:** kaynakla çelişen cümle, alıntısıyla işaretlenir.
+6. **Analiz:** istatistik motorunun gerçek korelasyon tablosu, r(118) = .50.
+7. **Kaynakça:** atıf motorunun gerçek APA 7 → ISNAD 2 → IEEE çıktısı.
+8. **Kalite ve teslim:** puan grafiği, doğru olanlar, kapak ve içindekiler, Word / PDF / LaTeX, kılavuz.
+9. **Savunma:** .pptx sunum ve yapay zekâ jüri provası (7/10).
+10. **Güven:** 673 otomatik test, 0 uydurma kaynak, AB/Frankfurt, satır düzeyinde erişim denetimi, erişim şeffaflığı, açık puanlama, KVKK.
+11. **Kapanış:** “Fikirden savunmaya. Tek yerde.”
+
+**Ses:** film sessizdir; anlatım ekrandaki yazılarla yapılır.
+
+**Teknik:**
+- Kaynak `media/tanitim/` içindedir. Yazı tipleri, kayıt betiği ve README orada. Kareler `render(t)` ile deterministik çizilir.
+- Kayıt: Playwright ile 2400 kare, ffmpeg H.264 (CRF 24, faststart), 5,6 MB.
+- Dosyalar yeni adla kaydedildi (`academiana-tanitim-80.mp4/.jpg`), böylece eski önbellek kullanılmaz; eski dosyalar silindi.
+- `PROMO_VIDEO` 80 sn (PT1M20S) olarak güncellendi; ana sayfa başlığı “80 saniyede Academiana”, VideoObject açıklaması yenilendi.
+- Örnek kaynaklar kurgusaldır ve ekranda “Temsilî örnek” diye etiketlidir.

@@ -126,7 +126,7 @@ export function promoVideoLd() {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: "Academiana tanıtım videosu",
-    description: "Academiana’nın kaynak tarama, atıf, iddia denetimi, veri analizi, PRISMA, literatür haritası ve kalite kontrol özelliklerini 68 saniyede anlatan tanıtım.",
+    description: "Fikirden kaynakçaya, kaynakçadan savunma provasına: Academiana’nın kurgu, kaynak tarama, yazım, iddia denetimi, veri analizi, atıf, kalite kontrol ve savunma hazırlığını 80 saniyede anlatan tanıtım filmi.",
     thumbnailUrl: `${SITE_URL}${PROMO_VIDEO.poster}`,
     contentUrl: `${SITE_URL}${PROMO_VIDEO.src}`,
     uploadDate: PROMO_VIDEO.uploadDate,

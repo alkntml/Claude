@@ -3189,8 +3189,7 @@ export const DE: Dict = {
   "İddia denetimi (atıflı her cümle kaynağıyla karşılaştırılır), PRISMA 2020 sistematik derleme, literatür haritası ve teslim öncesi kontrol listesi. Kalite puanının yöntemi herkese açıktır.": "Aussagenprüfung (jeder zitierte Satz wird mit seiner Quelle verglichen), systematisches Review nach PRISMA 2020, Literaturkarte und eine Checkliste vor der Abgabe. Die Methode des Qualitätswerts ist öffentlich.",
   "İddia denetimi ve teslim öncesi kontrol listesi": "Aussagenprüfung und Checkliste vor der Abgabe",
   "PRISMA 2020 sistematik derleme": "Systematisches Review nach PRISMA 2020",
-  "68 saniyede Academiana": "Academiana in 68 Sekunden",
-  "Kaynak taramasından teslim öncesi kontrole kadar bütün süreci izleyin.": "Sehen Sie den gesamten Ablauf – von der Quellensuche bis zur Prüfung vor der Abgabe.",
+  "80 saniyede Academiana": "Academiana in 80 Sekunden",
   "Academiana tanıtım videosu": "Vorstellungsvideo von Academiana",
   "Tanıtım videosunu oynat": "Vorstellungsvideo abspielen",
   "Tanıtımı izle": "Video ansehen",
@@ -4680,4 +4679,5 @@ export const DE: Dict = {
   "Yazım kılavuzunuza göre biçim": "Formatierung nach Ihrem Leitfaden",
   "Üniversitenizin veya derginizin kılavuzunu yükleyin; kılavuzda yazan kenar boşlukları, yazı tipi, satır aralığı, başlık ve kapak kuralları kendiliğinden uygulanır.": "Laden Sie den Leitfaden Ihrer Universität oder Zeitschrift hoch; die darin genannten Ränder, Schriftart, Zeilenabstand, Überschriften- und Titelblattregeln werden automatisch angewendet.",
   "600’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır.": "Vor jedem Update laufen über 600 automatisierte Tests; die Datenisolierung wird an einer echten Datenbank geprüft.",
+  "İlk fikirden kaynakçaya, kaynakçadan savunma provasına kadar bütün süreci izleyin.": "Sehen Sie den ganzen Ablauf: von der ersten Idee bis zum Literaturverzeichnis und vom Literaturverzeichnis bis zur Probeverteidigung.",
 };

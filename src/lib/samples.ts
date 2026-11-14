@@ -80,17 +80,18 @@ export const SECTIONS: SampleSection[] = [
   { id: "baslik", icon: "Type", plan: "free", title: { tr: "Başlık önerileri", en: "Title suggestions" }, what: { tr: "Değişkenleri, örneklemi ve yöntemi yansıtan, birbirinden farklı akademik başlıklar.", en: "Distinct academic titles that reflect variables, sample and method." } },
   { id: "kaynak", icon: "Search", plan: "free", title: { tr: "Kaynak araştırması ve doğrulama", en: "Source search and verification" }, what: { tr: "16 akademik veri tabanında, 250 milyondan fazla yayında arama; her kaynağın erişim seviyesi ve doğrulama durumu açıkça gösterilir.", en: "Search across more than 250 million publications in 16 academic databases; each source’s access level and verification status are shown." } },
   { id: "yazim", icon: "PenLine", plan: "free", title: { tr: "Bölüm taslağı", en: "Section draft" }, what: { tr: "Yalnızca projeye eklenen kaynaklara atıf yapan akademik metin; kaynağı olmayan iddia işaretlenir.", en: "Academic text that cites only sources in your project; unsupported claims are flagged." } },
+  { id: "butunluk", icon: "Link2", plan: "free", title: { tr: "Bölümler arası bütünlük", en: "Coherence across sections" }, what: { tr: "Amaç, araştırma soruları ve hipotezler her bölümde izlenir; konudan sapan veya bir soruyu cevapsız bırakan bölüm işaretlenir ve tek tıkla uyumlanır.", en: "The aim, research questions and hypotheses are tracked in every section; a section that drifts or leaves a question unanswered is flagged and can be aligned in one click." } },
   { id: "atif", icon: "Quote", plan: "free", title: { tr: "Atıf stilleri ve kaynakça", en: "Citation styles and reference list" }, what: { tr: "10 stil arasında tek tıkla geçiş; metin içi atıflar ve kaynakça kendiliğinden yeniden biçimlenir.", en: "Switch between 10 styles in one click; in-text citations and the reference list reformat themselves." } },
   { id: "matris", icon: "Table2", plan: "pro", title: { tr: "Literatür matrisi", en: "Literature matrix" }, what: { tr: "Kaynakları amaç, örneklem, yöntem ve bulgu bakımından yan yana karşılaştıran tablo.", en: "A table comparing sources side by side by aim, sample, method and findings." } },
   { id: "anket", icon: "ClipboardList", plan: "basic", title: { tr: "Yapay zekâ ile anket", en: "AI survey builder" }, what: { tr: "Amacınızı yazın; demografik sorular, ölçek blokları ve ters maddelerle uygulanmaya hazır taslak.", en: "Describe your aim; get a ready-to-use draft with demographics, scale blocks and reverse-scored items." } },
   { id: "istatistik", icon: "Sigma", plan: "basic", title: { tr: "İstatistik analizi (APA)", en: "Statistical analysis (APA)" }, what: { tr: "Verinizden APA 7 tablosu ve sonuç cümlesi: güvenirlik, t testi, korelasyon ve daha fazlası.", en: "APA 7 tables and result sentences from your data: reliability, t-test, correlation and more." } },
   { id: "grafik", icon: "BarChart3", plan: "basic", title: { tr: "APA tarzı grafik", en: "APA-style chart" }, what: { tr: "Verinizden yayına uygun, siyah-beyaz grafik; tezinize şekil olarak eklenir.", en: "Publication-ready black-and-white chart from your data, inserted as a figure." } },
-  { id: "kalite", icon: "ShieldCheck", plan: "basic", title: { tr: "Kalite raporu", en: "Quality report" }, what: { tr: "Eksik künyeler, eşleşmeyen atıflar, tekrar eden kalıplar ve yapı sorunları tek raporda.", en: "Missing reference details, unmatched citations, repeated phrasing and structural issues in one report." } },
+  { id: "kalite", icon: "ShieldCheck", plan: "basic", title: { tr: "Kalite raporu", en: "Quality report" }, what: { tr: "Alan alan puan grafiği; neyin doğru olduğu ve neyin düzeltileceği (eksik künye, eşleşmeyen atıf, tekrar eden kalıp, yapı sorunu) tek raporda.", en: "A score chart by area; what is right and what to fix (missing details, unmatched citations, repeated phrasing, structural issues) in one report." } },
   { id: "ozet", icon: "FileText", plan: "free", title: { tr: "Özet ve Abstract", en: "Abstract (TR + EN)" }, what: { tr: "Yazılmış bölümlerden, metinde olmayan bilgi eklemeden Türkçe özet ve İngilizce abstract.", en: "Turkish and English abstracts drawn from your written sections, without adding anything new." } },
   { id: "hakem", icon: "MessageSquareReply", plan: "pro", title: { tr: "Hakem yorumlarına cevap", en: "Response to reviewers" }, what: { tr: "Her hakem yorumu için yanıt ve metinde yapılan değişikliğin yeri.", en: "A reply to each reviewer comment and where the text was changed." } },
   { id: "savunma", icon: "GraduationCap", plan: "pro", title: { tr: "Savunma provası", en: "Defence rehearsal" }, what: { tr: "Yapay zekâ jüri tezinize özgü sorular sorar, cevabınızı değerlendirir.", en: "An AI jury asks questions specific to your thesis and evaluates your answers." } },
   { id: "sunum", icon: "Presentation", plan: "pro", title: { tr: "Savunma sunumu", en: "Defence slides" }, what: { tr: "Tezinizden otomatik hazırlanan, düzenlenebilir PowerPoint sunumu.", en: "An editable PowerPoint deck generated from your thesis." } },
-  { id: "cikti", icon: "FileDown", plan: "basic", title: { tr: "Word / PDF çıktısı", en: "Word / PDF export" }, what: { tr: "Kapak, içindekiler, bölümler ve kaynakçasıyla teslime hazır belge.", en: "A submission-ready document with cover, contents, chapters and references." } },
+  { id: "cikti", icon: "FileDown", plan: "basic", title: { tr: "Word / PDF çıktısı", en: "Word / PDF export" }, what: { tr: "Logo yeri, kurum ve tarih bilgili kapak, içindekiler, tablo ve şekil listeleriyle yazım stilinin ya da kılavuzunuzun kurallarına uygun belge.", en: "A document that follows your citation style or guideline: cover with logo space, institution and date, contents, and lists of tables and figures." } },
 ];
 
 /** 1. Kurgu */
@@ -177,6 +178,28 @@ export const QUALITY = {
     { tone: "green", t: { tr: "Metin içi atıflar ile kaynakça uyumlu", en: "In-text citations match the reference list" }, d: { tr: "Eşleşmeyen atıf yok.", en: "No unmatched citations." } },
   ],
 };
+
+/** Bölümler arası bütünlük (D182/D183): omurga matrisi — ✓ karşılanıyor, ! eksik, · bu bölümün işi değil */
+export const COHERENCE = {
+  cols: [{ tr: "Amaç", en: "Aim" }, { tr: "AS1", en: "RQ1" }, { tr: "AS2", en: "RQ2" }, { tr: "AS3", en: "RQ3" }] as L2[],
+  rows: [
+    { s: { tr: "Giriş", en: "Introduction" }, v: "✓✓✓✓" },
+    { s: { tr: "Kavramsal çerçeve", en: "Conceptual framework" }, v: "✓✓✓·" },
+    { s: { tr: "Yöntem", en: "Method" }, v: "✓✓✓✓" },
+    { s: { tr: "Bulgular", en: "Results" }, v: "✓✓!✓" },
+    { s: { tr: "Tartışma", en: "Discussion" }, v: "✓✓!✓" },
+  ],
+  issue: { tr: "AS2 (erteleme ↔ uyku kalitesi) Bulgular ve Tartışma bölümlerinde cevaplanmamış.", en: "RQ2 (procrastination ↔ sleep quality) is not answered in Results and Discussion." },
+  fix: { tr: "“Bütünle uyumla”: ilgili analiz sonucu Bulgular’a, yorumu Tartışma’ya eklenir; diğer paragraflar korunur.", en: "“Align with the whole”: the relevant result is added to Results and its interpretation to Discussion; other paragraphs stay as they are." },
+};
+
+/** Kalite raporu alan puanları (örnek) */
+export const QUALITY_AREAS: { a: L2; v: number }[] = [
+  { a: { tr: "Yapı", en: "Structure" }, v: 92 },
+  { a: { tr: "Atıf ve kaynak", en: "Citations and sources" }, v: 84 },
+  { a: { tr: "Bütünlük", en: "Coherence" }, v: 88 },
+  { a: { tr: "Dil ve üslup", en: "Language and style" }, v: 81 },
+];
 
 /** 12. Hakem yanıtı */
 export const REVIEWER: { c: L2; r: L2; where: L2 }[] = [

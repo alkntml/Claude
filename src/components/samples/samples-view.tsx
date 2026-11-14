@@ -1,6 +1,7 @@
 "use client";
 import { useSignedIn } from "@/components/use-signed-in";
-import { ArrowRight, BadgeCheck, BarChart3, Check, ClipboardList, Compass, FileDown, FileText, GraduationCap, Info, MessageSquareReply, PenLine, Presentation, Quote, Search, ShieldCheck, Sigma, Table2, Type, Unlock } from "lucide-react";
+import { ArrowRight, BadgeCheck, BarChart3, Check, ClipboardList, Compass, FileDown, FileText, GraduationCap, Info, Link2, MessageSquareReply, PenLine, Presentation, Quote, Search, ShieldCheck, Sigma, Table2, Type, Unlock } from "lucide-react";
+import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import Link from "@/components/l-link";
 import { cn } from "@/components/ui/cn";
@@ -10,12 +11,12 @@ import { renderChartSvg } from "@/lib/charts/svg";
 import { CitationEngine, STYLE_IDS, STYLES } from "@/lib/citations/styles";
 import type { CitationStyleId } from "@/lib/citations/types";
 import { richToHtml } from "@/lib/citations/util";
-import { BLUEPRINT, DEFENSE, DRAFT, MATRIX, pick, QUALITY, REVIEWER, sampleSources, SAMPLE_WORK, sampleDataset, SEARCH_RESULTS, SECTIONS, SURVEY, TITLES, VARS, type L2 } from "@/lib/samples";
+import { BLUEPRINT, COHERENCE, DEFENSE, DRAFT, MATRIX, pick, QUALITY, QUALITY_AREAS, REVIEWER, sampleSources, SAMPLE_WORK, sampleDataset, SEARCH_RESULTS, SECTIONS, SURVEY, TITLES, VARS, type L2 } from "@/lib/samples";
 import { buildChart } from "@/lib/stats/charts";
 import { runAnalysis } from "@/lib/stats/apa";
 import { pearson } from "@/lib/stats/tests";
 
-const ICONS = { Compass, Type, Search, PenLine, Quote, Table2, ClipboardList, Sigma, BarChart3, ShieldCheck, FileText, MessageSquareReply, GraduationCap, Presentation, FileDown } as const;
+const ICONS = { Link2, Compass, Type, Search, PenLine, Quote, Table2, ClipboardList, Sigma, BarChart3, ShieldCheck, FileText, MessageSquareReply, GraduationCap, Presentation, FileDown } as const;
 const PLAN_LABEL = { free: "Ücretsiz pakette", basic: "Basic ve üstü", pro: "Pro ve üstü" } as const;
 
 /** Basit Markdown tablo → HTML (istatistik motorunun APA tabloları için) */
@@ -177,9 +178,46 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
         <div className="mt-2 overflow-hidden rounded-xl border border-ink-100 bg-[rgb(255_255_255)] p-2 [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: data.chart }} />
       </div>
     ),
+    butunluk: (
+      <div className="space-y-4">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[460px] text-center text-[13px]">
+            <thead><tr className="text-[12px] font-semibold text-ink-500"><th className="py-1.5 text-left font-semibold">{t("Bölüm")}</th>{COHERENCE.cols.map((c) => <th key={c.tr} className="py-1.5 font-semibold">{p(c)}</th>)}</tr></thead>
+            <tbody>
+              {COHERENCE.rows.map((r, i) => (
+                <tr key={r.s.tr} className="border-t border-ink-100">
+                  <td className="py-2 text-left font-medium text-ink-800">{p(r.s)}</td>
+                  {[...r.v].map((m, j) => (
+                    <td key={j} className="py-2">
+                      <motion.span initial={{ scale: 0.5, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.06 * (i * 4 + j), duration: 0.3 }}
+                        className={cn("inline-flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-bold", m === "✓" ? "bg-emerald-50 text-emerald-600" : m === "!" ? "bg-amber-100 text-amber-700 ring-2 ring-amber-200" : "bg-ink-50 text-ink-300")}>{m}</motion.span>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[12px] text-ink-400">✓ {t("karşılanıyor")} · ! {t("eksik")} · · {t("bu bölümün işi değil")}</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-amber-100 bg-amber-50/60 p-3 text-[13.5px] text-ink-800"><p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">{t("Tutarlılık zinciri")}</p><p className="mt-1">{p(COHERENCE.issue)}</p></div>
+          <div className="rounded-xl border border-brand-100 bg-brand-50/50 p-3 text-[13.5px] text-ink-800"><p className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">{t("Önerilen düzeltme")}</p><p className="mt-1">{p(COHERENCE.fix)}</p></div>
+        </div>
+      </div>
+    ),
     kalite: (
       <div className="flex flex-col gap-4 sm:flex-row">
-        <div className="flex shrink-0 flex-col items-center justify-center rounded-2xl bg-emerald-50 px-6 py-4 text-emerald-700"><span className="text-4xl font-semibold">{QUALITY.score}</span><span className="text-[12px] font-medium">{t("Kalite skoru")}</span></div>
+        <div className="flex shrink-0 flex-col gap-3 sm:w-56">
+          <div className="flex flex-col items-center justify-center rounded-2xl bg-emerald-50 px-6 py-4 text-emerald-700"><span className="text-4xl font-semibold">{QUALITY.score}</span><span className="text-[12px] font-medium">{t("Kalite skoru")}</span></div>
+          <div className="space-y-2">
+            {QUALITY_AREAS.map((x, i) => (
+              <div key={x.a.tr} className="text-[12px] text-ink-600">
+                <div className="flex justify-between"><span>{p(x.a)}</span><b className="tabular-nums text-ink-800">{x.v}</b></div>
+                <div className="mt-0.5 h-1.5 rounded-full bg-ink-100"><motion.div className="h-1.5 rounded-full bg-emerald-500" initial={{ width: 0 }} whileInView={{ width: `${x.v}%` }} viewport={{ once: true }} transition={{ delay: 0.12 * i, duration: 0.8, ease: "easeOut" }} /></div>
+              </div>
+            ))}
+          </div>
+        </div>
         <ul className="flex-1 space-y-2">
           {QUALITY.items.map((x) => <li key={x.t.tr} className={cn("rounded-xl border p-3 text-[13.5px]", x.tone === "amber" ? "border-amber-100 bg-amber-50/60" : x.tone === "green" ? "border-emerald-100 bg-emerald-50/60" : "border-ink-100")}><p className="font-medium text-ink-900">{p(x.t)}</p><p className="text-ink-500">{p(x.d)}</p></li>)}
         </ul>
@@ -236,15 +274,21 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
     ),
     cikti: (
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="flex aspect-[1/1.414] flex-col items-center justify-between rounded-lg bg-[rgb(255_255_255)] p-6 text-center text-[rgb(20_20_20)] shadow-soft ring-1 ring-ink-100">
-          <p className="text-[9px] uppercase tracking-wider">{de ? "Institut für Erziehungswissenschaften" : l === "en" ? "Graduate School of Educational Sciences" : "Eğitim Bilimleri Enstitüsü"}</p>
-          <p className="font-serif text-[13px] font-semibold uppercase leading-snug">{p(SAMPLE_WORK.title)}</p>
-          <div className="text-[9px]"><p>{de ? "MASTERARBEIT" : l === "en" ? "MASTER’S THESIS" : "YÜKSEK LİSANS TEZİ"}</p><p className="mt-2">2026</p></div>
+        <div className="flex aspect-[1/1.414] flex-col items-center justify-between rounded-lg bg-[rgb(255_255_255)] p-6 text-center font-serif text-[rgb(20_20_20)] shadow-soft ring-1 ring-ink-100">
+          <div className="flex flex-col items-center gap-1 text-[8.5px] uppercase leading-snug tracking-wide">
+            <span className="mb-1 flex h-9 w-9 items-center justify-center rounded-full border border-dashed border-[rgb(150_150_150)] font-sans text-[6.5px] normal-case text-[rgb(130_130_130)]">{t("Logo")}</span>
+            {l === "tr" && !de && <p>T.C.</p>}
+            <p className="font-semibold">{de ? "[Name der Universität]" : l === "en" ? "[University name]" : "[Üniversite adı]"}</p>
+            <p>{de ? "Institut für Erziehungswissenschaften" : l === "en" ? "Graduate School of Educational Sciences" : "Eğitim Bilimleri Enstitüsü"}</p>
+            <p>{de ? "Abteilung Bildungswissenschaften" : l === "en" ? "Department of Educational Sciences" : "Eğitim Bilimleri Anabilim Dalı"}</p>
+          </div>
+          <p className="text-[12.5px] font-semibold uppercase leading-snug">{p(SAMPLE_WORK.title)}</p>
+          <div className="text-[9px]"><p className="font-semibold">{de ? "MASTERARBEIT" : l === "en" ? "MASTER’S THESIS" : "YÜKSEK LİSANS TEZİ"}</p><p className="mt-2">{de ? "Juni 2026" : l === "en" ? "June 2026" : "Haziran 2026"}</p></div>
         </div>
         <div className="flex aspect-[1/1.414] flex-col rounded-lg bg-[rgb(255_255_255)] p-6 text-[rgb(20_20_20)] shadow-soft ring-1 ring-ink-100">
           <p className="mb-3 text-center font-serif text-[12px] font-semibold">{de ? "INHALTSVERZEICHNIS" : l === "en" ? "CONTENTS" : "İÇİNDEKİLER"}</p>
           <ul className="space-y-1 font-serif text-[9.5px]">
-            {[[de || l === "en" ? "Abstract" : "Özet", "iv"], ...BLUEPRINT.chapters.map((c, i) => [`${i + 1}. ${p(c.t)}`, String([1, 9, 31, 42, 57, 68][i])]), [de ? "Literaturverzeichnis" : l === "en" ? "References" : "Kaynakça", "72"]].map(([a, b]) => <li key={a} className="flex gap-1"><span>{a}</span><span className="flex-1 border-b border-dotted border-[rgb(160_160_160)]" /><span>{b}</span></li>)}
+            {[[de || l === "en" ? "Abstract" : "Özet", "iv"], [de ? "Tabellenverzeichnis" : l === "en" ? "List of Tables" : "Tablolar Listesi", "vi"], [de ? "Abbildungsverzeichnis" : l === "en" ? "List of Figures" : "Şekiller Listesi", "vii"], ...BLUEPRINT.chapters.map((c, i) => [i ? `${i}. ${p(c.t)}` : p(c.t), String([1, 9, 31, 42, 57, 68][i])]), [de ? "Literaturverzeichnis" : l === "en" ? "References" : "Kaynakça", "72"]].map(([a, b]) => <li key={a} className="flex gap-1"><span>{a}</span><span className="flex-1 border-b border-dotted border-[rgb(160_160_160)]" /><span>{b}</span></li>)}
           </ul>
         </div>
       </div>
@@ -256,7 +300,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
       {/* Gezinme */}
       <nav className="min-w-0 lg:sticky lg:top-28 lg:h-fit" aria-label={t("Örnekler")}>
         <ul className="-mx-6 flex gap-1.5 overflow-x-auto px-6 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
-          {SECTIONS.map((s) => { const I = ICONS[s.icon as keyof typeof ICONS]; return <li key={s.id} className="shrink-0"><a href={`#${s.id}`} className="flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[13.5px] text-ink-600 ring-1 ring-ink-100 transition hover:bg-white hover:text-ink-900 lg:ring-0"><I className="h-4 w-4 text-brand-600" /> {p(s.title)}</a></li>; })}
+          {SECTIONS.map((s) => { const I = ICONS[s.icon as keyof typeof ICONS]; return <li key={s.id} className="shrink-0"><a href={`#${s.id}`} className="flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[13.5px] text-ink-600 ring-1 ring-ink-100 transition hover:bg-white hover:text-ink-900 lg:ring-0"><I className="h-4 w-4 shrink-0 text-brand-600" /> {p(s.title)}</a></li>; })}
         </ul>
       </nav>
 

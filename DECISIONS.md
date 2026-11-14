@@ -899,3 +899,18 @@ Site sahibi: her bölüm birbiriyle dayanışmalı, amaç ve hipotezleri yansıt
 (1) `lib/coherence.ts`: “ÇALIŞMANIN OMURGASI” (amaç ← kurgu / Amaç bölümü / makalede girişin amaç paragrafı; araştırma soruları ve hipotezler ← kurgu / Sorular bölümü / oluştururken yazılanlar / hafıza; kavram ve değişkenler ← hafıza / anahtar kelimeler; yöntem ve desen) her yazımda sabit bağlama girer, bütünlük kuralıyla (amaca hizmet, aynı kavram adları, çelişme ve tekrar yok, gönderme). Bölüm türüne göre “BÜTÜNLÜK GÖREVİ” (ör. literatür soruların değişkenlerine göre ve boşluğa bağlanarak; yöntem kararları sorulara dayanarak; bulgular soru sırasıyla; tartışma her bulguyu soru ve literatürle; sonuç her soruyu sırayla yanıtlayarak). “ÇALIŞMANIN ANA HATTI”: bütün bölümlerin başlıkları. Öbür bölümlerin başı ile birlikte vardığı sonuç (son kısmı) da verilir.
 (2) Asistan: “Tutarlılık kontrolü” her bölümde ve bütün metinle (doğru olanlar + kanıtlı sorunlar + bölüm bölüm öneri); yeni seçili metin eylemi “Bütünle uyumla” (amaçla bağ, kavram birliği, çelişki/tekrar giderme; atıflar korunur, uydurma yok).
 (3) Kalite kontrol tutarlılık zinciri: amaçtan kopuk bölüm (başlık/amaç/soru anahtar kavramlarının %30’undan azı; İyileştirme), bulgu veya tartışmada geçmeyen hipotez (H1, H2…; Önemli), sonuçta kendine özgü kavramları geçmeyen araştırma sorusu (İyileştirme). Puanı etkilemez. (4) Bölüm kontrolü (yapay zekâ incelemesi) omurgayı görür ve bütünlüğü değerlendirir. Test: `tests/coherence.test.ts`.
+
+## D183 — Özellikler vitrini ve Örnekler sayfasına son özellikler (2026-11-14)
+Site sahibi: son eklenenler, özellikler ve örnekler kısmına güzel ve dinamik görsellerle eklensin, ama kalabalık olmasın.
+Yeni sekme açılmadı; var olan alanlar zenginleştirildi. (1) Özellikler (`landing/feature-showcase.tsx`):
+- **Planlama ve yazım:** esnek yol haritası (bölüm ekle/çıkar/sırala, şablon), asistanın serbest istekleri, yeni “Bölümler arası bütünlük” maddesi. Görselde kayan “Bütünlük omurgası” şeridi yer alır (Amaç–H1–H2–AS1 ✓, AS2 ! → “Bütünle uyumla”).
+- **Atıf ve doğruluk:** “Kaynak sorununu kendisi çözer” (önce tam metni okunan kaynak). Görselde [KAYNAK GEREKLİ] işareti ekrana gelince atıfa dönüşür.
+- **Kalite, dil ve teslim:** grafikli kalite raporu, kurallara uygun Word/PDF (kapak, içindekiler, listeler), “Yazım kılavuzunuza göre biçim” (Pro). Görselde alan alan puan çubukları, “Doğru olanlar / Düzeltilecek” ve kılavuz satırı bulunur.
+- Hareketler `useReducedMotion`’a uyar. Test sayısı 600+ olarak güncellendi.
+
+(2) Örnekler (`samples-view.tsx`, `lib/samples.ts`):
+- Yeni “Bölümler arası bütünlük” örneği: bölüm × amaç/soru matrisi, tutarlılık zinciri uyarısı ve önerilen düzeltme.
+- Kalite raporuna alan puan grafiği eklendi.
+- Word/PDF örneğine şunlar eklendi: logo yeri, T.C., [Üniversite adı] doldurma alanı, enstitü ve anabilim dalı, ay–yıl kapağı, Tablolar ve Şekiller Listesi. İçindekilerde Giriş numarasızdır (D178).
+
+Bütün sayılar örnek ve temsilîdir; EN/DE çevirileri eklendi.

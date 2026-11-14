@@ -5,11 +5,11 @@
  * tutarlı) ve altyapı bölümü (mimari şema + güvenlik/güvenilirlik). Tüm içerik DOM’da kalır (arama motorları için);
  * sekme yalnızca görünürlüğü değiştirir. Sayı ve iddialar ürünün gerçek davranışına dayanır.
  */
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Activity, BarChart3, BookCheck, Bot, CheckCircle2, ClipboardList, Cloud, Code2, Database, FileCheck2, FileDown, FileSearch2, FileText, GitFork,
-  Globe2, Languages, Layers, Library, Lock, MessagesSquare, Network, PenLine, Quote, ScanSearch, Server, ShieldCheck, Sparkles, Table2, TestTube2,
-  Users, Workflow,
+  Globe2, Languages, Layers, Library, Link2, Lock, MessagesSquare, Network, PenLine, Quote, ScanSearch, Server, ShieldCheck, Sparkles, Table2, TestTube2,
+  Ruler, Users, Workflow,
 } from "lucide-react";
 import { useState } from "react";
 import Link from "@/components/l-link";
@@ -53,10 +53,31 @@ function WritingVisual() {
         <p className="text-[11px] font-semibold text-ink-400">2.1 {t("Kuramsal çerçeve")}</p>
         <p className="mt-2 font-serif text-[14px] leading-7 text-ink-800">{t("Öz düzenleme, uzaktan eğitimde başarının güçlü bir yordayıcısıdır")} <span className="rounded-md border border-brand-100 bg-brand-50 px-1.5 font-sans text-[11px] text-brand-700">(Kaya, 2021, s. 211)</span>. {t("Geri bildirimin zamanlaması bu ilişkide")}<span className="text-ink-300"> {t("aracı rol üstlenir…")}</span><span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 bg-brand-500" /></p>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
-        {[[Bot, "Yazım asistanı"], [Users, "Canlı: 2 ortak yazar"], [FileText, "Sürüm geçmişi"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="flex items-center gap-1.5 rounded-xl bg-ink-50 px-2 py-2 text-ink-600"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}
-      </div>
+      <SpineStrip />
     </Frame>
+  );
+}
+
+/** D183: Bütünlük omurgası — amaç, hipotezler ve sorular her bölümde izlenir (D182) */
+function SpineStrip() {
+  const { t } = useT();
+  const still = useReducedMotion();
+  const spine: [string, boolean][] = [["Amaç", true], ["H1", true], ["H2", true], ["AS1", true], ["AS2", false]];
+  return (
+    <div className="mt-3 rounded-2xl border border-ink-100 p-3">
+      <p className="flex items-center gap-1.5 text-[11px] font-semibold text-ink-500"><Link2 className="h-3.5 w-3.5 text-brand-600" />{t("Bütünlük omurgası · Bulgular bölümü")}</p>
+      <div className="relative mt-2.5 flex items-center justify-between">
+        <span className="absolute inset-x-3 top-1/2 h-0.5 -translate-y-1/2 bg-ink-100" />
+        <motion.span className="absolute left-3 top-1/2 h-0.5 -translate-y-1/2 bg-brand-400" initial={{ width: still ? "78%" : 0 }} whileInView={{ width: "78%" }} viewport={{ once: true }} transition={{ duration: 1.4, ease: "easeOut" }} />
+        {spine.map(([k, ok], i) => (
+          <motion.span key={k} initial={still ? false : { scale: 0.6, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.25 * i, duration: 0.35 }}
+            className={cn("relative z-10 rounded-full px-2 py-1 text-[10.5px] font-semibold ring-2 ring-white", ok ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-800")}>
+            {ok ? "✓ " : "! "}{k.startsWith("H") ? k : t(k)}
+          </motion.span>
+        ))}
+      </div>
+      <p className="mt-2.5 text-[11px] text-ink-500">{t("AS2 bu bölümde henüz cevaplanmadı")} → <span className="font-semibold text-brand-700">{t("Bütünle uyumla")}</span></p>
+    </div>
   );
 }
 
@@ -89,8 +110,31 @@ function CitationVisual() {
         <p className="font-semibold text-rose-800">{t("Kaynak bunun tersini söylüyor")} · Kaya (2021), s. 214</p>
         <p className="mt-1 font-serif italic text-ink-700">“{t("İki grubun başarı puanları arasında anlamlı bir fark bulunmamıştır.")}”</p>
       </div>
+      <SourceFixRow />
       <div className="mt-3 flex flex-wrap gap-1.5">{["APA 7", "ISNAD 2", "MLA 9", "Chicago", "IEEE", "Vancouver", "Harvard", "+3"].map((x) => <span key={x} className="rounded-lg bg-ink-50 px-2 py-1 text-[10.5px] font-medium text-ink-600">{x}</span>)}</div>
     </Frame>
+  );
+}
+
+/** D183: kaynak işaretini kendisi çözer — önce tam metni okunan kaynak (D177) */
+function SourceFixRow() {
+  const { t } = useT();
+  const still = useReducedMotion();
+  const [fixed, setFixed] = useState(!!still);
+  return (
+    <motion.div onViewportEnter={() => { if (!still) setTimeout(() => setFixed(true), 900); }} viewport={{ once: true }} className="mt-3 rounded-2xl border border-ink-100 p-3 text-[12px]">
+      <p className="font-serif text-[13px] text-ink-800">
+        {t("Geri bildirim sıklığı öz düzenlemeyi artırır")}{" "}
+        <motion.span key={String(fixed)} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+          className={cn("rounded-md px-1.5 font-sans text-[11px] font-semibold", fixed ? "border border-brand-100 bg-brand-50 text-brand-700" : "bg-amber-100 text-amber-800")}>
+          {fixed ? t("(Lee vd., 2020, s. 7)") : t("[KAYNAK GEREKLİ]")}
+        </motion.span>
+      </p>
+      <p className="mt-1.5 flex items-center gap-1.5 text-[10.5px] text-ink-500">
+        <CheckCircle2 className={cn("h-3.5 w-3.5 transition-colors", fixed ? "text-emerald-500" : "text-ink-300")} />
+        {fixed ? t("Tam metni okunan kaynakla desteklendi ve yerleştirildi") : t("Kütüphanede ve veri tabanlarında uygun kaynak aranıyor…")}
+      </p>
+    </motion.div>
   );
 }
 
@@ -141,10 +185,20 @@ function QualityVisual() {
           <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90"><circle cx="50" cy="50" r={r} className="fill-none stroke-ink-100" strokeWidth="10" /><circle cx="50" cy="50" r={r} className="fill-none stroke-emerald-500" strokeWidth="10" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * 0.14} /></svg>
           <span className="absolute inset-0 flex flex-col items-center justify-center"><b className="text-2xl text-ink-900">86</b><span className="text-[9.5px] text-ink-500">{t("Kalite puanı")}</span></span>
         </div>
-        <ul className="space-y-1.5 text-[12px] text-ink-700">
-          {[[true, "Bütün bölümler yazıldı"], [true, "Her kaynağa metinde atıf var"], [true, "Tablo ve şekil başlıkları stile uygun"], [false, "2 kaynağın künyesi eksik"]].map(([ok, l]) => <li key={l as string} className="flex items-center gap-1.5">{ok ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-100 text-[9px] font-bold text-amber-700">!</span>}{t(l as string)}</li>)}
-        </ul>
+        <div className="min-w-0 flex-1 space-y-1.5">
+          {([["Yapı", 92], ["Atıf ve kaynak", 88], ["Bütünlük", 81], ["Dil ve üslup", 84]] as const).map(([l, v], i) => (
+            <div key={l} className="text-[11px] text-ink-600">
+              <div className="flex justify-between"><span>{t(l)}</span><b className="tabular-nums text-ink-800">{v}</b></div>
+              <div className="mt-0.5 h-1.5 rounded-full bg-ink-100"><motion.div className="h-1.5 rounded-full bg-emerald-500" initial={{ width: 0 }} whileInView={{ width: `${v}%` }} viewport={{ once: true }} transition={{ delay: 0.15 * i, duration: 0.8, ease: "easeOut" }} /></div>
+            </div>
+          ))}
+        </div>
       </div>
+      <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+        <p className="rounded-xl bg-emerald-50/70 px-2.5 py-2 text-emerald-800"><CheckCircle2 className="mr-1 inline h-3.5 w-3.5" />{t("Doğru olanlar: 14 madde")}</p>
+        <p className="rounded-xl bg-amber-50/70 px-2.5 py-2 text-amber-800">! {t("Düzeltilecek: 2 madde")}</p>
+      </div>
+      <p className="mt-2 flex items-center gap-1.5 rounded-xl border border-dashed border-brand-200 px-2.5 py-1.5 text-[11px] text-ink-600"><Ruler className="h-3.5 w-3.5 shrink-0 text-brand-600" />{t("Kılavuz uygulandı: kenarlar 3 / 2,5 cm · Times New Roman 12 · 1,5 satır")}</p>
       <div className="mt-4 flex flex-wrap gap-1.5">{[[FileDown, "Word"], [FileDown, "PDF"], [Code2, "LaTeX / Overleaf"], [Layers, "Savunma sunumu (.pptx)"], [Languages, "TR ↔ EN ↔ DE çeviri"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="inline-flex items-center gap-1.5 rounded-xl border border-ink-100 px-2.5 py-1.5 text-[11px] font-medium text-ink-700"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}</div>
     </Frame>
   );
@@ -153,11 +207,12 @@ function QualityVisual() {
 /* ---------------- Alanlar ---------------- */
 const CATEGORIES: Category[] = [
   { id: "yazim", icon: PenLine, title: "Planlama ve yazım", lead: "Çalışma türünüze göre kurulan yol haritası ve her bölümün kendi asistanı.", Visual: WritingVisual, features: [
-    { icon: Workflow, title: "Çalışma türüne özel yol haritası", text: "Tez, makale, derleme, araştırma önerisi, TÜBİTAK/BAP dahil 9 çalışma türü; her aşamanın kuralları, soruları ve asistanı ayrı." },
+    { icon: Workflow, title: "Çalışma türüne özel, esnek yol haritası", text: "Tez, makale, derleme, araştırma önerisi, TÜBİTAK/BAP dahil 9 çalışma türü; bölüm ekleyin, çıkarın, sıralayın, şablon olarak saklayın. Her aşamanın kuralları ve asistanı ayrı." },
     { icon: ClipboardList, title: "Kurgu modülü", text: "Problem, amaç, araştırma soruları, yöntem ve bölüm bazında hedef uzunluk; asistan bütün bölümleri bu kurguya göre yazar." },
-    { icon: Bot, title: "Bölüm bölüm yazım asistanı", text: "Taslak, genişletme, yeniden yazma ve sentez; işin zorluğuna göre model seçilir, her sürüm geçmişte saklanır." },
+    { icon: Bot, title: "Bölüm bölüm yazım asistanı", text: "Taslak, genişletme, yeniden yazma ve sentez; “şu başlıkları ekle” gibi serbest isteklerinizi de uygular. Her sürüm geçmişte saklanır." },
+    { icon: Link2, title: "Bölümler arası bütünlük", text: "Amaç, hipotezler ve araştırma soruları her bölüme taşınır; konudan sapan, hipotezi karşılamayan veya soruyu cevapsız bırakan bölüm işaretlenir ve tek tıkla uyumlanır." },
     { icon: Sparkles, title: "Yazarken otomatik tamamlama", text: "Paragraf sonunda gri öneri belirir, Tab ile kabul edilir; metninizin üslubunu sürdürür." },
-    { icon: FileText, title: "Word’den içe aktarma", text: "Hazır tezinizi veya makalenizi yükleyin; bölümler, kaynakça ve atıflar otomatik bağlanır." },
+        { icon: FileText, title: "Word’den içe aktarma", text: "Hazır tezinizi veya makalenizi yükleyin; bölümler, kaynakça ve atıflar otomatik bağlanır." },
     { icon: Users, title: "Ortak yazım", text: "Gerçek zamanlı ortak yazım: kim hangi paragrafta anında görünür, değişiklikler saniyeler içinde yansır ve farklı paragraflarda otomatik birleşir.", plan: "coauthors" },
   ] },
   { id: "literatur", icon: Library, title: "Kaynak ve literatür", lead: "16 akademik veri tabanında 250 milyondan fazla yayın; her kaynağın ne kadarının okunduğu açıkça yazar.", Visual: SourcesVisual, features: [
@@ -172,7 +227,7 @@ const CATEGORIES: Category[] = [
   { id: "dogruluk", icon: ShieldCheck, title: "Atıf ve doğruluk", lead: "Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. Academiana ikisini de denetler.", Visual: CitationVisual, features: [
     { icon: Quote, title: "Canlı atıflar, 10 atıf stili", text: "APA 7, ISNAD 2, MLA, Chicago, IEEE ve diğerleri; stil değiştiğinde metin ve kaynakça birlikte dönüşür." },
     { icon: ScanSearch, title: "İddia denetimi", text: "Atıflı her cümle kaynağın metniyle karşılaştırılır: destekliyor, kısmen, desteklemiyor veya çelişiyor; birebir alıntı ve sayfa." },
-    { icon: GitFork, title: "Kaynaklar arası destek ve çelişki", text: "Atıfsız cümleleri destekleyen kaynaklarınızı önerir, cümlenizle çelişen bulguları alıntısıyla uyarır." },
+    { icon: GitFork, title: "Kaynak sorununu kendisi çözer", text: "Kaynak gereken veya doğrulanamayan cümle için kütüphanenizde, gerekirse veri tabanlarında uygun kaynağı bulur; önce tam metni okunan kaynakları kullanır, çelişen bulguyu alıntısıyla uyarır." },
     { icon: BookCheck, title: "Uydurma kaynak kontrolü", text: "Kaynakçadaki her satır gerçek kayıtlarla eşleştirilir; var olmayan kaynak ve hatalı DOI bulunur." },
     { icon: ShieldCheck, title: "Uydurma yok ilkesi", text: "Yapay zekâ yalnızca projenize eklenmiş kaynaklara atıf yapabilir; kaynak yoksa [KAYNAK GEREKLİ] diye işaretler." },
   ] },
@@ -190,9 +245,10 @@ const CATEGORIES: Category[] = [
     { icon: TestTube2, title: "Ücretsiz araçlar", text: "Örneklem büyüklüğü, Cronbach alfa, kaynakça oluşturucu ve atıf dönüştürücü üyeliksiz kullanılabilir." },
   ] },
   { id: "teslim", icon: FileCheck2, title: "Kalite, dil ve teslim", lead: "Teslim etmeden önce eksikleri görün; çalışmanızı istediğiniz biçimde ve dilde çıkarın.", Visual: QualityVisual, features: [
-    { icon: FileCheck2, title: "Şeffaf kalite puanı ve kontrol listesi", text: "Puan sabit ve herkese açık bir formülle hesaplanır; teslim öncesi liste eksik künyeden tablo başlığına kadar her şeyi gösterir." },
+    { icon: FileCheck2, title: "Grafikli kalite raporu", text: "Puan sabit ve herkese açık bir formülle hesaplanır; rapor neyin doğru olduğunu ve neyin düzeltileceğini alan alan gösterir." },
     { icon: Languages, title: "Dil denetimi ve akademik çeviri", text: "Türkçe, İngilizce ve Almanca arasında çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
-    { icon: FileDown, title: "Word ve PDF çıktısı", text: "Kapak, içindekiler, numaralandırma ve kaynakça hazır; kurum biçim şablonları." },
+    { icon: FileDown, title: "Kurallara uygun Word ve PDF", text: "Logo yeri, üniversite, fakülte, bölüm ve tarih içeren kapak; içindekiler, tablo ve şekil listeleri; yazım stilinin kenar boşluğu, punto ve başlık kurallarıyla." },
+    { icon: Ruler, title: "Yazım kılavuzunuza göre biçim", text: "Üniversitenizin veya derginizin kılavuzunu yükleyin; kılavuzda yazan kenar boşlukları, yazı tipi, satır aralığı, başlık ve kapak kuralları kendiliğinden uygulanır.", plan: "guideline" },
     { icon: Code2, title: "LaTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır." },
     { icon: Globe2, title: "Dergi önerisi ve hakem yanıtı", text: "Çalışmanıza uygun dergiler, ön yazı ve hakem yorumlarına madde madde cevap.", plan: "journals" },
     { icon: Layers, title: "Savunma sunumu ve provası", text: "Tezinizden sunum dosyası ve yapay zekâ jüriyle soru–cevap provası.", plan: "defense" },
@@ -204,7 +260,7 @@ const INFRA: { icon: Icon; title: string; text: string }[] = [
   { icon: Lock, title: "Satır düzeyinde erişim denetimi", text: "Her kullanıcının verisi veritabanı düzeyinde ayrılır; çalışmanızı yalnızca siz ve davet ettikleriniz görür." },
   { icon: ShieldCheck, title: "Uygulama güvenliği", text: "Zorunlu HTTPS (HSTS), içerik güvenlik politikası, istek kökeni denetimi ve dış bağlantılarda iç ağ koruması." },
   { icon: Activity, title: "İzleme ve dayanıklılık", text: "Veri tabanı bağlantıları geçici hatalarda yeniden denenir; kaynak sağlığı ve yapay zekâ yanıt süreleri sürekli izlenir." },
-  { icon: TestTube2, title: "Otomatik test güvencesi", text: "500’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır." },
+  { icon: TestTube2, title: "Otomatik test güvencesi", text: "600’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır." },
   { icon: FileCheck2, title: "KVKK ve şeffaflık", text: "Verilerinizi indirme ve silme talebi; kaynak doğrulama ve puanlama yöntemi herkese açık." },
 ];
 
@@ -244,7 +300,7 @@ function Connector() {
 export function FeatureShowcase() {
   const { t } = useT();
   const [active, setActive] = useState(CATEGORIES[0].id);
-  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["14", "istatistik analizi"], ["500+", "otomatik test"]];
+  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["14", "istatistik analizi"], ["600+", "otomatik test"]];
   return (
     <section id="ozellikler" className="relative scroll-mt-24 py-24">
       <div className="mx-auto max-w-6xl px-6">

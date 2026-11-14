@@ -4,14 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
-import { FONT_CHOICES, FORMAT_PRESETS, resolveFormat, type DocFormat } from "@/lib/export/format";
+import { FONT_CHOICES, FORMAT_PRESETS, resolveFormat, resolveLayout, workTypeLabel, type DocFormat } from "@/lib/export/format";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /** Word/PDF biçim şablonu ve kapak bilgileri */
 export function FormatModal({ open, onClose, project, patch }: { open: boolean; onClose: () => void; project: any; patch: (u: Record<string, unknown>) => Promise<any> }) {
   const { t } = useT();
   const toast = useToast();
-  const [f, setF] = useState<DocFormat>(() => resolveFormat(project.context?.format));
+  // D178: üniversite adı proje oluştururken yazıldıysa kapağa önceden doldurulur
+  const [f, setF] = useState<DocFormat>(() => { const r = resolveFormat(project.context?.format); return { ...r, cover: { ...r.cover, university: r.cover.university || project.context?.university || "" } }; });
   const [saving, setSaving] = useState(false);
   const set = <K extends keyof DocFormat>(k: K, v: DocFormat[K]) => setF((x) => ({ ...x, [k]: v }));
   const setM = (k: keyof DocFormat["margins"], v: number) => setF((x) => ({ ...x, margins: { ...x.margins, [k]: v } }));
@@ -20,7 +21,7 @@ export function FormatModal({ open, onClose, project, patch }: { open: boolean; 
 
   async function save() {
     setSaving(true);
-    const ok = await patch({ context: { format: f } });
+    const ok = await patch({ context: { format: { ...f, v: 2 } } });
     setSaving(false);
     if (ok) { toast({ tone: "success", title: t("Biçim ayarları kaydedildi"), detail: t("Word ve PDF çıktısında kullanılacak.") }); onClose(); }
   }
@@ -62,15 +63,24 @@ export function FormatModal({ open, onClose, project, patch }: { open: boolean; 
           </div>
         </div>
         <div className="space-y-3">
+          <label className="block"><span className="label">{t("Belge düzeni")}</span>
+            <select className="input" value={resolveLayout(f, { workType: project.work_type, documentPurpose: project.context?.documentPurpose })} onChange={(e) => set("layout", e.target.value as DocFormat["layout"])}>
+              <option value="submission">{t("Üniversite / ders teslimi: kapak, içindekiler, tablo ve şekil listeleri")}</option>
+              <option value="journal">{t("Dergi gönderimi: kapaksız, başlık ilk sayfada")}</option>
+            </select>
+          </label>
           <p className="font-medium text-ink-900">{t("Kapak sayfası")}</p>
+          <label className="flex items-center gap-2 text-[13px] text-ink-700"><input type="checkbox" checked={f.cover.logoSpace !== false} onChange={(e) => setC("logoSpace", e.target.checked)} /> {t("Üniversite logosu için yer bırak (3 × 3 cm)")}</label>
           <label className="flex items-center gap-2 text-[13px] text-ink-700"><input type="checkbox" checked={!!f.cover.showTC} onChange={(e) => setC("showTC", e.target.checked)} /> {t("En üstte “T.C.” yazsın")}</label>
           {text(t("Üniversite"), "university", t("ör. Hacettepe Üniversitesi"))}
-          {text(t("Enstitü / fakülte"), "institute", t("ör. Sosyal Bilimler Enstitüsü"))}
+          {text(t("Fakülte"), "faculty", t("ör. İletişim Fakültesi"))}
+          {text(t("Enstitü (lisansüstü)"), "institute", t("ör. Sosyal Bilimler Enstitüsü"))}
           {text(t("Anabilim dalı / bölüm"), "department", t("ör. Psikoloji Anabilim Dalı"))}
           {text(t("Program"), "programme", t("ör. Klinik Psikoloji Programı"))}
-          {text(t("Çalışma türü"), "thesisType", t("ör. Yüksek Lisans Tezi"))}
+          {text(t("Çalışma türü"), "thesisType", t(workTypeLabel(project.work_type, project.academic_level, "tr")) || t("ör. Yüksek Lisans Tezi"))}
           {text(t("Danışman"), "advisor", t("ör. Prof. Dr. Ad Soyad"))}
-          <div className="grid grid-cols-2 gap-2">{text(t("Şehir"), "city", t("ör. Ankara"))}{text(t("Yıl"), "year", new Date().getFullYear().toString())}</div>
+          <div className="grid grid-cols-3 gap-2">{text(t("Şehir"), "city", t("ör. Ankara"))}{text(t("Ay"), "month", new Date().toLocaleDateString("tr-TR", { month: "long" }))}{text(t("Yıl"), "year", new Date().getFullYear().toString())}</div>
+          <p className="text-xs text-ink-400">{t("Boş bırakılan üniversite, fakülte, bölüm ve danışman alanları kapakta köşeli parantezli doldurma alanı olarak görünür; ay ve yıl boşsa indirme tarihinden alınır.")}</p>
         </div>
       </div>
     </Modal>

@@ -99,7 +99,7 @@ function blockTex(b: Block, keys: Map<string, string>, figure: (b: Extract<Block
     }
     case "caption": {
       // D173: tablo/şekil listesindeki sayfa numarası için etiket
-      const lbl = b.list ? `\\label{${b.list === "table" ? "lot" : "lof"}:${++capCount[b.list]}}` : "";
+      const lbl = b.list && capListOn ? `\\label{${b.list === "table" ? "lot" : "lof"}:${++capCount[b.list]}}` : "";
       return `\\begin{${b.align === "center" ? "center" : "flushleft"}}\n${lbl}${b.lines.map((l) => runsToTex(l, keys)).join("\\\\\n")}\n\\end{${b.align === "center" ? "center" : "flushleft"}}`;
     }
     case "table": {
@@ -158,7 +158,7 @@ export function biblatexSetup(style: string, lang: boolean | "tr" | "en" | "de")
 }
 
 export function toLatexFiles(doc: ExportDoc, o: { style: CitationStyleId; items: CitationItem[] }): LatexFile[] {
-  capCount.table = 0; capCount.figure = 0;
+  capCount.table = 0; capCount.figure = 0; capListOn = doc.cover;
   const keys = bibKeyMap(o.items);
   const tr = doc.language === "tr", de = doc.language === "de";
   const bl = BIBLATEX_STYLE[o.style] ?? { style: "authoryear" };
@@ -196,7 +196,7 @@ ${bs.preamble}\\addbibresource{references.bib}
 
 \\begin{document}
 \\maketitle
-${doc.article ? "" : `\\tableofcontents\n\\clearpage\n${texLists(doc)}`}
+${doc.cover ? `\\tableofcontents\n\\clearpage\n${texLists(doc)}` : ""}
 ${body}
 
 ${bs.bibBegin}\\printbibliography[title={${texEscape(doc.bibliographyTitle)}}]${bs.bibEnd}
@@ -219,6 +219,7 @@ export async function toLatexZip(doc: ExportDoc, o: { style: CitationStyleId; it
 
 /** D173: tezde tablolar ve şekiller listesi (başlıklar \\label ile işaretlenir, sayfa \\pageref ile) */
 const capCount = { table: 0, figure: 0 };
+let capListOn = true;
 function texLists(doc: ExportDoc): string {
   return ([["lot", doc.lists.tables, doc.lists.tablesTitle], ["lof", doc.lists.figures, doc.lists.figuresTitle]] as const)
     .filter(([, items]) => items.length > 0)

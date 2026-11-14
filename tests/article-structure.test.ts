@@ -48,15 +48,15 @@ describe("makale yapısı (D170)", () => {
   const d = buildExportDoc({ project, stages, sources: [], engineItems: [], authorName: "Ayşe Yılmaz" });
   const toc = d.toc.map((x) => `${x.number} ${x.text}`.trim());
 
-  it("belge başlıkları: Özet/Abstract numarasız, Giriş 1, konu başlıkları 2–3, Sonuç 4", () => {
+  it("belge başlıkları: Özet/Abstract ve Giriş numarasız (D178), konu başlıkları 1–2, Sonuç 3", () => {
     expect(d.article).toBe(true);
-    expect(toc).toEqual(["Özet", "Abstract", "1 Giriş", "1.1 Bağlam", "1.2 Amaç", "2 Güçlü Etki Dönemi", "2.1 Kitle Toplumu", "3 Sınırlı Etki Dönemi", "4 SONUÇ"]);
+    expect(toc).toEqual(["Özet", "Abstract", "Giriş", "Bağlam", "Amaç", "1 Güçlü Etki Dönemi", "1.1 Kitle Toplumu", "2 Sınırlı Etki Dönemi", "3 Sonuç"]);
     expect(toc.join(" ")).not.toContain("Başlık, özet");
     expect(d.blocks.filter((b) => (b.kind === "paragraph" || b.kind === "heading") && b.keep === "abstract").length).toBe(6);
   });
-  it("editördeki bölüm numaraları belgeyle aynı (konu bölümleri 2–3, Sonuç 4)", () => {
+  it("editördeki bölüm numaraları belgeyle aynı (konu bölümleri 1–2, Sonuç 3)", () => {
     const pre = stagePrefixes(stages);
-    expect(pre.d).toBe("4");
+    expect(pre.d).toBe("3");
   });
   it("PDF ve Word: kapak ve içindekiler olmadan üretilir", async () => {
     const pdf = await toPdf(d);

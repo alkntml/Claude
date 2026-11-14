@@ -37,12 +37,13 @@ describe("akademik bölüm yapısı (D76)", () => {
     st("6", "findings", "Bulgular", 5, [h(2, "Bulgular"), h(2, "Betimsel bulgular"), p("…")]),
   ];
   const d = buildExportDoc({ project, stages: thesis, sources: [], engineItems: [], authorName: "" });
-  const toc = d.toc.map((x) => `${x.number} ${x.text}`);
+  const toc = d.toc.map((x) => `${x.number} ${x.text}`.trim());
   it("ardışık aşamalar ana bölümlerde toplanır, aşama adları akademik başlığa dönüşür", () => {
     expect(toc).toEqual([
-      "1 GİRİŞ", "1.1 Problem Durumu", "1.1.1 Atlanan düzey", "1.2 Araştırmanın Amacı ve Önemi",
-      "2 YÖNTEM", "2.1 Araştırma Modeli", "2.2 Evren ve Örneklem",
-      "3 BULGULAR", "3.1 Betimsel bulgular",
+      // D178: GİRİŞ ve alt başlıkları numarasız; numaralandırma YÖNTEM ile 1’den başlar
+      "GİRİŞ", "Problem Durumu", "Atlanan düzey", "Araştırmanın Amacı ve Önemi",
+      "1 YÖNTEM", "1.1 Araştırma Modeli", "1.2 Evren ve Örneklem",
+      "2 BULGULAR", "2.1 Betimsel bulgular",
     ]);
   });
   it("aşama adını tekrar eden ilk başlık atlanır; “x.0.y” numarası oluşmaz", () => {
@@ -100,8 +101,8 @@ describe("Word içindekiler", () => {
     const zip = await JSZip.loadAsync(await toDocx(d));
     const xml = await zip.file("word/document.xml")!.async("string");
     const tocPart = xml.slice(xml.indexOf("İÇİNDEKİLER"), xml.indexOf("Havacılık"));
-    expect(tocPart).toContain("1.1 Problem Durumu");
-    expect(tocPart).toContain("1.2 Araştırmanın Amacı ve Önemi");
+    expect(tocPart).toContain("Problem Durumu");
+    expect(tocPart).toContain("Araştırmanın Amacı ve Önemi");
     expect(tocPart).toContain("PAGEREF _Toc2");
     expect(xml).toMatch(/w:bookmarkStart[^>]*w:name="_Toc2"/);
   });

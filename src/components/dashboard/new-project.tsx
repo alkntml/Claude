@@ -80,7 +80,7 @@ export function NewProjectWizard({ defaultStyle }: { defaultStyle: string }) {
   const effDesign = designs.some((d) => d.id === design) ? design : "";
   const roadmap = useMemo(() => buildRoadmap({ workType, level, methodology: effMethod, program, design: effDesign || null, variant: workType === "capstone" ? variant : null }), [workType, level, effMethod, program, effDesign, variant]);
   const showMethod = options.length > 0;
-  const purpose = documentPurpose || (workType === "thesis" ? "institute" : ["research_article", "journal_article"].includes(workType) ? "journal" : workType === "grant_proposal" ? "grant" : workType === "capstone" ? "course" : "");
+  const purpose = documentPurpose || (workType === "thesis" ? "institute" : workType === "journal_article" || (workType === "research_article" && level !== "bachelor") ? "journal" : workType === "grant_proposal" ? "grant" : workType === "capstone" || workType === "research_article" ? "course" : "");
   const omitted = useMemo(() => omittedSections({ workType, level, methodology: effMethod, program, design: effDesign || null, variant: workType === "capstone" ? variant : null }), [workType, level, effMethod, program, effDesign, variant]);
   // Yol haritası değişirse (tür, yaklaşım, desen…) elle yapılan düzenleme sıfırlanır
   useEffect(() => setEdited(null), [roadmap]);

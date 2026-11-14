@@ -80,6 +80,7 @@ describe("akademik yapı yardımcıları (D76)", () => {
       { id: "f", key: "references", title: "Kaynakça", position: 5 },
     ];
     const defaults = { topic: "Araştırma konusunun belirlenmesi", problem: "Araştırma probleminin tanımlanması", purpose: "Araştırmanın amacı ve önemi", literature: "Literatür taraması", findings: "Bulgular" };
-    expect(stagePrefixes(stages, defaults)).toEqual({ a: "1", b: "1.1", c: "1.2", d: "2.1", e: "3" });
+    // D178: GİRİŞ numarasız; numaralandırma sonraki ana bölümle 1’den başlar
+    expect(stagePrefixes(stages, defaults)).toEqual({ a: "", b: "", c: "", d: "1.1", e: "2" });
   });
 });

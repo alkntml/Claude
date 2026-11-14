@@ -60,13 +60,24 @@ describe("biçim şablonu", () => {
     expect(f.preset).toBe("tez-tr");
     expect(f.chapterOnNewPage).toBe(true);
   });
-  it("Türk tezi kapak satırları", () => {
-    const f = resolveFormat({ cover: { showTC: true, university: "Hacettepe Üniversitesi", institute: "Sosyal Bilimler Enstitüsü", thesisType: "Yüksek Lisans Tezi", advisor: "Prof. Dr. A B", city: "Ankara", year: "2027" } });
+  it("Türk tezi kapak satırları (D178: logo yeri, fakülte, bölüm, tür, ŞEHİR – AY YIL; eksik alan doldurma alanı)", () => {
+    const f = resolveFormat({ cover: { showTC: true, university: "Hacettepe Üniversitesi", institute: "Sosyal Bilimler Enstitüsü", department: "Psikoloji Anabilim Dalı", thesisType: "Yüksek Lisans Tezi", advisor: "Prof. Dr. A B", city: "Ankara", month: "Haziran", year: "2027" } });
     const c = coverLines(f, { title: "İlişki odaklı OKB", subtitle: "", author: "Ayşe", date: "", language: "tr" });
-    expect(c.top).toEqual(["T.C.", "HACETTEPE ÜNİVERSİTESİ", "SOSYAL BİLİMLER ENSTİTÜSÜ"]);
+    expect(c.logo).toBe(true);
+    expect(c.top).toEqual(["T.C.", "HACETTEPE ÜNİVERSİTESİ", "SOSYAL BİLİMLER ENSTİTÜSÜ", "PSİKOLOJİ ANABİLİM DALI"]);
     expect(c.title).toBe("İLİŞKİ ODAKLI OKB");
+    expect(c.thesisType).toBe("YÜKSEK LİSANS TEZİ");
     expect(c.advisor).toBe("Danışman\nProf. Dr. A B");
-    expect(c.bottom).toBe("Ankara, 2027");
+    expect(c.bottom).toBe("ANKARA – HAZİRAN 2027");
+    // Boş kapak: üniversite proje bilgisinden, tür çalışma türünden; fakülte/bölüm/danışman doldurma alanı (uydurulmaz)
+    const e = coverLines(resolveFormat({}), { title: "Makale", subtitle: "", author: "Ali", date: "", language: "tr", institution: "Ankara Üniversitesi", workType: "research_article", level: "bachelor" });
+    expect(e.top).toEqual(["T.C.", "ANKARA ÜNİVERSİTESİ", "[FAKÜLTE / ENSTİTÜ ADI]", "[BÖLÜM / ANABİLİM DALI]"]);
+    expect(e.thesisType).toBe("ARAŞTIRMA MAKALESİ");
+    expect(e.advisor).toBe("Danışman\n[Unvan Ad SOYAD]");
+    expect(e.bottom).toMatch(/^[A-ZÇĞİÖŞÜ]+ \d{4}$/);
+    expect(resolveFormat({}).chapterTitleCenter).toBe(false);
+    expect(resolveFormat({ chapterTitleCenter: true }).chapterTitleCenter).toBe(false); // eski kayıt (v<2)
+    expect(resolveFormat({ chapterTitleCenter: true, v: 2 }).chapterTitleCenter).toBe(true); // kullanıcının bilinçli seçimi
   });
 });
 

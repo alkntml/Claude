@@ -2,7 +2,7 @@ import "server-only";
 import {
   AlignmentType, Document, Footer, FootnoteReferenceRun, HeadingLevel, LevelFormat, Packer, PageBreak, PageNumber, Paragraph,
   Table, TableCell, TableRow, TextRun, WidthType, BorderStyle, ImageRun,
-  Bookmark, InternalHyperlink, LeaderType, PageReference, TabStopType,
+  Bookmark, InternalHyperlink, LeaderType, PageReference, TabStopType, HeightRule, VerticalAlign,
 } from "docx";
 import { figurePng, type ExportDoc, type Run } from "./model";
 import { CM, coverLines, resolveFormat, type DocFormat } from "./format";
@@ -31,33 +31,42 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
 
   const body: (Paragraph | Table)[] = [];
 
-  // D170: makale düzeni — kapak ve içindekiler yok; başlık ve yazar ilk sayfanın üstünde, bölümler kesintisiz
-  if (d.article) {
-    body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: d.title, bold: true, font, size: 32 })] }));
-    if (d.subtitle) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: d.subtitle, italics: true, font, size: 26 })] }));
+  // D170/D178: dergi gönderim düzeni (kapaksız) — başlık ve yazar ilk sayfanın üstünde, bölümler kesintisiz
+  if (!d.cover) {
+    body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: d.title, bold: true, font, size: 28 })] }));
+    if (d.subtitle) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 120 }, children: [new TextRun({ text: d.subtitle, italics: true, font, size: 24 })] }));
     if (d.author) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 60 }, children: [new TextRun({ text: d.author, font, size })] }));
     if (d.institution) body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 360 }, children: [new TextRun({ text: d.institution, italics: true, font, size: size - 2 })] }));
   }
 
-  // Kapak (şablondaki kurum bilgileriyle)
+  // D178: kapak — Türk üniversitelerinde yaygın düzen. Üstte 3×3 cm logo alanı; kurum satırları 12 punto kalın, tek aralık;
+  // başlık 14 punto kalın büyük harf; çalışma türü, yazar ve danışman; en altta ŞEHİR – AY YIL. Hepsi ortalı.
   const cv = coverLines(f, d);
-  if (!d.article) {
-  const center = (text: string, o: { bold?: boolean; italics?: boolean; size?: number; before?: number } = {}) =>
-    text.split("\n").forEach((tx, k) => body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: k === 0 ? o.before ?? 0 : 0, line: 300 }, children: [new TextRun({ text: tx, bold: o.bold, italics: o.italics, size: o.size ?? size, font })] })));
-  cv.top.forEach((tx, k) => center(tx, { bold: true, before: k === 0 ? 0 : 0 }));
-  center(cv.title, { bold: true, size: 32, before: cv.top.length ? 2400 : 3200 });
-  if (cv.subtitle) center(cv.subtitle, { italics: true, size: 26, before: 200 });
-  if (cv.thesisType) center(cv.thesisType, { bold: true, before: 1600 });
-  if (cv.author) center(cv.author, { before: cv.thesisType ? 800 : 1600 });
-  if (cv.advisor) center(cv.advisor, { before: 800 });
-  if (!f.cover.university && d.institution) center(d.institution, { before: 400 });
-  center(cv.bottom, { before: 2400 });
-  body.push(new Paragraph({ children: [new PageBreak()] }));
+  if (d.cover) {
+    const center = (text: string, o: { bold?: boolean; italics?: boolean; size?: number; before?: number } = {}) =>
+      text.split("\n").forEach((tx, k) => body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: k === 0 ? o.before ?? 0 : 0, after: 0, line: 276 }, children: [new TextRun({ text: tx, bold: o.bold, italics: o.italics, size: o.size ?? 24, font })] })));
+    if (cv.logo) {
+      const dash = { style: BorderStyle.DASHED, size: 4, color: "A0A0A0" };
+      body.push(new Table({
+        alignment: AlignmentType.CENTER, width: { size: 3 * CM, type: WidthType.DXA }, columnWidths: [3 * CM],
+        rows: [new TableRow({ height: { value: 3 * CM, rule: HeightRule.EXACT }, children: [new TableCell({ width: { size: 3 * CM, type: WidthType.DXA }, verticalAlign: VerticalAlign.CENTER, borders: { top: dash, bottom: dash, left: dash, right: dash },
+          children: [new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: d.language === "tr" ? "Üniversite logosu" : d.language === "de" ? "Hochschullogo" : "University logo", size: 14, color: "A0A0A0", font })] })] })] })],
+      }));
+    }
+    cv.top.forEach((tx, k) => center(tx, { bold: true, before: k === 0 ? (cv.logo ? 240 : 0) : 0 }));
+    center(cv.title, { bold: true, size: 28, before: 1700 });
+    if (cv.subtitle) center(cv.subtitle, { italics: true, size: 24, before: 200 });
+    if (cv.thesisType) center(cv.thesisType, { bold: true, before: 1200 });
+    if (cv.author) center(cv.author, { bold: true, before: 1000 });
+    if (cv.advisor) center(cv.advisor, { before: 800 });
+    center(cv.bottom, { bold: true, before: 2000 });
+    body.push(new Paragraph({ children: [new PageBreak()] }));
   }
 
   // İçindekiler: girişler dosyaya hazır yazılır (Word alan güncellemesi yapmasa, Mac Word / Pages / Google Dokümanlar’da da
   // görünür). Her giriş başlığa bağlantılıdır; sayfa numaraları PAGEREF alanıyla Word açılışta güncellenir.
-  if (!d.article) {
+  // D178: kapaklı teslim düzeninde makalede de içindekiler ve (varsa) tablo/şekil listeleri basılır
+  if (d.cover) {
   body.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 240 }, children: [new TextRun({ text: d.language === "tr" ? "İÇİNDEKİLER" : d.language === "de" ? "INHALTSVERZEICHNIS" : "CONTENTS", font, bold: true, size: 28 })] }));
   const textWidth = Math.round((21 - f.margins.left - f.margins.right) * CM);
   const tocEntry = (anchor: string, text: string, level: number, bold = level === 1) => new Paragraph({
@@ -101,7 +110,7 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
     } else if (b.kind === "caption") {
       // D106: satırlar ve biçim (kalın/italik/ortalı) atıf stiline göre modelde hazırlanır
       // D173: tablo/şekil listesindeki sayfa numarası için başlığın ilk satırı yer imiyle işaretlenir
-      const mark = !d.article && b.list ? `_${b.list === "table" ? "Lot" : "Lof"}${++capNo[b.list]}` : "";
+      const mark = d.cover && b.list ? `_${b.list === "table" ? "Lot" : "Lof"}${++capNo[b.list]}` : "";
       b.lines.forEach((l, k) => body.push(new Paragraph({ alignment: b.align === "center" ? AlignmentType.CENTER : AlignmentType.LEFT, keepNext: true, spacing: { before: k === 0 ? 120 : 0, after: k === b.lines.length - 1 ? 60 : 0 }, children: k === 0 && mark ? [new Bookmark({ id: mark, children: runs(l) })] : runs(l) })));
     } else if (b.kind === "image") {
       // Metin genişliği ~15 cm (≈ 567 px @96dpi); şekil oranı korunur
@@ -152,10 +161,11 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
       ],
     },
     sections: [{
-      properties: { page: { margin: { top: Math.round(f.margins.top * CM), bottom: Math.round(f.margins.bottom * CM), left: Math.round(f.margins.left * CM), right: Math.round(f.margins.right * CM) } } },
+      // D178: kapak sayfasında sayfa numarası basılmaz (farklı ilk sayfa)
+      properties: { titlePage: d.cover, page: { margin: { top: Math.round(f.margins.top * CM), bottom: Math.round(f.margins.bottom * CM), left: Math.round(f.margins.left * CM), right: Math.round(f.margins.right * CM) } } },
       ...(f.pageNumber === "top-right"
-        ? { headers: { default: new Header({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }) } }
-        : { footers: { default: new Footer({ children: [new Paragraph({ alignment: f.pageNumber === "bottom-right" ? AlignmentType.RIGHT : AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }) } }),
+        ? { headers: { default: new Header({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }), ...(d.cover ? { first: new Header({ children: [] }) } : {}) } }
+        : { footers: { default: new Footer({ children: [new Paragraph({ alignment: f.pageNumber === "bottom-right" ? AlignmentType.RIGHT : AlignmentType.CENTER, children: [new TextRun({ children: [PageNumber.CURRENT], font, size: 20 })] })] }), ...(d.cover ? { first: new Footer({ children: [] }) } : {}) } }),
       children: body,
     }],
   });

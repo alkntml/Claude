@@ -34,7 +34,7 @@ const DOC_TITLE: Record<string, L2> = {
   front_matter: { tr: "", en: "", de: "" },
   // Konu bölümleri kendi başlığını almaz: içindeki her ## başlık makalede ayrı numaralı ana bölümdür
   article_body: { tr: "", en: "", de: "" },
-  conclusion_article: { tr: "SONUÇ", en: "CONCLUSION", de: "FAZIT" },
+  conclusion_article: { tr: "Sonuç", en: "Conclusion", de: "Fazit" },
   problem: { tr: "Problem Durumu", en: "Problem Statement", de: "Problemstellung" },
   purpose: { tr: "Araştırmanın Amacı ve Önemi", en: "Purpose and Significance of the Study", de: "Zielsetzung und Relevanz der Studie" },
   questions: { tr: "Araştırma Soruları ve Hipotezler", en: "Research Questions and Hypotheses", de: "Forschungsfragen und Hypothesen" },
@@ -65,7 +65,9 @@ const DOC_TITLE: Record<string, L2> = {
 };
 
 /** Numarasız ön/son kısımlar (bölüm numarası almaz) */
-export const UNNUMBERED = new Set(["front_matter", "title_abstract", "declarations", "appendices", "journal_requirements", "cover_letter"]);
+// D178: Giriş numarasız yazılır (“1. GİRİŞ” değil “GİRİŞ”); numaralandırma ondan sonraki ana bölümle 1’den başlar
+export const UNNUMBERED_GROUPS = new Set(["intro"]);
+export const UNNUMBERED = new Set(["introduction", "front_matter", "title_abstract", "declarations", "appendices", "journal_requirements", "cover_letter"]);
 /** D171: çalışma notu niteliğindeki aşamalar (dergi gereklilikleri, editöre mektup) makale metnine basılmaz */
 export const NOT_IN_MANUSCRIPT = new Set(["journal_requirements", "cover_letter"]);
 
@@ -172,6 +174,7 @@ export function stagePrefixes(stages: { id: string; key: string; title: string; 
     // D171: gizlenen bölüm numara almaz (belgeye de basılmaz)
     if (st.hidden) { out[st.id] = ""; continue; }
     const group = chapterGroup(st.key);
+    if (group && UNNUMBERED_GROUPS.has(group.id)) { current = group.id; out[st.id] = ""; continue; }
     if (group) {
       if (current !== group.id) { chapter++; section = 0; current = group.id; }
       const titled = !!sectionTitle(st.key, st.title, defaults[st.key], "tr");

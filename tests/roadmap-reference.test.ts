@@ -226,3 +226,33 @@ describe("kaynak düzeltme ve tam metin oranı (D177)", () => {
     expect(researchGate({ action: "fix_claim", message: "düzelt", recentlySearchedFocus: true })).toBe("force");
   });
 });
+
+describe("makale teslim düzeni (D178): kapak, içindekiler, listeler, sola yaslı başlık, numarasız Giriş", () => {
+  const PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+  const para = (text: string) => ({ type: "paragraph", content: [{ type: "text", text }] });
+  const stages = [
+    { id: "i", key: "introduction", title: "Giriş", position: 0, content_text: "Giriş metni.", content: { type: "doc", content: [para("Giriş metni.")] } },
+    { id: "m", key: "methods_article", title: "Yöntem", position: 1, content_text: "x", content: { type: "doc", content: [para("Yöntem metni."), para("Tablo 1. Örneklem"), { type: "table", content: [{ type: "tableRow", content: [{ type: "tableCell", content: [para("a")] }] }] }, para("Şekil 1. Model"), { type: "figure", attrs: { src: PNG, alt: "x" } }] } },
+  ];
+  const project = { title: "Kitle iletişim kuramları", work_type: "research_article", academic_level: "bachelor", language: "tr", citation_style: "apa7", context: { university: "Ankara Üniversitesi" } };
+  it("lisans araştırma makalesi varsayılan olarak kapaklı teslim düzeninde; Giriş numarasız, Yöntem 1", async () => {
+    const d = buildExportDoc({ project, stages, sources: [], engineItems: [], authorName: "Ali Veli" });
+    expect(d.cover).toBe(true);
+    expect(d.toc.map((x) => `${x.number} ${x.text}`.trim())).toEqual(["Giriş", "1 Yöntem"]);
+    const { toDocx } = await import("@/lib/export/render-docx");
+    const JSZip = (await import("jszip")).default;
+    const xml = await (await JSZip.loadAsync(await toDocx(d))).file("word/document.xml")!.async("string");
+    for (const x of ["Üniversite logosu", "T.C.", "ANKARA ÜNİVERSİTESİ", "[FAKÜLTE / ENSTİTÜ ADI]", "ARAŞTIRMA MAKALESİ", "İÇİNDEKİLER", "TABLOLAR LİSTESİ", "ŞEKİLLER LİSTESİ"]) expect(xml, x).toContain(x);
+    // Bölüm başlıkları sola yaslı (ortalı değil)
+    const head = xml.slice(xml.lastIndexOf("<w:p>", xml.indexOf(">1 Yöntem<")), xml.indexOf(">1 Yöntem<"));
+    expect(head).not.toContain('w:val="center"');
+    const { toPdf } = await import("@/lib/export/render-pdf");
+    const pdf = await toPdf(d);
+    expect((pdf.toString("latin1").match(/\/Type \/Page\b/g) ?? []).length).toBeGreaterThanOrEqual(4); // kapak + içindekiler + listeler + metin
+  });
+  it("dergi makalesi veya dergi amacında kapaksız düzen", () => {
+    expect(buildExportDoc({ project: { ...project, work_type: "journal_article" }, stages, sources: [], engineItems: [], authorName: "A" }).cover).toBe(false);
+    expect(buildExportDoc({ project: { ...project, context: { documentPurpose: "journal" } }, stages, sources: [], engineItems: [], authorName: "A" }).cover).toBe(false);
+    expect(buildExportDoc({ project: { ...project, context: { documentPurpose: "journal", format: { layout: "submission" } } }, stages, sources: [], engineItems: [], authorName: "A" }).cover).toBe(true);
+  });
+});

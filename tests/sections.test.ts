@@ -94,10 +94,11 @@ describe("Giriş açılış metnindeki alt başlıklar (D89)", () => {
       { id: "u", key: "purpose", title: "Araştırmanın amacı ve önemi", position: 2, content_text: "z", content: { type: "doc", content: [p("Amaç.")] } },
     ];
     const pre = stagePrefixes(stages, { problem: "Araştırma probleminin tanımlanması", purpose: "Araştırmanın amacı ve önemi" });
-    expect(pre).toEqual({ t: "1", p: "1.2", u: "1.3" });
-    expect(sectionTree(stages[0].content as any, pre.t).map((s) => s.number)).toEqual(["1.1", "1.1.1"]);
+    // D178: GİRİŞ numarasız; alt başlıkları da numarasız (sol liste ve belge aynı)
+    expect(pre).toEqual({ t: "", p: "", u: "" });
+    expect(sectionTree(stages[0].content as any, pre.t).map((s) => s.number)).toEqual(["", ""]);
     const d = buildExportDoc({ project: { title: "X", language: "tr", citation_style: "apa7", work_type: "capstone", academic_level: "bachelor" }, stages, sources: [], engineItems: [], authorName: "" });
-    expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["1 GİRİŞ", "1.1 Değişkenlerin Ölçülmesi", "1.1.1 ISO 14001", "1.2 Problem Durumu", "1.3 Araştırmanın Amacı ve Önemi"]);
+    expect(d.toc.map((x) => `${x.number} ${x.text}`.trim())).toEqual(["GİRİŞ", "Değişkenlerin Ölçülmesi", "ISO 14001", "Problem Durumu", "Araştırmanın Amacı ve Önemi"]);
   });
 });
 
@@ -113,7 +114,7 @@ describe("seçimli dışa aktarma (D91)", () => {
     ];
     const items = [{ id: "a", type: "book", title: "A kitabı", authors: [{ family: "Ak" }], year: 2020 }, { id: "b", type: "book", title: "B kitabı", authors: [{ family: "Bek" }], year: 2021 }] as any;
     const d = buildExportDoc({ project: { title: "X", language: "tr", citation_style: "apa7" }, stages, sources: [], engineItems: items, authorName: "", options: { onlyStageIds: [stages[2].id] } });
-    expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["2 YÖNTEM", "2.2 Evren ve Örneklem", "2.2.1 Örneklem seçimi"]);
+    expect(d.toc.map((x) => `${x.number} ${x.text}`)).toEqual(["1 YÖNTEM", "1.2 Evren ve Örneklem", "1.2.1 Örneklem seçimi"]);
     expect(d.bibliography.map((b) => b.rich.map((r) => r.text).join(""))).toEqual([expect.stringContaining("Bek")]);
     expect(JSON.stringify(d.blocks)).not.toContain("Yöntem.");
   });

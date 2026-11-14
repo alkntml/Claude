@@ -2,13 +2,14 @@
  * Dışa aktarma için ara belge modeli: TipTap JSON + kaynaklar + atıf stili ->
  * biçimden bağımsız bloklar. DOCX, PDF, Markdown ve TXT işleyicileri bu modeli kullanır.
  */
+import { resolveFormat, resolveLayout } from "./format";
 import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocale, type Rich } from "@/lib/citations";
 import { formatCaption, noteLabel, parseCaption, parseNote, type ParsedCaption } from "@/lib/citations/captions";
 import { citedIdsInOrder, citationAttrs, type JSONNode } from "@/lib/editor/doc";
 import { stageDef } from "@/lib/workflows";
 import { dictFor } from "@/i18n";
 import { LANG_TAG } from "@/lib/writing-lang";
-import { chapterGroup, NOT_IN_MANUSCRIPT, sameHeading, sectionTitle, UNNUMBERED } from "@/lib/workflows/structure";
+import { chapterGroup, NOT_IN_MANUSCRIPT, sameHeading, sectionTitle, UNNUMBERED, UNNUMBERED_GROUPS } from "@/lib/workflows/structure";
 
 export interface Run {
   text: string;
@@ -73,6 +74,11 @@ export interface ExportDoc {
   numericBibliography: boolean;
   /** D170: dergi/araştırma makalesi düzeni: kapak ve içindekiler yok, başlık ilk sayfanın üstünde, bölümler kesintisiz */
   article: boolean;
+  /** D178: kapak + içindekiler + listeler basılsın mı (üniversite/ders teslimi düzeni); false = dergi gönderim düzeni */
+  cover: boolean;
+  /** D178: kapaktaki çalışma türü satırı için */
+  workType: string;
+  level: string;
   /** D173: tezde ön sayfalardaki tablo ve şekil listeleri (başlık sırasıyla) */
   lists: { tables: string[]; figures: string[]; tablesTitle: string; figuresTitle: string };
 }
@@ -238,7 +244,7 @@ export function buildExportDoc(params: {
       continue;
     }
     if (group) {
-      if (currentGroup !== group.id) { startChapter([{ text: group.title[locale] }], true); currentGroup = group.id; }
+      if (currentGroup !== group.id) { startChapter([{ text: group.title[locale] }], !UNNUMBERED_GROUPS.has(group.id)); currentGroup = group.id; }
       if (title) { emit(2, [{ text: title }]); headingCtx = { shift: 1, skipTitle, seen: 0 }; }
       else headingCtx = { shift: 0, skipTitle, seen: 0 }; // başlıksız açılış metni (Giriş’in ilk kısmı)
     } else {
@@ -275,6 +281,9 @@ export function buildExportDoc(params: {
     bibliography: bib.map((b) => ({ number: b.number, rich: b.rich })),
     numericBibliography: meta.family === "numeric",
     article: project.work_type === "journal_article" || project.work_type === "research_article",
+    cover: resolveLayout(resolveFormat(project.context?.format), { workType: project.work_type, documentPurpose: project.context?.documentPurpose }) === "submission",
+    workType: String(project.work_type ?? ""),
+    level: String(project.academic_level ?? ""),
     lists: {
       tables: arranged.flatMap((b) => (b.kind === "caption" && b.list === "table" ? [b.entry ?? ""] : [])),
       figures: arranged.flatMap((b) => (b.kind === "caption" && b.list === "figure" ? [b.entry ?? ""] : [])),

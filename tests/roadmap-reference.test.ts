@@ -249,6 +249,13 @@ describe("makale teslim düzeni (D178): kapak, içindekiler, listeler, sola yasl
     const { toPdf } = await import("@/lib/export/render-pdf");
     const pdf = await toPdf(d);
     expect((pdf.toString("latin1").match(/\/Type \/Page\b/g) ?? []).length).toBeGreaterThanOrEqual(4); // kapak + içindekiler + listeler + metin
+    const { toLatexFiles } = await import("@/lib/export/render-latex");
+    const tex = toLatexFiles(d, { style: "apa7", items: [] }).find((f) => f.name === "main.tex")!.data as string;
+    expect(tex).toContain("\\begin{titlepage}");
+    expect(tex).toContain("ARAŞTIRMA MAKALESİ");
+    expect(tex).toContain("ANKARA ÜNİVERSİTESİ");
+    expect(tex).not.toContain("\\maketitle");
+    expect(tex).not.toMatch(/\\\\\s*\[/); // “\\ [” derlemeyi bozar
   });
   it("dergi makalesi veya dergi amacında kapaksız düzen", () => {
     expect(buildExportDoc({ project: { ...project, work_type: "journal_article" }, stages, sources: [], engineItems: [], authorName: "A" }).cover).toBe(false);

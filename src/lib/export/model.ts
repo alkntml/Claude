@@ -2,7 +2,7 @@
  * Dışa aktarma için ara belge modeli: TipTap JSON + kaynaklar + atıf stili ->
  * biçimden bağımsız bloklar. DOCX, PDF, Markdown ve TXT işleyicileri bu modeli kullanır.
  */
-import { resolveFormat, resolveLayout } from "./format";
+import { resolveFormat, resolveLayout, type DocFormat } from "./format";
 import { CitationEngine, type CitationItem, type CitationStyleId, type CiteLocale, type Rich } from "@/lib/citations";
 import { formatCaption, noteLabel, parseCaption, parseNote, type ParsedCaption } from "@/lib/citations/captions";
 import { citedIdsInOrder, citationAttrs, type JSONNode } from "@/lib/editor/doc";
@@ -76,6 +76,8 @@ export interface ExportDoc {
   article: boolean;
   /** D178: kapak + içindekiler + listeler basılsın mı (üniversite/ders teslimi düzeni); false = dergi gönderim düzeni */
   cover: boolean;
+  /** D178: biçim ve kapak bilgileri (LaTeX kapağı için; Word/PDF ayrıca alır) */
+  format?: Partial<DocFormat>;
   /** D178: kapaktaki çalışma türü satırı için */
   workType: string;
   level: string;
@@ -282,6 +284,7 @@ export function buildExportDoc(params: {
     numericBibliography: meta.family === "numeric",
     article: project.work_type === "journal_article" || project.work_type === "research_article",
     cover: resolveLayout(resolveFormat(project.context?.format), { workType: project.work_type, documentPurpose: project.context?.documentPurpose }) === "submission",
+    format: project.context?.format ?? undefined,
     workType: String(project.work_type ?? ""),
     level: String(project.academic_level ?? ""),
     lists: {

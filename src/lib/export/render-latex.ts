@@ -9,6 +9,7 @@
 import type { CitationItem, CitationStyleId } from "@/lib/citations";
 import { bibKeyMap, toBibTeX } from "@/lib/sources/bib";
 import { figurePng, type Block, type ExportDoc, type Run } from "./model";
+import { coverLines, resolveFormat } from "./format";
 
 /** Atıf stili → biblatex stili (Overleaf/TeX Live’da hazır gelen paketler) */
 export const BIBLATEX_STYLE: Record<CitationStyleId, { style: string; note?: string }> = {
@@ -195,8 +196,7 @@ ${bs.preamble}\\addbibresource{references.bib}
 \\date{${texEscape(doc.date)}}
 
 \\begin{document}
-\\maketitle
-${doc.cover ? `\\tableofcontents\n\\clearpage\n${texLists(doc)}` : ""}
+${doc.cover ? texTitlePage(doc) : "\\maketitle\n"}${doc.cover ? `\\tableofcontents\n\\clearpage\n${texLists(doc)}` : ""}
 ${body}
 
 ${bs.bibBegin}\\printbibliography[title={${texEscape(doc.bibliographyTitle)}}]${bs.bibEnd}
@@ -224,4 +224,29 @@ function texLists(doc: ExportDoc): string {
   return ([["lot", doc.lists.tables, doc.lists.tablesTitle], ["lof", doc.lists.figures, doc.lists.figuresTitle]] as const)
     .filter(([, items]) => items.length > 0)
     .map(([k, items, title]) => `\\section*{${texEscape(title)}}\n\\begin{flushleft}\n${items.map((x, i) => `${texEscape(x)} \\dotfill \\pageref{${k}:${i + 1}}\\\\`).join("\n")}\n\\end{flushleft}\n\\clearpage\n`).join("");
+}
+
+/** D178: kapak (Word/PDF ile aynı düzen: logo alanı, kurum satırları, başlık, tür, yazar, danışman, ŞEHİR – AY YIL) */
+function texTitlePage(doc: ExportDoc): string {
+  const cv = coverLines(resolveFormat(doc.format), doc);
+  // Satırlar \par ile ayrılır: “\\ [” LaTeX’te isteğe bağlı boşluk bağımsız değişkeni sayılıp derlemeyi bozar
+  const lines = (s: string) => s.split("\n").map(texEscape).join("\\par ");
+  const logo = doc.language === "tr" ? "Üniversite logosu" : doc.language === "de" ? "Hochschullogo" : "University logo";
+  return [
+    "\\begin{titlepage}",
+    "\\centering",
+    cv.logo ? `\\fbox{\\parbox[c][3cm][c]{3cm}{\\centering\\tiny ${texEscape(logo)}}}\\par\\vspace{0.6cm}` : "",
+    `{\\bfseries\\singlespacing ${cv.top.map(texEscape).join("\\par ")}\\par}`,
+    "\\vspace{2.5cm}",
+    `{\\large\\bfseries ${texEscape(cv.title)}\\par}`,
+    cv.subtitle ? `\\vspace{0.4cm}{\\itshape ${texEscape(cv.subtitle)}\\par}` : "",
+    "\\vspace{2cm}",
+    cv.thesisType ? `{\\bfseries ${texEscape(cv.thesisType)}\\par}\\vspace{1.5cm}` : "",
+    cv.author ? `{\\bfseries ${texEscape(cv.author)}\\par}\\vspace{1cm}` : "",
+    `{${lines(cv.advisor)}\\par}`,
+    "\\vfill",
+    `{\\bfseries ${texEscape(cv.bottom)}\\par}`,
+    "\\end{titlepage}",
+    "",
+  ].filter(Boolean).join("\n") + "\n";
 }

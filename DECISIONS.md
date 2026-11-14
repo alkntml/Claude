@@ -939,3 +939,15 @@ Site sahibi istedi: güven kazandıran bir reklam filmi. İlk fikirden kaynakça
 - Dosyalar yeni adla kaydedildi (`academiana-tanitim-80.mp4/.jpg`), böylece eski önbellek kullanılmaz; eski dosyalar silindi.
 - `PROMO_VIDEO` 80 sn (PT1M20S) olarak güncellendi; ana sayfa başlığı “80 saniyede Academiana”, VideoObject açıklaması yenilendi.
 - Örnek kaynaklar kurgusaldır ve ekranda “Temsilî örnek” diye etiketlidir.
+
+## D185 — Tanıtım filmine seslendirme ve müzik (2026-11-14)
+- **Seslendirme:** site sahibi ElevenLabs’te seslendirme üretti; ham ses 87 sn sürüyordu.
+- **Ses düzenlemesi:**
+  - 11 cümle grubu sessizlik tespitiyle ayrıldı.
+  - Gruplar arası boşluk 0,45 sn’ye indirildi; ses %3 hızlandırıldı (doğal duyulur).
+  - Her grup kendi sahnesinin açılışına yerleştirildi.
+- **Görüntü eşlemesi:** film, parça parça doğrusal zaman eşlemesiyle yeniden kaydedildi. Sahneler cümle uzunluğuna göre ×0,8–×1,3 esnedi; toplam süre yine 80 sn.
+- **Müzik:** telif sorunu olmasın diye kodla sentezlendi; çok hafif bir pad (C–Am–F–G), yaklaşık −35 LUFS. Konuşma sırasında ayrıca kısılır.
+- **Ses düzeyi:** konuşma −16 LUFS; toplam yaklaşık −15 LUFS. Dosya AAC 160 kb/sn.
+- **Dosya:** `public/video/academiana-tanitim-80-ses.mp4` (7,3 MB). Yeni ad sayesinde eski önbellek kullanılmaz. Kapak görseli aynı.
+- **Kaynak:** ayrıntı `media/tanitim/README.md`. Ham ses repoya girmez.

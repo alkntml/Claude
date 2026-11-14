@@ -9,3 +9,5 @@ next-env.d.ts
 coverage
 demo/dist
 media/tanitim/frames/
+media/tanitim/*.wav
+media/tanitim/vo.mp3

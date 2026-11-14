@@ -90,57 +90,146 @@ Der **Themenfinder** von Academiana wertet für das eingegebene Fachgebiet echte
   },
   "literatur-taramasi-nasil-yapilir": {
     slug: "literaturrecherche-literaturuebersicht-schreiben",
-    title: "Literaturrecherche und Literaturübersicht: Schritt-für-Schritt-Anleitung",
-    seoTitle: "Literaturübersicht schreiben: Schritt für Schritt",
-    description: "Quellen suchen, auswählen und zusammenführen: Suchbegriffe, Datenbanken, Einschlusskriterien und thematisches Schreiben für Abschlussarbeit und Artikel.",
-    keywords: ["Literaturrecherche", "Literaturübersicht schreiben", "wissenschaftliche Quellen finden", "Forschungsstand schreiben", "systematisches Review"],
+    title: "Literaturrecherche und Literaturübersicht: Schritt für Schritt vom Suchstring zur Synthese",
+    seoTitle: "Literaturrecherche: Schritt-für-Schritt-Anleitung",
+    description: "Literaturrecherche Schritt für Schritt: Forschungsfrage, Suchstring, Datenbanken, Einschlusskriterien, Quellenbewertung und thematische Synthese.",
+    keywords: ["Literaturrecherche durchführen", "Literaturübersicht schreiben", "Suchstring erstellen", "Literaturrecherche Schritte", "Datenbanken Recherche", "Literatursynthese"],
     cta: { text: "Durchsuchen Sie 16 Datenbanken gleichzeitig – darunter OpenAlex, Crossref, PubMed und DergiPark – mit automatischer Quellenverifizierung.", label: "Quellensuche starten" },
-    body: `Bei einer Literaturübersicht geht es darum, vorhandenes Wissen zu Ihrem Thema zu finden, zu bewerten und zusammenzuführen. Ziel ist nicht, Quellen einzeln zusammenzufassen, sondern zu zeigen, wo das Wissen im Fach heute steht und wo Ihre Studie ansetzt.
+    body: `Eine Literaturübersicht bedeutet, das vorhandene Wissen zu Ihrem Thema **zu finden, zu bewerten und zu synthetisieren**. Ziel ist nicht, Quellen einzeln zusammenzufassen, sondern zu zeigen, wo der Forschungsstand heute steht, worüber Einigkeit herrscht, wo gestritten wird und wo Ihre Arbeit ansetzt. Eine gute Literaturübersicht begründet Ihre Arbeit, stützt Ihre methodischen Entscheidungen und bereitet den Boden, auf dem Sie Ihre Ergebnisse in der Diskussion vergleichen.
 
-## 1. Legen Sie Ihre Suchbegriffe fest
+Dieser Leitfaden führt in praktischen Schritten durch eine Literaturrecherche: von der Schärfung der Frage und dem Suchstring über die Auswahl der Quellen bis zum Schreiben nach Themen.
 
-Notieren Sie die Kernbegriffe Ihres Themas und ergänzen Sie für jeden Synonyme – etwa „Selbstwert“ und „Selbstwertgefühl“. Verknüpfen Sie Begriffe mit **AND** und erweitern Sie Synonyme mit **OR**:
+## Arten von Literaturübersichten
 
-- (self-esteem OR self-worth) AND (social media) AND (university students)
+Alle heißen „Literaturübersicht“, haben aber unterschiedliche Ziele und Regeln:
 
-Da ein Großteil der Fachliteratur auf Englisch erscheint, lohnt sich fast immer auch eine englische Suche.
+- **Narrative (klassische) Übersicht:** Die häufigste Form in Einleitungen und Theoriekapiteln. Sie rahmt das Thema; der Suchprozess wird nicht im Detail berichtet.
+- **Integrative Übersicht:** Führt Studien mit unterschiedlichen Methoden zusammen und schlägt einen neuen Rahmen vor.
+- **Scoping Review:** Kartiert, was in einem Feld wie umfangreich untersucht wurde; die Bewertung der Studienqualität ist nicht das Hauptziel.
+- **Systematisches Review:** Folgt einem vorab festgelegten Protokoll mit reproduzierbarer Suche und Auswahl und wird meist mit einem PRISMA-Flussdiagramm berichtet. Siehe unseren Leitfaden zu [systematischem Review und PRISMA](/de/blog/systematisches-review-metaanalyse-prisma-2020).
+- **Metaanalyse:** Fasst die quantitativen Ergebnisse eines systematischen Reviews statistisch zusammen.
 
-## 2. Wählen Sie die richtigen Datenbanken
+Das Literaturkapitel einer Abschlussarbeit ist meist eine narrative Übersicht; wer die folgenden Schritte dennoch systematisch anwendet, vermeidet weitgehend den Vorwurf, eine wichtige Studie übersehen zu haben.
 
-- **Allgemein und interdisziplinär:** OpenAlex, Crossref, Google Scholar
-- **Gesundheit und Lebenswissenschaften:** PubMed, Europe PMC
+## 1. Forschungsfrage schärfen
+
+Die Forschungsfrage setzt die Grenzen der Suche. Eine vage Frage führt zu einer zerfaserten Suche. Zerlegen Sie die Frage in Bestandteile:
+
+- **Wer?** Stichprobe oder Kontext (z. B. Studierende, Lehrkräfte an Gymnasien)
+- **Was?** Variable, Intervention oder Phänomen (z. B. Social-Media-Nutzung)
+- **Welches Ergebnis?** Die interessierende Zielgröße (z. B. akademisches Aufschieben)
+
+In den Gesundheitswissenschaften heißt diese Struktur PICO (Population, Intervention, Vergleich, Outcome), in den Sozialwissenschaften oft PEO (Population, Exposition, Outcome). Jeder Bestandteil wird zu einem Block im Suchstring.
+
+## 2. Suchbegriffe und Suchstring
+
+Listen Sie für jeden Bestandteil Synonyme, verwandte Begriffe und englische Entsprechungen auf. Ein großer Teil der internationalen Literatur ist englischsprachig; wer nur auf Deutsch sucht, übersieht wichtige Studien.
+
+- Synonyme eines Bestandteils mit **OR** verbinden.
+- Verschiedene Bestandteile mit **AND** verknüpfen.
+- Wortgruppen in Anführungszeichen setzen: "social media".
+- Trunkierung mit Sternchen: procrastinat* (procrastination, procrastinating …).
+
+Beispiel-Suchstring:
+
+- ("social media" OR "social networking sites") AND (procrastinat*) AND ("university students" OR undergraduate*)
+
+Speichern Sie Ihre Suchstrings; Sie müssen sie eventuell im Methodenteil oder in einem systematischen Review berichten.
+
+## 3. Die richtigen Datenbanken wählen
+
+- **Allgemein und fachübergreifend:** OpenAlex, Crossref, Semantic Scholar, Google Scholar
+- **Gesundheits- und Lebenswissenschaften:** PubMed, Europe PMC
 - **Bildung:** ERIC
-- **Open Access:** DOAJ, OpenAIRE
-- **Türkische Quellen:** DergiPark, TR Dizin, das nationale Thesenzentrum des türkischen Hochschulrats (YÖK)
+- **Open Access:** DOAJ, CORE
+- **Türkischsprachige Quellen:** DergiPark, TR Dizin, das nationale Thesenzentrum YÖK
 
-Wer nur in einer Datenbank sucht, übersieht leicht wichtige Studien.
+Wer nur in einer Datenbank sucht, übersieht wichtige Studien. Google Scholar ist umfassend, seine Ergebnisse sind aber nicht reproduzierbar und enthalten nicht begutachtete Texte; nutzen Sie es nicht als einzige Quelle.
 
-## 3. Wählen Sie Ihre Quellen aus
+## 4. Ein- und Ausschlusskriterien vorab festlegen
 
-Sehen Sie sich zuerst Titel und Abstracts an und lesen Sie dann den Volltext der relevanten Studien. Legen Sie Ihre Einschlusskriterien vorab fest: Erscheinungsjahre, Sprache, Studientyp, Stichprobe. Bei einem systematischen Review wird erwartet, dass Sie diesen Prozess dokumentieren (zum Beispiel mit einem PRISMA-Flussdiagramm).
+Entscheiden Sie vor dem Lesen, welche Studien Sie aufnehmen. Kriterien erst nach Sichtung der Ergebnisse festzulegen, erzeugt eine selektive Literaturbasis.
 
-## 4. Machen Sie sich beim Lesen Notizen
+| Kriterium | Einschluss | Ausschluss |
+| --- | --- | --- |
+| Erscheinungsjahr | Letzte 10 Jahre (außer theoretische Grundlagenwerke) | Ältere empirische Studien |
+| Sprache | Deutsch und Englisch | Andere Sprachen |
+| Publikationsart | Begutachtete Artikel, Abschlussarbeiten | Konferenzabstracts, Blogbeiträge |
+| Stichprobe | Studierende | Kinder und Jugendliche |
+| Methode | Quantitative und qualitative empirische Studien | Meinungsbeiträge |
 
-Notieren Sie zu jeder Quelle Ziel, Stichprobe, Methode, zentrale Ergebnisse, Limitationen und den Bezug zu Ihrer Studie. Halten Sie bei Sätzen, die Sie zitieren könnten, immer die Seitenzahl fest. Wer diese Notizen in einer Tabelle sammelt (einer Literaturmatrix), schreibt später deutlich schneller.
+Die Tabelle ist ein Beispiel; legen Sie die Kriterien für Ihre eigene Frage fest und begründen Sie sie.
 
-## 5. Schreiben Sie nach Themen, nicht Quelle für Quelle
+## 5. Suchen, auswählen und dokumentieren
 
-Eine schwache Literaturübersicht liest sich wie: „A fand dies. B fand das.“ Eine starke ist nach Themen gegliedert: Welche Befunde stützen sich gegenseitig, welche widersprechen sich, welche Fragen sind offen?
+Die Auswahl erfolgt in zwei Stufen: zuerst **Titel und Abstracts**, dann die **Volltexte** der passend erscheinenden Studien. Notieren Sie in jeder Stufe, wie viele Treffer aus welchem Grund ausgeschlossen wurden. Ein einfaches Suchprotokoll beantwortet Monate später die Frage „Warum habe ich diese Studie nicht aufgenommen?“:
 
-## 6. Benennen Sie die Lücke deutlich
+- Suchdatum, Datenbank, Suchstring, Trefferzahl
+- In der Titel-/Abstract-Stufe ausgeschlossene Treffer und die Hauptgründe
+- Zahl der gelesenen Volltexte und eingeschlossenen Studien
 
-Am Ende Ihrer Übersicht sollte die Leserschaft beantworten können: „Warum ist diese Studie nötig?“ Die Lücke kann eine wenig untersuchte Gruppe sein, widersprüchliche Befunde oder eine fehlende Methode.
+Konnten Sie einen Volltext nicht beschaffen, halten Sie auch das fest. **Deuten Sie eine Studie, von der Sie nur das Abstract kennen, nicht so ausführlich, als hätten Sie den Volltext gelesen.**
+
+## 6. Beim Lesen notieren: die Literaturmatrix
+
+Halten Sie für jede Quelle dieselben Angaben fest: Ziel, Stichprobe, Methode, Instrument, zentrale Befunde, Grenzen und Bezug zu Ihrer Arbeit. Notieren Sie bei Sätzen, die Sie wörtlich zitieren, immer die Seitenzahl. Diese Notizen in einer Tabelle (Literaturmatrix) zu sammeln, beschleunigt das Schreiben erheblich; wie man sie aufbaut, zeigt unser Leitfaden [Literaturmatrix erstellen](/de/blog/literaturmatrix-erstellen) mit Beispiel. Die bibliografischen Angaben speichern Sie von Anfang an in einem Literaturverwaltungsprogramm: [Leitfaden zu Zotero und Mendeley](/de/blog/zotero-mendeley-literaturverwaltung).
+
+## 7. Quellen bewerten
+
+Nicht jede Veröffentlichung hat dasselbe Gewicht. Prüfen Sie vor der Verwendung:
+
+- **Begutachtung:** Erschien die Arbeit in einer begutachteten Zeitschrift? Wie man räuberische Zeitschriften meidet, erklären wir in [diesem Leitfaden](/de/blog/raeuberische-zeitschriften-erkennen).
+- **Angemessene Methode:** Sind Stichprobengröße, Validität und Reliabilität der Instrumente und die Auswertung angemessen?
+- **Aktualität:** Wie schnell verändert sich das Wissen in Ihrem Fach? Theoretische Grundlagenwerke dürfen älter sein; für empirische Befunde sind aktuelle Studien vorzuziehen.
+- **Primärquellen:** Lesen Sie einen Befund nach Möglichkeit in der Originalstudie, nicht in der Zusammenfassung eines anderen Autors.
+
+## 8. Nach Themen schreiben, nicht Quelle für Quelle
+
+Ein schwaches Literaturkapitel liest sich wie „A fand dies. B fand das. C fand ebenfalls dies.“ Ein starkes ist um Themen organisiert: Welche Befunde stützen sich gegenseitig, welche widersprechen sich, welche Fragen sind offen?
+
+Ein hilfreiches Muster für einen Themenabsatz: **allgemeine Aussage → stützende Studien → abweichende Studie → Bewertung.**
+
+- **Schwach:** „Müller (2019) fand einen Zusammenhang zwischen Social-Media-Nutzung und Aufschieben. Schmidt (2021) kam zu einem ähnlichen Ergebnis. Weber (2022) fand keinen Zusammenhang.“
+- **Stark:** „Die meisten Studien berichten einen positiven Zusammenhang zwischen Social-Media-Nutzung und akademischem Aufschieben (Müller, 2019; Schmidt, 2021). Dass die Studie ohne Zusammenhang (Weber, 2022) nur die Nutzungsdauer erfasste, legt nahe, dass es eher auf die Art als auf die Dauer der Nutzung ankommt.“
+
+Die Autorennamen sind Beispiele zur Veranschaulichung der Form. Der zweite Absatz nutzt dieselben Studien, liefert aber eine **Schlussfolgerung** und erörtert einen möglichen Grund für den Unterschied.
+
+## 9. Die Forschungslücke ausdrücklich benennen
+
+Am Ende Ihres Literaturkapitels sollte die Leserin beantworten können: „Warum braucht es diese Arbeit?“ Die Lücke kann sein:
+
+- Eine wenig untersuchte **Stichprobe oder ein Kontext** (z. B. Masterstudierende in einem bestimmten Land)
+- **Widersprüchliche Befunde** und eine fehlende Variable, die sie erklären könnte
+- Eine **methodische Lücke** (z. B. nur Querschnittstudien, keine Längsschnittstudien)
+- **Veraltete Befunde** (z. B. weil sich Instrumente oder Technik geändert haben)
+
+Vermeiden Sie absolute Aussagen wie „Dazu gibt es keine Studie“; formulieren Sie auf Ihre Suche bezogen, etwa „in der zugänglichen Literatur finden sich nur wenige Studien zu …“.
+
+## 10. Aufbau des Literaturkapitels
+
+1. **Kurze Einleitung:** Umfang des Kapitels und Reihenfolge der Themen
+2. **Themenüberschriften:** Ein Unterkapitel je Thema, vom Allgemeinen zum Besonderen
+3. **Bewertung und Lücke:** Gesamtbild der Literatur und Beitrag Ihrer Arbeit
+
+Zum Unterschied zwischen Literaturübersicht und theoretischem Rahmen siehe unseren Leitfaden [theoretischer vs. konzeptioneller Rahmen](/de/blog/theoretischer-vs-konzeptioneller-rahmen).
+
+## Wann ist die Suche abgeschlossen?
+
+Bringen neue Quellen keine neuen Themen oder Befunde mehr und zitieren sie immer dieselben Studien, nähern Sie sich der Sättigung. Halten Sie die Suche dennoch bis zur Abgabe aktuell: Eine wichtige Studie zu übersehen, die während des Schreibens erschienen ist, wird in Prüfungen häufig kritisiert.
 
 ## Häufige Fehler
 
-- Eine Studie so interpretieren, als hätte man den Volltext gelesen, obwohl man nur das Abstract kennt
-- Sich auf veraltete Quellen stützen
+- Eine Studie, von der man nur das Abstract kennt, wie einen gelesenen Volltext deuten
+- Nur in einer Datenbank und nur mit Suchbegriffen in einer Sprache suchen
+- Einschlusskriterien nachträglich anhand der Ergebnisse festlegen
+- Sich mit alten, überholten Quellen begnügen
 - Eine Sekundärquelle als Primärquelle ausgeben
-- Bibliografische Angaben bis zum Schluss aufschieben und dann nicht wiederfinden
+- Quellen einzeln hintereinander zusammenfassen
+- Bibliografische Angaben bis zum Schluss aufschieben und dann nicht mehr finden
 
-## Literaturübersichten mit Academiana
+## Literaturrecherche mit Academiana
 
-Academiana plant eine Suchstrategie für Ihr Thema und durchsucht 16 Datenbanken gleichzeitig. Quellen werden über die DOI verifiziert, und jede Quelle zeigt offen, ob nur die bibliografischen Angaben, das Abstract oder der Volltext gelesen wurde. In der Literaturmatrix vergleichen Sie Quellen tabellarisch, und Open-Access-Volltexte können Sie mit Seitenzahl zitieren.`,
+Academiana plant eine Suchstrategie für Ihr Thema und sucht gleichzeitig in 16 Datenbanken, darunter OpenAlex, Crossref, Semantic Scholar, PubMed und DergiPark. Gefundene Quellen werden per DOI geprüft; bei jeder Quelle steht klar, ob Metadaten, Abstract oder Volltext gelesen wurden. Mit der Literaturmatrix vergleichen Sie Quellen in einer Tabelle, mit der Literaturkarte sehen Sie Zitationsbeziehungen und fehlende Grundlagenwerke, und aus Open-Access-Volltexten zitieren Sie mit Seitenzahl. Beim Schreiben des Literaturkapitels fasst der Assistent Quellen nicht einzeln zusammen, sondern synthetisiert sie nach Themen und zitiert nur Quellen aus Ihrer Bibliothek.`,
   },
   "apa-7-atif-kurallari": {
     slug: "apa-7-zitierregeln",
@@ -217,59 +306,135 @@ In Academiana werden Zitate nicht als Text getippt, sondern mit der Quelle verkn
   },
   "kaynakca-nasil-hazirlanir": {
     slug: "literaturverzeichnis-erstellen-zitierstile",
-    title: "Literaturverzeichnis erstellen: APA, MLA, Chicago und IEEE im Vergleich",
-    seoTitle: "Literaturverzeichnis erstellen: Zitierstile im Vergleich",
-    description: "Welcher Zitierstil passt? APA, MLA, Chicago, IEEE, Vancouver und ISNAD im Vergleich, mit Beispielen und einer Checkliste für das Literaturverzeichnis.",
-    keywords: ["Literaturverzeichnis erstellen", "Zitierstile Vergleich", "MLA oder APA", "Chicago Zitierweise", "Quellenverzeichnis"],
+    title: "Literaturverzeichnis erstellen: Beispiele in APA, MLA, Chicago, IEEE und ISNAD",
+    seoTitle: "Literaturverzeichnis erstellen: Beispiele in 7 Stilen",
+    description: "Literaturverzeichnis erstellen: eine Quelle in APA 7, MLA, Chicago, IEEE, Vancouver und ISNAD, dazu DOI, Reihenfolge und Checkliste.",
+    keywords: ["Literaturverzeichnis erstellen", "Literaturverzeichnis Beispiel", "Zitierstile Beispiele", "ISNAD Literaturverzeichnis", "MLA Works Cited", "IEEE Literaturverzeichnis"],
     cta: { text: "Importieren Sie Ihre Bibliothek aus Zotero, Mendeley oder EndNote und erzeugen Sie das Literaturverzeichnis automatisch in jedem Stil.", label: "Mein Literaturverzeichnis erstellen" },
-    body: `Das Literaturverzeichnis enthält alle Quellen, die Sie in Ihrer Arbeit zitieren. Es ermöglicht, jede Information bis zu ihrem Ursprung zurückzuverfolgen, und ist ein Grundpfeiler wissenschaftlicher Integrität. Welchen Stil Sie verwenden, entscheidet meist Ihre Hochschule oder die Zeitschrift, nicht Sie selbst.
+    body: `Das Literaturverzeichnis enthält alle Quellen, die Sie in Ihrer Arbeit zitieren. Es ermöglicht, jede Information bis zu ihrer Quelle zurückzuverfolgen, und ist ein Grundpfeiler wissenschaftlicher Redlichkeit. Gutachterinnen und Gutachter gewinnen aus dem Literaturverzeichnis einen starken ersten Eindruck von der Sorgfalt einer Arbeit: unvollständige Angaben, Zitate im Text ohne Eintrag im Verzeichnis und uneinheitliche Formatierung gehören zu den häufigsten Korrekturwünschen.
 
-## Literaturverzeichnis oder Bibliografie?
+Dieser Leitfaden zeigt, wie man ein Literaturverzeichnis erstellt, wie sich die gängigen Zitierstile unterscheiden und wie dieselbe Quelle in jedem Stil aussieht.
 
-- **Literaturverzeichnis (Reference list):** nur die im Text zitierten Quellen.
-- **Bibliografie:** kann auch gelesene, aber nicht zitierte Quellen enthalten.
+## Literaturverzeichnis und Bibliografie
 
-Für Abschlussarbeiten und Artikel wird in der Regel ein **Literaturverzeichnis** verlangt.
+- **Literaturverzeichnis:** Nur die im Text zitierten Quellen.
+- **Bibliografie:** Kann auch gelesene, aber nicht zitierte Quellen enthalten.
 
-## Stile und ihre Einsatzbereiche
+Abschlussarbeiten und Artikel verlangen meist ein **Literaturverzeichnis**. Jedes Zitat im Text braucht einen Eintrag im Verzeichnis, und jede Quelle im Verzeichnis muss im Text zitiert sein.
 
-### APA
+## Wer bestimmt den Stil?
 
-Verbreitet in Psychologie, Erziehungs- und Sozialwissenschaften. Im Text: (Autor:in, Jahr). Im Verzeichnis folgt das Jahr direkt auf den Namen.
+Den Stil bestimmen meist nicht Sie, sondern die Vorgaben Ihres Instituts oder der Zeitschrift. Vorgaben nennen oft einen Stil und weichen an einzelnen Stellen davon ab (z. B. „APA 7, aber Vornamen im Verzeichnis ausschreiben“). Dann **gilt die Vorgabe des Instituts**. Lesen Sie die Vorgaben vor dem Schreiben; ein späterer Stilwechsel kostet viel Zeit.
 
-### MLA
+## Dieselbe Quelle in sieben Stilen
 
-Üblich in Sprach- und Literaturwissenschaft sowie den Geisteswissenschaften. Im Text: Autor:in und Seite (Smith 45). Das Verzeichnis heißt „Works Cited“.
+Am deutlichsten werden die Unterschiede, wenn man eine Quelle in verschiedenen Stilen nebeneinander sieht. Die folgenden Beispiele zeigen ein Zitat von Seite 50 eines **fiktiven** Zeitschriftenartikels (Demir und Kaya, 2022, *Örnek Eğitim Dergisi*, Jahrgang 12, Heft 3, Seiten 45–62) und den zugehörigen Verzeichniseintrag. Alle Beispiele wurden mit der Zitier-Engine von Academiana erzeugt.
 
-### Chicago
+### APA 7
 
-Verbreitet in Geschichte und Kunstwissenschaften. Es gibt zwei Systeme: **Notes-Bibliography** (Belege in Fußnoten) und **Author-Date**. Im deutschsprachigen Raum ist das Fußnotensystem in den Geisteswissenschaften ebenfalls stark verbreitet.
+- **Im Text:** (Demir & Kaya, 2022, S. 50)
+- **Literaturverzeichnis:** Demir, M., & Kaya, E. (2022). Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme. Örnek Eğitim Dergisi, 12(3), 45–62.
 
-### IEEE und Vancouver
+### MLA 9
 
-Üblich in den Ingenieurwissenschaften (IEEE) und der Medizin (Vancouver). Zitate werden in eckigen Klammern oder hochgestellt nummeriert: [1]. Das Verzeichnis ist in der Reihenfolge der ersten Nennung nummeriert.
+- **Im Text:** (Demir und Kaya 50)
+- **Literaturverzeichnis:** Demir, Mehmet, und Elif Kaya. “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme.” Örnek Eğitim Dergisi, vol. 12, no. 3, 2022, S. 45–62.
 
-### ISNAD
+### Chicago (Autor-Jahr)
 
-Ein in der Türkei entwickeltes Zitiersystem, das vor allem in der Theologie und Teilen der Sozialwissenschaften genutzt wird, mit Fußnoten- und Autor-Jahr-Variante. Viele türkische Zeitschriften verlangen es. Academiana unterstützt die Autor-Jahr-Form der 2. Auflage von ISNAD; bei Zeitschriften mit Fußnotenform gleichen Sie Ihr Verzeichnis bitte mit deren Richtlinien ab.
+- **Im Text:** (Demir und Kaya 2022, 50)
+- **Literaturverzeichnis:** Demir, Mehmet, und Elif Kaya. 2022. “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme.” Örnek Eğitim Dergisi 12 (3): 45–62.
+
+### IEEE
+
+- **Im Text:** [1, S. 50]
+- **Literaturverzeichnis:** M. Demir und E. Kaya, “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme,” Örnek Eğitim Dergisi, vol. 12, no. 3, S. 45–62, 2022.
+
+### Vancouver
+
+- **Im Text:** [1, S. 50]
+- **Literaturverzeichnis:** Demir M, Kaya E. Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme. Örnek Eğitim Dergisi. 2022;12(3):45-62.
+
+### ISNAD 2 (im Text)
+
+- **Im Text:** (Demir - Kaya, 2022, 50)
+- **Literaturverzeichnis:** Demir, Mehmet - Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Örnek Eğitim Dergisi 12/3 (2022), 45-62.
+
+### ISNAD 2 (Fußnoten)
+
+- **Erste Fußnote:** Mehmet Demir - Elif Kaya, “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”, Örnek Eğitim Dergisi 12/3 (2022), 45-62/50.
+- **Folgende Fußnoten:** Demir - Kaya, “Üniversite Öğrencilerinde Sosyal”, 52.
+- **Literaturverzeichnis:** Demir, Mehmet - Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Örnek Eğitim Dergisi 12/3 (2022), 45-62.
+
+
+## Die Stile auf einen Blick
+
+| Stil | Typische Fächer | Zitat im Text | Reihenfolge im Verzeichnis | Titel des Verzeichnisses |
+| --- | --- | --- | --- | --- |
+| APA 7 | Psychologie, Bildung, Sozialwissenschaften | Autor, Jahr | Alphabetisch | Literaturverzeichnis |
+| MLA 9 | Sprachen, Literatur, Geisteswissenschaften | Autor, Seite | Alphabetisch | Works Cited |
+| Chicago (Autor-Jahr) | Geschichte, Kunst, Sozialwissenschaften | Autor Jahr, Seite | Alphabetisch | Literaturverzeichnis |
+| IEEE | Ingenieurwesen, Informatik | Nummer in eckigen Klammern | Reihenfolge der Erstnennung | Literaturverzeichnis |
+| Vancouver | Medizin, Gesundheitswissenschaften | Nummer | Reihenfolge der Erstnennung | Literaturverzeichnis |
+| ISNAD 2 (im Text) | Theologie, einige Sozialwissenschaften | Autor, Jahr, Seite | Alphabetisch | Literaturverzeichnis |
+| ISNAD 2 (Fußnoten) | Theologie, Geschichte | Fußnote | Alphabetisch | Literaturverzeichnis |
+
+Einzelheiten zu ISNAD finden Sie in unserem [Leitfaden zum ISNAD-Zitierstil](/de/blog/isnad-zitierstil-leitfaden), die APA-Regeln für Zitate im Text im Leitfaden [APA 7 Zitierregeln](/de/blog/apa-7-zitierregeln).
+
+## Nötige Angaben nach Quellentyp
+
+Unabhängig vom Stil sollten Sie diese Angaben von Anfang an festhalten:
+
+- **Zeitschriftenartikel:** Autorinnen und Autoren, Jahr, Titel, Zeitschrift, Jahrgang, Heft, Seitenbereich, DOI
+- **Buch:** Autoren oder Herausgeber, Jahr, Titel, Auflage (ab der zweiten), Verlag; in manchen Stilen Verlagsort
+- **Buchkapitel:** Kapitelautoren, Kapiteltitel, Herausgeber, Buchtitel, Seitenbereich, Verlag
+- **Abschlussarbeit:** Autor, Jahr, Titel, Art (Master/Dissertation), Universität; bei Onlinezugriff Datenbank und Nummer
+- **Webseite:** Autor oder Organisation, Datum, Seitentitel, Name der Website, URL; Abrufdatum, wenn sich der Inhalt ändern kann
+
+Fehlt eine dieser Angaben, ist auch der Eintrag unvollständig. Am häufigsten vergessen werden Heftnummer, Seitenbereich und DOI.
+
+## Was ist eine DOI und warum ist sie wichtig?
+
+Eine DOI (Digital Object Identifier) ist eine dauerhafte Kennung für eine Veröffentlichung. Auch wenn sich die Internetadresse ändert, bleibt die DOI gleich und führt immer zur richtigen Seite. APA 7 verlangt die DOI als Link, der mit https://doi.org/ beginnt. Mit der DOI erreichen Leser die Quelle mit einem Klick, und ihre Existenz lässt sich leicht prüfen. Die DOI oder fehlende Angaben einer Quelle finden Sie mit unserem kostenlosen [Literaturverzeichnis-Generator](/de/araclar/kaynakca-olusturucu).
+
+## Regeln für Reihenfolge und Form
+
+- **Alphabetische Stile** (APA, MLA, Chicago, ISNAD) ordnen nach dem Nachnamen der ersten Autorin oder des ersten Autors.
+- **Zwei Werke derselben Person aus demselben Jahr** werden in APA durch einen Buchstaben am Jahr unterschieden: 2021a, 2021b.
+- **Nummerierte Stile** (IEEE, Vancouver) nummerieren in der Reihenfolge der Erstnennung; eine erneut zitierte Quelle behält ihre Nummer.
+- **Hängender Einzug:** In APA, MLA und Chicago beginnt die erste Zeile jedes Eintrags am linken Rand, die folgenden sind eingerückt.
+- **Großschreibung in Titeln:** APA schreibt in Artikeltiteln nur das erste Wort und Eigennamen groß; ISNAD und Chicago schreiben die Hauptwörter groß. Den Unterschied sehen Sie in den Beispielen oben.
 
 ## Checkliste für ein gutes Literaturverzeichnis
 
-- Hat **jedes** Zitat im Text einen passenden Eintrag?
-- Wird **jeder** Eintrag irgendwo im Text zitiert?
-- Stimmen Namen und Jahre exakt überein?
-- Sind Zeitschriftentitel, Band, Heft und Seiten vollständig?
+- Hat **jedes** Zitat im Text einen Eintrag im Verzeichnis?
+- Wird **jede** Quelle im Verzeichnis im Text zitiert?
+- Stimmen Namen und Jahre exakt mit dem Text überein?
+- Sind Zeitschrift, Jahrgang, Heft und Seiten vollständig?
 - Ist die DOI angegeben, wo vorhanden?
-- Stimmt die Reihenfolge (alphabetisch bei APA/MLA, numerisch bei IEEE)?
-- Ist die Formatierung einheitlich (Kursivschrift, Zeichensetzung, hängender Einzug)?
+- Stimmt die Reihenfolge (Nachname in alphabetischen Stilen, Erstnennung in nummerierten Stilen)?
+- Ist die Form einheitlich (Kursivschrift, Satzzeichen, hängender Einzug, Großschreibung)?
+- Existiert jede Quelle wirklich und enthält sie die zitierte Information?
+
+## Vorsicht vor erfundenen Quellen
+
+KI-Chatwerkzeuge können Quellen erzeugen, die es nicht gibt, die aber echt wirken: mit echten Autorennamen, echten Zeitschriftentiteln und überzeugenden DOIs. Eine solche Quelle im Literaturverzeichnis ist ein ernstes Problem wissenschaftlicher Redlichkeit. Suchen und lesen Sie jede Quelle selbst; Ihr Verzeichnis können Sie mit unserer kostenlosen [Prüfung auf erfundene Quellen](/de/araclar/uydurma-kaynak-kontrolu) kontrollieren. Mehr dazu im Leitfaden [KI-erfundene Quellen erkennen](/de/blog/ki-erfundene-quellen-erkennen).
 
 ## Literaturverwaltungsprogramme
 
-Programme wie Zotero, Mendeley, EndNote oder Citavi sammeln Ihre Quellen an einem Ort und erzeugen das Literaturverzeichnis automatisch. Über BibTeX, RIS oder CSL-JSON übertragen Sie Quellen zwischen Programmen.
+Programme wie Zotero, Mendeley und EndNote sammeln Ihre Quellen an einem Ort und erstellen das Verzeichnis automatisch. Gespeicherte Quellen lassen sich als BibTeX, RIS oder CSL-JSON exportieren und in andere Werkzeuge übernehmen. Zu Einrichtung und Nutzung siehe unseren [Leitfaden zu Zotero und Mendeley](/de/blog/zotero-mendeley-literaturverwaltung). Wie gut das Programm auch ist: Prüfen Sie automatisch erzeugte Einträge immer; fehlende Seitenbereiche und falsche Großschreibung sind häufig.
 
-## Literaturverzeichnisse mit Academiana
+## Häufige Fehler
 
-In Academiana tippen Sie das Literaturverzeichnis nie von Hand: Es entsteht aus den Zitaten in Ihrem Text und stimmt immer damit überein. Sie können aus Zotero, Mendeley und EndNote importieren und in Formaten exportieren, die diese Programme lesen. Ein Klick auf einen Eintrag zeigt alle Abschnitte, in denen die Quelle verwendet wird, und der Stilwechsel dauert einen Klick.`,
+- Eine im Text zitierte Quelle fehlt im Verzeichnis (oder umgekehrt)
+- Dieselbe Quelle erscheint im Text und im Verzeichnis mit anderem Jahr oder anderer Schreibweise
+- Eine nicht gelesene Quelle aus der Zusammenfassung eines anderen Autors übernehmen und als Primärquelle ausgeben: unser Leitfaden [Plagiat vermeiden](/de/blog/plagiat-vermeiden) erklärt die Regeln für Sekundärzitate
+- Verschiedene Stile in einem Verzeichnis mischen
+- Das ganze Verzeichnis erst am Ende der Arbeit erstellen
+
+## Literaturverzeichnis mit Academiana
+
+In Academiana wird das Literaturverzeichnis nicht von Hand geschrieben; es entsteht aus den Zitaten im Text und passt immer zu ihm. Löschen Sie ein Zitat, verschwindet die Quelle auch aus dem Verzeichnis. Sie wechseln mit einem Klick zwischen 11 Stilen, darunter APA 7, ISNAD 2 (im Text und mit Fußnoten), MLA, Chicago, IEEE, Vancouver und Harvard; mit ISNAD-Fußnoten werden Zitate in Word-, PDF- und LaTeX-Ausgaben zu echten Fußnoten. Quellen lassen sich aus Zotero, Mendeley und EndNote importieren und in Formaten exportieren, die diese Programme lesen. Die Qualitätsprüfung findet unvollständige Angaben, nicht überprüfbare Quellen und Abweichungen zwischen Text und Verzeichnis für Sie.`,
   },
   "intihal-nasil-onlenir": {
     slug: "plagiat-vermeiden",

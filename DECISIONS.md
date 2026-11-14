@@ -1146,3 +1146,14 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **İç bağlantı ve site haritası:**
   - Araçlar sayfasındaki rehber listelerine yeni yazılar eklendi.
   - Site haritası yazı listesinden üretildiği için yeni yazılar üç dil ve hreflang ile kendiliğinden girdi.
+
+## D198 — Dizine alınmayan sayfalar için içerik güçlendirme (2026-11-14)
+- **Neden:** Search Console 7 sayfa için “Tarandı, şu anda dizine eklenmemiş” gösterdi.
+  - Teknik denetimde sorun yok: 200 dönüyor, `index, follow`, kendine işaret eden canonical, robots.txt ve site haritası düzgün.
+  - En zayıf aday iki kısa blog yazısıydı: kaynakça (~570 kelime) ve literatür taraması (~620 kelime).
+- **Yapılan:** Bu iki yazı TR/EN/DE olarak yeniden yazıldı (TR ~1.270–1.290 kelime). Yeni başlık, arama başlığı, açıklama ve anahtar kelimeler; `updated: 2026-11-14`; gerçek eserlerden kaynak listeleri.
+  - **Literatür taraması:** derleme türleri, soru ayrıştırma (PICO/PEO), arama dizesi, veri tabanları, ölçüt tablosu, eleme kaydı, kaynak değerlendirme, tema paragrafı kalıbı, boşluk türleri, bölüm iskeleti.
+  - **Kaynakça:** aynı kurgusal makalenin 7 stilde metin içi ve kaynakça örneği (atıf motorundan, uydurma DOI yok), stil karşılaştırma tablosu, kaynak türüne göre gereken bilgiler, DOI, sıralama, uydurma kaynak uyarısı.
+  - Eski “dipnotlu ISNAD desteklenmez” bilgisi düzeltildi (D190).
+- **Test:** `tests/blog-d198.test.ts`, örneklerin atıf motoruyla üç dilde aynı olduğunu denetler.
+- **Kullanıcıya:** Search Console’da URL denetimi → “Dizine eklenmesini iste”; 1–2 hafta sonra “Düzeltmeyi doğrula”.

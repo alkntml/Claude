@@ -91,55 +91,157 @@ Academiana’nın **Konu bulma** aracı, yazdığınız alanla ilgili OpenAlex�
   },
   {
     slug: "literatur-taramasi-nasil-yapilir",
-    title: "Literatür Taraması Nasıl Yapılır? Adım Adım Rehber",
-    description: "Akademik literatür taraması için anahtar kelime belirleme, veri tabanı seçimi, kaynak eleme ve tematik sentez. Tez ve makale için uygulanabilir yöntem.",
+    title: "Literatür Taraması Nasıl Yapılır? Arama Dizesinden Sentez Yazımına Adım Adım Rehber",
+    seoTitle: "Literatür Taraması Nasıl Yapılır? Adım Adım Rehber",
+    description: "Literatür taraması adım adım: araştırma sorusu, arama dizesi, veri tabanları, eleme ölçütleri, kaynak değerlendirme ve temalara göre sentez yazımı.",
     category: "Araştırma ve yöntem",
-    keywords: ["literatür taraması nasıl yapılır", "literatür taraması örneği", "kaynak tarama", "sistematik derleme"],
+    keywords: ["literatür taraması nasıl yapılır", "literatür taraması örneği", "arama dizesi oluşturma", "literatür taraması aşamaları", "kaynak tarama", "literatür sentezi"],
     date: "2026-11-02",
+    updated: "2026-11-14",
     cta: { text: "OpenAlex, Crossref, PubMed, DergiPark dahil 16 veri tabanında aynı anda arayın; kaynaklar otomatik doğrulanır.", href: "/kayit", label: "Kaynak aramaya başla" },
-    body: `Literatür taraması, konunuzla ilgili mevcut bilgiyi bulmak, değerlendirmek ve sentezlemek demektir. Amaç kaynakları tek tek özetlemek değil, alandaki bilginin bugün nerede durduğunu ve sizin çalışmanızın nereye oturduğunu göstermektir.
+    body: `Literatür taraması, konunuzla ilgili mevcut bilgiyi **bulmak, değerlendirmek ve sentezlemek** demektir. Amaç kaynakları tek tek özetlemek değil; alandaki bilginin bugün nerede durduğunu, nerede uzlaşıldığını, nerede tartışıldığını ve sizin çalışmanızın bu tabloya nereden eklendiğini göstermektir. İyi bir literatür taraması tezin gerekçesini kurar, yöntem seçimlerinizi destekler ve tartışma bölümünde bulgularınızı karşılaştıracağınız zemini hazırlar.
 
-## 1. Anahtar kelimeleri belirleyin
+Bu rehberde bir literatür taramasını baştan sona, uygulanabilir adımlarla anlatıyoruz: soruyu netleştirmekten arama dizesi kurmaya, kaynakları elemekten temalara göre yazmaya kadar.
 
-Konunuzdaki temel kavramları yazın ve her biri için eş anlamlıları ve İngilizce karşılıklarını ekleyin. Örneğin "benlik saygısı" için *self-esteem*, *self-worth*. Kavramları **AND** ile birleştirip eş anlamlıları **OR** ile genişletebilirsiniz:
+## Literatür taraması türleri
 
-- (self-esteem OR self-worth) AND (social media) AND (university students)
+Hepsine “literatür taraması” denir, ama amaçları ve kuralları farklıdır:
 
-## 2. Doğru veri tabanlarını seçin
+- **Anlatı (geleneksel) derleme:** Tez ve makalelerin giriş ve kuramsal bölümlerinde en sık görülen türdür. Konunun çerçevesini çizer; arama süreci ayrıntılı raporlanmaz.
+- **Bütünleştirici derleme:** Farklı yöntemlerle yapılmış çalışmaları birlikte değerlendirerek yeni bir çerçeve önerir.
+- **Kapsam (scoping) derlemesi:** Bir alanda neyin, ne kadar çalışıldığını haritalar; çalışmaların kalitesini değerlendirmek birincil amaç değildir.
+- **Sistematik derleme:** Önceden yazılmış bir protokolle, tekrarlanabilir bir arama ve eleme süreciyle yapılır; genellikle PRISMA akış şemasıyla raporlanır. Ayrıntı için [sistematik derleme ve PRISMA rehberimize](/blog/sistematik-derleme-meta-analiz-prisma) bakın.
+- **Meta-analiz:** Sistematik derlemedeki nicel sonuçları istatistiksel olarak birleştirir.
+
+Bir tezin literatür bölümü çoğunlukla anlatı derlemedir; ama aşağıdaki adımları sistematik bir disiplinle uygulamak, “önemli bir çalışmayı kaçırdınız” eleştirisini büyük ölçüde önler.
+
+## 1. Araştırma sorusunu netleştirin
+
+Taramanın sınırlarını araştırma sorusu çizer. Soru belirsizse tarama da dağılır. Soruyu bileşenlerine ayırın:
+
+- **Kim?** Örneklem veya bağlam (ör. üniversite öğrencileri, Türkiye’deki lise öğretmenleri)
+- **Ne?** İncelenen değişken, müdahale veya olgu (ör. sosyal medya kullanımı)
+- **Hangi sonuç?** İlgilendiğiniz çıktı (ör. akademik erteleme)
+
+Sağlık bilimlerinde bu yapı PICO (popülasyon, müdahale, karşılaştırma, sonuç), sosyal bilimlerde çoğu zaman PEO (popülasyon, maruziyet, sonuç) olarak bilinir. Bileşenlerin her biri arama dizenizde bir blok olacaktır.
+
+## 2. Anahtar kelimeler ve arama dizesi
+
+Her bileşen için eş anlamlıları, yakın kavramları ve İngilizce karşılıkları listeleyin. Uluslararası literatürün büyük kısmı İngilizcedir; yalnızca Türkçe aramak önemli çalışmaları kaçırmanıza yol açar.
+
+- Bir bileşenin eş anlamlılarını **OR** ile birleştirin.
+- Farklı bileşenleri **AND** ile bağlayın.
+- Kelime öbeklerini tırnak içine alın: "social media".
+- Kök aramada yıldız kullanın: procrastinat* (procrastination, procrastinating…).
+
+Örnek arama dizesi:
+
+- ("social media" OR "social networking sites") AND (procrastinat*) AND ("university students" OR undergraduate*)
+
+Türkçe veri tabanları için aynı mantıkla ikinci bir dize hazırlayın: ("sosyal medya" OR "sosyal ağ") AND erteleme AND ("üniversite öğrencileri"). Arama dizelerini bir yere kaydedin; yöntem bölümünde veya sistematik bir derlemede bunları raporlamanız gerekebilir.
+
+## 3. Doğru veri tabanlarını seçin
 
 - **Genel ve disiplinler arası:** OpenAlex, Crossref, Semantic Scholar, Google Scholar
 - **Sağlık ve yaşam bilimleri:** PubMed, Europe PMC
+- **Eğitim:** ERIC
 - **Açık erişim:** DOAJ, CORE
 - **Türkçe kaynaklar:** DergiPark, TR Dizin, YÖK Ulusal Tez Merkezi
 
-Tek bir veri tabanında kalmak önemli çalışmaları kaçırmanıza neden olabilir.
+Tek bir veri tabanında kalmak önemli çalışmaları kaçırmanıza neden olur. Google Scholar geniş kapsamlıdır ama sonuçları tekrarlanabilir değildir ve hakemsiz kaynakları da içerir; tek kaynak olarak kullanmayın. Türkçe kaynaklara nasıl ulaşacağınızı [DergiPark, TR Dizin ve YÖK Tez rehberimizde](/blog/dergipark-tr-dizin-yok-tez-kaynak-arama) anlattık.
 
-## 3. Kaynakları eleyin
+## 4. Dahil etme ve hariç tutma ölçütlerini önceden yazın
 
-Önce başlık ve özete bakın, sonra uygun olanların tam metnini okuyun. Dahil etme ölçütlerinizi baştan yazın: yayın yılı aralığı, dil, yöntem türü, örneklem. Sistematik derleme yapıyorsanız bu süreci kayıt altına almanız (ör. PRISMA akış şeması) beklenir.
+Hangi çalışmaları alacağınıza okumaya başlamadan karar verin. Ölçütleri sonradan, sonuçlara bakarak belirlemek seçici bir literatür oluşturur.
 
-## 4. Okurken not alın
+| Ölçüt | Dahil | Hariç |
+| --- | --- | --- |
+| Yayın yılı | Son 10 yıl (kuramsal temel eserler hariç) | Daha eski ampirik çalışmalar |
+| Dil | Türkçe ve İngilizce | Diğer diller |
+| Yayın türü | Hakemli makale, tez | Konferans özeti, blog yazısı |
+| Örneklem | Üniversite öğrencileri | Çocuk ve ergen örneklemleri |
+| Yöntem | Nicel ve nitel ampirik çalışmalar | Görüş yazıları |
 
-Her kaynak için şunları not edin: amaç, örneklem, yöntem, temel bulgular, sınırlılıklar ve sizin çalışmanızla ilişkisi. Doğrudan alıntı yapacağınız cümlelerin sayfa numarasını mutlaka yazın. Bu notları bir tabloda toplamak (literatür matrisi) yazma aşamasını çok hızlandırır.
+Bu tablo bir örnektir; ölçütleri kendi sorunuza göre kurun ve gerekçelendirin.
 
-## 5. Kaynakları tek tek değil, temalara göre yazın
+## 5. Tarayın, eleyin ve kayıt tutun
 
-Zayıf bir literatür bölümü "A şunu buldu. B şunu buldu." şeklinde ilerler. Güçlü bir literatür bölümü ise temalar etrafında örgütlenir: hangi bulgular birbirini destekliyor, hangileri çelişiyor, hangi sorular hâlâ cevapsız?
+Eleme iki aşamada yapılır: önce **başlık ve özet**, sonra uygun görünenlerin **tam metni**. Her aşamada kaç kaydın elendiğini ve nedenini not edin. Basit bir arama kaydı, aylar sonra “Bu çalışmayı neden almamıştım?” sorusunu cevaplar:
 
-## 6. Boşluğu açıkça belirtin
+- Arama tarihi, veri tabanı, kullanılan dize, bulunan kayıt sayısı
+- Başlık–özet aşamasında elenen kayıt sayısı ve başlıca nedenler
+- Tam metni okunan ve dahil edilen çalışma sayısı
 
-Literatür bölümünüzün sonunda okuyucu şu soruya cevap bulmalıdır: "Bu çalışmaya neden ihtiyaç var?" Boşluk; az çalışılmış bir örneklem, çelişkili bulgular ya da eksik bir yöntem olabilir.
+Bir çalışmanın tam metnine erişemediyseniz bunu da kaydedin. **Yalnızca özetini okuduğunuz bir çalışmayı, tam metnini okumuş gibi ayrıntılı yorumlamayın.**
+
+## 6. Okurken not alın: literatür matrisi
+
+Her kaynak için aynı ölçütlerle not alın: amaç, örneklem, yöntem, ölçme aracı, temel bulgular, sınırlılıklar ve sizin çalışmanızla ilişkisi. Doğrudan alıntı yapacağınız cümlelerin sayfa numarasını mutlaka yazın. Bu notları tek bir tabloda toplamak (literatür matrisi) yazma aşamasını çok hızlandırır; matrisin nasıl kurulacağını ve örnek bir matrisi [literatür matrisi rehberimizde](/blog/literatur-matrisi-nasil-hazirlanir) bulabilirsiniz. Künyeleri ise baştan bir kaynak yönetim programına kaydedin: [Zotero ve Mendeley rehberi](/blog/zotero-mendeley-ile-kaynak-yonetimi).
+
+## 7. Kaynakları değerlendirin
+
+Her yayın aynı ağırlıkta değildir. Bir kaynağı kullanmadan önce şunlara bakın:
+
+- **Hakem süreci:** Hakemli bir dergide mi yayımlanmış? Yağmacı dergilerden nasıl kaçınacağınızı [bu rehberde](/blog/yagmaci-dergiler-nasil-anlasilir) anlattık.
+- **Yöntemin uygunluğu:** Örneklem büyüklüğü, ölçme araçlarının geçerlik ve güvenirliği, analiz seçimi yeterli mi?
+- **Güncellik:** Alanınızda bilgi ne kadar hızlı değişiyor? Temel kuramsal eserler eski olabilir; ampirik bulgular için güncel çalışmalar tercih edilir.
+- **Birincil kaynak:** Bir bulguyu başka bir yazarın aktarımından değil, mümkünse özgün çalışmadan okuyun.
+
+## 8. Kaynakları tek tek değil, temalara göre yazın
+
+Zayıf bir literatür bölümü “A şunu buldu. B şunu buldu. C de şunu buldu.” şeklinde ilerler. Güçlü bir literatür bölümü temalar etrafında örgütlenir: hangi bulgular birbirini destekliyor, hangileri çelişiyor, hangi sorular hâlâ cevapsız?
+
+Bir tema paragrafı için kullanışlı bir kalıp: **genel iddia → destekleyen çalışmalar → ayrışan çalışma → değerlendirme.**
+
+- **Zayıf:** “Yılmaz (2019) sosyal medya kullanımı ile erteleme arasında ilişki buldu. Kaya (2021) da benzer bir sonuca ulaştı. Demir (2022) ise ilişki bulamadı.”
+- **Güçlü:** “Sosyal medya kullanımı ile akademik erteleme arasındaki ilişki çalışmaların çoğunda pozitif bulunmuştur (Yılmaz, 2019; Kaya, 2021). İlişki bulamayan çalışmanın (Demir, 2022) yalnızca kullanım süresini ölçmesi, ilişkinin süreden çok kullanım biçimiyle ilgili olabileceğini düşündürmektedir.”
+
+Buradaki yazar adları biçimi göstermek için verilmiş örneklerdir. İkinci paragraf aynı çalışmaları kullanır ama okura bir **sonuç** verir ve farkın olası nedenini tartışır.
+
+## 9. Boşluğu açıkça belirtin
+
+Literatür bölümünüzün sonunda okuyucu şu soruya cevap bulmalıdır: “Bu çalışmaya neden ihtiyaç var?” Boşluk şunlardan biri olabilir:
+
+- Az çalışılmış bir **örneklem veya bağlam** (ör. Türkiye’deki lisansüstü öğrenciler)
+- **Çelişkili bulgular** ve bu çelişkiyi açıklayacak bir değişkenin eksikliği
+- **Yöntemsel eksiklik** (ör. yalnızca kesitsel çalışmalar var, boylamsal çalışma yok)
+- **Güncelliğini yitirmiş bulgular** (ör. ölçme araçları ya da teknoloji değişmiş)
+
+Boşluğu yazarken “bu konuda hiç çalışma yok” gibi kesin ifadelerden kaçının; “erişilebilen literatürde sınırlı sayıda çalışma bulunmaktadır” gibi taradığınız alanla sınırlı bir ifade kullanın.
+
+## 10. Literatür bölümünün iskeleti
+
+1. **Kısa giriş:** Bölümün kapsamı ve temaların sırası
+2. **Tema başlıkları:** Her tema ayrı bir alt başlık; genelden özele doğru
+3. **Değerlendirme ve boşluk:** Literatürün genel durumu ve çalışmanızın katkısı
+
+Literatür taraması ile kuramsal çerçeve arasındaki farkı [kuramsal ve kavramsal çerçeve rehberimizde](/blog/kuramsal-cerceve-kavramsal-cerceve-farki), bölümü tezin geri kalanıyla bağlamayı [tez nasıl yazılır rehberimizde](/blog/tez-nasil-yazilir) bulabilirsiniz.
+
+## Taramayı ne zaman bitirmeli?
+
+Yeni bulduğunuz kaynaklar artık yeni bir tema veya bulgu getirmiyor, hep aynı çalışmalara atıf yapıyorsa doygunluğa yaklaşmışsınız demektir. Yine de taramayı tez teslimine kadar güncel tutun: yazım sürecinde yayımlanan önemli bir çalışmayı atlamak jüride sık eleştirilen bir eksiktir.
 
 ## Sık yapılan hatalar
 
 - Yalnızca özetini okuduğunuz bir çalışmayı tam metnini okumuş gibi yorumlamak
+- Tek bir veri tabanında, yalnızca Türkçe anahtar kelimelerle aramak
+- Dahil etme ölçütlerini sonuçlara bakarak sonradan belirlemek
 - Eski ve güncelliğini yitirmiş kaynaklarla yetinmek
 - İkincil kaynağı birincil kaynakmış gibi göstermek
-- Kaynak bilgilerini sona bırakıp sonra bulamamak
+- Kaynakları tek tek özetleyip art arda dizmek
+- Künye bilgilerini sona bırakıp sonra bulamamak
 
 ## Academiana ile literatür taraması
 
-Academiana, yazdığınız konu için arama stratejisini planlar ve 16 veri tabanında aynı anda arama yapar. Bulunan kaynaklar DOI üzerinden doğrulanır; her kaynağın yanında künye, özet veya tam metin düzeyinde mi okunduğu açıkça yazar. Literatür matrisi ile kaynaklarınızı tablo hâlinde karşılaştırabilir, açık erişimli tam metinlerden sayfa numaralı alıntılar yapabilirsiniz.`,
+Academiana, yazdığınız konu için arama stratejisini planlar ve OpenAlex, Crossref, Semantic Scholar, PubMed, DergiPark dahil 16 veri tabanında aynı anda arama yapar. Bulunan kaynaklar DOI üzerinden doğrulanır; her kaynağın yanında künye, özet veya tam metin düzeyinde mi okunduğu açıkça yazar. Literatür matrisi ile kaynaklarınızı tablo hâlinde karşılaştırabilir, literatür haritası ile kaynaklar arasındaki atıf bağlarını ve eksik temel çalışmaları görebilir, açık erişimli tam metinlerden sayfa numaralı alıntılar yapabilirsiniz. Asistan literatür bölümünü yazarken kaynakları tek tek özetlemez, temalara göre sentezler ve yalnızca kütüphanenizdeki kaynaklara atıf yapar.`,
+    sources: [
+      { text: "Grant, M. J., & Booth, A. (2009). A typology of reviews: An analysis of 14 review types and associated methodologies. Health Information & Libraries Journal, 26(2), 91–108." },
+      { text: "Snyder, H. (2019). Literature review as a research methodology: An overview and guidelines. Journal of Business Research, 104, 333–339." },
+      { text: "Webster, J., & Watson, R. T. (2002). Analyzing the past to prepare for the future: Writing a literature review. MIS Quarterly, 26(2), xiii–xxiii." },
+      { text: "Torraco, R. J. (2005). Writing integrative literature reviews: Guidelines and examples. Human Resource Development Review, 4(3), 356–367." },
+      { text: "Page, M. J., McKenzie, J. E., Bossuyt, P. M., Boutron, I., Hoffmann, T. C., Mulrow, C. D., … Moher, D. (2021). The PRISMA 2020 statement: An updated guideline for reporting systematic reviews. BMJ, 372, n71." },
+      { text: "Booth, A., Sutton, A., & Papaioannou, D. (2016). Systematic approaches to a successful literature review (2nd ed.). SAGE." },
+    ],
   },
   {
     slug: "apa-7-atif-kurallari",
@@ -215,42 +317,107 @@ Academiana’da atıflar metne düz yazı olarak değil, kaynağa bağlı bir i�
   },
   {
     slug: "kaynakca-nasil-hazirlanir",
-    title: "Kaynakça Nasıl Hazırlanır? APA, MLA, Chicago ve ISNAD Farkları",
-    description: "Kaynakça hazırlarken hangi stili seçmelisiniz? APA, MLA, Chicago, IEEE ve ISNAD stillerinin farkları, örnekleri ve kaynakça hatalarından kaçınma yolları.",
+    title: "Kaynakça Nasıl Hazırlanır? APA, MLA, Chicago, IEEE ve ISNAD Örnekleriyle Rehber",
+    seoTitle: "Kaynakça Nasıl Hazırlanır? 7 Stilde Örneklerle Rehber",
+    description: "Kaynakça nasıl hazırlanır: aynı kaynağın APA 7, MLA, Chicago, IEEE, Vancouver ve ISNAD örnekleri, DOI, sıralama kuralları ve kontrol listesi.",
     category: "Kaynak ve atıf",
-    keywords: ["kaynakça nasıl yazılır", "kaynakça örneği", "ISNAD atıf sistemi", "MLA kaynak gösterme", "Chicago atıf"],
+    keywords: ["kaynakça nasıl hazırlanır", "kaynakça örneği", "kaynakça nasıl yazılır", "ISNAD kaynakça", "MLA kaynak gösterme", "Chicago atıf", "IEEE kaynakça"],
     date: "2026-11-02",
+    updated: "2026-11-14",
     cta: { text: "Zotero, Mendeley veya EndNote’tan kaynaklarınızı içe aktarın; kaynakça seçtiğiniz stilde otomatik oluşsun.", href: "/kayit", label: "Kaynakçamı otomatik oluştur" },
-    body: `Kaynakça, çalışmanızda atıf yaptığınız bütün kaynakların listesidir. Okuyucunun bir bilgiyi kaynağına kadar takip edebilmesini sağlar ve akademik dürüstlüğün temelidir. Hangi stili kullanacağınızı çoğu zaman siz değil, enstitünüz veya dergi belirler.
+    body: `Kaynakça, çalışmanızda atıf yaptığınız bütün kaynakların listesidir. Okuyucunun bir bilgiyi kaynağına kadar takip edebilmesini sağlar ve akademik dürüstlüğün temelidir. Jüri üyeleri ve hakemler kaynakçaya ilk bakışta çalışmanın ne kadar özenli hazırlandığına dair güçlü bir izlenim edinir: eksik künyeler, metinde olup kaynakçada olmayan atıflar ya da karışık biçimler en sık düzeltme istenen konular arasındadır.
+
+Bu rehberde kaynakçanın nasıl hazırlanacağını, en yaygın atıf stillerinin farklarını ve aynı kaynağın her stilde nasıl yazıldığını örneklerle anlatıyoruz.
 
 ## Kaynakça ile bibliyografya farkı
 
 - **Kaynakça:** Yalnızca metinde atıf yaptığınız kaynaklar.
 - **Bibliyografya:** Okuduğunuz ama atıf yapmadığınız kaynaklar da dahil olabilir.
 
-Tezlerde ve makalelerde genellikle **kaynakça** istenir.
+Tezlerde ve makalelerde genellikle **kaynakça** istenir. Metindeki her atıfın kaynakçada, kaynakçadaki her kaynağın metinde bir karşılığı olmalıdır.
 
-## Stiller ve kullanıldığı alanlar
+## Stili kim belirler?
 
-### APA
+Hangi stili kullanacağınızı çoğu zaman siz değil, enstitünüzün tez yazım kılavuzu veya dergi belirler. Kılavuz bir stil adı verip bazı noktalarda ondan ayrılabilir (ör. “APA 7, ancak kaynakçada yazar adları tam yazılır”). Böyle durumlarda **kılavuzun kendi kuralı önceliklidir**. Yazmaya başlamadan önce kılavuzu okuyun; stil değiştirmek ileride çok zaman alır.
 
-Psikoloji, eğitim ve sosyal bilimlerde yaygındır. Metin içinde (Yazar, Yıl) kullanılır. Kaynakçada yıl, yazar adından hemen sonra gelir.
+## Aynı kaynak yedi stilde
 
-### MLA
+Farkları en iyi gösteren yol, tek bir kaynağı farklı stillerde yan yana görmektir. Aşağıdaki örnekler **kurgusal** bir dergi makalesinin (Demir ve Kaya, 2022, *Örnek Eğitim Dergisi*, cilt 12, sayı 3, sayfa 45–62) 50. sayfasına yapılan atıfı ve kaynakça girdisini gösterir. Tüm örnekler Academiana’nın atıf motoruyla üretilmiştir.
 
-Dil, edebiyat ve beşerî bilimlerde kullanılır. Metin içinde yazar ve sayfa yazılır: (Yılmaz 45). Kaynakçanın adı "Works Cited"tır.
+### APA 7
 
-### Chicago
+- **Metin içi:** (Demir & Kaya, 2022, s. 50)
+- **Kaynakça:** Demir, M., & Kaya, E. (2022). Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme. Örnek Eğitim Dergisi, 12(3), 45–62.
 
-Tarih ve sanat alanlarında yaygındır. İki biçimi vardır: **dipnot–bibliyografya** (atıflar dipnotta) ve **yazar–tarih**.
+### MLA 9
 
-### IEEE ve Vancouver
+- **Metin içi:** (Demir ve Kaya 50)
+- **Kaynakça:** Demir, Mehmet, ve Elif Kaya. “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme.” Örnek Eğitim Dergisi, vol. 12, no. 3, 2022, pp. 45–62.
 
-Mühendislik (IEEE) ve tıp (Vancouver) alanlarında kullanılır. Atıflar köşeli parantez veya üst simge numaralarla verilir: [1]. Kaynakça, metinde ilk geçiş sırasına göre numaralandırılır.
+### Chicago (yazar-tarih)
 
-### ISNAD
+- **Metin içi:** (Demir ve Kaya 2022, 50)
+- **Kaynakça:** Demir, Mehmet, ve Elif Kaya. 2022. “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme.” Örnek Eğitim Dergisi 12 (3): 45–62.
 
-Türkiye’de özellikle ilahiyat ve sosyal bilimlerin bazı alanlarında kullanılan bir atıf sistemidir. Dipnotlu ve metin içi olmak üzere iki biçimi vardır. Türkiye’deki pek çok dergi ISNAD’ı zorunlu tutar. Academiana, ISNAD 2. edisyonun metin içi (yazar-tarih) biçimini destekler; dipnotlu biçim kullanan dergilerde kaynakçayı dergi kılavuzuyla karşılaştırın.
+### IEEE
+
+- **Metin içi:** [1, s. 50]
+- **Kaynakça:** M. Demir ve E. Kaya, “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme,” Örnek Eğitim Dergisi, vol. 12, no. 3, pp. 45–62, 2022.
+
+### Vancouver
+
+- **Metin içi:** [1, s. 50]
+- **Kaynakça:** Demir M, Kaya E. Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme. Örnek Eğitim Dergisi. 2022;12(3):45-62.
+
+### ISNAD 2 (metin içi)
+
+- **Metin içi:** (Demir - Kaya, 2022, 50)
+- **Kaynakça:** Demir, Mehmet - Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Örnek Eğitim Dergisi 12/3 (2022), 45-62.
+
+### ISNAD 2 (dipnotlu)
+
+- **İlk dipnot:** Mehmet Demir - Elif Kaya, “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”, Örnek Eğitim Dergisi 12/3 (2022), 45-62/50.
+- **Sonraki dipnotlar:** Demir - Kaya, “Üniversite Öğrencilerinde Sosyal”, 52.
+- **Kaynakça:** Demir, Mehmet - Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Örnek Eğitim Dergisi 12/3 (2022), 45-62.
+
+
+## Stillerin farkı tek bakışta
+
+| Stil | Yaygın alan | Metin içi atıf | Kaynakça sırası | Kaynakça adı |
+| --- | --- | --- | --- | --- |
+| APA 7 | Psikoloji, eğitim, sosyal bilimler | Yazar, yıl | Alfabetik | Kaynakça |
+| MLA 9 | Dil, edebiyat, beşerî bilimler | Yazar, sayfa | Alfabetik | Works Cited |
+| Chicago (yazar-tarih) | Tarih, sanat, sosyal bilimler | Yazar yıl, sayfa | Alfabetik | Kaynakça |
+| IEEE | Mühendislik, bilgisayar | Köşeli parantezde numara | Metinde ilk geçiş sırası | Kaynakça |
+| Vancouver | Tıp, sağlık bilimleri | Numara | Metinde ilk geçiş sırası | Kaynakça |
+| ISNAD 2 (metin içi) | İlahiyat ve bazı sosyal bilimler | Yazar, yıl, sayfa | Alfabetik | Kaynakça |
+| ISNAD 2 (dipnotlu) | İlahiyat, tarih | Dipnot | Alfabetik | Kaynakça |
+
+ISNAD’ın ayrıntılarını [ISNAD atıf sistemi rehberimizde](/blog/isnad-atif-sistemi-rehberi), APA’nın metin içi kurallarını [APA 7 atıf kuralları rehberimizde](/blog/apa-7-atif-kurallari) bulabilirsiniz.
+
+## Kaynak türüne göre gereken bilgiler
+
+Stil ne olursa olsun, bir kaynakça girdisi için şu bilgileri baştan kaydedin:
+
+- **Dergi makalesi:** Yazarlar, yıl, makale başlığı, dergi adı, cilt, sayı, sayfa aralığı, DOI
+- **Kitap:** Yazarlar veya editörler, yıl, kitap adı, baskı (ikinci ve sonrası), yayınevi; bazı stillerde basım yeri
+- **Kitap bölümü:** Bölüm yazarları, bölüm başlığı, editörler, kitap adı, sayfa aralığı, yayınevi
+- **Tez:** Yazar, yıl, tez başlığı, tez türü (yüksek lisans/doktora), üniversite; erişildiyse veri tabanı ve tez numarası
+- **Web sayfası:** Yazar veya kurum, tarih, sayfa başlığı, site adı, adres; içerik değişebiliyorsa erişim tarihi
+
+Bu bilgilerden biri eksikse kaynakça girdisi de eksik kalır. En sık unutulanlar sayı numarası, sayfa aralığı ve DOI’dir.
+
+## DOI nedir ve neden önemlidir?
+
+DOI (Digital Object Identifier), bir yayına verilen kalıcı kimliktir. Yayının internet adresi değişse bile DOI aynı kalır ve her zaman doğru sayfaya yönlendirir. APA 7, DOI’nin kaynakçada https://doi.org/ ile başlayan bağlantı biçiminde yazılmasını ister. DOI’si olan bir kaynakta DOI’yi eklemek, okurun kaynağa tek tıkla ulaşmasını sağlar ve kaynağın gerçekten var olduğunu doğrulamayı kolaylaştırır. Bir kaynağın DOI’sini veya eksik künyesini ücretsiz [kaynakça oluşturucumuzla](/araclar/kaynakca-olusturucu) bulabilirsiniz.
+
+## Sıralama ve biçim kuralları
+
+- **Alfabetik stillerde** (APA, MLA, Chicago, ISNAD) sıralama ilk yazarın soyadına göre yapılır. Türkçe soyadlarında Ç, Ğ, İ, Ö, Ş, Ü harflerinin sırasına dikkat edin.
+- **Aynı yazarın aynı yıldaki iki çalışması** APA’da yıla harf eklenerek ayrılır: 2021a, 2021b.
+- **Numaralı stillerde** (IEEE, Vancouver) kaynaklar metinde ilk geçtikleri sırayla numaralanır; aynı kaynağa tekrar atıf yapıldığında aynı numara kullanılır.
+- **Asılı girinti:** APA, MLA ve Chicago’da her girdinin ilk satırı sola dayalı, sonraki satırları içeride yazılır.
+- **Büyük harf kullanımı:** APA makale başlıklarında yalnızca ilk kelimenin ve özel adların baş harfini büyük yazar; ISNAD ve Chicago başlıkta her kelimenin baş harfini büyütür. Yukarıdaki örneklerde bu farkı görebilirsiniz.
 
 ## İyi bir kaynakça için kontrol listesi
 
@@ -259,16 +426,36 @@ Türkiye’de özellikle ilahiyat ve sosyal bilimlerin bazı alanlarında kullan
 - Yazar adları ve yıllar metinle birebir uyuşuyor mu?
 - Dergi adı, cilt, sayı ve sayfa bilgileri eksiksiz mi?
 - DOI varsa eklenmiş mi?
-- Sıralama doğru mu (APA ve MLA’da alfabetik, IEEE’de numara sırası)?
-- Biçim tutarlı mı (italik, noktalama, asılı girinti)?
+- Sıralama doğru mu (alfabetik stillerde soyadı, numaralı stillerde ilk geçiş sırası)?
+- Biçim tutarlı mı (italik, noktalama, asılı girinti, büyük harf kullanımı)?
+- Her kaynak gerçekten var mı ve okuduğunuz bilgiyi gerçekten içeriyor mu?
+
+## Uydurma kaynak riskine dikkat
+
+Yapay zekâ sohbet araçları, var olmayan ama gerçekçi görünen kaynaklar üretebilir: gerçek yazar adları, gerçek dergi adları ve inandırıcı DOI’lerle. Bu tür bir kaynağın kaynakçada bulunması akademik dürüstlük açısından ciddi bir sorundur. Kaynakçanızdaki her kaynağı kendiniz bulup okuyun; kaynakçanızı ücretsiz [uydurma kaynak kontrolü](/araclar/uydurma-kaynak-kontrolu) aracıyla taratabilirsiniz. Ayrıntılar için [yapay zekânın uydurduğu kaynakları tespit etme rehberimize](/blog/yapay-zeka-uydurma-kaynak-tespiti) bakın.
 
 ## Kaynak yönetim programları
 
-Zotero, Mendeley ve EndNote gibi programlar kaynaklarınızı tek bir yerde toplar ve kaynakçayı otomatik oluşturur. Bu programlarda kaydettiğiniz kaynakları BibTeX, RIS veya CSL-JSON biçiminde dışa aktarıp başka araçlara taşıyabilirsiniz.
+Zotero, Mendeley ve EndNote gibi programlar kaynaklarınızı tek bir yerde toplar ve kaynakçayı otomatik oluşturur. Kaydettiğiniz kaynakları BibTeX, RIS veya CSL-JSON biçiminde dışa aktarıp başka araçlara taşıyabilirsiniz. Kurulum ve kullanım için [Zotero ve Mendeley rehberimize](/blog/zotero-mendeley-ile-kaynak-yonetimi) bakın. Program ne kadar iyi olursa olsun, otomatik üretilen girdileri mutlaka kontrol edin: eksik sayfa aralığı veya yanlış büyük harf kullanımı sık görülür.
+
+## Sık yapılan hatalar
+
+- Metinde atıf yapılan bir kaynağın kaynakçada unutulması (veya tersi)
+- Aynı kaynağın metinde ve kaynakçada farklı yıl veya yazım ile geçmesi
+- Okunmayan bir kaynağı başka bir yazarın aktarımından alıp birincil kaynak gibi göstermek: [intihalden kaçınma rehberimiz](/blog/intihal-nasil-onlenir) aktarma kurallarını anlatır
+- Farklı stilleri aynı kaynakçada karıştırmak
+- Kaynakçayı tezin sonunda tek seferde hazırlamaya çalışmak
 
 ## Academiana ile kaynakça
 
-Academiana’da kaynakça elle yazılmaz; metindeki atıflardan otomatik oluşur ve her zaman metinle uyumludur. Zotero, Mendeley ve EndNote’tan kaynaklarınızı içe aktarabilir, kaynakçanızı yine bu programların okuyabileceği biçimlerde dışa aktarabilirsiniz. Kaynakçada bir kaynağa tıkladığınızda o kaynağın metnin hangi bölümlerinde kullanıldığını görürsünüz. Stil değiştirmek tek tıktır.`,
+Academiana’da kaynakça elle yazılmaz; metindeki atıflardan otomatik oluşur ve her zaman metinle uyumludur. Metinden bir atıfı sildiğinizde kaynak kaynakçadan da kalkar. APA 7, ISNAD 2 (metin içi ve dipnotlu), MLA, Chicago, IEEE, Vancouver ve Harvard dahil 11 stil arasında tek tıkla geçiş yapabilirsiniz; ISNAD dipnotlu seçildiğinde Word, PDF ve LaTeX çıktılarında atıflar gerçek dipnot olarak yerleşir. Zotero, Mendeley ve EndNote’tan kaynaklarınızı içe aktarabilir, kaynakçanızı bu programların okuyabileceği biçimlerde dışa aktarabilirsiniz. Kalite kontrolü eksik künyeleri, doğrulanamayan kaynakları ve metin–kaynakça uyumsuzluklarını sizin yerinize bulur.`,
+    sources: [
+      { text: "American Psychological Association. (2020). Publication manual of the American Psychological Association (7th ed.).", url: "https://apastyle.apa.org/" },
+      { text: "Modern Language Association of America. (2021). MLA handbook (9th ed.)." },
+      { text: "University of Chicago Press. (2017). The Chicago manual of style (17th ed.)." },
+      { text: "Patrias, K. (2007). Citing medicine: The NLM style guide for authors, editors, and publishers (2nd ed.). National Library of Medicine." },
+      { text: "İSNAD Atıf Sistemi. (2018). İSNAD Atıf Sistemi Kılavuzu (2. edisyon).", url: "https://www.isnadsistemi.org/" },
+    ],
   },
   {
     slug: "intihal-nasil-onlenir",

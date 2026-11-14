@@ -88,53 +88,146 @@ Academiana’s **Topic finder** analyses real publication records in OpenAlex fo
   },
   "literatur-taramasi-nasil-yapilir": {
     slug: "how-to-write-a-literature-review",
-    title: "How to Do a Literature Review: A Step-by-Step Guide",
-    description: "How to search, screen and synthesise sources for a literature review: keywords, databases, inclusion criteria and thematic writing for theses and papers.",
-    keywords: ["how to write a literature review", "literature review steps", "how to find academic sources", "systematic review"],
+    title: "How to Do a Literature Review: A Step-by-Step Guide from Search String to Synthesis",
+    seoTitle: "How to Do a Literature Review: Step-by-Step Guide",
+    description: "Literature review step by step: research question, search string, databases, inclusion criteria, evaluating sources and writing a thematic synthesis.",
+    keywords: ["how to do a literature review", "literature review example", "search string", "literature review steps", "literature search", "literature synthesis"],
     cta: { text: "Search 16 databases at once — including OpenAlex, Crossref, PubMed and DergiPark — with automatic source verification.", label: "Start searching sources" },
-    body: `A literature review means finding, evaluating and synthesising existing knowledge on your topic. The goal is not to summarise sources one by one, but to show where knowledge in the field stands today and where your study fits.
+    body: `A literature review means **finding, evaluating and synthesizing** what is already known about your topic. The goal is not to summarize sources one by one, but to show where knowledge in the field stands today, where researchers agree and disagree, and where your study fits in. A good literature review builds the rationale of your thesis, supports your methodological choices and prepares the ground on which you will compare your findings in the discussion.
 
-## 1. Define your keywords
+This guide walks through a literature review from start to finish in practical steps: from sharpening the question and building a search string to screening sources and writing by theme.
 
-Write down the core concepts of your topic and add synonyms for each — for example "self-esteem" and "self-worth". Combine concepts with **AND** and widen synonyms with **OR**:
+## Types of literature review
 
-- (self-esteem OR self-worth) AND (social media) AND (university students)
+All of them are called “literature reviews”, but their aims and rules differ:
 
-## 2. Choose the right databases
+- **Narrative (traditional) review:** The most common type in thesis and article introductions and theoretical chapters. It frames the topic; the search process is not reported in detail.
+- **Integrative review:** Brings together studies using different methods to propose a new framework.
+- **Scoping review:** Maps what has been studied in a field and how much; appraising study quality is not the main aim.
+- **Systematic review:** Follows a pre-registered protocol with a reproducible search and screening process, usually reported with a PRISMA flow diagram. See our [systematic review and PRISMA guide](/en/blog/systematic-review-meta-analysis-prisma-2020).
+- **Meta-analysis:** Statistically combines the quantitative results of a systematic review.
 
-- **General and interdisciplinary:** OpenAlex, Crossref, Semantic Scholar, Google Scholar
+A thesis literature chapter is usually a narrative review, but applying the steps below with systematic discipline largely prevents the criticism “you missed an important study”.
+
+## 1. Sharpen your research question
+
+The research question sets the boundaries of the search. A vague question leads to a scattered search. Break the question into components:
+
+- **Who?** Sample or context (e.g. university students, secondary school teachers)
+- **What?** The variable, intervention or phenomenon (e.g. social media use)
+- **Which outcome?** The result you care about (e.g. academic procrastination)
+
+In the health sciences this structure is known as PICO (population, intervention, comparison, outcome), in the social sciences often as PEO (population, exposure, outcome). Each component becomes a block in your search string.
+
+## 2. Keywords and the search string
+
+For each component, list synonyms, related concepts and spelling variants. Searching only in one language can make you miss important studies; if your topic has a substantial literature in another language (such as Turkish), search in that language too.
+
+- Combine synonyms of one component with **OR**.
+- Connect different components with **AND**.
+- Put phrases in quotation marks: "social media".
+- Use an asterisk for truncation: procrastinat* (procrastination, procrastinating…).
+
+Example search string:
+
+- ("social media" OR "social networking sites") AND (procrastinat*) AND ("university students" OR undergraduate*)
+
+Save your search strings; you may need to report them in your methods section or in a systematic review.
+
+## 3. Choose the right databases
+
+- **General and multidisciplinary:** OpenAlex, Crossref, Semantic Scholar, Google Scholar
 - **Health and life sciences:** PubMed, Europe PMC
+- **Education:** ERIC
 - **Open access:** DOAJ, CORE
-- **Turkish sources:** DergiPark, TR Dizin, the national thesis centre of the Council of Higher Education (YÖK)
+- **Turkish sources:** DergiPark, TR Dizin, the YÖK National Thesis Centre
 
-Staying in a single database can make you miss important studies.
+Staying in a single database means missing important studies. Google Scholar is broad, but its results are not reproducible and include non-peer-reviewed material; do not use it as your only source.
 
-## 3. Screen your sources
+## 4. Write inclusion and exclusion criteria in advance
 
-Look at titles and abstracts first, then read the full text of relevant studies. Write your inclusion criteria in advance: publication years, language, study type, sample. If you are doing a systematic review, you are expected to document this process (for example with a PRISMA flow diagram).
+Decide which studies you will include before you start reading. Setting criteria afterwards, after seeing the results, produces a selective literature.
 
-## 4. Take notes as you read
+| Criterion | Include | Exclude |
+| --- | --- | --- |
+| Publication year | Last 10 years (except foundational theoretical works) | Older empirical studies |
+| Language | English and Turkish | Other languages |
+| Publication type | Peer-reviewed articles, theses | Conference abstracts, blog posts |
+| Sample | University students | Child and adolescent samples |
+| Method | Quantitative and qualitative empirical studies | Opinion pieces |
 
-For each source, note the aim, sample, method, key findings, limitations and its relationship to your study. Always record the page number of sentences you may quote. Collecting these notes in a table (a literature matrix) speeds up writing enormously.
+This table is an example; build and justify the criteria for your own question.
 
-## 5. Write by themes, not source by source
+## 5. Search, screen and keep a record
 
-A weak literature review reads "A found this. B found that." A strong one is organised around themes: which findings support each other, which contradict, and which questions remain open?
+Screening happens in two stages: first **titles and abstracts**, then the **full texts** of those that look relevant. At each stage, note how many records were excluded and why. A simple search log answers “why didn’t I include this study?” months later:
 
-## 6. State the gap clearly
+- Search date, database, search string, number of records found
+- Records excluded at title/abstract stage and the main reasons
+- Number of full texts read and studies included
 
-At the end of your review the reader should be able to answer: "Why is this study needed?" The gap may be an understudied population, conflicting findings or a missing method.
+If you could not access a study’s full text, record that too. **Do not interpret a study in detail as if you had read the full text when you only read the abstract.**
+
+## 6. Take notes while reading: the literature matrix
+
+Record the same information for every source: aim, sample, method, instrument, main findings, limitations and relevance to your study. Always note the page number of sentences you will quote directly. Collecting these notes in one table (a literature matrix) speeds up writing considerably; see how to build one, with an example, in our [literature matrix guide](/en/blog/how-to-create-a-literature-matrix). Save references in a reference manager from the start: [Zotero and Mendeley guide](/en/blog/zotero-mendeley-reference-management-guide).
+
+## 7. Evaluate your sources
+
+Not every publication carries the same weight. Before using a source, check:
+
+- **Peer review:** Was it published in a peer-reviewed journal? We explain how to avoid predatory journals in [this guide](/en/blog/how-to-spot-predatory-journals).
+- **Appropriate methods:** Are the sample size, the validity and reliability of instruments and the analysis adequate?
+- **Currency:** How fast does knowledge change in your field? Foundational theoretical works may be old; for empirical findings, prefer recent studies.
+- **Primary sources:** Where possible, read a finding in the original study rather than in another author’s summary.
+
+## 8. Write by theme, not source by source
+
+A weak literature chapter reads “A found this. B found that. C also found this.” A strong one is organized around themes: which findings support each other, which conflict, which questions remain open?
+
+A useful pattern for a theme paragraph: **general claim → supporting studies → diverging study → evaluation.**
+
+- **Weak:** “Smith (2019) found a relationship between social media use and procrastination. Jones (2021) reached a similar conclusion. Brown (2022) found no relationship.”
+- **Strong:** “Most studies report a positive relationship between social media use and academic procrastination (Smith, 2019; Jones, 2021). That the study finding no relationship (Brown, 2022) measured only time spent online suggests the relationship may depend on how, rather than how long, social media is used.”
+
+The author names here are examples to show the format. The second paragraph uses the same studies but gives the reader a **conclusion** and discusses a possible reason for the difference.
+
+## 9. State the gap explicitly
+
+By the end of your literature chapter, the reader should be able to answer: “Why is this study needed?” The gap might be:
+
+- An under-studied **sample or context** (e.g. graduate students in a particular country)
+- **Conflicting findings** and a missing variable that could explain them
+- A **methodological gap** (e.g. only cross-sectional studies, no longitudinal ones)
+- **Outdated findings** (e.g. instruments or technology have changed)
+
+Avoid absolute claims such as “no study has examined this”; use wording limited to what you searched, such as “few studies in the accessible literature have examined…”.
+
+## 10. Structure of the literature chapter
+
+1. **Short introduction:** Scope of the chapter and order of themes
+2. **Theme headings:** One subheading per theme, from general to specific
+3. **Evaluation and gap:** The overall state of the literature and your study’s contribution
+
+For the difference between a literature review and a theoretical framework, see our [theoretical vs. conceptual framework guide](/en/blog/theoretical-vs-conceptual-framework).
+
+## When should you stop searching?
+
+When new sources no longer bring new themes or findings and keep citing the same studies, you are approaching saturation. Still, keep your search up to date until submission: missing an important study published while you were writing is a common criticism at the defence.
 
 ## Common mistakes
 
-- Interpreting a study as if you read the full text when you only read the abstract
-- Relying on outdated sources
-- Presenting a secondary source as a primary one
-- Leaving reference details to the end and not finding them again
+- Interpreting a study whose abstract you read as if you had read the full text
+- Searching a single database with keywords in only one language
+- Setting inclusion criteria afterwards, based on the results
+- Relying on old, outdated sources
+- Presenting a secondary source as if it were primary
+- Summarizing sources one after another
+- Leaving reference details until the end and then not finding them
 
 ## Literature reviews with Academiana
 
-Academiana plans a search strategy for your topic and searches 16 databases at once. Sources are verified via DOI, and every source shows clearly whether it was read at citation, abstract or full-text level. The literature matrix lets you compare sources in a table, and you can quote open-access full texts with page numbers.`,
+Academiana plans a search strategy for your topic and searches 16 databases at once, including OpenAlex, Crossref, Semantic Scholar, PubMed and DergiPark. Sources found are verified by DOI, and each source states clearly whether it was read at metadata, abstract or full-text level. With the literature matrix you can compare sources in a table, with the literature map you can see citation links and missing foundational works, and you can quote open-access full texts with page numbers. When writing the literature chapter, the assistant does not summarize sources one by one; it synthesizes them by theme and cites only sources in your library.`,
   },
   "apa-7-atif-kurallari": {
     slug: "apa-7-citation-guide",
@@ -208,58 +301,135 @@ In Academiana, citations are not typed as plain text; they are linked to the sou
   },
   "kaynakca-nasil-hazirlanir": {
     slug: "how-to-write-a-bibliography-citation-styles",
-    title: "How to Write a Reference List: APA vs MLA vs Chicago vs IEEE",
-    description: "Which citation style should you use? APA, MLA, Chicago, IEEE, Vancouver and ISNAD compared, with examples and a reference list checklist.",
-    keywords: ["how to write a bibliography", "citation styles comparison", "MLA vs APA", "Chicago style citation", "reference list"],
+    title: "How to Write a Reference List: APA, MLA, Chicago, IEEE and ISNAD Examples",
+    seoTitle: "How to Write a Reference List: Examples in 7 Styles",
+    description: "How to write a reference list: one source in APA 7, MLA, Chicago, IEEE, Vancouver and ISNAD, plus DOIs, ordering rules and a checklist.",
+    keywords: ["how to write a reference list", "reference list example", "bibliography examples", "ISNAD reference", "MLA works cited", "IEEE reference"],
     cta: { text: "Import your library from Zotero, Mendeley or EndNote and generate the reference list in any style automatically.", label: "Build my reference list" },
-    body: `A reference list includes every source you cite in your work. It lets readers trace any piece of information back to its source and is a cornerstone of academic integrity. Which style you use is usually decided by your university or the journal, not by you.
+    body: `A reference list contains every source you cite in your work. It lets readers trace each piece of information back to its source and is a cornerstone of academic integrity. Examiners and reviewers form a strong first impression of how carefully a work was prepared from its reference list: incomplete references, citations in the text that are missing from the list and inconsistent formatting are among the most common requests for revision.
 
-## Reference list vs bibliography
+This guide explains how to prepare a reference list, how the most common citation styles differ and how the same source looks in each style, with examples.
 
-- **Reference list:** only the sources you cite in the text.
-- **Bibliography:** may also include sources you read but did not cite.
+## Reference list versus bibliography
 
-Theses and articles usually require a **reference list**.
+- **Reference list:** Only the sources you cite in the text.
+- **Bibliography:** May also include sources you read but did not cite.
 
-## Styles and where they are used
+Theses and articles usually require a **reference list**. Every citation in the text must appear in the list, and every source in the list must be cited in the text.
 
-### APA
+## Who decides the style?
 
-Common in psychology, education and the social sciences. In-text: (Author, Year). The year follows the author name in the reference list.
+The style is usually decided not by you but by your institute’s thesis guidelines or the journal. Guidelines may name a style and then depart from it at certain points (e.g. “APA 7, but give authors’ full first names in the reference list”). In such cases, **the guideline’s own rule takes precedence**. Read the guidelines before you start writing; changing style later costs a lot of time.
 
-### MLA
+## The same source in seven styles
 
-Used in languages, literature and the humanities. In-text: author and page (Smith 45). The list is titled "Works Cited".
+The best way to see the differences is to look at one source in different styles side by side. The examples below show a citation to page 50 of a **fictional** journal article (Demir and Kaya, 2022, *Örnek Eğitim Dergisi*, volume 12, issue 3, pages 45–62) and its reference list entry. All examples were generated with Academiana’s citation engine.
 
-### Chicago
+### APA 7
 
-Common in history and the arts. It has two systems: **notes-bibliography** (citations in footnotes) and **author-date**.
+- **In-text:** (Demir & Kaya, 2022, p. 50)
+- **Reference list:** Demir, M., & Kaya, E. (2022). Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme. Örnek Eğitim Dergisi, 12(3), 45–62.
 
-### IEEE and Vancouver
+### MLA 9
 
-Used in engineering (IEEE) and medicine (Vancouver). Citations are numbered in square brackets or superscript: [1]. The list is numbered in order of first appearance.
+- **In-text:** (Demir and Kaya 50)
+- **Reference list:** Demir, Mehmet, and Elif Kaya. “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme.” Örnek Eğitim Dergisi, vol. 12, no. 3, 2022, pp. 45–62.
 
-### ISNAD
+### Chicago (author-date)
 
-A citation system developed in Türkiye and used especially in theology and parts of the social sciences, with footnote and in-text variants. Many Turkish journals require it. Academiana supports the in-text (author-date) form of ISNAD 2nd edition; for journals using the footnote form, check your reference list against their guidelines.
+- **In-text:** (Demir and Kaya 2022, 50)
+- **Reference list:** Demir, Mehmet, and Elif Kaya. 2022. “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme.” Örnek Eğitim Dergisi 12 (3): 45–62.
 
-## Checklist for a good reference list
+### IEEE
 
-- Does **every** in-text citation have a matching entry?
-- Is **every** entry cited somewhere in the text?
-- Do author names and years match exactly?
-- Are journal title, volume, issue and pages complete?
+- **In-text:** [1, p. 50]
+- **Reference list:** M. Demir and E. Kaya, “Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme,” Örnek Eğitim Dergisi, vol. 12, no. 3, pp. 45–62, 2022.
+
+### Vancouver
+
+- **In-text:** [1, p. 50]
+- **Reference list:** Demir M, Kaya E. Üniversite öğrencilerinde sosyal medya kullanımı ve akademik erteleme. Örnek Eğitim Dergisi. 2022;12(3):45-62.
+
+### ISNAD 2 (in-text)
+
+- **In-text:** (Demir - Kaya, 2022, 50)
+- **Reference list:** Demir, Mehmet - Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Örnek Eğitim Dergisi 12/3 (2022), 45-62.
+
+### ISNAD 2 (footnotes)
+
+- **First footnote:** Mehmet Demir - Elif Kaya, “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”, Örnek Eğitim Dergisi 12/3 (2022), 45-62/50.
+- **Subsequent footnotes:** Demir - Kaya, “Üniversite Öğrencilerinde Sosyal”, 52.
+- **Reference list:** Demir, Mehmet - Kaya, Elif. “Üniversite Öğrencilerinde Sosyal Medya Kullanımı ve Akademik Erteleme”. Örnek Eğitim Dergisi 12/3 (2022), 45-62.
+
+
+## The styles at a glance
+
+| Style | Common fields | In-text citation | List order | List title |
+| --- | --- | --- | --- | --- |
+| APA 7 | Psychology, education, social sciences | Author, year | Alphabetical | References |
+| MLA 9 | Languages, literature, humanities | Author, page | Alphabetical | Works Cited |
+| Chicago (author-date) | History, arts, social sciences | Author year, page | Alphabetical | References |
+| IEEE | Engineering, computing | Number in square brackets | Order of first citation | References |
+| Vancouver | Medicine, health sciences | Number | Order of first citation | References |
+| ISNAD 2 (in-text) | Theology and some social sciences | Author, year, page | Alphabetical | Bibliography |
+| ISNAD 2 (footnotes) | Theology, history | Footnote | Alphabetical | Bibliography |
+
+You can find details on ISNAD in our [ISNAD citation style guide](/en/blog/isnad-citation-style-guide) and APA’s in-text rules in our [APA 7 citation guide](/en/blog/apa-7-citation-guide).
+
+## Information needed by source type
+
+Whatever the style, record this information from the start:
+
+- **Journal article:** Authors, year, article title, journal name, volume, issue, page range, DOI
+- **Book:** Authors or editors, year, title, edition (second and later), publisher; place of publication in some styles
+- **Book chapter:** Chapter authors, chapter title, editors, book title, page range, publisher
+- **Thesis:** Author, year, title, type (master’s/doctoral), university; database and thesis number if accessed online
+- **Web page:** Author or organization, date, page title, site name, URL; access date if the content may change
+
+If any of these is missing, the reference is incomplete too. The most often forgotten items are the issue number, page range and DOI.
+
+## What is a DOI and why does it matter?
+
+A DOI (Digital Object Identifier) is a persistent identifier assigned to a publication. Even if the publication’s web address changes, the DOI stays the same and always leads to the right page. APA 7 asks for the DOI as a link starting with https://doi.org/. Adding the DOI lets readers reach the source with one click and makes it easy to verify that the source exists. You can find a source’s DOI or missing details with our free [reference generator](/en/araclar/kaynakca-olusturucu).
+
+## Ordering and formatting rules
+
+- **Alphabetical styles** (APA, MLA, Chicago, ISNAD) sort by the first author’s surname.
+- **Two works by the same author in the same year** are distinguished in APA by adding a letter to the year: 2021a, 2021b.
+- **Numbered styles** (IEEE, Vancouver) number sources in order of first citation; a source cited again keeps its number.
+- **Hanging indent:** In APA, MLA and Chicago the first line of each entry is flush left and the following lines are indented.
+- **Capitalization:** APA capitalizes only the first word and proper nouns in article titles; ISNAD and Chicago capitalize the main words. You can see this difference in the examples above.
+
+## Reference list checklist
+
+- Does **every** citation in the text have an entry in the list?
+- Is **every** source in the list cited in the text?
+- Do author names and years match the text exactly?
+- Are journal name, volume, issue and page numbers complete?
 - Is the DOI included where available?
-- Is the order correct (alphabetical for APA/MLA, numerical for IEEE)?
-- Is the formatting consistent (italics, punctuation, hanging indent)?
+- Is the order correct (surname in alphabetical styles, order of first citation in numbered styles)?
+- Is the formatting consistent (italics, punctuation, hanging indent, capitalization)?
+- Does every source really exist, and does it really contain the information you cite?
+
+## Watch out for fabricated references
+
+AI chat tools can produce references that do not exist but look real: real author names, real journal titles and convincing DOIs. Such a reference in your list is a serious academic integrity problem. Find and read every source in your list yourself; you can check your list with our free [fabricated reference checker](/en/araclar/uydurma-kaynak-kontrolu). For details, see our guide to [detecting AI-fabricated references](/en/blog/detecting-ai-fabricated-references).
 
 ## Reference managers
 
-Tools such as Zotero, Mendeley and EndNote gather your sources in one place and generate the reference list automatically. You can export sources as BibTeX, RIS or CSL-JSON to move them to other tools.
+Programs such as Zotero, Mendeley and EndNote collect your sources in one place and generate the reference list automatically. You can export saved sources as BibTeX, RIS or CSL-JSON and move them to other tools. See our [Zotero and Mendeley guide](/en/blog/zotero-mendeley-reference-management-guide) for setup and use. However good the program, always check automatically generated entries: missing page ranges and wrong capitalization are common.
 
-## Reference lists with Academiana
+## Common mistakes
 
-In Academiana you never type the reference list by hand: it is built from the citations in your text and always matches it. You can import from Zotero, Mendeley and EndNote and export in formats those tools read. Clicking an entry shows every section of your text where that source is used, and changing the style takes one click.`,
+- A source cited in the text is missing from the list (or vice versa)
+- The same source appears with a different year or spelling in the text and the list
+- Taking a source you have not read from another author’s summary and presenting it as primary: our [plagiarism guide](/en/blog/how-to-avoid-plagiarism) explains the rules for secondary citations
+- Mixing styles in one reference list
+- Trying to build the whole reference list at the end of the thesis
+
+## References with Academiana
+
+In Academiana the reference list is not typed by hand; it is generated from the citations in your text and always matches it. Delete a citation from the text and the source leaves the list too. You can switch among 11 styles with one click, including APA 7, ISNAD 2 (in-text and footnotes), MLA, Chicago, IEEE, Vancouver and Harvard; with ISNAD footnotes, citations become real footnotes in Word, PDF and LaTeX output. You can import sources from Zotero, Mendeley and EndNote and export your list in formats these programs read. The quality check finds incomplete references, unverifiable sources and mismatches between text and list for you.`,
   },
   "intihal-nasil-onlenir": {
     slug: "how-to-avoid-plagiarism",

@@ -162,6 +162,8 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 
 ## SEO (D164 sonrası, ayrıntı docs/seo/SEO_PLAN.md)
 - [ ] İçerik dalgası 2: DOI rehberi, literatür matrisi, ANOVA, korelasyon, regresyon raporlama, YZ kullanım beyanı, örneklem hazır tablosu (TR/EN/DE, motorla doğrulanmış örnekler)
+- [x] (2026-11-14, D198) Search Console “tarandı, dizinde değil”: teknik sorun yok; kaynakça ve literatür taraması yazıları üç dilde genişletildi
+- [ ] Search Console: 7 sayfa için “Dizine eklenmesini iste”, 1–2 hafta sonra “Düzeltmeyi doğrula” (kullanıcı)
 - [x] (2026-11-14, D197) Blog: ANOVA, regresyon raporlama ve literatür matrisi yazıları (TR/EN/DE); blog listesi sıkı satır görünümüne geçti; blogda tablo desteği
 - [x] (2026-11-14, D196) Yeni kullanıcı: rehberli tur kendiliğinden açılmıyor; çalışma başına ilk kurgu ve ilk başlık önerisi haktan düşülmüyor
 - [ ] Aktivasyon: çalışma alanı ilk girişte “Araştırma konusu”nda açılsın + tek “İlk bölümü yaz” düğmesi; 1 gün yazmayana hatırlatma (D196 sonrası huniye bakarak)

@@ -30,16 +30,34 @@ function CitationView({ node, updateAttributes, deleteNode, selected, editor, ge
   const [shift, setShift] = useState(0);
   const ids: string[] = node.attrs.ids ?? [];
   const missing = !ctx || ids.some((id) => !ctx.sources[id]);
-  const label = ctx && !missing ? richToPlain(ctx.engine.cite(ids, { locator: node.attrs.locator, narrative: node.attrs.narrative, suppressAuthor: node.attrs.suppressAuthor, prefix: node.attrs.prefix, suffix: node.attrs.suffix })) : t("[kaynak bulunamadı]");
+  // D190: dipnotlu stil (ISNAD 2 dipnotlu): atıf üst simge dipnot numarasıdır; dipnot metni (ilk atıfta tam künye,
+  // sonrakilerde kısa atıf) üzerine gelince ve tıklayınca görünür. Numara, bu bölümdeki atıf ve dipnotların sırasıdır.
+  const noteStyle = ctx?.engine.meta.family === "note";
+  let noteNo = 1;
+  const seenBefore = new Set<string>();
+  if (noteStyle) {
+    const pos = typeof getPos === "function" ? getPos() ?? 0 : 0;
+    editor.state.doc.descendants((n, p) => {
+      if (p >= pos) return false;
+      if (n.type.name === "footnote") noteNo++;
+      if (n.type.name === "citation") { noteNo++; for (const id of (n.attrs.ids ?? []) as string[]) seenBefore.add(id); }
+      return true;
+    });
+  }
+  const noteText = noteStyle && ctx && !missing ? richToPlain(ctx.engine.note(ids, { locator: node.attrs.locator, prefix: node.attrs.prefix, suffix: node.attrs.suffix }, (id) => !seenBefore.has(id))) : "";
+  const label = noteStyle && !missing
+    ? `${node.attrs.narrative && ctx ? ctx.engine.noteNarrative(ids) : ""}`
+    : ctx && !missing ? richToPlain(ctx.engine.cite(ids, { locator: node.attrs.locator, narrative: node.attrs.narrative, suppressAuthor: node.attrs.suppressAuthor, prefix: node.attrs.prefix, suffix: node.attrs.suffix })) : t("[kaynak bulunamadı]");
   const sup = ctx?.engine.style === "ama";
   return (
     <NodeViewWrapper as="span" className="relative">
       <span contentEditable={false} onClick={(e) => { const r = (e.currentTarget as HTMLElement).getBoundingClientRect(); const w = Math.min(320, window.innerWidth - 32); setShift(Math.min(0, window.innerWidth - 16 - (r.left + w))); setOpen((o) => !o); }} className={`citation-node ${missing ? "missing" : ""} ${selected ? "ring-2 ring-brand-300" : ""}`} data-citation data-ids={ids.join(",")}>
-        {sup ? <sup>{label}</sup> : label}
+        {noteStyle && !missing ? <>{label}<sup title={noteText}>{noteNo}</sup></> : sup ? <sup>{label}</sup> : label}
       </span>
       <AnimatePresence>
         {open && (
           <motion.span contentEditable={false} initial={{ opacity: 0, y: 4, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 4 }} style={{ left: shift }} className="absolute top-7 z-30 block w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-ink-100 bg-white p-3 font-sans text-[13px] leading-snug shadow-xl" onMouseDown={(e) => e.stopPropagation()}>
+            {noteText && <span className="mb-2 block rounded-lg border border-brand-100 bg-brand-50/60 p-2 font-serif text-ink-800"><b className="mr-1 font-sans">{noteNo}.</b>{noteText}</span>}
             {ids.map((id) => {
               const s = ctx?.sources[id];
               return (
@@ -92,10 +110,13 @@ export const Citation = Node.create({
 
 function FootnoteView({ node, updateAttributes, deleteNode, getPos, editor }: NodeViewProps) {
   const { t } = useT();
+  const ctx = useCitations();
   const [open, setOpen] = useState(false);
   let index = 1;
   const pos = typeof getPos === "function" ? getPos() : 0;
-  editor.state.doc.descendants((n, p) => { if (n.type.name === "footnote" && p < (pos ?? 0)) index++; });
+  // D190: dipnotlu atıf stilinde atıflar da dipnot olduğu için numaralar ortaktır
+  const shared = ctx?.engine.meta.family === "note";
+  editor.state.doc.descendants((n, p) => { if (p < (pos ?? 0) && (n.type.name === "footnote" || (shared && n.type.name === "citation"))) index++; });
   return (
     <NodeViewWrapper as="span" className="relative">
       <span contentEditable={false} className="footnote-node" title={node.attrs.text} onClick={() => setOpen((o) => !o)}>{index}</span>

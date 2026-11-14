@@ -9,7 +9,7 @@ import { ApiError } from "@/lib/api";
 import type { Session } from "@/lib/auth";
 import { adminClient } from "@/lib/supabase/admin";
 
-export type ProjectRole = "owner" | "editor" | "commenter";
+export type ProjectRole = "owner" | "editor" | "commenter" | "advisor";
 export type AccessNeed = "read" | "comment" | "edit" | "owner";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ProjectAccess {
@@ -22,7 +22,7 @@ export interface ProjectAccess {
   isOwner: boolean;
 }
 
-const RANK: Record<ProjectRole, number> = { commenter: 1, editor: 2, owner: 3 };
+const RANK: Record<ProjectRole, number> = { commenter: 1, advisor: 1, editor: 2, owner: 3 };
 const NEED: Record<AccessNeed, number> = { read: 1, comment: 1, edit: 2, owner: 3 };
 
 /** Rol, istenen işlem için yeterli mi? (saf; testlerde de kullanılır) */

@@ -45,8 +45,8 @@ export default async function CoauthorInvite({ params }: { params: Promise<{ tok
               <p className="text-[12px] uppercase tracking-wide text-ink-400">{t("Çalışma")}</p>
               <p className="mt-0.5 font-semibold text-ink-900">{project.title}</p>
               <p className="mt-3 text-[12px] uppercase tracking-wide text-ink-400">{t("Rolünüz")}</p>
-              <p className="mt-0.5 text-[14px] font-medium text-ink-800">{t(ROLE_LABEL[inv.role as "editor" | "commenter"])}</p>
-              <p className="text-[13px] text-ink-500">{t(ROLE_HINT[inv.role as "editor" | "commenter"])}</p>
+              <p className="mt-0.5 text-[14px] font-medium text-ink-800">{t(ROLE_LABEL[inv.role as "editor" | "commenter" | "advisor"])}</p>
+              <p className="text-[13px] text-ink-500">{t(ROLE_HINT[inv.role as "editor" | "commenter" | "advisor"])}</p>
               <p className="mt-3 text-[12px] text-ink-400">{t("Davet edilen adres: {e}", { e: maskEmail(inv.email) })}</p>
             </div>
           )}

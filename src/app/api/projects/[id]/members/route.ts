@@ -2,13 +2,13 @@ import crypto from "node:crypto";
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
-import { COAUTHOR_LIMIT, coauthorEmailOk } from "@/lib/coauthors";
+import { ADVISOR_LIMIT, COAUTHOR_LIMIT, coauthorEmailOk } from "@/lib/coauthors";
 import { displayName, projectAccess } from "@/lib/project-access";
 import { adminClient } from "@/lib/supabase/admin";
 import { assertFeature } from "@/lib/usage";
 
 type Ctx = { params: Promise<{ id: string }> };
-const Role = z.enum(["editor", "commenter"]);
+const Role = z.enum(["editor", "commenter", "advisor"]);
 
 /** Ortak yazarlar (D115): üyeler + (sahip için) bekleyen davetler. Ortak yazar diğer üyelerin adını görür, e-postasını görmez. */
 export const GET = route<Ctx>("members.list", async (_req, { params }) => {
@@ -33,6 +33,7 @@ export const GET = route<Ctx>("members.list", async (_req, { params }) => {
     myRole: acc.role,
     canInvite: acc.isOwner,
     limit: COAUTHOR_LIMIT,
+    advisorLimit: ADVISOR_LIMIT,
     members: [person(acc.ownerId, "owner"), ...(ms ?? []).map((m) => person(m.user_id, m.role, m.created_at))],
     invites: invites ?? [],
   });
@@ -43,21 +44,27 @@ export const POST = route<Ctx>("members.invite", async (req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const acc = await projectAccess(s, id, "owner");
-  assertFeature(s.profile.plan_id, "coauthors");
   const b = await parseBody(req, z.object({ email: z.string().trim().toLowerCase().email().max(320), role: Role.default("editor") }));
+  // D191: danışman daveti her pakette açıktır; ortak yazar/yorumcu daveti Pro ve üzeri
+  const advisor = b.role === "advisor";
+  if (!advisor) assertFeature(s.profile.plan_id, "coauthors");
   if (!coauthorEmailOk(b.email)) throw new ApiError(422, "Bu e-posta adresine davet gönderilemez");
   if (b.email === (s.user.email ?? "").toLowerCase()) throw new ApiError(422, "Kendinizi davet edemezsiniz");
   const admin = adminClient();
   const nowIso = new Date().toISOString();
   const [{ data: ms }, { data: pending }, { data: target }] = await Promise.all([
-    admin.from("project_members").select("user_id").eq("project_id", id),
-    admin.from("project_invites").select("id, email").eq("project_id", id).is("accepted_at", null).gt("expires_at", nowIso),
+    admin.from("project_members").select("user_id, role").eq("project_id", id),
+    admin.from("project_invites").select("id, email, role").eq("project_id", id).is("accepted_at", null).gt("expires_at", nowIso),
     admin.from("profiles").select("id").eq("email", b.email).maybeSingle(),
   ]);
   if (target && (ms ?? []).some((m) => m.user_id === target.id)) throw new ApiError(409, "Bu kişi zaten bu çalışmanın ortak yazarı");
   // Aynı adrese bekleyen davet varsa yenisi oluşturulmaz, rolü güncellenir
   const existing = (pending ?? []).find((p) => p.email.toLowerCase() === b.email);
-  if (!existing && (ms?.length ?? 0) + (pending?.length ?? 0) >= COAUTHOR_LIMIT) throw new ApiError(422, `Bir çalışmaya en fazla ${COAUTHOR_LIMIT} ortak yazar eklenebilir`, "coauthor_limit");
+  // Danışmanlar ve ortak yazarlar ayrı sınırlara sayılır
+  const sameKind = (r: string) => (r === "advisor") === advisor;
+  const used = (ms ?? []).filter((m) => sameKind(m.role)).length + (pending ?? []).filter((p) => sameKind(p.role) && p.id !== existing?.id).length;
+  if (advisor && used >= ADVISOR_LIMIT) throw new ApiError(422, `Bir çalışmaya en fazla ${ADVISOR_LIMIT} danışman eklenebilir`, "advisor_limit");
+  if (!advisor && used >= COAUTHOR_LIMIT) throw new ApiError(422, `Bir çalışmaya en fazla ${COAUTHOR_LIMIT} ortak yazar eklenebilir`, "coauthor_limit");
   const token = existing ? null : crypto.randomBytes(24).toString("base64url");
   const { data: invite, error } = existing
     ? await admin.from("project_invites").update({ role: b.role, expires_at: new Date(Date.now() + 14 * 86400_000).toISOString() }).eq("id", existing.id).select("id, email, role, token, created_at, expires_at").single()
@@ -78,6 +85,7 @@ export const PATCH = route<Ctx>("members.role", async (req, { params }) => {
   const { id } = await params;
   await projectAccess(s, id, "owner");
   const b = await parseBody(req, z.object({ userId: z.string().uuid(), role: Role }));
+  if (b.role !== "advisor") assertFeature(s.profile.plan_id, "coauthors");
   const { data, error } = await adminClient().from("project_members").update({ role: b.role }).eq("project_id", id).eq("user_id", b.userId).select("user_id");
   if (error) throw error;
   if (!data?.length) throw new ApiError(404, "Ortak yazar bulunamadı");

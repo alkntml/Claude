@@ -1,5 +1,5 @@
 export type CitationStyleId =
-  | "apa7" | "apa6" | "isnad" | "chicago" | "mla" | "harvard" | "vancouver" | "ieee" | "ama" | "turabian";
+  | "apa7" | "apa6" | "isnad" | "isnad_note" | "chicago" | "mla" | "harvard" | "vancouver" | "ieee" | "ama" | "turabian";
 
 export type ItemType =
   | "article-journal" | "book" | "chapter" | "paper-conference" | "thesis"
@@ -61,7 +61,8 @@ export interface InTextOptions {
 export interface StyleMeta {
   id: CitationStyleId;
   label: string;
-  family: "author-date" | "numeric" | "author-page";
+  /** D190: "note" = dipnotlu sistem (atıf metin içinde değil, dipnotta) */
+  family: "author-date" | "numeric" | "author-page" | "note";
   bibliographyTitle: Record<CiteLocale, string>;
   description: string;
 }

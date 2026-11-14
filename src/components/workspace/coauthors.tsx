@@ -50,11 +50,13 @@ function CoauthorsModal({ projectId, isOwner, planId, present, onClose, onCountC
   const { t, dl } = useT();
   const toast = useToast();
   const router = useRouter();
-  const [data, setData] = useState<{ members: any[]; invites: any[]; limit: number; myRole: string } | null>(null);
+  const [data, setData] = useState<{ members: any[]; invites: any[]; limit: number; advisorLimit?: number; myRole: string } | null>(null);
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<CoauthorRole>("editor");
-  const [busy, setBusy] = useState(false);
   const allowed = hasFeature(planId, "coauthors");
+  // D191: danışman daveti her pakette açık; ortak yazar paketi yoksa varsayılan rol danışman
+  const [role, setRole] = useState<CoauthorRole>(allowed ? "editor" : "advisor");
+  const [busy, setBusy] = useState(false);
+  const roleAllowed = allowed || role === "advisor";
   const link = (token: string) => `${window.location.origin}/ortak/${token}`;
 
   const load = useCallback(() => api<any>(`/api/projects/${projectId}/members`).then((r) => { setData(r); onCountChange?.(r.members.length - 1 + r.invites.length); }).catch((e) => toast({ tone: "error", title: t("Yüklenemedi"), detail: (e as Error).message })), [projectId, toast, t, onCountChange]);
@@ -62,7 +64,7 @@ function CoauthorsModal({ projectId, isOwner, planId, present, onClose, onCountC
 
   async function invite(e: React.FormEvent) {
     e.preventDefault();
-    if (!allowed) { openUpgrade({ code: "feature_locked", feature: "coauthors", plan: FEATURE_MIN_PLAN.coauthors }); return; }
+    if (!roleAllowed) { openUpgrade({ code: "feature_locked", feature: "coauthors", plan: FEATURE_MIN_PLAN.coauthors }); return; }
     setBusy(true);
     try {
       const r = await api<{ invite: any; registered: boolean }>(`/api/projects/${projectId}/members`, { method: "POST", json: { email, role } });
@@ -85,11 +87,15 @@ function CoauthorsModal({ projectId, isOwner, planId, present, onClose, onCountC
     } catch (err) { toast({ tone: "error", title: t("İşlem yapılamadı"), detail: (err as Error).message }); }
   }
   const presentIds = new Set(present.map((p) => p.userId));
-  const used = (data?.members.length ?? 1) - 1 + (data?.invites.length ?? 0);
+  // Danışmanlar ortak yazar sınırına sayılmaz (ayrı sınır)
+  const isAdv = (r: string) => r === "advisor";
+  const used = (data?.members ?? []).filter((m) => m.role !== "owner" && isAdv(m.role) === isAdv(role)).length + (data?.invites ?? []).filter((v) => isAdv(v.role) === isAdv(role)).length;
+  const cap = isAdv(role) ? data?.advisorLimit ?? 2 : data?.limit ?? 5;
 
   return (
     <Modal open onClose={onClose} title={t("Ortak yazarlar")}>
       <p className="text-[13.5px] leading-relaxed text-ink-600">{t("Çalışmayı birlikte yazacağınız kişileri davet edin. Ortak yazarlar bölümleri düzenler, kaynak ekler ve yapay zekâyı kendi paketleriyle kullanır; yorumcular yalnızca okur ve yorum yazar. Kim hangi bölümdeyse adı görünür; aynı bölümü aynı anda kaydederseniz hiçbir metin kaybolmaz, sürüm geçmişine saklanır.")}</p>
+      <p className="mt-2 rounded-xl bg-brand-50/60 px-3 py-2 text-[12.5px] leading-relaxed text-ink-700">{t("Danışmanınızı her pakette davet edebilirsiniz: danışman çalışmayı okur, bölümlere yorum yazar ve bölüm bölüm ilerlemeyi görür; metni değiştiremez.")}</p>
 
       <ul className="mt-4 divide-y divide-ink-100 rounded-2xl border border-ink-100">
         {!data && <li className="px-4 py-3 text-[13px] text-ink-400">{t("Yükleniyor…")}</li>}
@@ -103,7 +109,7 @@ function CoauthorsModal({ projectId, isOwner, planId, present, onClose, onCountC
             {isOwner && m.role !== "owner" ? (
               <>
                 <select aria-label={t("Rol")} className="h-8 rounded-lg border border-ink-200 bg-white px-2 text-[12.5px]" value={m.role} onChange={(e) => changeRole(m.userId, e.target.value as CoauthorRole)}>
-                  <option value="editor">{t(ROLE_LABEL.editor)}</option><option value="commenter">{t(ROLE_LABEL.commenter)}</option>
+                  <option value="editor">{t(ROLE_LABEL.editor)}</option><option value="commenter">{t(ROLE_LABEL.commenter)}</option><option value="advisor">{t(ROLE_LABEL.advisor)}</option>
                 </select>
                 <button onClick={() => remove({ userId: m.userId }, t("{n} çalışmadan çıkarılsın mı? Yazdıkları çalışmada kalır.", { n: m.name }))} className="rounded-lg p-1.5 text-rose-500 hover:bg-rose-50" aria-label={t("Çıkar")}><Trash2 className="h-4 w-4" /></button>
               </>
@@ -125,19 +131,19 @@ function CoauthorsModal({ projectId, isOwner, planId, present, onClose, onCountC
 
       {isOwner ? (
         <form onSubmit={invite} className="mt-4 space-y-2.5 rounded-2xl border border-ink-100 bg-ink-50/50 p-3.5">
-          <p className="flex items-center gap-2 text-[13.5px] font-semibold text-ink-800"><UserPlus className="h-4 w-4 text-brand-600" /> {t("Kişi davet et")}{!allowed && <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700"><Lock className="h-3 w-3" />Pro</span>}</p>
+          <p className="flex items-center gap-2 text-[13.5px] font-semibold text-ink-800"><UserPlus className="h-4 w-4 text-brand-600" /> {t("Kişi davet et")}{!roleAllowed && <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700"><Lock className="h-3 w-3" />Pro</span>}</p>
           <input type="email" required className="input" placeholder={t("ornek@universite.edu.tr")} value={email} onChange={(e) => setEmail(e.target.value)} aria-label={t("E-posta adresi")} />
-          <div className="grid gap-1.5 sm:grid-cols-2">
-            {(["editor", "commenter"] as const).map((r) => (
+          <div className="grid gap-1.5 sm:grid-cols-3">
+            {(["advisor", "editor", "commenter"] as const).map((r) => (
               <label key={r} className={cn("cursor-pointer rounded-xl border px-3 py-2 text-[12.5px] transition", role === r ? "border-brand-300 bg-brand-50" : "border-ink-200 bg-white hover:border-ink-300")}>
                 <input type="radio" name="role" className="sr-only" checked={role === r} onChange={() => setRole(r)} />
-                <span className="block font-semibold text-ink-800">{t(ROLE_LABEL[r])}</span>
+                <span className="flex items-center gap-1 font-semibold text-ink-800">{t(ROLE_LABEL[r])}{!allowed && r !== "advisor" && <Lock className="h-3 w-3 text-amber-600" />}</span>
                 <span className="block text-ink-500">{t(ROLE_HINT[r])}</span>
               </label>
             ))}
           </div>
-          <Button type="submit" className="w-full" loading={busy} disabled={!email.trim() || (!!data && used >= data.limit)}><UserPlus className="h-4 w-4" /> {t("Davet bağlantısı oluştur")}</Button>
-          <p className="text-[12px] text-ink-500">{data && used >= data.limit ? t("Bir çalışmaya en fazla {n} ortak yazar eklenebilir.", { n: data.limit }) : t("Davet yalnızca bu e-posta adresiyle giriş yapan kişi tarafından kabul edilebilir ve 14 gün geçerlidir. En fazla {n} kişi.", { n: data?.limit ?? 5 })}</p>
+          <Button type="submit" className="w-full" loading={busy} disabled={!email.trim() || (!!data && used >= cap)}><UserPlus className="h-4 w-4" /> {t("Davet bağlantısı oluştur")}</Button>
+          <p className="text-[12px] text-ink-500">{data && used >= cap ? (isAdv(role) ? t("Bir çalışmaya en fazla {n} danışman eklenebilir.", { n: cap }) : t("Bir çalışmaya en fazla {n} ortak yazar eklenebilir.", { n: cap })) : t("Davet yalnızca bu e-posta adresiyle giriş yapan kişi tarafından kabul edilebilir ve 14 gün geçerlidir. En fazla {n} kişi.", { n: cap })}</p>
         </form>
       ) : (
         <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-ink-100 p-3.5">

@@ -26,5 +26,7 @@ export async function buildUserExport(db: SupabaseClient, userId: string, profil
     const { data } = await admin.from(t).select("*").eq("user_id", userId).limit(50000);
     out[t] = data ?? [];
   }
+  // D192: Zotero/ORCID bağlantıları — şifreli anahtar dışa aktarılmaz
+  out.source_links = admin ? ((await admin.from("source_links").select("project_id, provider, config, last_synced_at, last_result, created_at").eq("user_id", userId).limit(1000)).data ?? []) : [];
   return out;
 }

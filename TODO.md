@@ -1,8 +1,12 @@
 ## Kullanıcının yapması gereken (öncelikli)
-- [ ] (D171) Supabase SQL Editor’de migration 43’ü çalıştır (`supabase/migrations/20261207000043_dynamic_templates.sql`: bölüm ayarları, kayıtlı şablonlar, yapı geçmişi); check_status.sql’de “43” YAPILMIŞ görünmeli
+- [ ] (D190–D192) Supabase SQL Editor’de migration 44’ü çalıştır (`supabase/migrations/20261208000044_isnad_note_advisor_sync.sql`: ISNAD dipnotlu stil, danışman rolü, Zotero/ORCID bağlantıları); check_status.sql’de “44” YAPILMIŞ görünmeli. Çalıştırılmadan ISNAD dipnotlu seçilemez, danışman daveti ve eşitleme kaydedilemez
+- [ ] (D192, isteğe bağlı) Vercel’e `INTEGRATION_SECRET` (uzun rastgele metin) ekle → Redeploy. Eklenmezse Zotero anahtarları veritabanı sunucu anahtarından türetilen anahtarla şifrelenir (çalışır; sunucu anahtarı yenilenirse kullanıcılar Zotero bağlantısını yeniden kurar)
+- [ ] (D192) docs/legal/HUKUKCU_NOTU_D192.md’yi hukukçuya ilet (Zotero anahtarının şifreli saklanması, ORCID, danışman rolü)
+- [ ] (D190–D192) Canlıda dene: atıf stilini “ISNAD 2 (dipnotlu)” yapıp Word/PDF indir (dipnotlar sayfa altında); “Ortak yazarlar” → rol “Danışman” ile davet, danışman hesabıyla “İlerleme”; “İçe aktar” → Zotero “Eşitle” işaretli ve ORCID ile aktarma, “Eşitlenen hesaplar”
+- [x] (2026-11-14) (D171) Supabase SQL Editor’de migration 43’ü çalıştır (`supabase/migrations/20261207000043_dynamic_templates.sql`: bölüm ayarları, kayıtlı şablonlar, yapı geçmişi); check_status.sql’de “43” YAPILMIŞ görünmeli
 - [ ] (D173) Canlıda dene: yeni tezde son adımda yol haritasını düzenle (adlandır, sırala, kaldır, ekle), “Neden bazı bölümler yok?”; çalışmada bölüm ayarlarında “İlgili asistan” ve “beklenen işlevler”; “Yapıyı yönet” → geçmişte “Geri al”; kalite kontrolde “Bu öneriyi reddet”; tablolu/şekilli bir tezi Word ve PDF indir (Tablolar ve Şekiller Listesi)
 - [ ] (D171) Canlıda dene: yeni nitel/karma tez ve yazılım bitirme projesi oluştur (bölümler farklı mı), “Yönteminizi henüz bilmiyor musunuz?”, bölüm ayarları, “Yapıyı yönet” → şablon kaydet → yeni projede “Kayıtlı şablonum”, kalite kontrolde “Akademik tutarlılık zinciri”
-- [ ] (D168) Supabase SQL Editor’de migration 42’yi çalıştır (`supabase/migrations/20261206000042_yearly_price_sync.sql`: yıllık fiyatlar fiyat sayfasıyla aynı olur); check_status.sql’de “42” YAPILMIŞ görünmeli
+- [x] (2026-11-14) (D168) Supabase SQL Editor’de migration 42’yi çalıştır (`supabase/migrations/20261206000042_yearly_price_sync.sql`: yıllık fiyatlar fiyat sayfasıyla aynı olur); check_status.sql’de “42” YAPILMIŞ görünmeli
 - [x] (2026-11-13) (D164) Search Console’a site haritası gönderildi (tam adres: https://www.academiana.com.tr/sitemap.xml)
 - [x] (2026-11-13) (D164) URL denetimi ile yeni 9 rehber adresi için “Dizine eklenmesini iste” (TR: /blog/t-testi-nasil-yapilir-ve-yorumlanir, /blog/normallik-testi-carpiklik-basiklik, /blog/isnad-atif-sistemi-rehberi ve EN/DE karşılıkları). Bing Webmaster Tools’u bağla
 - [x] (2026-11-13) (D162) Supabase SQL Editor’de migration 41’i çalıştır (paket adı “Sınırsız Proje”)
@@ -10,7 +14,7 @@
 - [ ] (D157) docs/legal/HUKUKCU_NOTU_D157.md’yi hukukçuya ilet (Kullanım Koşulları, Adil Kullanım, Mesafeli Sözleşmeler; yıllık ödeme ve yeni Tek Proje)
 - [x] (2026-11-13, D168: site sahibinin talimatıyla Kullanım Koşulları’na “hak dolunca yalnızca görüntüleme ve indirme” yazıldı) (D155) docs/legal/HUKUKCU_NOTU_D155.md’yi hukukçuya ilet: Kullanım Koşulları’ndaki “hak dolduğunda … düzenleyebilir” cümlesi yeni salt okunur kuralla çelişiyor; yeni metin gelince sürüm artırılıp yayımlanacak. Hukukçunun yeni metni gelmeden main’e alınmamalı
 - [ ] (D155) Canlıda dene: hakkı dolmuş bir hesapla çalışma salt okunur açılıyor mu, “Dışa aktar” çalışıyor mu, yeni çalışma/bölüm/kaynak eklemede “hakkınız doldu” penceresi çıkıyor mu, ücretsiz araçlar açık mı
-- [ ] (D154) Supabase SQL Editor’de migration 39’u çalıştır (`supabase/migrations/20261203000039_legal_acceptances.sql`, hukuki kabul kayıtları); check_status.sql’de “39” YAPILMIŞ görünmeli. Çalıştırılmadan önce site çalışır ama kabul kayıtları tutulmaz
+- [x] (2026-11-14) (D154) Supabase SQL Editor’de migration 39’u çalıştır (`supabase/migrations/20261203000039_legal_acceptances.sql`, hukuki kabul kayıtları); check_status.sql’de “39” YAPILMIŞ görünmeli. Çalıştırılmadan önce site çalışır ama kabul kayıtları tutulmaz
 - [ ] (D154) Hukukçudan: veri sorumlusu/satıcı unvanı, adres, MERSİS/vergi no, KEP ve KVKK başvuru e-postası → metinlerin “yayımdan önce eklenmelidir” yazan yerlerine eklenecek (yeni sürüm = yeniden kabul)
 - [ ] (D154) Hukukçu kararları: bağlayıcı dil; cihaz kimliği (acd_did) için izin gerekir mi (gerekirse lib/consent.ts SECURITY_REQUIRES_CONSENT = true); cayma hakkı ve anında ifa onayı; ödeme ve kabul kayıtları hesap silinince saklanmalı mı; saklama süreleri (12 ay kanıt kaydı, geri bildirim, hata kayıtları, ziyaret istatistiği); yaş sınırı
 - [ ] (D154) Supabase → Database → Backups: yedek türü ve saklama süresini docs/ACCOUNT_DELETION.md’ye yazdır
@@ -28,7 +32,7 @@
 - [x] (2026-11-12) Canlıda dene: iki tarayıcıda (sahip + ortak yazar) aynı bölümü aç; üstte yeşil “Canlı”, diğerinin paragrafında renkli çizgi; farklı paragraflara yazınca metin saniyeler içinde diğer tarafta görünmeli (D140)
 - [x] (2026-11-12) Canlıda dene: Araçlar → Literatür haritası → Ağ / Zaman çizelgesi / Konu haritası / Yeni çalışmalar (D141)
 - [x] (2026-11-13, eski madde kapatıldı) Canlıda dene: Dışa aktar → “LaTeX (.tex + .bib, ZIP)” ve “Overleaf’te aç” (Overleaf hesabıyla); derlenen PDF’in ekran görüntüsü (D136)
-- [ ] (Ertelendi, D136) ORCID ile yayın aktarma ve Zotero canlı eşitleme
+- [x] (2026-11-14, D192) ORCID ile yayın aktarma ve Zotero eşitleme
 - [x] (2026-11-12) Supabase SQL Editor’de migration 36’yı çalıştır (PDF bölümleri, derleme oyları, veri çıkarma, kalite; D132–D134)
 - [x] (2026-11-13, eski madde kapatıldı) Canlıda dene: Kaynaklar → “Birlikte analiz et” → Karşılaştır; İddia denetimi (Diğer kaynaklarımla da karşılaştır); PRISMA → Protokol’de çift değerlendirici, 5. Veri çıkarma ve kalite, 6. Yöntem metni → Belgeye ekle; yeni yüklenen bir PDF’te “Kaynağa sor → Yöntemi”
 - [x] (2026-11-13, eski madde kapatıldı) (İsteğe bağlı, ücretsiz) Vercel’e `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY` ekle → Redeploy (D129)
@@ -66,7 +70,7 @@
 - [x] (2026-11-02) Token limitleri yükseltildi (migration 13; elle çalıştırıldı)
 - [x] (2026-11-13, eski madde kapatıldı) Supabase SQL Editor’de migration 14’ü çalıştır (`20261109000014_cost_margin.sql`: yeni istek hakları + maliyet tavanı)
 - [ ] Her ay: Yönetim → Ayarlar → Kârlılık → dolar kurunu güncelle
-- [ ] Öneri: istem önbelleği (prompt caching) ile istek maliyetini düşürüp hakları artırmak
+- [x] (2026-11-14, D189) İstem önbelleği: bölüm boyunca sabit bağlam da önbellekte (kalite değişmeden). İleride: gerçek önbellek isabet oranı ölçülüp 1 saatlik önbellek süresi değerlendirilebilir
 - [x] (2026-11-13, eski madde kapatıldı) Supabase SQL Editor’de migration 15’i çalıştır (`20261110000015_plan_expiry.sql`: paket bitiş tarihi)
 - [x] (2026-11-13, eski madde kapatıldı) Supabase SQL Editor’de migration 16’yı çalıştır (`20261111000016_member_no.sql`: üye numarası)
 - [x] (2026-11-13, eski madde kapatıldı) Supabase SQL Editor’de migration 17’yi çalıştır (`20261112000017_price_increase.sql`: %50 fiyat artışı)
@@ -74,7 +78,7 @@
 - [x] (2026-11-13, eski madde kapatıldı) Supabase SQL Editor’de migration 19’u çalıştır (`20261114000019_isnad.sql`: ISNAD atıf stili)
 - [x] (2026-11-13, eski madde kapatıldı) Supabase → Authentication → Emails → “Reset Password” şablonunu Türkçeleştir; bağlantıyı `{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=recovery` yap (her cihazda çalışsın)
 - [x] (2026-11-13, eski madde kapatıldı) Pazarlama öncesi: Supabase → Authentication → SMTP ile kendi e-posta sağlayıcısını bağla (varsayılan gönderim saatlik birkaç e-postayla sınırlı)
-- [ ] İleride: ISNAD dipnotlu biçim (editörde dipnot altyapısı gerekir)
+- [x] (2026-11-14, D190) ISNAD 2 dipnotlu biçim
 - [ ] Ödeme gelince: Yönetim → Kullanıcılar’dan kullanıcının paketini elle değiştir
 - [x] (2026-11-13, eski madde kapatıldı) Alan adı: 2026-11-03’te hâlâ “Invalid Configuration” ise hosting.com.tr desteğine TRABIS iletimini sorun; gerekirse B planı (hosting.com.tr DNS + A @ 216.198.79.1, CNAME www → 4d8ff7a9ca75c5bb.vercel-dns-017.com)
 - [x] (2026-11-02, DNS yayılımı bekleniyor) Alan adı: hosting.com.tr’de nameserver → ns1.vercel-dns.com / ns2.vercel-dns.com (yapıldıysa Vercel’de “Valid Configuration” bekleniyor)
@@ -158,6 +162,6 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 
 ## SEO (D164 sonrası, ayrıntı docs/seo/SEO_PLAN.md)
 - [ ] İçerik dalgası 2: DOI rehberi, literatür matrisi, ANOVA, korelasyon, regresyon raporlama, YZ kullanım beyanı, örneklem hazır tablosu (TR/EN/DE, motorla doğrulanmış örnekler)
-- [ ] Yazı tipi önyüklemesini azalt (6 woff2 ≈ 590 KB; italik serif önyüklemesiz) — editörde italik görünüm testiyle
-- [ ] SSS ve ana sayfanın HTML ağırlığını azalt (içerik HTML + RSC + JSON-LD olarak üç kez taşınıyor)
+- [x] (2026-11-14, D193) Yazı tipi önyüklemesi 6 dosya/597 KB → 4 dosya/357 KB (italik serif gerektiğinde iner)
+- [x] (2026-11-14, D193) SSS HTML’i 312 → 231 KB (kısa CSS sınıfları, CSS ok); JSON-LD ve RSC tekrarı Next.js yapısı gereği kalır
 - [ ] Eski yazılara `updated` + `sources` ekle (önce en çok gösterim alan 10 yazı; Search Console verisiyle)

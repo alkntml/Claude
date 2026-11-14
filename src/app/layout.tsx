@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Source_Serif_4 } from "next/font/google";
+import { Inter } from "next/font/google";
+import { preload } from "react-dom";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nProvider } from "@/i18n/client";
@@ -16,8 +17,9 @@ import { JsonLd } from "@/components/json-ld";
 import { organizationLd, websiteLd } from "@/lib/structured-data";
 
 const sans = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-sans", display: "swap" });
-// Başlıklar ve metin editörü: klasik akademik yayın hissi veren Source Serif (optik boyutlu, Türkçe karakter destekli)
-const serif = Source_Serif_4({ subsets: ["latin", "latin-ext"], variable: "--font-serif", display: "swap", style: ["normal", "italic"], axes: ["opsz"] });
+// Başlıklar ve metin editörü: klasik akademik yayın hissi veren Source Serif (optik boyutlu, Türkçe karakter destekli).
+// D193: kendi sunucumuzdan (globals.css); yalnızca normal kesim önceden yüklenir, italik gerektiğinde iner.
+const SERIF_PRELOAD = ["/fonts/source-serif-4-normal-latin-v1.woff2", "/fonts/source-serif-4-normal-latinext-v1.woff2"];
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -48,8 +50,9 @@ export const viewport: Viewport = { themeColor: "#0f1d3d", width: "device-width"
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [locale, usdTry] = await Promise.all([getLocale(), getUsdTry().catch(() => 48)]);
+  for (const href of SERIF_PRELOAD) preload(href, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
-    <html lang={locale} className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={sans.variable} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} /></head>
       <body className="font-sans min-h-screen">
         <I18nProvider locale={locale}>

@@ -15,11 +15,11 @@ export const READ_ONLY_ALLOWED_ROUTES = new Set<string>([
   // Görüntüleme
   "projects.list", "projects.get", "stages.list", "stage.get", "revisions.list", "comments.list", "memory.list", "quality.latest", "claim_audit.get",
   "review.list", "project.sources.list", "source.get", "files.list", "ai.chat.history", "surveys.list", "survey.get", "survey.responses", "members.list",
-  "shares.list", "project.presence", "structure.get", "templates.list", "templates.get", "designs.list",
+  "shares.list", "project.presence", "project.progress", "project.sources.sync.list", "structure.get", "templates.list", "templates.get", "designs.list",
   // İndirme
   "project.export", "project.sources.export", "file.get",
-  // Gizlilik: danışman paylaşım bağlantısını iptal etmek her zaman serbest
-  "shares.revoke",
+  // Gizlilik: danışman paylaşım bağlantısını iptal etmek ve saklanan Zotero anahtarını silmek (D192) her zaman serbest
+  "shares.revoke", "project.sources.sync.remove",
 ]);
 
 export type ReadOnlyReason = "pages" | "ai_requests" | "tokens" | "cost";

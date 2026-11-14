@@ -19,6 +19,8 @@ export interface Run {
   sup?: boolean;
   /** Bu run bir dipnot işaretidir; değeri dipnot metnidir */
   footnote?: string;
+  /** D190: dipnot metni biçimli (italik başlık) — dipnotlu atıf stilinde */
+  footnoteRuns?: Run[];
   /** LaTeX çıktısında atıf biçimlenmez; kaynak kimlikleriyle \cite komutuna çevrilir (D136) */
   cite?: { ids: string[]; locator: string | null; narrative?: boolean; suppressAuthor?: boolean; prefix?: string | null; suffix?: string | null };
 }
@@ -126,6 +128,15 @@ export function buildExportDoc(params: {
         const a = citationAttrs(n);
         if (params.options?.latexCitations) { out.push({ text: "", cite: { ids: a.ids, locator: a.locator, narrative: a.narrative, suppressAuthor: a.suppressAuthor, prefix: a.prefix, suffix: a.suffix } }); continue; }
         const first = a.ids.some((id) => !firstSeen.has(id));
+        // D190: dipnotlu stil (ISNAD 2 dipnotlu): atıf dipnota gider; kaynağa ilk atıfta tam künye, sonrakilerde kısa atıf
+        if (engine.meta.family === "note") {
+          const seenBefore = new Set(firstSeen);
+          a.ids.forEach((id) => firstSeen.add(id));
+          const note = engine.note(a.ids, { locator: a.locator, prefix: a.prefix, suffix: a.suffix }, (id) => !seenBefore.has(id));
+          if (a.narrative) out.push({ text: engine.noteNarrative(a.ids) });
+          out.push({ text: "", footnote: note.map((x) => x.text).join(""), footnoteRuns: richToRuns(note) });
+          continue;
+        }
         a.ids.forEach((id) => firstSeen.add(id));
         out.push(...richToRuns(engine.cite(a.ids, { locator: a.locator, narrative: a.narrative, suppressAuthor: a.suppressAuthor, prefix: a.prefix, suffix: a.suffix }, first)));
       } else if (n.type === "footnote") {
@@ -134,6 +145,16 @@ export function buildExportDoc(params: {
         out.push({ text: "\n" });
       } else {
         out.push(...inlineRuns(n.content));
+      }
+    }
+    // D190: dipnotlu stilde dipnot numarası önündeki boşluk silinir ve arkasındaki noktalama işareti öne alınır (…ilişkilidir.¹)
+    if (engine.meta.family === "note") {
+      for (let k = 0; k < out.length; k++) {
+        if (out[k].footnote === undefined || out[k].text) continue;
+        const prev = out[k - 1], next = out[k + 1];
+        if (prev && !prev.footnote && !prev.text.endsWith("\n")) prev.text = prev.text.replace(/\s+$/, "");
+        const m = next && next.footnote === undefined ? next.text.match(/^[.,;:]/) : null;
+        if (m && prev && prev.footnote === undefined) { prev.text += m[0]; next.text = next.text.slice(1); }
       }
     }
     return out;

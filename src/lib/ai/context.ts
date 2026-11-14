@@ -24,7 +24,12 @@ export interface BuiltContext {
    * değişmediği için önbelleğe alınır (önbellekten okuma, normal girdi fiyatının ~%10’u).
    */
   head: string;
-  /** Değişken kısım: diğer bölümler, üzerinde çalışılan bölüm, yapı kuralı, tekrar listesi, tam metin parçaları */
+  /**
+   * D189: Bölüm boyunca sabit kısım: diğer bölümlerin durumu, ana hat ve üzerinde çalışılan bölümün talimatları.
+   * Aynı bölümdeki ardışık isteklerde değişmediği için ayrıca önbelleğe alınır.
+   */
+  mid: string;
+  /** Her istekte değişen kısım: bölümün mevcut metni, isteğe özgü ek kaynaklar, tekrar listesi, tam metin parçaları */
   tail: string;
   /** Kısa kimlik (S1) -> kaynak uuid */
   sourceMap: Record<string, string>;
@@ -108,6 +113,7 @@ export async function buildContext(params: {
   const { db, project, stage, stages, sources, memory, query } = params;
   const ctx = project.context ?? {};
   const head: string[] = [];
+  const mid: string[] = [];
   const tail: string[] = [];
   const bp = readBlueprint(ctx.blueprint);
 
@@ -210,66 +216,70 @@ export async function buildContext(params: {
   }
 
   // ---------- Değişken kısım ----------
+  // D189: isteğe özgü ek kaynaklar ve bu bölümdeki atıflar her istekte değişir; bölümün mevcut metninden sonra eklenir
+  const extraLines: string[] = [];
   if (picked.extra.length) {
-    tail.push("## BU İSTEKLE İLGİLİ EK KAYNAKLAR (bunlara da atıf yapabilirsin)");
+    extraLines.push("\n## BU İSTEKLE İLGİLİ EK KAYNAKLAR (bunlara da atıf yapabilirsin)");
     picked.extra.forEach((s) => {
       const sid = stableSid(s);
       sourceMap[sid] = s.id;
-      tail.push(sourceLine(s, sid, strict));
+      extraLines.push(sourceLine(s, sid, strict));
     });
   }
   const reverse = Object.fromEntries(Object.entries(sourceMap).map(([k, v]) => [v, k]));
   const citedIds = [...citedHere].map((id) => reverse[id]).filter(Boolean);
-  if (citedIds.length) tail.push(`\nBu bölümde zaten atıf yapılan kaynaklar: ${citedIds.join(", ")} (düzeltme ve genişletmede bu atıfları koru).`);
+  if (citedIds.length) extraLines.push(`\nBu bölümde zaten atıf yapılan kaynaklar: ${citedIds.join(", ")} (düzeltme ve genişletmede bu atıfları koru).`);
 
   // Diğer bölümlerin kısa özetleri (bölümler arası tutarlılık için)
   // D171: gizlenen bölümler bağlama girmez
   const others = stages.filter((s) => s.id !== stage?.id && !s.hidden && s.word_count > 0);
   if (others.length) {
-    tail.push("\n## DİĞER BÖLÜMLERİN DURUMU");
+    mid.push("\n## DİĞER BÖLÜMLERİN DURUMU");
     const lim = params.otherChars ?? 400;
     // D182: bölümün başı ve vardığı sonuç (son kısmı) birlikte verilir; bölümler birbirine bağlansın
     for (const s of others) {
       const txt = String(s.content_text).replace(/\s+/g, " ");
       const tailPart = txt.length > lim + 300 ? ` … [bölümün sonu:] ${txt.slice(-280)}` : "";
-      tail.push(`- ${s.title} (${s.word_count} kelime): ${txt.slice(0, lim)}${txt.length > lim ? "…" : ""}${tailPart}`);
+      mid.push(`- ${s.title} (${s.word_count} kelime): ${txt.slice(0, lim)}${txt.length > lim ? "…" : ""}${tailPart}`);
     }
   }
 
   // D182: çalışmanın ana hattı (bütün bölümlerin başlıkları)
-  { const ol = outlineBlock(spineStages, stage?.key); if (ol) tail.push(`\n${ol}`); }
+  { const ol = outlineBlock(spineStages, stage?.key); if (ol) mid.push(`\n${ol}`); }
 
   if (stage) {
     const def = stageDef(stage.key);
-    tail.push(`\n## ÜZERİNDE ÇALIŞILAN BÖLÜM: ${stage.title}`);
-    tail.push(`Amaç: ${def?.purpose ?? stage.description}`);
-    if (def?.rules.length) tail.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
-    if (params.stagePrompt) tail.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
+    mid.push(`\n## ÜZERİNDE ÇALIŞILAN BÖLÜM: ${stage.title}`);
+    mid.push(`Amaç: ${def?.purpose ?? stage.description}`);
+    if (def?.rules.length) mid.push(`Yazım kuralları:\n${def.rules.map((r) => `- ${r}`).join("\n")}`);
+    if (params.stagePrompt) mid.push(`BÖLÜME ÖZEL TALİMAT:\n${params.stagePrompt}`);
     // D171: bölümün gerekçesi, kullanıcının seçtiği kapsam ve literatür derinliği
-    if (stage.why) tail.push(`Bölümün çalışmadaki işlevi: ${stage.why}`);
+    if (stage.why) mid.push(`Bölümün çalışmadaki işlevi: ${stage.why}`);
     // D182: bu bölümün bütünle bağı
-    tail.push(coherenceRule(stage.key));
+    mid.push(coherenceRule(stage.key));
     // D173: bölümden sorumlu asistan rolü ve bölümde karşılanması beklenen işlevler (başlık olarak birebir kopyalanmaz)
     const role = assistantFor(stage.key, ctx.methodology);
-    tail.push(`Bu bölümde ${role.name} rolündesin: ${role.duty}.`);
+    mid.push(`Bu bölümde ${role.name} rolündesin: ${role.duty}.`);
     const fns = sourceBased && ["method", "methods_article", "findings", "results_article"].includes(stage.key) ? [] : sectionFunctions(stage.key, { workType: project.work_type, methodology: ctx.methodology, variant: ctx.variant });
-    if (fns.length) tail.push(`Bu bölümde karşılanması beklenen işlevler (gereken alt başlıkları konuya özgü adlarla bunlardan türet; listeyi başlık olarak kopyalama, çalışmaya uymayanı atla): ${fns.join("; ")}.`);
+    if (fns.length) mid.push(`Bu bölümde karşılanması beklenen işlevler (gereken alt başlıkları konuya özgü adlarla bunlardan türet; listeyi başlık olarak kopyalama, çalışmaya uymayanı atla): ${fns.join("; ")}.`);
     const ag = sourceBased ? "" : approachSectionGuidance(stage.key, ctx.methodology);
-    if (ag) tail.push(ag);
+    if (ag) mid.push(ag);
     const sg = scopeGuidance(stage.scope);
-    if (sg) tail.push(sg);
-    if (LITERATURE_STAGES.has(stage.key)) tail.push(`${LITERATURE_FUNCTIONS}\nBeklenen derinlik (${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level}): ${literatureDepth({ workType: project.work_type, level: project.academic_level, approach: ctx.methodology })}`);
-    if (stageNeedsData(stage.key, project)) tail.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
+    if (sg) mid.push(sg);
+    if (LITERATURE_STAGES.has(stage.key)) mid.push(`${LITERATURE_FUNCTIONS}\nBeklenen derinlik (${LEVEL_LABELS[project.academic_level as AcademicLevel] ?? project.academic_level}): ${literatureDepth({ workType: project.work_type, level: project.academic_level, approach: ctx.methodology })}`);
+    if (stageNeedsData(stage.key, project)) mid.push("UYARI: Bu bölüm kullanıcının gerçek verisini gerektirir. Kullanıcı veri sağlamadıysa değer üretme, [VERİ GİRİLECEK] kullan.");
     const note = blueprintStageNote(bp, stage);
-    if (note) tail.push(note);
+    if (note) mid.push(note);
     // Akademik yapı (D76): aşama adı başlık olarak yazılmaz; alt başlık sayısı bölüm türü ve hedef uzunluğa göre sınırlı
     const target = Number((bp?.chapters ?? []).find((c) => c.stageId === stage.id)?.words) || 0;
-    tail.push(structureRule(stage.key, stage.title, target));
+    mid.push(structureRule(stage.key, stage.title, target));
     const current = String(stage.content_text ?? "");
     if (!current) tail.push("Bölüm henüz boş.");
     else if (params.omitCurrentText) tail.push("Bölümün mevcut metninin tamamı aşağıda SEÇİLİ METİN olarak verildi.");
     else tail.push(`Bölümün mevcut metni:\n"""\n${current.slice(0, 12000)}\n"""`);
   }
+
+  tail.push(...extraLines);
 
   // Tekrar önleme: bölümde ve çalışmada zaten çok geçen kalıplar modele "kullanma" listesi olarak verilir
   {
@@ -315,10 +325,10 @@ export async function buildContext(params: {
     }
   }
 
-  const h = head.join("\n"), t = tail.join("\n");
+  const h = head.join("\n"), m = mid.join("\n").replace(/^\n+/, ""), t = tail.join("\n").replace(/^\n+/, "");
   // Bağlama girmeyen ama projede bulunan kaynaklar da çözülebilsin (ör. önceki mesajlarda atıf yapılanlar)
   for (const x of stableOrder) { const sid = sidOf.get(x.id)!; if (!sourceMap[sid]) sourceMap[sid] = x.id; }
-  return { text: t ? `${h}\n\n${t}` : h, head: h, tail: t, sourceMap, usedChunks };
+  return { text: [h, m, t].filter(Boolean).join("\n\n"), head: h, mid: m, tail: t, sourceMap, usedChunks };
 }
 
 /** Asistan yanıtındaki :::hafiza bloklarını ayrıştırır. */

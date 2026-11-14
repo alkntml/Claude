@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D188)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D193)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -16,7 +16,7 @@ Büyük değişiklik commit’lerinde ve kullanıcı “yedekle” dediğinde bu
 - **Yayın izni (13 Kasım 2026, kullanıcı):** “Yayınla dememi bekleme.” Her iş bittiğinde kontroller (tsc, test, lint, gerekiyorsa build) geçerse ayrıca sormadan `main`’e gönder ve kullanıcıya bildir. Veritabanı migration’ını kullanıcı Supabase’de elle çalıştırır (adımları yaz).
 - **Çalışma şekli (13 Kasım 2026, kullanıcı):** “Ne dediysem o olsun, her şeyi yapıp en son bana sorma.” İsteneni aynen uygula; sonunda “ister misiniz / söyleyin” diye soru veya alternatif önerme. Yalnızca gerçekten engelleyici bir belirsizlik varsa işe başlamadan sor. Kullanıcının yapması gereken adımları (ör. SQL) yine yaz.
 - **Veritabanı:** Supabase, Frankfurt.
-- **Ortam değişkenleri** (yalnızca Vercel; değişince Redeploy): zorunlu `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`; isteğe bağlı `OPENAI_API_KEY`, `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY`, `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`.
+- **Ortam değişkenleri** (yalnızca Vercel; değişince Redeploy): zorunlu `ANTHROPIC_API_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`; isteğe bağlı `OPENAI_API_KEY`, `SPRINGER_API_KEY`, `IEEE_API_KEY`, `ADS_API_KEY`, `ACADEMIC_CONTACT_EMAIL`, `NEXT_PUBLIC_APP_URL`, `INTEGRATION_SECRET` (Zotero anahtarı şifreleme, D192).
 - Bulut oturumunda akademik API’lere (OpenAlex, Crossref…) erişim yok: fixture testleri kullan. Anthropic API ve npm açık. Tünel açmak yasak.
 
 ## Temel ilkeler (pazarlık konusu değil)
@@ -60,7 +60,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
 - **Yapay zekâ:**
   - Model işe göre seçilir (D47): `fast` Haiku, `balanced` Sonnet, `default` Opus — `resolveModel(planId, tier)`, eylemler `ACTION_TIER`.
   - Modeller: `claude-opus-5-5`, `claude-sonnet-5-5`, `claude-haiku-5-5`. `temperature` gönderme, `output_config.effort` kullan; Opus/Sonnet’te `fallbacks: "default"`.
-  - Maliyet (D78, D94): sabit bağlam `context`, değişken `contextTail`; `estimateCost` + `recordUsage(..., { usage, costUsd })`; yanıt okunamazsa `throw await spentError(...)`; geçmiş `compactHistory`.
+  - Maliyet (D78, D94, D189): sabit bağlam `context`, bölüm boyunca sabit `contextMid`, değişken `contextTail` (sırayı ve rolü değiştirme: kalite); `estimateCost` + `recordUsage(..., { usage, costUsd })`; yanıt okunamazsa `throw await spentError(...)`; geçmiş `compactHistory`.
   - Limit `assertWithinLimits`, özellik kilidi `assertFeature`.
 - **Hak dolunca salt okunur (D155):** yeni bir API ucu salt okunur kullanıcıya kendiliğinden kapalıdır; yalnızca görüntüleme/indirme/hesap işlemi ise `lib/read-only.ts` → `READ_ONLY_ALLOWED_ROUTES`’a ekle.
 - Menü/özellik değişince kullanım metinlerini güncelle: `ai/help.ts`, `guide.ts`, `faq.ts`.

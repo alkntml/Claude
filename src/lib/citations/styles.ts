@@ -7,6 +7,7 @@ import {
 export const STYLES: Record<CitationStyleId, StyleMeta> = {
   apa7: { id: "apa7", label: "APA 7", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References", de: "Literaturverzeichnis" }, description: "American Psychological Association, 7. baskı" },
   isnad: { id: "isnad", label: "ISNAD 2 (metin içi)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Bibliography", de: "Literaturverzeichnis" }, description: "İSNAD Atıf Sistemi, 2. edisyon, metin içi atıf (yazar-tarih)" },
+  isnad_note: { id: "isnad_note", label: "ISNAD 2 (dipnotlu)", family: "note", bibliographyTitle: { tr: "Kaynakça", en: "Bibliography", de: "Literaturverzeichnis" }, description: "İSNAD Atıf Sistemi, 2. edisyon, dipnotlu: ilk atıfta tam künye, sonrakilerde kısa atıf" },
   apa6: { id: "apa6", label: "APA 6", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References", de: "Literaturverzeichnis" }, description: "American Psychological Association, 6. baskı" },
   chicago: { id: "chicago", label: "Chicago (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "References", de: "Literaturverzeichnis" }, description: "Chicago Manual of Style 17, yazar-tarih sistemi" },
   turabian: { id: "turabian", label: "Turabian (yazar-tarih)", family: "author-date", bibliographyTitle: { tr: "Kaynakça", en: "Reference List", de: "Literaturverzeichnis" }, description: "Turabian 9, yazar-tarih (reference list) sistemi" },
@@ -236,7 +237,7 @@ export class CitationEngine {
 
   private yearText(it: CitationItem): string {
     // ISNAD: tarihsiz eserler “ts.” (en: “n.d.”)
-    const nd = this.style === "isnad" && this.locale === "tr" ? "ts." : this.tm.nd;
+    const nd = (this.style === "isnad" || this.style === "isnad_note") && this.locale === "tr" ? "ts." : this.tm.nd;
     return `${it.year ?? nd}${this.suffix.get(it.id) ?? ""}`;
   }
 
@@ -281,6 +282,7 @@ export class CitationEngine {
         if (fam.length === 2) return `${fam[0]} ${this.tm.and} ${fam[1]}`;
         return etal;
       case "isnad":
+      case "isnad_note":
         // ISNAD 2 metin içi: (Demir - Aksoy, 2022), üç ve daha fazla yazarda (Lee vd., 2020)
         if (fam.length === 1) return fam[0];
         if (fam.length === 2) return narrative ? `${fam[0]} ${this.tm.and} ${fam[1]}` : `${fam[0]} - ${fam[1]}`;
@@ -321,9 +323,9 @@ export class CitationEngine {
       return [t(`(${parts.join("; ")}${loc ? `${parts[0] ? " " : ""}${loc}` : ""})`)];
     }
 
-    const sep = this.style.startsWith("apa") || this.style === "harvard" || this.style === "isnad" ? ", " : " ";
+    const sep = this.style.startsWith("apa") || this.style === "harvard" || this.style === "isnad" || this.style === "isnad_note" ? ", " : " ";
     // ISNAD metin içi sayfa: (Kaya, 2021, 45) — “s.” yazılmaz
-    const locStyle = this.style === "chicago" || this.style === "turabian" || this.style === "isnad" ? "chicago" : this.style === "harvard" ? "harvard" : "apa";
+    const locStyle = this.style === "chicago" || this.style === "turabian" || this.style === "isnad" || this.style === "isnad_note" ? "chicago" : this.style === "harvard" ? "harvard" : "apa";
     const loc = single ? this.locatorText(opts.locator, locStyle) : "";
 
     if (opts.narrative) {
@@ -366,6 +368,116 @@ export class CitationEngine {
   }
 
   // -------------------------------------------------------------------------
+  // Dipnot (D190: ISNAD 2 dipnotlu)
+  // -------------------------------------------------------------------------
+
+  /** Dipnotlu stilde anlatı atfının metin içinde kalan kısmı: “Demir ve Aksoy¹” */
+  noteNarrative(ids: string[]): string {
+    const items = ids.map((id) => this.items.get(id)).filter((x): x is CitationItem => !!x);
+    return items.map((it) => this.citeAuthors(it, true)).join("; ");
+  }
+
+  /**
+   * Dipnot metni. `first`: kaynağa ilk kez atıf yapılıyorsa tam künye, sonraki atıflarda kısa atıf (Soyad, Kısa Başlık, sayfa).
+   * ISNAD 2: makale ve kitap bölümünde sayfa aralığından sonra “/” ile atıf yapılan sayfa (45-62/50).
+   */
+  note(ids: string[], opts: InTextOptions = {}, first: boolean | ((id: string) => boolean) = true): Rich {
+    const items = ids.map((id) => this.items.get(id)).filter((x): x is CitationItem => !!x);
+    if (!items.length) return [t("?")];
+    const isFirst = (id: string) => (typeof first === "function" ? first(id) : first);
+    const loc = items.length === 1 ? this.noteLocator(opts.locator) : "";
+    const out: Rich = [];
+    if (opts.prefix?.trim()) out.push(t(`${opts.prefix.trim()} `));
+    items.forEach((it, k) => {
+      if (k) out.push(t("; "));
+      out.push(...(isFirst(it.id) ? this.isnadNoteFull(it, loc) : this.isnadNoteShort(it, loc)));
+    });
+    if (opts.suffix?.trim()) out.push(t(`; ${opts.suffix.trim()}`));
+    const r = trimEnd(out);
+    const last = r[r.length - 1];
+    if (last && !/[.!?]$/.test(last.text)) last.text = `${last.text.replace(/[,;:]$/, "")}.`;
+    return mergeRich(r);
+  }
+
+  private noteLocator(locator: string | null | undefined): string {
+    return pageRange(clean(locator).replace(/^(?:ss|sf|pp|s|p)\.\s*/i, ""), "-");
+  }
+
+  private noteAuthors(it: CitationItem, full: boolean): string {
+    const a = it.authors.length ? it.authors : it.editors ?? [];
+    const names = a.map((p) => (full ? nameGivenFamily(p) : familyOf(p)));
+    if (!names.length) return "";
+    const base = names.length === 1 ? names[0] : names.length === 2 ? `${names[0]} - ${names[1]}` : `${names[0]} ${this.tm.etal}`;
+    return !it.authors.length && full ? `${base} (${this.locale === "de" ? "Hrsg." : "ed."})` : base;
+  }
+
+  private notePages(it: CitationItem, loc: string): string {
+    const range = it.pages ? pageRange(it.pages, "-") : "";
+    if (range && loc) return `, ${range}/${loc}`;
+    if (range) return `, ${range}`;
+    return loc ? `, ${loc}` : "";
+  }
+
+  private isnadNoteFull(it: CitationItem, loc: string): Rich {
+    const a = this.noteAuthors(it, true);
+    const title = stripEndPunct(isnadTitleCase(it.title, this.locale));
+    const year = this.yearText(it);
+    const place = clean(it.publisherPlace), pub = clean(it.publisher);
+    const pp = place && pub ? `${place}: ${pub}` : place || pub;
+    const out: Rich = [];
+    if (a) out.push(t(`${a}, `));
+    switch (it.type) {
+      case "article-journal": {
+        out.push(t(`“${title}”, `));
+        if (it.containerTitle) out.push(i(isnadTitleCase(clean(it.containerTitle), this.locale)));
+        const vi = `${it.volume ? clean(it.volume) : ""}${it.issue ? `/${clean(it.issue)}` : ""}`;
+        out.push(t(`${vi ? ` ${vi}` : ""} (${year})${this.notePages(it, loc)}`));
+        break;
+      }
+      case "chapter":
+      case "paper-conference": {
+        out.push(t(`“${title}”, `));
+        if (it.containerTitle) out.push(i(isnadTitleCase(clean(it.containerTitle), this.locale)));
+        const eds = (it.editors ?? []).map(nameGivenFamily);
+        if (eds.length) out.push(t(`, ${this.locale === "de" ? "hrsg. v." : "ed."} ${eds.join(" - ")}`));
+        out.push(t(` (${[pp, year].filter(Boolean).join(", ")})${this.notePages(it, loc)}`));
+        break;
+      }
+      case "thesis": {
+        const inst = clean(it.institution ?? it.publisher);
+        out.push(i(title), t(` (${[place && inst ? `${place}: ${inst}` : place || inst, isnadTitleCase(this.thesisLabel(it), this.locale), year].filter(Boolean).join(", ")})${loc ? `, ${loc}` : ""}`));
+        break;
+      }
+      case "webpage": {
+        out.push(t(`“${title}”`));
+        if (it.containerTitle) out.push(t(`, ${clean(it.containerTitle)}`));
+        if (it.year) out.push(t(` (${year})`));
+        if (it.accessed) out.push(t(` (${this.locale === "tr" ? "Erişim" : this.locale === "de" ? "Zugriff am" : "Accessed"} ${this.fmtDate(it.accessed)})`));
+        if (it.url) out.push(t(`, ${it.url}`));
+        break;
+      }
+      default: {
+        const ed = it.edition ? `${clean(it.edition)}. ${this.locale === "tr" ? "Basım" : this.locale === "de" ? "Aufl." : "ed."}` : "";
+        out.push(i(title), t(` (${[pp, ed, year].filter(Boolean).join(", ")})${loc ? `, ${loc}` : ""}`));
+      }
+    }
+    return out;
+  }
+
+  private isnadNoteShort(it: CitationItem, loc: string): Rich {
+    const a = this.noteAuthors(it, false);
+    const full = stripEndPunct(isnadTitleCase(it.title, this.locale));
+    const words = full.split(/\s+/);
+    const short = stripEndPunct(words.length <= 4 ? full : words.slice(0, 3).join(" "));
+    const quoted = ["article-journal", "chapter", "paper-conference", "webpage"].includes(it.type);
+    const out: Rich = [];
+    if (a) out.push(t(`${a}, `));
+    out.push(quoted ? t(`“${short}”`) : i(short));
+    if (loc) out.push(t(`, ${loc}`));
+    return out;
+  }
+
+  // -------------------------------------------------------------------------
   // Kaynakça
   // -------------------------------------------------------------------------
 
@@ -389,6 +501,7 @@ export class CitationEngine {
       case "apa6":
         return mergeRich(this.apa(it));
       case "isnad":
+      case "isnad_note":
         return mergeRich(this.isnad(it));
       case "chicago":
       case "turabian":

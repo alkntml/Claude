@@ -50,7 +50,7 @@ export function NotificationBell({ className, align = "left" }: { className?: st
   const d0 = (n: Note) => n.data ?? {};
   const text = (n: Note): { title: string; body: string; href?: string; cta?: string } => {
     // Ortak yazım (D115)
-    if (n.kind === "coauthor_invite") return { title: t("Ortak yazar daveti"), body: t("{f} sizi “{p}” çalışmasına {r} olarak davet etti.", { f: d0(n).from ?? "", p: d0(n).project ?? "", r: d0(n).role === "commenter" ? t("yorumcu") : t("ortak yazar") }), href: `/ortak/${d0(n).token}`, cta: t("Daveti görüntüle") };
+    if (n.kind === "coauthor_invite") return { title: t("Ortak yazar daveti"), body: t("{f} sizi “{p}” çalışmasına {r} olarak davet etti.", { f: d0(n).from ?? "", p: d0(n).project ?? "", r: d0(n).role === "commenter" ? t("yorumcu") : d0(n).role === "advisor" ? t("danışman") : t("ortak yazar") }), href: `/ortak/${d0(n).token}`, cta: t("Daveti görüntüle") };
     if (n.kind === "coauthor_joined") return { title: t("Ortak yazar katıldı"), body: t("{n} “{p}” çalışmanıza katıldı.", { n: d0(n).name ?? "", p: d0(n).project ?? "" }), href: d0(n).projectId ? `/proje/${d0(n).projectId}` : undefined, cta: t("Çalışmayı aç") };
     if (n.kind === "coauthor_left") return { title: t("Ortak yazar ayrıldı"), body: t("{n} “{p}” çalışmanızdan ayrıldı.", { n: d0(n).name ?? "", p: d0(n).project ?? "" }) };
     if (n.kind === "coauthor_removed") return { title: t("Ortak yazarlıktan çıkarıldınız"), body: t("“{p}” çalışmasının sahibi sizi ortak yazarlar listesinden çıkardı.", { p: d0(n).project ?? "" }) };

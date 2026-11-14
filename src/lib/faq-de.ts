@@ -112,11 +112,11 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   "kendi-kaynak": {
     q: "Kann ich meine Quellen aus Zotero, Mendeley oder EndNote importieren?",
-    a: "Ja. Exportieren Sie Ihre Literaturangaben aus Ihrem Programm als BibTeX (.bib), RIS (.ris) oder CSL-JSON (.json) und laden Sie sie im Tab „Quellen“ mit „Importieren“ hoch. Es werden bis zu 300 Einträge auf einmal importiert, solche mit DOI werden verifiziert, und Dubletten werden übersprungen. Auch der Export in diesen Formaten ist möglich.",
+    a: "Ja. Exportieren Sie Ihre Literaturangaben aus Ihrem Programm als BibTeX (.bib), RIS (.ris) oder CSL-JSON (.json) und laden Sie sie im Tab „Quellen“ mit „Importieren“ hoch. Es werden bis zu 300 Einträge auf einmal importiert, solche mit DOI werden verifiziert, und Dubletten werden übersprungen. Auch der Export in diesen Formaten ist möglich. Sie können Zotero auch direkt verbinden: „Importieren“ in der oberen Leiste → Zotero; mit **Synchronisieren** kommen später hinzugefügte Einträge automatisch ins Projekt (der Schlüssel wird verschlüsselt gespeichert und ist jederzeit entfernbar). Mit einer **ORCID**-iD lassen sich die öffentlichen Werke einer Person importieren und synchronisieren.",
   },
   stiller: {
     q: "Welche Zitierstile werden unterstützt? Kann ich später wechseln?",
-    a: "APA 7, APA 6, ISNAD 2 (im Text), MLA 9, Chicago (Autor-Jahr), Turabian, Harvard, Vancouver, IEEE und AMA. Sie können jederzeit wechseln: Zitate werden nicht als einfacher Text, sondern als mit der Quelle verknüpfte Elemente eingefügt, daher stellen sich alle Zitate im Text und das Literaturverzeichnis sofort um. Das Literaturverzeichnis entsteht automatisch aus den im Text zitierten Quellen.",
+    a: "APA 7, APA 6, ISNAD 2 (im Text), MLA 9, Chicago (Autor-Jahr), Turabian, Harvard, Vancouver, IEEE und AMA. Sie können jederzeit wechseln: Zitate werden nicht als einfacher Text, sondern als mit der Quelle verknüpfte Elemente eingefügt, daher stellen sich alle Zitate im Text und das Literaturverzeichnis sofort um. Das Literaturverzeichnis entsteht automatisch aus den im Text zitierten Quellen. Mit **ISNAD 2 (Fußnoten)** werden Zitate zu Fußnoten: beim ersten Zitat einer Quelle die vollständige Angabe, danach eine Kurzform (Nachname, Kurztitel, Seite); in Word, PDF und LaTeX stehen die Fußnoten unten auf der Seite.",
   },
   kilavuz: {
     q: "Hält es sich an die Richtlinien meiner Hochschule für Abschlussarbeiten?",
@@ -192,7 +192,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   danisman: {
     q: "Wie teile ich meine Arbeit mit meiner Betreuung? Braucht sie ein Konto?",
-    a: "Erstellen Sie im Arbeitsbereich über „Teilen“ (auf dem Smartphone im Menü ⋯) einen Link nur zum Lesen; Ihre Betreuung braucht kein Konto. Sie können Kommentare erlauben; sie erscheinen im betreffenden Abschnitt und lassen sich mit „Mit Assistent umsetzen“ in einen Überarbeitungsvorschlag verwandeln. Sie können ein Ablaufdatum festlegen oder den Link jederzeit widerrufen.",
+    a: "Erstellen Sie im Arbeitsbereich über „Teilen“ (auf dem Smartphone im Menü ⋯) einen Link nur zum Lesen; Ihre Betreuung braucht kein Konto. Sie können Kommentare erlauben; sie erscheinen im betreffenden Abschnitt und lassen sich mit „Mit Assistent umsetzen“ in einen Überarbeitungsvorschlag verwandeln. Sie können ein Ablaufdatum festlegen oder den Link jederzeit widerrufen. Hat Ihre Betreuung ein Konto, können Sie sie auch als **Betreuung** einladen (Mitautoren → Rolle: Betreuung; in jedem Paket, höchstens 2 Personen): Sie liest, kommentiert und sieht über **Fortschritt** in der oberen Leiste den Stand je Kapitel (geschriebene Wörter, Ziel, offene Kommentare, letzte Qualitätspunktzahl); den Text kann sie nicht ändern. Der Freigabelink zeigt dasselbe Fortschrittsfeld.",
   },
   ucretsiz: {
     q: "Kann ich es kostenlos nutzen?",

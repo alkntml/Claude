@@ -20,6 +20,8 @@ export const env = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   iyzicoKey: process.env.IYZICO_API_KEY ?? "",
   iyzicoSecret: process.env.IYZICO_SECRET_KEY ?? "",
+  /** D192: bağlantı anahtarlarını (Zotero) şifrelemek için; yoksa sunucu anahtarından türetilir */
+  integrationSecret: process.env.INTEGRATION_SECRET ?? "",
 };
 
 export function isSupabaseConfigured() {

@@ -18,7 +18,7 @@ export const openaiProvider: AiProvider = {
         max_completion_tokens: p.maxTokens,
         stream: true,
         stream_options: { include_usage: true },
-        messages: [{ role: "system", content: [p.system, p.context, p.contextTail].filter(Boolean).join("\n\n") }, ...p.messages],
+        messages: [{ role: "system", content: [p.system, p.context, p.contextMid, p.contextTail].filter(Boolean).join("\n\n") }, ...p.messages],
         ...(p.jsonSchema ? { response_format: { type: "json_schema", json_schema: { name: "output", schema: p.jsonSchema, strict: false } } } : {}),
       }),
     });

@@ -65,16 +65,18 @@ export function Bibliography({ items, style, locale, onRemove }: { items: Citati
       </div>
       <ol className="space-y-3">
         {entries.map((e) => {
-          const intext = richToPlain(engine.cite([e.id], {}, false));
-          const narrative = engine.meta.family === "numeric" ? null : richToPlain(engine.cite([e.id], { narrative: true }, false));
+          // D190: dipnotlu stilde metin içi atıf yerine ilk dipnot (tam künye) ve sonraki dipnot (kısa atıf) gösterilir
+          const isNote = engine.meta.family === "note";
+          const intext = richToPlain(isNote ? engine.note([e.id], {}, true) : engine.cite([e.id], {}, false));
+          const narrative = engine.meta.family === "numeric" ? null : richToPlain(isNote ? engine.note([e.id], {}, false) : engine.cite([e.id], { narrative: true }, false));
           return (
             <li key={e.id} className="group rounded-xl border border-ink-100 bg-white p-3">
               <p className="font-serif text-[15.5px] leading-relaxed text-ink-900" style={{ paddingLeft: "2em", textIndent: "-2em" }}>
                 {engine.meta.family === "numeric" && <span>[{e.number}] </span>}<span dangerouslySetInnerHTML={{ __html: richToHtml(e.rich) }} />
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ink-500">
-                <span>{t("Metin içi:")} <b className="font-medium text-ink-800">{intext}</b></span>
-                {narrative && <span>{t("Anlatı:")} <b className="font-medium text-ink-800">{narrative}</b></span>}
+                <span>{isNote ? t("İlk dipnot:") : t("Metin içi:")} <b className="font-medium text-ink-800">{intext}</b></span>
+                {narrative && <span>{isNote ? t("Sonraki dipnotlar:") : t("Anlatı:")} <b className="font-medium text-ink-800">{narrative}</b></span>}
                 {onRemove && <button type="button" onClick={() => onRemove(e.id)} className="ml-auto text-ink-400 hover:text-rose-600">{t("Kaldır")}</button>}
               </div>
             </li>

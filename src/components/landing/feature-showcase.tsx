@@ -222,7 +222,7 @@ const CATEGORIES: Category[] = [
     { icon: MessagesSquare, title: "Kaynağa sor", text: "Bir makaleye soru sorun; cevap yalnızca o makaleden, sayfa numaralarıyla gelir." },
     { icon: Layers, title: "Birlikte analiz et", text: "2–8 makaleyi karşılaştırın: uyuşan noktalar, çelişen bulgular ve araştırma boşlukları tek tabloda.", plan: "matrix" },
     { icon: Network, title: "Literatür haritası ve matrisi", text: "Atıf, ortak kaynakça ve birlikte atıf ağı; konu kümeleri, zaman çizelgesi, konu haritası, eksik temel ve yeni çalışmalar; amaç–yöntem–bulgu matrisi.", plan: "litmap" },
-    { icon: Table2, title: "Konu bulma ve kütüphane aktarımı", text: "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma.", plan: "topics" },
+    { icon: Table2, title: "Konu bulma ve kütüphane aktarımı", text: "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma; Zotero ve ORCID eşitleme.", plan: "topics" },
   ] },
   { id: "dogruluk", icon: ShieldCheck, title: "Atıf ve doğruluk", lead: "Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. Academiana ikisini de denetler.", Visual: CitationVisual, features: [
     { icon: Quote, title: "Canlı atıflar, 10 atıf stili", text: "APA 7, ISNAD 2, MLA, Chicago, IEEE ve diğerleri; stil değiştiğinde metin ve kaynakça birlikte dönüşür." },

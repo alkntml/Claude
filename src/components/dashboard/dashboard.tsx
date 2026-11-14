@@ -149,7 +149,7 @@ export function Dashboard(p: Props) {
                     <span className="relative flex shrink-0 items-center justify-center"><ProgressRing value={pr.progress} size={32} /><span className="absolute text-[9px] font-semibold text-ink-700">{pr.progress}%</span></span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium text-ink-800">{pr.title}</span>
-                      <span className="block truncate text-xs text-ink-400">{pr.owner_name ? t("Sahibi: {n}", { n: pr.owner_name }) : ""}{pr.owner_name ? " · " : ""}{pr.role === "commenter" ? t("Yorumcu") : t("Ortak yazar")} · {t("Son düzenleme {x}", { x: ago(pr.updated_at) })}</span>
+                      <span className="block truncate text-xs text-ink-400">{pr.owner_name ? t("Sahibi: {n}", { n: pr.owner_name }) : ""}{pr.owner_name ? " · " : ""}{pr.role === "commenter" ? t("Yorumcu") : pr.role === "advisor" ? t("Danışman") : t("Ortak yazar")} · {t("Son düzenleme {x}", { x: ago(pr.updated_at) })}</span>
                     </span>
                     <ArrowRight className="h-4 w-4 text-ink-300" />
                   </Link>

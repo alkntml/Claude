@@ -57,8 +57,19 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
   const order = ["s1", "s2", "s3", "s4"];
   const sources = useMemo(() => sampleSources(locale), [locale]);
   const engine = useMemo(() => new CitationEngine(style, sources, { locale: l, citedOrder: order }), [style, l, sources]); // eslint-disable-line react-hooks/exhaustive-deps
-  const cite = (ids: string[]) => `<span class="sample-cite">${richToHtml(engine.cite(ids))}</span>`;
-  const withCites = (text: string) => text.replace(/\{c:([\w,]+)\}/g, (_, ids: string) => cite(ids.split(","))).replace(/\[(KAYNAK GEREKLİ|CITATION NEEDED|QUELLE ERFORDERLICH)\]/g, `<span class="sample-flag">[$1]</span>`);
+  // D190: dipnotlu stilde (ISNAD 2 dipnotlu) atıf üst simge numaradır; notlar paragrafın altında listelenir
+  const noteStyle = engine.meta.family === "note";
+  const notes: string[] = [];
+  const noteSeen = new Set<string>();
+  const cite = (ids: string[]) => {
+    if (!noteStyle) return `<span class="sample-cite">${richToHtml(engine.cite(ids))}</span>`;
+    const seen = new Set(noteSeen);
+    ids.forEach((id) => noteSeen.add(id));
+    notes.push(richToHtml(engine.note(ids, {}, (id) => !seen.has(id))));
+    return `<sup class="sample-cite">${notes.length}</sup>`;
+  };
+  // D190: dipnotlu stilde numara noktalama işaretinden sonra, boşluksuz gelir (…ilişkilidir.¹)
+  const withCites = (text: string) => (noteStyle ? text.replace(/\s*\{c:([\w,]+)\}([.,;:]?)/g, (_, ids: string, punct: string) => `${punct}${cite(ids.split(","))}`) : text.replace(/\{c:([\w,]+)\}/g, (_, ids: string) => cite(ids.split(",")))).replace(/\[(KAYNAK GEREKLİ|CITATION NEEDED|QUELLE ERFORDERLICH)\]/g, `<span class="sample-flag">[$1]</span>`);
   const bib = engine.bibliography();
   const src = (id: string) => sources.find((s) => s.id === id)!;
   const r2s = (r: number) => r.toFixed(2).replace(/^(-?)0\./, "$1.");
@@ -128,8 +139,9 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
         <div className="mb-3 flex flex-wrap gap-1.5">
           {STYLE_IDS.map((id) => <button key={id} type="button" onClick={() => setStyle(id)} className={cn("rounded-full border px-3 py-1 text-[12.5px] font-medium transition", style === id ? "border-ink-900 bg-ink-900 text-white" : "border-ink-200 text-ink-600 hover:border-ink-300")}>{STYLES[id].label}</button>)}
         </div>
-        <p className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">{t("Metin içi atıf")}</p>
-        <p className="mt-1 font-serif text-[15.5px] leading-7 text-ink-800" dangerouslySetInnerHTML={{ __html: withCites(p(DRAFT.paras[0])) }} />
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">{noteStyle ? t("Dipnotlu atıf") : t("Metin içi atıf")}</p>
+        <p className="mt-1 font-serif text-[15.5px] leading-7 text-ink-800" dangerouslySetInnerHTML={{ __html: (notes.length = 0, noteSeen.clear(), withCites(p(DRAFT.paras[0]))) }} />
+        {noteStyle && notes.length > 0 && <ol className="mt-2 space-y-1 border-t border-ink-100 pt-2 font-serif text-[13px] leading-6 text-ink-700">{notes.map((n, k) => <li key={k}><span className="mr-1">{k + 1}.</span><span dangerouslySetInnerHTML={{ __html: n }} /></li>)}</ol>}
         <p className="mt-4 text-[12px] font-semibold uppercase tracking-wide text-ink-400">{STYLES[style].bibliographyTitle[l]}</p>
         <ol className="mt-1 space-y-1.5">
           {bib.map((b) => <li key={b.id} className="pl-6 -indent-6 font-serif text-[15px] leading-7 text-ink-800">{b.number ? <span className="mr-1">[{b.number}]</span> : null}<span dangerouslySetInnerHTML={{ __html: richToHtml(b.rich) }} /></li>)}

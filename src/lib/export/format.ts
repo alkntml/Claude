@@ -126,7 +126,7 @@ export function defaultPreset(p: { workType?: string | null; citationStyle?: str
     case "harvard": return "harvard";
     case "ieee": return "ieee";
     case "vancouver": case "ama": return "medical";
-    case "isnad": return "isnad";
+    case "isnad": case "isnad_note": return "isnad";
     default: return "tez-tr";
   }
 }

@@ -16,6 +16,9 @@ export const anthropicProvider: AiProvider = {
     const system: Anthropic.Beta.BetaTextBlockParam[] = [{ type: "text", text: p.system, cache_control: { type: "ephemeral" } }];
     // Sabit bağlam da önbelleğe alınır (D78): aynı çalışmadaki ardışık isteklerde ~%90 daha ucuz okunur
     if (p.context) system.push({ type: "text", text: p.context, cache_control: { type: "ephemeral" } });
+    // D189: aynı bölümdeki ardışık isteklerde değişmeyen kısım (diğer bölümler, ana hat, bölüm talimatları) da önbelleğe alınır.
+    // İçerik ve rol (sistem) aynıdır; yalnızca her istekte değişen kısım önbellek noktasının arkasında kalır.
+    if (p.contextMid) system.push({ type: "text", text: p.contextMid, cache_control: { type: "ephemeral" } });
     if (p.contextTail) system.push({ type: "text", text: p.contextTail });
 
     const stream = getClient().beta.messages.stream(

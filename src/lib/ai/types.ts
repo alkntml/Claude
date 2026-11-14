@@ -9,7 +9,9 @@ export interface GenerateParams {
   system: string;
   /** Sabit bağlam: proje bilgileri, kurgu, kaynak listesi (Anthropic’te önbelleğe alınır, D78) */
   context?: string;
-  /** Değişken bağlam: üzerinde çalışılan bölüm, RAG parçaları (önbelleğe alınmaz) */
+  /** D189: bölüm boyunca sabit bağlam: diğer bölümler, ana hat, bölüm talimatları (Anthropic’te ayrıca önbelleğe alınır) */
+  contextMid?: string;
+  /** Değişken bağlam: bölümün mevcut metni, isteğe özgü kaynaklar, RAG parçaları (önbelleğe alınmaz) */
   contextTail?: string;
   messages: ChatMessage[];
   maxTokens: number;

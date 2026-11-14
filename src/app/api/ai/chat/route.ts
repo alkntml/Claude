@@ -294,8 +294,8 @@ export const POST = route("ai.chat", async (req) => {
         const effort = ACTION_EFFORT[b.action] ?? models.effort;
         // Türkçe ~2,7 token/kelime + düşünme payı; hedef uzunsa çıktı sınırı büyütülür
         const maxTokens = target ? Math.max(models.max_output_tokens, Math.min(32000, Math.ceil(target.words * 3.3) + 4000)) : models.max_output_tokens;
-        promptChars = system.length + ctx.head.length + ctx.tail.length + messages.reduce((a, m) => a + m.content.length, 0);
-        for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages, maxTokens, effort }, req.signal)) {
+        promptChars = system.length + ctx.head.length + ctx.mid.length + ctx.tail.length + messages.reduce((a, m) => a + m.content.length, 0);
+        for await (const ev of streamWith(model, { system, context: ctx.head, contextMid: ctx.mid, contextTail: ctx.tail, messages, maxTokens, effort }, req.signal)) {
           if (ev.type === "text") { answer += ev.text; controller.enqueue(sse("text", { text: ev.text })); }
           else { usage = ev.usage; stopReason = ev.stopReason; servedModel = ev.model; }
         }
@@ -307,7 +307,7 @@ export const POST = route("ai.chat", async (req) => {
             controller.enqueue(sse("status", { text: T("Taslak {w} kelimede kaldı; kurgudaki hedefe ({t} kelime) tamamlanıyor…", { w: written, t: target.words }) }));
             let more = "";
             const contMessages = [...messages, { role: "assistant" as const, content: answer }, { role: "user" as const, content: continuationPrompt(written, target) }];
-            for await (const ev of streamWith(model, { system, context: ctx.head, contextTail: ctx.tail, messages: contMessages, maxTokens, effort }, req.signal)) {
+            for await (const ev of streamWith(model, { system, context: ctx.head, contextMid: ctx.mid, contextTail: ctx.tail, messages: contMessages, maxTokens, effort }, req.signal)) {
               if (ev.type === "text") more += ev.text;
               else {
                 usage = { input: usage.input + ev.usage.input, output: usage.output + ev.usage.output, cacheRead: (usage.cacheRead ?? 0) + (ev.usage.cacheRead ?? 0), cacheWrite: (usage.cacheWrite ?? 0) + (ev.usage.cacheWrite ?? 0) };

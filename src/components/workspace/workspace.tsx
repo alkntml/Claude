@@ -45,6 +45,7 @@ import { BibliographyView, CommentsPanel, HistoryPanel, MemoryPanel } from "./pa
 import { ProjectSources, ResearchModal } from "./sources";
 import { ShareButton } from "./share-modal";
 import { Avatar, CoauthorsButton, type PresencePerson } from "./coauthors";
+import { ProgressButton } from "./progress";
 import { PRESENCE_INTERVAL_MS } from "@/lib/coauthors";
 import { ClientApiError } from "@/lib/client";
 
@@ -102,7 +103,7 @@ function saveDraft(id: string, doc: JSONNode) { try { localStorage.setItem(DRAFT
 function readDraft(id: string): { at: number; doc: JSONNode } | null { try { const v = localStorage.getItem(DRAFT_KEY(id)); return v ? JSON.parse(v) : null; } catch { return null; } }
 function clearDraft(id: string) { try { localStorage.removeItem(DRAFT_KEY(id)); } catch { /* yok */ } }
 
-interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter"; readOnly?: boolean; collaborative?: boolean; me?: { id: string; name: string } }
+interface Props { project: any; stages: any[]; sources: any[]; memory: any[]; files: any[]; initialStageId?: string | null; planId?: string; role?: "owner" | "editor" | "commenter" | "advisor"; readOnly?: boolean; collaborative?: boolean; me?: { id: string; name: string } }
 
 export function Workspace(props: Props) {
   const { t, dl } = useT();
@@ -120,14 +121,16 @@ export function Workspace(props: Props) {
   const isOwner = role === "owner";
   // D155: hak dolunca salt okunur — düzenleme, asistan ve araçlar kapalı; görüntüleme ve indirme açık
   const readOnly = !!props.readOnly;
-  const canEdit = role !== "commenter" && !readOnly;
+  // D191: yorumcu ve danışman metni değiştiremez
+  const viewer = role === "commenter" || role === "advisor";
+  const canEdit = !viewer && !readOnly;
   const [collaborative, setCollaborative] = useState(!!props.collaborative);
   const collabRef = useRef(collaborative);
   collabRef.current = collaborative;
   const [present, setPresent] = useState<PresencePerson[]>([]);
   const [conflict, setConflict] = useState<{ stageId: string; mine: JSONNode; theirs: any; by: string } | null>(null);
   const [save, setSave] = useState<SaveState>("saved");
-  const [tab, setTab] = useState<RightTab>(props.role === "commenter" || props.readOnly ? "comments" : "assistant");
+  const [tab, setTab] = useState<RightTab>(props.role === "commenter" || props.role === "advisor" || props.readOnly ? "comments" : "assistant");
   const [mobilePane, setMobilePane] = useState<"nav" | "editor" | "panel">("editor");
   const [research, setResearch] = useState<{ open: boolean; prefill: string }>({ open: false, prefill: "" });
   const [addStage, setAddStage] = useState(false);
@@ -252,7 +255,7 @@ export function Workspace(props: Props) {
   useEffect(() => { try { setAutoSuggest(localStorage.getItem("acd_autosuggest") !== "0"); } catch { /* yok say */ } }, []);
   const suggestCtx = useRef({ projectId: props.project.id, stageTitle: "", focusTitle: null as string | null, on: true, blocked: false });
   const suggestExt = useMemo(() => [createInlineSuggest({
-    enabled: () => suggestCtx.current.on && !suggestCtx.current.blocked && !!suggestCtx.current.stageTitle && props.role !== "commenter",
+    enabled: () => suggestCtx.current.on && !suggestCtx.current.blocked && !!suggestCtx.current.stageTitle && props.role !== "commenter" && props.role !== "advisor",
     fetch: async (before, signal) => {
       const c = suggestCtx.current;
       const res = await fetch(`/api/projects/${c.projectId}/complete`, { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ before, stageTitle: c.stageTitle, focusTitle: c.focusTitle }) });
@@ -480,6 +483,13 @@ export function Workspace(props: Props) {
       api<{ stage: any }>(`/api/stages/${m.stageId}`).then(({ stage }) => { if (pending.current?.id !== m.stageId) applyRemote(stage); }).catch(() => {});
     }
   };
+  // D192: Zotero/ORCID eşitlemesi — çalışma açılınca bağlı hesaplardaki yeni kayıtlar (en fazla 6 saatte bir) eklenir
+  useEffect(() => {
+    if (!canEdit) return;
+    api<{ added: any[] }>(`/api/projects/${project.id}/sources/sync`, { method: "POST", json: { auto: true } })
+      .then((r) => { if (r.added?.length) { setSources((l) => [...l, ...r.added.filter((x) => x && !l.some((y) => y.id === x.id))]); toast({ tone: "success", title: t("{n} yeni kaynak eşitlendi", { n: r.added.length }), detail: t("Zotero/ORCID bağlantınızdan eklendi.") }); } })
+      .catch(() => {});
+  }, [project.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const live = useLiveCollab({ projectId: project.id, enabled: collaborative && !!props.me, me, canWrite: canEdit, onDoc: onLiveDoc, onSaved: onLiveSaved });
   const isLive = live.status === "live";
   liveRef.current = {
@@ -1182,6 +1192,7 @@ export function Workspace(props: Props) {
           </select>
           <Link data-tour="quality" href={`/proje/${project.id}/kalite`} onClick={() => flush()} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex"><FileCheck2 className="h-4 w-4 text-emerald-600" /> {t("Kalite kontrol")}</Link>
           {isLive && <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11.5px] font-medium text-emerald-700 sm:inline-flex" title={t("Ortak yazarlarla gerçek zamanlı bağlantı açık: değişiklikler anında görünür ve birleşir.")}><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" /></span>{t("Canlı")}</span>}
+          <ProgressButton projectId={project.id} highlight={role === "advisor"} />
           <span data-tour="coauthors" className="flex"><CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} /></span>
           {isOwner && <span data-tour="share" className="flex"><ShareButton projectId={project.id} /></span>}
           {canEdit && <button onClick={() => { flush(); setHubOpen(true); }} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex"><FileUp className="h-4 w-4" /> {t("İçe aktar")}</button>}
@@ -1254,7 +1265,7 @@ export function Workspace(props: Props) {
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
                     )}
-                    {readOnly ? <p className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[13px] text-amber-900">{t("Bu ayki kullanım hakkınız doldu: çalışmanızı görüntüleyebilir ve “Dışa aktar” ile indirebilirsiniz. Düzenleme ve diğer özellikler paketinizi yükseltene veya hakkınız yenilenene kadar kapalıdır.")} <button type="button" onClick={() => openUpgrade({ code: "work_locked" })} className="font-medium underline">{t("Seçenekleri gör")}</button></p> : !canEdit && <p className="mb-3 rounded-2xl border border-ink-100 bg-ink-50 px-3.5 py-2.5 text-[13px] text-ink-600">{t("Bu çalışmada yorumcusunuz: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilirsiniz.")}</p>}
+                    {readOnly ? <p className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-[13px] text-amber-900">{t("Bu ayki kullanım hakkınız doldu: çalışmanızı görüntüleyebilir ve “Dışa aktar” ile indirebilirsiniz. Düzenleme ve diğer özellikler paketinizi yükseltene veya hakkınız yenilenene kadar kapalıdır.")} <button type="button" onClick={() => openUpgrade({ code: "work_locked" })} className="font-medium underline">{t("Seçenekleri gör")}</button></p> : !canEdit && <p className="mb-3 rounded-2xl border border-ink-100 bg-ink-50 px-3.5 py-2.5 text-[13px] text-ink-600">{role === "advisor" ? t("Bu çalışmada danışmansınız: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilir ve üst çubuktaki “İlerleme” ile bölüm bölüm durumu görebilirsiniz.") : t("Bu çalışmada yorumcusunuz: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilirsiniz.")}</p>}
                     {present.some((p) => p.stageId === active.id) && (
                       <div className="mb-3 flex items-center gap-2 rounded-2xl border border-emerald-100 bg-emerald-50/70 px-3.5 py-2 text-[13px] text-emerald-900">
                         <span className="flex -space-x-1.5">{present.filter((p) => p.stageId === active.id).slice(0, 3).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>

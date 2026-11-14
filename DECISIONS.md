@@ -997,3 +997,91 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Çalışma alanı yöneticiye açılmaz.
 - Veritabanı kuralları destek amacıyla yöneticiye okuma izni verir; panel bunu belirli ekranlarla sınırlar.
 - Genel bir yönetici işlem günlüğü yoktur. Yalnızca bazı işlemler kimin yaptığıyla kaydedilir: ayarlar, uyarı kararları, satın alma kaydı, mesajlar.
+
+## D189 — İstem önbelleği: bölüm boyunca sabit bağlam da önbellekte (2026-11-14)
+- **Talep:** Site sahibi “maliyeti düşür ama kaliteden şaşma; kalite düşecekse yapma” dedi.
+- **Mevcut durum:**
+  - Sistem istemi ve proje boyunca sabit bağlam (kaynak listesi, proje bilgisi, kurgu, omurga, hafıza) zaten önbellekteydi (D78).
+  - Değişken kısım her istekte tam fiyatla gidiyordu. Bu kısmın büyük bölümü (diğer bölümlerin durumu, ana hat, bölümün talimatları) aynı bölümde çalışırken değişmiyordu.
+- **Yapılan:**
+  - Bağlam üçe bölündü: `head` (proje), `mid` (bölüm boyunca sabit), `tail` (istek).
+  - `mid` ayrı bir önbellek noktasıyla gönderilir; aynı bölümdeki ardışık isteklerde önbellekten okunur.
+  - Değişen tek şey sıra: “isteğe özgü ek kaynaklar” ve “bu bölümde atıf yapılan kaynaklar” bölüm metninden sonraya alındı. İçerik birebir aynı ve hepsi yine sistem rolünde.
+- **Bilerek yapılmayanlar:**
+  - Değişken bağlamı konuşma geçmişinin arkasına almak, yani modelin kullanıcı sorusundan sonra bağlam okuması. Kaliteyi etkileyebileceği ve ölçülemediği için yapılmadı.
+  - 1 saatlik önbellek süresi. Gerçek isabet verisi olmadan maliyeti artırabilir.
+- **Test:** `tests/prompt-cache.test.ts`.
+
+## D190 — ISNAD 2 dipnotlu atıf stili (2026-11-14)
+- **Yeni stil:** `isnad_note` (“ISNAD 2 (dipnotlu)”, family `note`). Yalnızca bu stil seçildiğinde geçerlidir; metin içi ISNAD aynen kalır.
+- **Dipnot biçimi:**
+  - İlk atıfta tam künye:
+    - Makale: `Ad Soyad, “Başlık”, Dergi Cilt/Sayı (Yıl), aralık/sayfa`
+    - Kitap: `Ad Soyad, Başlık (Yer: Yayınevi, Yıl), sayfa`
+    - Kitap bölümü ve tez için de karşılıkları var.
+  - Sonraki atıflarda kısa atıf: `Soyad, Kısa Başlık, sayfa`.
+  - 2 yazar “ - ” ile, 3 ve daha fazla yazar “vd.” ile yazılır.
+  - Birden çok kaynak “;” ile ayrılır.
+- **Kaynakça:** ISNAD 2 kaynakça biçimi.
+- **Editör:**
+  - Atıf üst simge numara olur; numaralar elle eklenen dipnotlarla ortaktır.
+  - Dipnot metni atfın üzerine gelince ve tıklayınca görünür.
+  - Anlatı atfında yazar adı metinde kalır.
+- **Dışa aktarma:**
+  - Word’de gerçek dipnot (italik başlık korunur).
+  - PDF’te sayfa altı dipnot. Bütün dipnotlar için, eski “Notlar” sonu kaldırıldı. Her not sayfanın alt boşluğunu büyütür; işaret sonraki sayfaya taşarsa not da taşınır.
+  - LaTeX’te `\footcite` ile `style=verbose`, açıklamalı not ile.
+- **Noktalama:** Dipnot numarası noktalama işaretinden sonra ve boşluksuz gelir (…dir.¹).
+- **Diğer yüzler:** Kaynakça aracında “İlk dipnot / Sonraki dipnotlar” gösterilir; örnekler sayfası ve paylaşım görünümü de dipnotlu.
+- **Veritabanı:** citation_style enum’una `isnad_note` (migration 44).
+- **Test:** `tests/isnad-note.test.ts` (PDF görsel olarak da kontrol edildi).
+
+## D191 — Danışman rolü ve ilerleme görünümü (2026-11-14)
+- **Rol:** “advisor” (Danışman).
+  - Okur ve yorum yazar; metni değiştiremez. Yetki sırası yorumcu ile aynı, sunucu “edit” isteklerini reddeder.
+  - Davet her pakette açıktır; bir çalışmaya en fazla 2 danışman eklenebilir ve bunlar ortak yazar sınırına (5) sayılmaz.
+  - Ortak yazar ve yorumcu daveti Pro ve üzeri pakette kalır; rol değiştirirken de bu paket kuralı denetlenir.
+- **İlerleme:**
+  - `lib/progress.ts` (saf) ve `lib/progress-server.ts`.
+  - Hedef, kurgudaki bölüm kelimesinden gelir. Hedefe göre yüzde hesaplanır; hedef yoksa yazılmış bölümlerin oranı alınır.
+  - Kaynakça ve uzunluğu sayılmayan bölümler ile gizli bölümler hesaba girmez.
+  - Ayrıca açık yorumlar, son kalite puanı ve son çalışma tarihi gösterilir.
+  - Yeni uç `GET /api/projects/[id]/progress` (okuma yetkisi).
+- **Arayüz:**
+  - Üst çubukta “İlerleme” (danışmanda vurgulu).
+  - Danışmana özel bilgi bandı.
+  - Davet penceresinde 3 rol.
+  - Panelde “Danışman” etiketi.
+  - Davet sayfası ve bildirim metni.
+  - Hesapsız “Danışmanla paylaş” bağlantısında ilerleme paneli.
+- **Veritabanı:** project_members ve project_invites rol kısıtına `advisor` (migration 44).
+- **Test:** `tests/advisor.test.ts` ve db.test.
+
+## D192 — Zotero eşitleme ve ORCID (2026-11-14)
+- **Zotero:**
+  - “Eşitle” seçilirse bağlantı çalışmaya kaydedilir. API anahtarı AES-256-GCM ile şifrelenir (`lib/secret-box.ts`); anahtar `INTEGRATION_SECRET`, yoksa sunucu anahtarından türetilir.
+  - Sonraki eşitlemeler `since=<kütüphane sürümü>` ile yalnızca yeni ve değişen öğeleri çeker.
+  - Seçilmezse eski davranış sürer (anahtar saklanmaz).
+- **ORCID:**
+  - Genel API kullanılır (anahtarsız, yalnızca herkese açık kayıtlar). Özetler alınır, ayrıntılar 100’erlik toplu uçtan okunur ve CSL-JSON’a çevrilir.
+  - Yazar listesi kayıtta yoksa ORCID sahibi yazılır; başka bilgi uydurulmaz.
+  - Numaranın sağlama basamağı doğrulanır.
+- **Ortak hat:** İki kaynak da mevcut içe aktarma hattından geçer (DOI doğrulama, tekrar ayıklama).
+- **Eşitleme kuralları:**
+  - Tek yönlüdür; projeden kaynak silinmez.
+  - Çalışma açılınca en fazla 6 saatte bir kendiliğinden çalışır, yalnızca paket kaynak aktarımını içeriyorsa.
+  - “İçe aktar” penceresinde “Eşitlenen hesaplar” bölümü: Şimdi eşitle / Bağlantıyı kaldır. Kaldırma, salt okunur hesapta da serbesttir (gizlilik).
+- **Veritabanı:** `source_links` (RLS açık, politika yok: yalnızca sunucu; migration 44).
+- **KVKK veri indirmesi:** Bağlantılar dahil edilir, şifreli anahtar hariç.
+- **Hukuk:** Metinler değiştirilmedi; hukukçu notu `docs/legal/HUKUKCU_NOTU_D192.md`.
+- **Test:** `tests/zotero-orcid-sync.test.ts` (örnek yanıtlarla) ve db.test.
+
+## D193 — Hız: yazı tipi önyüklemesi ve SSS ağırlığı (2026-11-14)
+- **Yazı tipi:**
+  - Source Serif 4 kendi sunucumuzdan sunulur (`public/fonts/*-v1.woff2`, 1 yıl değişmez önbellek). Aynı aile adıyla normal ve italik kesimler tanımlıdır; yedek yazı tipi ölçüleri sayfa kaymasını önler.
+  - Yalnızca normal kesim önceden yüklenir, italik gerektiğinde iner.
+  - Önyükleme 6 dosya / 597 KB’tan 4 dosya / 357 KB’a indi.
+- **SSS listesi:**
+  - Kısa CSS sınıfları (`.faq-list`) ve CSS ile çizilen ok kullanıldı; madde başına uzun sınıflar ve SVG, HTML ile RSC’de iki kez taşınıyordu.
+  - /sss 312 → 231 KB ham, 66 → 63 KB sıkıştırılmış. Ana sayfa 375 → 362 KB.
+- **Değişmeyen:** JSON-LD ve RSC tekrarı Next.js yapısı gereğidir.

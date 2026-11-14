@@ -1,6 +1,6 @@
 "use client";
-import { ArrowLeft, BookCopy, ChevronRight, FileText, FileUp, Library, Link2, Loader2, Terminal, Upload } from "lucide-react";
-import { useRef, useState } from "react";
+import { ArrowLeft, BookCopy, ChevronRight, FileText, FileUp, Fingerprint, Library, Link2, Loader2, RefreshCw, Terminal, Trash2, Upload } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
@@ -12,8 +12,9 @@ import { toSourceInput } from "@/lib/sources/to-input";
 /**
  * İçe aktarma merkezi (D149): çalışmanın her anında açılır. Tüm çalışma (Word/PDF), bu bölüme Word, PDF makale
  * (kaynak olarak), Zotero (doğrudan), Mendeley/EndNote (dışa aktarılan dosya), DOI/PMID/arXiv, BibTeX/RIS.
+ * D192: Zotero ve ORCID eşitlemesi — bağlantı hatırlanırsa yeni kayıtlar “Şimdi eşitle” ile ve çalışma açılınca eklenir.
  */
-type View = "home" | "work" | "zotero" | "mendeley" | "doi" | "bib" | "pdf";
+type View = "home" | "work" | "zotero" | "orcid" | "mendeley" | "doi" | "bib" | "pdf";
 
 export function ImportHub({ open, onClose, projectId, onStages, onSources, onWordToSection }: {
   open: boolean; onClose: () => void; projectId: string;
@@ -23,7 +24,11 @@ export function ImportHub({ open, onClose, projectId, onStages, onSources, onWor
   const toast = useToast();
   const [view, setView] = useState<View>("home");
   const [busy, setBusy] = useState(false);
-  const [z, setZ] = useState({ library: "user" as "user" | "group", libraryId: "", apiKey: "", collection: "" });
+  const [z, setZ] = useState({ library: "user" as "user" | "group", libraryId: "", apiKey: "", collection: "", remember: true });
+  const [orcid, setOrcid] = useState({ id: "", remember: true });
+  const [links, setLinks] = useState<any[]>([]);
+  const loadLinks = useCallback(() => api<{ links: any[] }>(`/api/projects/${projectId}/sources/sync`).then((r) => setLinks(r.links)).catch(() => setLinks([])), [projectId]);
+  useEffect(() => { if (open) loadLinks(); }, [open, loadLinks]);
   const [doi, setDoi] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const close = () => { setView("home"); onClose(); };
@@ -60,8 +65,25 @@ export function ImportHub({ open, onClose, projectId, onStages, onSources, onWor
     setBusy(true);
     try {
       const r = await api<any>(`/api/projects/${projectId}/sources/zotero`, { method: "POST", json: z });
-      onSources(r.added); refsToast(r); setZ({ ...z, apiKey: "" }); close();
+      onSources(r.added); refsToast(r); setZ({ ...z, apiKey: "" }); loadLinks(); close();
     } catch (e) { fail(e, t("Zotero’dan aktarılamadı")); } finally { setBusy(false); }
+  }
+  async function importOrcid() {
+    setBusy(true);
+    try {
+      const r = await api<any>(`/api/projects/${projectId}/sources/orcid`, { method: "POST", json: { orcid: orcid.id, remember: orcid.remember } });
+      onSources(r.added); refsToast(r); loadLinks(); close();
+    } catch (e) { fail(e, t("ORCID’den aktarılamadı")); } finally { setBusy(false); }
+  }
+  async function syncNow(provider: string) {
+    setBusy(true);
+    try { const r = await api<any>(`/api/projects/${projectId}/sources/sync`, { method: "POST", json: { provider } }); onSources(r.added); refsToast(r); loadLinks(); }
+    catch (e) { fail(e, t("Eşitlenemedi")); } finally { setBusy(false); }
+  }
+  async function unlink(provider: string) {
+    if (!window.confirm(t("Bağlantı kaldırılsın mı? Eklenmiş kaynaklar projede kalır; Zotero anahtarı silinir."))) return;
+    try { await api(`/api/projects/${projectId}/sources/sync`, { method: "DELETE", json: { provider } }); loadLinks(); }
+    catch (e) { fail(e, t("Kaldırılamadı")); }
   }
   async function addDoi() {
     setBusy(true);
@@ -116,11 +138,29 @@ export function ImportHub({ open, onClose, projectId, onStages, onSources, onWor
           <div className="space-y-2">
             <p className="text-[12px] font-medium uppercase tracking-wide text-ink-400">{t("Kaynaklar")}</p>
             <Row icon={Upload} title={t("PDF dosyaları yükle")} desc={t("Makale PDF’leri kaynak olarak eklenir; tam metin okunur.")} onClick={() => setView("pdf")} />
-            <Row icon={Library} title={t("Zotero’dan içe aktar")} desc={t("Kütüphanenizden veya bir koleksiyondan doğrudan.")} onClick={() => setView("zotero")} />
+            <Row icon={Library} title={t("Zotero’dan içe aktar veya eşitle")} desc={t("Kütüphanenizden veya bir koleksiyondan; isterseniz yeni kayıtlar kendiliğinden eklenir.")} onClick={() => setView("zotero")} />
+            <Row icon={Fingerprint} title={t("ORCID’den yayınları aktar")} desc={t("ORCID numarasındaki herkese açık yayınlar; isterseniz yeni yayınlar da eklenir.")} onClick={() => setView("orcid")} />
             <Row icon={BookCopy} title={t("Mendeley’den içe aktar")} desc={t("Mendeley’den dışa aktardığınız BibTeX/RIS dosyasıyla.")} onClick={() => setView("mendeley")} />
             <Row icon={Link2} title={t("DOI / PMID / arXiv ile ekle")} desc={t("Kimliği yapıştırın; künye kayıt otoritesinden gelir.")} onClick={() => setView("doi")} />
             <Row icon={Terminal} title={t(".bib / .ris içe aktar")} desc={t("EndNote, JabRef ve diğer programların dosyaları.")} onClick={() => setView("bib")} />
           </div>
+          {links.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-[12px] font-medium uppercase tracking-wide text-ink-400">{t("Eşitlenen hesaplar")}</p>
+              {links.map((l) => (
+                <div key={l.provider} className="flex items-center gap-3 rounded-xl border border-ink-200/80 px-4 py-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">{l.provider === "zotero" ? <Library className="h-[18px] w-[18px]" /> : <Fingerprint className="h-[18px] w-[18px]" />}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[14px] font-medium text-ink-900">{l.provider === "zotero" ? `Zotero · ${l.config.library === "group" ? t("Grup") : t("Kişisel")} ${l.config.libraryId}${l.config.collection ? ` / ${l.config.collection}` : ""}` : `ORCID · ${l.config.name ? `${l.config.name} · ` : ""}${l.config.orcid}`}</span>
+                    <span className="block text-[12px] text-ink-500">{l.lastResult?.error ? <span className="text-rose-600">{l.lastResult.error}</span> : l.lastSyncedAt ? t("Son eşitleme: {d} · {n} yeni kaynak", { d: new Date(l.lastSyncedAt).toLocaleString(), n: l.lastResult?.added ?? 0 }) : ""}</span>
+                  </span>
+                  <button disabled={busy} onClick={() => syncNow(l.provider)} className="rounded-lg p-2 text-ink-600 hover:bg-ink-100" aria-label={t("Şimdi eşitle")} title={t("Şimdi eşitle")}><RefreshCw className="h-4 w-4" /></button>
+                  <button onClick={() => unlink(l.provider)} className="rounded-lg p-2 text-rose-500 hover:bg-rose-50" aria-label={t("Bağlantıyı kaldır")} title={t("Bağlantıyı kaldır")}><Trash2 className="h-4 w-4" /></button>
+                </div>
+              ))}
+              <p className="text-[12px] text-ink-500">{t("Eşitleme tek yönlüdür: yeni kayıtlar eklenir, projede olanlar atlanır, projeden kaynak silinmez. Çalışma açıldığında en fazla 6 saatte bir kendiliğinden çalışır.")}</p>
+            </div>
+          )}
         </div>
       )}
       {view === "work" && (
@@ -149,8 +189,18 @@ export function ImportHub({ open, onClose, projectId, onStages, onSources, onWor
             <label className="text-sm sm:col-span-2"><span className="label">{t("API anahtarı")}</span><input className="input font-mono" type="password" autoComplete="off" value={z.apiKey} onChange={(e) => setZ({ ...z, apiKey: e.target.value.trim() })} /></label>
             <label className="text-sm sm:col-span-2"><span className="label">{t("Koleksiyon anahtarı (isteğe bağlı)")}</span><input className="input font-mono uppercase" maxLength={8} placeholder="ABCD2345" value={z.collection} onChange={(e) => setZ({ ...z, collection: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} /></label>
           </div>
-          <p className="text-[12px] text-ink-500">{t("Anahtarınız saklanmaz; yalnızca bu aktarım için kullanılır. En fazla 300 kayıt aktarılır, ekler ve notlar alınmaz.")}</p>
+          <label className="flex items-start gap-2 text-[13px] text-ink-700"><input type="checkbox" className="mt-0.5" checked={z.remember} onChange={(e) => setZ({ ...z, remember: e.target.checked })} /> <span>{t("Eşitle: bağlantıyı hatırla, yeni eklediğim kayıtlar da projeye gelsin (anahtar şifreli saklanır; istediğiniz an kaldırabilirsiniz)")}</span></label>
+          <p className="text-[12px] text-ink-500">{z.remember ? t("Anahtar yalnızca sunucuda şifreli tutulur ve size bile gösterilmez. En fazla 300 kayıt aktarılır, ekler ve notlar alınmaz.") : t("Anahtarınız saklanmaz; yalnızca bu aktarım için kullanılır. En fazla 300 kayıt aktarılır, ekler ve notlar alınmaz.")}</p>
           <Button loading={busy} disabled={!z.libraryId || z.apiKey.length < 10} onClick={importZotero}><Library className="h-4 w-4" /> {t("Zotero’dan aktar")}</Button>
+        </div>
+      )}
+      {view === "orcid" && (
+        <div className="space-y-3">{back}
+          <p className="text-[14px] text-ink-700">{t("ORCID numarasını girin (sizin, danışmanınızın veya bir araştırmacının). Kayıttaki herkese açık yayınlar künyeleriyle gelir; DOI’si olanlar doğrulanır, projede olanlar atlanır.")}</p>
+          <label className="block text-sm"><span className="label">{t("ORCID numarası")}</span><input className="input font-mono" placeholder="0000-0002-1825-0097" value={orcid.id} onChange={(e) => setOrcid({ ...orcid, id: e.target.value.trim() })} /></label>
+          <label className="flex items-start gap-2 text-[13px] text-ink-700"><input type="checkbox" className="mt-0.5" checked={orcid.remember} onChange={(e) => setOrcid({ ...orcid, remember: e.target.checked })} /> <span>{t("Eşitle: yeni yayınlar eklendikçe projeye gelsin")}</span></label>
+          <p className="text-[12px] text-ink-500">{t("Yalnızca ORCID’de herkese açık olan yayınlar okunur; anahtar gerekmez. En fazla 200 yayın aktarılır.")}</p>
+          <Button loading={busy} disabled={orcid.id.replace(/\D/g, "").length < 15} onClick={importOrcid}><Fingerprint className="h-4 w-4" /> {t("ORCID’den aktar")}</Button>
         </div>
       )}
       {view === "mendeley" && (

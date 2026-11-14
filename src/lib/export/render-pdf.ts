@@ -26,20 +26,54 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   doc.on("data", (c: Buffer) => chunks.push(c));
   const done = new Promise<Buffer>((res) => doc.on("end", () => res(Buffer.concat(chunks))));
 
-  const notes: string[] = [];
   const fontOf = (r: Run) => (r.bold && r.italic ? "bi" : r.bold ? "b" : r.italic ? "i" : "r");
+  // D190: dipnotlar sayfanın altına basılır (ISNAD dipnotlu stil ve elle eklenen dipnotlar). Not eklendikçe o sayfanın
+  // alt boşluğu notun yüksekliği kadar büyütülür, böylece gövde metni notların üstünde biter; notlar sonda yazılır.
+  const NOTE_SIZE = 9, NOTE_GAP = 1.5, NOTE_RULE = 10;
+  const pageNotes = new Map<number, { n: number; runs: Run[]; h: number }[]>();
+  let noteNo = 0;
+  const pageNow = () => { const r = doc.bufferedPageRange(); return r.start + r.count - 1; };
+  const noteHeight = (n: number, runs: Run[]) => { doc.font("r").fontSize(NOTE_SIZE); return doc.heightOfString(`${n}. ${runs.map((x) => x.text).join("")}`, { width: doc.page.width - M.left - M.right, lineGap: NOTE_GAP }) + 3; };
+  const reserve = (h: number) => {
+    doc.page.margins.bottom += h;
+    // Devam eden paragrafın satır kaydırıcısı sayfa sınırını önceden hesaplamıştır; yeni sınır ona da bildirilir
+    const w = (doc as unknown as { _wrapper?: { maxY: number } })._wrapper;
+    if (w) w.maxY = doc.page.maxY();
+  };
+  const addNote = (n: number, runs: Run[], page: number, height: number) => {
+    const list = pageNotes.get(page) ?? [];
+    const h = height + (list.length ? 0 : NOTE_RULE);
+    list.push({ n, runs, h });
+    pageNotes.set(page, list);
+    if (page === pageNow()) reserve(h);
+  };
   const writeRuns = (runs: Run[], opts: PDFKit.Mixins.TextOptions & { size?: number } = {}) => {
     const size = opts.size ?? 11.5;
-    const list = runs.map((r) => (r.footnote !== undefined ? (notes.push(r.footnote), { text: String(notes.length), sup: true, bold: false, italic: false }) : r)).filter((r) => r.text);
+    const list = runs.map((r) => (r.footnote !== undefined ? { text: String(++noteNo), sup: true, bold: false, italic: false, note: r.footnoteRuns?.length ? r.footnoteRuns : [{ text: r.footnote }] } : r)).filter((r) => r.text);
     if (!list.length) return;
+    // Dipnot işaretinden sonraki boşluk işarete eklenir (devam eden yazımda satır başındaki boşluk düşürülüyor)
+    for (let k = 0; k < list.length - 1; k++) {
+      if ((list[k] as { note?: Run[] }).note && list[k + 1].text.startsWith(" ")) { list[k] = { ...list[k], text: `${list[k].text} ` }; list[k + 1] = { ...list[k + 1], text: list[k + 1].text.slice(1) }; }
+    }
+    // Not yükseklikleri paragraf yazılmaya başlamadan ölçülür (ölçüm, devam eden satır akışını bozmasın)
+    const heights = list.map((r) => ((r as { note?: Run[] }).note ? noteHeight(parseInt(r.text, 10), (r as { note: Run[] }).note) : 0));
     list.forEach((r, k) => {
+      const note = (r as { note?: Run[] }).note;
+      const before = pageNow();
+      if (note) addNote(parseInt(r.text, 10), note, before, heights[k]);
       doc.font(fontOf(r)).fontSize(r.sup ? size * 0.65 : size);
       doc.text(r.text, { ...opts, continued: k < list.length - 1, ...(r.sup ? { rise: size * 0.35 } as object : {}) });
+      // Dipnot işareti bir sonraki sayfaya taştıysa not da o sayfaya taşınır
+      if (note && pageNow() !== before) {
+        const old = pageNotes.get(before) ?? [];
+        const moved = old.pop();
+        if (moved) { if (!old.length) pageNotes.delete(before); addNote(moved.n, moved.runs, pageNow(), moved.h - (old.length ? 0 : NOTE_RULE)); }
+      }
     });
   };
 
   const usableW = () => doc.page.width - M.left - M.right;
-  const bottomY = () => doc.page.height - M.bottom;
+  const bottomY = () => doc.page.height - doc.page.margins.bottom;
   const plain = (runs: Run[]) => runs.map((r) => r.text).join("");
   // D170: özet/abstract dergilerdeki gibi tek satır aralığı ve bir punto küçük, girintisiz yazılır (başlıkla aynı sayfaya sığar)
   const absSize = base - 1, absGap = 2;
@@ -123,7 +157,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       if (!started) { doc.addPage(); started = true; }
       const maxW = Math.min(doc.page.width - M.left - M.right, 430);
       const w = Math.min(maxW, b.width), h = (w * b.height) / b.width;
-      if (doc.y + h > doc.page.height - M.bottom) doc.addPage();
+      if (doc.y + h > doc.page.height - doc.page.margins.bottom) doc.addPage();
       doc.image(figurePng(b.src), M.left + (doc.page.width - M.left - M.right - w) / 2, doc.y, { width: w, height: h });
       doc.y += h + 10;
     } else if (b.kind === "list") {
@@ -154,10 +188,6 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     }
   }
 
-  if (notes.length) {
-    doc.moveDown().font("b").fontSize(12).text(d.language === "tr" ? "Notlar" : d.language === "de" ? "Anmerkungen" : "Notes").moveDown(0.4);
-    notes.forEach((n, k) => doc.font("r").fontSize(9.5).text(`${k + 1}. ${n}`, { lineGap: 2 }));
-  }
 
   if (d.bibliography.length) {
     if (d.article) { doc.moveDown(1.2); need(80); } else doc.addPage();
@@ -205,6 +235,25 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
   });
   if (d.cover) writeIndex(entries, tocStart, d.language === "tr" ? "İçindekiler" : d.language === "de" ? "Inhaltsverzeichnis" : "Contents");
   for (const l of listDefs) writeIndex(l.items.map((text, k) => ({ level: 2, number: "", text, page: l.pages[k] })), l.start, l.title);
+
+  // D190: dipnotlar (sayfanın altında, kısa bir çizginin altında)
+  for (const [p, list] of pageNotes) {
+    doc.switchToPage(p);
+    const total = list.reduce((a, x) => a + x.h, 0);
+    doc.page.margins.bottom = M.bottom;
+    let y = doc.page.height - M.bottom - total + NOTE_RULE;
+    doc.save().moveTo(M.left, y - NOTE_RULE / 2).lineTo(M.left + 120, y - NOTE_RULE / 2).lineWidth(0.5).strokeColor("#000000").stroke().restore();
+    for (const x of list) {
+      doc.x = M.left; doc.y = y;
+      const parts: Run[] = [{ text: `${x.n}. ` }, ...x.runs];
+      parts.forEach((r, k) => {
+        doc.font(r.italic ? "i" : "r").fontSize(NOTE_SIZE);
+        if (k === 0) doc.text(r.text, M.left, y, { width: doc.page.width - M.left - M.right, lineGap: NOTE_GAP, continued: parts.length > 1 });
+        else doc.text(r.text, { continued: k < parts.length - 1 });
+      });
+      y += x.h - (x === list[0] ? NOTE_RULE : 0);
+    }
+  }
 
   // Sayfa numaraları (kapak hariç; makalede ilk sayfadan itibaren)
   const range = doc.bufferedPageRange();

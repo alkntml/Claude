@@ -1,21 +1,27 @@
 /**
  * Ortak yazım (D115): saf kurallar (istemci, sunucu ve testler ortak).
  * Sahip; Pro, Premium veya Tek Proje paketindeyse çalışmasına en fazla COAUTHOR_LIMIT kişi davet eder.
- * Roller: editor (yazar, kaynak ekler, yapay zekâyı kendi paketiyle kullanır), commenter (okur ve yorum yazar).
+ * Roller: editor (yazar, kaynak ekler, yapay zekâyı kendi paketiyle kullanır), commenter (okur ve yorum yazar),
+ * advisor (D191: danışman — okur, yorum yazar ve bölüm bölüm ilerlemeyi görür; her pakette, en fazla ADVISOR_LIMIT kişi).
  */
 import { isDisposableEmail } from "@/lib/disposable-email";
 
 export const COAUTHOR_LIMIT = 5;
+/** D191: danışman daveti her pakette açıktır ve ortak yazar sınırına sayılmaz */
+export const ADVISOR_LIMIT = 2;
 /** Varlık göstergesi: bu süre içinde sinyal gelen kişi “çalışmada” sayılır */
 export const PRESENCE_WINDOW_MS = 75_000;
 export const PRESENCE_INTERVAL_MS = 25_000;
 
-export type CoauthorRole = "editor" | "commenter";
-export const ROLE_LABEL: Record<CoauthorRole | "owner", string> = { owner: "Sahip", editor: "Ortak yazar", commenter: "Yorumcu" };
+export type CoauthorRole = "editor" | "commenter" | "advisor";
+export const ROLE_LABEL: Record<CoauthorRole | "owner", string> = { owner: "Sahip", editor: "Ortak yazar", commenter: "Yorumcu", advisor: "Danışman" };
 export const ROLE_HINT: Record<CoauthorRole, string> = {
   editor: "Bölümleri yazar ve düzenler, kaynak ekler, yapay zekâyı kendi paketiyle kullanır",
   commenter: "Çalışmayı okur ve bölümlere yorum yazar; metni değiştiremez",
+  advisor: "Çalışmayı okur, yorum yazar ve bölüm bölüm ilerlemeyi görür; metni değiştiremez",
 };
+/** Metni değiştirebilen roller */
+export const canWriteRole = (role: string | null | undefined) => role === "owner" || role === "editor";
 
 export function coauthorEmailOk(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !isDisposableEmail(email);

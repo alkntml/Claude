@@ -6,7 +6,7 @@
  * pdfLaTeX + biber ile derlenir (Overleaf varsayılanı). Atıf stili biblatex stiline eşlenir; karşılığı olmayan stiller
  * (ör. ISNAD) için en yakın stil seçilir ve dosyada not olarak belirtilir.
  */
-import type { CitationItem, CitationStyleId } from "@/lib/citations";
+import { STYLES, type CitationItem, type CitationStyleId } from "@/lib/citations";
 import { bibKeyMap, toBibTeX } from "@/lib/sources/bib";
 import { figurePng, type Block, type ExportDoc, type Run } from "./model";
 import { coverLines, resolveFormat } from "./format";
@@ -16,6 +16,7 @@ export const BIBLATEX_STYLE: Record<CitationStyleId, { style: string; note?: str
   apa7: { style: "apa" },
   apa6: { style: "apa", note: "APA 6 için biblatex stili yok; APA 7 (biblatex-apa) kullanıldı." },
   isnad: { style: "authoryear", note: "ISNAD 2 için biblatex stili yok; yazar–yıl (authoryear) kullanıldı. Dipnotlu ISNAD için \\footcite kullanabilirsiniz." },
+  isnad_note: { style: "verbose", note: "ISNAD 2 için biblatex stili yok; dipnotlu ISNAD’a en yakın, ilk atıfta tam ve sonrakilerde kısa dipnot veren verbose stili ve \\footcite kullanıldı." },
   chicago: { style: "authoryear", note: "Chicago yazar–yıl için biblatex-chicago paketini (style=chicago-authordate) seçebilirsiniz." },
   mla: { style: "mla" },
   harvard: { style: "authoryear" },
@@ -52,7 +53,8 @@ export function texLocator(loc: string | null | undefined): string {
 function cite(c: NonNullable<Run["cite"]>, keys: Map<string, string>): string {
   const ks = c.ids.map((id) => keys.get(id)).filter(Boolean) as string[];
   if (!ks.length) return "";
-  const cmd = c.narrative ? "\\textcite" : c.suppressAuthor ? "\\parencite*" : "\\parencite";
+  // D190: dipnotlu stilde atıf dipnota gider (\footcite); anlatı atfında yazar metinde kalır (\textcite verbose’da dipnot ekler)
+  const cmd = footCite ? (c.narrative ? "\\textcite" : "\\footcite") : c.narrative ? "\\textcite" : c.suppressAuthor ? "\\parencite*" : "\\parencite";
   const post = texLocator(c.locator);
   const pre = c.prefix ? texEscape(c.prefix) : "";
   const opt = pre ? `[${pre}][${post}]` : post ? `[${post}]` : "";
@@ -65,7 +67,7 @@ export function runsToTex(runs: Run[], keys: Map<string, string>): string {
     if (r.cite) {
       const c = cite(r.cite, keys);
       // Parantez içi atıf önceki kelimeye bölünmez boşlukla bağlanır (satır başına tek başına düşmesin)
-      out = !r.cite.narrative && / $/.test(out) && !/[.!?:] $/.test(out) ? `${out.trimEnd()}~${c}` : out + c;
+      out = footCite && !r.cite.narrative ? `${out.replace(/ $/, "")}${c}` : !r.cite.narrative && / $/.test(out) && !/[.!?:] $/.test(out) ? `${out.trimEnd()}~${c}` : out + c;
       continue;
     }
     if (r.footnote !== undefined && r.footnote !== null && !r.text) { out += `\\footnote{${texEscape(r.footnote)}}`; continue; }
@@ -159,7 +161,7 @@ export function biblatexSetup(style: string, lang: boolean | "tr" | "en" | "de")
 }
 
 export function toLatexFiles(doc: ExportDoc, o: { style: CitationStyleId; items: CitationItem[] }): LatexFile[] {
-  capCount.table = 0; capCount.figure = 0; capListOn = doc.cover;
+  capCount.table = 0; capCount.figure = 0; capListOn = doc.cover; footCite = STYLES[o.style]?.family === "note";
   // D179: biçim (yazım stili / kılavuz) LaTeX’e de uygulanır: punto, yazı tipi, kenar boşlukları, satır aralığı, girinti
   const f = resolveFormat(doc.format);
   const size = f.fontSizePt <= 10.5 ? 10 : f.fontSizePt <= 11.5 ? 11 : 12;
@@ -234,6 +236,8 @@ export async function toLatexZip(doc: ExportDoc, o: { style: CitationStyleId; it
 /** D173: tezde tablolar ve şekiller listesi (başlıklar \\label ile işaretlenir, sayfa \\pageref ile) */
 const capCount = { table: 0, figure: 0 };
 let capListOn = true;
+/** D190: dipnotlu atıf stili (ISNAD 2 dipnotlu) seçiliyse atıflar \footcite olur */
+let footCite = false;
 function texLists(doc: ExportDoc): string {
   return ([["lot", doc.lists.tables, doc.lists.tablesTitle], ["lof", doc.lists.figures, doc.lists.figuresTitle]] as const)
     .filter(([, items]) => items.length > 0)

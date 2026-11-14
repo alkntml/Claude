@@ -99,7 +99,8 @@ export const GUIDE: GuideChapter[] = [
         s("Var olan çalışmada boş bölümler doldurulur, diğerleri yeni bölüm olarak eklenir; dolu bölümlerin üzerine yazılmaz.", "In an existing work, empty sections are filled and the rest are added as new sections; sections with text are never overwritten."),
       ], tip: s("En iyi sonuç Word ile alınır; PDF’te başlıklar yaklaşık çıkarılır.", "Word gives the best result; in PDFs headings are detected approximately.") },
       { id: "kaynak-ice", title: s("Zotero, Mendeley, PDF ve DOI ile kaynak ekleme", "Adding sources from Zotero, Mendeley, PDF and DOI"), where: s("Çalışma ekranında üstte “İçe aktar”", "“Import” at the top of the workspace"), steps: [
-        s("Zotero: kullanıcı kimliğinizi ve yalnızca okuma izinli API anahtarınızı girin; anahtar saklanmaz.", "Zotero: enter your user ID and a read-only API key; the key is not stored."),
+        s("Zotero: kullanıcı kimliğinizi ve yalnızca okuma izinli API anahtarınızı girin. “Eşitle” seçiliyse anahtar şifreli saklanır ve yeni eklediğiniz kayıtlar da kendiliğinden gelir; seçili değilse anahtar saklanmaz.", "Zotero: enter your user ID and a read-only API key. With “Sync” on, the key is stored encrypted and items you add later arrive automatically; otherwise the key is not stored."),
+        s("ORCID: ORCID numarasını girin; herkese açık yayınlar künyeleriyle aktarılır, “Eşitle” ile yeni yayınlar da gelir. Eşitlenen hesaplar “İçe aktar” penceresinde listelenir: “Şimdi eşitle” veya “Bağlantıyı kaldır”.", "ORCID: enter an ORCID iD; public works are imported with their metadata, and with “Sync” new works follow. Synced accounts are listed in the “Import” window: “Sync now” or “Remove connection”."),
         s("Mendeley: kaynaklarınızı BibTeX veya RIS olarak dışa aktarıp dosyayı yükleyin.", "Mendeley: export your references as BibTeX or RIS and upload the file."),
         s("PDF: makale PDF’lerinizi seçin; künye doğrulanır, tam metin okunur.", "PDF: choose your article PDFs; the reference is verified and the full text is read."),
         s("DOI, PMID veya arXiv kimliği ile tek kaynak ekleyebilirsiniz.", "You can add a single source by DOI, PMID or arXiv ID."),
@@ -179,7 +180,8 @@ export const GUIDE: GuideChapter[] = [
       ] },
       { id: "kaynakca", title: s("Kaynakça ve atıf stilleri", "Reference list and citation styles"), where: s("Üst çubuk: atıf stili seçimi", "Top bar: citation style"), steps: [
         s("Kaynakçayı ayrıca yazmazsınız: atıf yaptığınız kaynaklardan otomatik oluşur; atıf almayan kaynak kaynakçaya girmez.", "You don’t write the reference list: it is built from the sources you cite; uncited sources are left out."),
-        s("10 stil: APA 7, APA 6, ISNAD 2 (metin içi), Chicago, Turabian, Harvard, MLA 9, Vancouver, IEEE, AMA 11.", "10 styles: APA 7, APA 6, ISNAD 2 (in-text), Chicago, Turabian, Harvard, MLA 9, Vancouver, IEEE, AMA 11."),
+        s("10 stil: APA 7, APA 6, ISNAD 2 (metin içi veya dipnotlu), Chicago, Turabian, Harvard, MLA 9, Vancouver, IEEE, AMA 11.", "10 styles: APA 7, APA 6, ISNAD 2 (in-text or footnotes), Chicago, Turabian, Harvard, MLA 9, Vancouver, IEEE, AMA 11."),
+        s("ISNAD 2 (dipnotlu): atıflar üst simge dipnot numarası olur; kaynağa ilk atıfta tam künye, sonrakilerde kısa atıf (Soyad, Kısa Başlık, sayfa). Dipnot metni atfa tıklayınca görünür; Word, PDF ve LaTeX’te sayfanın altına basılır.", "ISNAD 2 (footnotes): citations become superscript footnote numbers; the full reference at a source’s first citation, a short form (Surname, Short Title, page) afterwards. Click a citation to see its note; in Word, PDF and LaTeX notes are printed at the bottom of the page."),
         s("Kaynakça bölümünde bir kayda tıklayınca kullanıldığı yerleri görür, “Git” ile metindeki atfa gidersiniz.", "In the references section click an entry to see where it is used and jump with “Go”."),
       ] },
       { id: "sor", title: s("Kaynağa sor", "Ask a source"), where: s("Kaynaklar → kaynağın “Sor” düğmesi", "Sources → the source’s “Ask” button"), steps: [
@@ -296,7 +298,7 @@ export const GUIDE: GuideChapter[] = [
     intro: s("Ortak yazarlar, gerçek zamanlı yazım ve danışmanla paylaşım.", "Co-authors, real-time writing and sharing with your advisor."),
     articles: [
       { id: "ortak", title: s("Ortak yazar davet etme", "Inviting co-authors"), plan: "coauthors", where: s("Üst çubuk: “Ortak yazarlar”", "Top bar: “Co-authors”"), steps: [
-        s("E-posta adresini yazın ve rolü seçin: “Ortak yazar” (yazar, kaynak ekler, yapay zekâyı kendi paketiyle kullanır) veya “Yorumcu” (okur, yorum yazar). En fazla 5 kişi.", "Enter the email and choose a role: “Co-author” (writes, adds sources, uses AI with their own plan) or “Commenter” (reads and comments). Up to 5 people."),
+        s("E-posta adresini yazın ve rolü seçin: “Ortak yazar” (yazar, kaynak ekler, yapay zekâyı kendi paketiyle kullanır), “Yorumcu” (okur, yorum yazar) veya “Danışman” (okur, yorum yazar, ilerlemeyi görür). En fazla 5 ortak yazar ve 2 danışman; danışman daveti her pakette açıktır.", "Enter the email and choose a role: “Co-author” (writes, adds sources, uses AI with their own plan), “Commenter” (reads and comments) or “Supervisor” (reads, comments, sees progress). Up to 5 co-authors and 2 supervisors; supervisor invites work on every plan."),
         s("“Davet bağlantısı oluştur” → bağlantıyı WhatsApp/e-postayla iletin; kişi aynı e-postayla giriş yapıp “Daveti kabul et”e basar.", "“Create invite link” → send it by WhatsApp/email; they sign in with the same email and press “Accept invite”."),
         s("Davet edilenin ücretli pakete ihtiyacı yoktur. Dosyalarınız ve asistan sohbetleriniz size özeldir.", "Invitees don’t need a paid plan. Your files and assistant chats stay private."),
       ] },
@@ -308,6 +310,7 @@ export const GUIDE: GuideChapter[] = [
       ], tip: s("En rahat yöntem: herkes farklı alt başlıkta çalışsın.", "Easiest approach: everyone works on a different subheading.") },
       { id: "danisman", title: s("Danışmanla paylaşım ve yorumlar", "Sharing with your advisor and comments"), where: s("Üst çubuk: “Paylaş” → “Danışmanla paylaş”", "Top bar: “Share” → “Share with advisor”"), steps: [
         s("Süreli, salt okunur bir bağlantı oluşturun; isterseniz “Yorumlara izin ver”.", "Create a time-limited, read-only link; optionally “Allow comments”."),
+        s("Danışmanın hesabı varsa “Ortak yazarlar” penceresinden “Danışman” rolüyle davet edin: üst çubuktaki “İlerleme” ile her bölümde yazılan kelimeyi, hedefi, açık yorumları ve son kalite puanını görür. Paylaşım bağlantısında da aynı ilerleme paneli vardır.", "If your advisor has an account, invite them from “Co-authors” with the “Supervisor” role: via “Progress” in the top bar they see words written per section, the target, open comments and the latest quality score. The share link shows the same progress panel."),
         s("Danışman hesap açmadan okur ve yorum yazar; yorumlar sağdaki “Yorum” sekmesine düşer.", "Your advisor reads and comments without an account; comments arrive in the “Comments” tab."),
         s("Yorumda “Asistanla uygula” ile düzeltmeyi yaptırın, “Çözüldü” ile kapatın. Bağlantıyı “İptal et” ile kapatabilirsiniz.", "Use “Apply with assistant” on a comment, close it with “Resolved”. Revoke the link with “Revoke”."),
       ] },

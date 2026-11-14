@@ -31,7 +31,7 @@ describe("hak dolunca salt okunur kullanım (D155)", () => {
     const names = new Set(routes.map((r) => r.name));
     for (const n of READ_ONLY_ALLOWED_ROUTES) expect(names.has(n), n).toBe(true);
     const mutating = routes.filter((r) => r.method !== "GET" && READ_ONLY_ALLOWED_ROUTES.has(r.name)).map((r) => r.name).sort();
-    expect(mutating).toEqual(["account.data_request", "account.delete", "account.device", "account.update", "feedback.create", "legal.accept", "notifications.read", "org.leave", "project.presence", "shares.revoke"].sort());
+    expect(mutating).toEqual(["account.data_request", "account.delete", "account.device", "account.update", "feedback.create", "legal.accept", "notifications.read", "org.leave", "project.presence", "project.sources.sync.remove", "shares.revoke"].sort());
   });
 
   it("çalışmayı değiştiren ve yapay zekâ/tarama kullanan uçlar salt okunurken kapalı (varsayılan yasak)", () => {

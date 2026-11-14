@@ -23,7 +23,8 @@ export async function toDocx(d: ExportDoc, raw: Partial<DocFormat> = {}): Promis
     rs.map((r) => {
       if (r.footnote !== undefined) {
         fnId++;
-        footnotes[fnId] = { children: [new Paragraph({ children: [new TextRun({ text: r.footnote, size: 20, font })] })] };
+        const fr = r.footnoteRuns?.length ? r.footnoteRuns : [{ text: r.footnote }];
+        footnotes[fnId] = { children: [new Paragraph({ children: fr.map((x) => new TextRun({ text: x.text, italics: !!x.italic, size: 20, font })) })] };
         return new FootnoteReferenceRun(fnId);
       }
       return new TextRun({ text: r.text, bold: r.bold, italics: r.italic, underline: r.underline ? {} : undefined, superScript: r.sup, font, size });

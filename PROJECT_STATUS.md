@@ -18,6 +18,13 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Maliyet, ISNAD dipnot, danışman, Zotero/ORCID, hız (D189–D193, 14 Kasım 2026)**
+- İstem önbelleği: bölüm boyunca sabit bağlam (diğer bölümler, ana hat, bölüm talimatları) ayrıca önbellekte; içerik ve rol aynı (kalite değişmez)
+- ISNAD 2 (dipnotlu) atıf stili: ilk atıfta tam künye, sonra kısa atıf; editörde üst simge, Word/PDF/LaTeX’te sayfa altı dipnot
+- Danışman rolü (her pakette, en fazla 2) ve “İlerleme” paneli (çalışma alanı + paylaşım bağlantısı)
+- Zotero eşitleme (şifreli anahtar, sürüm takibi) ve ORCID’den yayın aktarma/eşitleme; çalışma açılınca 6 saatte bir
+- Hız: italik serif önyüklemesiz (597 → 357 KB), SSS HTML’i 312 → 231 KB
+
 **Referans belgesinin tamamına uyum (D173, 13 Kasım 2026)**
 - Madde madde uyum tablosu: `docs/roadmap/REFERANS_UYUM.md`
 - Bölüm işlevleri, tez ön sayfaları ve tablo/şekil listeleri, disiplin/düzey/belge amacı, asistan rolleri, yeni projede yol haritası düzenleme, kalite önerisini reddetme, yapı değişikliğini geri alma, yönetimden desen ekleme

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { Logo } from "@/components/icons";
 import { DocView } from "@/components/share/doc-view";
 import { ShareComment } from "@/components/share/share-comment";
+import { ProgressView } from "@/components/workspace/progress";
+import { loadProgress } from "@/lib/progress-server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { buildExportDoc } from "@/lib/export/model";
 import { sourceRowToItem } from "@/lib/projects";
@@ -32,6 +34,8 @@ export default async function SharedProject({ params }: { params: Promise<{ toke
     db.from("profiles").select("full_name").eq("id", share.user_id).single(),
   ]);
   if (!project) notFound();
+  // D191: danışman görünümü — bölüm bölüm ilerleme (yalnızca bu çalışma, açık project_id filtresiyle)
+  const progress = await loadProgress(db, project).catch(() => null);
   await db.from("project_shares").update({ view_count: share.view_count + 1, last_viewed_at: new Date().toISOString() }).eq("id", share.id);
   const doc = buildExportDoc({ project, stages: stages ?? [], sources: sources ?? [], engineItems: (sources ?? []).map(sourceRowToItem), authorName: owner?.full_name ?? "" });
   const written = (stages ?? []).filter((s) => (s.content_text ?? "").trim() && s.key !== "references");
@@ -54,6 +58,12 @@ export default async function SharedProject({ params }: { params: Promise<{ toke
             <p className="mb-2 font-semibold text-ink-800">{t("İçindekiler")}</p>
             {doc.toc.filter((e) => e.level === 1).map((e) => <a key={e.text} href={`#${stageIds[e.text] ?? ""}`} className="block rounded-lg px-2 py-1 text-ink-600 hover:bg-ink-50">{e.number} {e.text}</a>)}
           </nav>
+          {progress && progress.stages.length > 0 && (
+            <section className="text-sm">
+              <p className="mb-2 font-semibold text-ink-800">{t("İlerleme")}</p>
+              <ProgressView data={progress} compact />
+            </section>
+          )}
           {share.allow_comments && written.length > 0 && <ShareComment token={token} stages={written.map((s) => ({ id: s.id, title: s.title }))} />}
         </aside>
       </div>

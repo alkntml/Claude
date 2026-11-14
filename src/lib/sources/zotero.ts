@@ -10,10 +10,11 @@ const MAX_ITEMS = 300;
 
 export interface ZoteroInput { library: "user" | "group"; libraryId: string; apiKey: string; collection?: string | null }
 
-export function zoteroItemsUrl(z: ZoteroInput, start: number): string {
+/** `since`: D192 eşitleme — yalnızca bu kütüphane sürümünden sonra eklenen/değişen öğeler */
+export function zoteroItemsUrl(z: ZoteroInput, start: number, since?: number | null): string {
   const lib = `${z.library === "group" ? "groups" : "users"}/${encodeURIComponent(z.libraryId)}`;
   const path = z.collection ? `${lib}/collections/${encodeURIComponent(z.collection)}/items/top` : `${lib}/items/top`;
-  return `${BASE}/${path}?format=csljson&limit=${PAGE}&start=${start}&itemType=-attachment%20||%20note`;
+  return `${BASE}/${path}?format=csljson&limit=${PAGE}&start=${start}&itemType=-attachment%20||%20note${since ? `&since=${since}` : ""}`;
 }
 
 /** CSL-JSON yanıtı (Zotero { items: [...] } döndürür) → birleşik CSL-JSON dizisi metni */
@@ -25,17 +26,25 @@ export function mergeCsl(pages: unknown[]): string {
 export class ZoteroError extends Error { constructor(public status: number, message: string) { super(message); } }
 
 export async function fetchZotero(z: ZoteroInput): Promise<string> {
+  return (await fetchZoteroSince(z, null)).text;
+}
+
+/** D192: öğeler + kütüphanenin güncel sürümü (Last-Modified-Version); sonraki eşitleme bu sürümden devam eder */
+export async function fetchZoteroSince(z: ZoteroInput, since: number | null): Promise<{ text: string; version: number | null }> {
   const pages: unknown[] = [];
+  let version: number | null = null;
   for (let start = 0; start < MAX_ITEMS; start += PAGE) {
-    const res = await fetch(zoteroItemsUrl(z, start), { headers: { "Zotero-API-Key": z.apiKey, "Zotero-API-Version": "3" }, signal: AbortSignal.timeout(20_000), redirect: "error" });
+    const res = await fetch(zoteroItemsUrl(z, start, since), { headers: { "Zotero-API-Key": z.apiKey, "Zotero-API-Version": "3" }, signal: AbortSignal.timeout(20_000), redirect: "error" });
     if (res.status === 403) throw new ZoteroError(403, "Zotero erişimi reddetti: API anahtarını ve kütüphane kimliğini kontrol edin (anahtarda “kütüphaneye erişim” izni olmalı).");
     if (res.status === 404) throw new ZoteroError(404, "Zotero kütüphanesi veya koleksiyon bulunamadı.");
     if (!res.ok) throw new ZoteroError(502, "Zotero şu an yanıt vermiyor; biraz sonra tekrar deneyin.");
+    const v = Number(res.headers.get("Last-Modified-Version") ?? NaN);
+    if (Number.isFinite(v)) version = Math.max(version ?? 0, v);
     const page = await res.json();
     pages.push(page);
     const n = Array.isArray(page) ? page.length : Array.isArray(page?.items) ? page.items.length : 0;
     const total = Number(res.headers.get("Total-Results") ?? 0);
     if (n < PAGE || (total && start + PAGE >= total)) break;
   }
-  return mergeCsl(pages);
+  return { text: mergeCsl(pages), version };
 }

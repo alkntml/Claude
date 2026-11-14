@@ -276,6 +276,19 @@ describe("migration'lar ve seed", () => {
     expect((await db.query(`select 1 from public.abuse_decisions where alert_id = ${al.id}`)).rows).toHaveLength(0);
     await db.exec(`delete from public.export_fingerprints where user_id = '${A}'; delete from public.plan_purchases where user_id = '${A}';`);
   });
+  it("D190–D192 (migration 44): ISNAD dipnotlu stil, danışman rolü, source_links yalnızca sunucuda", async () => {
+    const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level, citation_style) values ('${A}', 'Danışmanlı çalışma', 'thesis', 'master', 'isnad_note') returning id`)).rows;
+    await db.query(`insert into public.project_members (project_id, user_id, role, invited_by) values ($1, '${B}', 'advisor', '${A}')`, [p.id]);
+    await db.query(`insert into public.project_invites (project_id, email, role, token, invited_by) values ($1, 'd@ornek.com', 'advisor', repeat('z', 40), '${A}')`, [p.id]);
+    await expectError(db.query(`insert into public.project_invites (project_id, email, role, token, invited_by) values ($1, 'e@ornek.com', 'owner', repeat('w', 40), '${A}')`, [p.id]), /check/);
+    // Bağlantı kaydı (şifreli anahtar) kullanıcıya hiç görünmez, kullanıcı yazamaz
+    await db.query(`insert into public.source_links (project_id, user_id, provider, config, secret) values ($1, '${A}', 'zotero', '{"libraryId":"1"}', 'v1:a:b:c')`, [p.id]);
+    expect(await as(A, `select provider from public.source_links where project_id = '${p.id}'`)).toHaveLength(0);
+    await expectError(as(A, `insert into public.source_links (project_id, user_id, provider) values ('${p.id}', auth.uid(), 'orcid')`), /row-level security/);
+    await expectError(db.query(`insert into public.source_links (project_id, user_id, provider) values ($1, '${A}', 'mendeley')`, [p.id]), /check/);
+    await db.query(`delete from public.projects where id = $1`, [p.id]);
+    expect((await db.query(`select 1 from public.source_links where project_id = $1`, [p.id])).rows).toHaveLength(0);
+  });
   it("durum sorgusu (check_status.sql) tüm migration'ları YAPILMIŞ gösterir", async () => {
     const sql = fs.readFileSync(path.resolve(__dirname, "../supabase/check_status.sql"), "utf8");
     const res = await db.exec(sql);

@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Başvuru rehberleri (D200, 15 Kasım 2026)**
+- TÜBİTAK yazılarının başarısı üzerine 6 yeni başvuru rehberi (TR/EN/DE): TÜBİTAK 1001, BAP, 2214-A/2219, NSF GRFP, MSCA doktora sonrası burs, Fulbright; toplam 55 yazı
+
 **Blog ve iletişim (D199, 15 Kasım 2026)**
 - 26 eski Türkçe yazı genişletildi (en kısa yazı 291 → 542 kelime); EN/DE sürümleri de aynı bölümlerle genişletildi (en kısa EN 621, DE 605 kelime)
 - 5 yeni yazı (korelasyon, etki büyüklüğü, ki-kare, DOI, yapay zekâ kullanım beyanı; TR/EN/DE, sayılar motorla doğrulandı); toplam 49 yazı

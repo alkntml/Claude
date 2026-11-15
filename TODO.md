@@ -174,3 +174,5 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-15, D199) 26 Türkçe blog yazısı genişletildi; 5 yeni yazı (TR/EN/DE); altbilgiye e-posta ve Instagram
 - [x] (2026-11-15, D199) Eski blog yazılarının EN/DE sürümleri Türkçedeki genişletmeye göre genişletildi (26 yazı × 2 dil)
 - [ ] iletisim@academiana.com.tr posta kutusu Google Workspace onayından sonra çalışır hâle gelmeli (D199)
+- [x] (2026-11-15, D200) 6 yeni başvuru rehberi (1001, BAP, 2214-A/2219, NSF GRFP, MSCA PF, Fulbright; TR/EN/DE)
+- [ ] (D200) Search Console’da başvuru rehberlerinin gösterim/tıklamasını 4–6 hafta sonra karşılaştır; tutan kalıpla yeni program yazıları (ör. ERC, DAAD, 2211, 3501, Erasmus+)

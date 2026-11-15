@@ -47,6 +47,39 @@ This is respectful and makes the editor’s decision easier.
 - Do page and line numbers match the final version?
 - Are you still within the word limit?
 
+
+## A template for the response letter
+
+Handle each reviewer comment in three parts: the comment itself, your response and the change you made in the text.
+
+- **Reviewer 1, Comment 3:** “It is unclear how the sample size was determined.”
+- **Response:** “Thank you for this valuable comment. The sample size was determined by a power analysis; we have added information on the calculation to the method section.”
+- **Change:** “Method, Population and Sample, paragraph 2 (p. 7, lines 12–18).”
+
+Show changes in the revised manuscript in color or with track changes, whichever the journal requires.
+
+## Approach by type of comment
+
+| Type of comment | What to do |
+| --- | --- |
+| A clear error (wrong statistic, missing citation) | Thank the reviewer, fix it and show where |
+| Request for additional analysis | Do it if possible; if not, explain why with justification |
+| Out-of-scope request | Politely explain that it is out of scope and add it to the limitations |
+| Ambiguous comment | State how you understood it and show the change you made accordingly |
+| Conflicting requests from two reviewers | Explain to the editor which path you chose and why |
+
+## Cover note to the editor
+
+Open the response letter with a short paragraph to the editor: thanks for the opportunity to revise, a two- or three-point summary of the main changes and a note that all comments are answered point by point below. This helps the editor assess the revision quickly.
+
+## Revision deadline and communication
+
+Respect the revision deadline the journal gives. If additional analyses or data collection are needed and time will not be enough, write to the editor before the deadline to ask for an extension. Staying silent can lead to the manuscript being treated as a new submission.
+
+## If you were rejected
+
+After a rejection, read the reviews carefully; they often contain valuable suggestions that strengthen the article. Apply them and submit the article to a journal whose scope fits better. For journal selection and article structure, see our [academic article guide](/en/blog/how-to-write-and-publish-a-research-paper).
+
 ## Response letters with Academiana
 
 Open "Respond to reviewers" from the Tools menu in Academiana and paste the editor and reviewer comments. The assistant reads your current manuscript, drafts a Comment–Response–Change letter for every comment and lists the changes you need to make in priority order. It never claims a change was made when it was not — those are marked [TO DO] — and leaves page numbers for you to fill in.`,
@@ -100,6 +133,53 @@ Open "Respond to reviewers" from the Tools menu in Academiana and paste the edit
 - Keep your presentation in more than one place (USB, email, cloud).
 - Bring a printed copy of the thesis; questions may refer to page numbers.
 - Arrive early and check the equipment.
+
+
+## Presentation structure and timing
+
+A defense presentation usually lasts 15–30 minutes; ask your graduate school or committee chair. A sample breakdown for a 20-minute presentation:
+
+| Section | Time | Content |
+| --- | --- | --- |
+| Introduction and problem | 3 min | Importance, gap, aim |
+| Research questions | 1 min | Questions or hypotheses |
+| Method | 4 min | Design, sample, instruments, analysis |
+| Results | 6 min | Key result for each question, with tables and charts |
+| Discussion and conclusion | 4 min | Comparison with the literature, contribution, recommendations |
+| Limitations | 2 min | Honest and brief |
+
+Results are the most important part; spending too long on the method and leaving no time for results is a common mistake.
+
+## Slide design
+
+- One idea per slide; use keywords and visuals instead of text.
+- Show only the important rows of tables; the full table is in the thesis.
+- Keep charts large and readable and label the axes.
+- Show slide numbers so the committee can refer back to a slide.
+- Prepare backup slides: extra analyses, scale items, detailed tables. Show them if asked.
+
+## Prepare for questions by group
+
+Committee questions usually fall into these groups:
+
+- **Theory and literature:** Why this theory? How do you differ from similar studies?
+- **Method:** Why this sample size? Why this scale? Why not another analysis?
+- **Results:** How do you explain the unexpected result? What does the effect size mean?
+- **Contribution and limitations:** What does this study add to the field? What would you change if you did it again?
+
+Write likely questions for each group and prepare short bullet-point answers. Make sure your answers are consistent with what the thesis says.
+
+## If you don’t know the answer
+
+Saying openly that you don’t know is far better than inventing a wrong answer. A reply such as “I did not address this in my study, but I would think about it like this…” is honest and shows your reasoning. If you did not understand a question, ask for it to be repeated.
+
+## After the defense
+
+The committee may request corrections. Get them in writing, show in a list how you addressed each, and submit within the deadline. Then prepare the final version in the format your institution requires (usually PDF) and according to the rules of the repository where the thesis will be deposited.
+
+## Language and body language
+
+Speak to the committee rather than reading from the slides. Answer questions openly, not defensively; criticism is a chance to improve your work. Recording yourself during rehearsal helps you notice your pace and filler words.
 
 ## Defence preparation with Academiana
 
@@ -167,6 +247,40 @@ Justify every item by the task in the method it serves. Base amounts on current 
 - An empty risk table
 - An unjustified or inflated budget
 
+
+## Working with your advisor
+
+In 2209-A applications, the student prepares the project together with an academic advisor. Meeting the advisor early saves time on the feasibility of the topic, whether ethics approval is needed and how realistic the budget items are. Bring a one-page project idea: problem, aim, draft method and expected output.
+
+## From research question to work packages
+
+In the project management section, divide the work into small, measurable work packages. For each, state what will be done, who is responsible, how long it will take and how success will be measured:
+
+| Work package | Responsible | Duration | Success criterion |
+| --- | --- | --- | --- |
+| Literature review | Student | Month 1 | Literature matrix completed |
+| Ethics application | Student and advisor | Months 1–2 | Approval obtained |
+| Data collection | Student | Months 3–5 | Planned number of participants reached |
+| Analysis and report | Student | Months 6–8 | Final report ready |
+
+This table is an example; set durations and work packages according to your project and the limits of the current call.
+
+## Risk management
+
+Reviewers check whether you have thought about where the project could go wrong. Write a plan B for each major risk: what if participants cannot be reached, how will the timeline change if ethics approval is delayed, what if a device breaks?
+
+## Feasibility of the method
+
+In undergraduate projects, reviewers pay most attention to whether the method fits the project’s duration and budget. Prefer a clearly bounded, completable design over one with many variables, hard-to-reach samples or expensive equipment. Justify your sample size: see the [sample size guide](/en/blog/how-to-calculate-sample-size).
+
+## Always follow the current call document
+
+Application dates, budget limits, eligibility conditions and form templates can change from call to call. This guide covers general writing principles; for dates, amounts and conditions, always read TÜBİTAK’s current call announcement and application guide.
+
+## Final report and dissemination
+
+When the project ends, a final report is prepared. Presenting the findings at a student congress or turning them into an article shows the project’s wider impact. For writing an article, see our [academic article guide](/en/blog/how-to-write-and-publish-a-research-paper).
+
 ## Proposals with Academiana
 
 Choose the "TÜBİTAK / BAP proposal" work type in Academiana and select your programme (2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP or a scholarship) to get summary, originality, methods, project management, impact and budget sections. The assistant helps you show the literature gap with real sources and drafts the work plan and risk table as tables. It never invents budget amounts or programme rules; you enter them and check the call announcement.
@@ -217,6 +331,39 @@ The official database of master’s and doctoral theses completed in Türkiye, r
 - **Do not report detailed findings** of a study you only read the abstract of.
 - **Use theses judiciously.** If the same work was published as an article, citing the article is usually preferred.
 - **Record full details:** journal title, volume, issue, pages and DOI (if any).
+
+
+## Effective search tips
+
+- **Search in Turkish and English.** Most DergiPark articles also have an English title and abstract; English terms can return different results.
+- **Try synonyms.** The same concept is often written in different ways.
+- **Use quotation marks.** Searching for a phrase in quotes narrows the results.
+- **Use advanced search.** Year range, journal and publication type filters make the result list manageable.
+- **Follow the citation chain.** The reference list of a good source and newer studies that cite it are often the most productive search route.
+
+## Making use of theses
+
+Theses in the CoHE (YÖK) National Thesis Center are valuable for both literature and method:
+
+- You can find the **scales used** in theses on similar topics and the sources of their Turkish adaptations.
+- The **recommendations sections** of theses are a good starting point for new thesis topics.
+- Access to the full text of some theses may be restricted by the author; in that case only the record and abstract are visible.
+
+When citing a thesis, include the thesis type (master’s/doctoral), university and thesis number. For reference format, see our [reference list guide](/en/blog/how-to-write-a-bibliography-citation-styles).
+
+## Assessing journal quality
+
+DergiPark is a publishing platform; not every journal on it is of the same quality. When assessing a journal:
+
+- Verify on the index’s own website that it is indexed in TR Dizin or international indexes.
+- Review the editorial board and peer review process.
+- Check whether it publishes regularly.
+
+To recognize questionable journals, see our [predatory journals guide](/en/blog/how-to-spot-predatory-journals).
+
+## Use them alongside international databases
+
+A literature review based only on Turkish databases misses the international literature. Use Turkish sources together with OpenAlex, Crossref, Semantic Scholar and databases specific to your field. We explain how to build a search strategy step by step in our [literature review guide](/en/blog/how-to-write-a-literature-review).
 
 ## Turkish sources with Academiana
 
@@ -279,6 +426,47 @@ A common convention: past tense for describing previous studies and your methods
 
 Proofread carefully, and follow the spelling conventions (e.g. British or American English) required by your institution or journal.
 
+
+## Before and after: revision examples
+
+| Problematic wording | Why it’s a problem | More academic wording |
+| --- | --- | --- |
+| Everyone knows social media is harmful. | Overgeneralization, no source | Some studies show that problematic social media use is related to academic procrastination. |
+| This study conclusively proved the point. | Unwarranted certainty | The findings of this study support the hypothesis. |
+| We found a really, really important result. | Informal, exaggerated | The findings point to an important result regarding… |
+| Students seem to kind of like procrastinating. | Vague and informal | Students’ procrastination levels are moderate. |
+| When the findings obtained as a result of the analyses conducted were examined… | Needlessly long | The analyses showed that… |
+
+## Measured language in academic writing
+
+Scientific findings are expressed with degrees of probability and evidence. Instead of “proved”, “definitely” or “always”, use “shows”, “suggests”, “supports” or “was associated with”. This measured language is not weakness but scientific honesty.
+
+## Passive and active voice
+
+The passive voice is common in academic texts (“data were collected”). But putting every sentence in the passive makes a text heavy and hides who did what. The passive suits the method; in the discussion, when giving your view, phrases such as “this finding can be interpreted as…” work well. Many style guides, including APA 7, also accept the active “we” for your own actions. What matters is consistency.
+
+## Paragraph structure
+
+A good academic paragraph develops one main idea:
+
+1. **Topic sentence:** The main idea of the paragraph
+2. **Supporting sentences:** Evidence, examples and sources
+3. **Linking sentence:** Transition to the next paragraph or an interim conclusion
+
+If a paragraph contains more than one main idea, split it. Avoid one-sentence paragraphs too.
+
+## Connectives and transitions
+
+Words that show the logical link between paragraphs make reading easier: for contrast “however”, “on the other hand”; for consequence “therefore”, “thus”; for addition “moreover”, “in addition”. Avoid using the same connective repeatedly.
+
+## Final read before submission
+
+- Read the text aloud or after a day’s break.
+- Check that you use terms consistently.
+- Make sure abbreviations are spelled out at first use.
+- Check that every claim has a source or data. For plagiarism and citation, see our [plagiarism guide](/en/blog/how-to-avoid-plagiarism).
+- Check spelling, hyphenation and capitalization against your style guide.
+
 ## Editing with Academiana
 
 In Academiana you can select part of your text and use "Make academic", "Shorten", "Expand" or "Restructure"; your citations are preserved. "Reduce repetition" removes repetitive patterns and near-identical sentences, and the quality check automatically finds informal expressions, overstated claims and repetition across chapters.`,
@@ -335,6 +523,36 @@ In plain language the participant can understand, it should explain:
 - Collecting more data than necessary (e.g. names when they are not needed)
 - Forgetting to attach scale permissions
 - Not allowing for committee meeting schedules in the timeline
+
+
+## Timing your application
+
+Ethics approval must be obtained before data collection begins; data collected without approval may not be usable in the thesis. Committees meet and review at different intervals; find out your committee’s schedule and leave buffer time for possible revision requests. Treat ethics approval as the critical path when planning your thesis: see the [thesis timeline guide](/en/blog/how-long-does-it-take-to-write-a-thesis).
+
+## Special cases
+
+- **Children and adolescents:** Consent from a parent or legal guardian is obtained together with the child’s own assent. If data are collected in schools, permission from the relevant authorities may also be required.
+- **Institutional permission:** If data are collected in a hospital, school or company, the institution’s permission is obtained in addition to ethics approval.
+- **Online surveys:** The consent form is on the first page of the survey; participants must not be able to proceed without consenting.
+- **Secondary data:** If you work with open datasets or institutional records, ask your committee whether ethics approval is needed.
+- **Scale permissions:** Permission letters from the developers or adapters of the scales you use are added to the file.
+
+## Personal data and confidentiality
+
+Processing personal data is subject to data protection law: in Turkey the Personal Data Protection Law No. 6698, in the EU the GDPR. In your application, explain how data will be stored, who can access them, how long they will be kept and how they will be anonymized. If possible, don’t collect identifying information such as names or student numbers at all; if you must, keep it separate from the data.
+
+## What the consent form must include
+
+- The purpose and duration of the study, in plain language
+- What participants are asked to do and how long it takes
+- That participation is voluntary and can be stopped at any time
+- Possible risks and benefits
+- Confidentiality of data and how they will be used
+- The researcher’s contact details
+
+## After approval
+
+State the date and number of the approval document in the method section. If you make a major change to the method after approval (a new scale, a different sample), you may need to notify the committee. Never invent approval details when writing the ethics section of your thesis; if you don’t have them yet, leave a placeholder and fill it in later.
 
 ## Ethics documents with Academiana
 
@@ -393,6 +611,35 @@ Use these files when switching tools or using your references elsewhere.
 - Write a short note for every source: why it matters and which chapter it belongs to.
 - Clean up duplicates regularly.
 
+
+## Getting started with Zotero, step by step
+
+1. Install the Zotero desktop app and the browser extension (Zotero Connector).
+2. Create a free Zotero account and enable syncing so your library stays the same across computers.
+3. On an article page, click the browser extension; the reference and, if available, the PDF are added to your library.
+4. Add a source with a DOI using the “Add Item by Identifier” button and pasting the DOI.
+5. Create a separate collection for each thesis; use subcollections or tags for chapters.
+6. Install the Zotero plugin for Word; insert citations into your text and generate the reference list automatically.
+
+## Tips for organizing your library
+
+- **Tags:** Tags such as “read”, “to read”, “method” or “scale” let you filter sources quickly.
+- **Notes:** Add a reading note to each source; record page numbers for direct quotations.
+- **Duplicates:** Use Zotero’s merge duplicates feature regularly.
+- **Check references:** Automatically imported references may have wrong title capitalization, missing issue/page details or author names; check them before submitting.
+
+## Collaboration
+
+**Group libraries** in Zotero and shared groups in Mendeley let you work on the same source list with co-authors. Sharing a group library with your supervisor lets them add suggested sources directly to your library.
+
+## Which style should I choose?
+
+Reference managers support hundreds of citation styles. Your graduate school’s or journal’s guidelines state which to use; APA 7 is the most widespread in the social sciences. For the same source in several styles side by side, see our [reference list guide](/en/blog/how-to-write-a-bibliography-citation-styles), and for ISNAD details, our [ISNAD guide](/en/blog/isnad-citation-style-guide).
+
+## Backups
+
+Export your library regularly (e.g. Zotero RDF or BibTeX) and store it somewhere else. Syncing services work well, but on a long project like a thesis an extra backup protects against data loss.
+
 ## Using Academiana alongside your reference manager
 
 Academiana imports BibTeX, RIS and CSL-JSON files exported from Zotero, Mendeley and EndNote; your sources are verified via DOI and duplicates are removed. You can export your project’s sources in the same formats, so you can keep your favourite tool while using Academiana’s source search, citation and writing features.`,
@@ -439,6 +686,42 @@ Set a target length for your thesis and divide it into a weekly word goal. Writi
 - Agree on a regular meeting schedule.
 - Send chapters in parts rather than the whole thesis at once.
 - Keep feedback in a list and tick off what you have addressed.
+
+
+## Sample timeline: a 12-month master’s thesis
+
+| Month | Stage | Output |
+| --- | --- | --- |
+| 1–2 | Topic, initial literature, proposal | Approved proposal |
+| 2–3 | Ethics application, scale permissions | Ethics approval |
+| 3–5 | Writing the literature and theoretical framework | Draft introduction and literature |
+| 4–6 | Data collection | Complete dataset |
+| 6–7 | Analysis | Results tables |
+| 7–9 | Writing results and discussion | Draft results and discussion |
+| 9–10 | Conclusion, abstract, formatting | Full draft |
+| 10–11 | Supervisor’s revisions | Final draft |
+| 12 | Submission and defense preparation | Defense |
+
+This table is an example; durations depend on your field, method and institution’s calendar. Note that writing the literature and collecting data can run in parallel.
+
+## A weekly routine
+
+- **Fixed work blocks:** Work on the thesis on set days and at set times. Regular short blocks are more productive than irregular marathons.
+- **Separate writing and reading:** Use one block only for writing and another for reading. Mixing them breaks your writing flow.
+- **Weekly goal:** Set a word or section target and note your progress at the end of the week.
+- **Supervisor rhythm:** Plan a short meeting with your supervisor every two or three weeks.
+
+## The perfectionism trap
+
+A first draft does not have to be flawless. Constantly revising the previous chapter before finishing the next one stops progress. Complete a rough draft first and leave revisions for the next round. Mark missing information in the text (e.g. “[data to be entered]”) and keep writing.
+
+## Spotting delays early
+
+When you fall more than two weeks behind schedule, update the plan: which stage can be shortened, which can run in parallel? If stages outside your control, such as ethics approval or data collection, are delayed, use the time to advance the literature and method chapters. As the deadline approaches, agree on a realistic final date with your supervisor.
+
+## Long-term motivation
+
+A thesis is a marathon. Celebrate small wins (finishing a chapter, ethics approval), protect your workspace and hours, and take breaks when needed. Research on procrastination suggests that breaking large tasks into small, concrete steps makes it easier to start.
 
 ## Planning with Academiana
 

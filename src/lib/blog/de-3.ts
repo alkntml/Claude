@@ -49,6 +49,39 @@ Das ist respektvoll und erleichtert der Herausgeberschaft die Entscheidung.
 - Stimmen Seiten- und Zeilennummern mit der finalen Fassung überein?
 - Liegen Sie noch innerhalb der Wortgrenze?
 
+
+## Vorlage für das Antwortschreiben
+
+Behandeln Sie jeden Gutachterkommentar in drei Teilen: Kommentar, Ihre Antwort und die Änderung im Text.
+
+- **Gutachten 1, Kommentar 3:** „Es ist unklar, wie die Stichprobengröße bestimmt wurde.“
+- **Antwort:** „Vielen Dank für diesen wertvollen Hinweis. Die Stichprobengröße wurde mit einer Poweranalyse bestimmt; Angaben zur Berechnung wurden im Methodenteil ergänzt.“
+- **Änderung:** „Methode, Abschnitt Grundgesamtheit und Stichprobe, 2. Absatz (S. 7, Z. 12–18).“
+
+Zeigen Sie Änderungen im überarbeiteten Manuskript farbig oder im Änderungsmodus, je nachdem, was die Zeitschrift verlangt.
+
+## Vorgehen nach Art des Kommentars
+
+| Art des Kommentars | Was tun? |
+| --- | --- |
+| Klarer Fehler (falsche Statistik, fehlender Beleg) | Danken, korrigieren und die Stelle angeben |
+| Wunsch nach zusätzlicher Analyse | Wenn möglich durchführen; sonst begründen, warum nicht |
+| Wunsch außerhalb des Rahmens | Höflich erklären, dass er außerhalb liegt, und in die Limitationen aufnehmen |
+| Unklarer Kommentar | Schreiben, wie Sie ihn verstanden haben, und die entsprechende Änderung zeigen |
+| Widersprüchliche Wünsche zweier Gutachten | Der Herausgeberschaft erklären, welchen Weg Sie gewählt haben und warum |
+
+## Vorbemerkung an die Herausgeberschaft
+
+Beginnen Sie das Antwortschreiben mit einem kurzen Absatz an die Herausgeberschaft: Dank für die Möglichkeit zur Überarbeitung, eine Zusammenfassung der wichtigsten Änderungen in zwei, drei Punkten und der Hinweis, dass alle Kommentare unten Punkt für Punkt beantwortet sind. Das erleichtert eine schnelle Prüfung.
+
+## Frist und Kommunikation
+
+Halten Sie die Überarbeitungsfrist ein. Sind zusätzliche Analysen oder Datenerhebungen nötig und reicht die Zeit nicht, bitten Sie vor Fristende um Verlängerung. Schweigen kann dazu führen, dass das Manuskript als Neueinreichung behandelt wird.
+
+## Wenn der Artikel abgelehnt wurde
+
+Lesen Sie nach einer Ablehnung die Gutachten sorgfältig; sie enthalten oft wertvolle Hinweise. Setzen Sie diese um und reichen Sie den Artikel bei einer Zeitschrift ein, deren Profil besser passt. Zur Wahl der Zeitschrift und zum Aufbau siehe unseren [Leitfaden zum wissenschaftlichen Artikel](/de/blog/wissenschaftlichen-artikel-schreiben-veroeffentlichen).
+
 ## Antwortschreiben mit Academiana
 
 Öffnen Sie in Academiana im Menü „Werkzeuge“ den Punkt „Antwort an die Gutachtenden“ und fügen Sie die Kommentare von Herausgeberschaft und Gutachtenden ein. Der Assistent liest Ihr aktuelles Manuskript, entwirft für jeden Kommentar ein Schreiben im Schema Kommentar – Antwort – Änderung und listet die nötigen Änderungen nach Priorität. Er behauptet nie, eine Änderung sei erfolgt, wenn sie es nicht ist – solche Punkte werden als [TO DO] markiert –, und überlässt Ihnen das Eintragen der Seitenzahlen.`,
@@ -103,6 +136,53 @@ Das ist respektvoll und erleichtert der Herausgeberschaft die Entscheidung.
 - Bewahren Sie Ihre Präsentation an mehreren Orten auf (USB-Stick, E-Mail, Cloud).
 - Bringen Sie ein gedrucktes Exemplar der Arbeit mit; Fragen können sich auf Seitenzahlen beziehen.
 - Kommen Sie früh und prüfen Sie die Technik.
+
+
+## Aufbau und Zeitplanung des Vortrags
+
+Ein Verteidigungsvortrag dauert meist 15–30 Minuten; fragen Sie Ihre Hochschule oder den Vorsitz. Eine Beispielaufteilung für 20 Minuten:
+
+| Teil | Zeit | Inhalt |
+| --- | --- | --- |
+| Einleitung und Problem | 3 Min. | Bedeutung, Lücke, Ziel |
+| Forschungsfragen | 1 Min. | Fragen oder Hypothesen |
+| Methode | 4 Min. | Design, Stichprobe, Instrumente, Analyse |
+| Ergebnisse | 6 Min. | Hauptergebnis je Frage mit Tabellen und Diagrammen |
+| Diskussion und Fazit | 4 Min. | Vergleich mit der Literatur, Beitrag, Empfehlungen |
+| Limitationen | 2 Min. | Ehrlich und kurz |
+
+Die Ergebnisse sind der wichtigste Teil; die Methode zu lang darzustellen und keine Zeit für Ergebnisse zu lassen, ist ein häufiger Fehler.
+
+## Foliengestaltung
+
+- Eine Idee pro Folie; Stichwörter und Grafiken statt Fließtext.
+- In Tabellen nur die wichtigen Zeilen zeigen; die vollständige Tabelle steht in der Arbeit.
+- Diagramme groß und lesbar halten, Achsen beschriften.
+- Foliennummern zeigen, damit die Kommission darauf Bezug nehmen kann.
+- Reservefolien vorbereiten: Zusatzanalysen, Skalenitems, ausführliche Tabellen. Bei Fragen zeigen.
+
+## Auf Fragen nach Gruppen vorbereiten
+
+Fragen der Kommission lassen sich meist so gruppieren:
+
+- **Theorie und Literatur:** Warum diese Theorie? Worin unterscheiden Sie sich von ähnlichen Studien?
+- **Methode:** Warum diese Stichprobengröße? Warum diese Skala? Warum keine andere Analyse?
+- **Ergebnisse:** Wie erklären Sie das unerwartete Ergebnis? Was bedeutet die Effektstärke?
+- **Beitrag und Limitationen:** Was trägt die Studie bei? Was würden Sie heute anders machen?
+
+Notieren Sie mögliche Fragen je Gruppe und bereiten Sie kurze Stichpunkte vor. Achten Sie darauf, dass Ihre Antworten zur Arbeit passen.
+
+## Wenn Sie eine Antwort nicht wissen
+
+Offen zu sagen, dass Sie es nicht wissen, ist viel besser als eine falsche Antwort zu erfinden. Eine Antwort wie „Das habe ich in meiner Studie nicht untersucht, ich würde es aber so sehen …“ ist ehrlich und zeigt Ihr Denken. Haben Sie eine Frage nicht verstanden, bitten Sie um Wiederholung.
+
+## Nach der Verteidigung
+
+Die Kommission kann Korrekturen verlangen. Lassen Sie sie sich schriftlich geben, dokumentieren Sie in einer Liste, wie Sie jede umgesetzt haben, und reichen Sie fristgerecht ein. Bereiten Sie dann die Endfassung im verlangten Format (meist PDF) und nach den Regeln der Veröffentlichung bzw. des Repositoriums vor.
+
+## Sprache und Körpersprache
+
+Sprechen Sie zur Kommission, statt von den Folien abzulesen. Beantworten Sie Fragen offen statt defensiv; Kritik ist eine Chance, die Arbeit zu verbessern. Wer sich bei der Probe aufnimmt, bemerkt Tempo und Füllwörter.
 
 ## Vorbereitung auf die Verteidigung mit Academiana
 
@@ -171,6 +251,40 @@ Begründen Sie jeden Posten mit der Aufgabe in der Methode, der er dient. Stütz
 - Eine leere Risikotabelle
 - Ein unbegründetes oder überhöhtes Budget
 
+
+## Zusammenarbeit mit der betreuenden Person
+
+Bei 2209-A-Anträgen erarbeiten Studierende das Projekt gemeinsam mit einer akademischen Betreuung. Ein frühes Gespräch spart Zeit bei Fragen zur Machbarkeit, zu einem nötigen Ethikvotum und zur Realitätsnähe des Budgets. Bringen Sie eine einseitige Projektidee mit: Problem, Ziel, Methodenentwurf und erwartetes Ergebnis.
+
+## Von der Forschungsfrage zu Arbeitspaketen
+
+Teilen Sie die Arbeit im Projektmanagement in kleine, messbare Arbeitspakete. Geben Sie für jedes an, was getan wird, wer verantwortlich ist, wie lange es dauert und woran Erfolg gemessen wird:
+
+| Arbeitspaket | Verantwortlich | Dauer | Erfolgskriterium |
+| --- | --- | --- | --- |
+| Literaturrecherche | Studierende | Monat 1 | Literaturmatrix fertig |
+| Ethikantrag | Studierende und Betreuung | Monat 1–2 | Votum erteilt |
+| Datenerhebung | Studierende | Monat 3–5 | Geplante Teilnehmerzahl erreicht |
+| Analyse und Bericht | Studierende | Monat 6–8 | Abschlussbericht fertig |
+
+Die Tabelle ist ein Beispiel; legen Sie Dauer und Pakete nach Ihrem Projekt und den Grenzen der aktuellen Ausschreibung fest.
+
+## Risikomanagement
+
+Gutachtende prüfen, ob Sie bedacht haben, wo das Projekt scheitern könnte. Schreiben Sie für jedes wichtige Risiko einen Plan B: Was, wenn Teilnehmende nicht erreichbar sind? Wie ändert sich der Zeitplan bei verspätetem Ethikvotum? Was, wenn ein Gerät ausfällt?
+
+## Machbarkeit der Methode
+
+Bei Projekten im Bachelorstudium achten Gutachtende vor allem darauf, ob die Methode zu Laufzeit und Budget passt. Bevorzugen Sie ein klar begrenztes, abschließbares Design statt vieler Variablen, schwer erreichbarer Stichproben oder teurer Geräte. Begründen Sie die Stichprobengröße: siehe [Leitfaden zur Stichprobengröße](/de/blog/stichprobengroesse-berechnen).
+
+## Maßgeblich ist die aktuelle Ausschreibung
+
+Termine, Budgetgrenzen, Voraussetzungen und Formularvorlagen können sich von Ausschreibung zu Ausschreibung ändern. Dieser Leitfaden beschreibt allgemeine Schreibprinzipien; für Termine, Beträge und Bedingungen lesen Sie immer die aktuelle Ausschreibung und den Antragsleitfaden von TÜBİTAK.
+
+## Abschlussbericht und Verbreitung
+
+Nach Projektende wird ein Abschlussbericht erstellt. Die Ergebnisse auf einem Studierendenkongress vorzustellen oder zu einem Artikel auszubauen, zeigt die Wirkung des Projekts. Zum Artikelschreiben siehe unseren [Leitfaden zum wissenschaftlichen Artikel](/de/blog/wissenschaftlichen-artikel-schreiben-veroeffentlichen).
+
 ## Anträge mit Academiana
 
 Wählen Sie in Academiana die Art „TÜBİTAK-/BAP-Antrag“ und Ihr Programm (2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP oder ein Stipendium); Sie erhalten Abschnitte zu Zusammenfassung, Originalität, Methode, Projektmanagement, Wirkung und Budget. Der Assistent hilft, die Forschungslücke mit echten Quellen zu belegen, und entwirft Arbeitsplan und Risikotabelle als Tabellen. Budgetbeträge oder Programmregeln erfindet er nie; diese tragen Sie ein und prüfen sie anhand der Ausschreibung.
@@ -222,6 +336,39 @@ Die offizielle Datenbank der in der Türkei abgeschlossenen Master- und Doktorar
 - **Berichten Sie keine Detailbefunde** einer Studie, deren Abstract allein Sie gelesen haben.
 - **Setzen Sie Abschlussarbeiten gezielt ein.** Ist dieselbe Arbeit als Artikel erschienen, wird meist der Artikel zitiert.
 - **Notieren Sie vollständige Angaben:** Zeitschriftentitel, Band, Heft, Seiten und DOI (falls vorhanden).
+
+
+## Tipps für eine wirksame Suche
+
+- **Auf Türkisch und Englisch suchen.** Die meisten DergiPark-Artikel haben auch einen englischen Titel und ein englisches Abstract; englische Begriffe liefern oft andere Treffer.
+- **Synonyme ausprobieren.** Derselbe Begriff wird oft unterschiedlich geschrieben.
+- **Anführungszeichen nutzen.** Eine Wortgruppe in Anführungszeichen grenzt die Treffer ein.
+- **Erweiterte Suche verwenden.** Filter für Jahr, Zeitschrift und Publikationstyp machen die Trefferliste handhabbar.
+- **Der Zitationskette folgen.** Das Literaturverzeichnis einer guten Quelle und neuere Studien, die sie zitieren, sind oft der ergiebigste Suchweg.
+
+## Abschlussarbeiten nutzen
+
+Die Arbeiten im Nationalen Thesenzentrum des türkischen Hochschulrats (YÖK) sind für Literatur und Methode wertvoll:
+
+- Sie finden die **verwendeten Skalen** ähnlicher Arbeiten und die Quellen ihrer türkischen Adaptionen.
+- Die **Empfehlungsteile** von Arbeiten sind ein guter Ausgangspunkt für neue Themen.
+- Der Volltext mancher Arbeiten kann vom Autor gesperrt sein; dann sind nur Angaben und Abstract sichtbar.
+
+Geben Sie beim Zitieren Art der Arbeit (Master/Dissertation), Hochschule und Nummer an. Zum Format siehe unseren [Leitfaden zum Literaturverzeichnis](/de/blog/literaturverzeichnis-erstellen-zitierstile).
+
+## Qualität von Zeitschriften einschätzen
+
+DergiPark ist eine Publikationsplattform; nicht jede Zeitschrift dort hat dieselbe Qualität. Prüfen Sie:
+
+- Auf der Website des Index, ob die Zeitschrift in TR Dizin oder internationalen Indizes gelistet ist.
+- Herausgebergremium und Begutachtungsverfahren.
+- Ob sie regelmäßig erscheint.
+
+Wie man fragwürdige Zeitschriften erkennt, zeigt unser [Leitfaden zu Raubverlagen](/de/blog/raeuberische-zeitschriften-erkennen).
+
+## Zusammen mit internationalen Datenbanken nutzen
+
+Eine Recherche nur in türkischen Datenbanken verpasst die internationale Literatur. Nutzen Sie türkische Quellen zusammen mit OpenAlex, Crossref, Semantic Scholar und fachspezifischen Datenbanken. Wie man eine Suchstrategie aufbaut, zeigt unser [Leitfaden zur Literaturrecherche](/de/blog/literaturrecherche-literaturuebersicht-schreiben) Schritt für Schritt.
 
 ## Türkische Quellen mit Academiana
 
@@ -285,6 +432,47 @@ Eine verbreitete Konvention: Vergangenheit für frühere Studien und Ihre Method
 
 Korrigieren Sie sorgfältig und folgen Sie den Rechtschreibkonventionen, die Ihre Hochschule oder Zeitschrift verlangt.
 
+
+## Vorher und nachher: Überarbeitungsbeispiele
+
+| Problematische Formulierung | Warum problematisch? | Wissenschaftlichere Formulierung |
+| --- | --- | --- |
+| Jeder weiß, dass soziale Medien schädlich sind. | Übergeneralisierung, ohne Beleg | Einige Studien zeigen, dass problematische Social-Media-Nutzung mit akademischem Aufschieben zusammenhängt. |
+| Diese Studie hat es eindeutig bewiesen. | Ungedeckte Gewissheit | Die Ergebnisse dieser Studie stützen die Hypothese. |
+| Wir haben ein total, total wichtiges Ergebnis gefunden. | Umgangssprachlich, übertrieben | Die Ergebnisse weisen auf einen wichtigen Befund hinsichtlich … hin. |
+| Die Studierenden scheinen das Aufschieben irgendwie zu mögen. | Vage und umgangssprachlich | Das Aufschiebeverhalten der Studierenden liegt im mittleren Bereich. |
+| Bei Betrachtung der Ergebnisse, die als Resultat der durchgeführten Analysen erzielt wurden, … | Unnötig lang | Die Analysen zeigten, dass … |
+
+## Vorsichtige Sprache im wissenschaftlichen Schreiben
+
+Wissenschaftliche Ergebnisse werden mit Wahrscheinlichkeit und Evidenzgrad formuliert. Statt „bewiesen“, „eindeutig“ oder „immer“ schreiben Sie „zeigt“, „deutet darauf hin“, „stützt“ oder „hing zusammen mit“. Diese Zurückhaltung ist keine Schwäche, sondern wissenschaftliche Redlichkeit.
+
+## Passiv und Aktiv
+
+Das Passiv ist in wissenschaftlichen Texten verbreitet („Die Daten wurden erhoben“). Jeder Satz im Passiv macht den Text jedoch schwerfällig und verschleiert, wer was getan hat. Im Methodenteil passt das Passiv; in der Diskussion eignen sich Formulierungen wie „Dieser Befund lässt sich als … deuten“. Viele Stilvorgaben, auch APA 7, akzeptieren für eigene Handlungen ein aktives „wir“. Wichtig ist Einheitlichkeit.
+
+## Absatzstruktur
+
+Ein guter wissenschaftlicher Absatz entwickelt einen Hauptgedanken:
+
+1. **Kernsatz:** der Hauptgedanke des Absatzes
+2. **Stützende Sätze:** Belege, Beispiele und Quellen
+3. **Überleitungssatz:** Übergang zum nächsten Absatz oder Zwischenfazit
+
+Enthält ein Absatz mehrere Hauptgedanken, teilen Sie ihn. Vermeiden Sie auch Ein-Satz-Absätze.
+
+## Konnektoren und Übergänge
+
+Wörter, die den logischen Zusammenhang zeigen, erleichtern das Lesen: für Gegensätze „jedoch“, „andererseits“; für Folgen „daher“, „folglich“; für Ergänzungen „außerdem“, „darüber hinaus“. Vermeiden Sie, denselben Konnektor ständig zu wiederholen.
+
+## Letzte Durchsicht vor der Abgabe
+
+- Lesen Sie den Text laut oder nach einem Tag Pause.
+- Prüfen Sie, ob Sie Begriffe einheitlich verwenden.
+- Stellen Sie sicher, dass Abkürzungen beim ersten Gebrauch ausgeschrieben sind.
+- Prüfen Sie, ob jede Behauptung eine Quelle oder Daten hat. Zu Plagiat und Belegen siehe unseren [Leitfaden zu Plagiaten](/de/blog/plagiat-vermeiden).
+- Prüfen Sie Rechtschreibung, Zusammen- und Getrenntschreibung nach dem aktuellen Regelwerk (z. B. Duden).
+
 ## Überarbeiten mit Academiana
 
 In Academiana markieren Sie einen Textteil und nutzen „Akademisch formulieren“, „Kürzen“, „Erweitern“ oder „Umstrukturieren“; Ihre Zitate bleiben erhalten. „Wiederholungen reduzieren“ entfernt wiederkehrende Muster und nahezu identische Sätze, und die Qualitätsprüfung findet automatisch umgangssprachliche Ausdrücke, überzogene Behauptungen und Wiederholungen über Kapitel hinweg.`,
@@ -342,6 +530,36 @@ In einfacher, für Teilnehmende verständlicher Sprache sollte sie erklären:
 - Mehr Daten erheben als nötig (z. B. Namen, die nicht gebraucht werden)
 - Skalengenehmigungen nicht beifügen
 - Sitzungstermine der Kommission im Zeitplan nicht berücksichtigen
+
+
+## Zeitpunkt des Antrags
+
+Das Ethikvotum muss vor Beginn der Datenerhebung vorliegen; ohne Votum erhobene Daten dürfen in der Arbeit unter Umständen nicht verwendet werden. Kommissionen tagen und prüfen in unterschiedlichen Abständen; erkundigen Sie sich nach dem Zeitplan und planen Sie Puffer für Nachforderungen ein. Behandeln Sie das Ethikvotum bei der Planung als kritischen Pfad: siehe [Leitfaden zum Zeitplan der Abschlussarbeit](/de/blog/wie-lange-dauert-eine-abschlussarbeit).
+
+## Besondere Fälle
+
+- **Kinder und Jugendliche:** Die Einwilligung der Eltern bzw. Sorgeberechtigten wird zusammen mit der Zustimmung des Kindes eingeholt. Bei Erhebungen an Schulen kann zusätzlich eine Genehmigung der Schulbehörde nötig sein.
+- **Genehmigung der Einrichtung:** Bei Erhebungen in Klinik, Schule oder Unternehmen braucht es neben dem Ethikvotum die Zustimmung der Einrichtung.
+- **Online-Befragungen:** Die Einwilligung steht auf der ersten Seite; ohne Zustimmung darf man nicht weiterkommen.
+- **Sekundärdaten:** Bei offenen Datensätzen oder Verwaltungsdaten klären Sie mit der Kommission, ob ein Votum nötig ist.
+- **Skalengenehmigungen:** Genehmigungen der Entwicklerinnen, Entwickler oder Adaptierenden der Skalen werden dem Antrag beigefügt.
+
+## Personenbezogene Daten und Vertraulichkeit
+
+Die Verarbeitung personenbezogener Daten unterliegt dem Datenschutzrecht, in der EU der DSGVO. Erklären Sie im Antrag, wie die Daten gespeichert werden, wer Zugriff hat, wie lange sie aufbewahrt und wie sie anonymisiert werden. Erheben Sie identifizierende Angaben wie Namen oder Matrikelnummern möglichst gar nicht; falls nötig, getrennt von den Daten.
+
+## Was die Einwilligungserklärung enthalten muss
+
+- Zweck und Dauer der Studie in einfacher Sprache
+- Was von Teilnehmenden verlangt wird und wie lange es dauert
+- Dass die Teilnahme freiwillig ist und jederzeit beendet werden kann
+- Mögliche Risiken und Nutzen
+- Vertraulichkeit und Verwendung der Daten
+- Kontaktdaten der forschenden Person
+
+## Nach dem Votum
+
+Nennen Sie Datum und Aktenzeichen des Votums im Methodenteil. Ändern Sie danach die Methode wesentlich (neue Skala, andere Stichprobe), müssen Sie dies der Kommission eventuell melden. Erfinden Sie im Ethikabschnitt keine Angaben zum Votum; liegen sie noch nicht vor, setzen Sie einen Platzhalter und tragen sie später ein.
 
 ## Ethikunterlagen mit Academiana
 
@@ -401,6 +619,35 @@ Nutzen Sie diese Dateien, wenn Sie das Programm wechseln oder Ihre Quellen ander
 - Schreiben Sie zu jeder Quelle eine kurze Notiz: warum sie wichtig ist und zu welchem Kapitel sie gehört.
 - Bereinigen Sie regelmäßig Dubletten.
 
+
+## Einstieg in Zotero Schritt für Schritt
+
+1. Installieren Sie die Zotero-Desktop-App und die Browsererweiterung (Zotero Connector).
+2. Legen Sie ein kostenloses Zotero-Konto an und aktivieren Sie die Synchronisation, damit Ihre Bibliothek auf allen Rechnern gleich bleibt.
+3. Klicken Sie auf einer Artikelseite auf die Erweiterung; Angaben und, falls vorhanden, das PDF werden übernommen.
+4. Fügen Sie Quellen mit DOI über „Eintrag per Identifier hinzufügen“ ein, indem Sie die DOI einfügen.
+5. Legen Sie für jede Arbeit eine eigene Sammlung an; nutzen Sie Untersammlungen oder Tags für Kapitel.
+6. Installieren Sie das Zotero-Plugin für Word; fügen Sie Zitate ein und erzeugen Sie das Literaturverzeichnis automatisch.
+
+## Tipps für eine geordnete Bibliothek
+
+- **Tags:** Tags wie „gelesen“, „zu lesen“, „Methode“ oder „Skala“ machen das Filtern schnell.
+- **Notizen:** Fügen Sie zu jeder Quelle eine Lesenotiz hinzu; notieren Sie bei wörtlichen Zitaten die Seitenzahl.
+- **Dubletten:** Nutzen Sie regelmäßig die Zusammenführung von Dubletten.
+- **Angaben prüfen:** Automatisch übernommene Angaben können falsche Großschreibung, fehlende Heft- oder Seitenangaben und fehlerhafte Namen enthalten; prüfen Sie sie vor der Abgabe.
+
+## Zusammenarbeit
+
+**Gruppenbibliotheken** in Zotero und geteilte Gruppen in Mendeley ermöglichen die Arbeit an derselben Quellenliste mit Ko-Autorinnen und -Autoren. Teilen Sie eine Gruppenbibliothek mit Ihrer Betreuung, kann sie empfohlene Quellen direkt hinzufügen.
+
+## Welchen Stil wählen?
+
+Literaturverwaltungen unterstützen Hunderte Zitierstile. Welcher gilt, steht in den Vorgaben Ihrer Hochschule oder Zeitschrift; in den Sozialwissenschaften ist APA 7 am verbreitetsten. Dieselbe Quelle in mehreren Stilen nebeneinander zeigt unser [Leitfaden zum Literaturverzeichnis](/de/blog/literaturverzeichnis-erstellen-zitierstile), Details zu ISNAD unser [ISNAD-Leitfaden](/de/blog/isnad-zitierstil-leitfaden).
+
+## Sicherung
+
+Exportieren Sie Ihre Bibliothek regelmäßig (z. B. als Zotero RDF oder BibTeX) und speichern Sie sie an einem anderen Ort. Synchronisation funktioniert gut, aber bei einem langen Projekt wie einer Abschlussarbeit schützt eine zusätzliche Sicherung vor Datenverlust.
+
 ## Academiana neben Ihrer Literaturverwaltung
 
 Academiana importiert BibTeX-, RIS- und CSL-JSON-Dateien aus Zotero, Mendeley und EndNote; Ihre Quellen werden über die DOI verifiziert und Dubletten entfernt. Die Quellen Ihres Projekts exportieren Sie in denselben Formaten – so behalten Sie Ihr bevorzugtes Programm und nutzen zugleich Quellensuche, Zitieren und Schreiben in Academiana.`,
@@ -448,6 +695,42 @@ Legen Sie einen Zielumfang für Ihre Arbeit fest und teilen Sie ihn in ein wöch
 - Vereinbaren Sie regelmäßige Termine.
 - Schicken Sie Kapitel in Teilen statt der ganzen Arbeit auf einmal.
 - Führen Sie Rückmeldungen in einer Liste und haken Sie Erledigtes ab.
+
+
+## Beispielzeitplan: Masterarbeit in 12 Monaten
+
+| Monat | Phase | Ergebnis |
+| --- | --- | --- |
+| 1–2 | Thema, erste Literatur, Exposé | Angenommenes Exposé |
+| 2–3 | Ethikantrag, Skalengenehmigungen | Ethikvotum |
+| 3–5 | Literatur und theoretischer Rahmen | Entwurf von Einleitung und Literaturteil |
+| 4–6 | Datenerhebung | Vollständiger Datensatz |
+| 6–7 | Analyse | Ergebnistabellen |
+| 7–9 | Ergebnisse und Diskussion schreiben | Entwurf von Ergebnissen und Diskussion |
+| 9–10 | Fazit, Abstract, Formatierung | Vollständiger Entwurf |
+| 10–11 | Überarbeitung nach Feedback | Endfassung |
+| 12 | Abgabe und Vorbereitung der Verteidigung | Verteidigung |
+
+Die Tabelle ist ein Beispiel; die Dauer hängt von Fach, Methode und Kalender Ihrer Hochschule ab. Literaturteil und Datenerhebung können parallel laufen.
+
+## Ein Wochenrhythmus
+
+- **Feste Arbeitsblöcke:** Arbeiten Sie an festen Tagen und Zeiten an der Arbeit. Regelmäßige kurze Blöcke sind produktiver als unregelmäßige Marathons.
+- **Schreiben und Lesen trennen:** Ein Block nur zum Schreiben, ein anderer zum Lesen. Beides zu mischen unterbricht den Schreibfluss.
+- **Wochenziel:** Setzen Sie ein Wort- oder Abschnittsziel und notieren Sie am Wochenende Ihren Fortschritt.
+- **Rhythmus mit der Betreuung:** Planen Sie alle zwei bis drei Wochen ein kurzes Treffen.
+
+## Die Perfektionismusfalle
+
+Ein erster Entwurf muss nicht makellos sein. Wer das vorige Kapitel ständig überarbeitet, bevor das nächste fertig ist, kommt nicht voran. Schreiben Sie erst einen Rohentwurf und überarbeiten Sie in der nächsten Runde. Markieren Sie fehlende Angaben im Text (z. B. „[Daten einzutragen]“) und schreiben Sie weiter.
+
+## Verzögerungen früh erkennen
+
+Liegen Sie mehr als zwei Wochen hinter dem Plan, aktualisieren Sie ihn: Welche Phase lässt sich kürzen, welche parallel erledigen? Verzögern sich Phasen außerhalb Ihrer Kontrolle wie Ethikvotum oder Datenerhebung, bringen Sie in dieser Zeit Literatur- und Methodenteil voran. Vereinbaren Sie gegen Ende mit Ihrer Betreuung einen realistischen Abgabetermin.
+
+## Motivation auf lange Sicht
+
+Eine Abschlussarbeit ist ein Marathon. Feiern Sie kleine Erfolge (ein fertiges Kapitel, das Ethikvotum), schützen Sie Arbeitsplatz und Arbeitszeiten und machen Sie bei Bedarf Pausen. Forschung zum Aufschieben legt nahe, dass das Zerlegen großer Aufgaben in kleine, konkrete Schritte den Einstieg erleichtert.
 
 ## Planen mit Academiana
 

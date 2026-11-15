@@ -1218,13 +1218,16 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Sınır: taranmış PDF’te seçilebilir metin yok; açık erişim metni aslı gibi değil metin görünümünde açılır. Migration gerekmez.
 
 ## D208 — Rasat: kaynak analizi zekâsının marka adı (15 Kasım 2026)
-- Kullanıcı kararı: kaynaklarla yapılan işlerin (PDF’ten metin seçme, seçilen metni sayfalı atıfla kullanma, kaynağa soru sorma, birden çok makaleyi birlikte analiz etme, kaynaklardan atıflı akademik paragraf) ortak adı **Rasat** (gözlem; Zenit ile aynı gökbilim ailesi). Söylem: “Zenit yazar, Rasat kanıtlar.”
+- Kullanıcı kararı: kaynaklarla yapılan işlerin (PDF’ten metin seçme, seçilen metni sayfalı atıfla kullanma, kaynağa soru sorma, birden çok makaleyi birlikte analiz etme, kaynaklardan atıflı akademik paragraf) ortak adı **Rasat** (gözlem; Zenit ile aynı gökbilim ailesi). Söylem: “Zenit yazar, Rasat okur.”
 - Görünür yerler: tanıtım sayfası “Kaynak ve literatür” kartı, “Kaynağa sor”, “Oku ve alıntıla”, “Kaynakları birlikte analiz et” pencere başlıkları (“Rasat · …”), yardım asistanı, SSS (“Rasat nedir?”), rehber başlıkları; TR/EN/DE. Düğme adları kısa kaldı.
 - Doğruluk ilkesi değişmez: Rasat yalnızca okunan metne dayanır, sayfa/kaynak uydurmaz.
 - Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).
 
 ## D209 — Mizan: denetim zekâsının marka adı (15 Kasım 2026)
-- Kullanıcı kararı: iddiaların kaynak desteği ve güvenilirliği, akademik dil ve yazım kalitesi, kaynakların uygunluğu, hakemin takılabileceği noktalar, atıf doğrulama ve kalite kontrol birimlerinin ortak adı **Mizan** (terazi; eski gökbilimde Terazi takımyıldızı). Söylem: “Zenit yazar, Rasat kanıtlar, Mizan tartar.”
+- Kullanıcı kararı: iddiaların kaynak desteği ve güvenilirliği, akademik dil ve yazım kalitesi, kaynakların uygunluğu, hakemin takılabileceği noktalar, atıf doğrulama ve kalite kontrol birimlerinin ortak adı **Mizan** (terazi; eski gökbilimde Terazi takımyıldızı). Söylem: “Zenit yazar, Rasat okur, Mizan tartar.”
 - Kapsam (mevcut özellikler): İddia denetimi, Kaynakta doğrula, Kaynak gerektiren ifadeleri düzelt, uydurma kaynak/DOI kontrolü, Kalite kontrol (kural tabanlı + jüri gözüyle yapay zekâ incelemesi, puan).
 - Görünür yerler: tanıtım sayfası “Atıf ve doğruluk” kartı, ilgili pencere/sayfa başlıkları (“Mizan · …”), yardım asistanı, SSS (“Mizan nedir?”), rehber başlıkları; TR/EN/DE. Düğme adları kısa kaldı. İntihal yüzdesi gösterilmez ilkesi değişmez.
 - Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).
+
+## D210 — Marka söylemi düzeltmesi (15 Kasım 2026)
+- Kullanıcı düzeltmesi: Rasat’ın işi kanıtlamak değil, kaynakları okumak ve işlemek (PDF okuma, alıntılama, soru sorma, birlikte analiz, kaynaklardan paragraf); kanıt ve doğrulama Mizan’ın işidir. Söylem: “Zenit yazar, Rasat okur, Mizan tartar.” (D208/D209 metinleri buna göre düzeltildi.)

@@ -84,6 +84,7 @@ export const GUIDE_DE: Record<string, string> = {
   "Otomatik tamamlama": "Autovervollständigung",
   "Araç çubuğundaki sihirli değnek": "Zauberstab in der Symbolleiste",
   "Paragrafın sonunda yazmayı bırakınca gri renkte bir cümlelik öneri çıkar.": "Halten Sie am Ende eines Absatzes inne, erscheint ein Vorschlag von einem Satz in Grau.",
+  "Öneri; çalışmanın konusunu ve amacını, bölümler arası akışı, bölümün başlığını ve amacını ve önceki paragrafları dikkate alır.": "Der Vorschlag berücksichtigt Thema und Ziel der Arbeit, den Ablauf der Kapitel, Titel und Zweck des Kapitels sowie die vorherigen Absätze.",
   "“Tab” tümünü, “Ctrl/⌘ + →” bir kelimeyi kabul eder, “Esc” kapatır; telefonda öneriye dokunun.": "„Tab“ übernimmt alles, „Strg/⌘ + →“ ein Wort, „Esc“ verwirft; auf dem Smartphone tippen Sie auf den Vorschlag.",
   "Öneriler sayı, yıl, ad veya atıf içermez; aylık hakkınızdan düşmez (günlük sınırı vardır).": "Vorschläge enthalten nie Zahlen, Jahre, Namen oder Zitate; sie werden nicht auf Ihr monatliches Kontingent angerechnet (es gilt ein Tageslimit).",
   "Bul ve değiştir": "Suchen und Ersetzen",

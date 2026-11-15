@@ -3,6 +3,7 @@ import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { projectAccess } from "@/lib/project-access";
 import { AUTOCOMPLETE_DAILY, suggestContinuation } from "@/lib/autocomplete";
+import { buildSuggestContext } from "@/lib/autocomplete-context";
 import { detectLang } from "@/lib/editor/translate-doc";
 import { assertSingleProject } from "@/lib/single-project";
 import { adminClient } from "@/lib/supabase/admin";
@@ -11,7 +12,7 @@ import { assertWithinLimits, isAdminUser, recordUsage } from "@/lib/usage";
 export const maxDuration = 20;
 type Ctx = { params: Promise<{ id: string }> };
 
-const Body = z.object({ before: z.string().min(20).max(4000), stageTitle: z.string().max(300).default(""), focusTitle: z.string().max(300).nullable().optional() });
+const Body = z.object({ before: z.string().min(20).max(4000), stageTitle: z.string().max(300).default(""), focusTitle: z.string().max(300).nullable().optional(), stageId: z.string().uuid().nullable().optional() });
 
 /** Türkiye saatiyle bugünün başlangıcı */
 const trDayStart = () => { const TR = 3 * 3600_000; const d = new Date(Date.now() + TR); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - TR).toISOString(); };
@@ -34,7 +35,10 @@ export const POST = route<Ctx>("project.complete", async (req, { params }) => {
     if ((minute ?? 0) >= 30) throw new ApiError(429, "Çok hızlı öneri istendi", "rate_limited");
     if ((today ?? 0) >= (AUTOCOMPLETE_DAILY[s.profile.plan_id] ?? 30)) throw new ApiError(429, "Bugünkü otomatik tamamlama sınırına ulaşıldı; yarın yenilenir.", "autocomplete_daily");
   }
-  const r = await suggestContinuation({ planId: s.profile.plan_id, before: b.before, stageTitle: b.stageTitle, focusTitle: b.focusTitle, projectTitle: project.title, lang: detectLang(b.before) });
+  // D205: çalışmanın konusu, akışı ve bölümün amacı (açık project_id filtresiyle)
+  const { data: stageRows } = await adminClient().from("project_stages").select("id, key, title, description, why, hidden, position").eq("project_id", id).order("position").limit(200);
+  const sc = buildSuggestContext({ project, stages: stageRows ?? [], stageId: b.stageId, stageTitle: b.stageTitle, focusTitle: b.focusTitle });
+  const r = await suggestContinuation({ planId: s.profile.plan_id, before: b.before, stageTitle: b.stageTitle, focusTitle: b.focusTitle, projectTitle: project.title, lang: detectLang(b.before), context: sc.text, role: sc.role });
   await recordUsage(s.user.id, "autocomplete", { quantity: 1, usage: r.usage, costUsd: r.cost, provider: r.provider, model: r.model, meta: { projectId: id, shown: !!r.text } });
   return json({ text: r.text });
 });

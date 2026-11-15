@@ -1194,3 +1194,10 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Okunabilir rapor:** `lib/data-export-html.ts` → `renderExportHtml`; `GET /api/account?export=1&format=html` ve `GET /api/admin/user-export?userId=…&format=html`. Uzun metinler 160 karakterde kısaltılır, bölüm başına en çok 300 satır; tam veri JSON’da. Örnek: 3,9 MB JSON → 188 KB rapor.
 - **Depolama:** İki dosya da indirme anında bellekte üretilir; Supabase depolamasına yazılmaz, ücretsiz alan kotasını etkilemez.
 - Test: `tests/data-export.test.ts`.
+
+## D205 — Otomatik tamamlamanın çalışma ve bölüm bağlamı (15 Kasım 2026)
+- **Önce:** Satır içi öneri (D113) yalnızca çalışma başlığını, bölüm/alt başlık adını ve imlecin öncesindeki son 1.500 karakteri görüyordu.
+- **Şimdi:** `lib/autocomplete-context.ts` → `buildSuggestContext` (saf): çalışmanın türü, düzeyi, disiplini, yaklaşımı/deseni, programı, konusu, anahtar kelimeleri, kurgudaki problem, amaç ve araştırma soruları, tür kuralı (`workTypeGuidance`); **çalışmanın akışı** (görünür bölümler sırasıyla, şu anki bölüm işaretli); bölümün amacı (`stageDef().purpose` ya da özel bölümde açıklaması), çalışmadaki işlevi (`why`), karşılaması beklenen işlevler (`sectionFunctions`) ve öğrencinin bölüm planı. Asistan `assistantFor` ile bölümün rolünü üstlenir. Metin penceresi 2.000 karakter.
+- **Uç:** `/api/projects/[id]/complete` gövdesine `stageId`; bölümler `project_id` filtresiyle okunur. Kurallar değişmedi: tek cümle, sayı/yıl/ad/atıf yok, aylık haktan düşmez, günlük sınır ve maliyet tavanı.
+- **Maliyet:** Hızlı model; istem başına giriş yaklaşık 2–3 katına çıkar (birkaç yüz token), öneri başı maliyet hâlâ çok düşüktür ve maliyet tavanına eklenir.
+- Test: `tests/autocomplete-context.test.ts` (9 çalışma türü, 90 bölüm).

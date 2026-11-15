@@ -253,12 +253,12 @@ export function Workspace(props: Props) {
   // Satır içi otomatik tamamlama (D113): ayarı tarayıcıda hatırlanır; günlük sınır dolunca o oturumda kapanır
   const [autoSuggest, setAutoSuggest] = useState(true);
   useEffect(() => { try { setAutoSuggest(localStorage.getItem("acd_autosuggest") !== "0"); } catch { /* yok say */ } }, []);
-  const suggestCtx = useRef({ projectId: props.project.id, stageTitle: "", focusTitle: null as string | null, on: true, blocked: false });
+  const suggestCtx = useRef({ projectId: props.project.id, stageId: null as string | null, stageTitle: "", focusTitle: null as string | null, on: true, blocked: false });
   const suggestExt = useMemo(() => [createInlineSuggest({
     enabled: () => suggestCtx.current.on && !suggestCtx.current.blocked && !!suggestCtx.current.stageTitle && props.role !== "commenter" && props.role !== "advisor",
     fetch: async (before, signal) => {
       const c = suggestCtx.current;
-      const res = await fetch(`/api/projects/${c.projectId}/complete`, { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ before, stageTitle: c.stageTitle, focusTitle: c.focusTitle }) });
+      const res = await fetch(`/api/projects/${c.projectId}/complete`, { method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ before, stageId: c.stageId, stageTitle: c.stageTitle, focusTitle: c.focusTitle }) });
       if (res.status === 402 || res.status === 429) {
         const j = await res.json().catch(() => ({}));
         if (j?.code !== "rate_limited") { c.blocked = true; toast({ tone: "info", title: t("Otomatik tamamlama bugünlük durdu"), detail: j?.error ? t(j.error) : undefined }); }
@@ -1036,6 +1036,7 @@ export function Workspace(props: Props) {
   const focused = focus != null ? activeTree.find((x) => x.index === focus) ?? null : null;
   suggestCtx.current.stageTitle = !isBibliography && active ? active.title : "";
   suggestCtx.current.focusTitle = focused?.text ?? null;
+  suggestCtx.current.stageId = !isBibliography && active ? active.id : null;
   suggestCtx.current.on = autoSuggest;
   const maxLevel = active ? maxSectionLevel(!!chapterGroup(active.key) && !!prefixes[active.id]?.includes(".")) : 4;
   const [subOpen, setSubOpen] = useState(false);

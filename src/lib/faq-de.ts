@@ -188,7 +188,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   "otomatik-tamamlama": {
     q: "Was ist der graue Vorschlag beim Schreiben? Wie schalte ich ihn aus?",
-    a: "Das ist die Autovervollständigung: Wenn Sie am Ende eines Absatzes kurz innehalten, schlägt sie in Grau eine mögliche Fortsetzung vor. **Tab** übernimmt alles, **Strg/⌘ + →** ein Wort, **Esc** verwirft den Vorschlag; auf dem Smartphone tippen Sie auf den Vorschlag. Vorschläge enthalten nie Zahlen, Jahreszahlen, Namen oder Zitate; sie helfen nur, Ihren eigenen Gedanken in wissenschaftlicher Sprache fortzuführen. Sie werden Ihrem monatlichen KI-Kontingent nicht angerechnet (es gibt ein Tageslimit). Mit dem Zauberstab in der Werkzeugleiste schalten Sie die Funktion ein oder aus.",
+    a: "Das ist die Autovervollständigung: Wenn Sie am Ende eines Absatzes kurz innehalten, schlägt sie in Grau eine mögliche Fortsetzung vor. Der Vorschlag berücksichtigt Thema, Ziel und Forschungsfragen Ihrer Arbeit, den Ablauf der Kapitel, Titel und Zweck des Kapitels sowie Ihre vorherigen Absätze. **Tab** übernimmt alles, **Strg/⌘ + →** ein Wort, **Esc** verwirft den Vorschlag; auf dem Smartphone tippen Sie auf den Vorschlag. Vorschläge enthalten nie Zahlen, Jahreszahlen, Namen oder Zitate; sie helfen nur, Ihren eigenen Gedanken in wissenschaftlicher Sprache fortzuführen. Sie werden Ihrem monatlichen KI-Kontingent nicht angerechnet (es gibt ein Tageslimit). Mit dem Zauberstab in der Werkzeugleiste schalten Sie die Funktion ein oder aus.",
   },
   danisman: {
     q: "Wie teile ich meine Arbeit mit meiner Betreuung? Braucht sie ein Konto?",

@@ -24,15 +24,19 @@ export function sanitizeSuggestion(raw: string, before: string): string {
   return needsSpace ? ` ${s}` : s;
 }
 
-export async function suggestContinuation(o: { planId: string; before: string; stageTitle: string; focusTitle?: string | null; projectTitle: string; lang: "tr" | "en" | "de" }) {
+export async function suggestContinuation(o: { planId: string; before: string; stageTitle: string; focusTitle?: string | null; projectTitle: string; lang: "tr" | "en" | "de"; context?: string; role?: { name: string; duty: string } }) {
   const model = await resolveModel(o.planId, "fast");
-  const system = `Sen akademik yazımda öğrencinin cümlesini tamamlayan bir yazım yardımcısısın. Verilen metnin hemen devamını yaz.
+  // D205: asistan, bölümün rolünü üstlenir; çalışmanın konusu, gidişatı ve bölümün amacına uygun devam eder
+  const role = o.role ? `Bu bölümde ${o.role.name} rolündesin (${o.role.duty}). ` : "";
+  const system = `${role}Sen akademik yazımda öğrencinin cümlesini tamamlayan bir yazım yardımcısısın. Verilen metnin hemen devamını yaz.
+BAĞLAM kısmındaki çalışmanın konusunu, amacını, araştırma sorularını, bölümün amacını ve çalışmanın akışını dikkate al: öneri bu bölümün işlevine hizmet etsin, çalışmanın yönüyle tutarlı olsun ve başka bir bölümün işini (ör. girişte bulgu, yöntemde tartışma) yapmasın.
 KURALLAR:
 - En fazla BİR cümle (en fazla 25 kelime). Metin cümle ortasında bitiyorsa yalnızca o cümleyi tamamla.
 - ${o.lang === "en" ? "İngilizce" : o.lang === "de" ? "Almanca" : "Türkçe"}, akademik, nesnel ve metnin üslubuyla uyumlu yaz.
 - Kaynak gerektiren hiçbir şey yazma: sayı, yüzde, yıl, kişi veya kurum adı, istatistik, araştırma bulgusu, atıf YOK. Öğrencinin kendi argümanını, geçiş ifadesini veya yöntem anlatımını sürdür.
 - Yalnızca devam metnini yaz; tırnak, açıklama veya önceki metni tekrar etme. Uygun bir devam yoksa boş yanıt ver.`;
-  const user = `ÇALIŞMA: ${o.projectTitle}\nBÖLÜM: ${o.stageTitle}${o.focusTitle ? ` › ${o.focusTitle}` : ""}\n\nMETİN:\n${o.before.slice(-1500)}`;
+  const head = o.context ?? `ÇALIŞMA: ${o.projectTitle}\nBÖLÜM: ${o.stageTitle}${o.focusTitle ? ` › ${o.focusTitle}` : ""}`;
+  const user = `BAĞLAM:\n${head}\n\nMETİN (önceki paragraflar dahil, imlecin hemen öncesi):\n${o.before.slice(-2000)}`;
   const res = await complete(model, { system, messages: [{ role: "user", content: user }], maxTokens: 80, effort: "low" });
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   return { text: sanitizeSuggestion(res.text, o.before), usage: res.usage, cost, model: res.model, provider: model.provider };

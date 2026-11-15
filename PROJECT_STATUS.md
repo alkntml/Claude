@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Otomatik tamamlama bağlamı (D205, 15 Kasım 2026)**
+- Satır içi öneri artık çalışmanın konusu, türü, düzeyi, yöntemi, amacı ve araştırma sorularını; bölüm akışını (şu anki konum); bölümün başlığını, amacını, çalışmadaki işlevini, beklenen işlevlerini ve öğrencinin bölüm planını bilir ve bölümün asistan rolüyle yazar. Bütün çalışma türlerinde ve özel bölümlerde.
+
 **KVKK veri dökümü (D204, 15 Kasım 2026)**
 - Dökümde eksik kişisel veriler eklendi: hata kayıtları, ortak yazarlık, gönderilen/alınan davetler (bağlantı anahtarı hariç), kurum üyeliği ve işlem kaydı, ücretsiz araç kullanımı, kayıtlı şablonlar ve yapı değişiklikleri.
 - JSON’un başında Türkçe okuma rehberi (`_aciklama`: amaç, aktarılan taraflar, saklama, haklar, bölüm açıklamaları ve kayıt sayıları).

@@ -289,6 +289,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "mizan",
+        q: { tr: "Mizan nedir?", en: "What is Mizan?" },
+        a: {
+          tr: "Mizan, Academiana’nın denetim zekâsının adıdır: Zenit yazar, Rasat kanıtlar, Mizan tartar. **İddia denetimi** atıflı her cümleyi kaynağın okunan metniyle karşılaştırır ve kaynağın iddiayı destekleyip desteklemediğini birebir alıntı ve sayfayla gösterir; **Kaynakta doğrula** tek bir atfı denetler; **Kaynak gerektiren ifadeleri düzelt** kaynaksız kalan iddiaları bulur. **Kalite kontrol** akademik dili, tutarlılığı, kaynakların doğrulanabilirliğini ve uygunluğunu, atıf–kaynakça uyumunu denetler; yapay zekâ incelemesi çalışmayı bir jüri üyesi gözüyle okuyup hakemin takılabileceği mantık ve bütünlük sorunlarını bildirir. Puan sabit ve herkese açık bir formülle hesaplanır. Mizan intihal yüzdesi göstermez.",
+          en: "Mizan is the name of Academiana’s review intelligence: Zenit writes, Rasat provides the evidence, Mizan weighs. **Claim audit** compares every cited sentence with the text read from the source and shows, with a verbatim quote and page, whether the source supports the claim; **Verify in source** checks a single citation; **Fix statements that need a source** finds claims left without a source. **Quality check** reviews academic language, consistency, verifiability and suitability of sources and citation–reference consistency; the AI review reads the work as a jury member would and reports the logic and coherence problems a reviewer might object to. The score is calculated with a fixed, public formula. Mizan does not show a plagiarism percentage.",
+        },
+      },
+      {
         id: "rasat",
         q: { tr: "Rasat nedir?", en: "What is Rasat?" },
         a: {

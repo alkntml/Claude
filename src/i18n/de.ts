@@ -4766,4 +4766,10 @@ export const DE: Dict = {
   "Rasat · Kaynakları birlikte analiz et": "Rasat · Quellen gemeinsam analysieren",
   "Rasat: kaynaklarınızın içine bakan analiz zekâsı": "Rasat: die Analyseintelligenz, die in Ihre Quellen blickt",
   "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır.": "Markieren Sie Text im PDF und zitieren Sie ihn mit Seitenzahl, stellen Sie einem Artikel Fragen, analysieren Sie mehrere Artikel gemeinsam und fügen Sie die Synthese als belegten Absatz ein; jede Aussage beruht auf dem gelesenen Text und seiner Seite.",
+  "Mizan · İddia denetimi": "Mizan · Aussagenprüfung",
+  "Mizan · Atıf doğrulama": "Mizan · Belegprüfung",
+  "Mizan · Kaynak gerektiren ifadeleri düzelt": "Mizan · Belegbedürftige Aussagen korrigieren",
+  "Mizan · Akademik kalite kontrolü": "Mizan · Akademische Qualitätsprüfung",
+  "Mizan: yazdığınızı tartan denetim zekâsı": "Mizan: die Prüfintelligenz, die abwägt, was Sie schreiben",
+  "Atıflı her cümle kaynağın okunan metniyle karşılaştırılır (destekliyor, kısmen, desteklemiyor, çelişiyor; birebir alıntı ve sayfa); kaynak gerektiren iddialar, kaynakların doğrulanabilirliği, akademik dil ve tutarlılık denetlenir; jüri gözüyle hakemin takılacağı noktalar puanlı raporda gösterilir.": "Jeder belegte Satz wird mit dem gelesenen Quellentext verglichen (stützt, teilweise, stützt nicht, widerspricht; wörtliches Zitat und Seite); belegbedürftige Aussagen, Überprüfbarkeit der Quellen, wissenschaftliche Sprache und Konsistenz werden geprüft; Punkte, an denen Gutachter Anstoß nähmen, zeigt ein bewerteter Bericht aus Sicht einer Prüfungskommission.",
 };

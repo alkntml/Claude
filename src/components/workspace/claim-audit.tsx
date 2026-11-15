@@ -100,7 +100,7 @@ export function ClaimAuditModal({ open, onClose, editor, stageId, scopeLabel, fo
   const bar: [keyof typeof VERDICT | "uncited", number, string][] = s ? [["contradicts", s.contradicts ?? 0, "bg-rose-700"], ["not_supported", s.not_supported, "bg-rose-500"], ["partial", s.partial, "bg-amber-400"], ["insufficient", s.insufficient, "bg-ink-300"], ["uncited", s.uncited + s.marked, "bg-orange-400"], ["supports", s.supports, "bg-emerald-500"]] : [];
 
   return (
-    <Modal open={open} onClose={onClose} title={t("İddia denetimi")} wide>
+    <Modal open={open} onClose={onClose} title={t("Mizan · İddia denetimi")} wide>
       <div className="space-y-4">
         <div className="flex flex-wrap items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50/60 p-3.5 text-[13px] text-ink-700">
           <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />

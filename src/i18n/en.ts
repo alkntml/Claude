@@ -4774,4 +4774,10 @@ export const EN: Record<string, string> = {
   "Rasat · Kaynakları birlikte analiz et": "Rasat · Analyse sources together",
   "Rasat: kaynaklarınızın içine bakan analiz zekâsı": "Rasat: the analysis intelligence that looks inside your sources",
   "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır.": "Select text in a PDF and quote it with the page number, ask a paper questions, analyse several papers together and add the synthesis to your text as a cited paragraph; every statement rests on the text that was read and its page.",
+  "Mizan · İddia denetimi": "Mizan · Claim audit",
+  "Mizan · Atıf doğrulama": "Mizan · Citation verification",
+  "Mizan · Kaynak gerektiren ifadeleri düzelt": "Mizan · Fix statements that need a source",
+  "Mizan · Akademik kalite kontrolü": "Mizan · Academic quality check",
+  "Mizan: yazdığınızı tartan denetim zekâsı": "Mizan: the review intelligence that weighs what you write",
+  "Atıflı her cümle kaynağın okunan metniyle karşılaştırılır (destekliyor, kısmen, desteklemiyor, çelişiyor; birebir alıntı ve sayfa); kaynak gerektiren iddialar, kaynakların doğrulanabilirliği, akademik dil ve tutarlılık denetlenir; jüri gözüyle hakemin takılacağı noktalar puanlı raporda gösterilir.": "Every cited sentence is compared with the text read from the source (supports, partly, does not support, contradicts; verbatim quote and page); claims that need a source, verifiability of sources, academic language and consistency are checked; the points a reviewer would object to are shown from a jury’s perspective in a scored report.",
 };

@@ -216,7 +216,7 @@ export const GUIDE: GuideChapter[] = [
     title: s("Doğruluk ve kalite", "Accuracy and quality"),
     intro: s("Atıfların kaynağı gerçekten söyleyip söylemediğini ve çalışmanın teslime hazır olup olmadığını kontrol edin.", "Check that citations really say what you claim and that the work is ready to submit."),
     articles: [
-      { id: "dogrula", title: s("Tek bir atfı kaynakta doğrulama", "Verifying a single citation"), where: s("Atfa tıklayın → “Kaynakta doğrula”", "Click a citation → “Verify in source”"), steps: [
+      { id: "dogrula", title: s("Mizan: tek bir atfı kaynakta doğrulama", "Mizan: verifying a single citation"), where: s("Atfa tıklayın → “Kaynakta doğrula”", "Click a citation → “Verify in source”"), steps: [
         s("Cümle, kaynağın okunan metniyle karşılaştırılır; dayanak pasaj ve sayfası gösterilir.", "The sentence is compared with the source text; the supporting passage and page are shown."),
         s("Kaynakların künyesini Kaynaklar sekmesindeki “Doğrula” ile Crossref/OpenAlex üzerinden kontrol edebilirsiniz.", "Check reference details against Crossref/OpenAlex with “Verify” in the Sources tab."),
       ] },
@@ -224,13 +224,13 @@ export const GUIDE: GuideChapter[] = [
         s("Asistan uygun kaynak bulamadığı cümleleri [KAYNAK GEREKLİ] ile işaretler; uydurma atıf yapmaz.", "The assistant marks sentences it cannot support with [CITATION NEEDED]; it never invents citations."),
         s("“Kaynak bul ve düzelt” bu cümleler için kaynak arar ve uygun olanlara atıf ekler; bulamazsa cümleyi yumuşatmanızı önerir.", "“Find sources and fix” searches for sources and cites suitable ones; otherwise it suggests softening the sentence."),
       ] },
-      { id: "iddia", title: s("İddia denetimi", "Claim audit"), where: s("“Araçlar” → “İddia denetimi” veya bölüm başlığındaki düğme", "“Tools” → “Claim audit” or the section header button"), steps: [
+      { id: "iddia", title: s("Mizan: iddia denetimi", "Mizan: claim audit"), where: s("“Araçlar” → “İddia denetimi” veya bölüm başlığındaki düğme", "“Tools” → “Claim audit” or the section header button"), steps: [
         s("Bölümdeki atıflı her cümle, kaynağın okunan metniyle karşılaştırılır: destekleniyor / kısmen / desteklenmiyor / çelişiyor / okunamadı.", "Every cited sentence is checked against the source text: supported / partly / not supported / contradicts / could not be read."),
         s("Her sonuçta kısa gerekçe, kaynaktan birebir alıntı ve sayfa görünür. Atıfsız kesin ifadeler de işaretlenir.", "Each result shows a short reason, a verbatim quote and the page. Uncited definitive claims are flagged too."),
         s("“Cümleye git”, “Asistanla düzelt”; “Sorunlu cümleleri metinde işaretle” ile editörde altını çizin.", "Use “Go to sentence”, “Fix with assistant”; “Mark problem sentences in text” underlines them in the editor."),
         s("“Diğer kaynaklarımla da karşılaştır”: projedeki başka kaynakların cümlenizi destekleyip desteklemediği ya da çeliştiği gösterilir. Sonuçlar CSV olarak indirilebilir.", "“Also compare with my other sources” shows whether other project sources support or contradict the sentence. Results can be downloaded as CSV."),
       ], tip: s("“Kısmen” çoğu zaman cümlenin kaynaktan daha kesin konuştuğu anlamına gelir (ör. “yalnızca”, “kanıtlamıştır”). “Okunamadı” ise o kaynağın tam metni olmadığındandır: PDF’ini yükleyin.", "“Partly” usually means the sentence is stronger than the source (e.g. “only”, “proved”). “Could not be read” means no full text: upload the PDF.") },
-      { id: "kalite", title: s("Kalite kontrol ve puan", "Quality check and score"), where: s("Üst çubuk: “Kalite kontrol”", "Top bar: “Quality check”"), plan: "quality_ai", steps: [
+      { id: "kalite", title: s("Mizan: kalite kontrol ve puan", "Mizan: quality check and score"), where: s("Üst çubuk: “Kalite kontrol”", "Top bar: “Quality check”"), plan: "quality_ai", steps: [
         s("“Kontrolü başlat”: atıf ve kaynakça tutarlılığı, eksik künye, yinelenen kaynak, bölüm uzunlukları ve tekrarlar kural tabanlı denetlenir.", "“Start check”: citation/reference consistency, incomplete entries, duplicates, section lengths and repetition are checked by rules."),
         s("Paketinize göre yapay zekâ incelemesi de eklenir; puanı etkilemez, öneri olarak gelir.", "Depending on your plan, an AI review is added; it doesn’t change the score and comes as suggestions."),
         s("“Puan nasıl hesaplanır?” bağlantısı yöntemi açıklar (herkese açık “Yöntem” sayfası).", "“How is the score calculated?” explains the method (public “Method” page)."),

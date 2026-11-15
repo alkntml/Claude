@@ -226,7 +226,7 @@ const CATEGORIES: Category[] = [
   ] },
   { id: "dogruluk", icon: ShieldCheck, title: "Atıf ve doğruluk", lead: "Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. Academiana ikisini de denetler.", Visual: CitationVisual, features: [
     { icon: Quote, title: "Canlı atıflar, 10 atıf stili", text: "APA 7, ISNAD 2, MLA, Chicago, IEEE ve diğerleri; stil değiştiğinde metin ve kaynakça birlikte dönüşür." },
-    { icon: ScanSearch, title: "İddia denetimi", text: "Atıflı her cümle kaynağın metniyle karşılaştırılır: destekliyor, kısmen, desteklemiyor veya çelişiyor; birebir alıntı ve sayfa." },
+    { icon: ScanSearch, title: "Mizan: yazdığınızı tartan denetim zekâsı", text: "Atıflı her cümle kaynağın okunan metniyle karşılaştırılır (destekliyor, kısmen, desteklemiyor, çelişiyor; birebir alıntı ve sayfa); kaynak gerektiren iddialar, kaynakların doğrulanabilirliği, akademik dil ve tutarlılık denetlenir; jüri gözüyle hakemin takılacağı noktalar puanlı raporda gösterilir." },
     { icon: GitFork, title: "Kaynak sorununu kendisi çözer", text: "Kaynak gereken veya doğrulanamayan cümle için kütüphanenizde, gerekirse veri tabanlarında uygun kaynağı bulur; önce tam metni okunan kaynakları kullanır, çelişen bulguyu alıntısıyla uyarır." },
     { icon: BookCheck, title: "Uydurma kaynak kontrolü", text: "Kaynakçadaki her satır gerçek kayıtlarla eşleştirilir; var olmayan kaynak ve hatalı DOI bulunur." },
     { icon: ShieldCheck, title: "Uydurma yok ilkesi", text: "Yapay zekâ yalnızca projenize eklenmiş kaynaklara atıf yapabilir; kaynak yoksa [KAYNAK GEREKLİ] diye işaretler." },

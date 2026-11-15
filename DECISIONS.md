@@ -1222,3 +1222,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Görünür yerler: tanıtım sayfası “Kaynak ve literatür” kartı, “Kaynağa sor”, “Oku ve alıntıla”, “Kaynakları birlikte analiz et” pencere başlıkları (“Rasat · …”), yardım asistanı, SSS (“Rasat nedir?”), rehber başlıkları; TR/EN/DE. Düğme adları kısa kaldı.
 - Doğruluk ilkesi değişmez: Rasat yalnızca okunan metne dayanır, sayfa/kaynak uydurmaz.
 - Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).
+
+## D209 — Mizan: denetim zekâsının marka adı (15 Kasım 2026)
+- Kullanıcı kararı: iddiaların kaynak desteği ve güvenilirliği, akademik dil ve yazım kalitesi, kaynakların uygunluğu, hakemin takılabileceği noktalar, atıf doğrulama ve kalite kontrol birimlerinin ortak adı **Mizan** (terazi; eski gökbilimde Terazi takımyıldızı). Söylem: “Zenit yazar, Rasat kanıtlar, Mizan tartar.”
+- Kapsam (mevcut özellikler): İddia denetimi, Kaynakta doğrula, Kaynak gerektiren ifadeleri düzelt, uydurma kaynak/DOI kontrolü, Kalite kontrol (kural tabanlı + jüri gözüyle yapay zekâ incelemesi, puan).
+- Görünür yerler: tanıtım sayfası “Atıf ve doğruluk” kartı, ilgili pencere/sayfa başlıkları (“Mizan · …”), yardım asistanı, SSS (“Mizan nedir?”), rehber başlıkları; TR/EN/DE. Düğme adları kısa kaldı. İntihal yüzdesi gösterilmez ilkesi değişmez.
+- Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).

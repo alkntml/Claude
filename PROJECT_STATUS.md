@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Mizan markası (D209, 15 Kasım 2026)**
+- Denetim zekâsının adı **Mizan**: tanıtım kartı, iddia denetimi/atıf doğrulama/kaynak gerektiren ifadeler pencereleri ve kalite kontrol sayfası başlıkları, yardım asistanı, SSS (“Mizan nedir?”), rehber; TR/EN/DE.
+
 **Rasat markası (D208, 15 Kasım 2026)**
 - Kaynaklarla çalışan analiz zekâsının adı **Rasat**: tanıtım kartı, pencere başlıkları, yardım asistanı, SSS (“Rasat nedir?”), rehber; TR/EN/DE.
 

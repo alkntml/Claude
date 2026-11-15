@@ -187,3 +187,5 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-15, D207) PDF’ten metin seçip sayfa numaralı alıntı/atıf ekleme (“Oku ve alıntıla”)
 - [x] (2026-11-15, D208) Rasat adı ürüne yerleştirildi
 - [ ] (Kullanıcı) “Rasat” için TÜRKPATENT marka araştırması (sınıf 9, 41, 42); uygunsa tescil başvurusu (D208)
+- [x] (2026-11-15, D209) Mizan adı ürüne yerleştirildi
+- [ ] (Kullanıcı) “Mizan” için TÜRKPATENT marka araştırması (sınıf 9, 41, 42); uygunsa tescil başvurusu (D209)

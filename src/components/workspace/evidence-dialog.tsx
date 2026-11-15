@@ -32,7 +32,7 @@ export function EvidenceDialog({ sourceId, source, sentence, locator, onClose }:
   };
   if (typeof document === "undefined") return null;
   return createPortal(
-    <Modal open onClose={onClose} title={t("Atıf doğrulama")} wide>
+    <Modal open onClose={onClose} title={t("Mizan · Atıf doğrulama")} wide>
       <div className="space-y-4 text-[14px]">
         <div>
           <p className="text-xs font-medium uppercase tracking-wider text-ink-400">{t("Metindeki iddia")}</p>

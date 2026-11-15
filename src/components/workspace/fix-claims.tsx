@@ -110,7 +110,7 @@ export function FixClaimsModal({ open, onClose, projectId, stages, sourceExists,
   const pending = props.filter((p) => p.state === "ready").length;
 
   return (
-    <Modal open={open} onClose={close} title={t("Kaynak gerektiren ifadeleri düzelt")} wide
+    <Modal open={open} onClose={close} title={t("Mizan · Kaynak gerektiren ifadeleri düzelt")} wide
       footer={running
         ? <Button variant="secondary" onClick={() => abort.current?.abort()}>{t("Durdur")}</Button>
         : props.length

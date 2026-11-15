@@ -717,12 +717,13 @@ function LocksTab() {
       <div className="space-y-5">
         <div className="card p-5">
           <h3 className="font-semibold">Bekleyen KVKK veri talepleri</h3>
-          <p className="mt-1 text-sm text-ink-500">Kullanıcılar verilerini Hesap sayfasından anında indirebilir; talep oluşturanlara 30 gün içinde ücretsiz yanıt vermeniz yasal zorunluluktur.</p>
+          <p className="mt-1 text-sm text-ink-500">Kullanıcılar verilerini Hesap sayfasından anında indirebilir; talep oluşturanlara 30 gün içinde ücretsiz yanıt vermeniz yasal zorunluluktur. Yanıtta iki dosyayı birlikte gönderin: <b>Okunabilir rapor</b> (Türkçe açıklamalı) ve <b>JSON</b> (tam veri). Dosyalar indirme anında üretilir, sunucuda saklanmaz. Gönderdikten sonra “Tamamlandı”ya basın.</p>
           {(data?.requests ?? []).length === 0 && <p className="mt-3 text-sm text-ink-400">Bekleyen talep yok.</p>}
           {(data?.requests ?? []).map((r) => (
             <div key={r.id} className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-ink-100 p-2.5 text-[13px]">
               <span className="flex-1">{r.email ?? r.user_id} · {new Date(r.created_at).toLocaleDateString("tr-TR")}</span>
               {r.user_id && <a className="font-medium text-brand-700 hover:underline" href={`/api/admin/user-export?userId=${r.user_id}`}>JSON indir</a>}
+              {r.user_id && <a className="font-medium text-brand-700 hover:underline" href={`/api/admin/user-export?userId=${r.user_id}&format=html`} title="Türkçe açıklamalı, tarayıcıda açılır; yazdırıp PDF yapılabilir">Okunabilir rapor</a>}
               <Button size="sm" variant="secondary" onClick={async () => { await api("/api/admin/locks", { method: "PATCH", json: { requestId: r.id } }); load(); }}>Tamamlandı</Button>
             </div>
           ))}

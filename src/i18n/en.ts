@@ -3781,6 +3781,7 @@ export const EN: Record<string, string> = {
   "Silinen dosya sayısı: {n}.": "Files deleted: {n}.",
   "Son geçerlilik": "Expires",
   "Verilerimi JSON olarak indir": "Download my data as JSON",
+  "Okunabilir veri raporu": "Readable data report",
   "WhatsApp’a geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.": "Before continuing to WhatsApp, confirm that you have read the information texts.",
   "Yalnızca zorunlu": "Necessary only",
   "Zorunlu olmayan çerezleri yalnızca izninizle kullanırız.": "We use non-essential cookies only with your consent.",

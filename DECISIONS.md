@@ -1186,3 +1186,11 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Dönemler:** `lib/insights.ts` → `costPeriodStarts` (Türkiye saati; hafta Pazartesi) ve `costByPeriod`. `/api/admin/stats` yıl başından beri `usage_events` + `tool_usage` maliyetini okur ve `costPeriods { users, admin }` döndürür; “Bu ay” ve kâr hesabı da buradan gelir.
 - **Yönetici maliyeti:** `role = admin` kullanıcıların satırları toplam maliyete, model dağılımına, maliyet sağlığına, en çok harcayanlara ve özellik dökümüne katılmaz. Genel bakışta ayrı satır, “Günlük API maliyeti” çizelgesinde “Yönetici (toplama dahil değil)” çizgisi. Kullanıcı ID’si olmayan ziyaretçi araç kullanımı toplamda kalır.
 - Test: `tests/cost-periods.test.ts`.
+
+## D204 — KVKK veri dökümünün tamamlanması ve okunabilir rapor (15 Kasım 2026)
+- **İnceleme:** Yöneticinin kendi dökümü incelendi: parola, anahtar, IP yok; ancak kullanıcıya bağlı bazı kayıtlar dökümde yoktu ve dosya teknik bir dökümdü.
+- **Eklenen kayıtlar** (`lib/data-export.ts` → `extraRecords`, service role + açık kullanıcı filtresi): `error_logs` (sayfa, mesaj, tarih; yığın yok), `project_members`, `project_invites` (gönderilen: davet edilen e-posta dahil; alınan: kullanıcının e-postasına gelen; davet anahtarı hiçbirinde yok), `organization_members`, `org_audit_log` (yalnızca işlem türü, tarih ve kullanıcının rolü; başka kişinin ayrıntısı yok), `tool_usage`, `user_templates`, `template_change_logs`.
+- **Rehber:** `lib/data-export-guide.ts` — KVKK Aydınlatma Metni’nden özetlenen amaç, alıcılar, saklama, haklar, dökümde olmayanlar (dosyaların kendisi, parola, Zotero anahtarı) ve her bölümün Türkçe adı/açıklaması. JSON’un başına `_aciklama` olarak eklenir; KVKK metni değişirse burası da gözden geçirilir.
+- **Okunabilir rapor:** `lib/data-export-html.ts` → `renderExportHtml`; `GET /api/account?export=1&format=html` ve `GET /api/admin/user-export?userId=…&format=html`. Uzun metinler 160 karakterde kısaltılır, bölüm başına en çok 300 satır; tam veri JSON’da. Örnek: 3,9 MB JSON → 188 KB rapor.
+- **Depolama:** İki dosya da indirme anında bellekte üretilir; Supabase depolamasına yazılmaz, ücretsiz alan kotasını etkilemez.
+- Test: `tests/data-export.test.ts`.

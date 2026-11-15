@@ -64,6 +64,7 @@ export function PrivacySection() {
       <div className="mt-4 flex flex-wrap gap-2">
         {/* D155: hak dolsa da veriler her zaman indirilebilir */}
         <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi JSON olarak indir")}</a>
+        <a href="/api/account?export=1&format=html" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><FileText className="h-4 w-4" /> {t("Okunabilir veri raporu")}</a>
         <Button variant="secondary" onClick={request}><FileText className="h-4 w-4" /> {t("Veri talebi oluştur (KVKK)")}</Button>
         <Button variant="danger" onClick={() => setDelOpen(true)}><Trash2 className="h-4 w-4" /> {t("Hesabımı ve verilerimi sil")}</Button>
       </div>

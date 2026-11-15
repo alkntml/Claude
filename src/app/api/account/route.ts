@@ -5,6 +5,7 @@ import { STYLE_IDS } from "@/lib/citations";
 import { adminClient } from "@/lib/supabase/admin";
 import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 import { buildUserExport } from "@/lib/data-export";
+import { renderExportHtml } from "@/lib/data-export-html";
 import { listUserObjects, removeObjects } from "@/lib/account-delete";
 
 export const GET = route("account.get", async (req) => {
@@ -12,6 +13,9 @@ export const GET = route("account.get", async (req) => {
   if (new URL(req.url).searchParams.get("export") === "1") {
     const out = await buildUserExport(s.supabase, s.user.id, s.profile);
     await s.supabase.from("data_requests").insert({ user_id: s.user.id, kind: "export", status: "completed", completed_at: new Date().toISOString() });
+    if (new URL(req.url).searchParams.get("format") === "html") {
+      return new Response(renderExportHtml(out), { headers: { "Content-Type": "text/html; charset=utf-8", "Content-Disposition": `attachment; filename="academiana-veri-raporum.html"` } });
+    }
     return new Response(JSON.stringify(out, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="academiana-verilerim.json"` } });
   }
   const [usage, limits, subs] = await Promise.all([

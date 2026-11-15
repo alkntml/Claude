@@ -18,6 +18,11 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**KVKK veri dökümü (D204, 15 Kasım 2026)**
+- Dökümde eksik kişisel veriler eklendi: hata kayıtları, ortak yazarlık, gönderilen/alınan davetler (bağlantı anahtarı hariç), kurum üyeliği ve işlem kaydı, ücretsiz araç kullanımı, kayıtlı şablonlar ve yapı değişiklikleri.
+- JSON’un başında Türkçe okuma rehberi (`_aciklama`: amaç, aktarılan taraflar, saklama, haklar, bölüm açıklamaları ve kayıt sayıları).
+- “Okunabilir rapor” (HTML, yazdırılıp PDF yapılabilir): Hesap → Gizlilik ve Yönetim → KVKK talepleri. Dosyalar indirme anında üretilir, sunucuda saklanmaz.
+
 **API maliyeti dönemleri (D203, 15 Kasım 2026)**
 - Yönetim → Genel bakış: “Toplam API maliyeti” bugün / bu hafta / bu ay / bu yıl (Türkiye saati, USD + TL). Yöneticinin kendi kullanımı toplamlara, kâr hesabına ve en çok harcayanlara katılmaz; “Günlük API maliyeti” çizelgesinde ayrı çizgi olarak görünür.
 

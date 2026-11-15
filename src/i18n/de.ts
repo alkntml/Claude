@@ -3773,6 +3773,7 @@ export const DE: Dict = {
   "Silinen dosya sayısı: {n}.": "Gelöschte Dateien: {n}.",
   "Son geçerlilik": "Gültig bis",
   "Verilerimi JSON olarak indir": "Meine Daten als JSON herunterladen",
+  "Okunabilir veri raporu": "Lesbarer Datenbericht",
   "WhatsApp’a geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.": "Bitte bestätigen Sie vor dem Wechsel zu WhatsApp, dass Sie die Informationstexte gelesen haben.",
   "Yalnızca zorunlu": "Nur notwendige",
   "Zorunlu olmayan çerezleri yalnızca izninizle kullanırız.": "Nicht notwendige Cookies verwenden wir nur mit Ihrer Einwilligung.",

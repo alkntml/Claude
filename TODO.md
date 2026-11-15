@@ -180,3 +180,4 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] (Kullanıcı, Aralık) BiGG uygulayıcı kuruluşlarıyla görüş; `docs/business/BIGG_HAZIRLIK.md` köşeli parantezli bilgileri doldur
 - [x] (2026-11-15, D202) Yönetim panelinde gün bazlı paket atama (ör. 1 günlük Premium)
 - [x] (2026-11-15, D203) Yönetim panelinde API maliyeti günlük/haftalık/aylık/yıllık; yönetici maliyeti çizelgede ayrı, toplamda yok
+- [x] (2026-11-15, D204) KVKK veri dökümü: eksik tablolar, Türkçe rehber, okunabilir HTML rapor

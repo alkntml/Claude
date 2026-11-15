@@ -1171,7 +1171,7 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 ## D201 — Kış 2026–2027 fırsatları (15 Kasım 2026)
 - **Araştırma sonucu:** 2204-A son başvuru 4 Ocak 2027, 2204-B 10 Şubat 2027; Black Friday 27 Kasım; güz sonu tez teslim dönemi; 1001 2027-1 tahminen Ocak sonu; YÖK’ün tezde yapay zekâ düzenlemesi bekleniyor; BiGG 2027 çağrıları.
 - **Ürün:** `tubitak_2204b` programı (yapay zekâ notu: yaşa uygun sade dil, öğrenci yerine proje üretmez; bütçe bölümü yok). Rehber `tubitak-2204-b-ortaokul-proje-nasil-hazirlanir` (TR/EN/DE, tarih/tutar yok).
-- **Black Friday:** `KASIM20`, %20, Basic/Pro/Premium, son kayıt 1 Aralık, 200 kullanım. %20 seçildi çünkü yıllık ve ekip indirimiyle aynı, maliyet analizinde onaylı oran. Kod yeni kayıtlara kalıcı bağlanır (D145).
-- **Pazarlama ve iş:** `docs/marketing/KIS_2026_KAMPANYA.md` (takvim + 7 Instagram metni), `docs/business/BIGG_HAZIRLIK.md` (yol haritası + başvuru taslağı; kullanıcı rakamları uydurulmadı, yer tutucu).
+- **Black Friday:** önerilen `KASIM20` indirimi kullanıcı kararıyla **kaldırıldı** (kod hiç oluşturulmadı).
+- **Pazarlama ve iş:** kampanya planı belgesi kullanıcı isteğiyle kaldırıldı; `docs/business/BIGG_HAZIRLIK.md` (yol haritası + başvuru taslağı; kullanıcı rakamları uydurulmadı, yer tutucu).
 - **Otomatik kontrol:** Haftalık zamanlanmış görev YÖK düzenlemesini ve 1001 çağrısını arar; düzenleme çıkarsa rehber yazısını hazırlayıp yayınlar.
 - Metricool hesabındaki marka (`dermanlikakademik`) Academiana’nın Instagram’ı değil; gönderiler oraya planlanmadı.

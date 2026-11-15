@@ -20,7 +20,6 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 ## Tamamlanan özellikler
 **Kış kampanyası hazırlığı (D201, 15 Kasım 2026)**
 - 2204-B (ortaokul) program türü ve TR/EN/DE rehberi; toplam 56 yazı
-- Kampanya planı, Black Friday kodu kararı ve Instagram metinleri: `docs/marketing/KIS_2026_KAMPANYA.md`
 - TÜBİTAK BiGG başvuru hazırlığı: `docs/business/BIGG_HAZIRLIK.md`
 - Haftalık otomatik kontrol: YÖK yapay zekâ düzenlemesi ve TÜBİTAK 1001 2027-1 çağrısı
 

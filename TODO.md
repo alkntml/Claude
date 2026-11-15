@@ -176,7 +176,5 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] iletisim@academiana.com.tr posta kutusu Google Workspace onayından sonra çalışır hâle gelmeli (D199)
 - [x] (2026-11-15, D200) 6 yeni başvuru rehberi (1001, BAP, 2214-A/2219, NSF GRFP, MSCA PF, Fulbright; TR/EN/DE)
 - [ ] (D200) Search Console’da başvuru rehberlerinin gösterim/tıklamasını 4–6 hafta sonra karşılaştır; tutan kalıpla yeni program yazıları (ör. ERC, DAAD, 2211, 3501, Erasmus+)
-- [x] (2026-11-15, D201) 2204-B program türü + rehber; kampanya planı ve Instagram metinleri; BiGG hazırlık belgesi; haftalık YÖK/1001 kontrolü
-- [ ] (Kullanıcı, 27 Kasım) Black Friday: panelde `KASIM20` kodunu oluştur (adımlar `docs/marketing/KIS_2026_KAMPANYA.md`)
-- [ ] (Kullanıcı) Instagram gönderilerini takvime göre paylaş (aynı belge)
+- [x] (2026-11-15, D201) 2204-B program türü + rehber; BiGG hazırlık belgesi; haftalık YÖK/1001 kontrolü
 - [ ] (Kullanıcı, Aralık) BiGG uygulayıcı kuruluşlarıyla görüş; `docs/business/BIGG_HAZIRLIK.md` köşeli parantezli bilgileri doldur

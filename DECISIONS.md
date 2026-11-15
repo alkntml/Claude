@@ -1167,3 +1167,11 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Neden:** TÜBİTAK yazıları çok görüntülenme getirdi. Program kodlu aramalar (“2209-A nasıl yazılır”) net niyetli, dönemsel olarak yüksek hacimli ve az rakipli; yazılar form bölümlerine birebir karşılık geliyor ve ürünün “TÜBİTAK / BAP proje önerisi” türüne bağlanıyor.
 - **Ne:** `posts-10`, `en-10`, `de-10`: TÜBİTAK 1001, BAP, 2214-A/2219, NSF GRFP, MSCA Postdoctoral Fellowships, Fulbright. Aynı kalıp: programın değerlendirme ölçütlerine göre bölüm bölüm yazım, tablo, sık hatalar, “güncel çağrı belgesini esas alın” notu, ürün bağlantısı.
 - **Kural:** Tutar, tarih, puan eşiği yazılmaz; uygunluk koşulları yalnızca genel hatlarıyla ve resmî duyuruya yönlendirerek verilir. `tests/blog-d200.test.ts` para birimi/yıl içermediğini denetler. Kaynaklar programların resmî sayfaları.
+
+## D201 — Kış 2026–2027 fırsatları (15 Kasım 2026)
+- **Araştırma sonucu:** 2204-A son başvuru 4 Ocak 2027, 2204-B 10 Şubat 2027; Black Friday 27 Kasım; güz sonu tez teslim dönemi; 1001 2027-1 tahminen Ocak sonu; YÖK’ün tezde yapay zekâ düzenlemesi bekleniyor; BiGG 2027 çağrıları.
+- **Ürün:** `tubitak_2204b` programı (yapay zekâ notu: yaşa uygun sade dil, öğrenci yerine proje üretmez; bütçe bölümü yok). Rehber `tubitak-2204-b-ortaokul-proje-nasil-hazirlanir` (TR/EN/DE, tarih/tutar yok).
+- **Black Friday:** `KASIM20`, %20, Basic/Pro/Premium, son kayıt 1 Aralık, 200 kullanım. %20 seçildi çünkü yıllık ve ekip indirimiyle aynı, maliyet analizinde onaylı oran. Kod yeni kayıtlara kalıcı bağlanır (D145).
+- **Pazarlama ve iş:** `docs/marketing/KIS_2026_KAMPANYA.md` (takvim + 7 Instagram metni), `docs/business/BIGG_HAZIRLIK.md` (yol haritası + başvuru taslağı; kullanıcı rakamları uydurulmadı, yer tutucu).
+- **Otomatik kontrol:** Haftalık zamanlanmış görev YÖK düzenlemesini ve 1001 çağrısını arar; düzenleme çıkarsa rehber yazısını hazırlayıp yayınlar.
+- Metricool hesabındaki marka (`dermanlikakademik`) Academiana’nın Instagram’ı değil; gönderiler oraya planlanmadı.

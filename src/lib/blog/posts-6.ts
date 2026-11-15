@@ -198,7 +198,7 @@ Başvuru takvimi, bütçe üst sınırları, başvuru koşulları ve form şablo
 
 ## Academiana ile 2204-A raporu
 
-Academiana’da “TÜBİTAK / BAP proje önerisi” türünü ve 2204-A programını seçtiğinizde rapor bölümleri hazır gelir; bütçe bölümü bu yarışmada yer almadığı için çıkarılır. Asistan konunuzu daraltmanıza, gerçek kaynaklar bulmanıza ve bulgularınızı tablo ve grafiğe dönüştürmenize yardım eder. Sizin yapmadığınız bir deneyin sonucunu ya da veriyi uydurmaz; veri gereken yerde boşluk bırakır.`,
+Academiana’da “TÜBİTAK / BAP proje önerisi” türünü ve 2204-A programını seçtiğinizde rapor bölümleri hazır gelir; bütçe bölümü bu yarışmada yer almadığı için çıkarılır. Asistan konunuzu daraltmanıza, gerçek kaynaklar bulmanıza ve bulgularınızı tablo ve grafiğe dönüştürmenize yardım eder. Sizin yapmadığınız bir deneyin sonucunu ya da veriyi uydurmaz; veri gereken yerde boşluk bırakır. Ortaokul öğrencileri için [2204-B rehberimize](/blog/tubitak-2204-b-ortaokul-proje-nasil-hazirlanir) bakın.`,
   },
   {
     slug: "tubitak-2242-proje-yarismasi-rehberi",

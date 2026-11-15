@@ -454,4 +454,100 @@ Academiana’da “TÜBİTAK / BAP proje önerisi” çalışma türünde “Bur
       { text: "U.S. Department of State. Fulbright Program.", url: "https://fulbrightprogram.org/" },
     ],
   },
+  {
+    slug: "tubitak-2204-b-ortaokul-proje-nasil-hazirlanir",
+    title: "TÜBİTAK 2204-B Ortaokul Araştırma Projesi Nasıl Hazırlanır? Öğrenci ve Öğretmen Rehberi",
+    seoTitle: "TÜBİTAK 2204-B Ortaokul Projesi Nasıl Hazırlanır?",
+    description: "TÜBİTAK 2204-B ortaokul öğrencileri araştırma projeleri yarışması: konu bulma, basit deney tasarımı, proje günlüğü, rapor bölümleri, veli ve öğretmen rolü.",
+    category: "Başvuru ve savunma",
+    keywords: ["TÜBİTAK 2204-B", "2204-B proje örnekleri", "ortaokul proje yarışması", "ortaokul bilim projesi nasıl hazırlanır", "2204-B proje raporu", "danışman öğretmen"],
+    date: "2026-11-15",
+    cta: { text: "“TÜBİTAK / BAP proje önerisi” türünde 2204-B’yi seçin; rapor bölümleri hazır gelsin, bulguları tablo ve grafiğe dönüştürün.", href: "/kayit", label: "2204-B raporumu hazırla" },
+    body: `TÜBİTAK 2204-B Ortaokul Öğrencileri Araştırma Projeleri Yarışması, ortaokul öğrencilerinin bir danışman öğretmen eşliğinde kendi araştırma projelerini hazırlayıp sergiledikleri bir bilim yarışmasıdır. Bu yaşta jürinin aradığı şey büyük bir buluş değil, **merak edilen bir soruya bilimsel yöntemle, adım adım cevap aramaktır**. Bu rehber öğrenciler, danışman öğretmenler ve veliler için hazırlandı. Lise düzeyindeki yarışma için [2204-A rehberimize](/blog/tubitak-2204-a-lise-proje-nasil-hazirlanir) bakabilirsiniz.
+
+## İyi bir proje sorusu nereden çıkar?
+
+En iyi sorular günlük hayattan gelir. Öğrenciden şu cümleyi tamamlamasını isteyin: “Hep merak etmişimdir, acaba …”
+
+- “Acaba okul bahçesindeki gölgede ve güneşte aynı bitki aynı hızda büyür mü?”
+- “Acaba sınıfımızda kahvaltı yapan ve yapmayan öğrencilerin ilk derste dikkatleri farklı mı?”
+- “Acaba farklı malzemeden yapılmış bardaklarda çay aynı hızda mı soğur?”
+
+İyi bir sorunun üç özelliği vardır:
+
+1. **Ölçülebilir:** Cevap bir sayı, gözlem veya karşılaştırmayla bulunabilir.
+2. **Yapılabilir:** Okulda veya evde, güvenli ve basit malzemelerle, birkaç hafta içinde yapılabilir.
+3. **Öğrencinin kendi sorusu:** Öğrenci soruyu kendi cümleleriyle anlatabilir ve gerçekten cevabını merak eder.
+
+## Basit bir deney nasıl kurulur?
+
+Bilimsel yöntemi ortaokul düzeyinde şu adımlarla kurabilirsiniz:
+
+| Adım | Ne yapılır? | Örnek (bardak ve çay) |
+| --- | --- | --- |
+| Soru | Merak edilen şey yazılır | Hangi bardakta çay daha hızlı soğur? |
+| Tahmin (hipotez) | Öğrenci sonucu önceden tahmin eder | Metal bardakta daha hızlı soğur |
+| Değiştirilen şey | Bir tek şey değiştirilir | Bardağın malzemesi |
+| Ölçülen şey | Ne ölçülecek, neyle ölçülecek? | 10 dakika sonraki sıcaklık, termometreyle |
+| Sabit tutulanlar | Her denemede aynı kalanlar | Çayın miktarı, başlangıç sıcaklığı, oda |
+| Tekrar | Deney kaç kez yapılacak? | Her bardak için 3 kez |
+
+En sık hata, aynı anda birden fazla şeyi değiştirmektir. Bir seferde **yalnızca bir şey** değişirse sonucun neden çıktığı anlaşılır.
+
+## Proje günlüğü tutmak
+
+Proje günlüğü, jürinin en çok güvendiği belgedir; çalışmayı öğrencinin kendisinin yaptığını gösterir. Her çalışma gününde şunlar yazılır:
+
+- Tarih ve o gün ne yapıldığı
+- Ölçümler (tablo hâlinde)
+- Gözlemler ve beklenmeyen durumlar
+- Karşılaşılan sorun ve nasıl çözüldüğü
+- Fotoğraflar
+
+Günlük el yazısıyla tutulabilir; düzgün olması değil, gerçek ve düzenli olması önemlidir.
+
+## Proje raporunun bölümleri
+
+Rapor kısa ve sade olmalıdır. Genellikle şu bölümler beklenir; güncel şablonu çağrı belgesinden kontrol edin:
+
+1. **Proje adı:** Soruyu anlatan kısa bir ad.
+2. **Amaç:** Projede neyi öğrenmek istediğiniz, bir iki cümleyle.
+3. **Giriş:** Konuyla ilgili okuduklarınız ve sorunun neden önemli olduğu. Kullandığınız kaynakları (kitap, ansiklopedi, güvenilir web siteleri) yazın.
+4. **Yöntem:** Ne yaptığınızı, hangi malzemeleri kullandığınızı, neyi nasıl ölçtüğünüzü başka biri tekrar yapabilecek kadar açık anlatın.
+5. **Bulgular:** Ölçümlerinizi tablo ve basit grafiklerle gösterin.
+6. **Sonuç ve tartışma:** Tahmininiz doğru çıktı mı? Neden böyle olmuş olabilir? Projenin eksikleri neler, nasıl geliştirilebilir?
+7. **Kaynaklar**
+
+Grafiklerde başlık, eksen adları ve birimleri unutmayın. Sütun grafiği karşılaştırma için, çizgi grafiği zaman içindeki değişim için uygundur.
+
+## Öğretmenin ve velinin rolü
+
+- **Danışman öğretmen** soruyu daraltmaya, deneyi güvenli kurmaya ve raporu düzenlemeye yardım eder; projeyi öğrenci yerine yapmaz.
+- **Veli** malzeme ve zaman konusunda destek olur. Velinin yazdığı bir rapor, jürinin sorularında hemen anlaşılır.
+- Jüri öğrenciyle konuşur: “Bunu neden böyle yaptın?”, “Sonuç başka çıksaydı ne düşünürdün?” Öğrencinin kendi kelimeleriyle anlatabilmesi en önemli hazırlıktır.
+
+## Güvenlik ve etik
+
+- Elektrik, ateş, kimyasal madde veya keskin alet gerektiren deneyler yetişkin gözetiminde yapılmalı ya da tercih edilmemelidir.
+- İnsanlarla anket veya ölçüm yapılacaksa katılımcıların ve gerekiyorsa velilerinin izni alınmalı, isimler raporda yazılmamalıdır.
+- Hayvanlara zarar verebilecek deneylerden kaçının; bitkiler ve cansız malzemeler ortaokul projeleri için en uygun seçenektir.
+
+Yarışmanın etik kurallarını çağrı belgesinden mutlaka okuyun.
+
+## Sergi ve sunum
+
+Projeniz sergiye kalırsa iki dakikalık bir anlatım hazırlayın: soru, ne yaptım, ne buldum, ne öğrendim. Posterde az yazı, büyük grafik ve fotoğraf kullanın. Proje günlüğünüzü yanınızda bulundurun.
+
+## Sık yapılan hatalar
+
+- Çok büyük bir soru seçmek (“İklim değişikliğini nasıl durdururuz?”)
+- Deneyi yalnızca bir kez yapmak
+- Aynı anda birden fazla şeyi değiştirmek
+- İnternetten bulunan bir projeyi aynen tekrar etmek
+- Sonucu tahmine uymadığı için değiştirmek: beklenmeyen sonuçlar da değerlidir${CALL}
+## Academiana ile 2204-B raporu
+
+Academiana’da “TÜBİTAK / BAP proje önerisi” türünü ve 2204-B programını seçtiğinizde rapor bölümleri hazır gelir; bütçe bölümü bu yarışmada yer almadığı için çıkarılır. Asistan sade bir dille yazar, sorunuzu daraltmanıza ve ölçümlerinizi tablo ile grafiğe dönüştürmenize yardım eder. Öğrencinin yerine proje üretmez; yapılmamış bir deneyin sonucunu ya da veriyi uydurmaz, veri gereken yerde boşluk bırakır.`,
+    sources: [TUBITAK],
+  },
 ];

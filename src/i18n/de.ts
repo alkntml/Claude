@@ -3723,8 +3723,9 @@ export const DE: Dict = {
   "TÜBİTAK 1002-A Hızlı Destek Modülü": "TÜBİTAK 1002-A Schnellförderungsmodul",
   "TÜBİTAK 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler": "TÜBİTAK 3005 Innovative Lösungen in den Sozial- und Geisteswissenschaften",
   "TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması": "TÜBİTAK 2204-A Forschungsprojektwettbewerb für Schülerinnen und Schüler",
+  "TÜBİTAK 2204-B Ortaokul Öğrencileri Araştırma Projeleri Yarışması": "TÜBİTAK 2204-B Forschungsprojektwettbewerb für die Mittelstufe",
   "TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları": "TÜBİTAK 2242 Forschungsprojektwettbewerbe für Studierende",
-  "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, burs": "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, Stipendium",
+  "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2204-B, 2242, BAP, burs": "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2204-B, 2242, BAP, Stipendium",
   // D153
   "TÜBİTAK 2242 proje yarışması": "TÜBİTAK-2242-Projektwettbewerb",
   // D154: hukuki metinler, onay, gizlilik ve veri yönetimi

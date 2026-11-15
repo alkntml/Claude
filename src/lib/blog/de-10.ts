@@ -421,4 +421,98 @@ Zur Bewertungslogik des US-Stipendiums der NSF siehe unseren [Leitfaden zum NSF 
 
 Wählen Sie in Academiana im Arbeitstyp „Projektantrag TÜBİTAK / BAP“ das „Forschungsexposé für eine Stipendienbewerbung“ und schreiben Sie Ihr Study/Research Objective Abschnitt für Abschnitt; die Oberfläche gibt es auch auf Englisch. Der Assistent hilft beim Kürzen und Schärfen; Erfahrungen, Erfolge, Einrichtungen oder Quellen erfindet er nicht.`,
   },
+  "tubitak-2204-b-ortaokul-proje-nasil-hazirlanir": {
+    slug: "tubitak-2204-b-forschungsprojekt-mittelstufe",
+    title: "TÜBİTAK 2204-B: Forschungsprojekt in der Mittelstufe vorbereiten – Leitfaden für Schüler und Lehrkräfte",
+    seoTitle: "TÜBİTAK 2204-B: Schülerforschungsprojekt vorbereiten",
+    description: "TÜBİTAK-2204-B-Wettbewerb für die Mittelstufe: Frage finden, einfaches Experiment, Projekttagebuch, Berichtsteile und die Rolle der Erwachsenen.",
+    keywords: ["TÜBİTAK 2204-B", "Schülerforschungsprojekt", "Experiment planen Schule", "Projekttagebuch", "Forschungsbericht Schule", "betreuende Lehrkraft"],
+    cta: { text: "Wählen Sie im Arbeitstyp „Projektantrag TÜBİTAK / BAP“ das Programm 2204-B; die Berichtsteile stehen bereit, Messwerte werden zu Tabellen und Diagrammen.", label: "2204-B-Bericht vorbereiten" },
+    body: `Der TÜBİTAK-Wettbewerb 2204-B ist ein türkischer Wissenschaftswettbewerb, bei dem Schülerinnen und Schüler der Mittelstufe mit einer betreuenden Lehrkraft eigene Forschungsprojekte erarbeiten und ausstellen. In diesem Alter sucht die Jury keine große Erfindung, sondern **eine neugierige Frage, die Schritt für Schritt mit wissenschaftlicher Methode beantwortet wird**. Dieser Leitfaden richtet sich an Schülerinnen und Schüler, Lehrkräfte und Eltern. Für den Wettbewerb der Oberstufe siehe unseren [Leitfaden zu 2204-A](/de/blog/tubitak-2204-a-schuelerforschungsprojekt-leitfaden).
+
+## Woher kommt eine gute Projektfrage?
+
+Die besten Fragen kommen aus dem Alltag. Lassen Sie das Kind den Satz ergänzen: „Ich wollte schon immer wissen, ob …“
+
+- „… dieselbe Pflanze im Schulgarten im Schatten und in der Sonne gleich schnell wächst?“
+- „… Kinder, die frühstücken, in der ersten Stunde aufmerksamer sind als Kinder ohne Frühstück?“
+- „… Tee in Bechern aus unterschiedlichem Material gleich schnell abkühlt?“
+
+Eine gute Frage hat drei Merkmale:
+
+1. **Messbar:** Die Antwort lässt sich mit einer Zahl, Beobachtung oder einem Vergleich finden.
+2. **Machbar:** In Schule oder zu Hause, sicher, mit einfachen Materialien, in wenigen Wochen.
+3. **Die eigene Frage:** Das Kind kann sie in eigenen Worten erklären und will die Antwort wirklich wissen.
+
+## Ein einfaches Experiment aufbauen
+
+So lässt sich die wissenschaftliche Methode in der Mittelstufe umsetzen:
+
+| Schritt | Was tun? | Beispiel (Becher und Tee) |
+| --- | --- | --- |
+| Frage | Aufschreiben, was man herausfinden will | In welchem Becher kühlt Tee am schnellsten ab? |
+| Vermutung (Hypothese) | Ergebnis vorher schätzen | Im Metallbecher am schnellsten |
+| Was verändert wird | Nur eine Sache verändern | Material des Bechers |
+| Was gemessen wird | Was, womit? | Temperatur nach 10 Minuten, mit Thermometer |
+| Was gleich bleibt | Bei jedem Versuch gleich | Teemenge, Anfangstemperatur, Raum |
+| Wiederholung | Wie oft? | Dreimal pro Becher |
+
+Der häufigste Fehler: mehrere Dinge gleichzeitig verändern. Ändert sich **nur eine Sache**, versteht man, warum das Ergebnis so ausfällt.
+
+## Ein Projekttagebuch führen
+
+Das Projekttagebuch ist das Dokument, dem die Jury am meisten vertraut; es zeigt, dass das Kind selbst gearbeitet hat. An jedem Arbeitstag wird notiert:
+
+- Datum und was getan wurde
+- Messwerte (als Tabelle)
+- Beobachtungen und Unerwartetes
+- Probleme und wie sie gelöst wurden
+- Fotos
+
+Es darf handschriftlich sein; wichtig ist, dass es echt und regelmäßig geführt ist, nicht ordentlich.
+
+## Teile des Projektberichts
+
+Der Bericht soll kurz und einfach sein. Meist werden diese Teile erwartet; prüfen Sie die aktuelle Vorlage der Ausschreibung:
+
+1. **Projekttitel:** Ein kurzer Titel, der die Frage nennt.
+2. **Ziel:** Was man herausfinden will, in ein, zwei Sätzen.
+3. **Einleitung:** Was man zum Thema gelesen hat und warum die Frage wichtig ist. Quellen (Bücher, Lexika, verlässliche Websites) angeben.
+4. **Methode:** Was getan wurde, welche Materialien, was wie gemessen wurde, so klar, dass andere es wiederholen können.
+5. **Ergebnisse:** Messwerte in Tabellen und einfachen Diagrammen.
+6. **Fazit und Diskussion:** Stimmte die Vermutung? Warum könnte es so gekommen sein? Welche Schwächen hatte das Projekt, wie lässt es sich verbessern?
+7. **Quellen**
+
+Diagramme brauchen Titel, Achsenbeschriftung und Einheiten. Säulendiagramme eignen sich für Vergleiche, Liniendiagramme für Veränderungen über die Zeit.
+
+## Rolle von Lehrkräften und Eltern
+
+- Die **betreuende Lehrkraft** hilft beim Eingrenzen der Frage, beim sicheren Aufbau des Experiments und beim Ordnen des Berichts; sie macht das Projekt nicht anstelle des Kindes.
+- **Eltern** unterstützen mit Material und Zeit. Ein von Eltern geschriebener Bericht fällt bei den Fragen der Jury sofort auf.
+- Die Jury spricht mit dem Kind: „Warum hast du das so gemacht?“, „Was hättest du gedacht, wenn das Ergebnis anders gewesen wäre?“ Die wichtigste Vorbereitung ist, alles in eigenen Worten erklären zu können.
+
+## Sicherheit und Ethik
+
+- Versuche mit Strom, Feuer, Chemikalien oder scharfen Werkzeugen nur unter Aufsicht Erwachsener oder lieber gar nicht.
+- Werden Menschen befragt oder gemessen, braucht es ihre Zustimmung und gegebenenfalls die der Eltern; Namen gehören nicht in den Bericht.
+- Vermeiden Sie Versuche, die Tieren schaden könnten; Pflanzen und unbelebte Materialien sind für die Mittelstufe am besten geeignet.
+
+Lesen Sie die Ethikregeln des Wettbewerbs in der Ausschreibung.
+
+## Ausstellung und Präsentation
+
+Kommt das Projekt in die Ausstellung, bereiten Sie eine Zwei-Minuten-Erklärung vor: meine Frage, was ich getan habe, was ich herausgefunden habe, was ich gelernt habe. Auf dem Poster wenig Text, große Diagramme und Fotos. Das Projekttagebuch mitbringen.
+
+## Häufige Fehler
+
+- Eine zu große Frage wählen („Wie stoppen wir den Klimawandel?“)
+- Den Versuch nur einmal durchführen
+- Mehrere Dinge gleichzeitig verändern
+- Ein Projekt aus dem Internet genau nachmachen
+- Das Ergebnis ändern, weil es nicht zur Vermutung passt: Auch unerwartete Ergebnisse sind wertvoll${CALL}
+## 2204-B-Bericht mit Academiana
+
+Wählen Sie in Academiana den Arbeitstyp „Projektantrag TÜBİTAK / BAP“ und das Programm 2204-B: Die Berichtsteile stehen bereit, der Budgetteil entfällt, weil der Wettbewerb keinen hat. Der Assistent schreibt in einfacher Sprache und hilft, die Frage einzugrenzen und Messwerte in Tabellen und Diagramme zu verwandeln. Er erstellt das Projekt nicht anstelle des Kindes und erfindet keine Ergebnisse oder Daten eines nicht durchgeführten Versuchs; wo Daten fehlen, bleibt eine Lücke.`,
+  },
 };
+

@@ -18,6 +18,12 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Kış kampanyası hazırlığı (D201, 15 Kasım 2026)**
+- 2204-B (ortaokul) program türü ve TR/EN/DE rehberi; toplam 56 yazı
+- Kampanya planı, Black Friday kodu kararı ve Instagram metinleri: `docs/marketing/KIS_2026_KAMPANYA.md`
+- TÜBİTAK BiGG başvuru hazırlığı: `docs/business/BIGG_HAZIRLIK.md`
+- Haftalık otomatik kontrol: YÖK yapay zekâ düzenlemesi ve TÜBİTAK 1001 2027-1 çağrısı
+
 **Başvuru rehberleri (D200, 15 Kasım 2026)**
 - TÜBİTAK yazılarının başarısı üzerine 6 yeni başvuru rehberi (TR/EN/DE): TÜBİTAK 1001, BAP, 2214-A/2219, NSF GRFP, MSCA doktora sonrası burs, Fulbright; toplam 55 yazı
 

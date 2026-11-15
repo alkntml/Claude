@@ -3731,8 +3731,9 @@ export const EN: Record<string, string> = {
   "TÜBİTAK 1002-A Hızlı Destek Modülü": "TÜBİTAK 1002-A Rapid Support Module",
   "TÜBİTAK 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler": "TÜBİTAK 3005 Innovative Solutions in Social Sciences and Humanities",
   "TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması": "TÜBİTAK 2204-A High School Students Research Projects Competition",
+  "TÜBİTAK 2204-B Ortaokul Öğrencileri Araştırma Projeleri Yarışması": "TÜBİTAK 2204-B Middle School Students Research Projects Competition",
   "TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları": "TÜBİTAK 2242 University Students Research Project Competitions",
-  "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, burs": "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, scholarship",
+  "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2204-B, 2242, BAP, burs": "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2204-B, 2242, BAP, scholarship",
   // D153
   "TÜBİTAK 2242 proje yarışması": "TÜBİTAK 2242 project competition",
   // D154: hukuki metinler, onay, gizlilik ve veri yönetimi

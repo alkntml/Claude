@@ -25,7 +25,7 @@ export const WORK_TYPES: WorkTypeMeta[] = [
   { id: "capstone", title: "Bitirme projesi", short: "Proje ve rapor", description: "Tasarım, uygulama ve değerlendirme süreçleriyle bitirme projesi raporu.", icon: "Rocket", levels: ["bachelor", "master"] },
   { id: "literature_review", title: "Literatür taraması", short: "Sistematik / anlatı derleme", description: "Arama stratejisi, tarama ve tematik sentez ile derleme çalışması.", icon: "Library", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "research_proposal", title: "Araştırma önerisi", short: "Research proposal", description: "Tez önerisi, proje başvurusu veya burs için araştırma önerisi.", icon: "Lightbulb", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
-  { id: "grant_proposal", title: "TÜBİTAK / BAP proje önerisi", short: "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2242, BAP, burs", description: "Özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleriyle proje başvurusu hazırlayın.", icon: "Landmark", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
+  { id: "grant_proposal", title: "TÜBİTAK / BAP proje önerisi", short: "2209-A, 2209-B, 1001, 1002-A, 3005, 3501, 2204-A, 2204-B, 2242, BAP, burs", description: "Özgün değer, yöntem, proje yönetimi, yaygın etki ve bütçe bölümleriyle proje başvurusu hazırlayın.", icon: "Landmark", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "text_editing", title: "Akademik metin düzenleme", short: "Dil, yapı ve atıf", description: "Mevcut metninizin dilini, yapısını ve atıflarını geliştirin.", icon: "PenLine", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
   { id: "source_research", title: "Kaynak ve literatür araştırması", short: "Gerçek veri tabanları", description: "OpenAlex, Crossref, PubMed ve diğer veri tabanlarında doğrulanmış kaynak bulun.", icon: "SearchCheck", levels: ["bachelor", "master", "doctorate", "postdoc", "other"] },
 ];
@@ -47,6 +47,7 @@ export const GRANT_PROGRAMS = [
   { id: "tubitak_1002a", label: "TÜBİTAK 1002-A Hızlı Destek Modülü" },
   { id: "tubitak_3005", label: "TÜBİTAK 3005 Sosyal ve Beşeri Bilimlerde Yenilikçi Çözümler" },
   { id: "tubitak_2204a", label: "TÜBİTAK 2204-A Lise Öğrencileri Araştırma Projeleri Yarışması" },
+  { id: "tubitak_2204b", label: "TÜBİTAK 2204-B Ortaokul Öğrencileri Araştırma Projeleri Yarışması" },
   { id: "tubitak_2242", label: "TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışmaları" },
   { id: "tubitak_3501", label: "TÜBİTAK 3501 Kariyer Geliştirme Programı" },
   { id: "bap", label: "Üniversite BAP projesi" },
@@ -65,6 +66,7 @@ export const PROGRAM_NOTES: Partial<Record<GrantProgram, string>> = {
   tubitak_1002a: "ARDEB Hızlı Destek: kısa süreli, sınırlı bütçeli, odaklı bir araştırma (ör. ön çalışma, fizibilite, acil ihtiyaç). Kapsamı dar tut; iş paketleri az ve kısa, hedefler kısa sürede ulaşılabilir olsun; neden hızlı destek gerektiğini gerekçelendir.",
   tubitak_3005: "Sosyal ve beşeri bilimlerde toplumsal bir soruna yenilikçi çözüm önerisi. Sorunu ve etkilenen kesimi verilerle tanımla; çözümün yenilikçi yönünü, uygulanabilirliğini ve toplumsal/kamu politikasına katkısını öne çıkar; nitel/nicel/karma yöntemi soruna göre gerekçelendir.",
   tubitak_2204a: "Lise öğrencileri araştırma projesi yarışması; danışman öğretmen eşliğinde. Proje raporu sade ve anlaşılır olmalı: problem, amaç, yöntem, bulgular, sonuç ve öneriler; bilimsel yöntem ve etik kurallar (insan/hayvan deneyleri, izinler) vurgulanır. Yaş düzeyine uygun, kendi yapılmış deney/gözlem.",
+  tubitak_2204b: "Ortaokul öğrencileri araştırma projesi yarışması; danışman öğretmen eşliğinde. Dil çok sade ve öğrencinin yaşına uygun; proje öğrencinin kendi merakından doğan, güvenli ve basit malzemelerle yapılabilen bir deney/gözlem/anket olmalı. Problem, amaç, yöntem, bulgular, sonuç; ölçüm tekrarları, proje günlüğü ve basit grafikler. Etik ve güvenlik (veli izni, canlı/insan katılımcı) vurgulanır; metni öğrencinin kendi anlatımıyla yazmasına yardım et, öğrenci yerine proje üretme.",
   tubitak_2242: "Üniversite öğrencileri araştırma proje yarışması (tematik alanlar); fikir ya da tamamlanmış proje. Problem, özgünlük, yöntem, uygulanabilirlik ve yaygın etki; sergi/sunum için kısa ve görsel anlatım.",
   bap: "Üniversite BAP projesi; üniversitenin kendi BAP yönergesi ve form şablonu esas alınır.",
 };

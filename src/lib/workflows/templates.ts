@@ -233,7 +233,7 @@ function proposal(m: string, level: string): Item[] {
 }
 
 function grant(program?: string | null): Item[] {
-  const noBudget = program === "scholarship" || program === "tubitak_2204a" || program === "tubitak_2242";
+  const noBudget = program === "scholarship" || program === "tubitak_2204a" || program === "tubitak_2204b" || program === "tubitak_2242";
   return [
     it("grant_summary", { critical: true }), it("grant_originality", { title: "Problem, gerekçe ve özgün değer", critical: true }), it("grant_objectives", { critical: true }),
     it("grant_literature"), it("grant_method", { title: "Yöntem ve iş paketleri", critical: true }), it("grant_management", { critical: true }),

@@ -421,4 +421,98 @@ For the review logic of the U.S. NSF fellowship, see our [NSF GRFP guide](/en/bl
 
 In Academiana, choose “Research proposal for a scholarship application” in the “TÜBİTAK / BAP project proposal” work type to write your study/research objective section by section; you can use the interface in English too. The assistant helps you shorten and sharpen your text; it does not invent experiences, achievements, institutions or sources.`,
   },
+  "tubitak-2204-b-ortaokul-proje-nasil-hazirlanir": {
+    slug: "tubitak-2204-b-middle-school-research-project",
+    title: "How to Prepare a TÜBİTAK 2204-B Middle School Research Project: A Guide for Students and Teachers",
+    seoTitle: "TÜBİTAK 2204-B Middle School Project: How to Prepare",
+    description: "TÜBİTAK 2204-B middle school research project competition: finding a question, a simple experiment, the project logbook, report sections and adults’ roles.",
+    keywords: ["TÜBİTAK 2204-B", "middle school science project", "science fair project guide", "how to design a simple experiment", "project logbook", "advisor teacher"],
+    cta: { text: "Choose 2204-B in the “TÜBİTAK / BAP project proposal” work type; the report sections come ready and you can turn results into tables and charts.", label: "Prepare my 2204-B report" },
+    body: `The TÜBİTAK 2204-B Middle School Students Research Projects Competition is a science competition in Turkey in which middle school students prepare and exhibit their own research projects with an advisor teacher. At this age the jury is not looking for a major invention but for **a curious question answered step by step with the scientific method**. This guide is for students, advisor teachers and parents. For the high school competition, see our [2204-A guide](/en/blog/tubitak-2204-a-high-school-research-project-guide).
+
+## Where does a good project question come from?
+
+The best questions come from daily life. Ask the student to complete the sentence: “I have always wondered whether …”
+
+- “… the same plant grows at the same rate in the shade and in the sun in the school garden?”
+- “… students in our class who eat breakfast and those who don’t pay attention differently in the first lesson?”
+- “… tea cools at the same rate in cups made of different materials?”
+
+A good question has three features:
+
+1. **Measurable:** The answer can be found with a number, an observation or a comparison.
+2. **Doable:** It can be done at school or at home, safely, with simple materials, in a few weeks.
+3. **The student’s own:** The student can explain it in their own words and really wants to know the answer.
+
+## Setting up a simple experiment
+
+At middle school level, you can build the scientific method with these steps:
+
+| Step | What to do | Example (cups and tea) |
+| --- | --- | --- |
+| Question | Write what you want to find out | In which cup does tea cool fastest? |
+| Prediction (hypothesis) | The student predicts the result | It cools fastest in the metal cup |
+| What changes | Change only one thing | The cup material |
+| What is measured | What will be measured, and with what? | Temperature after 10 minutes, with a thermometer |
+| What stays the same | Kept the same in every trial | Amount of tea, starting temperature, room |
+| Repetition | How many times will you repeat it? | 3 times for each cup |
+
+The most common mistake is changing more than one thing at a time. If **only one thing** changes, you can tell why the result happened.
+
+## Keeping a project logbook
+
+The logbook is the document the jury trusts most; it shows the student did the work. For each working day, write:
+
+- The date and what was done
+- Measurements (in a table)
+- Observations and anything unexpected
+- Problems and how they were solved
+- Photos
+
+It can be handwritten; what matters is that it is real and regular, not neat.
+
+## Sections of the project report
+
+The report should be short and simple. These sections are usually expected; check the current template in the call:
+
+1. **Project title:** A short title that states the question.
+2. **Aim:** What you want to learn, in one or two sentences.
+3. **Introduction:** What you read about the topic and why the question matters. List your sources (books, encyclopedias, reliable websites).
+4. **Method:** What you did, which materials you used and what you measured and how, clearly enough for someone else to repeat it.
+5. **Results:** Show your measurements in tables and simple charts.
+6. **Conclusion and discussion:** Was your prediction right? Why might this have happened? What were the project’s weaknesses and how could it be improved?
+7. **Sources**
+
+Give charts a title, axis labels and units. Bar charts suit comparisons; line charts suit change over time.
+
+## The roles of teachers and parents
+
+- The **advisor teacher** helps narrow the question, set up the experiment safely and organize the report; they do not do the project for the student.
+- **Parents** help with materials and time. A report written by a parent shows immediately when the jury asks questions.
+- The jury talks to the student: “Why did you do it this way?”, “What would you think if the result had been different?” Being able to explain in their own words is the most important preparation.
+
+## Safety and ethics
+
+- Experiments needing electricity, fire, chemicals or sharp tools should be supervised by an adult or avoided.
+- If you survey or measure people, get their permission and, where needed, their parents’ permission, and don’t write names in the report.
+- Avoid experiments that could harm animals; plants and non-living materials are the best choice for middle school projects.
+
+Always read the competition’s ethics rules in the call document.
+
+## Exhibition and presentation
+
+If your project reaches the exhibition, prepare a two-minute explanation: my question, what I did, what I found, what I learned. Use little text, large charts and photos on the poster. Keep your logbook with you.
+
+## Common mistakes
+
+- Choosing a question that is too big (“How do we stop climate change?”)
+- Doing the experiment only once
+- Changing more than one thing at a time
+- Repeating a project found online exactly
+- Changing the result because it didn’t match the prediction: unexpected results are valuable too${CALL}
+## Your 2204-B report with Academiana
+
+In Academiana, choose the “TÜBİTAK / BAP project proposal” work type and the 2204-B program: the report sections come ready, and the budget section is removed because this competition has none. The assistant writes in plain language and helps you narrow your question and turn your measurements into tables and charts. It does not produce the project for the student or invent results or data from an experiment that was not done; it leaves a blank where data are needed.`,
+  },
 };
+

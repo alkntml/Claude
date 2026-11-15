@@ -1157,3 +1157,8 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
   - Eski “dipnotlu ISNAD desteklenmez” bilgisi düzeltildi (D190).
 - **Test:** `tests/blog-d198.test.ts`, örneklerin atıf motoruyla üç dilde aynı olduğunu denetler.
 - **Kullanıcıya:** Search Console’da URL denetimi → “Dizine eklenmesini iste”; 1–2 hafta sonra “Düzeltmeyi doğrula”.
+
+## D199 — İletişim bilgileri ve blog genişletmesi (15 Kasım 2026)
+- **İletişim:** `lib/site.ts` → `CONTACT_EMAIL` (iletisim@academiana.com.tr) ve `INSTAGRAM` (@academianatr). Altbilgide e-posta, Instagram (yeni sekmede) ve WhatsApp bağlantıları; Hakkımızda sayfası ve kurumlar sayfası bu adresi kullanır; Organization yapılandırılmış verisine `email` ve `sameAs` eklendi.
+- **Eski yazılar:** 26 Türkçe yazıya bölümler, tablolar ve iç bağlantılar eklendi (en kısa yazı 291 → 542 kelime), `updated` 2026-11-15. TÜBİTAK yazılarında tutar/tarih verilmez; “güncel çağrı belgesini esas alın” notu eklendi. EN/DE sürümleri sonraki adım.
+- **Yeni yazılar (`posts-9`, `en-9`, `de-9`):** korelasyon (Pearson/Spearman), etki büyüklüğü, ki-kare bağımsızlık testi, DOI, yapay zekâ kullanım beyanı. Sayısal örnekler istatistik motorundan; `tests/blog-d199.test.ts` üç dilde denetler. Örneklem tablosu yazısı mevcut örneklem yazısıyla çakışacağı için yazılmadı.

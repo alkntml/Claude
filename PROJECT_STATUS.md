@@ -18,6 +18,11 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Blog ve iletişim (D199, 15 Kasım 2026)**
+- 26 eski Türkçe yazı genişletildi (en kısa yazı 291 → 542 kelime); EN/DE sürümleri henüz genişletilmedi
+- 5 yeni yazı (korelasyon, etki büyüklüğü, ki-kare, DOI, yapay zekâ kullanım beyanı; TR/EN/DE, sayılar motorla doğrulandı); toplam 49 yazı
+- Altbilgi, Hakkımızda ve yapılandırılmış veriye iletişim e-postası (iletisim@academiana.com.tr) ve Instagram (@academianatr)
+
 **Blog (D197–D198, 14 Kasım 2026)**
 - Kaynakça ve literatür taraması yazıları üç dilde genişletildi (Search Console “tarandı, dizinde değil” için)
 - 3 yeni yazı (ANOVA, regresyon raporlama, literatür matrisi; TR/EN/DE, motorla doğrulanmış sayılar); toplam 44 yazı

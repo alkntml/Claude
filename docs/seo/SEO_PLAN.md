@@ -80,11 +80,11 @@ Kurallar: her yazı gerçek bir ürün özelliğine veya ücretsiz araca bağlan
 | # | Başlık (çalışma adı) | Küme | Niyet | Bağlanan özellik / araç | Öncelik |
 |---|---|---|---|---|---|
 | 1 | ✅ (D197) Tek yönlü ANOVA nasıl yapılır ve raporlanır (Bonferroni ile) | İstatistik | B | İstatistik analizi (ANOVA + post hoc) | Yüksek |
-| 2 | Pearson ve Spearman korelasyonu yorumlama | İstatistik | B | İstatistik analizi | Yüksek |
+| 2 | ✅ (D199) Pearson ve Spearman korelasyonu yorumlama | İstatistik | B | İstatistik analizi | Yüksek |
 | 3 | ✅ (D197) Doğrusal regresyon sonuçları APA 7’ye göre nasıl raporlanır | İstatistik | B | İstatistik analizi (regresyon) | Yüksek |
-| 4 | Ki-kare bağımsızlık testi: çapraz tablo yorumlama | İstatistik | B | İstatistik analizi | Orta |
+| 4 | ✅ (D199) Ki-kare bağımsızlık testi: çapraz tablo yorumlama | İstatistik | B | İstatistik analizi | Orta |
 | 5 | Mann–Whitney U ve Kruskal–Wallis: parametrik olmayan testler | İstatistik | B | İstatistik analizi | Orta |
-| 6 | Etki büyüklüğü rehberi: Cohen d, eta kare, r | İstatistik | B | İstatistik analizi | Orta |
+| 6 | ✅ (D199) Etki büyüklüğü rehberi: Cohen d, eta kare, r | İstatistik | B | İstatistik analizi | Orta |
 | 7 | p değeri ve güven aralığı nasıl yorumlanır | İstatistik | B | İstatistik analizi | Orta |
 | 8 | Betimsel istatistik tablosu APA 7 örneği | İstatistik | B | Tablo/şekil + istatistik | Orta |
 | 9 | Likert verisi: ortalama mı medyan mı, hangi test? | İstatistik | B | Anket oluşturucu + istatistik | Orta |
@@ -94,7 +94,7 @@ Kurallar: her yazı gerçek bir ürün özelliğine veya ücretsiz araca bağlan
 | 13 | IEEE atıf stili örnekleri | Atıf | B | Kaynakça oluşturucu | Orta |
 | 14 | Vancouver atıf stili örnekleri | Atıf | B | Kaynakça oluşturucu | Orta |
 | 15 | Chicago: yazar-tarih ve dipnot biçimi | Atıf | B | Atıf dönüştürücü | Düşük-orta |
-| 16 | DOI nedir, nasıl bulunur ve doğrulanır | Atıf | B + İ | Kaynakça oluşturucu, uydurma kaynak kontrolü | Yüksek |
+| 16 | ✅ (D199) DOI nedir, nasıl bulunur ve doğrulanır | Atıf | B + İ | Kaynakça oluşturucu, uydurma kaynak kontrolü | Yüksek |
 | 17 | Harvard atıf stili örnekleri | Atıf | B | Kaynakça oluşturucu | Düşük |
 | 18 | Tezde sınırlılıklar ve varsayımlar nasıl yazılır | Tez | B | Bölüm şablonları | Orta |
 | 19 | Tez sonuç ve öneriler bölümü nasıl yazılır | Tez | B | Bölüm yazımı | Orta |
@@ -104,7 +104,7 @@ Kurallar: her yazı gerçek bir ürün özelliğine veya ücretsiz araca bağlan
 | 23 | Dergi seçimi: dizin türleri ve kontrol listesi | Makale | B | Dergi önerisi | Orta |
 | 24 | Editöre mektup (cover letter) nasıl yazılır | Makale | B | Asistan | Orta |
 | 25 | Makale reddedildiğinde ne yapılmalı | Makale | B | Hakem yanıtı yazısına bağlantı | Düşük-orta |
-| 26 | Yapay zekâ kullanım beyanı nasıl yazılır (dergi politikalarına göre) | Etik/YZ | B | Akademik dürüstlük sayfası | Yüksek |
+| 26 | ✅ (D199) Yapay zekâ kullanım beyanı nasıl yazılır (dergi politikalarına göre) | Etik/YZ | B | Akademik dürüstlük sayfası | Yüksek |
 | 27 | Yapay zekâ araçları kaynak olarak gösterilir mi? (APA’nın resmi önerisiyle) | Etik/YZ | B | APA 7 yazısı | Orta |
 | 28 | TÜBİTAK 1001 proje önerisi rehberi (tutar/takvim verilmez) | Başvuru | B | Başvuru şablonları | Orta |
 | 29 | Doktora yeterlik sınavına hazırlık planı | Başvuru | B | Çalışma planı | Düşük |

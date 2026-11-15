@@ -562,7 +562,7 @@ Bu bilgilerden biri eksikse kaynakça girdisi de eksik kalır. En sık unutulanl
 
 ## DOI nedir ve neden önemlidir?
 
-DOI (Digital Object Identifier), bir yayına verilen kalıcı kimliktir. Yayının internet adresi değişse bile DOI aynı kalır ve her zaman doğru sayfaya yönlendirir. APA 7, DOI’nin kaynakçada https://doi.org/ ile başlayan bağlantı biçiminde yazılmasını ister. DOI’si olan bir kaynakta DOI’yi eklemek, okurun kaynağa tek tıkla ulaşmasını sağlar ve kaynağın gerçekten var olduğunu doğrulamayı kolaylaştırır. Bir kaynağın DOI’sini veya eksik künyesini ücretsiz [kaynakça oluşturucumuzla](/araclar/kaynakca-olusturucu) bulabilirsiniz.
+DOI (Digital Object Identifier), bir yayına verilen kalıcı kimliktir. Yayının internet adresi değişse bile DOI aynı kalır ve her zaman doğru sayfaya yönlendirir. APA 7, DOI’nin kaynakçada https://doi.org/ ile başlayan bağlantı biçiminde yazılmasını ister. DOI’si olan bir kaynakta DOI’yi eklemek, okurun kaynağa tek tıkla ulaşmasını sağlar ve kaynağın gerçekten var olduğunu doğrulamayı kolaylaştırır. Bir kaynağın DOI’sini veya eksik künyesini ücretsiz [kaynakça oluşturucumuzla](/araclar/kaynakca-olusturucu) bulabilirsiniz. DOI’nin nasıl bulunup doğrulanacağını [DOI rehberimizde](/blog/doi-nedir-nasil-bulunur) ayrıntılı anlattık.
 
 ## Sıralama ve biçim kuralları
 
@@ -757,6 +757,8 @@ Pek çok dergi ve üniversite, yapay zekâ araçlarının kullanıldığı durum
 - Hangi aracın kullanıldığı
 - Hangi amaçla kullanıldığı (ör. dil düzeltme, literatür taramasında arama stratejisi, kod yazımı)
 - Çıktıların yazar tarafından kontrol edildiği ve sorumluluğun yazara ait olduğu
+
+Örnek beyan metinleri ve beyanın nereye yazılacağı için [yapay zekâ kullanım beyanı rehberimize](/blog/yapay-zeka-kullanim-beyani-nasil-yazilir) bakın.
 
 Beyanın nereye ve nasıl yazılacağı kurumdan kuruma değişir: yöntem bölümü, teşekkür bölümü veya ayrı bir beyan. Teslimden önce enstitünüzün ve hedef derginizin güncel politikasını mutlaka okuyun.
 

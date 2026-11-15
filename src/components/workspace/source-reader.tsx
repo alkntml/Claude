@@ -141,7 +141,7 @@ export function SourceReaderModal({ sourceId, onClose, onInsert, canInsert }: {
 
   const title = data?.source.title ?? t("Kaynak");
   return (
-    <Modal open onClose={onClose} title={t("Oku ve alıntıla")} wide>
+    <Modal open onClose={onClose} title={t("Rasat · Oku ve alıntıla")} wide>
       <style>{TEXT_LAYER_CSS}</style>
       {err ? <p className="text-sm text-rose-600">{err}</p> : !data ? <p className="flex items-center gap-2 text-sm text-ink-500"><Loader2 className="h-4 w-4 animate-spin" /> {t("Kaynak açılıyor…")}</p> : (
         <div className="flex flex-col gap-3">

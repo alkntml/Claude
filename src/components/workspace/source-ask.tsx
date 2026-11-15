@@ -77,7 +77,7 @@ export function SourceAskModal({ source, projectId, onClose, onInsert, onUploadP
     : <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[12px] font-medium text-amber-800">{access === "abstract" ? t("Yalnızca özet okundu") : t("Yalnızca künye bilgisi var")}</span>;
 
   return (
-    <Modal open onClose={onClose} title={t("Kaynağa sor")} wide>
+    <Modal open onClose={onClose} title={t("Rasat · Kaynağa sor")} wide>
       <div className="flex max-h-[75vh] flex-col">
         <div className="space-y-2 border-b border-ink-100 pb-3">
           <p className="line-clamp-2 font-serif text-[16px] font-semibold text-ink-950">{source.title}</p>

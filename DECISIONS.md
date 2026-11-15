@@ -1216,3 +1216,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - `lib/sources/quote.ts` (saf, testli): seçim temizlenir (satır sonu tirelemesi, boşluk, dış tırnak), kelimeler değişmez; APA kuralı: < 40 kelime tırnaklı alıntı + atıf + nokta; ≥ 40 kelime blok alıntı; “Yalnızca atıf” sayfalı atıf. Düğümler doğrudan kurulur (Markdown’a çevrilmez), atıf canlı `citation` düğümüdür; imlecin bulunduğu yere eklenir, otomatik kaydedilir.
 - Doğrulama: gerçek Chromium + gerçek 2 sayfalı PDF ile 18 uçtan uca kontrol geçti; bulunan iki hata (ekran dışında kalan araç çubuğu → her zaman görünen alt çubuk; sayfa rozetinin alıntıya sızması) düzeltildi.
 - Sınır: taranmış PDF’te seçilebilir metin yok; açık erişim metni aslı gibi değil metin görünümünde açılır. Migration gerekmez.
+
+## D208 — Rasat: kaynak analizi zekâsının marka adı (15 Kasım 2026)
+- Kullanıcı kararı: kaynaklarla yapılan işlerin (PDF’ten metin seçme, seçilen metni sayfalı atıfla kullanma, kaynağa soru sorma, birden çok makaleyi birlikte analiz etme, kaynaklardan atıflı akademik paragraf) ortak adı **Rasat** (gözlem; Zenit ile aynı gökbilim ailesi). Söylem: “Zenit yazar, Rasat kanıtlar.”
+- Görünür yerler: tanıtım sayfası “Kaynak ve literatür” kartı, “Kaynağa sor”, “Oku ve alıntıla”, “Kaynakları birlikte analiz et” pencere başlıkları (“Rasat · …”), yardım asistanı, SSS (“Rasat nedir?”), rehber başlıkları; TR/EN/DE. Düğme adları kısa kaldı.
+- Doğruluk ilkesi değişmez: Rasat yalnızca okunan metne dayanır, sayfa/kaynak uydurmaz.
+- Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).

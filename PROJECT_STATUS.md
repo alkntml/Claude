@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Rasat markası (D208, 15 Kasım 2026)**
+- Kaynaklarla çalışan analiz zekâsının adı **Rasat**: tanıtım kartı, pencere başlıkları, yardım asistanı, SSS (“Rasat nedir?”), rehber; TR/EN/DE.
+
 **Kaynak okuyucu (D207, 15 Kasım 2026)**
 - Kaynaklar → “Oku ve alıntıla”: PDF aslı gibi (seçilebilir metinle) veya okunan tam metin açılır; seçilen metin yayındaki sayfa numaralı atıfla kısa/blok alıntı ya da yalnızca atıf olarak imlece eklenir; TR/EN/DE, yardım, SSS ve rehber güncel.
 

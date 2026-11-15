@@ -289,6 +289,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "rasat",
+        q: { tr: "Rasat nedir?", en: "What is Rasat?" },
+        a: {
+          tr: "Rasat, Academiana’nın kaynaklarla çalışan analiz zekâsının adıdır; Zenit yazar, Rasat kanıtlar. **Kaynaklar** sekmesindeki dört yetenek Rasat’tır: **Oku ve alıntıla** ile PDF’ten metni seçip yayındaki sayfa numarasıyla alıntı veya atıf olarak eklersiniz; **Sor** ile bir makaleye soru sorarsınız ve cevap sayfa numarasıyla gelir; **Birlikte analiz et** ile birden çok makaleyi karşılaştırır, uyuşan ve çelişen bulguları ve boşlukları görürsünüz; sentezi **Atıflarla metne ekle** ile kaynaklarınıza dayanan atıflı bir akademik paragraf olarak çalışmanıza alırsınız. Rasat yalnızca okunan metne dayanır, kaynak veya sayfa uydurmaz; tam metni okunmayan kaynakta bunu açıkça söyler.",
+          en: "Rasat is the name of Academiana’s analysis intelligence that works with your sources; Zenit writes, Rasat provides the evidence. Four capabilities in the **Sources** tab are Rasat: with **Read and quote** you select text in a PDF and add it as a quotation or citation with the published page number; with **Ask** you ask a paper a question and get an answer with page numbers; with **Analyse together** you compare several papers and see agreements, conflicting findings and gaps; and with **Insert with citations** you add the synthesis to your work as a cited academic paragraph based on your sources. Rasat relies only on the text that was read and never invents sources or pages; for a source whose full text was not read it says so clearly.",
+        },
+      },
+      {
         id: "pdf-alinti",
         q: { tr: "PDF’ten metin seçip sayfa numarasıyla alıntılayabilir miyim?", en: "Can I select text in a PDF and quote it with the page number?" },
         a: {

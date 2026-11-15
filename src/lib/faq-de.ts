@@ -14,6 +14,10 @@ export const FAQ_GROUP_DE: Record<string, string> = {
 };
 
 export const FAQ_DE: Record<string, { q: string; a: string }> = {
+  "rasat": {
+    q: "Was ist Rasat?",
+    a: "Rasat ist der Name der Analyseintelligenz von Academiana, die mit Ihren Quellen arbeitet; Zenit schreibt, Rasat belegt. Vier Funktionen im Reiter **Quellen** gehören zu Rasat: Mit **Lesen und zitieren** markieren Sie Text im PDF und fügen ihn als Zitat oder Beleg mit der veröffentlichten Seitenzahl ein; mit **Fragen** stellen Sie einem Artikel eine Frage und erhalten eine Antwort mit Seitenzahlen; mit **Gemeinsam analysieren** vergleichen Sie mehrere Artikel und sehen Übereinstimmungen, widersprüchliche Befunde und Lücken; mit **Mit Belegen einfügen** übernehmen Sie die Synthese als belegten wissenschaftlichen Absatz auf Grundlage Ihrer Quellen. Rasat stützt sich nur auf den gelesenen Text und erfindet weder Quellen noch Seiten; bei Quellen ohne gelesenen Volltext sagt es das klar.",
+  },
   "pdf-alinti": {
     q: "Kann ich Text im PDF markieren und mit Seitenzahl zitieren?",
     a: "Ja. Im Reiter **Quellen** öffnet die Schaltfläche **Lesen und zitieren** Ihr hochgeladenes PDF im Original (ohne PDF wird der gelesene Open-Access-Volltext mit Seiten angezeigt). Klicken Sie zuerst im Editor an die Stelle für das Zitat und markieren Sie dann Text mit der Maus: **Als Zitat einfügen** setzt ein Zitat in Anführungszeichen (ab 40 Wörtern ein Blockzitat); **Nur Beleg** fügt Ihrem eigenen Satz einen Beleg mit Seitenzahl an. Der Beleg ist ein lebendiger Beleg im Zitierstil Ihres Projekts, und die Seitenzahl ist die veröffentlichte Seite, nicht die PDF-Seitenzahl. Lässt sich die Seite nicht bestimmen, wird das angezeigt, und Sie ergänzen sie per Klick auf den Beleg. Gescannte PDFs (Bilder) enthalten keinen markierbaren Text.",

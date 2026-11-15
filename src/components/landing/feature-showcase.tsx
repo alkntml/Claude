@@ -219,7 +219,7 @@ const CATEGORIES: Category[] = [
     { icon: Database, title: "16 veri tabanında eşzamanlı arama", text: "OpenAlex, Crossref, PubMed, arXiv, ERIC, DOAJ, HAL, PLOS ve diğerleri; sonuçlar birleştirilir, tekrarlar ayıklanır." },
     { icon: Globe2, title: "Türkiye kaynakları", text: "DergiPark dergileri dahil Türkçe ve Türkiye adresli yayınlar; TR Dizin ve YÖK Tez Merkezi’nde tek tıkla arama." },
     { icon: FileSearch2, title: "Tam metin okuma", text: "Açık erişimli metinler otomatik okunur, PDF’iniz yüklenebilir; bölümler tanınır, alıntılar yayındaki sayfa numarasıyla gelir." },
-    { icon: MessagesSquare, title: "Kaynağa sor", text: "Bir makaleye soru sorun; cevap yalnızca o makaleden, sayfa numaralarıyla gelir." },
+    { icon: MessagesSquare, title: "Rasat: kaynaklarınızın içine bakan analiz zekâsı", text: "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır." },
     { icon: Layers, title: "Birlikte analiz et", text: "2–8 makaleyi karşılaştırın: uyuşan noktalar, çelişen bulgular ve araştırma boşlukları tek tabloda.", plan: "matrix" },
     { icon: Network, title: "Literatür haritası ve matrisi", text: "Atıf, ortak kaynakça ve birlikte atıf ağı; konu kümeleri, zaman çizelgesi, konu haritası, eksik temel ve yeni çalışmalar; amaç–yöntem–bulgu matrisi.", plan: "litmap" },
     { icon: Table2, title: "Konu bulma ve kütüphane aktarımı", text: "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma; Zotero ve ORCID eşitleme.", plan: "topics" },

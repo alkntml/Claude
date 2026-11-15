@@ -4769,4 +4769,9 @@ export const EN: Record<string, string> = {
   "sayfa numarası belirlenemedi": "page number could not be determined",
   "{n} kelime seçildi": "{n} words selected",
   "PDF’i veya tam metni açın; seçtiğiniz metni sayfa numarasıyla alıntılayın": "Open the PDF or full text; quote the text you select with its page number",
+  "Rasat · Kaynağa sor": "Rasat · Ask the source",
+  "Rasat · Oku ve alıntıla": "Rasat · Read and quote",
+  "Rasat · Kaynakları birlikte analiz et": "Rasat · Analyse sources together",
+  "Rasat: kaynaklarınızın içine bakan analiz zekâsı": "Rasat: the analysis intelligence that looks inside your sources",
+  "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır.": "Select text in a PDF and quote it with the page number, ask a paper questions, analyse several papers together and add the synthesis to your text as a cited paragraph; every statement rests on the text that was read and its page.",
 };

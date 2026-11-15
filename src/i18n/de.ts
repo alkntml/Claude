@@ -4761,4 +4761,9 @@ export const DE: Dict = {
   "sayfa numarası belirlenemedi": "Seitenzahl nicht bestimmbar",
   "{n} kelime seçildi": "{n} Wörter markiert",
   "PDF’i veya tam metni açın; seçtiğiniz metni sayfa numarasıyla alıntılayın": "PDF oder Volltext öffnen; markierten Text mit Seitenzahl zitieren",
+  "Rasat · Kaynağa sor": "Rasat · Die Quelle fragen",
+  "Rasat · Oku ve alıntıla": "Rasat · Lesen und zitieren",
+  "Rasat · Kaynakları birlikte analiz et": "Rasat · Quellen gemeinsam analysieren",
+  "Rasat: kaynaklarınızın içine bakan analiz zekâsı": "Rasat: die Analyseintelligenz, die in Ihre Quellen blickt",
+  "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır.": "Markieren Sie Text im PDF und zitieren Sie ihn mit Seitenzahl, stellen Sie einem Artikel Fragen, analysieren Sie mehrere Artikel gemeinsam und fügen Sie die Synthese als belegten Absatz ein; jede Aussage beruht auf dem gelesenen Text und seiner Seite.",
 };

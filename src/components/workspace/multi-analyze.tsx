@@ -74,7 +74,7 @@ export function MultiAnalyzeModal({ open, onClose, projectId, sources, canInsert
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={t("Kaynakları birlikte analiz et")} wide>
+    <Modal open={open} onClose={onClose} title={t("Rasat · Kaynakları birlikte analiz et")} wide>
       <div className="space-y-4">
         <p className="text-[13px] text-ink-600">{t("2–8 kaynak seçin. Yapay zekâ yalnızca okunan metinlerden (tam metin parçaları ve özetler) yararlanır; her bilgi kaynağına ve sayfasına bağlanır. Yalnızca künyesi bilinen kaynaklar seçilemez.")}</p>
         <div className="flex gap-1.5">

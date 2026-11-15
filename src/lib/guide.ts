@@ -186,17 +186,17 @@ export const GUIDE: GuideChapter[] = [
         s("ISNAD 2 (dipnotlu): atıflar üst simge dipnot numarası olur; kaynağa ilk atıfta tam künye, sonrakilerde kısa atıf (Soyad, Kısa Başlık, sayfa). Dipnot metni atfa tıklayınca görünür; Word, PDF ve LaTeX’te sayfanın altına basılır.", "ISNAD 2 (footnotes): citations become superscript footnote numbers; the full reference at a source’s first citation, a short form (Surname, Short Title, page) afterwards. Click a citation to see its note; in Word, PDF and LaTeX notes are printed at the bottom of the page."),
         s("Kaynakça bölümünde bir kayda tıklayınca kullanıldığı yerleri görür, “Git” ile metindeki atfa gidersiniz.", "In the references section click an entry to see where it is used and jump with “Go”."),
       ] },
-      { id: "sor", title: s("Kaynağa sor", "Ask a source"), where: s("Kaynaklar → kaynağın “Sor” düğmesi", "Sources → the source’s “Ask” button"), steps: [
+      { id: "sor", title: s("Rasat: kaynağa sor", "Rasat: ask a source"), where: s("Kaynaklar → kaynağın “Sor” düğmesi", "Sources → the source’s “Ask” button"), steps: [
         s("Makaleye soru sorun ya da hazır sorulardan seçin: “Kısa özet”, “Yöntem”, “Örneklem”, “Temel bulgular”, “Sınırlılıklar”…", "Ask the paper a question or pick a ready one: “Short summary”, “Method”, “Sample”, “Key findings”, “Limitations”…"),
         s("Cevap okunan metne dayanır ve sayfa numarası verir.", "Answers are based on the text that was read and give page numbers."),
         s("“Atıfla metne ekle” veya “Hafızaya ekle” ile kullanın.", "Use it with “Insert with citation” or “Add to memory”."),
       ] },
-      { id: "oku", title: s("PDF’ten alıntı (Oku ve alıntıla)", "Quoting from a PDF (Read and quote)"), where: s("Kaynaklar → kaynağın “Oku ve alıntıla” düğmesi", "Sources → the source’s “Read and quote” button"), steps: [
+      { id: "oku", title: s("Rasat: PDF’ten alıntı (Oku ve alıntıla)", "Rasat: quoting from a PDF (Read and quote)"), where: s("Kaynaklar → kaynağın “Oku ve alıntıla” düğmesi", "Sources → the source’s “Read and quote” button"), steps: [
         s("Önce editörde alıntının gireceği yere tıklayın, sonra kaynağın “Oku ve alıntıla” düğmesine basın. Yüklediğiniz PDF aslı gibi açılır; PDF yoksa okunan açık erişim tam metni sayfalarıyla görünür.", "First click in the editor where the quotation should go, then press the source’s “Read and quote” button. An uploaded PDF opens as the original; without a PDF the open-access full text that was read is shown with its pages."),
         s("Metni fareyle seçin: “Alıntı olarak ekle” tırnaklı alıntıyı, 40 kelime ve üzerinde blok alıntıyı; “Yalnızca atıf” ise kendi cümlenizin sonuna sayfalı atfı ekler.", "Select text with the mouse: “Add as quotation” inserts a quotation in quotation marks (a block quotation from 40 words); “Citation only” adds a citation with page to your own sentence."),
         s("Sayfa numarası yayındaki sayfadır (künyedeki sayfa aralığından); belirlenemezse atfa tıklayıp elle ekleyin. Taranmış PDF’lerde seçilebilir metin yoktur.", "The page number is the published page (from the reference’s page range); if it cannot be determined, click the citation and add it manually. Scanned PDFs have no selectable text."),
       ] },
-      { id: "birlikte", title: s("Kaynakları birlikte analiz etme", "Analysing sources together"), plan: "matrix", where: s("Kaynaklar → “Birlikte analiz et”", "Sources → “Analyse together”"), steps: [
+      { id: "birlikte", title: s("Rasat: kaynakları birlikte analiz etme", "Rasat: analysing sources together"), plan: "matrix", where: s("Kaynaklar → “Birlikte analiz et”", "Sources → “Analyse together”"), steps: [
         s("Karşılaştırmak istediğiniz kaynakları seçin.", "Select the sources to compare."),
         s("“Karşılaştır”: uyuştukları, ayrıştıkları noktalar ve boşluklar tablo hâlinde gelir. “Hepsine birlikte sor”: tek soruya hepsinden cevap.", "“Compare” gives a table of agreements, disagreements and gaps. “Ask all together” answers one question from all of them."),
         s("“Tabloyu belgeye ekle” veya “Atıflarla metne ekle”.", "“Add table to document” or “Insert with citations”."),

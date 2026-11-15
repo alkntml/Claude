@@ -1207,3 +1207,12 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Kapsam: asistan ve otomatik tamamlama birlikte Zenit’tir. Doğruluk için: kaynaklı/atıflı yazım asistanın işidir; otomatik tamamlama bilerek kaynak, sayı, yıl, ad, atıf önermez (D113).
 - Görünür yerler: tanıtım sayfası “Planlama ve yazım” kartı, çalışma alanı asistan başlığı (“Zenit · Akademik asistan”), öneri düğmesi ve bildirimleri (“Zenit otomatik tamamlama”), yardım asistanı bilgisi, SSS “Zenit nedir?” (TR/EN/DE), kullanım rehberi.
 - Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).
+
+## D207 — Kaynak okuyucu: PDF’ten seçerek sayfalı alıntı (15 Kasım 2026)
+- Kullanıcı isteği: PDF içinden metin seçme ve seçilen metni kaynak göstererek kullanma.
+- Kaynaklar → “Oku ve alıntıla” (tam metni okunan veya PDF’i yüklü kaynaklarda). Yüklü PDF pdf.js (pdfjs-dist 4.10.38, sürüm sabit) ile aslı gibi, seçilebilir metin katmanıyla açılır; PDF yoksa okunan tam metin `page_hint` sayfalarıyla metin görünümünde açılır. Sayfalar tembel çizilir.
+- Uç: `GET /api/sources/[id]/reader` (`childAccess` okuma; dosya sahibine, aynı çalışmaya ve `storage_path` sahibin klasörüne ait olmalı; 10 dk imzalı bağlantı). Yapay zekâ kullanmaz, haktan düşmez, salt okunur kullanıcıya açık.
+- Sayfa numarası yayındaki sayfadır (`pdfPageLabels`, künyedeki sayfa aralığı); seçim iki sayfaya taşarsa “12–13”. Belirlenemezse boş bırakılır ve kullanıcıya söylenir (uydurma sayfa yok). Sayfa rozetleri seçilemez (alıntıya sızmaz).
+- `lib/sources/quote.ts` (saf, testli): seçim temizlenir (satır sonu tirelemesi, boşluk, dış tırnak), kelimeler değişmez; APA kuralı: < 40 kelime tırnaklı alıntı + atıf + nokta; ≥ 40 kelime blok alıntı; “Yalnızca atıf” sayfalı atıf. Düğümler doğrudan kurulur (Markdown’a çevrilmez), atıf canlı `citation` düğümüdür; imlecin bulunduğu yere eklenir, otomatik kaydedilir.
+- Doğrulama: gerçek Chromium + gerçek 2 sayfalı PDF ile 18 uçtan uca kontrol geçti; bulunan iki hata (ekran dışında kalan araç çubuğu → her zaman görünen alt çubuk; sayfa rozetinin alıntıya sızması) düzeltildi.
+- Sınır: taranmış PDF’te seçilebilir metin yok; açık erişim metni aslı gibi değil metin görünümünde açılır. Migration gerekmez.

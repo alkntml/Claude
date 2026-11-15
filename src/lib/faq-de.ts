@@ -14,6 +14,10 @@ export const FAQ_GROUP_DE: Record<string, string> = {
 };
 
 export const FAQ_DE: Record<string, { q: string; a: string }> = {
+  "pdf-alinti": {
+    q: "Kann ich Text im PDF markieren und mit Seitenzahl zitieren?",
+    a: "Ja. Im Reiter **Quellen** öffnet die Schaltfläche **Lesen und zitieren** Ihr hochgeladenes PDF im Original (ohne PDF wird der gelesene Open-Access-Volltext mit Seiten angezeigt). Klicken Sie zuerst im Editor an die Stelle für das Zitat und markieren Sie dann Text mit der Maus: **Als Zitat einfügen** setzt ein Zitat in Anführungszeichen (ab 40 Wörtern ein Blockzitat); **Nur Beleg** fügt Ihrem eigenen Satz einen Beleg mit Seitenzahl an. Der Beleg ist ein lebendiger Beleg im Zitierstil Ihres Projekts, und die Seitenzahl ist die veröffentlichte Seite, nicht die PDF-Seitenzahl. Lässt sich die Seite nicht bestimmen, wird das angezeigt, und Sie ergänzen sie per Klick auf den Beleg. Gescannte PDFs (Bilder) enthalten keinen markierbaren Text.",
+  },
   "ayiran": {
     q: "Was unterscheidet Academiana von anderen KI-Tools?",
     a: "Academiana ist kein allgemeiner Chatbot, sondern ein Arbeitsbereich, der **von Grund auf für wissenschaftliches Arbeiten entwickelt** wurde. Quellen stammen aus echten wissenschaftlichen Datenbanken, und die KI zitiert nur Quellen, die Ihrem Projekt hinzugefügt wurden und deren bibliografische Angaben überprüfbar sind; keine Quellen, DOIs oder Daten zu erfinden, ist eine Grundregel des Systems. Bei jeder Quelle wird klar angezeigt, ob die Angaben, das Abstract oder der Volltext gelesen wurden. Alle Schritte – von der Themenwahl über Konzept, Recherche, Schreiben und Statistik bis zur Prüfung vor der Abgabe – laufen an einem Ort und greifen ineinander.",

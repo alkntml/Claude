@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Kaynak okuyucu (D207, 15 Kasım 2026)**
+- Kaynaklar → “Oku ve alıntıla”: PDF aslı gibi (seçilebilir metinle) veya okunan tam metin açılır; seçilen metin yayındaki sayfa numaralı atıfla kısa/blok alıntı ya da yalnızca atıf olarak imlece eklenir; TR/EN/DE, yardım, SSS ve rehber güncel.
+
 **Zenit markası (D206, 15 Kasım 2026)**
 - Yazım zekâsının (asistan + otomatik tamamlama) adı **Zenit**: tanıtım sayfası özellik kartı, çalışma alanında asistan başlığı ve öneri düğmesi, yardım asistanı, SSS (“Zenit nedir?”) ve rehber; TR/EN/DE.
 

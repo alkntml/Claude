@@ -191,6 +191,11 @@ export const GUIDE: GuideChapter[] = [
         s("Cevap okunan metne dayanır ve sayfa numarası verir.", "Answers are based on the text that was read and give page numbers."),
         s("“Atıfla metne ekle” veya “Hafızaya ekle” ile kullanın.", "Use it with “Insert with citation” or “Add to memory”."),
       ] },
+      { id: "oku", title: s("PDF’ten alıntı (Oku ve alıntıla)", "Quoting from a PDF (Read and quote)"), where: s("Kaynaklar → kaynağın “Oku ve alıntıla” düğmesi", "Sources → the source’s “Read and quote” button"), steps: [
+        s("Önce editörde alıntının gireceği yere tıklayın, sonra kaynağın “Oku ve alıntıla” düğmesine basın. Yüklediğiniz PDF aslı gibi açılır; PDF yoksa okunan açık erişim tam metni sayfalarıyla görünür.", "First click in the editor where the quotation should go, then press the source’s “Read and quote” button. An uploaded PDF opens as the original; without a PDF the open-access full text that was read is shown with its pages."),
+        s("Metni fareyle seçin: “Alıntı olarak ekle” tırnaklı alıntıyı, 40 kelime ve üzerinde blok alıntıyı; “Yalnızca atıf” ise kendi cümlenizin sonuna sayfalı atfı ekler.", "Select text with the mouse: “Add as quotation” inserts a quotation in quotation marks (a block quotation from 40 words); “Citation only” adds a citation with page to your own sentence."),
+        s("Sayfa numarası yayındaki sayfadır (künyedeki sayfa aralığından); belirlenemezse atfa tıklayıp elle ekleyin. Taranmış PDF’lerde seçilebilir metin yoktur.", "The page number is the published page (from the reference’s page range); if it cannot be determined, click the citation and add it manually. Scanned PDFs have no selectable text."),
+      ] },
       { id: "birlikte", title: s("Kaynakları birlikte analiz etme", "Analysing sources together"), plan: "matrix", where: s("Kaynaklar → “Birlikte analiz et”", "Sources → “Analyse together”"), steps: [
         s("Karşılaştırmak istediğiniz kaynakları seçin.", "Select the sources to compare."),
         s("“Karşılaştır”: uyuştukları, ayrıştıkları noktalar ve boşluklar tablo hâlinde gelir. “Hepsine birlikte sor”: tek soruya hepsinden cevap.", "“Compare” gives a table of agreements, disagreements and gaps. “Ask all together” answers one question from all of them."),

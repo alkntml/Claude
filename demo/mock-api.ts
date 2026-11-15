@@ -255,6 +255,7 @@ on("POST", "/api/projects/([^/]+)/sources", (m, b) => {
   db.sources.push(...rows);
   return { sources: rows, skipped: b.sources.length - rows.length };
 });
+on("GET", "/api/sources/([^/]+)/reader", (m) => { const src = db.sources.find((s) => s.id === m[1]) ?? fail(404, "Kaynak bulunamadı", "not_found"); return { source: src, pdf: null, chunks: [] }; });
 on("GET", "/api/sources/([^/]+)", (m) => ({ source: db.sources.find((s) => s.id === m[1]) ?? fail(404, "Kaynak bulunamadı", "not_found") }));
 on("DELETE", "/api/sources/([^/]+)", (m) => { db.sources = db.sources.filter((s) => s.id !== m[1]); return { ok: true }; });
 on("POST", "/api/sources/([^/]+)/verify", () => fail(503, DEMO_DISABLED.verify));

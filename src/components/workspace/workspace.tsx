@@ -898,6 +898,12 @@ export function Workspace(props: Props) {
     if (!editor) return;
     editor.chain().focus().insertContent({ type: "citation", attrs: { ids: [id], locator: null, narrative: false } }).insertContent(" ").run();
   }
+  /** D207: kaynak okuyucudan sayfalı alıntı/atıf — imlecin bulunduğu yere (otomatik kaydedilir) */
+  function insertAtCursor(nodes: JSONNode[]): boolean {
+    if (!editor || isBibliography) return false;
+    editor.chain().focus().insertContent(nodes).run();
+    return true;
+  }
 
   // --- Proje ayarları
   async function patchProject(update: Record<string, unknown>) {
@@ -1316,7 +1322,7 @@ export function Workspace(props: Props) {
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
                   {tab === "assistant" && <AssistantPanel needsData={active ? stageNeedsData(active.key, project) : false} researchPrefs={project.context?.research} projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text, index: focused.index } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} unwrittenMain={unwrittenMain} />}
-                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
+                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onInsertNodes={!isBibliography && editor ? insertAtCursor : undefined} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={canEdit ? applyComment : undefined} isOwner={isOwner} />}
                   {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, { emitUpdate: false }); }} />}

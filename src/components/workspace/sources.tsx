@@ -1,13 +1,15 @@
 "use client";
 import { fullTextLikely, pickWithFullTextQuota } from "@/lib/sources/fulltext-share";
 import { SourceAskModal } from "./source-ask";
+import { SourceReaderModal } from "./source-reader";
+import type { JSONNode } from "@/lib/editor/doc";
 import { useT } from "@/i18n/client";
 import { DeleteButton } from "@/components/ui/delete-button";
 import { MatrixButton, MatrixModal } from "./matrix";
 import { MultiAnalyzeButton, MultiAnalyzeModal } from "./multi-analyze";
 import { RefsImportExport } from "./refs-io";
 import { motion } from "framer-motion";
-import { BadgeCheck, MessageCircleQuestion, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
+import { BadgeCheck, BookOpenText, MessageCircleQuestion, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -182,13 +184,15 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
   );
 }
 
-export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds, onInsertMarkdown }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string>; onInsertMarkdown?: (md: string, sourceMap: Record<string, string>) => void }) {
+export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds, onInsertMarkdown, onInsertNodes }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string>; onInsertMarkdown?: (md: string, sourceMap: Record<string, string>) => void; onInsertNodes?: (nodes: JSONNode[]) => boolean | void }) {
   const { t } = useT();
   const [matrix, setMatrix] = useState(false);
   const [multi, setMulti] = useState(false);
   const [pdfOpen, setPdfOpen] = useState(false);
   // Kaynağa sor (D112)
   const [askId, setAskId] = useState<string | null>(null);
+  // Kaynak okuyucu (D207): PDF/tam metinden seçerek sayfalı alıntı
+  const [readId, setReadId] = useState<string | null>(null);
   const asking = askId ? sources.find((x) => x.id === askId) ?? null : null;
   const [uploading, setUploading] = useState<string | null>(null);
   // Tam metni okunamayan (kapalı erişim) kaynaklar: önce metinde atıf yapılanlar
@@ -270,6 +274,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
       <div className="flex-1 overflow-y-auto p-4">
         {mode === "search" && <SourceSearch projectId={projectId} existingDois={existing} onAdded={(rows) => setSources((l) => [...l, ...rows])} />}
         {mode === "manual" && <ManualSource projectId={projectId} onAdded={(rows) => { setSources((l) => [...l, ...rows]); setMode("list"); }} />}
+        {readId && <SourceReaderModal sourceId={readId} onClose={() => setReadId(null)} canInsert={canCite && !!onInsertNodes} onInsert={onInsertNodes} />}
         {asking && <SourceAskModal source={asking} projectId={projectId} onClose={() => setAskId(null)} canInsert={canCite} onInsert={onInsertMarkdown} onUploadPdf={(f) => uploadPdf(asking, f)} onFetchFulltext={asking.access_level !== "full_text" && (asking.oa_url || asking.doi || asking.arxiv_id || asking.pmcid) ? () => fulltext(asking.id) : undefined} />}
         {multi && <MultiAnalyzeModal open onClose={() => setMulti(false)} projectId={projectId} sources={sources} canInsert={canCite} onInsertMarkdown={onInsertMarkdown} onInsertTable={onInsertTable} />}
         <MatrixModal open={matrix} onClose={() => setMatrix(false)} projectId={projectId} sources={sources} setSources={setSources} language={language} onInsertTable={onInsertTable} />
@@ -313,6 +318,7 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
                 <div key={s.id} id={`src-${s.id}`}>
                   <SourceCard s={s} compact actions={<>
                     <Button size="sm" variant="soft" onClick={() => setAskId(s.id)} title={t("Bu kaynağa soru sorun; cevaplar sayfa numaralı gelir")}><MessageCircleQuestion className="h-3.5 w-3.5" /> {t("Sor")}</Button>
+                    {(s.access_level === "full_text" || s.file_id) && <Button size="sm" variant="soft" onClick={() => setReadId(s.id)} title={t("PDF’i veya tam metni açın; seçtiğiniz metni sayfa numarasıyla alıntılayın")}><BookOpenText className="h-3.5 w-3.5" /> {t("Oku ve alıntıla")}</Button>}
                     <Button size="sm" variant="soft" disabled={!canCite} onClick={() => onCite(s.id)} title={canCite ? t("İmlecin bulunduğu yere atıf ekle") : t("Önce editörde bir yere tıklayın")}><Quote className="h-3.5 w-3.5" /> {t("Atıf ekle")}</Button>
                     {!s.verified && <Button size="sm" variant="ghost" loading={busy === `v${s.id}`} onClick={() => verify(s.id)}><BadgeCheck className="h-3.5 w-3.5" /> {t("Doğrula")}</Button>}
                     {s.access_level !== "full_text" && s.fulltext_status !== "queued" && s.fulltext_status !== "processing" && (s.oa_url || s.doi || s.arxiv_id || s.pmcid) && <Button size="sm" variant="ghost" loading={busy === `f${s.id}`} onClick={() => fulltext(s.id)}><Unlock className="h-3.5 w-3.5" /> {t("Tam metni analiz et")}</Button>}

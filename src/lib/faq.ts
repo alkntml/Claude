@@ -289,6 +289,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "pdf-alinti",
+        q: { tr: "PDF’ten metin seçip sayfa numarasıyla alıntılayabilir miyim?", en: "Can I select text in a PDF and quote it with the page number?" },
+        a: {
+          tr: "Evet. **Kaynaklar** sekmesinde kaynağın **Oku ve alıntıla** düğmesi, yüklediğiniz PDF’i aslı gibi açar (PDF yoksa okunan açık erişim tam metni sayfalarıyla gösterir). Önce editörde alıntının gireceği yere tıklayın, sonra metni fareyle seçin: **Alıntı olarak ekle** tırnaklı alıntıyı, 40 kelime ve üzerinde blok alıntıyı; **Yalnızca atıf** kendi cümlenize sayfalı atfı ekler. Atıf, çalışmanızın atıf stiline göre yazılan canlı atıftır ve sayfa numarası PDF’in kaçıncı sayfası değil, yayındaki sayfadır. Sayfa belirlenemezse bunu söyler; atfa tıklayıp elle eklersiniz. Taranmış (görüntü) PDF’lerde seçilebilir metin yoktur.",
+          en: "Yes. In the **Sources** tab, a source’s **Read and quote** button opens your uploaded PDF as the original (without a PDF, the open-access full text that was read is shown with its pages). First click in the editor where the quotation should go, then select text with the mouse: **Add as quotation** inserts a quotation in quotation marks (a block quotation from 40 words); **Citation only** adds a citation with the page to your own sentence. The citation is a live citation written in your project’s citation style, and the page is the published page, not the PDF page index. If the page cannot be determined you are told so and can add it by clicking the citation. Scanned (image) PDFs have no selectable text.",
+        },
+      },
+      {
         id: "arastirmalar-ne-diyor",
         q: { tr: "“Araştırmalar ne diyor?” nedir?", en: "What is “What does research say?”" },
         a: {

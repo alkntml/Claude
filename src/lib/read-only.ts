@@ -14,7 +14,7 @@ export const READ_ONLY_ALLOWED_ROUTES = new Set<string>([
   "legal.accept", "legal.mine", "notifications.list", "notifications.read", "announcements.list", "feedback.create", "org.members", "org.leave",
   // Görüntüleme
   "projects.list", "projects.get", "stages.list", "stage.get", "revisions.list", "comments.list", "memory.list", "quality.latest", "claim_audit.get",
-  "review.list", "project.sources.list", "source.get", "files.list", "ai.chat.history", "surveys.list", "survey.get", "survey.responses", "members.list",
+  "review.list", "project.sources.list", "source.get", "source.reader", "files.list", "ai.chat.history", "surveys.list", "survey.get", "survey.responses", "members.list",
   "shares.list", "project.presence", "project.progress", "project.sources.sync.list", "structure.get", "templates.list", "templates.get", "designs.list",
   // İndirme
   "project.export", "project.sources.export", "file.get",

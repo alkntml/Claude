@@ -45,6 +45,42 @@ Die Details unterscheiden sich je nach Hochschule, meist enthält ein Exposé:
 - Der Stichprobenumfang wird nicht begründet
 - Das Ethikverfahren wird nicht erwähnt
 
+
+## Was in welchen Abschnitt gehört
+
+### Problemstellung
+
+Die Problemstellung ist der meistgelesene Teil des Exposés. Gehen Sie vom Allgemeinen zum Besonderen: zuerst, warum das Thema wichtig ist, dann, was die Literatur weiß, und zuletzt, was nicht bekannt ist. Am Ende des Absatzes muss die Antwort auf „Warum braucht es diese Studie?“ sichtbar sein. Belegen Sie jede Behauptung mit einer Quelle.
+
+### Ziel und Forschungsfragen
+
+Das übergeordnete Ziel ist ein Satz; Teilziele oder Forschungsfragen zerlegen ihn in prüfbare Teile. Jede Frage muss im Methodenteil einer Datenquelle und einer Analyse entsprechen. Siehe unseren [Leitfaden zu Forschungsfrage und Hypothese](/de/blog/forschungsfrage-und-hypothesen-formulieren).
+
+### Methode
+
+Die Methode im Exposé ist weniger ausführlich als in der Arbeit, muss aber beantworten: Welches Design? Mit wem (Grundgesamtheit, Stichprobe, Stichprobengröße)? Mit welchen Instrumenten? Mit welcher Analyse? Ist ein Ethikvotum nötig? Zum vollständigen Methodenkapitel siehe unseren [Leitfaden zum Methodenteil](/de/blog/methodenteil-schreiben).
+
+### Zeitplan
+
+Zeigen Sie Literatur, Ethikantrag, Datenerhebung, Analyse, Schreiben und Überarbeitung monatsweise. Die Kommission prüft, ob der Zeitplan realistisch ist; planen Sie Puffer für Ethikvotum und Datenerhebung ein.
+
+## Umfang und Format
+
+Umfang und Vorlage unterscheiden sich je nach Hochschule: Manche verlangen ein kurzes Formular, andere einen ausführlichen Text. Richten Sie sich nach den Vorgaben Ihres Instituts. Wenn Sie die Formatregeln der Arbeit (Schrift, Ränder, Zitierstil) von Anfang an anwenden, lässt sich das Exposé später leichter zur Einleitung ausbauen.
+
+## Vorbereitung auf die Präsentation
+
+Möglicherweise müssen Sie das Exposé kurz präsentieren. Folgen Sie dieser Reihenfolge: Problem, Ziel und Fragen, Methode, erwarteter Beitrag, Zeitplan. Am häufigsten wird nach der Machbarkeit der Methode und ihrer Passung zu den Fragen gefragt. Notieren Sie mögliche Fragen und bereiten Sie Antworten vor:
+
+- Warum diese Stichprobe, und wie erhalten Sie Zugang zu den Daten?
+- Ist das Instrument valide und reliabel?
+- Worin unterscheiden Sie sich von ähnlichen Studien?
+- Wie ist das Ethikverfahren im Zeitplan berücksichtigt?
+
+## Nach der Annahme des Exposés
+
+Das angenommene Exposé ist der erste Entwurf Ihrer Einleitung und Ihres Methodenkapitels. Arbeiten Sie die geforderten Änderungen sofort ein; bei größeren Methodenänderungen folgen Sie gemeinsam mit Ihrer Betreuung dem Verfahren Ihrer Hochschule. Für den Rest der Arbeit helfen unser [Leitfaden zum Schreiben der Abschlussarbeit](/de/blog/abschlussarbeit-schreiben-anleitung) und unser [Leitfaden zum Zeitplan](/de/blog/wie-lange-dauert-eine-abschlussarbeit).
+
 ## Exposés mit Academiana
 
 Wählen Sie in Academiana die Art „Forschungsexposé“, stehen Abschnitte zu Problemstellung, Zielen, Forschungsfragen, Literatur, Methode, Zeitplan und Risiken bereit. Der Assistent zeigt Zweck und Schreibregeln jedes Abschnitts; die „Konsistenzprüfung“ prüft den Zusammenhang von Zielen, Fragen und Methode, und für Ihren Ethikantrag können Sie Entwurfsdokumente erstellen.`,
@@ -97,6 +133,45 @@ Für eine gerichtete Hypothese brauchen Sie eine starke Begründung aus der Lite
 - Jede Hypothese sollte genau einen Zusammenhang oder Unterschied prüfen.
 - Nummerieren Sie sie (H1, H2, H3 …) und behandeln Sie sie im Ergebnisteil in derselben Reihenfolge.
 - Geben Sie im Methodenteil an, mit welcher Analyse jede Hypothese geprüft wird.
+
+
+## Von schwach zu stark: Beispiele für Forschungsfragen
+
+| Schwache Frage | Problem | Starke Frage |
+| --- | --- | --- |
+| Beeinflussen soziale Medien Studierende? | Zu breit, Variablen unklar | Sagt problematische Nutzung sozialer Medien akademisches Aufschieben bei Bachelorstudierenden vorher? |
+| Mögen Lehrkräfte Technik? | Nicht messbar | Unterscheidet sich die Technologieakzeptanz von Lehrkräften der Sekundarstufe nach Berufserfahrung? |
+| Ist Fernunterricht gut? | Enthält ein Werturteil | Wie deuten Bachelorstudierende ihre Erfahrungen mit Fernunterricht? |
+
+Die ersten beiden starken Fragen sind quantitativ, die letzte qualitativ. Qualitative Fragen beginnen meist mit „wie“ oder „was“ und suchen die Bedeutung einer Erfahrung; quantitative Fragen prüfen Zusammenhänge oder Unterschiede zwischen Variablen.
+
+## Fragen und Analysen zuordnen
+
+Jede Forschungsfrage sollte einer Analyse entsprechen. Gelingt die Zuordnung nicht, ist die Frage zu breit oder die Methode unpassend:
+
+| Fragetyp | Beispiel | Mögliche Analyse |
+| --- | --- | --- |
+| Beschreibung | Wie stark ist das Aufschieben der Studierenden? | Deskriptive Statistik |
+| Zusammenhang | Hängt Social-Media-Nutzung mit Aufschieben zusammen? | Korrelation |
+| Unterschied (zwei Gruppen) | Unterscheidet sich Aufschieben nach Geschlecht? | t-Test für unabhängige Stichproben |
+| Unterschied (drei oder mehr Gruppen) | Unterscheidet sich Aufschieben nach Studienjahr? | Einfaktorielle ANOVA |
+| Vorhersage | Sagt Social-Media-Nutzung Aufschieben vorher? | Regression |
+
+Wie diese Analysen durchgeführt und berichtet werden, zeigen unsere Leitfäden zum [t-Test](/de/blog/t-test-durchfuehren-und-interpretieren), zur [einfaktoriellen ANOVA](/de/blog/einfaktorielle-anova-durchfuehren-und-berichten) und zur [Regression](/de/blog/regressionsanalyse-nach-apa-7-berichten) mit Rechenbeispielen.
+
+## Null- und Alternativhypothese
+
+Statistische Tests prüfen die **Nullhypothese** (H0): „Es gibt keinen Unterschied zwischen den Gruppen“ oder „keinen Zusammenhang zwischen den Variablen“. Die **Alternativhypothese** (H1) ist Ihre Erwartung. In Abschlussarbeiten werden meist Alternativhypothesen formuliert, und im Ergebnisteil wird angegeben, ob sie gestützt wurden. Schreiben Sie „die Hypothese wurde gestützt“ statt „bewiesen“; eine einzelne Studie beweist keine Hypothese endgültig.
+
+## Wann keine Hypothese?
+
+- **In qualitativen Studien** werden Forschungsfragen statt Hypothesen verwendet.
+- **In explorativen quantitativen Studien** kann eine Forschungsfrage besser sein, wenn die Literatur keine Richtung nahelegt.
+- **Beschreibende Fragen** („Wie hoch ist …?“) brauchen keine Hypothese.
+
+## Wie viele Fragen?
+
+Für eine Masterarbeit genügen meist eine Hauptfrage und einige Teilfragen. Zu viele Fragen zersplittern Ergebnisse und Diskussion; denken Sie daran, dass jede Frage gründlich diskutiert werden muss.
 
 ## Fragen und Hypothesen mit Academiana
 
@@ -161,6 +236,36 @@ Bei qualitativen Arbeiten beschreiben Sie Kodierung, Themenbildung und Maßnahme
 - Analysen nicht den Forschungsfragen zuordnen
 - Ergebnisse bereits im Methodenteil berichten
 
+
+## Unterschiede im Methodenteil quantitativer und qualitativer Arbeiten
+
+| Abschnitt | Quantitative Studie | Qualitative Studie |
+| --- | --- | --- |
+| Design | Befragung, korrelativ, experimentell, quasi-experimentell | Phänomenologie, Fallstudie, Grounded Theory, Ethnografie |
+| Teilnehmende | Grundgesamtheit und Stichprobe, Berechnung der Stichprobengröße | Untersuchungsgruppe, gezielte Auswahl, Merkmale der Teilnehmenden |
+| Datenerhebung | Skalen, Fragebögen, Tests; Validität und Reliabilität | Interviews, Beobachtung, Dokumente; Entwicklung des Leitfadens |
+| Analyse | Statistische Tests und Prüfung der Voraussetzungen | Kodieren, Themenbildung, deskriptive oder Inhaltsanalyse |
+| Güte | Validität, Reliabilität | Glaubwürdigkeit, Übertragbarkeit, Zuverlässigkeit, Bestätigbarkeit |
+| Rolle der Forschenden | Meist kein eigener Abschnitt | Position und möglicher Einfluss werden erläutert |
+
+Für den Methodenteil einer qualitativen Arbeit siehe unseren [Leitfaden zur qualitativen Forschung](/de/blog/qualitative-interviews-thematische-analyse).
+
+## Die Stichprobengröße begründen
+
+„Die Stichprobe umfasst 300 Personen“ reicht nicht; zeigen Sie, warum diese Zahl genügt. Quantitative Studien nutzen eine Poweranalyse oder eine Berechnung nach Größe der Grundgesamtheit. Siehe unseren [Leitfaden zur Stichprobengröße](/de/blog/stichprobengroesse-berechnen) und für eine schnelle Berechnung unseren kostenlosen [Stichprobenrechner](/de/araclar/orneklem-hesaplayici).
+
+## Messinstrumente beschreiben
+
+Geben Sie für jede Skala an: ursprüngliche Entwicklerinnen und Entwickler, wer sie für Ihre Sprache adaptiert hat, Itemzahl, Dimensionen, Antwortformat, Deutung der Werte und die Validitäts- und Reliabilitätswerte der Adaptionsstudie. Berichten Sie dann die Reliabilität **in Ihrer eigenen Stichprobe**. Siehe unseren [Leitfaden zu Cronbachs Alpha](/de/blog/cronbachs-alpha-erklaert) und den kostenlosen [Cronbachs-Alpha-Rechner](/de/araclar/cronbach-alfa). Entwickeln oder adaptieren Sie eine Skala, führt unser [Leitfaden zu Validität und Reliabilität von Skalen](/de/blog/skalenadaptation-validitaet-reliabilitaet) durch die Schritte.
+
+## Die Analyse Frage für Frage beschreiben
+
+Behandeln Sie im Analyseteil jede Forschungsfrage oder Hypothese der Reihe nach und nennen Sie den verwendeten Test. Geben Sie die Prüfung der Voraussetzungen (Normalverteilung, Varianzhomogenität) und das Signifikanzniveau an. Wie man die Normalverteilungsprüfung berichtet, zeigt unser [Leitfaden zur Normalverteilung](/de/blog/normalverteilung-pruefen-schiefe-kurtosis). Welcher Test zu welcher Frage passt, erklärt unser Leitfaden [welcher statistische Test](/de/blog/welcher-statistische-test).
+
+## Zeitform und Stil
+
+Der Methodenteil beschreibt einen abgeschlossenen Prozess und steht daher meist in der Vergangenheit („Die Daten wurden … erhoben“). Im Exposé steht das Futur; passen Sie die Zeitformen beim Schreiben der Arbeit an. Begründen Sie Ihre Entscheidungen, etwa: „Ein korrelatives Querschnittsdesign wurde gewählt, weil es Zusammenhänge ohne Intervention untersucht.“
+
 ## Der Methodenteil mit Academiana
 
 Wählen Sie in Academiana einen quantitativen, qualitativen oder gemischten Ansatz, passt sich der Fahrplan an – qualitative Studien erhalten statt „Population und Stichprobe“ einen Abschnitt „Teilnehmende“. Der Assistent kann den Abschnitt mit Unterüberschriften schreiben, die Aktion „Methodenvorschläge“ vergleicht Optionen mit Vor- und Nachteilen, und „Ethikunterlagen“ entwirft Antragstext und Einwilligungserklärung.`,
@@ -224,6 +329,46 @@ Wiederholen Sie diesen Zyklus für jeden Hauptbefund.
 - Nicht signifikante Ergebnisse verschweigen
 - Korrelation als Kausalität deuten
 
+
+## Ergebnisse nach Forschungsfragen ordnen
+
+Schreiben Sie den Ergebnisteil in der Reihenfolge Ihrer Forschungsfragen oder Hypothesen. Nennen Sie in jedem Unterabschnitt zuerst die Frage, dann die Analyse, danach die Tabelle und eine kurze Zusammenfassung. Wiederholen Sie nicht jede Zahl der Tabelle im Text; berichten Sie das wichtigste Ergebnis und die Statistik. Zum Format siehe unseren [Leitfaden zu APA-7-Tabellen und -Abbildungen](/de/blog/apa-7-tabellen-und-abbildungen).
+
+Wie statistische Ergebnisse korrekt berichtet werden, zeigen unsere Leitfäden zum [t-Test](/de/blog/t-test-durchfuehren-und-interpretieren), zur [einfaktoriellen ANOVA](/de/blog/einfaktorielle-anova-durchfuehren-und-berichten) und zur [Regression](/de/blog/regressionsanalyse-nach-apa-7-berichten) mit Rechenbeispielen.
+
+## Ergebnis und Interpretation unterscheiden
+
+| Im Ergebnisteil | In der Diskussion |
+| --- | --- |
+| „Der Unterschied zwischen den Gruppen ist signifikant, F(2, 27) = 6.74, p = .004.“ | „Dieser Unterschied stimmt mit Studien überein, nach denen projektbasiertes Lernen die aktive Beteiligung erhöht.“ |
+| Sagt, was das Ergebnis ist | Diskutiert, was es bedeutet und warum es so ausfiel |
+| Keine Literaturbezüge | Vergleich mit der Literatur |
+| Gibt an, ob die Hypothese gestützt wurde | Diskutiert mögliche Gründe für unerwartete Ergebnisse |
+
+## Aufbau eines Diskussionsabsatzes
+
+Bilden Sie für jedes Hauptergebnis einen Diskussionsstrang und folgen Sie dieser Reihenfolge:
+
+1. **Ergebnis kurz nennen:** „Die Studie ergab, dass …“
+2. **Mit der Literatur vergleichen:** Stützende und abweichende Studien gemeinsam nennen.
+3. **Erklären:** Mögliche Gründe auf Grundlage des theoretischen Rahmens diskutieren.
+4. **Eingrenzen:** Angeben, unter welchen Bedingungen die Deutung gilt.
+
+Unerwartete oder hypothesenwidrige Ergebnisse sind der wertvollste Teil der Diskussion; übergehen Sie sie nicht.
+
+## Fazit und Empfehlungen
+
+Das Fazit zählt die Ergebnisse nicht erneut auf, sondern fasst in wenigen Absätzen zusammen, wie die Studie ihr Ziel beantwortet. Empfehlungen gliedern sich in zwei Gruppen:
+
+- **Empfehlungen für die Praxis:** Direkt aus den Ergebnissen abgeleitet, für Praktikerinnen und Praktiker (Lehrkräfte, Leitungen, Kliniker).
+- **Empfehlungen für die Forschung:** Aus den Limitationen abgeleitet, für künftige Studien (andere Stichprobe, Längsschnittdesign, qualitative Vertiefung).
+
+Geben Sie keine Empfehlungen, die Ihre Ergebnisse nicht stützen; jede sollte auf einem Ergebnis oder einer Limitation beruhen.
+
+## Vorsicht mit kausaler Sprache
+
+Vermeiden Sie in korrelativen und Querschnittsstudien kausale Wörter wie „beeinflusst“, „verursacht“ oder „erhöht“; schreiben Sie „hängt zusammen mit“ oder „sagt vorher“. Kausale Schlüsse erfordern ein experimentelles Design. Diese Unterscheidung wird in Prüfungen häufig erfragt.
+
 ## Ergebnisse und Diskussion mit Academiana
 
 Das Statistikwerkzeug von Academiana rechnet t-Tests, ANOVA, Korrelation, Regression, Chi-Quadrat, Cronbachs Alpha und mehr mit echten Berechnungen auf Ihrer CSV- oder Excel-Datei und liefert Tabellen und Sätze im APA-Format. Die KI erzeugt nie Zahlen. Das Diagrammwerkzeug zeichnet Abbildungen im APA-Stil, und die Aktion „Diskussion ausbauen“ vergleicht Ihre Befunde mit den Quellen Ihres Projekts.`,
@@ -278,6 +423,42 @@ Für Methode und Ergebnisse ist die Vergangenheit üblich („wurde durchgeführ
 
 „Ziel dieser Studie war es, den Zusammenhang zwischen … und … zu untersuchen. In einem korrelativen Befragungsdesign wurden Daten von … Teilnehmenden mit … und … erhoben. Die Analysen zeigten, dass …. Diese Befunde deuten darauf hin, dass ….“
 
+
+## Abstract und erweitertes Abstract
+
+Manche Hochschulen verlangen bei Arbeiten in einer anderen Sprache ein englisches **erweitertes Abstract** (extended abstract). Es ist ein eigener Text von einigen Seiten, gegliedert in Einleitung, Methode, Ergebnisse und Diskussion, und kann Zitate enthalten. Anders als ein normales Abstract beschreibt es Hauptergebnisse und Diskussion ausführlicher. Prüfen Sie, ob Ihre Vorgaben eines verlangen.
+
+## Die Wortgrenze einhalten
+
+Abstracts sind meist auf 150–250 Wörter begrenzt; die Grenze hängt von Hochschule und Zeitschrift ab. So passen Sie hinein:
+
+- Reduzieren Sie das Problem auf einen Satz; Literaturdetails gehören nicht ins Abstract.
+- Nennen Sie die Methode in ein bis zwei Sätzen in der Reihenfolge Design, Stichprobe, Instrument, Analyse.
+- Berichten Sie die zwei oder drei wichtigsten Ergebnisse mit Zahlen; zählen Sie nicht alles auf.
+- Nutzen Sie den letzten Satz für die Bedeutung des Ergebnisses und die wichtigste Empfehlung.
+
+## Ein Abstract Satz für Satz
+
+Das fiktive Abstract zeigt die Aufgabe jedes Satzes:
+
+1. **Ziel:** „Diese Studie untersuchte den Zusammenhang zwischen problematischer Social-Media-Nutzung und akademischem Aufschieben bei Bachelorstudierenden.“
+2. **Methode:** „An der korrelativen Befragungsstudie nahmen Bachelorstudierende einer staatlichen Hochschule teil; die Daten wurden mit zwei Skalen erhoben und mit Korrelation und Regression ausgewertet.“
+3. **Ergebnisse:** „Problematische Social-Media-Nutzung hing positiv und signifikant mit akademischem Aufschieben zusammen.“
+4. **Fazit:** „Die Ergebnisse legen nahe, dass Beratungsangebote der Hochschulen digitale Gewohnheiten aufgreifen sollten.“
+
+In einem echten Abstract enthält der Ergebnissatz auch statistische Werte (z. B. Korrelationskoeffizient und erklärte Varianz).
+
+## Schlagwörter wählen
+
+Schlagwörter helfen Datenbanken, Ihre Studie zu finden. Ergänzen Sie statt Wörtern aus dem Titel Synonyme und übergeordnete Begriffe. Wählen Sie im Fach etablierte und international gebräuchliche Begriffe.
+
+## Typische Übersetzungsfehler im englischen Abstract
+
+- Nicht Wort für Wort übersetzen; übliche englische Wissenschaftsformulierungen verwenden.
+- Auf Zeitformen achten: Methode und Ergebnisse meist in der Vergangenheit, Schlussfolgerungen im Präsens.
+- „Significant“ nur für statistische Signifikanz verwenden.
+- Abkürzungen beim ersten Gebrauch ausschreiben.
+
 ## Abstracts mit Academiana
 
 In Academiana steht das Abstract im Fahrplan an letzter Stelle. Sind die übrigen Kapitel fertig, entwirft die Aktion „Abstract“ aus Ihrem Text ein türkisches und ein englisches Abstract in der Reihenfolge Ziel – Methode – Ergebnisse – Fazit. Sie fügt nie Befunde hinzu, die nicht in Ihrem Text stehen; sind die Ergebnisse noch nicht geschrieben, setzt sie „[DATEN EINZUTRAGEN]“ (Daten einzutragen).`,
@@ -329,6 +510,36 @@ Testen Sie den Fragebogen vor der Hauptstudie mit einer kleinen Gruppe, um unkla
 ## Reliabilität: Cronbachs Alpha
 
 Alpha zeigt, ob die Items einer Skala dasselbe Konstrukt konsistent messen. Werte ab .70 gelten weithin als akzeptabel, wobei die Bewertung von Zweck und Itemanzahl abhängt. Berechnen und berichten Sie die Reliabilität auch für Ihre eigene Stichprobe.
+
+
+## Wie viele Stufen sollte eine Likert-Skala haben?
+
+Fünf- und siebenstufige Likert-Skalen sind am verbreitetsten. Fünf Stufen sind für Teilnehmende einfacher; sieben Stufen erlauben feinere Unterscheidungen. Gerade Stufenzahlen (vier oder sechs) entfernen die Mitte und lenken zu einer Seite; sie eignen sich, wenn eine neutrale Option keinen Sinn ergibt. Verwenden Sie eine bestehende Skala, ändern Sie das Antwortformat nicht; Validität und Reliabilität wurden in diesem Format geprüft.
+
+## Wie werden Likert-Daten ausgewertet?
+
+Ein einzelnes Likert-Item ist ordinal. **Skalenwerte** aus Summe oder Mittelwert mehrerer Items werden in den Sozialwissenschaften jedoch meist als metrisch behandelt und mit parametrischen Tests ausgewertet. Bei Auswertungen einzelner Items sind Häufigkeiten, Prozente und nichtparametrische Tests angemessener. Zur Testwahl siehe unseren Leitfaden [welcher statistische Test](/de/blog/welcher-statistische-test).
+
+## Online-Befragungen durchführen
+
+- **Pflichtfragen:** Alle Items verpflichtend zu machen verhindert fehlende Werte, kann aber ermüden; außer bei Einwilligung und Demografie sparsam einsetzen.
+- **Aufmerksamkeitsitem:** Ein Item wie „Bitte wählen Sie hier ‚stimme zu‘“ hilft, zufällig Antwortende zu erkennen.
+- **Dauer:** Messen Sie im Pretest die Bearbeitungszeit und nennen Sie sie in der Einwilligung.
+- **Eine Antwort pro Person:** Nutzen Sie Einstellungen, die Mehrfachteilnahme verhindern.
+
+## Datenbereinigung
+
+Prüfen Sie den Datensatz vor der Analyse:
+
+1. Fehlende Werte erkennen und den Umgang festlegen.
+2. Invertierte Items vor der Bildung der Skalenwerte umpolen.
+3. Teilnehmende prüfen, die das Aufmerksamkeitsitem verfehlten oder durchgehend dieselbe Option wählten.
+4. Ausreißer prüfen.
+5. Diese Schritte und die Zahl ausgeschlossener Personen im Methodenteil berichten.
+
+## Stichprobengröße
+
+Berechnen Sie vor der Erhebung, wie viele Personen teilnehmen müssen. Zur Berechnung nach Größe der Grundgesamtheit und zur Poweranalyse siehe unseren [Leitfaden zur Stichprobengröße](/de/blog/stichprobengroesse-berechnen) und den kostenlosen [Stichprobenrechner](/de/araclar/orneklem-hesaplayici). Die Reliabilität Ihrer Skala in dieser Stichprobe berechnen Sie mit unserem kostenlosen [Cronbachs-Alpha-Rechner](/de/araclar/cronbach-alfa).
 
 ## Umfragen mit Academiana
 
@@ -391,6 +602,39 @@ Ein p-Wert allein genügt nicht. Berichten Sie Teststatistik, Freiheitsgrade, p-
 - Skalenwerte bilden, ohne Items umzukodieren
 - Die Normalverteilung nie prüfen
 
+
+## Entscheidungstabelle
+
+| Ziel | Abhängige Variable | Gruppen / Variablen | Parametrischer Test | Nichtparametrische Alternative |
+| --- | --- | --- | --- | --- |
+| Zwei unabhängige Gruppen vergleichen | Metrisch | 2 Gruppen | t-Test für unabhängige Stichproben | Mann-Whitney-U |
+| Zwei Messungen derselben Personen | Metrisch | 2 Messungen | t-Test für abhängige Stichproben | Wilcoxon-Vorzeichen-Rang-Test |
+| Drei oder mehr unabhängige Gruppen | Metrisch | 3+ Gruppen | Einfaktorielle ANOVA | Kruskal-Wallis-H |
+| Zusammenhang zweier metrischer Variablen | Metrisch | 2 Variablen | Pearson-Korrelation | Spearman-Rangkorrelation |
+| Zusammenhang zweier kategorialer Variablen | Kategorial | 2 Variablen | — | Chi-Quadrat-Unabhängigkeitstest |
+| Ein Ergebnis vorhersagen | Metrisch | 1+ Prädiktoren | Lineare Regression | — |
+| Reliabilität einer Skala | Itemwerte | Skalenitems | Cronbachs Alpha | — |
+
+## Beispielszenarien
+
+- **„Unterscheiden sich Experimental- und Kontrollgruppe im Nachtest?“** Zwei unabhängige Gruppen, metrischer Wert: t-Test für unabhängige Stichproben. Siehe [Leitfaden zum t-Test](/de/blog/t-test-durchfuehren-und-interpretieren).
+- **„Haben sich die Angstwerte vor und nach dem Programm verändert?“** Dieselben Personen, zwei Messungen: t-Test für abhängige Stichproben.
+- **„Führen drei Lehrmethoden zu unterschiedlichen Leistungen?“** Drei unabhängige Gruppen: einfaktorielle ANOVA. Siehe [ANOVA-Leitfaden](/de/blog/einfaktorielle-anova-durchfuehren-und-berichten).
+- **„Sagen Lernzeit und Schlaf gemeinsam die Prüfungsleistung vorher?“** Mehrere Prädiktoren: multiple Regression. Siehe [Regressionsleitfaden](/de/blog/regressionsanalyse-nach-apa-7-berichten).
+- **„Hängt das Geschlecht mit der bevorzugten Lernform zusammen?“** Zwei kategoriale Variablen: Chi-Quadrat. Siehe [Chi-Quadrat-Leitfaden](/de/blog/chi-quadrat-unabhaengigkeitstest).
+
+## Parametrisch oder nichtparametrisch?
+
+Parametrische Tests (t-Test, ANOVA, Pearson) setzen eine annähernd normalverteilte abhängige Variable und ähnliche Gruppenvarianzen voraus. Sind die Voraussetzungen deutlich verletzt, besonders bei kleinen Stichproben, werden nichtparametrische Alternativen bevorzugt. Wie man die Normalverteilung mit Schiefe und Kurtosis prüft, zeigt unser [Leitfaden zur Normalverteilung](/de/blog/normalverteilung-pruefen-schiefe-kurtosis). Bei großen, ausgewogenen Stichproben sind parametrische Tests gegenüber kleinen Abweichungen recht robust.
+
+## Die Effektstärke nicht vergessen
+
+Der p-Wert zeigt, ob ein Unterschied oder Zusammenhang durch Zufall erklärbar ist, nicht wie groß er ist. APA 7 verlangt zu jedem Test eine Effektstärke (Cohens d, η², r, R²) und möglichst ein Konfidenzintervall. In großen Stichproben werden auch winzige Unterschiede signifikant; deuten Sie anhand der Effektstärke. Siehe unseren [Leitfaden zur Effektstärke](/de/blog/effektstaerke-cohens-d-eta-quadrat).
+
+## Die Analyse vorab planen
+
+Legen Sie vor der Datenerhebung fest, welche Analyse Sie durchführen, und schreiben Sie es in den Methodenteil. Die Analyse erst nach Blick auf die Daten danach zu wählen, was „signifikant wurde“, untergräbt die Glaubwürdigkeit. Berechnen Sie die Stichprobengröße für die geplante Analyse: siehe [Leitfaden zur Stichprobengröße](/de/blog/stichprobengroesse-berechnen).
+
 ## Statistik mit Academiana
 
 Im Statistikwerkzeug von Academiana laden Sie Ihre Daten hoch und wählen eine Analyse: Deskriptivstatistik und Normalverteilung, t-Tests, ANOVA, Mann-Whitney, Kruskal-Wallis, Korrelation, Regression, Chi-Quadrat und Cronbachs Alpha. Die Berechnungen laufen auf dem Server mit etablierten Formeln, und die Ergebnisse kommen als APA-7-Tabellen mit Interpretationssatz zurück.`,
@@ -443,6 +687,38 @@ Ein kurzes Schreiben an die Herausgeberschaft: Titel, kurzes Ziel und Beitrag, P
 ## Nach der Einreichung
 
 Die Begutachtung kann Wochen oder Monate dauern. Übliche Entscheidungen sind Annahme, kleine Überarbeitung, große Überarbeitung oder Ablehnung. Eine Überarbeitungsentscheidung ist ein gutes Zeichen; antworten Sie den Gutachtenden sorgfältig und Punkt für Punkt.
+
+
+## Titel und Abstract: die meistgelesenen Teile
+
+Die meisten Leserinnen und Leser lesen nur Titel und Abstract. Der Titel sollte Variablen, Stichprobe und gegebenenfalls das Design nennen, ohne Füllwörter („Eine Studie über …“, „Eine Untersuchung zu …“). Schreiben Sie das Abstract in der von der Zeitschrift verlangten Form (strukturiert oder ein Absatz) und innerhalb der Wortgrenze. Siehe unseren [Leitfaden zum Abstract](/de/blog/abstract-schreiben).
+
+## Die Einleitung wie einen Trichter aufbauen
+
+Die Einleitung wird vom Allgemeinen zum Besonderen enger:
+
+1. Bedeutung und allgemeiner Kontext des Themas
+2. Stand der Forschung (thematisch, knapp)
+3. Die Lücke: was nicht bekannt ist
+4. Ziel der Studie und Forschungsfragen oder Hypothesen
+
+Anders als in einer Abschlussarbeit gibt es im Artikel kein eigenes Literaturkapitel; die Literatur steht knapp in der Einleitung. Übernehmen Sie nicht das lange Literaturkapitel Ihrer Arbeit; nutzen Sie nur Studien, die die Forschungsfrage begründen.
+
+## Aufbau der Diskussion
+
+Die Diskussion beginnt mit dem Hauptergebnis in einem Satz, vergleicht die Ergebnisse mit der Literatur, bietet Erklärungen an, nennt ehrlich die Limitationen und endet mit Empfehlungen für Praxis und Forschung. Wiederholen Sie keine Zahlen aus dem Ergebnisteil. Den ausführlichen Aufbau zeigt unser [Leitfaden zu Ergebnissen und Diskussion](/de/blog/ergebnisse-und-diskussion-schreiben).
+
+## Seriosität einer Zeitschrift prüfen
+
+Vorsicht bei Zeitschriften, die schnelle Veröffentlichung gegen hohe Gebühren versprechen und ein unklares Begutachtungsverfahren haben. Prüfen Sie auf der Website des jeweiligen Index, ob die Zeitschrift dort gelistet ist, und sehen Sie sich Herausgebergremium, Begutachtung und Gebühren an. Wie man Raubverlage erkennt, zeigt [dieser Leitfaden](/de/blog/raeuberische-zeitschriften-erkennen).
+
+## Begutachtung und Überarbeitung
+
+Zeitschriften antworten meist mit Desk Reject (außerhalb des Profils), größerer Überarbeitung, kleinerer Überarbeitung oder Annahme. Bei einer Überarbeitung schreiben Sie einen Brief, der jeden Gutachterkommentar Punkt für Punkt beantwortet; siehe unseren [Leitfaden zur Antwort auf Gutachten](/de/blog/auf-gutachten-antworten). Eine Ablehnung ist kein Ende; Sie können den Artikel anhand der Gutachten verbessern und bei einer anderen Zeitschrift einreichen.
+
+## Autorschaft und Beitragserklärung
+
+Reihenfolge und Kriterien der Autorschaft sollten früh vereinbart werden. Viele Zeitschriften verlangen eine Erklärung zum Beitrag jeder Person (z. B. nach der CRediT-Taxonomie). Personen ohne wesentlichen Beitrag aufzunehmen oder jemanden mit Beitrag wegzulassen, verletzt die Publikationsethik. KI-Werkzeuge können keine Autoren sein; ihre Nutzung wird nach der Richtlinie der Zeitschrift offengelegt, siehe unseren Leitfaden [KI-Nutzungserklärung schreiben](/de/blog/ki-nutzungserklaerung-schreiben).
 
 ## Artikel schreiben mit Academiana
 

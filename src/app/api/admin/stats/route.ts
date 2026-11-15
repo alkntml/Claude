@@ -4,8 +4,7 @@ import { integrationStatus } from "@/lib/env";
 import { availableProviders } from "@/lib/payments";
 import { adminClient } from "@/lib/supabase/admin";
 import { getSetting } from "@/lib/settings";
-import { monthStart } from "@/lib/usage";
-import { costHealth, lastDays, monthProjection, type CostEvent } from "@/lib/insights";
+import { costByPeriod, costHealth, costPeriodStarts, lastDays, monthProjection, type CostEvent } from "@/lib/insights";
 
 /** API satır sınırına (1000) takılmadan tüm satırları sayfalı okur */
 async function allRows<T>(fetchPage: (from: number, to: number) => PromiseLike<{ data: T[] | null }>, max = 200000): Promise<T[]> {
@@ -25,11 +24,11 @@ export const GET = route("admin.stats", async (req) => {
   const since = new Date(Date.now() - days * 86400_000).toISOString();
   const now = new Date().toISOString();
   const week = new Date(Date.now() + 7 * 86400_000).toISOString();
-  const [users, newUsers, projects, events, errors, openFeedback, plans, paid, priceRows, margin, monthCost, expiring, lockedCount] = await Promise.all([
+  const [users, newUsers, projects, events, errors, openFeedback, plans, paid, priceRows, margin, yearCost, expiring, lockedCount] = await Promise.all([
     db.from("profiles").select("id", { count: "exact", head: true }),
     db.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", since),
     db.from("projects").select("id", { count: "exact", head: true }),
-    allRows((a, b) => db.from("usage_events").select("kind, quantity, tokens_in, tokens_out, cost_usd, model, created_at, meta").gte("created_at", since).order("id").range(a, b)),
+    allRows((a, b) => db.from("usage_events").select("user_id, kind, quantity, tokens_in, tokens_out, cost_usd, model, created_at, meta").gte("created_at", since).order("id").range(a, b)),
     db.from("error_logs").select("id", { count: "exact", head: true }).gte("created_at", since),
     db.from("feedback").select("id", { count: "exact", head: true }).eq("status", "open"),
     allRows<{ plan_id: string }>((a, b) => db.from("profiles").select("plan_id").order("id").range(a, b)),
@@ -37,32 +36,39 @@ export const GET = route("admin.stats", async (req) => {
     allRows<{ plan_id: string; plan_expires_at: string | null }>((a, b) => db.from("profiles").select("plan_id, plan_expires_at").neq("plan_id", "free").neq("role", "admin").order("id").range(a, b)),
     db.from("plans").select("id, price_monthly"),
     getSetting("billing.margin"),
-    allRows<{ cost_usd: number; user_id: string }>((a, b) => db.from("usage_events").select("cost_usd, user_id").gte("created_at", monthStart()).gt("cost_usd", 0).order("id").range(a, b)),
+    // D203: yıl başından beri maliyet (bugün / hafta / ay / yıl dönemleri buradan hesaplanır)
+    allRows<{ cost_usd: number; user_id: string; created_at: string }>((a, b) => db.from("usage_events").select("cost_usd, user_id, created_at").gte("created_at", costPeriodStarts().year).gt("cost_usd", 0).order("id").range(a, b)),
     db.from("profiles").select("id, email, full_name, plan_id, plan_expires_at").neq("plan_id", "free").gte("plan_expires_at", now).lte("plan_expires_at", week).order("plan_expires_at").limit(20),
     db.from("profiles").select("id", { count: "exact", head: true }).eq("work_locked", true),
   ]);
   // Ücretsiz araçların yapay zekâ maliyeti (D90) de gerçek harcamadır: toplamlara ve kâr hesabına katılır (D94).
   // Tablo henüz kurulmadıysa (migration 21) boş kabul edilir.
-  const [toolRows, toolMonth, models, fxRow] = await Promise.all([
-    allRows<{ cost_usd: number; tokens_in: number; tokens_out: number; model: string | null; created_at: string }>((a, b) => db.from("tool_usage").select("cost_usd, tokens_in, tokens_out, model, created_at").gte("created_at", since).gt("cost_usd", 0).order("id").range(a, b)),
-    allRows<{ cost_usd: number }>((a, b) => db.from("tool_usage").select("cost_usd").gte("created_at", monthStart()).gt("cost_usd", 0).order("id").range(a, b)),
+  const [toolRows, toolYear, models, fxRow, adminRows] = await Promise.all([
+    allRows<{ cost_usd: number; tokens_in: number; tokens_out: number; model: string | null; created_at: string; user_id: string | null }>((a, b) => db.from("tool_usage").select("cost_usd, tokens_in, tokens_out, model, created_at, user_id").gte("created_at", since).gt("cost_usd", 0).order("id").range(a, b)),
+    allRows<{ cost_usd: number; created_at: string; user_id: string | null }>((a, b) => db.from("tool_usage").select("cost_usd, created_at, user_id").gte("created_at", costPeriodStarts().year).gt("cost_usd", 0).order("id").range(a, b)),
     getSetting("ai.models"),
     // Kur hatırlatıcısı (D96): bütçe ve sayfa vaadi kura bağlı; ayar 30 günden eskiyse uyarı
     db.from("app_settings").select("updated_at").eq("key", "billing.margin").maybeSingle(),
+    // D203: yöneticilerin kendi kullanımı toplam maliyete katılmaz, çizelgede ayrı gösterilir
+    db.from("profiles").select("id").eq("role", "admin"),
   ]);
+  const adminIds = new Set((adminRows.data ?? []).map((r: { id: string }) => r.id));
+  const isAdminRow = (uid: string | null | undefined) => !!uid && adminIds.has(uid);
   const fxUpdatedAt = (fxRow.data?.updated_at as string | undefined) ?? null;
   const fxAgeDays = fxUpdatedAt ? Math.floor((Date.now() - new Date(fxUpdatedAt).getTime()) / 86400_000) : null;
 
-  const byDay: Record<string, { ai: number; search: number; cost: number; tokens: number }> = {};
+  const byDay: Record<string, { ai: number; search: number; cost: number; tokens: number; adminCost: number }> = {};
   const byModel: Record<string, { requests: number; tokens: number; cost: number }> = {};
   const providerHealth: Record<string, { ok: number; fail: number; lastError?: string }> = {};
   const totals = { ai: 0, search: 0, exports: 0, uploads: 0, tokens: 0, cost: 0 };
   for (const e of events) {
     const day = e.created_at.slice(0, 10);
-    byDay[day] ??= { ai: 0, search: 0, cost: 0, tokens: 0 };
+    byDay[day] ??= { ai: 0, search: 0, cost: 0, tokens: 0, adminCost: 0 };
     if (e.kind === "ai_request") { totals.ai += e.quantity; byDay[day].ai += e.quantity; }
     // Model maliyeti: kullanıcı hakkından düşmeyen yapay zekâ işlemleri (ör. bölüm kontrolü) dahil
-    if (e.kind === "ai_request" || (e.model && (Number(e.cost_usd) > 0 || e.tokens_in + e.tokens_out > 0))) {
+    // D203: yöneticinin kendi maliyeti toplama girmez; çizelgede ayrı seri
+    if (isAdminRow(e.user_id)) byDay[day].adminCost += Number(e.cost_usd) || 0;
+    else if (e.kind === "ai_request" || (e.model && (Number(e.cost_usd) > 0 || e.tokens_in + e.tokens_out > 0))) {
       totals.tokens += e.tokens_in + e.tokens_out; totals.cost += Number(e.cost_usd);
       byDay[day].tokens += e.tokens_in + e.tokens_out; byDay[day].cost += Number(e.cost_usd);
       const m = e.model ?? "?";
@@ -81,18 +87,20 @@ export const GET = route("admin.stats", async (req) => {
   }
   for (const t of toolRows) {
     const day = t.created_at.slice(0, 10);
-    byDay[day] ??= { ai: 0, search: 0, cost: 0, tokens: 0 };
+    byDay[day] ??= { ai: 0, search: 0, cost: 0, tokens: 0, adminCost: 0 };
+    if (isAdminRow(t.user_id)) { byDay[day].adminCost += Number(t.cost_usd) || 0; continue; }
     const c = Number(t.cost_usd) || 0, tk = (t.tokens_in ?? 0) + (t.tokens_out ?? 0);
     totals.cost += c; totals.tokens += tk; byDay[day].cost += c; byDay[day].tokens += tk;
     const m = t.model ?? "?";
     byModel[m] ??= { requests: 0, tokens: 0, cost: 0 };
     byModel[m].requests++; byModel[m].tokens += tk; byModel[m].cost += c;
   }
-  const health = costHealth(events as unknown as CostEvent[], models.pricing_per_mtok ?? {});
+  const health = costHealth(events.filter((e) => !isAdminRow(e.user_id)) as unknown as CostEvent[], models.pricing_per_mtok ?? {});
   // Bu ay: toplam, ay sonu tahmini, en çok maliyet oluşturan kullanıcılar
-  const monthUsd = monthCost.reduce((a, r) => a + Number(r.cost_usd), 0) + toolMonth.reduce((a, r) => a + Number(r.cost_usd), 0);
+  const periods = costByPeriod([...yearCost, ...toolYear], adminIds);
+  const monthUsd = periods.users.month;
   const perUser = new Map<string, number>();
-  for (const r of monthCost) perUser.set(r.user_id, (perUser.get(r.user_id) ?? 0) + Number(r.cost_usd));
+  for (const r of yearCost) if (r.created_at >= periods.starts.month && !adminIds.has(r.user_id)) perUser.set(r.user_id, (perUser.get(r.user_id) ?? 0) + Number(r.cost_usd));
   const top = [...perUser.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
   const { data: topProfiles } = top.length ? await db.from("profiles").select("id, email, full_name, plan_id").in("id", top.map(([id]) => id)) : { data: [] as { id: string; email: string; full_name: string | null; plan_id: string }[] };
   const prof = new Map((topProfiles ?? []).map((p) => [p.id, p]));
@@ -114,7 +122,9 @@ export const GET = route("admin.stats", async (req) => {
     openFeedback: openFeedback.count ?? 0,
     totals: { ...totals, cost: Math.round(totals.cost * 100) / 100 },
     // Boş günler de sıfırla gösterilir (grafikte boşluk sıkışmasın)
-    byDay: lastDays(days).map((day) => { const v = byDay[day] ?? { ai: 0, search: 0, cost: 0, tokens: 0 }; return { day, ...v, cost: Math.round(v.cost * 1000) / 1000 }; }),
+    byDay: lastDays(days).map((day) => { const v = byDay[day] ?? { ai: 0, search: 0, cost: 0, tokens: 0, adminCost: 0 }; return { day, ...v, cost: Math.round(v.cost * 1000) / 1000, adminCost: Math.round(v.adminCost * 1000) / 1000 }; }),
+    // D203: bugün / bu hafta / bu ay / bu yıl (Türkiye saati); users = toplam (yönetici hariç), admin = yöneticinin kendi kullanımı
+    costPeriods: { users: periods.users, admin: periods.admin },
     byModel,
     costHealth: {
       ...health,

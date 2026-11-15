@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**API maliyeti dönemleri (D203, 15 Kasım 2026)**
+- Yönetim → Genel bakış: “Toplam API maliyeti” bugün / bu hafta / bu ay / bu yıl (Türkiye saati, USD + TL). Yöneticinin kendi kullanımı toplamlara, kâr hesabına ve en çok harcayanlara katılmaz; “Günlük API maliyeti” çizelgesinde ayrı çizgi olarak görünür.
+
 **Gün bazlı paket (D202, 15 Kasım 2026)**
 - Yönetim paneli → kullanıcı → “Paket ve süre”: süre türü Aylık (30 gün) / Gün bazlı (1–3650 gün, hızlı 1-2-3-7-15) / Yıllık; Sınırsız Proje de gün bazlı verilebilir. Kısa sürelerde bitiş saatle gösterilir.
 

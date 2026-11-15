@@ -178,3 +178,32 @@ export function aiReliability(rows: { model: string; ms: number; ttft_ms: number
   const total = rows.length, failed = rows.filter((r) => !r.ok && r.error !== "aborted").length;
   return { total, failed, errorRate: total ? Math.round((failed / total) * 1000) / 10 : 0, models, topErrors: [...errs.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([error, count]) => ({ error, count })) };
 }
+
+/** D203: maliyet dönemleri — Türkiye saatiyle bugün, bu hafta (Pazartesi’den), bu ay ve bu yıl başlangıçları (ISO) */
+export type CostPeriod = "day" | "week" | "month" | "year";
+export function costPeriodStarts(now = new Date()): Record<CostPeriod, string> {
+  const TR = 3 * 3600_000;
+  const tr = new Date(now.getTime() + TR);
+  const y = tr.getUTCFullYear(), m = tr.getUTCMonth(), d = tr.getUTCDate();
+  const dow = (tr.getUTCDay() + 6) % 7; // Pazartesi = 0
+  const at = (yy: number, mm: number, dd: number) => new Date(Date.UTC(yy, mm, dd) - TR).toISOString();
+  return { day: at(y, m, d), week: at(y, m, d - dow), month: at(y, m, 1), year: at(y, 0, 1) };
+}
+
+/**
+ * Maliyet satırlarını dönemlere böler; yöneticilerin kullanımı ayrı tutulur ve toplama katılmaz (D203).
+ * user_id’si olmayan satırlar (ör. giriş yapmamış ziyaretçinin ücretsiz araç kullanımı) kullanıcı toplamına girer.
+ */
+export function costByPeriod(rows: { cost_usd: number | string; created_at: string; user_id?: string | null }[], adminIds: Set<string>, now = new Date()) {
+  const starts = costPeriodStarts(now);
+  const zero = (): Record<CostPeriod, number> => ({ day: 0, week: 0, month: 0, year: 0 });
+  const users = zero(), admin = zero();
+  for (const r of rows) {
+    const c = Number(r.cost_usd) || 0;
+    if (!c) continue;
+    const bucket = r.user_id && adminIds.has(r.user_id) ? admin : users;
+    for (const p of ["day", "week", "month", "year"] as CostPeriod[]) if (r.created_at >= starts[p]) bucket[p] += c;
+  }
+  const round = (o: Record<CostPeriod, number>) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, Math.round(v * 10000) / 10000])) as Record<CostPeriod, number>;
+  return { users: round(users), admin: round(admin), starts };
+}

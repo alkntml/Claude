@@ -179,3 +179,4 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-15, D201) 2204-B program türü + rehber; BiGG hazırlık belgesi; haftalık YÖK/1001 kontrolü
 - [ ] (Kullanıcı, Aralık) BiGG uygulayıcı kuruluşlarıyla görüş; `docs/business/BIGG_HAZIRLIK.md` köşeli parantezli bilgileri doldur
 - [x] (2026-11-15, D202) Yönetim panelinde gün bazlı paket atama (ör. 1 günlük Premium)
+- [x] (2026-11-15, D203) Yönetim panelinde API maliyeti günlük/haftalık/aylık/yıllık; yönetici maliyeti çizelgede ayrı, toplamda yok

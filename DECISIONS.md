@@ -1181,3 +1181,8 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Sunucu zaten `set_plan` + `days` (1–3650) destekliyordu; panel arayüzü “Aylık pakette gün sayısı” kutusuyla belirsizdi ve Sınırsız Proje 30 güne sabitti. Panelde süre türü: **Aylık (30 gün) / Gün bazlı / Yıllık**; gün bazlıda gün kutusu, hızlı seçimler ve önizlenen bitiş saati. Gün bazlı atama `plan_period = monthly` ve `plan_expires_at = şimdi + N gün` olarak kaydedilir (veritabanı değişikliği yok).
 - Kullanım hakları: gün bazlı pakette o paketin **aylık** hakları geçerlidir (orantılama yok); süre bitince kullanıcı ücretsiz pakete döner (D53). Gerekirse hak “Ek kullanım hakkı” ile ayrıca ayarlanır.
 - Kalan süre ≤ 48 saatse panelde saatle, hesap sayfasında tarih + saatle gösterilir.
+
+## D203 — API maliyeti dönemleri ve yönetici maliyetinin ayrılması (15 Kasım 2026)
+- **Dönemler:** `lib/insights.ts` → `costPeriodStarts` (Türkiye saati; hafta Pazartesi) ve `costByPeriod`. `/api/admin/stats` yıl başından beri `usage_events` + `tool_usage` maliyetini okur ve `costPeriods { users, admin }` döndürür; “Bu ay” ve kâr hesabı da buradan gelir.
+- **Yönetici maliyeti:** `role = admin` kullanıcıların satırları toplam maliyete, model dağılımına, maliyet sağlığına, en çok harcayanlara ve özellik dökümüne katılmaz. Genel bakışta ayrı satır, “Günlük API maliyeti” çizelgesinde “Yönetici (toplama dahil değil)” çizgisi. Kullanıcı ID’si olmayan ziyaretçi araç kullanımı toplamda kalır.
+- Test: `tests/cost-periods.test.ts`.

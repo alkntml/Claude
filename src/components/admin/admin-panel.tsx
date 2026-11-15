@@ -95,12 +95,13 @@ function Overview() {
         <StatTile label="Kullanıcı" value={fmtN(d.users)} sub={`+${fmtN(d.newUsers)} yeni · ${days} gün`} />
         <StatTile label="Proje" value={fmtN(d.projects)} />
         <StatTile label="Yapay zekâ isteği" value={fmtN(d.totals.ai)} sub={`${(d.totals.tokens / 1000).toFixed(0)}K token`} spark={spark("ai")} />
-        <StatTile label="Tahmini API maliyeti" value={usd(d.totals.cost)} sub={`${days} gün · ücretsiz araçlar dahil`} spark={spark("cost")} />
+        <StatTile label="Tahmini API maliyeti" value={usd(d.totals.cost)} sub={`${days} gün · ücretsiz araçlar dahil · yönetici hariç`} spark={spark("cost")} />
         <StatTile label="Kaynak taraması" value={fmtN(d.totals.search)} spark={spark("search")} />
         <StatTile label="Dışa aktarma" value={fmtN(d.totals.exports)} />
         <StatTile label="Hata" value={fmtN(d.errors)} sub={`${days} gün`} tone={d.errors > 0 ? "bad" : undefined} />
         <StatTile label="Açık geri bildirim" value={fmtN(d.openFeedback)} />
       </div>
+      {d.costPeriods && <CostPeriods p={d.costPeriods} usdTry={d.money?.usdTry} />}
       {d.money && (
         <div className="card p-5">
           <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Bu ay gelir ve kâr</h3><span className="text-xs text-ink-400">Kur: {d.money.usdTry} TL · gelir KDV hariç, süresi geçerli ücretli kullanıcılardan tahmini</span></div>
@@ -148,6 +149,22 @@ function Overview() {
           <div className="mt-5"><Donut title="Paket dağılımı" parts={Object.entries(d.planDist).map(([k, v]) => ({ label: k, value: v as number }))} format={fmtN} centerLabel="kullanıcı" /></div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** D203: toplam API maliyeti bugün / bu hafta / bu ay / bu yıl (Türkiye saati). Yöneticinin kendi kullanımı toplama katılmaz, ayrıca gösterilir. */
+function CostPeriods({ p, usdTry }: { p: { users: Record<string, number>; admin: Record<string, number> }; usdTry?: number }) {
+  const usd = (v: number) => (v < 0.1 ? `$${v.toFixed(4)}` : v < 100 ? `$${v.toFixed(2)}` : `$${Math.round(v).toLocaleString("tr-TR")}`);
+  const tl = (v: number) => (usdTry ? `≈ ${Math.round(v * usdTry).toLocaleString("tr-TR")} TL` : "");
+  const P: [string, string][] = [["day", "Bugün"], ["week", "Bu hafta"], ["month", "Bu ay"], ["year", "Bu yıl"]];
+  return (
+    <div className="card p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Toplam API maliyeti</h3><span className="text-xs text-ink-400">Türkiye saatiyle · hafta Pazartesi başlar · ücretsiz araçlar dahil · yönetici kullanımı hariç</span></div>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {P.map(([k, l]) => <StatTile key={k} label={l} value={usd(p.users[k] ?? 0)} sub={tl(p.users[k] ?? 0)} />)}
+      </div>
+      <p className="mt-3 rounded-xl bg-ink-50 px-3 py-2 text-[13px] text-ink-600">Sizin (yönetici) kullanımınız, toplama dahil değil: {P.map(([k, l]) => <span key={k} className="mr-3 whitespace-nowrap">{l.toLocaleLowerCase("tr-TR")} <b className="text-ink-900">{usd(p.admin[k] ?? 0)}</b></span>)}</p>
     </div>
   );
 }

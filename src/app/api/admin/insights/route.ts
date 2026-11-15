@@ -25,20 +25,27 @@ export const GET = route("admin.insights", async (req) => {
   const n = Math.min(90, Math.max(7, Number(new URL(req.url).searchParams.get("days") ?? 30)));
   const days = lastDays(n);
   const since = `${days[0]}T00:00:00Z`;
-  const [costRows, toolRows, pageRows, signups, paid] = await Promise.all([
-    allRows<CostRow & { created_at: string }>((a, b) => db.from("usage_events").select("cost_usd, tokens_in, tokens_out, meta, created_at").gte("created_at", since).gt("cost_usd", 0).order("id").range(a, b)),
-    allRows<{ tool: string; items: number; cost_usd: number; created_at: string; visitor: string | null }>((a, b) => db.from("tool_usage").select("tool, items, cost_usd, created_at, visitor").gte("created_at", since).order("id").range(a, b)),
+  const [costRowsAll, toolRows, pageRows, signups, paid, adminRows] = await Promise.all([
+    allRows<CostRow & { created_at: string; user_id: string | null }>((a, b) => db.from("usage_events").select("cost_usd, tokens_in, tokens_out, meta, created_at, user_id").gte("created_at", since).gt("cost_usd", 0).order("id").range(a, b)),
+    allRows<{ tool: string; items: number; cost_usd: number; created_at: string; visitor: string | null; user_id: string | null }>((a, b) => db.from("tool_usage").select("tool, items, cost_usd, created_at, visitor, user_id").gte("created_at", since).order("id").range(a, b)),
     allRows<PageRow>((a, b) => db.from("analytics_events").select("path, visitor, referrer, utm_source, device, created_at").eq("kind", "pageview").gte("created_at", since).order("id").range(a, b)),
     allRows<{ created_at: string; plan_id: string }>((a, b) => db.from("profiles").select("created_at, plan_id").gte("created_at", since).order("id").range(a, b)),
     db.from("profiles").select("id", { count: "exact", head: true }).neq("plan_id", "free").neq("role", "admin"),
+    db.from("profiles").select("id").eq("role", "admin"),
   ]);
+  // D203: yöneticinin kendi kullanımı toplam maliyete katılmaz; çizelgede ayrı seri olarak gösterilir
+  const adminIds = new Set((adminRows.data ?? []).map((r: { id: string }) => r.id));
+  const isAdm = (uid: string | null | undefined) => !!uid && adminIds.has(uid);
 
   // Özellik + ücretsiz araç maliyeti (günlük ve toplam)
+  const costRows = costRowsAll.filter((r) => !isAdm(r.user_id));
   const features = costByFeature(costRows);
   const toolAgg = new Map<string, { uses: number; items: number; cost: number }>();
-  const costDay = new Map(days.map((d) => [d, { features: 0, tools: 0 }]));
-  for (const r of costRows) { const d = costDay.get(r.created_at.slice(0, 10)); if (d) d.features += Number(r.cost_usd) || 0; }
+  const costDay = new Map(days.map((d) => [d, { features: 0, tools: 0, admin: 0 }]));
+  for (const r of costRowsAll) { const d = costDay.get(r.created_at.slice(0, 10)); if (d) { if (isAdm(r.user_id)) d.admin += Number(r.cost_usd) || 0; else d.features += Number(r.cost_usd) || 0; } }
+  let adminTotal = costRowsAll.filter((r) => isAdm(r.user_id)).reduce((a, r) => a + (Number(r.cost_usd) || 0), 0);
   for (const r of toolRows) {
+    if (isAdm(r.user_id)) { adminTotal += Number(r.cost_usd) || 0; const d = costDay.get(r.created_at.slice(0, 10)); if (d) d.admin += Number(r.cost_usd) || 0; continue; }
     const t = toolAgg.get(r.tool) ?? { uses: 0, items: 0, cost: 0 };
     t.uses++; t.items += r.items ?? 1; t.cost += Number(r.cost_usd) || 0;
     toolAgg.set(r.tool, t);
@@ -58,7 +65,8 @@ export const GET = route("admin.insights", async (req) => {
       total: Math.round((features.reduce((a, f) => a + f.value, 0) + tools.reduce((a, t) => a + t.cost, 0)) * 10000) / 10000,
       features,
       tools,
-      byDay: [...costDay.entries()].map(([day, v]) => ({ day, features: Math.round(v.features * 1000) / 1000, tools: Math.round(v.tools * 1000) / 1000 })),
+      admin: Math.round(adminTotal * 10000) / 10000,
+      byDay: [...costDay.entries()].map(([day, v]) => ({ day, features: Math.round(v.features * 1000) / 1000, tools: Math.round(v.tools * 1000) / 1000, admin: Math.round(v.admin * 1000) / 1000 })),
     },
     traffic: {
       ...traffic,

@@ -22,7 +22,7 @@ export function CostBreakdown({ days }: { days: number }) {
   return (
     <div className="space-y-4">
       <div className="card p-5">
-        <TimeSeries data={d.cost.byDay} series={[{ key: "features", label: "Uygulama özellikleri" }, { key: "tools", label: "Ücretsiz araçlar" }]} title="Günlük API maliyeti" subtitle={`Toplam ${usd(d.cost.total)} · son ${d.days} gün`} format={usd} />
+        <TimeSeries data={d.cost.byDay} series={[{ key: "features", label: "Uygulama özellikleri" }, { key: "tools", label: "Ücretsiz araçlar" }, { key: "admin", label: "Yönetici (toplama dahil değil)" }]} title="Günlük API maliyeti" subtitle={`Toplam ${usd(d.cost.total)} (yönetici hariç) · yönetici ${usd(d.cost.admin ?? 0)} · son ${d.days} gün`} format={usd} />
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card p-5"><BarList title="Hangi özellik ne kadar harcadı?" subtitle="Yapay zekâ maliyeti (USD), çağrı sayısıyla" items={d.cost.features.map((f: any) => ({ label: f.label, value: f.value, sub: `${num(f.calls)} çağrı` }))} format={usd} limit={9} empty="Bu dönemde yapay zekâ maliyeti yok." /></div>

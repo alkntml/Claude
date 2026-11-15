@@ -54,6 +54,42 @@ Verknüpfen Sie jeden Posten mit einer Aufgabe der Methode. Unbegründete Gerät
 
 Für ein Programm mit ähnlicher Struktur lesen Sie unseren [Leitfaden zu TÜBİTAK 2209-A](/de/blog/tubitak-2209-a-antrag-leitfaden).
 
+
+## Den Umfang eines kurzen Projekts eingrenzen
+
+Der häufigste Fehler bei Schnellförderprogrammen ist ein Projekt, das zu breit ist, um in kurzer Zeit fertig zu werden. So grenzen Sie ein:
+
+- Konzentrieren Sie sich auf eine Hauptforschungsfrage.
+- Achten Sie darauf, dass die Datenerhebung nicht mehr als die Hälfte der Laufzeit beansprucht.
+- Zeigen Sie, dass die nötige Infrastruktur (Labor, Software, Zugang zu Teilnehmenden) vorhanden ist.
+
+## Ziele messbar formulieren
+
+„Das Thema untersuchen“ kann ein Ziel sein, ist aber kein messbares Teilziel. Formulieren Sie Teilziele mit konkreten Ergebnissen: „den Zusammenhang zwischen … mit … Teilnehmenden prüfen“, „einen Prototyp von … entwickeln und nach Kriterium … testen“. Gutachtende müssen daran erkennen können, ob die Ziele am Ende erreicht wurden.
+
+## Arbeitspaket- und Risikotabelle
+
+| Arbeitspaket | Dauer | Ergebnis | Mögliches Risiko | Plan B |
+| --- | --- | --- | --- | --- |
+| Literatur und Design | Monat 1 | Designbericht | — | — |
+| Datenerhebung | Monat 2–4 | Datensatz | Teilnehmende nicht erreichbar | Kooperation mit einer zweiten Einrichtung |
+| Analyse und Bericht | Monat 5–6 | Abschlussbericht | Verzögerte Analyse | Vorab erstellter Analyseplan |
+
+Die Tabelle ist ein Beispiel; passen Sie die Dauer an das an, was Programm und Ausschreibung erlauben.
+
+## Begründung des Budgets
+
+Begründen Sie jeden Budgetposten mit Bezug zur Methode: „Dieses Gerät wird für die im Methodenteil beschriebenen Messungen benötigt.“ Posten ohne Gegenstück in der Methode fallen auf und können zu Kürzungen führen.
+
+## Ergebnisse und Wirkung
+
+Listen Sie die konkreten Ergebnisse auf: Artikel, Tagungsbeiträge, Abschlussarbeiten, Datensätze, Software. Der Hinweis, dass Schnellförderprojekte oft Vorstudien für ein größeres Projekt sind, zeigt das Fortsetzungspotenzial.
+
+
+## Maßgeblich ist die aktuelle Ausschreibung
+
+Termine, Budgetgrenzen, Voraussetzungen und Formularvorlagen können sich von Ausschreibung zu Ausschreibung ändern. Dieser Leitfaden beschreibt allgemeine Schreibprinzipien; für Termine, Beträge und Bedingungen lesen Sie immer die aktuelle Ausschreibung und den Antragsleitfaden von TÜBİTAK.
+
 ## 1002-A-Antrag mit Academiana
 
 Wählen Sie den Typ „TÜBİTAK-/BAP-Projektantrag“ und das Programm 1002-A: Zusammenfassung, Originalität, Methode, Projektmanagement, breitere Wirkung und Budget sind vorbereitet. Der Assistent kennt das kurze Format, hilft beim Eingrenzen, zeigt die Forschungslücke mit echten Quellen und entwirft Arbeitspakete und Risikotabelle. Programmregeln wie Förderbeträge oder Laufzeit erfindet er nicht; diese prüfen Sie selbst anhand der Ausschreibung.`,
@@ -114,6 +150,45 @@ Für Studien mit Menschen, Tieren oder Gesundheitsbezug gelten im Leitfaden zus�
 - Informationen ohne Quelle und kopierter Text
 
 Für das ähnliche Programm auf Hochschulebene lesen Sie unseren [Leitfaden zu TÜBİTAK 2209-A](/de/blog/tubitak-2209-a-antrag-leitfaden).
+
+
+## Von der Forschungsfrage zum Experiment
+
+Ein gutes Schulprojekt beginnt mit einem beobachtbaren Problem und wird zu einer messbaren Frage:
+
+1. **Beobachtung:** „An unserer Schule nutzen die Schülerinnen und Schüler in den Pausen sehr viel ihr Handy.“
+2. **Frage:** „Beeinflusst die Handynutzung in der Pause die Aufmerksamkeit in der folgenden Stunde?“
+3. **Variablen:** Unabhängige Variable (Handynutzung), abhängige Variable (Aufmerksamkeitstest), Kontrollvariablen (Klassenstufe, Unterrichtsstunde).
+4. **Methode:** Zwei Gruppen, derselbe Aufmerksamkeitstest, dieselben Bedingungen.
+
+Diese Schritte zeigen, dass Ihr Projekt auf wissenschaftlicher Methode beruht.
+
+## Messen und dokumentieren
+
+- Messen Sie jedes Mal unter denselben Bedingungen und wiederholen Sie die Messungen.
+- Führen Sie ein Projekttagebuch: Datum, Tätigkeit, Beobachtung, Ergebnis und aufgetretene Probleme.
+- Dokumentieren Sie den Ablauf mit Fotos und Videos; Sie können sie in der Präsentation vor der Jury nutzen.
+- Bewahren Sie die Rohdaten auf; Tabellen und Diagramme müssen daraus entstehen.
+
+## Diagramme und Tabellen
+
+Zeigen Sie Ihre Ergebnisse mit einfachen Diagrammen: Säulendiagramme für Gruppenvergleiche, Liniendiagramme für Veränderungen über die Zeit. Jedes Diagramm braucht Titel, Achsenbeschriftung und Einheiten. Geben Sie in Tabellen Grundstatistiken wie Mittelwert und Standardabweichung an. Unser [Leitfaden zu APA-7-Tabellen und -Abbildungen](/de/blog/apa-7-tabellen-und-abbildungen) hilft auch bei Schulprojekten.
+
+## Ausstellung und Juryvortrag
+
+- Bereiten Sie einen Kurzvortrag vor, der das Projekt in zwei Minuten erklärt: Problem, Methode, Ergebnis, Bedeutung.
+- Nutzen Sie auf dem Poster Bilder und kurze Sätze statt Fließtext.
+- Rechnen Sie mit der Frage „Warum haben Sie das so gemacht?“; kennen Sie die Gründe Ihrer Methodenentscheidungen.
+- Nennen Sie die Grenzen Ihres Projekts ehrlich und wie es verbessert werden könnte.
+
+## Zusammenarbeit mit der betreuenden Lehrkraft
+
+Die betreuende Lehrkraft leitet Ihr Projekt an, durchführen sollen Sie es aber selbst. Planen Sie regelmäßige Treffen, teilen Sie Ihr Projekttagebuch und besprechen Sie Entscheidungen gemeinsam.
+
+
+## Maßgeblich ist die aktuelle Ausschreibung
+
+Termine, Budgetgrenzen, Voraussetzungen und Formularvorlagen können sich von Ausschreibung zu Ausschreibung ändern. Dieser Leitfaden beschreibt allgemeine Schreibprinzipien; für Termine, Beträge und Bedingungen lesen Sie immer die aktuelle Ausschreibung und den Antragsleitfaden von TÜBİTAK.
 
 ## 2204-A-Bericht mit Academiana
 
@@ -176,6 +251,41 @@ Sie müssen der Jury Problem, Lösung und Belege in kurzer Zeit erklären. Erste
 
 Für eine ähnliche Antragsstruktur lesen Sie unseren [Leitfaden zu TÜBİTAK 2209-A](/de/blog/tubitak-2209-a-antrag-leitfaden).
 
+
+## Die Problemstellung schärfen
+
+Erfolgreiche Projekte haben gemeinsam, dass das gelöste Problem klar und wichtig ist. Formulieren Sie die Problemstellung so, dass sie beantwortet: Wen betrifft das Problem? Wie verbreitet ist es? Warum reichen bestehende Lösungen nicht aus? Belegen Sie die Größe des Problems mit Daten aus verlässlichen Quellen.
+
+## Vergleich mit bestehenden Lösungen
+
+Am wirksamsten zeigen Sie Originalität durch einen Vergleich mit ähnlichen Lösungen:
+
+| Kriterium | Bestehende Lösung A | Bestehende Lösung B | Vorgeschlagenes Projekt |
+| --- | --- | --- | --- |
+| Kosten | … | … | … |
+| Bedienbarkeit | … | … | … |
+| Zugänglichkeit | … | … | … |
+| Hauptschwäche | … | … | Wie wird sie behoben? |
+
+Füllen Sie die Tabelle mit realen Lösungen Ihres Fachs und deren Quellen; vergleichen Sie mit messbaren Kriterien und ohne Übertreibung.
+
+## Prototyp und Testplan
+
+Entwickeln Sie ein Produkt oder System, geben Sie klar an, in welchem Stadium der Prototyp ist und wie er getestet wird. Der Testplan nennt, was gemessen wird, unter welchen Bedingungen, mit wie vielen Wiederholungen und nach welchem Erfolgskriterium. Bei Nutzertests denken Sie an die Einwilligung der Teilnehmenden und gegebenenfalls ein Ethikvotum: [Leitfaden zum Ethikantrag](/de/blog/ethikantrag-stellen).
+
+## Team und Aufgabenverteilung
+
+Geben Sie bei Teamprojekten die Rolle jedes Mitglieds und das verantwortete Arbeitspaket an. Gutachtende achten auf die Umsetzungsfähigkeit des Teams; verknüpfen Sie Kenntnisse und Fähigkeiten mit den Projektanforderungen.
+
+## Geistiges Eigentum und Nachhaltigkeit
+
+Hat Ihr Projekt Potenzial zur Vermarktung oder Verbreitung, beschreiben Sie konkrete Schritte: Zielnutzer, mögliche Partnerschaften, Patent- oder Gebrauchsmusterrecherche. Zu zeigen, wie das Projekt nach dem Wettbewerb weitergeht, ist ein starker Beleg für Wirkung.
+
+
+## Maßgeblich ist die aktuelle Ausschreibung
+
+Termine, Budgetgrenzen, Voraussetzungen und Formularvorlagen können sich von Ausschreibung zu Ausschreibung ändern. Dieser Leitfaden beschreibt allgemeine Schreibprinzipien; für Termine, Beträge und Bedingungen lesen Sie immer die aktuelle Ausschreibung und den Antragsleitfaden von TÜBİTAK.
+
 ## 2242-Projekt mit Academiana
 
 Wählen Sie den Typ „TÜBİTAK-/BAP-Projektantrag“ und das Programm 2242: Die Abschnitte der Projektmappe sind vorbereitet, der Budgetabschnitt entfällt, weil dieser Wettbewerb keinen vorsieht. Der Assistent hilft, die Originalität mit echten Quellen zu zeigen; das Präsentationswerkzeug entwirft Folien aus Ihrem Text, und das Verteidigungstraining bereitet mögliche Jury-Fragen vor.`,
@@ -229,6 +339,37 @@ Verknüpfen Sie jeden Posten mit einer Aufgabe der Methode; begründen Sie Koste
 - Ethikvotum und Feldgenehmigungen nicht einplanen
 
 Für eine ähnliche Struktur auf Studierendenebene lesen Sie unseren [Leitfaden zu TÜBİTAK 2209-A](/de/blog/tubitak-2209-a-antrag-leitfaden).
+
+
+## Das gesellschaftliche Problem bestimmen
+
+Ausgangspunkt innovativer, lösungsorientierter Projekte in den Sozialwissenschaften ist ein gesellschaftliches Problem. Bei der Bestimmung:
+
+- Zeigen Sie mit verlässlichen Daten, wen das Problem in welchem Umfang betrifft.
+- Fassen Sie die Literatur zu seinen Ursachen zusammen.
+- Erklären Sie, warum bestehende Politiken und Praktiken nicht ausreichen.
+- Geben Sie an, wie Ihre Lösung diese Lücke schließt.
+
+## Methode und Lösung verknüpfen
+
+Der Methodenteil beschreibt nicht nur Datenerhebung und Analyse, sondern auch, wie die Lösung entwickelt und erprobt wird. Schlagen Sie etwa ein Bildungsprogramm vor, erklären Sie, wie es gestaltet, mit welcher Gruppe umgesetzt und wie seine Wirkung gemessen wird (Vor- und Nachtest, Kontrollgruppe). Die Verbindung qualitativer und quantitativer Methoden zeigt sowohl die Wirkung als auch die Wirkungsweise. Zur qualitativen Seite siehe unseren [Leitfaden zur qualitativen Forschung](/de/blog/qualitative-interviews-thematische-analyse), zur Stichprobe unseren [Leitfaden zur Stichprobengröße](/de/blog/stichprobengroesse-berechnen).
+
+## Beteiligte und Kooperationen
+
+In sozialwissenschaftlichen Projekten sind die Einrichtungen, in denen die Lösung umgesetzt wird (Schulen, Kommunen, zivilgesellschaftliche Organisationen), entscheidend. Beschreiben Sie, wie die Zusammenarbeit zustande kommt und ob Absichtserklärungen vorliegen. Berücksichtigen Sie Genehmigungen und Ethikvotum im Zeitplan: [Leitfaden zum Ethikantrag](/de/blog/ethikantrag-stellen).
+
+## Messbare Erfolgskriterien
+
+Definieren Sie für jedes Arbeitspaket ein Erfolgskriterium, etwa „eine signifikante Verbesserung der Zielvariable in der Programmgruppe“ oder „ein akzeptabler Reliabilitätskoeffizient des entwickelten Instruments“. Die Kriterien sollen objektiv zeigen, was am Projektende erreicht wurde.
+
+## Verbreitungsplan
+
+Planen Sie, wie und an wen die Ergebnisse vermittelt werden: wissenschaftliche Publikationen, Policy Briefs, Leitfäden für die Praxis, Workshops. In sozialwissenschaftlichen Projekten sind Ergebnisse für Politik und Praxis das stärkste Zeichen von Wirkung.
+
+
+## Maßgeblich ist die aktuelle Ausschreibung
+
+Termine, Budgetgrenzen, Voraussetzungen und Formularvorlagen können sich von Ausschreibung zu Ausschreibung ändern. Dieser Leitfaden beschreibt allgemeine Schreibprinzipien; für Termine, Beträge und Bedingungen lesen Sie immer die aktuelle Ausschreibung und den Antragsleitfaden von TÜBİTAK.
 
 ## 3005-Antrag mit Academiana
 

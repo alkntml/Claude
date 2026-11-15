@@ -19,7 +19,7 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 
 ## Tamamlanan özellikler
 **Blog ve iletişim (D199, 15 Kasım 2026)**
-- 26 eski Türkçe yazı genişletildi (en kısa yazı 291 → 542 kelime); EN/DE sürümleri henüz genişletilmedi
+- 26 eski Türkçe yazı genişletildi (en kısa yazı 291 → 542 kelime); EN/DE sürümleri de aynı bölümlerle genişletildi (en kısa EN 621, DE 605 kelime)
 - 5 yeni yazı (korelasyon, etki büyüklüğü, ki-kare, DOI, yapay zekâ kullanım beyanı; TR/EN/DE, sayılar motorla doğrulandı); toplam 49 yazı
 - Altbilgi, Hakkımızda ve yapılandırılmış veriye iletişim e-postası (iletisim@academiana.com.tr) ve Instagram (@academianatr)
 

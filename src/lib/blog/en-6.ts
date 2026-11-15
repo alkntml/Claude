@@ -54,6 +54,42 @@ Link every item to a task in the method. Unjustified equipment or long-term staf
 
 For a programme with a similar structure, see our [TÜBİTAK 2209-A guide](/en/blog/tubitak-2209-a-research-project-application-guide).
 
+
+## Narrowing the scope of a short project
+
+The most common mistake in rapid support programs is proposing a project too broad to finish in a short time. To narrow the scope:
+
+- Focus on a single main research question.
+- Make sure data collection does not take more than half the project period.
+- Show that the required infrastructure (laboratory, software, access to participants) is in place.
+
+## Writing measurable aims and objectives
+
+“Examining the topic” can be an aim but is not a measurable objective. Write objectives with concrete outputs: “testing the relationship between … with … participants”, “developing a prototype of … and testing it against criterion …”. Reviewers should be able to tell from these statements whether the objectives were met at the end of the project.
+
+## Work package and risk table
+
+| Work package | Duration | Output | Possible risk | Plan B |
+| --- | --- | --- | --- | --- |
+| Literature and design | Month 1 | Design report | — | — |
+| Data collection | Months 2–4 | Dataset | Participants cannot be reached | Collaboration with a second institution |
+| Analysis and reporting | Months 5–6 | Final report | Analysis delayed | Analysis plan prepared in advance |
+
+This table is an example; adjust durations to what the program and call allow.
+
+## Budget justification
+
+Justify each budget item by linking it to the method: “This device is needed for the measurements described in the method section.” Items with no counterpart in the method draw reviewers’ attention and can lead to budget cuts.
+
+## Outputs and wider impact
+
+List the concrete outputs expected from the project: articles, conference papers, graduate theses, datasets, software. Noting that rapid support projects are often pilot studies for a larger project shows their potential to continue.
+
+
+## Always follow the current call document
+
+Application dates, budget limits, eligibility conditions and form templates can change from call to call. This guide covers general writing principles; for dates, amounts and conditions, always read TÜBİTAK’s current call announcement and application guide.
+
 ## Writing a 1002-A proposal with Academiana
 
 Choose the “TÜBİTAK / BAP proposal” type and the 1002-A programme: summary, originality, method, project management, wider impact and budget sections are ready. The assistant knows the programme’s short format, helps you narrow the scope, shows the literature gap with real sources and drafts work packages and the risk table. It never invents programme rules such as funding amounts or duration; you are asked to check these against the call.`,
@@ -114,6 +150,45 @@ Studies involving people, animals or health are subject to additional permission
 - Unsourced information and copied text
 
 For the similar university-level programme, see our [TÜBİTAK 2209-A guide](/en/blog/tubitak-2209-a-research-project-application-guide).
+
+
+## From research question to experiment
+
+In high school projects, a good project starts from an observable problem and becomes a measurable question:
+
+1. **Observation:** “Students at our school use their phones a lot during breaks.”
+2. **Question:** “Does phone use during breaks affect attention in the following lesson?”
+3. **Variables:** Independent variable (phone use), dependent variable (attention test score), control variables (grade level, time of lesson).
+4. **Method:** Two groups, the same attention test, the same conditions.
+
+These steps show that your project is built on the scientific method.
+
+## Measuring and keeping records
+
+- Take measurements under the same conditions each time and repeat them.
+- Keep a project logbook: date, what was done, observation, result and problems encountered.
+- Document the process with photos and videos; you can use them in your presentation to the jury.
+- Keep your raw data; tables and charts must be produced from it.
+
+## Preparing charts and tables
+
+Show your findings with simple charts: bar charts to compare groups, line charts for change over time. Give every chart a title, axis labels and units. In tables, give basic statistics such as the mean and standard deviation. Our [APA 7 tables and figures guide](/en/blog/apa-7-tables-and-figures) is also useful for high school projects.
+
+## Exhibition and jury presentation
+
+- Prepare a short talk that explains your project in two minutes: problem, method, result, importance.
+- Use visuals and short sentences on your poster instead of text.
+- Be ready for the jury’s “Why did you do it this way?”; know the reasons behind your method decisions.
+- State your project’s limitations honestly and explain how it could be improved.
+
+## Working with your advisor teacher
+
+Your advisor teacher guides your project, but you are expected to carry it out. Plan regular meetings, share your project logbook and review your decisions together.
+
+
+## Always follow the current call document
+
+Application dates, budget limits, eligibility conditions and form templates can change from call to call. This guide covers general writing principles; for dates, amounts and conditions, always read TÜBİTAK’s current call announcement and application guide.
 
 ## Writing a 2204-A report with Academiana
 
@@ -176,6 +251,41 @@ You need to explain the problem, the solution and your evidence to the jury in a
 
 For a similar application structure, see our [TÜBİTAK 2209-A guide](/en/blog/tubitak-2209-a-research-project-application-guide).
 
+
+## Sharpening the problem statement
+
+What winning projects have in common is that the problem they solve is clear and important. Write your problem statement so it answers: Who does the problem affect? How widespread is it? Why are existing solutions inadequate? Support the size of the problem with data from reliable sources.
+
+## Comparing with existing solutions
+
+The most effective way to show originality is to compare with similar solutions:
+
+| Criterion | Existing solution A | Existing solution B | Proposed project |
+| --- | --- | --- | --- |
+| Cost | … | … | … |
+| Ease of use | … | … | … |
+| Accessibility | … | … | … |
+| Key shortcoming | … | … | How does it address this? |
+
+Fill in the table with real solutions in your field and their sources; compare with measurable criteria and without exaggeration.
+
+## Prototype and test plan
+
+If you are developing a product or system, state clearly what stage the prototype is at and how it will be tested. The test plan should state what will be measured, under which conditions, with how many repetitions and against which success criterion. If you will run user tests, remember to obtain participants’ consent and, if needed, ethics approval: [ethics committee guide](/en/blog/how-to-apply-for-ethics-committee-approval).
+
+## Team and division of roles
+
+In team projects, state each member’s role and the work package they are responsible for. Reviewers look at the team’s capacity to deliver; link members’ knowledge and skills to the project’s needs.
+
+## Intellectual property and sustainability
+
+If your project has commercialization or scaling potential, explain it with concrete steps: target users, possible partnerships, patent or utility model searches. Showing how the project will continue after the competition is strong evidence of impact.
+
+
+## Always follow the current call document
+
+Application dates, budget limits, eligibility conditions and form templates can change from call to call. This guide covers general writing principles; for dates, amounts and conditions, always read TÜBİTAK’s current call announcement and application guide.
+
 ## Preparing a 2242 project with Academiana
 
 Choose the “TÜBİTAK / BAP proposal” type and the 2242 programme: the project file sections are ready, and the budget section is removed because this competition does not include one. The assistant helps you show originality with real sources; the defence presentation tool drafts slides from your text, and defence practice prepares likely jury questions.`,
@@ -229,6 +339,37 @@ Link every item to a task in the method; justify fieldwork, survey and transcrip
 - Not planning ethics approval and field permissions
 
 For a similar structure at student level, see our [TÜBİTAK 2209-A guide](/en/blog/tubitak-2209-a-research-project-application-guide).
+
+
+## Defining the social problem
+
+The starting point of innovative, solution-oriented projects in the social sciences is a social problem. When defining it:
+
+- Show with reliable data whom the problem affects and on what scale.
+- Summarize the literature on its causes.
+- Explain why current policies and practices fall short.
+- State how your proposed solution will fill this gap.
+
+## Linking the method to the solution
+
+The method should describe not only data collection and analysis but also how the solution will be developed and tested. For example, if you propose an education program, explain how it will be designed, with which group it will be implemented and how its effect will be measured (pre-test/post-test, control group). Combining qualitative and quantitative methods helps show both the effect of the solution and how it works. For the qualitative side, see our [qualitative research guide](/en/blog/qualitative-interviews-thematic-analysis); for sampling, our [sample size guide](/en/blog/how-to-calculate-sample-size).
+
+## Stakeholders and partnerships
+
+In social science projects, the institutions where the solution will be implemented (schools, municipalities, NGOs) are critical to success. State how the partnership with them will be established and whether letters of intent have been obtained. Reflect implementation permissions and ethics approval in the timeline: [ethics committee guide](/en/blog/how-to-apply-for-ethics-committee-approval).
+
+## Measurable success criteria
+
+Define a success criterion for each work package, such as “a significant improvement in the target variable in the group receiving the program” or “an acceptable reliability coefficient for the developed instrument”. The criteria should show objectively what was achieved at the end of the project.
+
+## Dissemination plan
+
+Plan how and to whom the findings will be communicated: academic publications, policy briefs, guides for practitioners, workshops. In social science projects, outputs aimed at policymakers and practitioners are the strongest sign of wider impact.
+
+
+## Always follow the current call document
+
+Application dates, budget limits, eligibility conditions and form templates can change from call to call. This guide covers general writing principles; for dates, amounts and conditions, always read TÜBİTAK’s current call announcement and application guide.
 
 ## Writing a 3005 proposal with Academiana
 

@@ -172,5 +172,5 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-14, D193) SSS HTML’i 312 → 231 KB (kısa CSS sınıfları, CSS ok); JSON-LD ve RSC tekrarı Next.js yapısı gereği kalır
 - [ ] Eski yazılara `updated` + `sources` ekle (önce en çok gösterim alan 10 yazı; Search Console verisiyle)
 - [x] (2026-11-15, D199) 26 Türkçe blog yazısı genişletildi; 5 yeni yazı (TR/EN/DE); altbilgiye e-posta ve Instagram
-- [ ] Eski blog yazılarının EN/DE sürümlerini Türkçedeki genişletmeye göre genişlet (D199)
+- [x] (2026-11-15, D199) Eski blog yazılarının EN/DE sürümleri Türkçedeki genişletmeye göre genişletildi (26 yazı × 2 dil)
 - [ ] iletisim@academiana.com.tr posta kutusu Google Workspace onayından sonra çalışır hâle gelmeli (D199)

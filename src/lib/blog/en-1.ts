@@ -47,6 +47,59 @@ Every graduate school has thesis guidelines: margins, typeface, line spacing, he
 
 Before submitting, check that citations match the reference list, that table and figure numbers are consistent, and fix spelling and punctuation. Then prepare answers to the questions your committee is likely to ask.
 
+
+## Types of theses and expectations
+
+Theses carry different expectations depending on level and method:
+
+- **Master’s thesis:** Shows that you can answer a research question with scientific method. An original contribution is expected, but it can be a new sample, context or application of a method.
+- **Doctoral dissertation:** Expects a lasting, original contribution to the field. The theoretical discussion is deeper, the method more robust and the literature more comprehensive.
+- **Quantitative, qualitative and mixed-methods theses:** Chapter names may be similar, but the content differs. A quantitative thesis foregrounds sampling and statistics; a qualitative one, the study group, data collection process and trustworthiness.
+
+Your thesis guidelines may set chapter names and order; always follow them.
+
+## The backbone of a thesis: the consistency chain
+
+What examiners watch most closely is consistency between chapters. This chain must not break from start to finish:
+
+1. **Problem:** Which gap or problem are you addressing?
+2. **Aim:** What do you want to establish about it?
+3. **Research questions or hypotheses:** Do they break the aim into testable parts?
+4. **Method:** Is there a suitable design, sample and analysis for each question?
+5. **Results:** Is a result reported for each question?
+6. **Discussion and conclusion:** Is each finding compared with the literature and linked back to the aim?
+
+For example, if you have three research questions, examiners expect three headings in the results and three lines of discussion. If one question has no method, or one answer is missing from the results, that is the first thing you will be asked in the defense.
+
+## A realistic timeline
+
+Writing a master’s thesis roughly breaks down into topic and proposal, literature, method and ethics approval, data collection, analysis, writing and revisions. Data collection and ethics approval are usually where schedules slip most; plan backwards from the submission date. For a detailed planning method, see our [thesis timeline guide](/en/blog/how-long-does-it-take-to-write-a-thesis).
+
+## Working effectively with your supervisor
+
+- Before each meeting, send a short agenda and what you have done since the last one.
+- Share drafts chapter by chapter; sending the whole thesis at once delays feedback.
+- Keep a list of the feedback you receive and note how you addressed each point.
+- Agree on method decisions (sample, scale, analysis) with your supervisor before collecting data.
+
+## Common mistakes
+
+- Choosing a topic that is too broad and trying to cover everything
+- Summarizing the literature source by source instead of synthesizing by theme: see our [literature review guide](/en/blog/how-to-write-a-literature-review)
+- Not matching research questions with analyses
+- Interpreting in the results chapter, or presenting new findings in the discussion
+- Leaving the reference list and formatting to the final week
+- Writing the abstract first and forgetting to update it
+
+## Pre-submission checklist
+
+- Does every research question have an analysis in the method and an answer in the results?
+- Is every in-text citation in the reference list, and every reference cited in the text? See our [reference list guide](/en/blog/how-to-write-a-bibliography-citation-styles).
+- Are table and figure numbers sequential and mentioned in the text?
+- Does the abstract describe the final version of the thesis?
+- Do the cover, approval and declaration pages follow your graduate school’s guidelines?
+- Are limitations and recommendations consistent with the findings?
+
 ## How Academiana helps
 
 When you choose your work type in Academiana, the steps above arrive as a ready-made roadmap. You start by choosing a title, then the chapters follow in order, with the abstract saved for last. The assistant finds sources in real academic databases, checks each chapter against its purpose when you mark it complete, and lets you export your thesis as a formatted Word file. You remain the author; the system guides you.`,
@@ -81,6 +134,53 @@ When you choose your work type in Academiana, the steps above arrive as a ready-
 - Choosing the method before the topic ("I will definitely run a survey")
 - Claiming "this has never been studied" without checking the literature
 - Ignoring the time needed for data collection and ethics approval
+
+
+## From topic to research question: a narrowing example
+
+A broad interest becomes a thesis topic in a few steps:
+
+1. **Field:** Social media
+2. **Topic:** Social media and academic achievement
+3. **Focus:** Social media use and academic procrastination
+4. **Sample and context:** Undergraduate students at public universities in one country
+5. **Research question:** “Does problematic social media use predict undergraduate students’ levels of academic procrastination?”
+
+Each step narrows the scope and clarifies what data you will collect, from whom and how. For writing research questions and hypotheses, see our [research question and hypothesis guide](/en/blog/how-to-write-research-questions-and-hypotheses).
+
+## 8 questions to test your topic
+
+Before settling on a topic, answer these honestly:
+
+1. Can you describe the topic in one sentence?
+2. Can you find at least a few studies on it from the last five years?
+3. How will you differ from them: sample, context or method?
+4. How will you access data, and is that realistic?
+5. Will you need ethics approval? If so, have you planned for the time it takes?
+6. Is the instrument you plan to use validated in your language and population?
+7. Can you finish within the submission deadline?
+8. Can your supervisor guide you on this topic?
+
+If two or three answers are unclear, you may need to narrow the topic or change the data source.
+
+## Quantitative or qualitative?
+
+Topic and method influence each other, but method should not come before the topic:
+
+- A **quantitative study** suits questions about relationships, differences or effects between variables. It needs enough participants and valid scales; to calculate sample size in advance, see our [sample size guide](/en/blog/how-to-calculate-sample-size).
+- A **qualitative study** suits questions about how an experience is lived, its meaning or its process. It works with fewer participants but longer interviews; see our [qualitative research guide](/en/blog/qualitative-interviews-thematic-analysis).
+- **Mixed methods** are used when you ask both kinds of question; the workload is higher.
+
+## Presenting your topic to your supervisor
+
+Don’t go to the meeting empty-handed. Prepare a short note:
+
+- Your proposed title (it can be provisional)
+- One paragraph describing the problem and 3–5 key sources
+- The research question and possible method
+- Your data collection plan and likely difficulties
+
+This one-page note moves the conversation from “What should I study?” to “How do I study this?”. For the full proposal submitted to a committee, see our [thesis proposal guide](/en/blog/how-to-write-a-research-proposal).
 
 ## Finding a topic with Academiana
 
@@ -295,6 +395,53 @@ Smith, A. (2022). *Title of the thesis* [Master’s thesis, University Name]. Da
 - Forgetting page numbers for direct quotes
 - Not distinguishing two works by the same author in the same year (2021a, 2021b)
 
+
+## Detailed rules for in-text citations
+
+### Parenthetical and narrative citations
+
+APA 7 has two citation formats. In a **parenthetical citation**, author and year appear in parentheses, usually at the end of the sentence. In a **narrative citation**, the author’s name is part of the sentence and only the year is in parentheses. The choice is stylistic; using a narrative citation instead of repeating the same parenthetical citation within a paragraph makes the text flow.
+
+### Citing several works at once
+
+When several works appear in the same parentheses, order them **alphabetically by the first author’s surname** and separate them with semicolons. Several works by the same author are listed by year.
+
+### Same author, same year
+
+When citing two works by the same author from the same year, add a letter after the year (2021a, 2021b). The letters follow the order of titles in the reference list and are used the same way in the text.
+
+### Group authors
+
+When an organization is the author (for example, a ministry report), write its full name. If the abbreviation is well known, give the full name and abbreviation in the first citation and only the abbreviation afterwards.
+
+### Secondary sources
+
+If you cannot access the original work, cite it through the source you read: name both the original work and the source you read in the text, and list **only the source you read** in the reference list. APA recommends using secondary sources only when the original is truly unavailable.
+
+## Details of direct quotations
+
+- **Quotations of fewer than 40 words** go in quotation marks within the text, with a page number.
+- **Quotations of 40 words or more** are set as an indented block quotation without quotation marks; the page number comes at the end.
+- For sources without page numbers, use a paragraph number, section heading or time stamp (for videos).
+- Show omitted material with an ellipsis and your own added words in square brackets.
+
+Use direct quotations sparingly; expressing ideas in your own words (paraphrasing) with a citation is preferred in academic writing. Paraphrases also require a citation; see our [guide to avoiding plagiarism](/en/blog/how-to-avoid-plagiarism).
+
+## General rules for the reference list
+
+- The reference list is ordered **alphabetically by the first author’s surname**.
+- Each entry has a **hanging indent**: the first line flush left, later lines indented.
+- In article titles, capitalize only the first word and proper nouns; journal names are in title case and italics.
+- The journal volume is italic; the issue number is in parentheses, not italic.
+- If there is a DOI, add it as a link starting with https://doi.org/; do not write “Retrieved from”.
+- For works with 21 or more authors, list the first 19, an ellipsis and the final author.
+
+You can find the same source formatted in APA 7 and other styles side by side in our [reference list guide](/en/blog/how-to-write-a-bibliography-citation-styles).
+
+## Citations in tables and figures
+
+For tables or figures adapted from another work, add the source in the note below the table and obtain copyright permission if needed. For table and figure format, see our [APA 7 tables and figures guide](/en/blog/apa-7-tables-and-figures).
+
 ## Automatic APA 7 with Academiana
 
 In Academiana, citations are not typed as plain text; they are linked to the source. The reference list is generated from these links automatically, so deleting a citation removes it from the list too. You can switch between 10 styles — APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver, Harvard and more — with one click, and the quality check finds missing reference details and mismatches for you.`,
@@ -471,6 +618,46 @@ Tools such as Turnitin and iThenticate show how **similar** your text is to othe
 
 "Spinning" tools that make text unreadable, or character tricks, are unethical and easily spotted by committees. They can lead to disciplinary action.
 
+
+## Types of plagiarism
+
+Plagiarism is not only copying and pasting a text. It takes several forms in academia:
+
+- **Direct plagiarism:** Using someone else’s sentences without quotation marks and a citation.
+- **Paraphrase plagiarism:** Rewriting sentences by changing a few words without citing the source. Changing words does not make the idea yours.
+- **Mosaic (patchwork) plagiarism:** Stitching together fragments from different sources and presenting them as a new text.
+- **Self-plagiarism:** Reusing your own published text or assignment without citing it. Articles derived from a thesis are expected to cite the thesis.
+- **Source plagiarism:** Presenting sources from another author’s reference list as if you had read them.
+- **Idea and data plagiarism:** Using someone else’s original idea, research design or data without credit.
+
+## How to write a good paraphrase
+
+A paraphrase expresses the source’s idea in your own sentence structure and words. A useful method:
+
+1. Read the paragraph and reread until you understand the main idea.
+2. Close the source and note the idea in your own words.
+3. Compare your note with the source: if you kept the same sentence structure or distinctive phrases, rewrite it.
+4. Add a citation. Paraphrases also require one.
+
+You do not need to change field-specific technical terms; searching for a synonym of a concept like “self-efficacy” can distort the meaning. What must change is sentence structure and expression.
+
+## Turning a thesis into an article
+
+When you prepare an article from your thesis, part of the text will naturally resemble the thesis. When submitting, state that the article is derived from a thesis, cite the thesis and rewrite sections such as the method in the journal’s format. If you produce several articles from the same data, make sure each answers a different question; publishing the same findings in different journals (salami slicing, duplicate publication) is also an ethics violation.
+
+## AI and plagiarism
+
+Text produced by AI tools is also subject to academic integrity rules. Many institutions do not accept AI-generated text presented as the author’s own and require its use to be disclosed. AI can also invent sources that do not exist, which is a more serious problem than source plagiarism. For details, see our guides on [the ethics of writing a thesis with AI](/en/blog/is-it-ethical-to-use-ai-for-thesis-writing) and [detecting fabricated references](/en/blog/detecting-ai-fabricated-references).
+
+## Pre-submission checklist
+
+- Is every direct quotation in quotation marks with a page number?
+- Does every paraphrase end with a citation?
+- Have you avoided presenting a source you have not read as a primary source?
+- Have you cited sections taken from your earlier work?
+- Have you credited tables, figures and scale items, and obtained permission where needed?
+- Is every source in the reference list cited in the text?
+
 ## The Academiana approach
 
 Academiana does not display a plagiarism percentage, because a reliable score can only come from licensed services with large archives. Instead, it helps you avoid plagiarism in the first place: the assistant cites only real sources added to your project, never writes unsupported claims, gives page numbers when drawing on full texts it has read, and flags repetitive phrasing in your text.`,
@@ -520,6 +707,47 @@ General-purpose chatbots can produce articles, authors and DOIs that do not exis
 4. **Transform drafts.** Rewrite and develop AI suggestions with your own thinking.
 5. **Disclose.** If your institution requires it, state which tool you used and why.
 
+
+## Disclosing AI use
+
+Many journals and universities require AI use to be clearly disclosed. The publication ethics body COPE stresses that AI tools cannot be listed as authors because they cannot take responsibility for a work. A statement usually includes:
+
+- Which tool was used
+- For what purpose (e.g. language editing, search strategy in the literature review, writing code)
+- That the author checked the output and takes responsibility
+
+Where and how to disclose varies by institution: the method section, the acknowledgements or a separate statement. Read your graduate school’s and target journal’s current policy before submitting. For example statements, see our guide on [how to write an AI use statement](/en/blog/how-to-write-an-ai-use-statement).
+
+## Risk map by type of use
+
+| Use | General assessment | What to watch |
+| --- | --- | --- |
+| Language and grammar editing | Accepted by most institutions | Meaning must not change; disclosure may be required |
+| Search strategy and keyword suggestions | Generally accepted | You must find and read the sources yourself |
+| Summarizing a source you have read | Use with care | Check that the summary is faithful |
+| Drafting chapters | Varies by institution | Requires disclosure and heavy revision |
+| Generating sources, data or findings | Not acceptable | Fabrication is academic misconduct |
+
+This table is a general assessment; your institution’s rules are binding.
+
+## Talk openly with your supervisor
+
+Discuss with your supervisor at the start at which stages and how you plan to use AI. Some supervisors allow language editing but not drafting. This conversation prevents surprises in the defense or a plagiarism review.
+
+## What can you be asked in the defense?
+
+The biggest risk of a thesis written with AI is that the author does not master the text. A student who cannot answer when the committee asks about a concept, a method decision or a source’s finding gives the impression of not having written the text. You should be able to explain every sentence. To prepare, see our [thesis defense guide](/en/blog/how-to-prepare-for-thesis-defense).
+
+## The habit of verifying sources
+
+The most important habit when working with AI is verifying every source:
+
+1. Search for the source in a database (Crossref, OpenAlex, Google Scholar or a national index).
+2. If there is a DOI, open it and check that the details match.
+3. Read the relevant section to confirm the source really contains the claimed information.
+
+To check your whole reference list, use our free [fabricated reference checker](/en/araclar/uydurma-kaynak-kontrolu).
+
 ## Academiana is built on these principles
 
 In Academiana the assistant cannot fabricate sources at system level: it can only cite sources found in real databases and added to your project. It never writes unsupported claims and leaves "[DATA TO BE ENTERED]" where data is needed. No draft enters your document until you click "Add to document", and every change is kept in version history. See our [academic integrity principles](/akademik-durustluk) for details.`,
@@ -556,6 +784,42 @@ Tools that claim to "humanise" AI text or help it "bypass" detectors have two pr
 ## The right approach
 
 Use AI as a research and editing assistant, not as a replacement for the author. When you read drafts and rewrite them with your own thinking, the text becomes both better and genuinely yours.
+
+
+## Who is most affected by false positives?
+
+Research has shown that AI detectors can flag texts by non-native English writers as “AI-generated” more often. Detectors look at how “predictable” a text is: texts with a more limited vocabulary and formulaic academic phrasing can resemble AI output even when written by a person. For languages other than English, there are few independent studies of detector accuracy. A detection result should therefore never be the sole basis for a sanction.
+
+## What a detection score means, and what it doesn’t
+
+- **It means:** According to the tool’s own model, the text statistically resembles AI output.
+- **It does not mean:** Proof that the text was written with AI. The score is a probability estimate.
+- **It does not mean:** Plagiarism. Detectors do not match sources; they differ from similarity reports. We explain how to read a similarity report in our [plagiarism guide](/en/blog/how-to-avoid-plagiarism).
+
+## Documenting your writing process
+
+The strongest defense against a false flag is being able to show your writing process:
+
+- **Version history:** The version history in Word, Google Docs or your editor shows how the text developed over time.
+- **Notes and drafts:** Keep your reading notes, literature matrix and handwritten drafts.
+- **Source records:** The dates in your reference manager show when you found your sources.
+- **Supervisor correspondence:** Chapter drafts you sent and the feedback you received.
+
+## Recommendations for institutions
+
+If you are a graduate school or instructor using detectors:
+
+- Do not base decisions on the score alone; assess it together with a conversation with the student and process documents.
+- Write a clear AI use policy: what is allowed and what must be disclosed.
+- Use assessment methods that test command of the content (oral presentation, defense, process portfolio).
+
+## A short roadmap for students
+
+1. Read your institution’s AI policy.
+2. Note which tool you used and why; disclose it if required. See our guide on [how to write an AI use statement](/en/blog/how-to-write-an-ai-use-statement).
+3. Write in your own words and read every source.
+4. Keep your version history and notes.
+5. If you are flagged, stay calm and bring your process documents to the meeting.
 
 ## Academiana’s position
 

@@ -48,6 +48,59 @@ Jede Hochschule hat Vorgaben für Abschlussarbeiten: Seitenränder, Schriftart, 
 
 Prüfen Sie vor der Abgabe, ob alle Zitate mit dem Literaturverzeichnis übereinstimmen, ob Tabellen- und Abbildungsnummern stimmen, und korrigieren Sie Rechtschreibung und Zeichensetzung. Bereiten Sie dann Antworten auf die Fragen vor, die Ihre Prüfungskommission voraussichtlich stellen wird.
 
+
+## Arten von Abschlussarbeiten und Erwartungen
+
+Abschlussarbeiten stellen je nach Stufe und Methode unterschiedliche Erwartungen:
+
+- **Masterarbeit:** Zeigt, dass Sie eine Forschungsfrage mit wissenschaftlicher Methode beantworten können. Ein eigener Beitrag wird erwartet, kann aber eine neue Stichprobe, ein neuer Kontext oder eine neue Anwendung einer Methode sein.
+- **Dissertation:** Erwartet einen dauerhaften, originellen Beitrag zum Fach. Theoretische Diskussion, Methode und Literaturarbeit müssen tiefer und umfassender sein.
+- **Quantitative, qualitative und Mixed-Methods-Arbeiten:** Die Kapitelnamen ähneln sich, der Inhalt unterscheidet sich. Quantitative Arbeiten stellen Stichprobe und Statistik in den Vordergrund, qualitative die Untersuchungsgruppe, die Datenerhebung und die Gütekriterien.
+
+Ihre Prüfungsordnung oder Ihr Leitfaden kann Kapitelnamen und Reihenfolge vorgeben; richten Sie sich immer danach.
+
+## Das Rückgrat der Arbeit: die Konsistenzkette
+
+Gutachterinnen und Gutachter achten vor allem auf die Stimmigkeit zwischen den Kapiteln. Diese Kette darf nirgends reißen:
+
+1. **Problem:** Welche Lücke oder welches Problem behandeln Sie?
+2. **Ziel:** Was wollen Sie dazu herausfinden?
+3. **Forschungsfragen oder Hypothesen:** Zerlegen sie das Ziel in prüfbare Teile?
+4. **Methode:** Gibt es für jede Frage ein passendes Design, eine Stichprobe und eine Analyse?
+5. **Ergebnisse:** Wird zu jeder Frage ein Ergebnis berichtet?
+6. **Diskussion und Fazit:** Wird jedes Ergebnis mit der Literatur verglichen und auf das Ziel zurückgeführt?
+
+Haben Sie etwa drei Forschungsfragen, erwartet man drei Abschnitte im Ergebnisteil und drei Diskussionsstränge. Fehlt einer Frage die Methode oder im Ergebnisteil die Antwort, wird genau das in der Verteidigung zuerst gefragt.
+
+## Ein realistischer Zeitplan
+
+Eine Masterarbeit gliedert sich grob in Thema und Exposé, Literatur, Methode und Ethikvotum, Datenerhebung, Analyse, Schreiben und Überarbeitung. Datenerhebung und Ethikvotum verzögern sich am häufigsten; planen Sie rückwärts vom Abgabetermin. Eine ausführliche Planungsmethode zeigt unser [Leitfaden zum Zeitplan der Abschlussarbeit](/de/blog/wie-lange-dauert-eine-abschlussarbeit).
+
+## Effizient mit der Betreuung arbeiten
+
+- Schicken Sie vor jedem Termin eine kurze Agenda und was Sie seit dem letzten Treffen erledigt haben.
+- Geben Sie Entwürfe kapitelweise ab; die ganze Arbeit auf einmal verzögert das Feedback.
+- Führen Sie eine Liste der Rückmeldungen und notieren Sie, wie Sie jede umgesetzt haben.
+- Stimmen Sie Methodenentscheidungen (Stichprobe, Skala, Analyse) vor der Datenerhebung ab.
+
+## Häufige Fehler
+
+- Ein zu breites Thema wählen und alles abdecken wollen
+- Die Literatur Quelle für Quelle zusammenfassen statt thematisch zu synthetisieren: siehe unseren [Leitfaden zur Literaturrecherche](/de/blog/literaturrecherche-literaturuebersicht-schreiben)
+- Forschungsfragen und Analysen nicht aufeinander abstimmen
+- Im Ergebnisteil interpretieren oder in der Diskussion neue Ergebnisse bringen
+- Literaturverzeichnis und Formatierung auf die letzte Woche verschieben
+- Das Abstract zuerst schreiben und nicht mehr aktualisieren
+
+## Checkliste vor der Abgabe
+
+- Hat jede Forschungsfrage eine Analyse in der Methode und eine Antwort im Ergebnisteil?
+- Steht jede zitierte Quelle im Literaturverzeichnis und wird jede Quelle im Text zitiert? Siehe unseren [Leitfaden zum Literaturverzeichnis](/de/blog/literaturverzeichnis-erstellen-zitierstile).
+- Sind Tabellen und Abbildungen fortlaufend nummeriert und im Text erwähnt?
+- Beschreibt das Abstract die endgültige Fassung?
+- Entsprechen Deckblatt und Erklärungen den Vorgaben Ihrer Hochschule?
+- Passen Limitationen und Empfehlungen zu den Ergebnissen?
+
 ## Wie Academiana hilft
 
 Wenn Sie in Academiana die Art Ihrer Arbeit wählen, erhalten Sie die obigen Schritte als fertigen Fahrplan. Sie beginnen mit der Titelwahl, danach folgen die Kapitel in sinnvoller Reihenfolge, das Abstract kommt zuletzt. Der Assistent findet Quellen in echten wissenschaftlichen Datenbanken, prüft jedes Kapitel beim Abschließen gegen dessen Zweck und lässt Sie die Arbeit als formatierte Word-Datei exportieren. Sie bleiben Autorin bzw. Autor; das System gibt die Richtung vor.`,
@@ -83,6 +136,53 @@ Wenn Sie in Academiana die Art Ihrer Arbeit wählen, erhalten Sie die obigen Sch
 - Die Methode vor dem Thema festlegen („Ich mache auf jeden Fall eine Umfrage“)
 - Ohne Literaturprüfung behaupten, „das wurde noch nie untersucht“
 - Den Zeitbedarf für Datenerhebung und Ethikvotum unterschätzen
+
+
+## Vom Thema zur Forschungsfrage: ein Beispiel für die Eingrenzung
+
+Ein breites Interessengebiet wird in wenigen Schritten zum Thema einer Abschlussarbeit:
+
+1. **Fachgebiet:** Soziale Medien
+2. **Thema:** Soziale Medien und Studienerfolg
+3. **Fokus:** Nutzung sozialer Medien und akademisches Aufschieben (Prokrastination)
+4. **Stichprobe und Kontext:** Bachelorstudierende an staatlichen Hochschulen eines Landes
+5. **Forschungsfrage:** „Sagt eine problematische Nutzung sozialer Medien das Ausmaß akademischer Prokrastination bei Bachelorstudierenden vorher?“
+
+Jeder Schritt grenzt den Umfang ein und klärt, welche Daten Sie von wem und wie erheben. Zum Formulieren von Forschungsfragen und Hypothesen siehe unseren [Leitfaden zu Forschungsfrage und Hypothese](/de/blog/forschungsfrage-und-hypothesen-formulieren).
+
+## 8 Fragen, um Ihr Thema zu prüfen
+
+Beantworten Sie diese Fragen ehrlich, bevor Sie sich festlegen:
+
+1. Können Sie das Thema in einem Satz beschreiben?
+2. Finden Sie mindestens einige Studien dazu aus den letzten fünf Jahren?
+3. Worin unterscheiden Sie sich: Stichprobe, Kontext oder Methode?
+4. Wie kommen Sie an Daten, und ist das realistisch?
+5. Brauchen Sie ein Ethikvotum? Wenn ja, haben Sie die Dauer eingeplant?
+6. Ist das geplante Messinstrument in Ihrer Sprache und Zielgruppe validiert?
+7. Schaffen Sie die Arbeit in der Bearbeitungszeit?
+8. Kann Ihre Betreuungsperson Sie bei diesem Thema anleiten?
+
+Sind zwei oder drei Antworten unklar, sollten Sie das Thema eingrenzen oder die Datenquelle ändern.
+
+## Quantitativ oder qualitativ?
+
+Thema und Methode beeinflussen sich, aber die Methode sollte nicht vor dem Thema kommen:
+
+- Eine **quantitative Studie** passt, wenn Sie Zusammenhänge, Unterschiede oder Effekte zwischen Variablen messen wollen. Sie braucht genügend Teilnehmende und valide Skalen; zur vorab berechneten Stichprobengröße siehe unseren [Leitfaden zur Stichprobengröße](/de/blog/stichprobengroesse-berechnen).
+- Eine **qualitative Studie** passt, wenn Sie verstehen wollen, wie eine Erfahrung erlebt wird, was sie bedeutet oder wie ein Prozess verläuft. Sie arbeitet mit weniger Teilnehmenden, aber längeren Interviews; siehe unseren [Leitfaden zur qualitativen Forschung](/de/blog/qualitative-interviews-thematische-analyse).
+- **Mixed Methods** verbinden beide Fragearten; der Aufwand ist höher.
+
+## Das Thema der Betreuung vorstellen
+
+Gehen Sie nicht mit leeren Händen ins Gespräch. Bereiten Sie eine kurze Notiz vor:
+
+- Vorgeschlagener (vorläufiger) Titel
+- Ein Absatz zum Problem und 3–5 zentrale Quellen
+- Forschungsfrage und mögliche Methode
+- Plan zur Datenerhebung und absehbare Schwierigkeiten
+
+Diese einseitige Notiz verschiebt das Gespräch von „Was soll ich untersuchen?“ zu „Wie untersuche ich das?“. Für das vollständige Exposé siehe unseren [Leitfaden zum Exposé](/de/blog/forschungsexpose-schreiben).
 
 ## Ein Thema finden mit Academiana
 
@@ -300,6 +400,53 @@ Smith, A. (2022). *Title of the thesis* [Master’s thesis, University Name]. Da
 - Fehlende Seitenzahlen bei direkten Zitaten
 - Zwei Werke derselben Person aus demselben Jahr nicht unterschieden (2021a, 2021b)
 
+
+## Detaillierte Regeln für Zitate im Text
+
+### Zitate in Klammern und im Fließtext
+
+APA 7 kennt zwei Formen. Beim **Klammerzitat** stehen Autor und Jahr in Klammern, meist am Satzende. Beim **narrativen Zitat** ist der Autorenname Teil des Satzes, und nur das Jahr steht in Klammern. Die Wahl ist eine Stilfrage; ein narratives Zitat statt wiederholter Klammerzitate derselben Quelle macht einen Absatz flüssiger.
+
+### Mehrere Quellen gleichzeitig zitieren
+
+Stehen mehrere Quellen in derselben Klammer, werden sie **alphabetisch nach dem Nachnamen der Erstautorin bzw. des Erstautors** geordnet und durch Semikolons getrennt. Mehrere Werke derselben Person werden nach Jahr geordnet.
+
+### Gleiche Person, gleiches Jahr
+
+Zitieren Sie zwei Werke derselben Person aus demselben Jahr, wird dem Jahr ein Buchstabe angehängt (2021a, 2021b). Die Buchstaben folgen der Reihenfolge der Titel im Literaturverzeichnis und werden im Text ebenso verwendet.
+
+### Institutionen als Autor
+
+Ist eine Organisation Autor (z. B. ein Ministeriumsbericht), wird ihr vollständiger Name geschrieben. Bei bekannter Abkürzung stehen beim ersten Zitat Name und Abkürzung, danach nur die Abkürzung.
+
+### Sekundärzitate (zitiert nach)
+
+Ist das Original nicht zugänglich, zitieren Sie über die gelesene Quelle: Im Text werden Original und gelesene Quelle genannt, ins Literaturverzeichnis kommt **nur die gelesene Quelle**. APA empfiehlt Sekundärzitate nur, wenn das Original wirklich nicht erreichbar ist.
+
+## Details wörtlicher Zitate
+
+- **Zitate unter 40 Wörtern** stehen in Anführungszeichen im Text, mit Seitenzahl.
+- **Zitate ab 40 Wörtern** werden als eingerücktes Blockzitat ohne Anführungszeichen gesetzt; die Seitenzahl steht am Ende.
+- Bei Quellen ohne Seitenzahlen können Absatznummer, Abschnittsüberschrift oder Zeitstempel (bei Videos) verwendet werden.
+- Auslassungen werden mit Auslassungspunkten, eigene Ergänzungen in eckigen Klammern gekennzeichnet.
+
+Verwenden Sie wörtliche Zitate sparsam; Gedanken in eigenen Worten wiederzugeben (Paraphrase) und zu belegen, ist im wissenschaftlichen Schreiben üblich. Auch eine Paraphrase braucht einen Beleg; siehe unseren [Leitfaden zur Vermeidung von Plagiaten](/de/blog/plagiat-vermeiden).
+
+## Allgemeine Regeln für das Literaturverzeichnis
+
+- Das Verzeichnis wird **alphabetisch nach dem Nachnamen der Erstautorin bzw. des Erstautors** geordnet.
+- Jeder Eintrag hat einen **hängenden Einzug**: erste Zeile bündig, Folgezeilen eingerückt.
+- In Artikeltiteln werden nur das erste Wort und Eigennamen großgeschrieben (im Englischen); Zeitschriftentitel stehen kursiv.
+- Der Jahrgang (Band) ist kursiv, die Heftnummer steht in Klammern, nicht kursiv.
+- Eine DOI wird als Link mit https://doi.org/ angegeben; „Abgerufen von“ entfällt.
+- Bei 21 oder mehr Autorinnen und Autoren werden die ersten 19, Auslassungspunkte und die letzte Person genannt.
+
+Dieselbe Quelle in APA 7 und anderen Stilen nebeneinander finden Sie in unserem [Leitfaden zum Literaturverzeichnis](/de/blog/literaturverzeichnis-erstellen-zitierstile).
+
+## Belege in Tabellen und Abbildungen
+
+Bei Tabellen oder Abbildungen, die aus einem anderen Werk übernommen oder angepasst wurden, steht die Quelle in der Anmerkung unter der Tabelle; gegebenenfalls ist eine Abdruckgenehmigung nötig. Zum Format siehe unseren [Leitfaden zu APA-7-Tabellen und -Abbildungen](/de/blog/apa-7-tabellen-und-abbildungen).
+
 ## APA 7 automatisch mit Academiana
 
 In Academiana werden Zitate nicht als Text getippt, sondern mit der Quelle verknüpft. Das Literaturverzeichnis entsteht automatisch aus diesen Verknüpfungen; löschen Sie ein Zitat, verschwindet es auch aus dem Verzeichnis. Mit einem Klick wechseln Sie zwischen 10 Stilen – APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver, Harvard und weiteren –, und die Qualitätsprüfung findet fehlende Angaben und Unstimmigkeiten für Sie.`,
@@ -477,6 +624,46 @@ Werkzeuge wie Turnitin und iThenticate zeigen, wie **ähnlich** Ihr Text anderen
 
 „Spinning“-Werkzeuge, die Text unlesbar machen, oder Zeichentricks sind unethisch und fallen Prüfenden leicht auf. Sie können disziplinarische Folgen haben.
 
+
+## Arten von Plagiaten
+
+Ein Plagiat ist nicht nur Kopieren und Einfügen. In der Wissenschaft gibt es mehrere Formen:
+
+- **Direktes Plagiat:** Fremde Sätze ohne Anführungszeichen und Beleg verwenden.
+- **Paraphrasenplagiat:** Sätze durch Austausch einiger Wörter umschreiben, ohne die Quelle zu nennen. Andere Wörter machen den Gedanken nicht zu Ihrem.
+- **Mosaik- (Flickwerk-)Plagiat:** Satzteile aus verschiedenen Quellen zusammensetzen und als neuen Text ausgeben.
+- **Selbstplagiat:** Eigene veröffentlichte Texte oder Hausarbeiten ohne Beleg wiederverwenden. Aus einer Abschlussarbeit entstandene Artikel sollten die Arbeit zitieren.
+- **Quellenplagiat:** Quellen aus dem Literaturverzeichnis anderer so angeben, als hätte man sie selbst gelesen.
+- **Ideen- und Datenplagiat:** Fremde originelle Ideen, Forschungsdesigns oder Daten ohne Nennung nutzen.
+
+## So gelingt eine gute Paraphrase
+
+Eine Paraphrase gibt den Gedanken der Quelle in eigener Satzstruktur und eigenen Worten wieder. Bewährtes Vorgehen:
+
+1. Lesen Sie den Absatz, bis Sie den Hauptgedanken verstanden haben.
+2. Schließen Sie die Quelle und notieren Sie den Gedanken in eigenen Worten.
+3. Vergleichen Sie Ihre Notiz mit der Quelle: Haben Sie Satzbau oder markante Formulierungen übernommen, schreiben Sie neu.
+4. Fügen Sie den Beleg hinzu. Auch Paraphrasen müssen belegt werden.
+
+Fachbegriffe müssen Sie nicht ersetzen; ein Synonym für einen Begriff wie „Selbstwirksamkeit“ kann den Sinn verfälschen. Ändern müssen sich Satzbau und Ausdruck.
+
+## Aus der Abschlussarbeit einen Artikel machen
+
+Wenn Sie aus Ihrer Arbeit einen Artikel erstellen, ähnelt ein Teil des Textes zwangsläufig der Arbeit. Geben Sie bei der Einreichung an, dass der Artikel auf einer Abschlussarbeit beruht, zitieren Sie diese und schreiben Sie etwa den Methodenteil im Format der Zeitschrift neu. Entstehen aus denselben Daten mehrere Artikel, muss jeder eine andere Frage beantworten; dieselben Ergebnisse in mehreren Zeitschriften zu veröffentlichen (Salami-Taktik, Doppelpublikation) ist ebenfalls ein Verstoß.
+
+## KI und Plagiat
+
+Auch KI-generierte Texte unterliegen den Regeln guter wissenschaftlicher Praxis. Viele Einrichtungen akzeptieren nicht, dass KI-Text als eigener ausgegeben wird, und verlangen eine Offenlegung. Zudem kann KI nicht existierende Quellen erfinden, was schwerer wiegt als ein Quellenplagiat. Mehr dazu in unseren Leitfäden zur [Ethik von KI in der Abschlussarbeit](/de/blog/ki-fuer-abschlussarbeit-ethisch) und zum [Erkennen erfundener Quellen](/de/blog/ki-erfundene-quellen-erkennen).
+
+## Checkliste vor der Abgabe
+
+- Steht jedes wörtliche Zitat in Anführungszeichen und hat eine Seitenzahl?
+- Endet jede Paraphrase mit einem Beleg?
+- Haben Sie keine ungelesene Quelle als Primärquelle ausgegeben?
+- Haben Sie Passagen aus früheren eigenen Arbeiten belegt?
+- Sind Tabellen, Abbildungen und Skalenitems belegt und, falls nötig, genehmigt?
+- Wird jede Quelle des Literaturverzeichnisses im Text zitiert?
+
 ## Der Ansatz von Academiana
 
 Academiana zeigt keinen Plagiatsprozentsatz an, denn ein verlässlicher Wert kann nur von lizenzierten Diensten mit großen Archiven kommen. Stattdessen hilft es, Plagiate von vornherein zu vermeiden: Der Assistent zitiert nur echte, Ihrem Projekt hinzugefügte Quellen, schreibt nie unbelegte Behauptungen, nennt Seitenzahlen, wenn er sich auf gelesene Volltexte stützt, und markiert wiederkehrende Formulierungen in Ihrem Text.`,
@@ -527,6 +714,47 @@ Allgemeine Chatbots können Artikel, Autor:innen und DOIs erzeugen, die es nicht
 4. **Entwickeln Sie Entwürfe weiter.** Schreiben Sie KI-Vorschläge mit eigenem Denken um und bauen Sie sie aus.
 5. **Legen Sie offen.** Verlangt Ihre Hochschule es, nennen Sie Werkzeug und Zweck.
 
+
+## KI-Nutzung offenlegen
+
+Viele Zeitschriften und Hochschulen verlangen, dass die Nutzung von KI-Werkzeugen klar angegeben wird. Das Publikationsethik-Gremium COPE betont, dass KI-Werkzeuge keine Autoren sein können, weil sie keine Verantwortung für ein Werk übernehmen können. Eine Erklärung enthält meist:
+
+- Welches Werkzeug genutzt wurde
+- Zu welchem Zweck (z. B. Sprachkorrektur, Suchstrategie bei der Literaturrecherche, Programmierung)
+- Dass die Ausgaben geprüft wurden und die Verantwortung bei der verfassenden Person liegt
+
+Wo und wie offengelegt wird, ist je nach Einrichtung verschieden: Methodenteil, Danksagung oder eigene Erklärung. Lesen Sie vor der Abgabe die aktuelle Richtlinie Ihrer Hochschule und Zielzeitschrift. Beispieltexte finden Sie in unserem Leitfaden [KI-Nutzungserklärung schreiben](/de/blog/ki-nutzungserklaerung-schreiben).
+
+## Risikokarte nach Nutzungsart
+
+| Nutzung | Allgemeine Einschätzung | Worauf achten |
+| --- | --- | --- |
+| Sprach- und Grammatikkorrektur | An den meisten Einrichtungen akzeptiert | Sinn darf sich nicht ändern; Erklärung evtl. nötig |
+| Suchstrategie und Schlagwortvorschläge | Meist akzeptiert | Quellen selbst finden und lesen |
+| Zusammenfassung einer gelesenen Quelle | Mit Vorsicht | Prüfen, ob die Zusammenfassung stimmt |
+| Kapitelentwürfe erstellen | Je nach Einrichtung | Erklärung und starke Überarbeitung nötig |
+| Quellen, Daten oder Ergebnisse erzeugen | Nicht akzeptabel | Erfindung ist wissenschaftliches Fehlverhalten |
+
+Diese Tabelle ist eine allgemeine Einschätzung; verbindlich sind die Regeln Ihrer Einrichtung.
+
+## Offen mit der Betreuung sprechen
+
+Besprechen Sie früh, in welchen Phasen und wie Sie KI nutzen wollen. Manche Betreuende erlauben Sprachkorrektur, aber keine Entwürfe. Das Gespräch verhindert Überraschungen in der Verteidigung oder bei einer Plagiatsprüfung.
+
+## Was kann in der Verteidigung gefragt werden?
+
+Das größte Risiko einer mit KI geschriebenen Arbeit ist, dass die verfassende Person den Text nicht beherrscht. Wer Fragen zu einem Begriff, einer Methodenentscheidung oder einem Quellenbefund nicht beantworten kann, erweckt den Eindruck, den Text nicht selbst geschrieben zu haben. Sie sollten jeden Satz erklären können. Zur Vorbereitung siehe unseren [Leitfaden zur Verteidigung](/de/blog/verteidigung-abschlussarbeit-vorbereiten).
+
+## Die Gewohnheit, Quellen zu prüfen
+
+Die wichtigste Gewohnheit bei der Arbeit mit KI ist, jede Quelle zu prüfen:
+
+1. Suchen Sie die Quelle in einer Datenbank (Crossref, OpenAlex, Google Scholar oder ein nationaler Katalog).
+2. Öffnen Sie eine vorhandene DOI und prüfen Sie die Angaben.
+3. Lesen Sie den betreffenden Abschnitt, um zu bestätigen, dass die Quelle die Aussage wirklich enthält.
+
+Ihr ganzes Literaturverzeichnis prüfen Sie mit unserer kostenlosen [Prüfung auf erfundene Quellen](/de/araclar/uydurma-kaynak-kontrolu).
+
 ## Academiana beruht auf diesen Grundsätzen
 
 In Academiana kann der Assistent systembedingt keine Quellen erfinden: Er zitiert nur Quellen, die in echten Datenbanken gefunden und Ihrem Projekt hinzugefügt wurden. Er schreibt nie unbelegte Behauptungen und setzt „[DATEN EINZUTRAGEN]“ (Daten einzutragen), wo Daten nötig sind. Kein Entwurf gelangt in Ihr Dokument, bevor Sie auf „Zum Dokument hinzufügen“ klicken, und jede Änderung bleibt im Versionsverlauf erhalten. Einzelheiten finden Sie in unseren [Grundsätzen wissenschaftlicher Integrität](/de/akademik-durustluk).`,
@@ -564,6 +792,42 @@ Werkzeuge, die KI-Text „vermenschlichen“ oder Detektoren „umgehen“ wolle
 ## Der richtige Weg
 
 Nutzen Sie KI als Recherche- und Überarbeitungsassistenz, nicht als Ersatz für die Autorschaft. Wenn Sie Entwürfe lesen und mit eigenem Denken umschreiben, wird der Text besser – und wirklich Ihrer.
+
+
+## Wen treffen Fehlalarme besonders?
+
+Studien zeigen, dass KI-Detektoren Texte von Nicht-Muttersprachlern des Englischen häufiger als „KI-generiert“ markieren. Detektoren messen, wie „vorhersagbar“ ein Text ist: Texte mit begrenzterem Wortschatz und formelhaften akademischen Wendungen können KI-Ausgaben ähneln, obwohl ein Mensch sie geschrieben hat. Für andere Sprachen als Englisch gibt es kaum unabhängige Studien zur Genauigkeit. Ein Detektorergebnis darf deshalb nie alleinige Grundlage einer Sanktion sein.
+
+## Was ein Detektorwert bedeutet – und was nicht
+
+- **Er bedeutet:** Nach dem Modell des Werkzeugs ähnelt der Text statistisch einer KI-Ausgabe.
+- **Er bedeutet nicht:** einen Beweis, dass der Text mit KI geschrieben wurde. Der Wert ist eine Wahrscheinlichkeitsschätzung.
+- **Er bedeutet nicht:** ein Plagiat. Detektoren gleichen keine Quellen ab und unterscheiden sich von Ähnlichkeitsberichten. Wie man einen Ähnlichkeitsbericht liest, erklären wir im [Leitfaden zu Plagiaten](/de/blog/plagiat-vermeiden).
+
+## Den Schreibprozess dokumentieren
+
+Die stärkste Verteidigung gegen einen Fehlalarm ist, den eigenen Schreibprozess zeigen zu können:
+
+- **Versionsgeschichte:** Die Versionsgeschichte in Word, Google Docs oder Ihrem Editor zeigt, wie der Text gewachsen ist.
+- **Notizen und Entwürfe:** Bewahren Sie Lesenotizen, Literaturmatrix und handschriftliche Entwürfe auf.
+- **Quellenaufzeichnungen:** Die Daten in Ihrer Literaturverwaltung zeigen, wann Sie Quellen gefunden haben.
+- **Korrespondenz mit der Betreuung:** Eingereichte Kapitelentwürfe und erhaltenes Feedback.
+
+## Empfehlungen für Einrichtungen
+
+Wenn Sie als Hochschule oder Lehrende Detektoren nutzen:
+
+- Treffen Sie keine Entscheidung allein auf Basis des Wertes; bewerten Sie ihn zusammen mit einem Gespräch und Prozessbelegen.
+- Formulieren Sie eine klare KI-Richtlinie: was erlaubt ist und was offengelegt werden muss.
+- Nutzen Sie Prüfungsformen, die die Beherrschung des Inhalts zeigen (mündliche Präsentation, Verteidigung, Prozessportfolio).
+
+## Kurzer Fahrplan für Studierende
+
+1. Lesen Sie die KI-Richtlinie Ihrer Einrichtung.
+2. Notieren Sie, welches Werkzeug Sie wofür genutzt haben, und legen Sie es bei Bedarf offen. Siehe unseren Leitfaden [KI-Nutzungserklärung schreiben](/de/blog/ki-nutzungserklaerung-schreiben).
+3. Schreiben Sie in eigenen Worten und lesen Sie jede Quelle.
+4. Bewahren Sie Versionsgeschichte und Notizen auf.
+5. Werden Sie markiert, bleiben Sie ruhig und bringen Sie Ihre Prozessbelege zum Gespräch mit.
 
 ## Die Haltung von Academiana
 

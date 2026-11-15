@@ -81,7 +81,7 @@ export const GUIDE_DE: Record<string, string> = {
   "Bir cümle veya paragraf seçin; üstünde küçük bir menü çıkar.": "Markieren Sie einen Satz oder Absatz; darüber erscheint ein kleines Menü.",
   "“Çevir”, “Dil denetimi”, “Akademikleştir”, “Kısalt”, “Genişlet”, “Asistana sor” seçili metne uygulanır.": "„Übersetzen“, „Sprachprüfung“, „Akademisch formulieren“, „Kürzen“, „Erweitern“ und „Den Assistenten fragen“ wirken auf die Auswahl.",
   "Atıflar ve dipnotlar bu işlemlerde korunur.": "Zitate und Fußnoten bleiben erhalten.",
-  "Otomatik tamamlama": "Autovervollständigung",
+  "Zenit otomatik tamamlama": "Zenit-Autovervollständigung",
   "Araç çubuğundaki sihirli değnek": "Zauberstab in der Symbolleiste",
   "Paragrafın sonunda yazmayı bırakınca gri renkte bir cümlelik öneri çıkar.": "Halten Sie am Ende eines Absatzes inne, erscheint ein Vorschlag von einem Satz in Grau.",
   "Öneri; çalışmanın konusunu ve amacını, bölümler arası akışı, bölümün başlığını ve amacını ve önceki paragrafları dikkate alır.": "Der Vorschlag berücksichtigt Thema und Ziel der Arbeit, den Ablauf der Kapitel, Titel und Zweck des Kapitels sowie die vorherigen Absätze.",

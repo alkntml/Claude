@@ -1201,3 +1201,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Uç:** `/api/projects/[id]/complete` gövdesine `stageId`; bölümler `project_id` filtresiyle okunur. Kurallar değişmedi: tek cümle, sayı/yıl/ad/atıf yok, aylık haktan düşmez, günlük sınır ve maliyet tavanı.
 - **Maliyet:** Hızlı model; istem başına giriş yaklaşık 2–3 katına çıkar (birkaç yüz token), öneri başı maliyet hâlâ çok düşüktür ve maliyet tavanına eklenir.
 - Test: `tests/autocomplete-context.test.ts` (9 çalışma türü, 90 bölüm).
+
+## D206 — Zenit: yazım zekâsının marka adı (15 Kasım 2026)
+- Kullanıcı kararı: önceki paragrafı anlayan, çalışmanın konusu ve gidişatından kopmayan, bölümün başlığını ve amacını bilen, yazarken devam cümlesi öneren ve kütüphanedeki kaynakları kullanan yazım zekâsının adı **Zenit** (“çalışmanıza en yukarıdan bakar”).
+- Kapsam: asistan ve otomatik tamamlama birlikte Zenit’tir. Doğruluk için: kaynaklı/atıflı yazım asistanın işidir; otomatik tamamlama bilerek kaynak, sayı, yıl, ad, atıf önermez (D113).
+- Görünür yerler: tanıtım sayfası “Planlama ve yazım” kartı, çalışma alanı asistan başlığı (“Zenit · Akademik asistan”), öneri düğmesi ve bildirimleri (“Zenit otomatik tamamlama”), yardım asistanı bilgisi, SSS “Zenit nedir?” (TR/EN/DE), kullanım rehberi.
+- Marka tescili kullanıcıda: TÜRKPATENT araştırması (sınıf 9, 41, 42).

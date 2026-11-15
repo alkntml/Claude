@@ -211,7 +211,7 @@ const CATEGORIES: Category[] = [
     { icon: ClipboardList, title: "Kurgu modülü", text: "Problem, amaç, araştırma soruları, yöntem ve bölüm bazında hedef uzunluk; asistan bütün bölümleri bu kurguya göre yazar." },
     { icon: Bot, title: "Bölüm bölüm yazım asistanı", text: "Taslak, genişletme, yeniden yazma ve sentez; “şu başlıkları ekle” gibi serbest isteklerinizi de uygular. Her sürüm geçmişte saklanır." },
     { icon: Link2, title: "Bölümler arası bütünlük", text: "Amaç, hipotezler ve araştırma soruları her bölüme taşınır; konudan sapan, hipotezi karşılamayan veya soruyu cevapsız bırakan bölüm işaretlenir ve tek tıkla uyumlanır." },
-    { icon: Sparkles, title: "Yazarken otomatik tamamlama", text: "Paragraf sonunda gri öneri belirir, Tab ile kabul edilir; metninizin üslubunu sürdürür." },
+    { icon: Sparkles, title: "Zenit: çalışmanızın bütününü gören yazım zekâsı", text: "Yazdığınız her cümlede önceki paragrafları, çalışmanın konusunu ve gidişatını, bölümün başlığını ve amacını bilir; asistan kütüphanenizdeki gerçek kaynaklarla yazar. Paragraf sonunda gri öneri belirir, Tab ile kabul edilir." },
         { icon: FileText, title: "Word’den içe aktarma", text: "Hazır tezinizi veya makalenizi yükleyin; bölümler, kaynakça ve atıflar otomatik bağlanır." },
     { icon: Users, title: "Ortak yazım", text: "Gerçek zamanlı ortak yazım: kim hangi paragrafta anında görünür, değişiklikler saniyeler içinde yansır ve farklı paragraflarda otomatik birleşir.", plan: "coauthors" },
   ] },

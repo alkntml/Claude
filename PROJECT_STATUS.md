@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Zenit markası (D206, 15 Kasım 2026)**
+- Yazım zekâsının (asistan + otomatik tamamlama) adı **Zenit**: tanıtım sayfası özellik kartı, çalışma alanında asistan başlığı ve öneri düğmesi, yardım asistanı, SSS (“Zenit nedir?”) ve rehber; TR/EN/DE.
+
 **Otomatik tamamlama bağlamı (D205, 15 Kasım 2026)**
 - Satır içi öneri artık çalışmanın konusu, türü, düzeyi, yöntemi, amacı ve araştırma sorularını; bölüm akışını (şu anki konum); bölümün başlığını, amacını, çalışmadaki işlevini, beklenen işlevlerini ve öğrencinin bölüm planını bilir ve bölümün asistan rolüyle yazar. Bütün çalışma türlerinde ve özel bölümlerde.
 

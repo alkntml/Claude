@@ -150,7 +150,7 @@ export function SuggestSwitch({ on, onToggle }: { on: boolean; onToggle: () => v
   const { t } = useT();
   return (
     <button type="button" role="switch" aria-checked={on} onMouseDown={(e) => e.preventDefault()} onClick={onToggle}
-      title={on ? t("Otomatik tamamlama açık (kapat)") : t("Otomatik tamamlama kapalı (aç)")}
+      title={on ? t("Zenit otomatik tamamlama açık (kapat)") : t("Zenit otomatik tamamlama kapalı (aç)")}
       className="flex h-7 shrink-0 items-center gap-2 rounded-md pl-2 pr-1 text-[12.5px] text-ink-600 hover:bg-ink-50">
       <span>{t("Otomatik tamamlama")}</span>
       <span className={cn("relative inline-flex h-[18px] w-8 items-center rounded-full transition-colors", on ? "bg-brand-600" : "bg-ink-200")}>

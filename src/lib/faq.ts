@@ -390,6 +390,14 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "zenit",
+        q: { tr: "Zenit nedir?", en: "What is Zenit?" },
+        a: {
+          tr: "Zenit, Academiana’nın yazım zekâsının adıdır; asistan ve otomatik tamamlama birlikte çalışır. Yazdığınız her cümlede **önceki paragraflarınızı**, **çalışmanızın konusunu ve gidişatını** (bölümlerin sırası ve şu an nerede olduğunuz), **bölümün başlığını ve amacını** bilir ve o bölümün asistan rolüyle (ör. yöntem, literatür, tartışma) yazar. Asistan atıflı yazarken yalnızca **kütüphanenizdeki gerçek kaynakları** kullanır. Paragraf sonundaki gri öneri ise kaynak gerektiren bilgi (sayı, yıl, ad, atıf) içermez; yalnızca kendi düşüncenizi sürdürmenize yardım eder.",
+          en: "Zenit is the name of Academiana’s writing intelligence; the assistant and autocomplete work together. In every sentence you write it knows **your previous paragraphs**, **your work’s topic and direction** (the order of sections and where you are now) and **the section’s title and purpose**, and writes in that section’s assistant role (e.g. method, literature, discussion). When the assistant writes with citations, it uses only the **real sources in your library**. The grey suggestion at the end of a paragraph never contains information that needs a source (numbers, years, names, citations); it only helps you continue your own idea.",
+        },
+      },
+      {
         id: "otomatik-tamamlama",
         q: { tr: "Yazarken çıkan gri öneri nedir? Nasıl kapatırım?", en: "What is the grey suggestion while I type? How do I turn it off?" },
         a: {

@@ -4728,4 +4728,11 @@ export const DE: Dict = {
   "Zotero/ORCID bağlantınızdan eklendi.": "Aus Ihrer Zotero-/ORCID-Verbindung hinzugefügt.",
   "Bu çalışmada danışmansınız: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilir ve üst çubuktaki “İlerleme” ile bölüm bölüm durumu görebilirsiniz.": "Sie betreuen diese Arbeit: Sie können den Text lesen, einen Abschnitt markieren und im Tab „Kommentar“ eine Notiz hinterlassen sowie über „Fortschritt“ in der oberen Leiste den Stand jedes Kapitels sehen.",
   "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma; Zotero ve ORCID eşitleme.": "Publikationstrends nach Jahren und Themenvorschläge; Import/Export für Zotero, Mendeley und EndNote; Synchronisierung mit Zotero und ORCID.",
+  "Zenit: çalışmanızın bütününü gören yazım zekâsı": "Zenit: Schreibintelligenz, die Ihre ganze Arbeit überblickt",
+  "Yazdığınız her cümlede önceki paragrafları, çalışmanın konusunu ve gidişatını, bölümün başlığını ve amacını bilir; asistan kütüphanenizdeki gerçek kaynaklarla yazar. Paragraf sonunda gri öneri belirir, Tab ile kabul edilir.": "Bei jedem Satz kennt es Ihre vorherigen Absätze, Thema und Richtung der Arbeit sowie Titel und Zweck des Kapitels; der Assistent schreibt mit den echten Quellen Ihrer Bibliothek. Am Ende des Absatzes erscheint ein grauer Vorschlag, der mit Tab übernommen wird.",
+  "Zenit · Akademik asistan": "Zenit · Wissenschaftlicher Assistent",
+  "Zenit otomatik tamamlama açık (kapat)": "Zenit-Autovervollständigung an (ausschalten)",
+  "Zenit otomatik tamamlama kapalı (aç)": "Zenit-Autovervollständigung aus (einschalten)",
+  "Zenit otomatik tamamlama açık": "Zenit-Autovervollständigung an",
+  "Zenit otomatik tamamlama kapalı": "Zenit-Autovervollständigung aus",
 };

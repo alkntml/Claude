@@ -182,3 +182,5 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-15, D203) Yönetim panelinde API maliyeti günlük/haftalık/aylık/yıllık; yönetici maliyeti çizelgede ayrı, toplamda yok
 - [x] (2026-11-15, D204) KVKK veri dökümü: eksik tablolar, Türkçe rehber, okunabilir HTML rapor
 - [x] (2026-11-15, D205) Otomatik tamamlama: çalışmanın konusu/gidişatı, bölüm başlığı/amacı ve asistan rolü (tüm çalışma türleri)
+- [x] (2026-11-15, D206) Zenit adı ürüne yerleştirildi
+- [ ] (Kullanıcı) “Zenit” için TÜRKPATENT marka araştırması (sınıf 9, 41, 42); uygunsa tescil başvurusu (D206)

@@ -4736,4 +4736,11 @@ export const EN: Record<string, string> = {
   "Zotero/ORCID bağlantınızdan eklendi.": "Added from your Zotero/ORCID connection.",
   "Bu çalışmada danışmansınız: metni okuyabilir, bir bölümü seçip “Yorum” sekmesinden not bırakabilir ve üst çubuktaki “İlerleme” ile bölüm bölüm durumu görebilirsiniz.": "You are the supervisor of this work: you can read the text, select a section and leave a note in the “Comment” tab, and see the status of each section via “Progress” in the top bar.",
   "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma; Zotero ve ORCID eşitleme.": "Publication trends by year and topic suggestions; Zotero, Mendeley and EndNote import/export; Zotero and ORCID sync.",
+  "Zenit: çalışmanızın bütününü gören yazım zekâsı": "Zenit: writing intelligence that sees your whole work",
+  "Yazdığınız her cümlede önceki paragrafları, çalışmanın konusunu ve gidişatını, bölümün başlığını ve amacını bilir; asistan kütüphanenizdeki gerçek kaynaklarla yazar. Paragraf sonunda gri öneri belirir, Tab ile kabul edilir.": "In every sentence you write, it knows your previous paragraphs, the work’s topic and direction, and the section’s title and purpose; the assistant writes with the real sources in your library. A grey suggestion appears at the end of the paragraph and is accepted with Tab.",
+  "Zenit · Akademik asistan": "Zenit · Academic assistant",
+  "Zenit otomatik tamamlama açık (kapat)": "Zenit autocomplete on (turn off)",
+  "Zenit otomatik tamamlama kapalı (aç)": "Zenit autocomplete off (turn on)",
+  "Zenit otomatik tamamlama açık": "Zenit autocomplete on",
+  "Zenit otomatik tamamlama kapalı": "Zenit autocomplete off",
 };

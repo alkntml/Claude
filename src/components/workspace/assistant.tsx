@@ -406,7 +406,7 @@ function AssistantBubble({ msg, streaming, onInsert, onUpdateDraft, onReduce, bu
   const hasDraft = parsed.parts.some((p) => p.kind === "draft");
   return (
     <div className="w-full max-w-full space-y-2.5 sm:max-w-[96%]">
-      <div className="flex items-center gap-1.5 text-[11px] font-medium text-ink-400"><Sparkles className="h-3 w-3 text-brand-500" /> {t("Akademik asistan")}</div>
+      <div className="flex items-center gap-1.5 text-[11px] font-medium text-ink-400"><Sparkles className="h-3 w-3 text-brand-500" /> {t("Zenit · Akademik asistan")}</div>
       {research}
       {parsed.parts.map((p, i) =>
         p.kind === "text" ? (

@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D205)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D206)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -56,6 +56,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
 - Sunucuya özel modüller `import "server-only"` ile başlar.
 - **Metinler:** Türkçe yaz, `t("…")` ile sar (istemci `useT()`, sunucu `getT()`, API `makeT(localeFromRequest(req))`). İngilizcesi `src/i18n/en.ts`, Almancası `src/i18n/de.ts` (içerik dosyalarında `*-de.ts`); `tests/i18n.test.ts` denetler. Kesme işareti `’`.
 - **Renkler:** `ink-*` / marka sınıfları, sabit hex yok (gece modu). Görünüm dili D148; vurgu rengi indigo mavi (D163: krem tema geri alındı): dolgu `bg-brand-600` + beyaz yazı, bağlantı `text-brand-600/700`.
+- **Zenit (D206):** Academiana’nın yazım zekâsının marka adı (asistan + otomatik tamamlama). Metinlerde “Zenit” olarak geçer; otomatik tamamlama kaynak/atıf önermez, kaynaklı yazım asistanın işidir.
 - **Atıflar** editörde `citation` düğümüdür; düz metin “(Yazar, Yıl)” üretme.
 - **Yapay zekâ:**
   - Model işe göre seçilir (D47): `fast` Haiku, `balanced` Sonnet, `default` Opus — `resolveModel(planId, tier)`, eylemler `ACTION_TIER`.

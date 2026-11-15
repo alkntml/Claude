@@ -131,7 +131,7 @@ export const GUIDE: GuideChapter[] = [
         s("“Çevir”, “Dil denetimi”, “Akademikleştir”, “Kısalt”, “Genişlet”, “Asistana sor” seçili metne uygulanır.", "“Translate”, “Language check”, “Make academic”, “Shorten”, “Expand”, “Ask the assistant” apply to the selection."),
         s("Atıflar ve dipnotlar bu işlemlerde korunur.", "Citations and footnotes are preserved."),
       ] },
-      { id: "tamamlama", title: s("Otomatik tamamlama", "Autocomplete"), where: s("Araç çubuğundaki sihirli değnek", "Magic wand in the toolbar"), steps: [
+      { id: "tamamlama", title: s("Zenit otomatik tamamlama", "Zenit autocomplete"), where: s("Araç çubuğundaki sihirli değnek", "Magic wand in the toolbar"), steps: [
         s("Paragrafın sonunda yazmayı bırakınca gri renkte bir cümlelik öneri çıkar.", "Pause at the end of a paragraph and a one-sentence suggestion appears in grey."),
         s("Öneri; çalışmanın konusunu ve amacını, bölümler arası akışı, bölümün başlığını ve amacını ve önceki paragrafları dikkate alır.", "Suggestions consider the work’s topic and aim, the flow between sections, the section’s title and purpose, and your previous paragraphs."),
         s("“Tab” tümünü, “Ctrl/⌘ + →” bir kelimeyi kabul eder, “Esc” kapatır; telefonda öneriye dokunun.", "“Tab” accepts all, “Ctrl/⌘ + →” one word, “Esc” dismisses; on phones tap the suggestion."),

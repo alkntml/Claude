@@ -1097,7 +1097,7 @@ export function Workspace(props: Props) {
     await setFullDoc(removeSection(fullDoc(), focused.index), t("Alt başlık silindi"), null);
   }
 
-  const toggleSuggest = () => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Otomatik tamamlama açık") : t("Otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); };
+  const toggleSuggest = () => { const v = !autoSuggest; setAutoSuggest(v); suggestCtx.current.blocked = false; try { localStorage.setItem("acd_autosuggest", v ? "1" : "0"); } catch { /* yok say */ } toast({ tone: "info", title: v ? t("Zenit otomatik tamamlama açık") : t("Zenit otomatik tamamlama kapalı"), detail: v ? t("Paragrafın sonunda durunca gri öneri çıkar; Tab ile kabul edin.") : undefined }); };
   const done = completion(stages);
   const nextId = nextStage(stages)?.id;
   const waitFor = active && !isBibliography && active.status !== "done" ? shouldWaitFor(stages, active) : undefined;

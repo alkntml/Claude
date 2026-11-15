@@ -1,3 +1,4 @@
+import { CONTACT_EMAIL } from "@/lib/site";
 import Link from "@/components/l-link";
 import { pageMeta } from "@/lib/seo-server";
 import { StaticPage } from "@/components/static-page";
@@ -12,7 +13,9 @@ export const dynamic = "force-dynamic";
 
 /** Kurumsal lisans tanıtımı: üniversiteler, enstitüler, araştırma grupları */
 export default async function Institutions() {
-  const [{ t }, contact] = await Promise.all([getT(), getSetting("site.contact")]);
+  const [{ t }, setting] = await Promise.all([getT(), getSetting("site.contact")]);
+  // D199: yönetimden ayrı adres girilmediyse sitenin iletişim adresi
+  const contact = { ...setting, email: setting.email || CONTACT_EMAIL };
   const waHref = whatsappLink(t("Merhaba, Academiana kurum lisansı / Akademik Ekip İndirimi için teklif almak istiyorum.\nKurum / bölüm / ekip adı: \nKişi sayısı: \nİlgilendiğimiz paket: "));
   const items = [
     ["Toplu lisans", "Belirlediğiniz sayıda kullanıcıya Pro veya Premium paket; tek fatura, yıllık sözleşme."],

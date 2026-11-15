@@ -1904,6 +1904,7 @@ export const DE: Dict = {
   "En yeni yazılar": "Neueste Artikel",
   "Tümünü gör": "Alle ansehen",
   "{n} yazı": "{n} Artikel",
+  "İletişim": "Kontakt",
   "{n} dk okuma": "{n} Min. Lesezeit",
   "{s} Editör Ekibi": "Redaktion {s}",
   "Ücretsiz deneyin": "Kostenlos testen",

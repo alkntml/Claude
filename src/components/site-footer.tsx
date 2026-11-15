@@ -3,6 +3,8 @@ import { useT } from "@/i18n/client";
 import Link from "@/components/l-link";
 import { Logo } from "./icons";
 import { LEGAL_DOCS } from "@/lib/legal/docs";
+import { WHATSAPP_NUMBER } from "@/lib/pricing";
+import { CONTACT_EMAIL, INSTAGRAM } from "@/lib/site";
 
 // Sık aranan rehberler (iç bağlantı): [Türkçe adres, İngilizce adres, başlık, Almanca adres]
 const FOOTER_GUIDES: [string, string, string, string][] = [
@@ -22,6 +24,12 @@ export function SiteFooter() {
         <div className="md:col-span-2">
           <Logo variant="full" className="!h-14" />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-500">{t("Akademik çalışmanızı gerçek ve doğrulanabilir kaynaklarla, şeffaf erişim seviyeleriyle ve bilimsel standartlara uygun biçimde hazırlayın.")}</p>
+          {/* D199: iletişim */}
+          <ul className="mt-5 space-y-2 text-sm text-ink-600" aria-label={t("İletişim")}>
+            <li><a href={`mailto:${CONTACT_EMAIL}`} className="inline-flex items-center gap-2 hover:text-ink-900"><svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>{CONTACT_EMAIL}</a></li>
+            <li><a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer me" className="inline-flex items-center gap-2 hover:text-ink-900"><svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>@{INSTAGRAM.handle}</a></li>
+            <li><a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-ink-900"><svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12Z" /></svg>WhatsApp</a></li>
+          </ul>
         </div>
         <div>
           <h4 className="text-sm font-semibold text-ink-800">{t("Platform")}</h4>

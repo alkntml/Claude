@@ -1903,6 +1903,7 @@ export const EN: Record<string, string> = {
   "En yeni yazılar": "Latest articles",
   "Tümünü gör": "See all",
   "{n} yazı": "{n} articles",
+  "İletişim": "Contact",
   "{n} dk okuma": "{n} min read",
   "{s} Editör Ekibi": "{s} Editorial Team",
   "Ücretsiz deneyin": "Try it free",

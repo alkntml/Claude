@@ -2,7 +2,7 @@ import Link from "@/components/l-link";
 import { JsonLd } from "@/components/json-ld";
 import { StaticPage } from "@/components/static-page";
 import { getLocale } from "@/i18n/server";
-import { env } from "@/lib/env";
+import { CONTACT_EMAIL, INSTAGRAM } from "@/lib/site";
 import { FOUNDER, founderLd } from "@/lib/structured-data";
 import { WHATSAPP_NUMBER } from "@/lib/pricing";
 import { pageMeta } from "@/lib/seo-server";
@@ -17,7 +17,7 @@ const phone = `+${WHATSAPP_NUMBER.slice(0, 2)} ${WHATSAPP_NUMBER.slice(2, 5)} ${
 /** Hakkımızda (D108): neden kurulduk, misyon, vizyon, değerler, kurucu. Yalnızca doğrulanabilir bilgi; sayı/kullanıcı iddiası yok. */
 export default async function AboutPage() {
   const locale = await getLocale();
-  const email = env.contactEmail;
+  const email = CONTACT_EMAIL;
   if (locale === "de") {
     return (
       <StaticPage path="/hakkimizda" pageType="AboutPage" title="Über Academiana" lead="Academiana wurde gegründet, um KI eine sinnvolle und produktive Rolle in der Bildung zu geben: Studierenden und Forschenden Zeit zu sparen, ihnen bessere Arbeit zu ermöglichen und ihren Beitrag zu stärken.">
@@ -40,7 +40,7 @@ export default async function AboutPage() {
         <h2>Gründer</h2>
         <p>Academiana wurde von <strong>{FOUNDER.name}</strong> (Gründer und CEO) gegründet und wird von ihm geleitet.</p>
         <h2>Kontakt</h2>
-        <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · E-Mail: <span className="select-all font-medium text-ink-900">{email}</span></> : null}</p>
+        <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · E-Mail: <a href={`mailto:${email}`} className="font-medium text-ink-900 underline-offset-2 hover:underline">{email}</a></> : null} · Instagram: <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 underline-offset-2 hover:underline">@{INSTAGRAM.handle}</a></p>
       </StaticPage>
     );
   }
@@ -66,7 +66,7 @@ export default async function AboutPage() {
         <h2>Founder</h2>
         <p>Academiana was founded and is led by <strong>{FOUNDER.name}</strong>, Founder and CEO.</p>
         <h2>Contact</h2>
-        <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · Email: <span className="select-all font-medium text-ink-900">{email}</span></> : null}</p>
+        <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · Email: <a href={`mailto:${email}`} className="font-medium text-ink-900 underline-offset-2 hover:underline">{email}</a></> : null} · Instagram: <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 underline-offset-2 hover:underline">@{INSTAGRAM.handle}</a></p>
       </StaticPage>
     );
   }
@@ -91,7 +91,7 @@ export default async function AboutPage() {
       <h2>Kurucu</h2>
       <p>Academiana, Kurucu ve CEO <strong>{FOUNDER.name}</strong> tarafından kurulmuştur ve yönetilmektedir.</p>
       <h2>İletişim</h2>
-      <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · E-posta: <span className="select-all font-medium text-ink-900">{email}</span></> : null}</p>
+      <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · E-posta: <a href={`mailto:${email}`} className="font-medium text-ink-900 underline-offset-2 hover:underline">{email}</a></> : null} · Instagram: <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 underline-offset-2 hover:underline">@{INSTAGRAM.handle}</a></p>
     </StaticPage>
   );
 }

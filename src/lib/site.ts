@@ -5,3 +5,7 @@ export const SITE_HOST = "www.academiana.com.tr";
 
 /** Tanıtım videosu (D127): public/video altında; ana sayfa oynatıcısı ve VideoObject şeması aynı dosyayı kullanır. */
 export const PROMO_VIDEO = { src: "/video/academiana-tanitim-80-ses.mp4", poster: "/video/academiana-tanitim-kapak.jpg", duration: "PT1M20S", uploadDate: "2026-11-14" };
+
+/** İletişim (D199): herkese açık e-posta ve Instagram hesabı (altbilgi, Hakkımızda, Kurumlar, yapılandırılmış veri) */
+export const CONTACT_EMAIL = "iletisim@academiana.com.tr";
+export const INSTAGRAM = { handle: "academianatr", url: "https://www.instagram.com/academianatr/" };

@@ -8,6 +8,7 @@ export const POSTS_1: BlogPost[] = [
     category: "Tez yazımı",
     keywords: ["tez nasıl yazılır", "yüksek lisans tezi yazma", "tez yazım aşamaları", "tez bölümleri"],
     date: "2026-11-02",
+    updated: "2026-11-15",
     cta: { text: "Tez türünüze göre hazır yol haritası, bölüm bölüm rehberlik ve gerçek kaynaklarla çalışan bir asistanla başlayın.", href: "/kayit", label: "Tezime başla" },
     body: `Tez yazmak çoğu öğrenciye ilk bakışta dağ gibi görünür. Oysa tez, birbirine bağlı ve her biri tek başına yönetilebilir küçük adımlardan oluşur. Bu rehberde bir tezi baştan sona hangi sırayla yazmanız gerektiğini ve her aşamada nelere dikkat etmeniz gerektiğini anlatıyoruz.
 
@@ -48,6 +49,59 @@ Her enstitünün bir tez yazım kılavuzu vardır: kenar boşlukları, yazı tip
 
 Teslimden önce atıf–kaynakça tutarlılığını, tablo ve şekil numaralarını, yazım ve noktalamayı kontrol edin. Ardından jürinin sorabileceği sorulara cevap hazırlayın.
 
+
+## Tez türleri ve beklentiler
+
+Tezler düzeye ve yönteme göre farklı beklentiler taşır:
+
+- **Yüksek lisans tezi:** Bir araştırma sorusunu bilimsel yöntemle cevaplayabildiğinizi gösterir. Özgün katkı beklenir ama bu katkı yeni bir örneklem, bağlam veya yöntem uygulaması olabilir.
+- **Doktora tezi:** Alana kalıcı ve özgün bir katkı bekler. Kuramsal tartışma daha derin, yöntem daha sağlam, literatür daha kapsamlı olmalıdır.
+- **Nicel, nitel ve karma tezler:** Bölüm adları benzer olsa da içerik değişir. Nicel tezde örneklem ve istatistik, nitel tezde çalışma grubu, veri toplama süreci ve inandırıcılık (geçerlik–güvenirlik) ön plandadır.
+
+Tez yazım kılavuzunuz bölüm adlarını ve sırasını belirleyebilir; her zaman kılavuzu esas alın.
+
+## Tezin omurgası: tutarlılık zinciri
+
+Jürilerin en çok dikkat ettiği konu, bölümler arasındaki tutarlılıktır. Şu zincir baştan sona kopmamalıdır:
+
+1. **Problem:** Hangi boşluğu veya sorunu ele alıyorsunuz?
+2. **Amaç:** Bu sorunla ilgili neyi ortaya koymak istiyorsunuz?
+3. **Araştırma soruları veya hipotezler:** Amacı sınanabilir parçalara bölüyor mu?
+4. **Yöntem:** Her soru için uygun desen, örneklem ve analiz var mı?
+5. **Bulgular:** Her soru için bir sonuç raporlanmış mı?
+6. **Tartışma ve sonuç:** Her bulgu literatürle karşılaştırılmış ve amaca geri dönülmüş mü?
+
+Örneğin üç araştırma sorunuz varsa bulgular bölümünde de üç başlık, tartışmada da üç tartışma ekseni görmek beklenir. Sorulardan birinin yöntemi yoksa ya da bulgularda bir sorunun cevabı unutulmuşsa bu, savunmada ilk sorulacak konudur.
+
+## Gerçekçi bir zaman planı
+
+Bir yüksek lisans tezinin yazım süreci kabaca şu aşamalara ayrılır: konu ve öneri, literatür, yöntem ve etik kurul, veri toplama, analiz, yazım ve düzeltmeler. Veri toplama ve etik kurul süreleri genellikle en çok sapan kalemlerdir; takvimi teslim tarihinden geriye doğru planlayın. Ayrıntılı bir planlama yöntemi için [tez yazım takvimi rehberimize](/blog/tez-yazim-takvimi-zaman-yonetimi) bakabilirsiniz.
+
+## Danışmanla verimli çalışmak
+
+- Her görüşmeden önce kısa bir gündem ve son görüşmeden beri yaptıklarınızı gönderin.
+- Taslakları bölüm bölüm paylaşın; tezin tamamını tek seferde göndermek geri bildirimi geciktirir.
+- Aldığınız geri bildirimleri bir listede tutun ve hangisini nasıl uyguladığınızı not edin.
+- Yöntemle ilgili kararları (örneklem, ölçek, analiz) veri toplamaya başlamadan danışmanınızla onaylayın.
+
+## Sık yapılan hatalar
+
+- Konuyu çok geniş tutup her şeyi kapsamaya çalışmak
+- Literatürü kaynak kaynak özetlemek, temalara göre sentezlememek: bunun için [literatür taraması rehberimize](/blog/literatur-taramasi-nasil-yapilir) bakın
+- Araştırma soruları ile analizleri eşleştirmemek
+- Bulgular bölümünde yorum yapmak, tartışmada yeni bulgu vermek
+- Kaynakçayı ve biçim kurallarını teslimden önceki son haftaya bırakmak
+- Özeti en başta yazıp sonra güncellemeyi unutmak
+
+## Teslimden önce kontrol listesi
+
+- Her araştırma sorusunun yöntemde bir analizi, bulgularda bir cevabı var mı?
+- Metindeki her atıf kaynakçada, kaynakçadaki her kaynak metinde var mı? Ayrıntı için [kaynakça rehberimize](/blog/kaynakca-nasil-hazirlanir) bakın.
+- Tablo ve şekil numaraları sıralı ve metinde anılıyor mu?
+- Özet, tezin son hâlini mi anlatıyor?
+- Kapak, onay, beyan sayfaları enstitü kılavuzuna uygun mu?
+- Sınırlılıklar ve öneriler bulgularla tutarlı mı?
+
 ## Academiana bu süreçte nasıl yardımcı olur?
 
 Academiana’da çalışma türünüzü seçtiğinizde yukarıdaki adımlar hazır bir yol haritası olarak gelir. Önce konu ve başlık seçimi yapılır, sonra bölümler sırayla ilerler; özet en sona bırakılır. Asistan gerçek veri tabanlarından kaynak bulur, her bölüm tamamlandığında amacına uygun olup olmadığını kontrol eder ve tezinizi enstitü biçimine yakın bir Word dosyası olarak indirmenizi sağlar. Yazar her zaman sizsiniz; sistem yol gösterir.`,
@@ -59,6 +113,7 @@ Academiana’da çalışma türünüzü seçtiğinizde yukarıdaki adımlar haz�
     category: "Tez yazımı",
     keywords: ["tez konusu nasıl seçilir", "tez konusu önerileri", "yüksek lisans tez konusu", "araştırma konusu belirleme"],
     date: "2026-11-02",
+    updated: "2026-11-15",
     cta: { text: "Alanınızdaki yayın eğilimlerini, yükselen alt konuları ve Türkiye’de ne kadar çalışıldığını gerçek verilerle görün.", href: "/konu-bul", label: "Konu bulma aracını dene" },
     body: `Tez sürecinin en kritik kararı konudur. Yanlış seçilmiş bir konu aylar sonra veri bulunamadığı ya da kapsam büyüdüğü için yeniden başlamanıza yol açabilir. İyi bir konu ise yazım sürecini kendiliğinden kolaylaştırır.
 
@@ -84,6 +139,53 @@ Academiana’da çalışma türünüzü seçtiğinizde yukarıdaki adımlar haz�
 - Yöntemi konudan önce seçmek ("Kesin anket yapacağım" diye konu aramak)
 - Literatüre bakmadan "Bu konu hiç çalışılmamış" demek
 - Veri toplama ve etik kurul sürelerini hesaba katmamak
+
+
+## Konudan araştırma sorusuna: daraltma örneği
+
+Geniş bir ilgi alanı birkaç adımda tez konusuna dönüşür:
+
+1. **Alan:** Sosyal medya
+2. **Konu:** Sosyal medya ve akademik başarı
+3. **Odak:** Sosyal medya kullanımı ile akademik erteleme
+4. **Örneklem ve bağlam:** Türkiye’de devlet üniversitelerinde öğrenim gören lisans öğrencileri
+5. **Araştırma sorusu:** “Lisans öğrencilerinin problemli sosyal medya kullanımı akademik erteleme düzeylerini yordamakta mıdır?”
+
+Her adımda kapsam daralır ve hangi veriyi, kimden, nasıl toplayacağınız netleşir. Araştırma sorusu ve hipotez yazımı için [araştırma sorusu ve hipotez rehberimize](/blog/arastirma-sorusu-ve-hipotez-nasil-yazilir) bakabilirsiniz.
+
+## Konunuzu sınayacak 8 soru
+
+Bir konuya karar vermeden önce şu sorulara dürüstçe cevap verin:
+
+1. Konuyu tek cümleyle anlatabiliyor musunuz?
+2. Son beş yılda bu konuda yayımlanmış en az birkaç çalışma bulabiliyor musunuz?
+3. Bu çalışmalardan farkınız ne olacak: örneklem mi, bağlam mı, yöntem mi?
+4. Veriye nasıl ulaşacaksınız ve bu gerçekçi mi?
+5. Etik kurul onayı gerekecek mi? Gerekiyorsa süresini planladınız mı?
+6. Kullanacağınız ölçme aracı Türkçeye uyarlanmış mı, geçerlik ve güvenirlik çalışması var mı?
+7. Tezi teslim süresi içinde bitirebilir misiniz?
+8. Danışmanınız bu konuda size yol gösterebilir mi?
+
+Cevaplarınızdan ikisi veya üçü belirsizse, konuyu daraltmak veya veri kaynağını değiştirmek gerekebilir.
+
+## Nicel mi, nitel mi?
+
+Konu seçimi ile yöntem birbirini etkiler ama yöntem konudan önce gelmemelidir:
+
+- **Nicel çalışma** değişkenler arasındaki ilişkiyi, farkı veya etkiyi ölçmek istediğinizde uygundur. Yeterli sayıda katılımcıya ve geçerli ölçeklere ihtiyaç duyar; örneklem büyüklüğünü önceden hesaplamak için [örneklem rehberimize](/blog/orneklem-buyuklugu-nasil-hesaplanir) bakın.
+- **Nitel çalışma** bir deneyimin nasıl yaşandığını, anlamını veya sürecini derinlemesine anlamak istediğinizde uygundur. Daha az katılımcıyla ama daha uzun görüşmelerle çalışılır; ayrıntılar [nitel araştırma rehberimizde](/blog/nitel-arastirma-gorusme-ve-tematik-analiz).
+- **Karma yöntem** her iki tür soruyu birlikte sorduğunuzda kullanılır; iş yükü daha fazladır.
+
+## Konu önerisini danışmana sunmak
+
+Danışmanınızla görüşmeye boş gitmeyin. Kısa bir öneri hazırlayın:
+
+- Önerdiğiniz başlık (geçici olabilir)
+- Problemi anlatan bir paragraf ve 3–5 temel kaynak
+- Araştırma sorusu ve olası yöntem
+- Veri toplama planı ve olası güçlükler
+
+Bu bir sayfalık not, görüşmeyi “ne çalışsam?” sorusundan “bunu nasıl çalışırım?” sorusuna taşır. Komiteye sunulacak tam öneri için [tez önerisi rehberimize](/blog/tez-onerisi-nasil-hazirlanir) bakın.
 
 ## Academiana ile konu bulma
 
@@ -250,6 +352,7 @@ Academiana, yazdığınız konu için arama stratejisini planlar ve OpenAlex, Cr
     category: "Kaynak ve atıf",
     keywords: ["APA 7 kuralları", "APA kaynak gösterme", "APA 7 kaynakça örnekleri", "metin içi atıf"],
     date: "2026-11-02",
+    updated: "2026-11-15",
     cta: { text: "Atıfları APA 7 dahil 10 stilde otomatik biçimlendirin; stili değiştirdiğinizde bütün atıflar ve kaynakça kendiliğinden dönüşür.", href: "/kayit", label: "Atıfları otomatik yap" },
     body: `APA (American Psychological Association) stili, sosyal bilimlerde ve eğitim alanında en yaygın kullanılan atıf sistemidir. Güncel sürüm 7. baskıdır. Aşağıda en sık ihtiyaç duyulan kuralları örneklerle özetledik. Türkçe çalışmalarda bazı ifadeler Türkçeleştirilir; enstitünüzün kılavuzunda farklı bir uygulama varsa o geçerlidir.
 
@@ -311,9 +414,59 @@ Yılmaz, A. (2022). *Tezin başlığı* [Yüksek lisans tezi, Üniversite Adı].
 - Doğrudan alıntıda sayfa numarasını unutmak
 - Aynı yazarın aynı yıldaki iki çalışmasını ayırmamak (2021a, 2021b)
 
+
+## Metin içi atıfta ayrıntılı kurallar
+
+### Parantez içi ve anlatı içi atıf
+
+APA 7’de iki atıf biçimi vardır. **Parantez içi atıfta** yazar adı ve yıl cümlenin sonunda parantez içinde verilir. **Anlatı içi atıfta** yazar adı cümlenin öznesi olur ve yalnızca yıl parantez içinde yazılır. İkisi arasındaki tercih üsluba bağlıdır; bir paragrafta aynı kaynağı arka arkaya parantez içinde vermek yerine anlatı içi atıf kullanmak metni akıcı kılar.
+
+### Birden fazla kaynağa aynı anda atıf
+
+Aynı parantezde birden fazla kaynak gösterilecekse kaynaklar **ilk yazarın soyadına göre alfabetik** sıralanır ve noktalı virgülle ayrılır. Aynı yazarın birden fazla çalışması yıl sırasıyla verilir.
+
+### Aynı yazar, aynı yıl
+
+Aynı yazarın aynı yıl yayımlanmış iki çalışmasına atıf yapıyorsanız yılın yanına harf eklenir (2021a, 2021b). Harfler kaynakçadaki başlık sırasına göre verilir ve metinde de aynı biçimde kullanılır.
+
+### Kurum yazarlar
+
+Bir kurumun yazar olduğu belgelerde (ör. bir bakanlık raporu) kurumun tam adı yazılır. Kısaltması yaygınsa ilk atıfta tam ad ve kısaltma birlikte verilir, sonraki atıflarda yalnızca kısaltma kullanılır.
+
+### İkincil kaynak (aktaran)
+
+Özgün kaynağa ulaşamadığınız durumda, okuduğunuz kaynak üzerinden atıf yapılır: metinde özgün çalışma ile okuduğunuz çalışma birlikte anılır, **kaynakçaya yalnızca okuduğunuz kaynak** yazılır. APA, ikincil kaynağın yalnızca özgün kaynağa gerçekten ulaşılamadığında kullanılmasını önerir.
+
+## Doğrudan alıntının ayrıntıları
+
+- **40 kelimeden kısa alıntılar** tırnak içinde metne yerleştirilir ve sayfa numarası verilir.
+- **40 kelime ve üzeri alıntılar** blok alıntı olarak, tırnaksız ve girintili yazılır; sayfa numarası alıntının sonunda verilir.
+- Sayfa numarası olmayan kaynaklarda paragraf numarası, bölüm başlığı veya zaman damgası (video için) kullanılabilir.
+- Alıntının içinden bir bölümü çıkardıysanız üç nokta, kendi eklediğiniz kelimeleri köşeli parantez içinde gösterin.
+
+Doğrudan alıntıyı az kullanın; düşünceyi kendi cümlelerinizle aktarmak (parafraz) ve atıf vermek akademik yazımda tercih edilir. Parafrazda da atıf zorunludur; ayrıntı için [intihalden kaçınma rehberimize](/blog/intihal-nasil-onlenir) bakın.
+
+## Kaynakça biçiminin genel kuralları
+
+- Kaynakça **ilk yazarın soyadına göre alfabetik** sıralanır.
+- Her girdi **asılı girinti** ile yazılır: ilk satır sola dayalı, sonraki satırlar içeride.
+- Makale başlıklarında yalnızca ilk kelimenin ve özel adların baş harfi büyük yazılır; dergi adları her kelimenin baş harfi büyük ve italik yazılır.
+- Dergi cilt numarası italik, sayı numarası parantez içinde düz yazılır.
+- DOI varsa https://doi.org/ ile başlayan bağlantı biçiminde eklenir; “Retrieved from” ifadesi kullanılmaz.
+- 21 veya daha fazla yazarlı bir kaynakta ilk 19 yazar, üç nokta ve son yazar yazılır.
+
+Aynı kaynağın APA 7 ve diğer stillerdeki karşılaştırmalı örneklerini [kaynakça rehberimizde](/blog/kaynakca-nasil-hazirlanir) bulabilirsiniz.
+
+## Tablo ve şekillerde atıf
+
+Başka bir çalışmadan uyarladığınız tablo veya şekiller için tablonun altındaki nota kaynak bilgisi eklenir ve gerekiyorsa telif izni alınır. Tablo ve şekil biçimi için [APA 7 tablo ve şekil rehberimize](/blog/tez-tablo-ve-sekil-apa-7) bakın.
+
 ## Academiana ile otomatik APA 7
 
 Academiana’da atıflar metne düz yazı olarak değil, kaynağa bağlı bir işaret olarak eklenir. Kaynakça bu işaretlerden otomatik oluşur; metinden bir atıfı sildiğinizde kaynakçadan da kalkar. APA 7, ISNAD, MLA, Chicago, IEEE, Vancouver ve Harvard dahil 10 stil arasında tek tıkla geçiş yapabilirsiniz. Kalite kontrolü, eksik künye bilgilerini ve metin–kaynakça uyumsuzluklarını sizin yerinize bulur.`,
+    sources: [
+      { text: "American Psychological Association. (2020). Publication manual of the American Psychological Association (7th ed.).", url: "https://apastyle.apa.org/" },
+    ],
   },
   {
     slug: "kaynakca-nasil-hazirlanir",
@@ -464,6 +617,7 @@ Academiana’da kaynakça elle yazılmaz; metindeki atıflardan otomatik oluşur
     category: "Etik ve yapay zekâ",
     keywords: ["intihal nasıl önlenir", "intihal oranı düşürme", "intihalden kurtulma", "parafraz nasıl yapılır", "benzerlik raporu"],
     date: "2026-11-02",
+    updated: "2026-11-15",
     cta: { text: "Her bilgiyi kaynağına bağlayan, sayfa numaralı alıntı yapan ve kaynaksız iddia yazmayan bir asistanla çalışın.", href: "/kayit", label: "Doğru atıfla yazmaya başla" },
     body: `"İntihal oranımı nasıl düşürürüm?" sorusu, öğrencilerin en çok aradığı sorulardan biridir. Ancak asıl hedef bir yazılımın oranını düşürmek değil, **intihal yapmamaktır**. Doğru atıf ve parafraz alışkanlığı kazandığınızda benzerlik raporu kendiliğinden bir sorun olmaktan çıkar.
 
@@ -499,9 +653,53 @@ Turnitin, iThenticate veya İntihal.net gibi programlar metninizin başka metinl
 
 Metni anlamsız hâle getiren kelime değiştirme araçları veya karakter hileleri gibi yöntemler hem etik değildir hem de jüri tarafından kolayca fark edilir. Bunlar disiplin sürecine yol açabilir.
 
+
+## İntihal türleri
+
+İntihal yalnızca bir metni kopyalayıp yapıştırmak değildir. Akademik dünyada farklı biçimleri vardır:
+
+- **Doğrudan intihal:** Başkasının cümlelerini tırnak işareti ve atıf olmadan kullanmak.
+- **Parafraz intihali:** Cümleleri birkaç kelime değiştirerek yeniden yazmak ama kaynak göstermemek. Kelimeleri değiştirmek fikri sizin yapmaz.
+- **Mozaik (yama) intihal:** Farklı kaynaklardan cümle parçalarını birleştirip yeni bir metin gibi sunmak.
+- **Kendi kendini intihal:** Daha önce yayımladığınız bir metni ya da ödevi atıf yapmadan yeniden kullanmak. Tezden üretilen makalelerde tezinize atıf yapmanız beklenir.
+- **Kaynak intihali:** Başka bir yazarın kaynakçasındaki kaynakları okumadan kendi okumuş gibi göstermek.
+- **Fikir ve veri intihali:** Başkasının özgün fikrini, araştırma tasarımını veya verisini kaynak göstermeden kullanmak.
+
+## İyi bir parafraz nasıl yazılır?
+
+Parafraz, kaynağın fikrini kendi cümle yapınızla ve kendi kelimelerinizle aktarmaktır. Kullanışlı bir yöntem:
+
+1. Kaynaktaki paragrafı okuyun ve ana fikri anlayana kadar tekrar okuyun.
+2. Kaynağı kapatın ve fikri kendi cümlelerinizle not alın.
+3. Notunuzu kaynakla karşılaştırın: aynı cümle yapısını veya özgün ifadeleri kullanmışsanız yeniden yazın.
+4. Atıf ekleyin. Parafrazda da atıf zorunludur.
+
+Alana özgü teknik terimleri değiştirmeniz gerekmez; “öz yeterlik” gibi bir kavramın eş anlamlısını aramak anlamı bozabilir. Değiştirilmesi gereken cümle yapısı ve anlatımdır.
+
+## Tezden makale üretirken
+
+Tezinizden makale hazırladığınızda metnin bir kısmı doğal olarak tezle benzer olacaktır. Dergiye gönderirken makalenin bir tezden üretildiğini belirtin, teze atıf yapın ve yöntem gibi bölümleri dergi biçimine göre yeniden yazın. Aynı veriden birden fazla makale üretiyorsanız her makalenin farklı bir soruya cevap verdiğinden emin olun; aynı bulguları farklı dergilerde yayımlamak (dilimleme, yinelenen yayın) da etik ihlaldir.
+
+## Yapay zekâ ve intihal
+
+Yapay zekâ araçlarının ürettiği metinler de akademik dürüstlük kurallarına tabidir. Birçok kurum yapay zekâyla üretilen metnin yazara aitmiş gibi sunulmasını kabul etmez ve kullanımın beyan edilmesini ister. Ayrıca yapay zekâ var olmayan kaynaklar üretebilir; bu, kaynak intihalinden daha ciddi bir sorundur. Ayrıntılar için [yapay zekâ ile tez yazmanın etiği](/blog/yapay-zeka-ile-tez-yazmak-etik-mi) ve [uydurma kaynak tespiti](/blog/yapay-zeka-uydurma-kaynak-tespiti) rehberlerimize bakın.
+
+## Gönderim öncesi kontrol listesi
+
+- Her doğrudan alıntı tırnak içinde mi ve sayfa numarası var mı?
+- Her parafrazın sonunda atıf var mı?
+- Okumadığınız bir kaynağı birincil kaynak gibi göstermediniz mi?
+- Daha önceki çalışmalarınızdan aldığınız bölümlere atıf yaptınız mı?
+- Tablo, şekil ve ölçek maddeleri için kaynak gösterdiniz ve gerekiyorsa izin aldınız mı?
+- Kaynakçadaki her kaynağa metinde atıf var mı?
+
 ## Academiana yaklaşımı
 
 Academiana bir intihal yüzdesi göstermez; çünkü güvenilir bir oran ancak lisanslı ve büyük arşivlere sahip servislerle hesaplanabilir. Bunun yerine intihale düşmemeniz için çalışır: asistan yalnızca projenize eklenmiş gerçek kaynaklara atıf yapar, kaynağı olmayan kesin iddia yazmaz, tam metni okunan kaynaklardan aktarımlarda sayfa numarası verir ve metinde tekrar eden ifadeleri işaretler.`,
+    sources: [
+      { text: "Roig, M. (2015). Avoiding plagiarism, self-plagiarism, and other questionable writing practices: A guide to ethical writing. Office of Research Integrity." },
+      { text: "American Psychological Association. (2020). Publication manual of the American Psychological Association (7th ed.).", url: "https://apastyle.apa.org/" },
+    ],
   },
   {
     slug: "yapay-zeka-ile-tez-yazmak-etik-mi",
@@ -510,6 +708,7 @@ Academiana bir intihal yüzdesi göstermez; çünkü güvenilir bir oran ancak l
     category: "Etik ve yapay zekâ",
     keywords: ["yapay zeka ile tez yazmak", "ChatGPT ile tez yazılır mı", "yapay zeka akademik etik", "yapay zeka beyanı"],
     date: "2026-11-02",
+    updated: "2026-11-15",
     cta: { text: "Uydurma kaynak üretmeyen, her iddiayı gerçek kaynağa bağlayan ve yazarlığı size bırakan bir asistanla çalışın.", href: "/akademik-durustluk", label: "Akademik dürüstlük ilkelerimiz" },
     body: `Yapay zekâ araçları akademik çalışmada hızla yaygınlaşıyor. Öğrencilerin aklındaki soru da açık: "Bunu kullanırsam başım derde girer mi?" Kısa cevap: **Nasıl kullandığınıza bağlı.** Yapay zekâ bir yardımcı olarak kullanıldığında meşru olabilir; yazarın yerine geçtiğinde ise ciddi bir etik sorundur.
 
@@ -550,9 +749,54 @@ Genel amaçlı sohbet botları gerçekte var olmayan makaleler, yazarlar ve DOI 
 4. **Taslakları dönüştürün.** Yapay zekâ önerilerini kendi düşüncenizle yeniden yazın ve geliştirin.
 5. **Beyan edin.** Kurumunuz istiyorsa hangi aracı ne amaçla kullandığınızı açıkça yazın.
 
+
+## Yapay zekâ kullanımını beyan etmek
+
+Pek çok dergi ve üniversite, yapay zekâ araçlarının kullanıldığı durumlarda bunun açıkça beyan edilmesini ister. Uluslararası yayın etiği kuruluşu COPE, yapay zekâ araçlarının yazar olarak gösterilemeyeceğini, çünkü bir çalışmanın sorumluluğunu üstlenemeyeceklerini vurgular. Beyan genellikle şunları içerir:
+
+- Hangi aracın kullanıldığı
+- Hangi amaçla kullanıldığı (ör. dil düzeltme, literatür taramasında arama stratejisi, kod yazımı)
+- Çıktıların yazar tarafından kontrol edildiği ve sorumluluğun yazara ait olduğu
+
+Beyanın nereye ve nasıl yazılacağı kurumdan kuruma değişir: yöntem bölümü, teşekkür bölümü veya ayrı bir beyan. Teslimden önce enstitünüzün ve hedef derginizin güncel politikasını mutlaka okuyun.
+
+## Kullanım alanlarına göre risk haritası
+
+| Kullanım | Genel değerlendirme | Dikkat edilecek nokta |
+| --- | --- | --- |
+| Dil ve yazım düzeltme | Çoğu kurumda kabul görür | Anlam değişmemeli, beyan gerekebilir |
+| Arama stratejisi ve anahtar kelime önerisi | Genellikle kabul görür | Kaynakları siz bulup okumalısınız |
+| Okuduğunuz kaynağı özetleme | Dikkatli kullanılmalı | Özet kaynağa sadık mı, kontrol edin |
+| Bölüm taslağı oluşturma | Kuruma göre değişir | Beyan ve yoğun düzeltme gerekir |
+| Kaynak, veri veya bulgu üretme | Kabul edilmez | Uydurma, akademik sahtekârlıktır |
+
+Bu tablo genel bir değerlendirmedir; bağlayıcı olan kurumunuzun kuralıdır.
+
+## Danışmanla açık konuşun
+
+Yapay zekâyı hangi aşamada ve nasıl kullanmayı düşündüğünüzü danışmanınızla baştan konuşun. Bazı danışmanlar dil düzeltmeyi serbest bırakırken taslak üretimini istemeyebilir. Bu konuşma, savunmada veya intihal incelemesinde yaşanabilecek sürprizleri önler.
+
+## Savunmada ne sorulabilir?
+
+Yapay zekâ ile yazılmış bir tezin en büyük riski, yazarın metnine hâkim olmamasıdır. Jüri, tezdeki bir kavramı, yöntem kararını veya bir kaynağın bulgusunu sorduğunda cevap veremeyen öğrenci, metni kendisinin yazmadığı izlenimini verir. Tezinizdeki her cümleyi açıklayabilecek durumda olmalısınız. Savunmaya hazırlık için [tez savunması rehberimize](/blog/tez-savunmasina-nasil-hazirlanilir) bakın.
+
+## Kaynak doğrulama alışkanlığı
+
+Yapay zekâ ile çalışırken edinmeniz gereken en önemli alışkanlık her kaynağı doğrulamaktır:
+
+1. Kaynağı bir veri tabanında (DergiPark, Crossref, OpenAlex, Google Scholar) arayın.
+2. DOI varsa açın ve künyenin tuttuğunu kontrol edin.
+3. Kaynağın gerçekten iddia edilen bilgiyi içerdiğini, ilgili bölümü okuyarak doğrulayın.
+
+Kaynakçanızı toplu kontrol etmek için ücretsiz [uydurma kaynak kontrolü](/araclar/uydurma-kaynak-kontrolu) aracını kullanabilirsiniz.
+
 ## Academiana bu ilkeler üzerine kuruldu
 
 Academiana’da asistan sistem düzeyinde kaynak uyduramaz: yalnızca gerçek veri tabanlarından bulunup projenize eklenmiş kaynaklara atıf yapabilir. Kaynağı olmayan kesin iddia yazmaz; veri gereken yerde "[VERİ GİRİLECEK]" işareti bırakır. Hiçbir taslak siz "Belgeye ekle" demeden metninize girmez ve her değişiklik sürüm geçmişinde saklanır. Ayrıntılar için [akademik dürüstlük ilkelerimize](/akademik-durustluk) göz atabilirsiniz.`,
+    sources: [
+      { text: "Committee on Publication Ethics (COPE). (2023). Authorship and AI tools: COPE position statement.", url: "https://publicationethics.org/" },
+      { text: "Hosseini, M., Rasmussen, L. M., & Resnik, D. B. (2023). Using AI to write scholarly publications. Accountability in Research." },
+    ],
   },
   {
     slug: "yapay-zeka-tespit-araclari",
@@ -561,6 +805,7 @@ Academiana’da asistan sistem düzeyinde kaynak uyduramaz: yalnızca gerçek ve
     category: "Etik ve yapay zekâ",
     keywords: ["yapay zeka tespit", "Turnitin yapay zeka", "AI detector güvenilir mi", "yapay zeka tespitinden kurtulma"],
     date: "2026-11-02",
+    updated: "2026-11-15",
     cta: { text: "Yazım sürecinizi sürüm geçmişiyle kayıt altında tutun; kendi emeğinizi her zaman gösterebilin.", href: "/kayit", label: "Ücretsiz başla" },
     body: `Pek çok üniversite artık teslim edilen metinleri yapay zekâ tespit araçlarından geçiriyor. Bu da öğrencilerde iki soru doğuruyor: "Bu araçlar nasıl çalışıyor?" ve "Kendi yazdığım metin yanlışlıkla işaretlenirse ne olacak?"
 
@@ -589,8 +834,48 @@ Bu araçlar bir metnin kesin olarak kim tarafından yazıldığını bilemez. Me
 
 Yapay zekâyı yazarın yerine değil, araştırma ve düzeltme yardımcısı olarak kullanmak. Taslakları okuyup kendi düşüncenizle yeniden yazdığınızda metin hem daha nitelikli olur hem de sizin olur.
 
+
+## Yanlış pozitif kimleri daha çok etkiler?
+
+Araştırmalar, yapay zekâ tespit araçlarının ana dili İngilizce olmayan yazarların metinlerini daha sık “yapay zekâ üretimi” olarak işaretleyebildiğini göstermiştir. Bunun nedeni, araçların metnin “tahmin edilebilirliğine” bakmasıdır: daha sınırlı kelime dağarcığı ve kalıplaşmış akademik ifadeler kullanan metinler, insan tarafından yazılmış olsa bile yapay zekâ metnine benzetilebilir. Türkçe metinlerde ise bu araçların doğruluğu hakkında yeterli bağımsız çalışma yoktur. Bu nedenle tespit sonucu tek başına bir yaptırım gerekçesi olarak kullanılmamalıdır.
+
+## Tespit skoru ne anlama gelir, ne anlama gelmez?
+
+- **Anlama gelir:** Aracın kendi modeline göre metnin istatistiksel olarak yapay zekâ çıktısına benzediği.
+- **Anlama gelmez:** Metnin yapay zekâ ile yazıldığının kanıtı. Skor bir olasılık tahminidir.
+- **Anlama gelmez:** İntihal. Tespit araçları kaynak eşleştirmesi yapmaz; benzerlik raporundan farklıdır. Benzerlik raporunun nasıl okunacağını [intihal rehberimizde](/blog/intihal-nasil-onlenir) anlattık.
+
+## Yazım sürecinizi belgelemek
+
+Bir tespit aracının yanlış işaretlemesine karşı en güçlü savunma, yazım sürecinizi gösterebilmektir:
+
+- **Sürüm geçmişi:** Word, Google Dokümanlar veya kullandığınız editörün sürüm geçmişi, metnin zaman içinde nasıl geliştiğini gösterir.
+- **Notlar ve taslaklar:** Okuma notlarınız, literatür matrisiniz ve el yazısı taslaklarınız saklayın.
+- **Kaynak kayıtları:** Kaynak yönetim programınızdaki kayıt tarihleri, kaynakları ne zaman bulduğunuzu gösterir.
+- **Danışman yazışmaları:** Bölüm bölüm gönderdiğiniz taslaklar ve aldığınız geri bildirimler.
+
+## Kurumlar için öneriler
+
+Tespit araçlarını kullanan bir enstitü veya öğretim üyesiyseniz:
+
+- Skoru tek başına karar gerekçesi yapmayın; öğrenciyle görüşme ve süreç belgeleriyle birlikte değerlendirin.
+- Yapay zekâ kullanım politikanızı açıkça yazın: neye izin verildiğini, neyin beyan edilmesi gerektiğini belirtin.
+- Değerlendirmede metnin içeriğine hâkimiyeti ölçen yöntemler (sözlü sunum, savunma, süreç dosyası) kullanın.
+
+## Öğrenciler için kısa yol haritası
+
+1. Kurumunuzun yapay zekâ politikasını okuyun.
+2. Kullandığınız aracı ve amacını not edin; gerekiyorsa beyan edin. Beyanın nasıl yazılacağını [yapay zekâ etiği rehberimizde](/blog/yapay-zeka-ile-tez-yazmak-etik-mi) anlattık.
+3. Metninizi kendi sözlerinizle yazın ve her kaynağı okuyun.
+4. Sürüm geçmişinizi ve notlarınızı saklayın.
+5. Bir işaretleme olursa sakin kalın; süreç belgelerinizle görüşmeye gidin.
+
 ## Academiana’nın tutumu
 
 Academiana tespit araçlarını atlatmaya yönelik bir özellik sunmaz ve böyle bir vaatte bulunmaz. Bunun yerine sürecin şeffaf olmasını sağlar: her asistan eklemesinden önceki hâl ve elle kaydettiğiniz sürümler geçmişte saklanır, böylece metninizin nasıl geliştiğini her zaman gösterebilirsiniz. Asistanın önerileri yalnızca siz eklediğinizde metne girer.`,
+    sources: [
+      { text: "Liang, W., Yuksekgonul, M., Mao, Y., Wu, E., & Zou, J. (2023). GPT detectors are biased against non-native English writers. Patterns, 4(7), 100779." },
+      { text: "Weber-Wulff, D., Anohina-Naumeca, A., Bjelobaba, S., Foltýnek, T., Guerrero-Dib, J., Popoola, O., Šigut, P., & Waddington, L. (2023). Testing of detection tools for AI-generated text. International Journal for Educational Integrity, 19, 26." },
+    ],
   },
 ];

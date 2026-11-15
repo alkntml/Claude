@@ -69,7 +69,7 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
             const soon = left <= 7;
             return (
               <div className={cn("mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm", soon ? "bg-amber-50 text-amber-900" : "bg-ink-50 text-ink-600")}>
-                <span>{t("Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).", { date: end.toLocaleDateString(dl), n: Math.max(0, left) })}</span>
+                <span>{t("Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).", { date: left <= 2 ? end.toLocaleString(dl, { dateStyle: "medium", timeStyle: "short" }) : end.toLocaleDateString(dl), n: Math.max(0, left) })}</span>
                 {soon && <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nÜye no: {no}\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "", no: memberCode(profile.member_no) }))}>{t("Süreyi uzat")}</a>}
                 {soon && <Link href="/mesafeli-sozlesmeler" target="_blank" className="text-xs text-amber-800 underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link>}
               </div>

@@ -22,6 +22,7 @@ import { discountedPrice, discountLabel } from "@/lib/discount";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts";
+type Term = "monthly" | "days" | "yearly";
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
@@ -189,9 +190,12 @@ const USER_FILTERS: [string, string][] = [["all", "Tümü"], ["paid", "Ücretli"
 function expiryBadge(u: any) {
   if (u.plan_id === "free") return <span className="text-xs text-ink-400">—</span>;
   if (!u.plan_expires_at) return <Badge tone="ink">Süresiz</Badge>;
-  const left = Math.ceil((new Date(u.plan_expires_at).getTime() - Date.now()) / 86400_000);
+  const ms = new Date(u.plan_expires_at).getTime() - Date.now();
   const date = new Date(u.plan_expires_at).toLocaleDateString("tr-TR");
-  if (left < 0) return <Badge tone="red">Doldu · {date}</Badge>;
+  if (ms <= 0) return <Badge tone="red">Doldu · {date}</Badge>;
+  // Gün bazlı kısa paketlerde (≤ 48 saat) kalan süre saatle gösterilir
+  if (ms <= 48 * 3600_000) return <Badge tone="amber">{new Date(u.plan_expires_at).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })} · {Math.ceil(ms / 3600_000)} saat</Badge>;
+  const left = Math.ceil(ms / 86400_000);
   return <Badge tone={left <= 7 ? "amber" : "green"}>{date} · {left} gün</Badge>;
 }
 
@@ -252,12 +256,14 @@ function UsersTab({ selfId }: { selfId: string }) {
 function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[]; onClose: () => void; onChanged: () => void }) {
   const toast = useToast();
   const [d, setD] = useState<any | null>(null);
-  const [days, setDays] = useState(30);
+  const [days, setDays] = useState(1);
+  const [pick, setPick] = useState<string>("free");
+  const [term, setTerm] = useState<Term>("monthly");
   const [date, setDate] = useState("");
   const [credit, setCredit] = useState({ ai: 10, search: 0, pages: 0, days: 30, note: "" });
   const [msg, setMsg] = useState({ title: "", message: "", link: "" });
   const [pur, setPur] = useState({ name: "", phone: "", amount: "", note: "" });
-  const load = useCallback(async () => { try { const r = await api<any>(`/api/admin/user/${id}`); setD(r); setDate(r.profile.plan_expires_at ? r.profile.plan_expires_at.slice(0, 10) : ""); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [id, toast]);
+  const load = useCallback(async () => { try { const r = await api<any>(`/api/admin/user/${id}`); setD(r); setPick(r.profile.plan_id); setTerm(r.profile.plan_period === "yearly" ? "yearly" : "monthly"); setDate(r.profile.plan_expires_at ? r.profile.plan_expires_at.slice(0, 10) : ""); } catch (e) { toast({ tone: "error", title: "Yüklenemedi", detail: (e as Error).message }); } }, [id, toast]);
   useEffect(() => { load(); }, [load]);
   async function act(body: any, ok: string) {
     try { await api(`/api/admin/user/${id}`, { method: "POST", json: body }); toast({ tone: "success", title: ok }); await load(); onChanged(); }
@@ -298,14 +304,15 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
           <div className="space-y-4">
             <div className="rounded-2xl border border-ink-100 p-4">
               <p className="font-semibold">Paket ve süre</p>
-              <label className="mt-2 block text-xs text-ink-500">Paket ata — Aylık: gün sayısı kadar geçerli; Yıllık: 365 gün, 12 aylık hak baştan; Sınırsız Proje: 5 proje dışında her şey sınırsız (aylık 30 gün / yıllık 365 gün)</label>
+              <label className="mt-2 block text-xs text-ink-500">Paket ata — Aylık: 30 gün; Gün bazlı: yazdığınız gün sayısı kadar (ör. 1 günlük Premium); Yıllık: 365 gün, 12 aylık hak baştan. Gün bazlı pakette o paketin aylık kullanım hakları geçerlidir; süre bitince kullanıcı ücretsiz pakete döner.</label>
               {d.profile.plan_period === "yearly" && d.profile.plan_id !== "free" && <p className="mt-1 text-[12px] text-emerald-700">Yıllık paket · başlangıç {d.profile.plan_started_at ? new Date(d.profile.plan_started_at).toLocaleDateString("tr-TR") : "—"}</p>}
-              <div className="mt-1 flex gap-2">
-                <select id="plan-pick" className="input !py-2" defaultValue={d.profile.plan_id}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
-                <select id="period-pick" className="input !w-28 !py-2" defaultValue={d.profile.plan_period ?? "monthly"} title="Ödeme dönemi"><option value="monthly">Aylık</option><option value="yearly">Yıllık</option></select>
-                <input className="input !w-24 !py-2" type="number" min={1} value={days} onChange={(e) => setDays(Number(e.target.value) || 30)} title="Aylık pakette gün sayısı" />
-                <Button size="sm" onClick={() => { const v = (document.getElementById("plan-pick") as HTMLSelectElement).value; act({ action: "set_plan", planId: v, days: v === "free" ? null : v === "single" ? 30 : days, period: (document.getElementById("period-pick") as HTMLSelectElement).value, purchase: { payerName: pur.name, payerPhone: pur.phone, amountTry: pur.amount ? Number(pur.amount.replace(",", ".")) : null, note: pur.note } }, v === "single" ? "Tek Proje atandı (süresiz)" : "Paket atandı"); }}>Ata</Button>
+              <div className="mt-1 flex flex-wrap gap-2">
+                <select className="input !w-auto !py-2" value={pick} onChange={(e) => setPick(e.target.value)}>{plans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+                {pick !== "free" && <select className="input !w-36 !py-2" value={term} onChange={(e) => setTerm(e.target.value as Term)} title="Süre türü"><option value="monthly">Aylık (30 gün)</option><option value="days">Gün bazlı</option><option value="yearly">Yıllık</option></select>}
+                {pick !== "free" && term === "days" && <label className="flex items-center gap-1.5 text-[13px] text-ink-500"><input className="input !w-20 !py-2" type="number" min={1} max={3650} value={days} onChange={(e) => setDays(Math.max(1, Math.min(3650, Math.round(Number(e.target.value) || 1))))} />gün</label>}
+                <Button size="sm" onClick={() => { const planDays = pick === "free" ? null : term === "days" ? days : 30; act({ action: "set_plan", planId: pick, days: planDays, period: term === "yearly" ? "yearly" : "monthly", purchase: { payerName: pur.name, payerPhone: pur.phone, amountTry: pur.amount ? Number(pur.amount.replace(",", ".")) : null, note: pur.note } }, pick === "free" ? "Ücretsiz pakete alındı" : `${plans.find((p) => p.id === pick)?.name ?? pick} atandı · ${term === "yearly" ? "365 gün" : `${planDays} gün`}`); }}>Ata</Button>
               </div>
+              {pick !== "free" && term === "days" && <div className="mt-1.5 flex flex-wrap items-center gap-1.5"><span className="text-[12px] text-ink-500">Hızlı:</span>{[1, 2, 3, 7, 15].map((n) => <button key={n} type="button" onClick={() => setDays(n)} className={cn("rounded-full border px-2.5 py-0.5 text-[12px] font-medium", days === n ? "border-brand-600 bg-brand-600 text-white" : "border-ink-200 text-ink-600 hover:bg-ink-50")}>{n} gün</button>)}<span className="text-[12px] text-ink-400">· bitiş: {new Date(Date.now() + days * 86400_000).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" })}</span></div>}
               <p className="mt-3 text-xs text-ink-500">Ödeme bilgisi (paketle birlikte kaydedilir; Tek Proje’de ödeyen adı zorunlu)</p>
               <div className="mt-1 grid grid-cols-2 gap-2">
                 <input className="input !py-1.5" placeholder="Ödeyen adı soyadı" value={pur.name} onChange={(e) => setPur({ ...pur, name: e.target.value })} />

@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Gün bazlı paket (D202, 15 Kasım 2026)**
+- Yönetim paneli → kullanıcı → “Paket ve süre”: süre türü Aylık (30 gün) / Gün bazlı (1–3650 gün, hızlı 1-2-3-7-15) / Yıllık; Sınırsız Proje de gün bazlı verilebilir. Kısa sürelerde bitiş saatle gösterilir.
+
 **Kış kampanyası hazırlığı (D201, 15 Kasım 2026)**
 - 2204-B (ortaokul) program türü ve TR/EN/DE rehberi; toplam 56 yazı
 - TÜBİTAK BiGG başvuru hazırlığı: `docs/business/BIGG_HAZIRLIK.md`

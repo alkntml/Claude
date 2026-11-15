@@ -178,3 +178,4 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] (D200) Search Console’da başvuru rehberlerinin gösterim/tıklamasını 4–6 hafta sonra karşılaştır; tutan kalıpla yeni program yazıları (ör. ERC, DAAD, 2211, 3501, Erasmus+)
 - [x] (2026-11-15, D201) 2204-B program türü + rehber; BiGG hazırlık belgesi; haftalık YÖK/1001 kontrolü
 - [ ] (Kullanıcı, Aralık) BiGG uygulayıcı kuruluşlarıyla görüş; `docs/business/BIGG_HAZIRLIK.md` köşeli parantezli bilgileri doldur
+- [x] (2026-11-15, D202) Yönetim panelinde gün bazlı paket atama (ör. 1 günlük Premium)

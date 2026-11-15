@@ -1175,3 +1175,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Pazarlama ve iş:** kampanya planı belgesi kullanıcı isteğiyle kaldırıldı; `docs/business/BIGG_HAZIRLIK.md` (yol haritası + başvuru taslağı; kullanıcı rakamları uydurulmadı, yer tutucu).
 - **Otomatik kontrol:** Haftalık zamanlanmış görev YÖK düzenlemesini ve 1001 çağrısını arar; düzenleme çıkarsa rehber yazısını hazırlayıp yayınlar.
 - Metricool hesabındaki marka (`dermanlikakademik`) Academiana’nın Instagram’ı değil; gönderiler oraya planlanmadı.
+
+## D202 — Gün bazlı paket (15 Kasım 2026)
+- Kullanıcı isteği: herhangi bir paketi istenen gün sayısı kadar verebilmek (ör. 1 günlük Premium).
+- Sunucu zaten `set_plan` + `days` (1–3650) destekliyordu; panel arayüzü “Aylık pakette gün sayısı” kutusuyla belirsizdi ve Sınırsız Proje 30 güne sabitti. Panelde süre türü: **Aylık (30 gün) / Gün bazlı / Yıllık**; gün bazlıda gün kutusu, hızlı seçimler ve önizlenen bitiş saati. Gün bazlı atama `plan_period = monthly` ve `plan_expires_at = şimdi + N gün` olarak kaydedilir (veritabanı değişikliği yok).
+- Kullanım hakları: gün bazlı pakette o paketin **aylık** hakları geçerlidir (orantılama yok); süre bitince kullanıcı ücretsiz pakete döner (D53). Gerekirse hak “Ek kullanım hakkı” ile ayrıca ayarlanır.
+- Kalan süre ≤ 48 saatse panelde saatle, hesap sayfasında tarih + saatle gösterilir.

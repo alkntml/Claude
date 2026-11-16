@@ -197,3 +197,4 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-16, D214) Çalışma alanında geniş editör, küçük ölçekli yan paneller, odak modu
 - [x] (2026-11-16, D215) Ana sayfa sırası (özellikler → örnekler) ve üç zekânın ziyaretçi ekranlarında öne çıkması
 - [ ] (Kullanıcı, ertelendi) Google girişinde “aveawdnqodkfdegrfnzn.supabase.co” yerine “Academiana” görünsün: Google Cloud → Google Auth Platform → Branding (ad, logo, gizlilik/koşul bağlantıları, academiana.com.tr) + Verification Center; isteğe bağlı Supabase Custom Domain (auth.academiana.com.tr, ücretli) ve ardından NEXT_PUBLIC_SUPABASE_URL güncellemesi. Giriş istemcisi: 338651195497-svhoqnm2… projesi.
+- [ ] (Kullanıcı) Google Search Console → URL denetimi: https://www.academiana.com.tr/zenit, /rasat, /mizan için “Dizine eklenmesini iste”; site haritasını yeniden gönder (D220)

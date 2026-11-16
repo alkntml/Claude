@@ -1285,3 +1285,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Kullanıcı kararı: şimdiye kadar açılan bütün paketler yönetici atamasıyla ücretsizdi; gelire dahil edilmez, bundan sonrakiler edilir.
 - `lib/pricing.ts` → `REVENUE_SINCE = 2026-11-16T14:37:00Z`, `countsAsRevenue(plan_started_at)`. Gelir (Genel bakış → “Bu ay gelir ve kâr”) yalnızca bu andan sonra başlayan (yeniden atanan dahil) paketlerden hesaplanır; “Ücretli kullanıcı” bu paketleri sayar, ücretsiz atananlar “+N ücretsiz atanmış (gelire dahil değil)” olarak ayrı gösterilir. Kullanıcı ayrıntısında bu kişilerde gelir 0 ve “ücretsiz atama; liste fiyatı …” yazar. Paket başına maliyet sınırı (D52) liste fiyatıyla çalışmaya devam eder.
 - Not: ödemeler WhatsApp ile alınıp paket yönetici tarafından atandığı için, bundan sonra yapılan ücretsiz bir atama (hediye) da gelire girer; o kişiye atamayı satın alma kaydı olmadan yapmak gelir tahminini şişirir.
+
+## D220 — Zenit, Rasat, Mizan için arama motoru sayfaları (16 Kasım 2026)
+- Kullanıcı isteği: üç zekâ Google’da çıksın; ayrıntılı sayfalar olsun ama sitede ayrı sayfa olarak görünmesin (mevcut görünüm kalsın).
+- `/zenit`, `/rasat`, `/mizan` (+ `/en/…`, `/de/…`), içerik `lib/intelligence-pages.ts`, görünüm `components/intelligence-page.tsx`: tanım, dört yetenek, üç adım, kullanım/şeffaflık bölümleri, 3 SSS, kayıt düğmesi, diğer iki zekâya bağlantı. Yalnızca ürünün gerçekte yaptığı yazılır.
+- SEO: `PUBLIC_PATHS`, `PAGE_SEO` (başlık ≤60, açıklama ≤160, anahtar kelimeler TR/EN/DE), site haritası (öncelik 0,8), canonical + hreflang, `index, follow`, JSON-LD: WebPage + BreadcrumbList + FAQPage (`faqLd`).
+- Site menüsü, altbilgi ve ana sayfada bağlantı verilmez (kullanıcı kararı); sayfalar site haritasıyla keşfedilir. Search Console’dan dizine ekleme istenmesi önerilir.

@@ -137,3 +137,15 @@ export function promoVideoLd() {
     publisher: { "@id": ORG_ID },
   };
 }
+
+/** D220: Zenit/Rasat/Mizan tanıtım sayfaları için sık sorulan sorular (FAQPage) */
+export function faqLd(locale: Locale, path: string, items: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    url: absoluteUrl(path),
+    inLanguage: LANG_TAG[locale],
+    mainEntity: items.map((x) => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.a } })),
+  };
+}
+

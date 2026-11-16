@@ -1261,3 +1261,10 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Izgara: lg 236/360, xl 252/388, 2xl 272/420 (önce 264/420 ve 280/460). Yan paneller geniş ekranda `zoom: 0.92` (`.ws-side`): içerik ve düğmeler aynı, yalnızca ölçek küçük. Editör kapsayıcısı 780 → 880 px, yan boşluk 40 → 32 px.
 - Editör ekran ölçeği (`.ws-editor .prose-academic`): 16,5 → 15,5 px, başlıklar orantılı; bölüm başlığı 28 → 25 px. Dışa aktarmadaki yazı tipi/punto biçim ayarlarından (kılavuz, stil) gelir, etkilenmez.
 - Odak modu: sol menü ve sağ panel başlığındaki simgelerle ayrı ayrı, Ctrl/⌘+\ ile birlikte gizlenir/açılır; editör üstündeki simgelerle geri açılır; `acd_ws_layout` (consent envanterinde). Kısayol listesi, yardım ve Yenilikler güncellendi. Mobil düzen değişmedi.
+
+## D215 — Ana sayfa: üç zekâ öne çıktı; özellikler ve örnekler açılışın hemen ardından (16 Kasım 2026)
+- Kullanıcı isteği: kaydolmamış ziyaretçiye gösterilen ekranlarda Zenit, Rasat ve Mizan öne çıksın; ana sayfada açılış (tanıtım, video) sonrası önce özellikler, hemen ardından örnekler gelsin; SSS güncellensin.
+- Sıra: Açılış → Tanıtım videosu (TR) → Özellikler (üç zekâ vitrini + tüm özellikler) → Örnekler (`landing/samples-teaser.tsx`, 9 örnek çıktı, ilgili zekâ adıyla, /ornekler#… bağlantılı) → İzlenebilirlik örneği → Karşılaştırma → Güvence → Ücretsiz araçlar → Çalışma türü seçimi → Nasıl çalışır → Kaynaklar → İlkeler → Görüşler → Paketler → Rehberler → SSS.
+- Açılış ekranı: üç zekâ kartı (“Zenit yazar.” vb., #imza-zekalar’a bağlanır); süreç adımlarında ilgili zekâ adı; ikinci düğme “Örnek çıktıları gör”.
+- Örnekler sayfasında ilgili örneklerde zekâ adı (`SECTIONS[].mark`); kayıt ekranında üç zekâ satırı; Hakkımızda’da “Üç zekâ” bölümü (TR/EN/DE).
+- SSS: “Zenit, Rasat ve Mizan nedir?” (ana sayfada ilk soru), ana sayfaya “PDF’ten alıntı” ve “eğitimde kullanılmaz” soruları; ilgili cevaplara hangi zekânın işi olduğu eklendi; SSS listesinde adlar imza görünümüyle yazılır.

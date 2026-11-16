@@ -25,6 +25,7 @@ import { FaqList } from "@/components/faq-list";
 import { FAQ, FAQ_HIGHLIGHTS } from "@/lib/faq";
 import { ToolCards } from "@/components/tools/tool-cards";
 import { Testimonials } from "@/components/landing/testimonials";
+import { SamplesTeaser } from "@/components/landing/samples-teaser";
 
 const GUIDES = ["tez-nasil-yazilir", "apa-7-atif-kurallari", "intihal-nasil-onlenir", "literatur-taramasi-nasil-yapilir", "hangi-istatistik-analizi-secilmeli", "yapay-zeka-ile-tez-yazmak-etik-mi"];
 
@@ -44,8 +45,10 @@ export default async function Home() {
       <main id="main">
         <Hero signedIn={signedIn} />
         {locale === "tr" && <PromoVideo />}
-        <CompareSection />
+        <FeatureShowcase />
+        <SamplesTeaser />
         <TraceDemo />
+        <CompareSection />
         <AssuranceSection />
         <section id="ucretsiz-araclar" className="scroll-mt-24 py-16">
           <div className="mx-auto max-w-6xl px-6">
@@ -69,7 +72,6 @@ export default async function Home() {
             <WorkTypePicker signedIn={signedIn} />
           </div>
         </section>
-        <FeatureShowcase />
         <HowItWorks />
         <SourcesStrip />
         <Principles />

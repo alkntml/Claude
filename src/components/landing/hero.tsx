@@ -3,6 +3,14 @@ import { useSignedIn } from "@/components/use-signed-in";
 import { useT } from "@/i18n/client";
 import { ArrowRight, BadgeCheck } from "lucide-react";
 import Link from "@/components/l-link";
+import { BrandMark, WithMarks, type Signature } from "@/components/brand-mark";
+
+/** D215: açılış ekranında üç imza zekâ (özellikler bölümündeki tanıtıma bağlanır) */
+const TRIO: [Signature, string, string][] = [
+  ["Zenit", "Zenit yazar.", "Çalışmanızın konusunu, gidişatını ve bölümün amacını bilerek sizinle yazar."],
+  ["Rasat", "Rasat okur.", "PDF’lerinizi okur, sorularınızı sayfa numarasıyla cevaplar, alıntıyı sayfasıyla ekler."],
+  ["Mizan", "Mizan tartar.", "Atıflı her cümleyi kaynağıyla tartar; hakemden önce eksikleri gösterir."],
+];
 
 export function Hero({ signedIn: initialSignedIn }: { signedIn: boolean }) {
   const signedIn = useSignedIn(initialSignedIn);
@@ -30,7 +38,15 @@ export function Hero({ signedIn: initialSignedIn }: { signedIn: boolean }) {
             <Link href={signedIn ? "/yeni" : "/kayit"} className="group inline-flex h-12 items-center gap-2 rounded-xl bg-brand-600 px-7 font-medium text-white transition hover:bg-brand-700">
               {t("Çalışmaya başla")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </Link>
-            <Link href="#tur-sec" className="inline-flex h-12 items-center rounded-xl border border-ink-200 bg-white px-7 font-medium text-ink-700 transition hover:border-ink-300">{t("Çalışma türlerini gör")}</Link>
+            <Link href="#ornekler-onizleme" className="inline-flex h-12 items-center rounded-xl border border-ink-200 bg-white px-7 font-medium text-ink-700 transition hover:border-ink-300">{t("Örnek çıktıları gör")}</Link>
+          </div>
+          <div className="mx-auto mt-10 grid max-w-4xl gap-3 text-left sm:grid-cols-3">
+            {TRIO.map(([name, motto, text]) => (
+              <Link key={name} href="#imza-zekalar" className="group rounded-2xl border border-brand-100 bg-white/85 px-4 py-3.5 shadow-[0_18px_40px_-28px_rgb(79_70_229/0.5)] transition hover:-translate-y-0.5 hover:border-brand-300">
+                <p className="font-serif text-[22px] leading-none"><BrandMark name={name} /> <span className="text-[15px] italic text-ink-500">{t(motto).replace(name, "").trim()}</span></p>
+                <p className="mt-2 text-[13px] leading-snug text-ink-600">{t(text)}</p>
+              </Link>
+            ))}
           </div>
           <p className="mt-7 flex items-center justify-center gap-2 text-[15px] text-ink-600">
             <span className="flex -space-x-1.5">{["bg-brand-500", "bg-sky-400", "bg-amber-400", "bg-emerald-400"].map((c) => <span key={c} className={`h-6 w-6 rounded-full border-2 border-white ${c}`} />)}</span>
@@ -46,11 +62,11 @@ export function Hero({ signedIn: initialSignedIn }: { signedIn: boolean }) {
         </div>
         {/* Sürecin tamamı: baştan sona adımlar */}
         <ol className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink-200 bg-ink-200 text-left sm:grid-cols-3 lg:grid-cols-6">
-          {[["Konu ve başlık", "Konu bulma, başlık önerisi"], ["Kurgu", "Problem, amaç, bölüm planı"], ["Kaynaklar", "16 veri tabanında doğrulanmış tarama"], ["Yazım", "Bölüm bölüm, atıflı taslak"], ["Analiz", "İstatistik, grafik, anket"], ["Denetim ve teslim", "İddia denetimi, Word/PDF/LaTeX"]].map(([a, b], i) => (
+          {[["Konu ve başlık", "Konu bulma, başlık önerisi"], ["Kurgu", "Problem, amaç, bölüm planı"], ["Kaynaklar", "16 veri tabanında doğrulanmış tarama · Rasat"], ["Yazım", "Bölüm bölüm, atıflı taslak · Zenit"], ["Analiz", "İstatistik, grafik, anket"], ["Denetim ve teslim", "Mizan iddia denetimi, Word/PDF/LaTeX"]].map(([a, b], i) => (
             <li key={a} className="bg-white p-4">
               <p className="text-[12px] font-semibold tabular-nums text-brand-600">{String(i + 1).padStart(2, "0")}</p>
               <p className="mt-1 text-[14px] font-semibold text-ink-900">{t(a)}</p>
-              <p className="mt-0.5 text-[12.5px] leading-snug text-ink-500">{t(b)}</p>
+              <p className="mt-0.5 text-[12.5px] leading-snug text-ink-500"><WithMarks text={t(b)} /></p>
             </li>
           ))}
         </ol>

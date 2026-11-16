@@ -1,4 +1,5 @@
 import Link from "@/components/l-link";
+import { WithMarks } from "@/components/brand-mark";
 import { JsonLd } from "@/components/json-ld";
 import { StaticPage } from "@/components/static-page";
 import { getLocale } from "@/i18n/server";
@@ -27,6 +28,8 @@ export default async function AboutPage() {
         <p>Ein Großteil der Zeit für eine Abschlussarbeit oder einen Artikel fließt in Quellensuche, das Formatieren des Literaturverzeichnisses, die Gliederung der Kapitel, Analysen und das Einhalten von Formatrichtlinien. Academiana bündelt diese Schritte in einem Arbeitsbereich, damit die Zeit der Forschenden dem Kern der Arbeit zugutekommt – mit echten wissenschaftlichen Quellen, im Einklang mit akademischen Konventionen wie ISNAD und den Richtlinien der Hochschulen und so, dass die Forschenden Autor:innen ihrer Arbeit bleiben.</p>
         <h2>Unsere Mission</h2>
         <p>KI zu einem verlässlichen und produktiven Teil wissenschaftlicher Arbeit zu machen: Studierenden und Forschenden Zeit zu sparen, ihnen zu helfen, ihre eigene Arbeit Schritt für Schritt mit echten Quellen und im Einklang mit akademischen Konventionen zu erstellen, und zu ihrem Lernen beizutragen.</p>
+        <h2>Drei Intelligenzen</h2>
+        <p><WithMarks text="Im Kern von Academiana arbeiten drei sich ergänzende KIs: Zenit schreibt mit Ihnen und kennt Thema, Richtung und Zweck jedes Kapitels; Rasat liest Ihre Quellen, beantwortet Fragen mit Seitenzahlen und zitiert mit der veröffentlichten Seite; Mizan wägt jeden belegten Satz an seiner Quelle ab und zeigt Lücken vor der Abgabe. Alle drei stützen sich nur auf echte Quellen und gelesenen Text." /></p>
         <h2>Unsere Vision</h2>
         <p>Die führende Plattform für das Zusammenspiel von KI und Bildung zu werden – zuerst in der Türkei, dann weltweit – und zu einer akademischen Kultur beizutragen, in der KI die Forschung beschleunigt und zugleich ihre Qualität und Integrität stärkt.</p>
         <h2>Unsere Werte</h2>
@@ -53,6 +56,8 @@ export default async function AboutPage() {
         <p>Much of the time spent on a thesis or paper goes into searching for sources, formatting references, structuring chapters, running analyses and following writing guides. Academiana brings these steps together in one workspace, so that the researcher’s time goes to the work itself. It does this with real academic sources, in line with academic conventions such as ISNAD and graduate school guides, and in a way that keeps the researcher as the author.</p>
         <h2>Our mission</h2>
         <p>To make AI a reliable and productive part of academic work: saving students and researchers time, helping them produce their own work step by step with real sources and in line with academic conventions, and adding value to their learning.</p>
+        <h2>Three intelligences</h2>
+        <p><WithMarks text="Three complementary AIs work at the heart of Academiana: Zenit writes with you, knowing your topic, direction and the purpose of each section; Rasat reads your sources, answers questions with page numbers and quotes with the published page; Mizan weighs every cited sentence against its source and shows gaps before you submit. All three rely only on real sources and text that was actually read." /></p>
         <h2>Our vision</h2>
         <p>To be the leading platform where AI and education work together, first in Turkey and then worldwide, and to help build an academic culture in which AI speeds up research while strengthening its quality and integrity.</p>
         <h2>Our values</h2>
@@ -78,6 +83,8 @@ export default async function AboutPage() {
       <p>Bir tez ya da makalede harcanan zamanın büyük kısmı kaynak aramaya, kaynakçayı biçimlendirmeye, bölümleri kurgulamaya, analiz yapmaya ve yazım kılavuzlarına uymaya gidiyor. Academiana bu adımları tek bir çalışma alanında bir araya getirir; böylece araştırmacının zamanı işin özüne kalır. Bunu gerçek akademik kaynaklarla, ISNAD ve enstitü kılavuzları gibi akademik kurallara uygun biçimde ve yazarlığı araştırmacıda bırakarak yapar.</p>
       <h2>Misyonumuz</h2>
       <p>Yapay zekâyı akademik çalışmanın güvenilir ve verimli bir parçası hâline getirmek: öğrencilere ve araştırmacılara zaman kazandırmak, kendi çalışmalarını gerçek kaynaklarla ve akademik kurallara uygun biçimde adım adım ortaya koymalarına yardım etmek ve öğrenmelerine katkı sağlamak.</p>
+      <h2>Üç zekâ</h2>
+      <p><WithMarks text="Academiana’nın kalbinde birbirini tamamlayan üç yapay zekâ çalışır: Zenit, çalışmanızın konusunu, gidişatını ve her bölümün amacını bilerek sizinle yazar; Rasat kaynaklarınızı okur, sorularınızı sayfa numarasıyla cevaplar ve alıntıyı yayındaki sayfasıyla ekler; Mizan atıflı her cümleyi kaynağıyla tartar ve teslimden önce eksikleri gösterir. Üçü de yalnızca gerçek kaynaklara ve okunan metne dayanır." /></p>
       <h2>Vizyonumuz</h2>
       <p>Yapay zekâ ile eğitimin birlikte çalıştığı alanda önce Türkiye’de, ardından dünyada öncü platform olmak; yapay zekânın araştırmayı hızlandırırken niteliğini ve güvenilirliğini de güçlendirdiği bir akademik kültürün oluşmasına katkı sağlamak.</p>
       <h2>Değerlerimiz</h2>

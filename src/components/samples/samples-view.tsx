@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import Link from "@/components/l-link";
 import { cn } from "@/components/ui/cn";
+import { BrandMark } from "@/components/brand-mark";
 import { useT } from "@/i18n/client";
 import { contentLang, dateLocale } from "@/i18n/core";
 import { renderChartSvg } from "@/lib/charts/svg";
@@ -328,6 +329,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
               <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600"><I className="h-5 w-5" /></span>
                 <h2 className="font-serif text-2xl font-medium text-ink-950">{p(s.title)}</h2>
+                {s.mark && <BrandMark name={s.mark} className="text-[15px]" />}
                 <span className={cn("rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold", s.plan === "free" ? "bg-emerald-50 text-emerald-700" : s.plan === "basic" ? "bg-sky-50 text-sky-700" : "bg-violet-50 text-violet-700")}>{t(PLAN_LABEL[s.plan])}</span>
               </div>
               <p className="mb-3 text-[14.5px] text-ink-500">{p(s.what)}</p>

@@ -199,7 +199,7 @@ const PILLARS: Pillar[] = [
 export function SignatureTrio() {
   const { t } = useT();
   return (
-    <div className="mt-20">
+    <div id="imza-zekalar" className="mt-20 scroll-mt-24">
       <FadeIn className="mx-auto max-w-3xl text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("İmza zekâlarımız")}</p>
         <h3 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink-950 sm:text-4xl">

@@ -195,3 +195,4 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [ ] (Kullanıcı) Yönetim → Yapay zekâ → “Mizan doğruluk testi”ni çalıştır; sonuç bağımsız insan etiketiyle doğrulanmadan sitede sayı yayımlanmaz (D213)
 - [ ] Erişilebilirlik: dışa aktarılan Word/PDF belgelerinin erişilebilirliği ve bağımsız uzman denetimi (D213)
 - [x] (2026-11-16, D214) Çalışma alanında geniş editör, küçük ölçekli yan paneller, odak modu
+- [x] (2026-11-16, D215) Ana sayfa sırası (özellikler → örnekler) ve üç zekânın ziyaretçi ekranlarında öne çıkması

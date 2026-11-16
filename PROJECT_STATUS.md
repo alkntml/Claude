@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Ana sayfada üç zekâ (D215, 16 Kasım 2026)**
+- Açılışta Zenit/Rasat/Mizan kartları; açılıştan hemen sonra Özellikler ve Örnekler; SSS, Örnekler, kayıt ve Hakkımızda güncel.
+
 **Geniş editör ve odak modu (D214, 16 Kasım 2026)**
 - Yan paneller dar ve küçük ölçekli, editör daha geniş ve ekranda bir tık küçük yazılı; Ctrl/⌘+\ odak modu.
 

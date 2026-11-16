@@ -1,5 +1,6 @@
 import { faqA, faqQ, type FaqItem } from "@/lib/faq";
 import type { Locale } from "@/i18n/core";
+import { WithMarks } from "@/components/brand-mark";
 
 /** **kalın** ve satır sonlarını paragraflara çeviren küçük biçimlendirici (HTML enjekte etmez) */
 function Rich({ text }: { text: string }) {
@@ -7,7 +8,7 @@ function Rich({ text }: { text: string }) {
     <>
       {text.split("\n").filter((p) => p.trim()).map((p, i) => (
         <p key={i}>
-          {p.split(/(\*\*[^*]+\*\*)/g).map((part, k) => (part.startsWith("**") && part.endsWith("**") ? <b key={k} className="font-semibold text-ink-900">{part.slice(2, -2)}</b> : part))}
+          {p.split(/(\*\*[^*]+\*\*)/g).map((part, k) => (part.startsWith("**") && part.endsWith("**") ? <b key={k} className="font-semibold text-ink-900"><WithMarks text={part.slice(2, -2)} /></b> : <WithMarks key={k} text={part} />))}
         </p>
       ))}
     </>

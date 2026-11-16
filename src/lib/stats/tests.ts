@@ -2,7 +2,7 @@
  * Çıkarımsal istatistik testleri (deterministik). Sonuçlar SPSS/R ile aynı formüllerle hesaplanır;
  * yapay zekâ hiçbir değeri üretmez.
  */
-import { chi2RightTail, fRightTail, normalTwoTailed, tCritical, tTwoTailed, zCritical } from "./dist";
+import { chi2RightTail, fRightTail, logGamma, normalTwoTailed, normalUpper, pnf, pnt, ptukey, qnorm, solveMonotone, tCritical, tTwoTailed, zCritical } from "./dist";
 
 export const mean = (x: number[]) => x.reduce((a, b) => a + b, 0) / x.length;
 export function variance(x: number[]): number {
@@ -322,4 +322,191 @@ export function kruskalWallis(groups: number[][]): KruskalWallis {
   if (tie > 0) H /= tie;
   const df = gs.length - 1;
   return { H, df, p: chi2RightTail(H, df), meanRanks, ns: gs.map((g) => g.length), epsilonSquared: H / (N - 1) };
+}
+
+// ---------------------------------------------------------------------------
+// D222: normallik, küçük örneklem 2×2 tabloları, çoklu karşılaştırma, etki büyüklüğü güven aralıkları,
+// regresyon varsayımları. Algoritmalar R’ninkilerle aynıdır (shapiro.test, fisher.test, TukeyHSD,
+// rstatix::games_howell_test, p.adjust, effectsize, lmtest::bptest) ve testlerde R çıktısıyla karşılaştırılır.
+// ---------------------------------------------------------------------------
+
+/** Shapiro–Wilk normallik testi (Royston 1995, AS R94; R shapiro.test ile aynı). 3 ≤ n ≤ 5000 */
+export function shapiroWilk(data: number[]): { W: number; p: number; n: number } {
+  const x = data.filter(Number.isFinite).slice().sort((a, b) => a - b);
+  const n = x.length;
+  if (n < 3) throw new Error("Shapiro–Wilk testi için en az 3 gözlem gerekir");
+  if (n > 5000) throw new Error("Shapiro–Wilk testi en fazla 5000 gözlemle çalışır");
+  const range = x[n - 1] - x[0];
+  if (range < 1e-19) throw new Error("Tüm değerler aynı; normallik sınanamaz");
+  const poly = (cc: number[], xv: number) => { let r = cc[0]; if (cc.length > 1) { let p = xv * cc[cc.length - 1]; for (let j = cc.length - 2; j > 0; j--) p = (p + cc[j]) * xv; r += p; } return r; };
+  const g = [-2.273, 0.459];
+  const c1 = [0, 0.221157, -0.147981, -2.07119, 4.434685, -2.706056];
+  const c2 = [0, 0.042981, -0.293762, -1.752461, 5.682633, -3.582633];
+  const c3 = [0.544, -0.39978, 0.025054, -6.714e-4];
+  const c4 = [1.3822, -0.77857, 0.062767, -0.0020322];
+  const c5 = [-1.5861, -0.31082, -0.083751, 0.0038915];
+  const c6 = [-0.4803, -0.082676, 0.0030302];
+  const nn2 = Math.floor(n / 2);
+  const a = new Array<number>(nn2 + 1).fill(0); // 1 tabanlı
+  const an = n;
+  if (n === 3) a[1] = Math.SQRT1_2;
+  else {
+    const an25 = an + 0.25;
+    let summ2 = 0;
+    for (let i = 1; i <= nn2; i++) { a[i] = qnorm((i - 0.375) / an25); summ2 += a[i] * a[i]; }
+    summ2 *= 2;
+    const ssumm2 = Math.sqrt(summ2), rsn = 1 / Math.sqrt(an);
+    const a1 = poly(c1, rsn) - a[1] / ssumm2;
+    let i1: number, fac: number;
+    if (n > 5) {
+      i1 = 3;
+      const a2 = -a[2] / ssumm2 + poly(c2, rsn);
+      fac = Math.sqrt((summ2 - 2 * a[1] * a[1] - 2 * a[2] * a[2]) / (1 - 2 * a1 * a1 - 2 * a2 * a2));
+      a[2] = a2;
+    } else {
+      i1 = 2;
+      fac = Math.sqrt((summ2 - 2 * a[1] * a[1]) / (1 - 2 * a1 * a1));
+    }
+    a[1] = a1;
+    for (let i = i1; i <= nn2; i++) a[i] /= -fac;
+  }
+  const sign = (v: number) => (v > 0 ? 1 : v < 0 ? -1 : 0);
+  let xx = x[0] / range, sx = xx, sa = -a[1];
+  for (let i = 1, j = n - 1; i < n; j--) {
+    const xi = x[i] / range;
+    sx += xi;
+    i++;
+    if (i !== j) sa += sign(i - j) * a[Math.min(i, j)];
+    xx = xi;
+  }
+  sa /= n; sx /= n;
+  let ssa = 0, ssx = 0, sax = 0;
+  for (let i = 0, j = n - 1; i < n; i++, j--) {
+    const asa = i !== j ? sign(i - j) * a[1 + Math.min(i, j)] - sa : -sa;
+    const xsx = x[i] / range - sx;
+    ssa += asa * asa; ssx += xsx * xsx; sax += asa * xsx;
+  }
+  const ssassx = Math.sqrt(ssa * ssx);
+  const w1 = ((ssassx - sax) * (ssassx + sax)) / (ssa * ssx);
+  const W = 1 - w1;
+  if (n === 3) {
+    const p = 1.90985931710274 * (Math.asin(Math.sqrt(W)) - 1.0471975511966);
+    return { W, p: Math.max(0, p), n };
+  }
+  let y = Math.log(w1);
+  const lxx = Math.log(an);
+  let m: number, s: number;
+  if (n <= 11) {
+    const gamma = poly(g, an);
+    if (y >= gamma) return { W, p: 1e-99, n };
+    y = -Math.log(gamma - y);
+    m = poly(c3, an);
+    s = Math.exp(poly(c4, an));
+  } else {
+    m = poly(c5, lxx);
+    s = Math.exp(poly(c6, lxx));
+  }
+  return { W, p: normalUpper((y - m) / s), n };
+}
+
+/** 2×2 tablo için Fisher’in kesin testi (iki yönlü; R fisher.test ile aynı ölçüt) ve Yates düzeltmeli ki-kare */
+export function fisherExact2x2(t: number[][]): { p: number; oddsRatio: number } {
+  const [[a, b], [c, d]] = t;
+  const r1 = a + b, r2 = c + d, c1 = a + c, n = r1 + r2;
+  const lf = (k: number) => logGamma(k + 1);
+  const logP = (x: number) => lf(r1) + lf(r2) + lf(c1) + lf(n - c1) - lf(n) - lf(x) - lf(r1 - x) - lf(c1 - x) - lf(r2 - c1 + x);
+  const lo = Math.max(0, c1 - r2), hi = Math.min(r1, c1);
+  const obs = logP(a);
+  let p = 0;
+  for (let x = lo; x <= hi; x++) { const lp = logP(x); if (lp <= obs + Math.log1p(1e-7)) p += Math.exp(lp); }
+  return { p: Math.min(1, p), oddsRatio: b * c === 0 ? Infinity : (a * d) / (b * c) };
+}
+export function yatesChi2(t: number[][]): { chi2: number; df: number; p: number } {
+  const [[a, b], [c, d]] = t;
+  const n = a + b + c + d;
+  const rows = [a + b, c + d], cols = [a + c, b + d];
+  let chi2 = 0;
+  [[a, b], [c, d]].forEach((row, i) => row.forEach((o, j) => { const e = (rows[i] * cols[j]) / n; const dev = Math.min(0.5, Math.abs(o - e)); chi2 += (Math.abs(o - e) - dev) ** 2 / e; }));
+  return { chi2, df: 1, p: chi2RightTail(chi2, 1) };
+}
+
+/** Çoklu karşılaştırma düzeltmeleri (R p.adjust ile aynı): Bonferroni, Holm, Benjamini–Hochberg (FDR) */
+export function pAdjust(ps: number[], method: "bonferroni" | "holm" | "BH"): number[] {
+  const m = ps.length;
+  if (method === "bonferroni") return ps.map((p) => Math.min(1, p * m));
+  const idx = ps.map((p, i) => [p, i] as const);
+  const out = new Array<number>(m);
+  if (method === "holm") {
+    idx.sort((x, y) => x[0] - y[0]);
+    let run = 0;
+    idx.forEach(([p, i], k) => { run = Math.max(run, Math.min(1, (m - k) * p)); out[i] = run; });
+    return out;
+  }
+  idx.sort((x, y) => y[0] - x[0]);
+  let run = 1;
+  idx.forEach(([p, i], k) => { run = Math.min(run, (m / (m - k)) * p); out[i] = Math.min(1, run); });
+  return out;
+}
+
+export interface PairwiseRow { a: string; b: string; diff: number; lwr: number; upr: number; p: number; df?: number }
+/** Tukey HSD (eşit varyans; Tukey–Kramer dengesiz gruplarda; R TukeyHSD ile aynı) */
+export function tukeyHSD(groups: number[][], labels: string[], a: Anova): PairwiseRow[] {
+  const k = groups.length, out: PairwiseRow[] = [];
+  const qcrit = solveMonotone((q) => ptukey(q, k, a.dfWithin), 0.95, 0, 100);
+  for (let i = 0; i < k; i++) for (let j = i + 1; j < k; j++) {
+    const diff = mean(groups[j]) - mean(groups[i]);
+    const se = Math.sqrt((a.msWithin / 2) * (1 / groups[i].length + 1 / groups[j].length));
+    const q = Math.abs(diff) / se;
+    out.push({ a: labels[j], b: labels[i], diff, lwr: diff - qcrit * se, upr: diff + qcrit * se, p: Math.max(0, 1 - ptukey(q, k, a.dfWithin)) });
+  }
+  return out;
+}
+/** Games–Howell (varyanslar eşit değilken; rstatix::games_howell_test ile aynı) */
+export function gamesHowell(groups: number[][], labels: string[]): PairwiseRow[] {
+  const k = groups.length, out: PairwiseRow[] = [];
+  for (let i = 0; i < k; i++) for (let j = i + 1; j < k; j++) {
+    const ni = groups[i].length, nj = groups[j].length, vi = variance(groups[i]) / ni, vj = variance(groups[j]) / nj;
+    const diff = mean(groups[j]) - mean(groups[i]);
+    const df = (vi + vj) ** 2 / (vi ** 2 / (ni - 1) + vj ** 2 / (nj - 1));
+    const se = Math.sqrt((vi + vj) / 2);
+    const q = Math.abs(diff) / se;
+    const qcrit = solveMonotone((x) => ptukey(x, k, df), 0.95, 0, 100);
+    out.push({ a: labels[j], b: labels[i], diff, lwr: diff - qcrit * se, upr: diff + qcrit * se, p: Math.max(0, 1 - ptukey(q, k, df)), df });
+  }
+  return out;
+}
+
+/** Merkezi olmayan t ile etki büyüklüğü güven aralığı: d = ncp × ölçek (effectsize::cohens_d ile aynı yöntem) */
+export function dCI(t: number, df: number, scale: number, level = 0.95): [number, number] {
+  const alpha = (1 - level) / 2;
+  const span = Math.max(10, Math.abs(t) * 3 + 10);
+  const lo = solveMonotone((ncp) => pnt(t, df, ncp), 1 - alpha, t - span, t + span);
+  const hi = solveMonotone((ncp) => pnt(t, df, ncp), alpha, t - span, t + span);
+  return [lo * scale, hi * scale];
+}
+/** η² için merkezi olmayan F güven aralığı (effectsize::eta_squared, iki yönlü) */
+export function eta2CI(F: number, df1: number, df2: number, level = 0.95): [number, number] {
+  const alpha = (1 - level) / 2;
+  // effectsize: λ sınırları F = λ/df1 olarak η²’ye çevrilir → η² = λ / (λ + df2)
+  const toEta = (ncp: number) => ncp / (ncp + df2);
+  const maxN = Math.max(100, F * df1 * 10 + 100);
+  const at = (ncp: number) => pnf(F, df1, df2, ncp);
+  const lo = at(0) < 1 - alpha ? 0 : solveMonotone(at, 1 - alpha, 0, maxN);
+  const hi = at(0) < alpha ? 0 : solveMonotone(at, alpha, 0, maxN);
+  return [toEta(lo), toEta(hi)];
+}
+
+/** Regresyon varsayımları: artıkların normalliği (Shapiro–Wilk), eş varyans (Breusch–Pagan, Koenker), Durbin–Watson */
+export function regressionDiagnostics(y: number[], X: number[][], reg: Regression): { residuals: number[]; shapiro: { W: number; p: number } | null; breuschPagan: { stat: number; df: number; p: number }; durbinWatson: number } {
+  const res = y.map((v, i) => v - reg.coefficients.reduce((a, c, j) => a + c.b * (j === 0 ? 1 : X[i][j - 1]), 0));
+  const n = res.length;
+  let shapiro: { W: number; p: number } | null = null;
+  try { const s = shapiroWilk(res); shapiro = { W: s.W, p: s.p }; } catch { shapiro = null; }
+  // Koenker’in stüdentleştirilmiş BP testi: e² ~ X yardımcı regresyonunun n·R²’si (lmtest::bptest varsayılanı)
+  const e2 = res.map((e) => e * e);
+  const aux = linearRegression(e2, X, X[0].map((_, j) => `x${j}`));
+  const stat = n * aux.r2, df = X[0].length;
+  let num = 0, den = res[0] ** 2;
+  for (let i = 1; i < n; i++) { num += (res[i] - res[i - 1]) ** 2; den += res[i] ** 2; }
+  return { residuals: res, shapiro, breuschPagan: { stat, df, p: chi2RightTail(stat, df) }, durbinWatson: num / den };
 }

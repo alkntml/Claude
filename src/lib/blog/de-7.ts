@@ -171,7 +171,7 @@ Einzelne Likert-Items sind ordinal; geprüft wird meist der Skalensummen- oder M
 
 ## Normalverteilung mit Academiana prüfen
 
-Wenn Sie eine Datendatei in Ihre Arbeit hochladen, liefert die deskriptive Statistik unter „Statistische Analyse“ für jede Variable Mittelwert, Standardabweichung, Schiefe und Kurtosis mit z-Werten. Den Shapiro-Wilk-Test berechnet Academiana in dieser Version nicht; führen Sie ihn in einem Programm wie SPSS, R oder JASP durch und fügen Sie das Ergebnis in Ihren Text ein. Für nicht normalverteilte Daten können Sie Mann-Whitney-U und Kruskal-Wallis direkt in Academiana rechnen.`,
+Wenn Sie eine Datendatei in Ihre Arbeit hochladen, liefert die deskriptive Statistik unter „Statistische Analyse“ für jede Variable Mittelwert, Standardabweichung, Schiefe und Kurtosis mit z-Werten. Dieselbe Tabelle enthält für jede Variable auch W und p des Shapiro-Wilk-Tests; Berichte zu t-Tests und ANOVA ergänzen das Shapiro-Wilk-Ergebnis je Gruppe als Anmerkung. Für nicht normalverteilte Daten können Sie Mann-Whitney-U und Kruskal-Wallis direkt in Academiana rechnen.`,
   },
   "isnad-atif-sistemi-rehberi": {
     slug: "isnad-zitierstil-leitfaden",

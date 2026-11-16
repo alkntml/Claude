@@ -521,7 +521,7 @@ function AiTab() {
     try { put("ai.models", JSON.parse(models)); } catch { toast({ tone: "error", title: "Geçersiz JSON" }); }
   }
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
       <MizanBenchCard />
       <div className="card space-y-3 p-5">
         <h3 className="font-semibold">Model yapılandırması</h3>

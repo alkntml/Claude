@@ -5,7 +5,6 @@
 import { DataTable } from "./apa";
 import { tCritical } from "./dist";
 import { describe, mean, pearson } from "./tests";
-import { toNum } from "@/lib/files/stats";
 
 type L = "tr" | "en" | "de";
 export type ErrorKind = "ci95" | "se" | "sd" | "none";
@@ -111,7 +110,7 @@ export function buildChart(rows: string[][], spec: ChartSpec, l: L = "tr"): Char
       const gi = spec.group ? d.col(spec.group) : -1;
       const idx = spec.vars.map((v) => d.col(v));
       for (const r of d.body) {
-        const vals = idx.map((i) => toNum(String(r[i] ?? "")));
+        const vals = idx.map((i) => d.num(i, String(r[i] ?? "")));
         if (!vals.every((x) => Number.isFinite(x))) continue;
         const g = gi >= 0 ? String(r[gi] ?? "").trim() : w.all;
         if (!g) continue;

@@ -292,7 +292,7 @@ The computations are similar, but the questions differ; state clearly which one 
 
 ## Chi-square with Academiana
 
-After uploading your data file to your project, choose two categorical variables under “Tools” → “Statistical analysis” → “Chi-square test of independence”. You get observed counts with row percentages, the χ² value, degrees of freedom, p value and Cramér’s V in APA format; if more than 20% of cells have expected counts below 5, a warning suggests Fisher’s exact test or combining categories. The table can be added to your document with one click. For which test fits which question, see our guide on [which statistical test to use](/en/blog/which-statistical-test-to-use).`,
+After uploading your data file to your project, choose two categorical variables under “Tools” → “Statistical analysis” → “Chi-square test of independence”. You get observed counts with row percentages, the χ² value, degrees of freedom, p value and Cramér’s V in APA format; for 2×2 tables the Yates-corrected χ² and Fisher’s exact test are also computed, and if any expected count is below 5 the result is reported with Fisher’s test. The table can be added to your document with one click. For which test fits which question, see our guide on [which statistical test to use](/en/blog/which-statistical-test-to-use).`,
   },
   "doi-nedir-nasil-bulunur": {
     slug: "what-is-a-doi-how-to-find-it",

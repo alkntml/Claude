@@ -37,7 +37,7 @@ export const POST = route<Ctx>("review.extract", async (req, { params }) => {
   for (const r of recs as any[]) {
     const src = (srcs ?? []).find((x: any) => x.id === r.source_id);
     const abstract = src && src.access_level !== "metadata" ? src.abstract : r.record?.abstract ?? null;
-    const x = await extractData({ planId: s.profile.plan_id, lang, title: r.record?.title ?? "", abstract, chunks: chunks.filter((c) => c.source_id === r.source_id) });
+    const x = await extractData({ planId: s.profile.plan_id, lang, title: r.record?.title ?? "", abstract, chunks: chunks.filter((c) => c.source_id === r.source_id), customFields: acc.project.context?.review?.extractionFields ?? [] });
     if (x.usage) { usage.input += x.usage.input; usage.output += x.usage.output; cost += x.cost; model = x.model; provider = x.provider; calls++; }
     await serverDb().from("review_records").update({ extraction: x.extraction, updated_at: new Date().toISOString() }).eq("id", r.id).eq("project_id", id).eq("user_id", acc.ownerId);
     out.push({ id: r.id, extraction: x.extraction });

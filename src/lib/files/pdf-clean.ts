@@ -22,22 +22,24 @@ export const SECTION_LABELS: Record<SectionId, { tr: string; en: string }> = {
 
 /** Bölüm başlığı kalıpları (TR + EN; numaralı başlıklar dahil: “3. Method”, “III. YÖNTEM”) */
 const HEADINGS: [SectionId, RegExp][] = [
-  ["abstract", /^(abstract|özet|öz|summary)$/i],
-  ["introduction", /^(introduction|giriş|background|arka ?plan)$/i],
-  ["literature", /^(literature review|theoretical (framework|background)|related work|kuramsal çerçeve|kavramsal çerçeve|literatür( taraması)?|alanyazın)$/i],
-  ["method", /^(methods?|methodology|materials and methods|research design|the study|yöntem|yöntem ve gereçler|araştırma yöntemi|metodoloji|gereç ve yöntem)$/i],
-  ["results", /^(results?|findings|bulgular|sonuçlar ve bulgular)$/i],
-  ["discussion", /^(discussion|general discussion|results and discussion|tartışma|tartışma ve yorum|bulgular ve tartışma)$/i],
-  ["conclusion", /^(conclusions?|concluding remarks|implications|sonuç|sonuç ve öneriler|sonuçlar|öneriler)$/i],
-  ["references", /^(references|reference list|bibliography|works cited|literature cited|kaynakça|kaynaklar|yararlanılan kaynaklar)$/i],
-  ["appendix", /^(appendix|appendices|supplementary material|ek(ler)?)(\s+[a-z0-9]+)?$/i],
+  ["abstract", /^(abstract|özet|öz|summary|extended abstract|genişletilmiş özet)$/],
+  ["introduction", /^(introduction|giriş|giriş ve amaç|background|arka ?plan|önsöz|preface|motivation)$/],
+  ["literature", /^(literature review|review of (the )?literature|theoretical (framework|background)|conceptual framework|related work|background and related work|preliminaries|kuramsal çerçeve|kavramsal çerçeve|teorik çerçeve|literatür( taraması| özeti)?|alan ?yazın( taraması)?|ilgili (araştırmalar|çalışmalar)|kuramsal çerçeve ve ilgili araştırmalar)$/],
+  ["method", /^(methods?|methodology|materials and methods|methods and materials|research (design|method(ology)?)|the study|study design|experimental (setup|design|procedure)|experiments?|data and methods?|yöntem|yöntem ve gereçler|gereç ve yöntem|materyal ve yöntem|yöntem ve materyal|araştırma(nın)? yöntemi|araştırma modeli|metodoloji|yöntembilim)$/],
+  ["results", /^(results?|findings|experimental results|empirical results|bulgular|araştırma bulguları|bulgular ve yorum(lar)?|sonuçlar ve bulgular)$/],
+  ["discussion", /^(discussion|general discussion|results and discussion|discussion and conclusions?|tartışma|tartışma ve yorum|bulgular ve tartışma|tartışma ve sonuç)$/],
+  ["conclusion", /^(conclusions?|concluding remarks|summary and conclusions?|conclusions? and (future work|outlook|implications|recommendations)|consequences and conclusions|implications|final remarks|sonuç|sonuçlar|sonuç ve öneriler|sonuç ve değerlendirme(ler)?(imiz)?|değerlendirme ve sonuç|genel değerlendirme|öneriler|yargı)$/],
+  ["references", /^(references|reference list|references and notes|bibliography|works cited|literature cited|kaynakça|kaynaklar|yararlanılan kaynaklar|kaynakça ve notlar)$/],
+  ["appendix", /^(appendix|appendices|supplementary (material|information)|ek(ler)?)(\s+[a-z0-9]+)?$/],
 ];
 
-/** Bir satır bölüm başlığı mı? Numara ve noktalama atılır; çok uzun satırlar başlık sayılmaz. */
+/** Bir satır bölüm başlığı mı? Numara ve noktalama atılır; çok uzun satırlar başlık sayılmaz. Türkçe büyük harf
+ * (GİRİŞ, YÖNTEM, SONUÇ VE DEĞERLENDİRME) Türkçe kurallarla küçültülerek karşılaştırılır (D222). */
 export function headingOf(line: string): SectionId | null {
-  const s = line.trim().replace(/^((\d+(\.\d+)*|[IVX]+)[.)]?\s+)/, "").replace(/[:.]$/, "").trim();
-  if (!s || s.length > 40) return null;
-  for (const [id, re] of HEADINGS) if (re.test(s)) return id;
+  const s = line.trim().replace(/^((\d+(\.\d+)*|[IVX]+|[A-H])[.)]?\s+)/, "").replace(/[:.]$/, "").trim().replace(/\s+/g, " ");
+  if (!s || s.length > 48) return null;
+  const low = s.toLocaleLowerCase("tr"), lowEn = s.toLowerCase();
+  for (const [id, re] of HEADINGS) if (re.test(low) || re.test(lowEn)) return id;
   return null;
 }
 

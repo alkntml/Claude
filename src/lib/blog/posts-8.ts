@@ -16,7 +16,7 @@ export const POSTS_8: BlogPost[] = [
     keywords: ["tek yönlü ANOVA nasıl yapılır", "ANOVA yorumlama", "ANOVA APA raporlama", "Bonferroni post hoc", "eta kare", "varyans analizi tez"],
     date: "2026-11-14",
     updated: "2026-11-14",
-    cta: { text: "Veri dosyanızı çalışmanıza yükleyin; “Araçlar” → “İstatistik analizi” → “Tek yönlü varyans analizi (ANOVA)” ile F tablosunu, eta kareyi ve Bonferroni karşılaştırmalarını APA biçiminde alın.", href: "/kayit", label: "ANOVA’mı çalıştır" },
+    cta: { text: "Veri dosyanızı çalışmanıza yükleyin; “Araçlar” → “İstatistik analizi” → “Tek yönlü varyans analizi (ANOVA)” ile F tablosunu, eta kareyi ve Tukey HSD / Games–Howell karşılaştırmalarını APA biçiminde alın.", href: "/kayit", label: "ANOVA’mı çalıştır" },
     body: `Tek yönlü varyans analizi (ANOVA), **üç veya daha fazla bağımsız grubun ortalamasını** tek bir testte karşılaştırır. “Üç öğretim yönteminden hangisi daha başarılı?”, “Sınıf düzeyine göre kaygı puanları farklılaşıyor mu?” gibi sorular tezlerde en sık ANOVA ile sınanır. Bu rehberde testi seçmekten APA 7’ye göre raporlamaya kadar her adımı, aynı örnek veri üzerinde sayıları tek tek yorumlayarak anlatıyoruz.
 
 Bu yazıdaki bütün sayılar, aşağıdaki örnek veriden Academiana’nın istatistik motoruyla hesaplanmıştır. Verileri kendi programınıza girerek aynı sonuçları elde edebilirsiniz.
@@ -124,7 +124,7 @@ Bu örnekte grup başına yalnızca 10 öğrenci var. Soru-cevap ile diğer grup
 
 ## Academiana ile ANOVA
 
-Veri dosyanızı (CSV veya XLSX) çalışmanıza yükledikten sonra “Araçlar” → “İstatistik analizi” bölümünden “Tek yönlü varyans analizi (ANOVA)” seçeneğini işaretleyin, bağımlı değişkeni ve gruplama değişkenini seçin. Sonuçta grup betimselleri, ANOVA tablosu, η² ve ANOVA anlamlıysa Bonferroni düzeltmeli ikili karşılaştırmalar APA biçiminde gelir; tek tıkla numaralı tablo olarak belgenize eklenir. Grupların ortalamasını hata çubuklu bir sütun grafiğiyle göstermek için “Grafik oluştur” aracını kullanabilirsiniz. Sayılar yapay zekâ tarafından üretilmez; sitenin istatistik motoru verinizden hesaplar.`,
+Veri dosyanızı (CSV veya XLSX) çalışmanıza yükledikten sonra “Araçlar” → “İstatistik analizi” bölümünden “Tek yönlü varyans analizi (ANOVA)” seçeneğini işaretleyin, bağımlı değişkeni ve gruplama değişkenini seçin. Sonuçta grup betimselleri, ANOVA tablosu, η² ve %95 güven aralığı, Levene testi ve ANOVA anlamlıysa çoklu karşılaştırmalar (varyanslar homojense Tukey HSD, değilse Games–Howell) APA biçiminde gelir; tek tıkla numaralı tablo olarak belgenize eklenir. Grupların ortalamasını hata çubuklu bir sütun grafiğiyle göstermek için “Grafik oluştur” aracını kullanabilirsiniz. Sayılar yapay zekâ tarafından üretilmez; sitenin istatistik motoru verinizden hesaplar.`,
     sources: [
       { text: "Fisher, R. A. (1925). Statistical methods for research workers. Oliver and Boyd." },
       { text: "Levene, H. (1960). Robust tests for equality of variances. In I. Olkin (Ed.), Contributions to probability and statistics (pp. 278–292). Stanford University Press." },

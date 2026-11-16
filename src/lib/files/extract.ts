@@ -1,5 +1,6 @@
 import "server-only";
 import { cleanPdfPages, contentSegments, segmentPages, type Segment } from "./pdf-clean";
+import { detectPrintedPages } from "@/lib/sources/pages";
 
 export interface Extracted {
   text: string;
@@ -7,6 +8,8 @@ export interface Extracted {
   pages?: string[];
   /** Temizlenmiş PDF’in bölümlere ayrılmış hâli (kaynakça ve ekler hariç; D132) */
   segments?: Segment[];
+  /** D222: PDF sayfalarına basılı sayfa numaraları (bulunamazsa null) */
+  pageNumbers?: (string | null)[] | null;
   /** Tablo verisi (CSV/XLSX) */
   rows?: string[][];
   meta: Record<string, unknown>;
@@ -47,9 +50,11 @@ export async function extract(kind: string, buf: Buffer): Promise<Extracted> {
       const raw = (Array.isArray(text) ? text : [text]).map((p) => p.replace(/[ \t]+\n/g, "\n").trim());
       // D132: üst/alt bilgi, bölünmüş kelime ve bitişik harf temizliği; bölüm tanıma; kaynakça ayrılır
       const clean = cleanPdfPages(raw);
+      // D222: basılı sayfa numaraları üst/alt bilgi temizliğinden önce, ham sayfalardan okunur
+      const pageNumbers = detectPrintedPages(raw);
       const { kept, droppedReferences } = contentSegments(segmentPages(clean.pages));
       const sections = [...new Set(kept.map((s) => s.section).filter(Boolean))];
-      return { text: clean.pages.join("\n\n"), pages: clean.pages, segments: kept, meta: { pages: totalPages, scanned: clean.scanned, removedLines: clean.removedLines, droppedReferenceSegments: droppedReferences, sections } };
+      return { text: clean.pages.join("\n\n"), pages: clean.pages, segments: kept, pageNumbers, meta: { pageNumbers, pages: totalPages, scanned: clean.scanned, removedLines: clean.removedLines, droppedReferenceSegments: droppedReferences, sections } };
     }
     case "docx": {
       const mammoth = await import("mammoth");

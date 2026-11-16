@@ -4,6 +4,8 @@ import { PROVIDERS } from "./providers";
 import type { ProviderConfig, ProviderResult, SearchQuery, SearchResponse, SourceProviderId, SourceRecord } from "./types";
 
 const PROVIDER_TIMEOUT_MS = 9000;
+/** D222: Europe PMC özetli (core) aramada sık sık 9 sn’yi aşıyor; bu sağlayıcıya daha uzun süre tanınır */
+const SLOW_PROVIDERS: Partial<Record<string, number>> = { europepmc: 16000 };
 
 function filled(r: SourceRecord): number {
   return (["containerTitle", "volume", "issue", "pages", "publisher", "doi", "abstract", "oaUrl", "pmid"] as const)
@@ -100,18 +102,24 @@ export async function searchAll(
         return [];
       }
       const started = Date.now();
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), PROVIDER_TIMEOUT_MS);
-      try {
-        const recs = await p.search!(q, cfg, ctrl.signal);
-        providers.push({ provider: id, ok: true, count: recs.length, ms: Date.now() - started });
-        return recs;
-      } catch (e) {
-        const msg = ctrl.signal.aborted ? "zaman aşımı" : e instanceof Error ? e.message : "bilinmeyen hata";
-        providers.push({ provider: id, ok: false, count: 0, error: msg, ms: Date.now() - started });
-        return [];
-      } finally {
-        clearTimeout(timer);
+      // D222: zaman aşımı ya da geçici hata (429/5xx, bağlantı hatası) olursa sağlayıcı bir kez yeniden denenir
+      for (let attempt = 0; ; attempt++) {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), SLOW_PROVIDERS[id] ?? PROVIDER_TIMEOUT_MS);
+        try {
+          const recs = await p.search!(q, cfg, ctrl.signal);
+          providers.push({ provider: id, ok: true, count: recs.length, ms: Date.now() - started });
+          return recs;
+        } catch (e) {
+          const status = (e as { status?: number })?.status ?? 0;
+          const retryable = ctrl.signal.aborted || status === 429 || status >= 500 || status === 0;
+          if (attempt === 0 && retryable) continue;
+          const msg = ctrl.signal.aborted ? "zaman aşımı" : e instanceof Error ? e.message : "bilinmeyen hata";
+          providers.push({ provider: id, ok: false, count: 0, error: msg, ms: Date.now() - started });
+          return [];
+        } finally {
+          clearTimeout(timer);
+        }
       }
     }),
   );

@@ -16,12 +16,12 @@ import type { JSONNode } from "@/lib/editor/doc";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
 type PdfHandle = { pdfjs: typeof import("pdfjs-dist"); doc: PDFDocumentProxy } | null;
-import { pdfPageLabels } from "@/lib/sources/pages";
+import { resolvePageLabels } from "@/lib/sources/pages";
 import { BLOCK_QUOTE_WORDS, buildQuoteNodes, cleanSelection, pageLocator, wordCount, type QuoteKind } from "@/lib/sources/quote";
 
 interface ReaderData {
   source: { id: string; title: string; authors: unknown; year: number | null; pages: string | null; access_level: string };
-  pdf: { url: string; name: string } | null;
+  pdf: { url: string; name: string; pageNumbers?: (string | null)[] | null } | null;
   chunks: { page: string | null; section: string | null; content: string }[];
 }
 interface Sel { text: string; start: string | null; end: string | null; x: number; y: number }
@@ -79,7 +79,7 @@ export function SourceReaderModal({ sourceId, onClose, onInsert, canInsert }: {
         const doc = await pdfjs.getDocument({ url: data.pdf!.url, isEvalSupported: false }).promise;
         if (cancelled) { doc.destroy(); return; }
         pdfRef.current = { pdfjs, doc };
-        setPdfState({ pages: doc.numPages, labels: pdfPageLabels(data.source.pages, doc.numPages), noText: false });
+        setPdfState({ pages: doc.numPages, labels: resolvePageLabels(data.source.pages, doc.numPages, data.pdf!.pageNumbers), noText: false });
       } catch (e) {
         if (!cancelled) setPdfError((e as Error).message || "PDF açılamadı");
       }

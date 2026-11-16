@@ -17,8 +17,8 @@ export function useInsights(days: number) {
 export function CostBreakdown({ days }: { days: number }) {
   const d = useInsights(days);
   if (!d) return <div className="skeleton h-72" />;
-  if (d.error) return <p className="text-sm text-rose-600">Maliyet dökümü yüklenemedi.</p>;
-  const toolCost = (d.cost.tools ?? []).reduce((a: number, t: any) => a + t.cost, 0);
+  if (d.error || !d.cost) return <p className="text-sm text-rose-600">Maliyet dökümü yüklenemedi.</p>;
+  const toolCost = (d.cost?.tools ?? []).reduce((a: number, t: any) => a + t.cost, 0);
   return (
     <div className="space-y-4">
       <div className="card p-5">
@@ -27,7 +27,7 @@ export function CostBreakdown({ days }: { days: number }) {
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="card p-5"><BarList title="Hangi özellik ne kadar harcadı?" subtitle="Yapay zekâ maliyeti (USD), çağrı sayısıyla" items={d.cost.features.map((f: any) => ({ label: f.label, value: f.value, sub: `${num(f.calls)} çağrı` }))} format={usd} limit={9} empty="Bu dönemde yapay zekâ maliyeti yok." /></div>
         <div className="card p-5">
-          <BarList title="Ücretsiz araçlar" subtitle={`Kullanım sayısı · API maliyeti toplam ${usd(toolCost)}`} color={2} items={(d.cost.tools ?? []).map((t: any) => ({ label: t.label, value: t.uses, sub: t.cost > 0 ? `${usd(t.cost)} · ${num(t.items)} kayıt` : "yapay zekâ yok · $0" }))} format={num} empty="Ücretsiz araçlar henüz kullanılmadı (veya veritabanı güncellemesi 21 yapılmadı)." />
+          <BarList title="Ücretsiz araçlar" subtitle={`Kullanım sayısı · API maliyeti toplam ${usd(toolCost)}`} color={2} items={(d.cost?.tools ?? []).map((t: any) => ({ label: t.label, value: t.uses, sub: t.cost > 0 ? `${usd(t.cost)} · ${num(t.items)} kayıt` : "yapay zekâ yok · $0" }))} format={num} empty="Ücretsiz araçlar henüz kullanılmadı (veya veritabanı güncellemesi 21 yapılmadı)." />
         </div>
       </div>
     </div>
@@ -84,7 +84,7 @@ export function ProductHealth({ days }: { days: number }) {
   const [d, setD] = useState<any | null>(null);
   useEffect(() => { setD(null); api(`/api/admin/product?days=${days}`).then(setD).catch(() => setD({ error: true })); }, [days]);
   if (!d) return <div className="skeleton h-40" />;
-  if (d.error) return <p className="text-sm text-ink-500">Ürün analitiği yüklenemedi.</p>;
+  if (d.error || !d.funnel) return <p className="text-sm text-ink-500">Ürün analitiği yüklenemedi.</p>;
   const r = d.reliability;
   return (
     <div className="grid gap-4 lg:grid-cols-3">

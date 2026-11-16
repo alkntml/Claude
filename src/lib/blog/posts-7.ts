@@ -188,7 +188,7 @@ Likert tipi ölçeklerde tek tek maddeler sıralı veridir; normallik genellikle
 
 ## Academiana ile normallik incelemesi
 
-Veri dosyanızı çalışmanıza yüklediğinizde “İstatistik analizi” bölümündeki betimsel istatistikler, her değişken için ortalama, standart sapma, çarpıklık ve basıklık değerlerini z puanlarıyla birlikte verir. Academiana bu sürümde Shapiro–Wilk testini hesaplamaz; bu testi SPSS, R veya JASP gibi bir programla yapıp sonucunu metninize ekleyebilirsiniz. Normal dağılmayan veride Mann–Whitney U ve Kruskal–Wallis testlerini doğrudan Academiana’da çalıştırabilirsiniz.`,
+Veri dosyanızı çalışmanıza yüklediğinizde “İstatistik analizi” bölümündeki betimsel istatistikler, her değişken için ortalama, standart sapma, çarpıklık ve basıklık değerlerini z puanlarıyla birlikte verir. Aynı tabloda her değişken için Shapiro–Wilk W ve p değeri de yer alır; t testi ve ANOVA raporları grup bazında Shapiro–Wilk sonucunu not olarak ekler. Normal dağılmayan veride Mann–Whitney U ve Kruskal–Wallis testlerini doğrudan Academiana’da çalıştırabilirsiniz.`,
     sources: [
       { text: "Shapiro, S. S., & Wilk, M. B. (1965). An analysis of variance test for normality (complete samples). Biometrika, 52(3–4), 591–611.", url: "https://doi.org/10.1093/biomet/52.3-4.591" },
       { text: "Kim, H.-Y. (2013). Statistical notes for clinical researchers: Assessing normal distribution (2) using skewness and kurtosis. Restorative Dentistry & Endodontics, 38(1), 52–54.", url: "https://doi.org/10.5395/rde.2013.38.1.52" },

@@ -51,18 +51,22 @@ const nrm = (s: string) => s.replace(/\s+/g, " ").trim().toLocaleLowerCase("tr")
  * bölümleri öncelikli — veya özet). Metinde olmayan alan “belirtilmemiş” kalır; her alanın dayanak alıntısı kaynak
  * metninde birebir yoksa alıntı gösterilmez. Sonuç taslaktır; araştırmacı düzeltir.
  */
-export async function extractData(o: { planId: string; lang: Locale; title: string; abstract: string | null; chunks: { content: string; page_hint: string | null; section?: string | null }[] }) {
+export async function extractData(o: { planId: string; lang: Locale; title: string; abstract: string | null; chunks: { content: string; page_hint: string | null; section?: string | null }[]; customFields?: string[] }) {
   const basedOn: Extraction["basedOn"] = o.chunks.length ? "full_text" : o.abstract ? "abstract" : "metadata";
   if (basedOn === "metadata") return { extraction: { basedOn, at: new Date().toISOString() } as Extraction, usage: null, cost: 0, model: null, provider: null };
   const model = await resolveModel(o.planId, "fast");
   if (!isProviderConfigured(model.provider)) throw new Error("Yapay zekâ sağlayıcısı yapılandırılmamış");
   const picks = o.chunks.length ? rankChunks(o.chunks, ["method", "participants", "sample", "design", "procedure", "instrument", "measure", "results", "findings", "yöntem", "örneklem", "katılımcı", "desen", "ölçek", "bulgular", "anlamlı", "n ="], null, 8, { sections: ["method", "results", "abstract"] }) : [];
   const material = [o.abstract ? `ÖZET:\n${o.abstract.slice(0, 2500)}` : "", ...picks.map((c, i) => `P${i + 1}${c.page ? ` (s. ${c.page})` : ""}${c.section ? ` [${c.section}]` : ""}:\n${c.content.slice(0, 1400)}`)].filter(Boolean).join("\n\n");
+  // D222: protokoldeki ek alanlar (ör. “Örneklem büyüklüğü (n)”) x0, x1… anahtarlarıyla aynı kurallarla istenir
+  const custom = (o.customFields ?? []).slice(0, 12);
+  const cellSchema = { type: "object", additionalProperties: false, required: ["value", "quote", "page"], properties: { value: { type: "string" }, quote: { type: "string" }, page: { type: "string" } } };
+  const schema = custom.length ? { ...EX_SCHEMA, required: [...EX_SCHEMA.required, ...custom.map((_, i) => `x${i}`)], properties: { ...EX_SCHEMA.properties, ...Object.fromEntries(custom.map((_, i) => [`x${i}`, cellSchema])) } } : EX_SCHEMA;
   const res = await complete(model, {
     system: `Sistematik derleme için dahil edilen bir çalışmadan veri çıkarıyorsun. Yalnızca verilen METNE dayan; tahmin etme, kendi bilgini ekleme.
 Her alan için: value = kısa ve net (en fazla 35 kelime, ${AI_LANGUAGE[o.lang]}); metinde yoksa value = "${pick({ tr: "belirtilmemiş", en: "not reported", de: "nicht berichtet" }, o.lang)}". quote = değerin dayandığı en kısa ifade, metinden AYNEN (yoksa boş). page = alıntının sayfası (yoksa boş).
-Alanlar: ${EXTRACTION_FIELDS.map((f) => `${f}: ${FIELD_HINTS[f]}`).join("; ")}.`,
-    messages: [{ role: "user", content: `ÇALIŞMA: ${o.title}\n\nMETİN:\n${material}` }], maxTokens: 1400, effort: "low", jsonSchema: EX_SCHEMA,
+Alanlar: ${EXTRACTION_FIELDS.map((f) => `${f}: ${FIELD_HINTS[f]}`).join("; ")}${custom.length ? `; ${custom.map((c, i) => `x${i}: ${c.replace(/[\n\r]/g, " ")}`).join("; ")}` : ""}.`,
+    messages: [{ role: "user", content: `ÇALIŞMA: ${o.title}\n\nMETİN:\n${material}` }], maxTokens: 1400 + custom.length * 120, effort: "low", jsonSchema: schema,
   });
   const cost = await estimateCost(res.model, res.usage.input, res.usage.output, res.usage);
   const nm = nrm(material);
@@ -75,5 +79,11 @@ Alanlar: ${EXTRACTION_FIELDS.map((f) => `${f}: ${FIELD_HINTS[f]}`).join("; ")}.`
     const ok = !!c.quote && nm.includes(nrm(c.quote));
     extraction[f] = { value: c.value.slice(0, 600), quote: ok ? c.quote.slice(0, 600) : null, page: ok && c.page ? c.page.slice(0, 20) : null };
   }
+  custom.forEach((name, i) => {
+    const c = j[`x${i}`];
+    if (!c?.value) return;
+    const ok = !!c.quote && nm.includes(nrm(c.quote));
+    (extraction.custom ??= {})[name] = { value: c.value.slice(0, 600), quote: ok ? c.quote.slice(0, 600) : null, page: ok && c.page ? c.page.slice(0, 20) : null };
+  });
   return { extraction, usage: res.usage, cost, model: res.model, provider: model.provider };
 }

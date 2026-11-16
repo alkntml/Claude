@@ -33,8 +33,8 @@ export function MizanBenchCard() {
   }
   const s = last?.score;
   return (
-    <div className="card space-y-3 p-5 lg:col-span-2">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="card min-w-0 space-y-3 p-5 lg:col-span-2">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <h3 className="flex items-center gap-2 font-semibold"><Scale className="h-4 w-4 text-brand-600" /><BrandMark name="Mizan" /> doğruluk testi</h3>
         <Button size="sm" onClick={run} loading={busy}>{last ? "Yeniden ölç" : "Ölçümü başlat"}</Button>
       </div>
@@ -43,27 +43,34 @@ export function MizanBenchCard() {
       {last && last.parts && (last.part ?? 0) < last.parts - 1 && !busy && <p className="text-[13px] text-amber-700">Son ölçüm yarım kaldı ({(last.part ?? 0) + 1}/{last.parts} parça); sonuçlar eksik iddialarla hesaplandı.</p>}
       {s && last && (
         <>
-          <div className="grid gap-2 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[["Tam isabet", `%${s.exactPct}`, `${s.exact}/${s.n} iddia`], ["Sorun yakalama", `%${s.detectionPct}`, `${s.caught}/${s.problems} sorunlu iddia`], ["Yanlış alarm", `%${s.falseAlarmPct}`, `${s.falseAlarms}/${s.fine} doğru iddia`], ["Tehlikeli kaçırma", String(s.dangerousMisses), "çelişen/olmayan iddiaya “destekliyor”"]].map(([a, b, c]) => (
               <div key={a} className="rounded-2xl border border-ink-100 p-3"><p className="text-[12px] text-ink-500">{a}</p><p className="text-2xl font-semibold text-ink-900">{b}</p><p className="text-[11.5px] text-ink-400">{c}</p></div>
             ))}
           </div>
-          <p className="text-[12px] text-ink-500">Etiket bazında: {s.perLabel.map((p) => `${LABEL[p.label]} ${p.correct}/${p.n}`).join(" · ")} · Model: {last.model} · {last.calls} çağrı · ${last.costUsd.toFixed(3)} · {Math.round(last.durationMs / 1000)} sn · {new Date(last.at).toLocaleString("tr-TR")}</p>
+          <p className="break-words text-[12px] text-ink-500">Etiket bazında: {s.perLabel.map((p) => `${LABEL[p.label]} ${p.correct}/${p.n}`).join(" · ")} · Model: {last.model} · {last.calls} çağrı · ${last.costUsd.toFixed(3)} · {Math.round(last.durationMs / 1000)} sn · {new Date(last.at).toLocaleString("tr-TR")}</p>
           {s.perClass && (
-            <div className="overflow-auto rounded-2xl border border-ink-100">
-              <table className="w-full text-left text-[12.5px]">
-                <thead className="bg-ink-50 text-ink-500"><tr><th className="p-2">Sınıf</th><th className="p-2">Kesinlik</th><th className="p-2">Duyarlılık</th><th className="p-2">F1</th><th className="p-2">Yanlış pozitif</th><th className="p-2">Yanlış negatif</th></tr></thead>
-                <tbody>
+            <>
+              <div className="overflow-x-auto rounded-2xl border border-ink-100">
+                <table className="w-full text-left text-[12.5px] tabular-nums">
+                  <thead className="bg-ink-50 text-ink-500"><tr><th className="p-2">Sınıf</th><th className="p-2">Kesinlik</th><th className="p-2">Duyarlılık</th><th className="p-2">F1</th><th className="p-2" title="Yanlış pozitif">YP</th><th className="p-2" title="Yanlış negatif">YN</th></tr></thead>
+                  <tbody>
+                    {[...s.perClass.map((c) => ({ ...c, name: LABEL[c.label] })), { ...s.issue, name: "Sorun var (ikili)" }].map((c) => (
+                      <tr key={c.name} className="border-t border-ink-100"><td className="p-2 font-medium text-ink-800">{c.name}</td><td className="p-2">{c.precision.toFixed(3)}</td><td className="p-2">{c.recall.toFixed(3)}</td><td className="p-2">{c.f1.toFixed(3)}</td><td className="p-2">{c.fp}</td><td className="p-2">{c.fn}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-[12px] text-ink-500">Makro F1: {s.macroF1.toFixed(3)} · YP: başka sınıftaki iddiaya bu sınıf denmesi · YN: bu sınıftaki iddianın başka sınıf sayılması.</p>
+              <details className="rounded-2xl border border-ink-100 p-3 text-[12.5px]">
+                <summary className="cursor-pointer font-medium text-ink-800">Yanlış pozitif ve yanlış negatif iddialar</summary>
+                <ul className="mt-2 space-y-1.5 break-words text-ink-600">
                   {[...s.perClass.map((c) => ({ ...c, name: LABEL[c.label] })), { ...s.issue, name: "Sorun var (ikili)" }].map((c) => (
-                    <tr key={c.name} className="border-t border-ink-100 align-top">
-                      <td className="p-2 font-medium text-ink-800">{c.name}</td><td className="p-2">{c.precision.toFixed(3)}</td><td className="p-2">{c.recall.toFixed(3)}</td><td className="p-2">{c.f1.toFixed(3)}</td>
-                      <td className="p-2 text-ink-500">{c.fp}{c.fpIds.length ? `: ${c.fpIds.join(", ")}` : ""}</td><td className="p-2 text-ink-500">{c.fn}{c.fnIds.length ? `: ${c.fnIds.join(", ")}` : ""}</td>
-                    </tr>
+                    <li key={c.name}><b className="text-ink-800">{c.name}</b> — YP: {c.fpIds.length ? c.fpIds.join(", ") : "yok"} · YN: {c.fnIds.length ? c.fnIds.join(", ") : "yok"}</li>
                   ))}
-                </tbody>
-              </table>
-              <p className="p-2 text-[12px] text-ink-500">Makro F1: {s.macroF1.toFixed(3)}</p>
-            </div>
+                </ul>
+              </details>
+            </>
           )}
           <button className="text-[13px] font-medium text-brand-700 hover:underline" onClick={() => setOpen((o) => !o)}>{open ? "Ayrıntıyı gizle" : "İddia iddia sonuçları"}</button>
           {open && (

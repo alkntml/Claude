@@ -171,7 +171,7 @@ Individual Likert items are ordinal; normality is usually examined on the scale 
 
 ## Checking normality with Academiana
 
-When you upload a data file to your work, the descriptive statistics under “Statistical analysis” give the mean, standard deviation, skewness and kurtosis with z scores for each variable. Academiana does not compute the Shapiro–Wilk test in this version; run it in a program such as SPSS, R or JASP and add the result to your text. For non-normal data you can run Mann–Whitney U and Kruskal–Wallis directly in Academiana.`,
+When you upload a data file to your work, the descriptive statistics under “Statistical analysis” give the mean, standard deviation, skewness and kurtosis with z scores for each variable. The same table also gives the Shapiro–Wilk W and p value for each variable, and t-test and ANOVA reports add the Shapiro–Wilk result for each group as a note. For non-normal data you can run Mann–Whitney U and Kruskal–Wallis directly in Academiana.`,
   },
   "isnad-atif-sistemi-rehberi": {
     slug: "isnad-citation-style-guide",

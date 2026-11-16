@@ -297,6 +297,8 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - D94: maliyet denetimi (Opus önbellek %5, Haiku uzun istem, bilinmeyen model, kesilen/okunamayan çağrılar, araç maliyeti toplamlara) + Yönetim → Maliyet sağlığı kartı
 - D93: Semantic Scholar kaldırıldı (toplam 12 veri tabanı); asistan kullanım sorularını rehbere göre yanıtlar (Haiku, bağlamsız)
 
+- **Test programı ve düzeltmeler (D221–D222):** 200 iddialık Mizan seti, P/R/F1; PDF yazı tipi, LaTeX 11/11, basılı sayfa numarası, PRISMA (RoB 2, ROBINS-I, JBI, NOS, kontrol listesi), istatistik (Shapiro–Wilk, Fisher, Tukey, Games–Howell, etki büyüklüğü GA, regresyon varsayımları; R ile 120/120), sütun bazında ondalık okuma.
+
 ## Commit geçmişi (özet)
 | Commit | İçerik |
 |---|---|

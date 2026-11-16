@@ -64,7 +64,18 @@ async function viaDatacite(doi: string, signal: AbortSignal): Promise<SourceReco
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+/**
+ * D222: kayıt otoritesi geç yanıt verirse (zaman aşımı) ya da geçici hata dönerse (429/5xx) bir kez, daha uzun süreyle
+ * yeniden denenir; testlerde Europe PMC’nin 10 sn’yi aşan yanıtları doğrulamaların %5’ini “hata”ya düşürüyordu.
+ */
 export async function verifySource(rec: Pick<SourceRecord, "title" | "doi" | "pmid" | "arxivId">, cfg: ProviderConfig, timeoutMs = 10000): Promise<VerificationResult> {
+  const first = await verifyOnce(rec, cfg, timeoutMs);
+  if (first.status !== "error" || !first.retryable) return strip(first);
+  return strip(await verifyOnce(rec, cfg, Math.max(timeoutMs, 15000)));
+}
+const strip = (r: VerificationResult & { retryable?: boolean }): VerificationResult => { const { retryable: _x, ...rest } = r; void _x; return rest; };
+
+async function verifyOnce(rec: Pick<SourceRecord, "title" | "doi" | "pmid" | "arxivId">, cfg: ProviderConfig, timeoutMs: number): Promise<VerificationResult & { retryable?: boolean }> {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   const compare = (found: SourceRecord | null, authority: VerificationResult["authority"], identifier: string) => {
@@ -91,7 +102,8 @@ export async function verifySource(rec: Pick<SourceRecord, "title" | "doi" | "pm
     }
     return result("no_identifier", { message: "Kalıcı tanımlayıcı (DOI/PMID/arXiv) yok; kaynak elle doğrulanmalıdır." });
   } catch (e) {
-    return result("error", { message: ctrl.signal.aborted ? "Doğrulama zaman aşımına uğradı" : e instanceof Error ? e.message : "Doğrulama hatası" });
+    const status = e instanceof HttpError ? e.status : 0;
+    return { ...result("error", { message: ctrl.signal.aborted ? "Doğrulama zaman aşımına uğradı" : e instanceof Error ? e.message : "Doğrulama hatası" }), retryable: ctrl.signal.aborted || status === 429 || status >= 500 || status === 0 };
   } finally {
     clearTimeout(timer);
   }

@@ -321,7 +321,7 @@ Ki-kare testinin iki yaygın kullanımı vardır:
 
 ## Academiana ile ki-kare
 
-Veri dosyanızı çalışmanıza yükledikten sonra “Araçlar” → “İstatistik analizi” → “Ki-kare bağımsızlık testi” bölümünde iki kategorik değişkeni seçin. Sonuçta gözlenen frekanslar satır yüzdeleriyle birlikte, χ² değeri, serbestlik derecesi, p değeri ve Cramér V APA biçiminde gelir; hücrelerin %20’sinden fazlasında beklenen frekans 5’in altındaysa Fisher’in kesin testi veya kategori birleştirme önerisiyle uyarı verilir. Tablo tek tıkla belgenize eklenir. Hangi testin hangi soruya uygun olduğunu [analiz seçme rehberimizde](/blog/hangi-istatistik-analizi-secilmeli) bulabilirsiniz.`,
+Veri dosyanızı çalışmanıza yükledikten sonra “Araçlar” → “İstatistik analizi” → “Ki-kare bağımsızlık testi” bölümünde iki kategorik değişkeni seçin. Sonuçta gözlenen frekanslar satır yüzdeleriyle birlikte, χ² değeri, serbestlik derecesi, p değeri ve Cramér V APA biçiminde gelir; 2×2 tablolarda Yates düzeltmeli χ² ve Fisher’in kesin testi de hesaplanır; beklenen frekansı 5’in altında göze varsa sonuç Fisher testine göre yazılır. Tablo tek tıkla belgenize eklenir. Hangi testin hangi soruya uygun olduğunu [analiz seçme rehberimizde](/blog/hangi-istatistik-analizi-secilmeli) bulabilirsiniz.`,
     sources: [
       { text: "Pearson, K. (1900). On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling. The London, Edinburgh, and Dublin Philosophical Magazine and Journal of Science, 50(302), 157–175." },
       { text: "Cramér, H. (1946). Mathematical methods of statistics. Princeton University Press." },

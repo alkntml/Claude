@@ -292,7 +292,7 @@ Die Berechnung ist ähnlich, die Frage aber verschieden; geben Sie klar an, welc
 
 ## Chi-Quadrat mit Academiana
 
-Nach dem Hochladen Ihrer Datendatei wählen Sie unter „Werkzeuge“ → „Statistische Analyse“ → „Chi-Quadrat-Unabhängigkeitstest“ zwei kategoriale Variablen. Sie erhalten beobachtete Häufigkeiten mit Zeilenprozenten, χ²-Wert, Freiheitsgrade, p-Wert und Cramérs V im APA-Format; haben mehr als 20 % der Zellen erwartete Häufigkeiten unter 5, erscheint ein Hinweis auf den exakten Test nach Fisher oder das Zusammenfassen von Kategorien. Welcher Test zu welcher Frage passt, zeigt unser Leitfaden [welcher statistische Test](/de/blog/welcher-statistische-test).`,
+Nach dem Hochladen Ihrer Datendatei wählen Sie unter „Werkzeuge“ → „Statistische Analyse“ → „Chi-Quadrat-Unabhängigkeitstest“ zwei kategoriale Variablen. Sie erhalten beobachtete Häufigkeiten mit Zeilenprozenten, χ²-Wert, Freiheitsgrade, p-Wert und Cramérs V im APA-Format; bei 2×2-Tafeln werden zusätzlich das Yates-korrigierte χ² und der exakte Test nach Fisher berechnet; liegt eine erwartete Häufigkeit unter 5, wird das Ergebnis nach Fisher berichtet. Welcher Test zu welcher Frage passt, zeigt unser Leitfaden [welcher statistische Test](/de/blog/welcher-statistische-test).`,
   },
   "doi-nedir-nasil-bulunur": {
     slug: "doi-was-ist-das-und-wie-finden",

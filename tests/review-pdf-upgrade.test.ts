@@ -120,7 +120,7 @@ describe("PRISMA geliştirmeleri", () => {
     expect(md).toContain("3 yinelenen");
     expect(md).toContain("Kontrol grubu yok (n = 1)");
     expect(md).toContain("2 çalışma derlemeye dahil edilmiştir [[kaynak:S1,S2]]");
-    expect(md).toContain("κ = 0.78");
+    expect(md).toContain("κ = 0,78");
     expect(md).toContain("| Scopus | gamif* AND math* | 2026-10-01 | 120 |");
   });
   it("özellikler tablosu: atıf, alanlar ve risk", () => {

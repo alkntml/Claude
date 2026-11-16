@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
-import { canMove, EMPTY_PROTOCOL, findFuzzyDuplicate, recordKey, REVIEW_STAGES, type ReviewStage } from "@/lib/prisma";
+import { APPRAISAL_TOOLS, canMove, EMPTY_PROTOCOL, fuzzyMatch, recordKey, REPORTING_FIELDS, REVIEW_STAGES, type AppraisalToolId, type ReviewStage } from "@/lib/prisma";
 import { isMissingColumn } from "@/lib/db-compat";
 import { serverDb } from "@/lib/server-db";
 import { projectAccess } from "@/lib/project-access";
@@ -26,7 +26,13 @@ const RecordData = z.object({
   publisher: z.string().max(300).nullable().optional(), pmid: z.string().max(40).nullable().optional(), arxivId: z.string().max(60).nullable().optional(), isbn: z.string().max(40).nullable().optional(),
 });
 const Search = z.object({ database: z.string().trim().min(1).max(60), query: z.string().trim().max(1000), date: z.string().max(20), results: z.number().int().min(0).max(1_000_000) });
-const Protocol = z.object({ question: z.string().max(2000), inclusion: z.array(z.string().trim().max(300)).max(20), exclusion: z.array(z.string().trim().max(300)).max(20), searches: z.array(Search).max(50), dual: z.boolean().optional() });
+const Protocol = z.object({
+  question: z.string().max(2000), inclusion: z.array(z.string().trim().max(300)).max(20), exclusion: z.array(z.string().trim().max(300)).max(20), searches: z.array(Search).max(50), dual: z.boolean().optional(),
+  // D222: ek veri alanları, varsayılan yanlılık riski aracı, PRISMA 2020 raporlama metinleri
+  extractionFields: z.array(z.string().trim().min(1).max(80)).max(12).optional(),
+  appraisalTool: z.enum(APPRAISAL_TOOLS.map((x) => x.id) as [AppraisalToolId, ...AppraisalToolId[]]).optional(),
+  reporting: z.object(Object.fromEntries(REPORTING_FIELDS.map((f) => [f, z.string().trim().max(1500).optional()]))).optional(),
+});
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /** Kayıtlar + protokol (D122) */
@@ -72,11 +78,11 @@ export const POST = route<Ctx>("review.add", async (req, { params }) => {
   const rows = incoming.map((r) => {
     const key = recordKey(r);
     const exact = seen.has(key);
-    const near = exact ? null : findFuzzyDuplicate(r, pool);
+    const near = exact ? null : fuzzyMatch(r, pool);
     if (near) fuzzy++;
     if (!exact && !near) { seen.add(key); pool.push({ key, title: r.title, year: r.year ?? null, doi: r.doi ?? null }); }
     const dup = exact || !!near;
-    return { project_id: id, user_id: acc.ownerId, key: key.slice(0, 600), origin: b.origin, stage: dup ? "duplicate" : "identified", reason: near ? "Olası yinelenen (benzer başlık ve yıl)" : null, record: r, decided_by: null };
+    return { project_id: id, user_id: acc.ownerId, key: key.slice(0, 600), origin: b.origin, stage: dup ? "duplicate" : "identified", reason: near ? (near.kind === "version" ? "Aynı çalışmanın başka sürümü (ön baskı / dergi makalesi)" : "Olası yinelenen (benzer başlık ve yıl)") : null, record: r, decided_by: null };
   });
   const { error } = await serverDb().from("review_records").insert(rows, { defaultToNull: false });
   if (error) throw error;

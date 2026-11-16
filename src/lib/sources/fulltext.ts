@@ -4,7 +4,7 @@ import { chunkText } from "@/lib/files/chunk";
 import { extract } from "@/lib/files/extract";
 import { safeFetch, stripTags } from "./http";
 import { insertChunks } from "./chunk-insert";
-import { pdfPageLabels } from "./pages";
+import { resolvePageLabels } from "./pages";
 import type { Segment } from "@/lib/files/pdf-clean";
 import { unpaywallLookup } from "./providers";
 import type { ProviderConfig } from "./types";
@@ -54,6 +54,7 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
   try {
     let pages: string[] | undefined;
     let segments: Segment[] | undefined;
+    let printed: (string | null)[] | null = null;
     let scanned = false;
     let text = "";
     let usedUrl: string | undefined;
@@ -82,7 +83,7 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
         try {
           const ex = await extract("pdf", await fetchPdf(url, ctrl.signal));
           if (ex.meta.scanned) scanned = true;
-          if (ex.text.length >= 2000) { pages = ex.pages; segments = ex.segments; text = ex.text; usedUrl = url; break; }
+          if (ex.text.length >= 2000) { pages = ex.pages; segments = ex.segments; printed = ex.pageNumbers ?? null; text = ex.text; usedUrl = url; break; }
         } catch {
           // sonraki adayı dene
         }
@@ -93,7 +94,7 @@ async function ingestInner(db: SupabaseClient, source: any, cfg: ProviderConfig)
     if (text.length < 2000) return { status: "failed", message: scanned ? "PDF taranmış görüntüden oluşuyor; metni seçilemediği için okunamadı. Metin seçilebilen bir sürümünü yükleyebilirsiniz." : "Tam metin indirilemedi veya okunamadı (taranmış PDF ya da yayıncı engeli olabilir)." };
 
     // Sayfa ipuçları yayındaki gerçek sayfa numaralarıyla yazılır (atıfta sayfa gösterimi için)
-    const chunks = chunkText({ pages, text, segments, pageLabels: pages ? pdfPageLabels(source.pages, pages.length) : undefined });
+    const chunks = chunkText({ pages, text, segments, pageLabels: pages ? resolvePageLabels(source.pages, pages.length, printed) : undefined });
     await db.from("source_chunks").delete().eq("source_id", source.id);
     await insertChunks(db, chunks.map((c, idx) => ({ source_id: source.id, project_id: source.project_id, user_id: source.user_id, chunk_index: idx, page_hint: c.pageHint, content: c.content, section: c.section ?? null })));
     await db.from("sources").update({ access_level: "full_text", license, oa_url: source.oa_url ?? usedUrl }).eq("id", source.id);

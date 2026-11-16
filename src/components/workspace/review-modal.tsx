@@ -11,7 +11,7 @@ import { Modal, Tabs } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
-import { agreement, APPRAISAL_ITEMS, appraisalSummary, characteristicsMarkdown, EMPTY_PROTOCOL, EXTRACTION_FIELDS, EXTRACTION_LABELS, methodsMarkdown, prismaCounts, prismaSvg, reviewCsv, type Appraisal, type AppraisalAnswer, type Extraction, type ReviewProtocol, type ReviewRecord, type ReviewStage, type VoteDecision, type VotePhase } from "@/lib/prisma";
+import { agreement, appraisalSummary, appraisalTool, APPRAISAL_TOOLS, characteristicsMarkdown, checklistMarkdown, checklistStatusText, prismaChecklist, REPORTING_FIELDS, REPORTING_LABELS, SCALE_ANSWERS, type AppraisalToolId, EMPTY_PROTOCOL, EXTRACTION_FIELDS, EXTRACTION_LABELS, methodsMarkdown, prismaCounts, prismaSvg, reviewCsv, type Appraisal, type AppraisalAnswer, type Extraction, type ReviewProtocol, type ReviewRecord, type ReviewStage, type VoteDecision, type VotePhase } from "@/lib/prisma";
 import { svgToPng } from "@/lib/svg-png";
 import { writingLang } from "@/lib/writing-lang";
 
@@ -39,7 +39,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
   const [tab, setTab] = useState<Tab>("protocol");
   const [records, setRecords] = useState<ReviewRecord[]>([]);
   const [protocol, setProtocol] = useState<ReviewProtocol>(EMPTY_PROTOCOL);
-  const [draft, setDraft] = useState({ question: "", inclusion: "", exclusion: "" });
+  const [draft, setDraft] = useState({ question: "", inclusion: "", exclusion: "", fields: "" });
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
   const [me, setMe] = useState("");
@@ -50,7 +50,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
     try {
       const r = await api<{ records: ReviewRecord[]; protocol: ReviewProtocol; me?: string; upgraded?: boolean }>(`/api/projects/${projectId}/review`);
       setRecords(r.records); setProtocol(r.protocol); setMe(r.me ?? ""); setUpgraded(r.upgraded !== false);
-      setDraft({ question: r.protocol.question, inclusion: r.protocol.inclusion.join("\n"), exclusion: r.protocol.exclusion.join("\n") });
+      setDraft({ question: r.protocol.question, inclusion: r.protocol.inclusion.join("\n"), exclusion: r.protocol.exclusion.join("\n"), fields: (r.protocol.extractionFields ?? []).join("\n") });
       if (r.records.length) setTab((x) => (x === "protocol" ? "screen" : x));
     } catch (e) { toast({ tone: "error", title: t("Yüklenemedi"), detail: (e as Error).message }); }
     finally { setLoading(false); }
@@ -61,7 +61,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
   const reasons = useMemo(() => [...protocol.exclusion, t("Konu dışı"), t("Yayın türü uygun değil"), t("Dil ölçütü dışında")], [protocol.exclusion, t]);
 
   async function saveProtocol(next?: Partial<ReviewProtocol>) {
-    const p = { ...protocol, question: draft.question, inclusion: lines(draft.inclusion), exclusion: lines(draft.exclusion), ...next };
+    const p = { ...protocol, question: draft.question, inclusion: lines(draft.inclusion), exclusion: lines(draft.exclusion), extractionFields: lines(draft.fields).slice(0, 12), ...next };
     setBusy("protocol");
     try { const r = await api<{ protocol: ReviewProtocol }>(`/api/projects/${projectId}/review`, { method: "PUT", json: p }); setProtocol(r.protocol); toast({ tone: "success", title: t("Protokol kaydedildi") }); }
     catch (e) { toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); }
@@ -113,6 +113,32 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
                   <input type="checkbox" className="mt-0.5" checked={!!protocol.dual} disabled={!upgraded} onChange={(e) => saveProtocol({ dual: e.target.checked })} />
                   <span><b>{t("Çift değerlendirici modu")}</b> — {t("Ekipteki her araştırmacı (ortak yazarlar dahil) kayıtlara bağımsız oy verir; anlaşmazlıklar listelenir ve değerlendiriciler arası uyum (Cohen’in kappası) yöntem metnine yazılır. Sistematik derlemelerde önerilen yöntemdir.")}{!upgraded && <span className="block text-amber-700">{t("Bu özellik için veritabanı güncellemesi gerekiyor (migration 36).")}</span>}</span>
                 </label>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div>
+                    <label className="label" htmlFor="f-review-fields">{t("Veri çıkarma formuna ek alanlar (her satıra bir)")}</label>
+                    <textarea id="f-review-fields" className="input min-h-[96px]" value={draft.fields} onChange={(e) => setDraft({ ...draft, fields: e.target.value })} placeholder={t("Örneklem büyüklüğü (n)\nOrtalama ve standart sapma\nEtki büyüklüğü ve %95 güven aralığı\nİzlem süresi")} />
+                    <p className="mt-1 text-[11.5px] text-ink-500">{t("Standart altı alana (desen, ülke, örneklem, müdahale, sonuçlar, bulgular) eklenir; yapay zekâ bu alanları da okunan metinden doldurur. En fazla 12 alan.")}</p>
+                  </div>
+                  <div>
+                    <label className="label" htmlFor="f-review-tool">{t("Varsayılan yanlılık riski aracı")}</label>
+                    <select id="f-review-tool" className="input" value={protocol.appraisalTool ?? "general"} onChange={(e) => saveProtocol({ appraisalTool: e.target.value as AppraisalToolId })}>
+                      {APPRAISAL_TOOLS.map((x) => <option key={x.id} value={x.id}>{x.name[lang]} — {x.use[lang]}</option>)}
+                    </select>
+                    <p className="mt-1 text-[11.5px] text-ink-500">{t("Her çalışmada desenine göre ayrıca değiştirilebilir (ör. randomize çalışmalar için RoB 2, kohortlar için Newcastle–Ottawa).")}</p>
+                  </div>
+                </div>
+                <details className="rounded-xl border border-ink-100 p-3">
+                  <summary className="cursor-pointer text-[13.5px] font-semibold text-ink-900">{t("Raporlama bilgileri (PRISMA 2020 maddeleri 12–15 ve 24–27)")}</summary>
+                  <p className="mt-1 text-[12px] text-ink-500">{t("Bu metinleri siz yazarsınız; yöntem metnine aynen eklenir ve kontrol listesinde ilgili madde tamamlanmış görünür. Boş bırakılan madde “eksik” olarak listelenir.")}</p>
+                  <div className="mt-2 grid gap-2 md:grid-cols-2">
+                    {REPORTING_FIELDS.map((f) => (
+                      <div key={f}>
+                        <label className="label" htmlFor={`f-rep-${f}`}>{REPORTING_LABELS[f].item}. {REPORTING_LABELS[f][lang]}</label>
+                        <textarea id={`f-rep-${f}`} className="input min-h-[56px] text-[13px]" defaultValue={protocol.reporting?.[f] ?? ""} placeholder={REPORTING_LABELS[f].hint[lang]} onBlur={(e) => { const v = e.target.value.trim(); if (v === (protocol.reporting?.[f] ?? "")) return; setProtocol((x) => ({ ...x, reporting: { ...(x.reporting ?? {}), [f]: v } })); }} />
+                      </div>
+                    ))}
+                  </div>
+                </details>
                 <Button onClick={() => saveProtocol()} loading={busy === "protocol"}>{t("Protokolü kaydet")}</Button>
                 {protocol.searches.length > 0 && (
                   <div>
@@ -125,7 +151,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
             {tab === "collect" && <Collect projectId={projectId} onAdded={load} />}
             {tab === "screen" && <Screen projectId={projectId} records={records} reasons={reasons} protocol={protocol} decide={decide} reload={load} setRecords={setRecords} dual={dual} me={me} vote={vote} />}
             {tab === "eligibility" && <Eligibility projectId={projectId} records={records} reasons={reasons} decide={decide} onSourcesAdded={(rows) => { onSourcesAdded(rows); load(); }} dual={dual} me={me} vote={vote} />}
-            {tab === "extract" && <ExtractTab projectId={projectId} records={records} setRecords={setRecords} lang={lang} upgraded={upgraded} onInsertMarkdown={onInsertMarkdown} sourceTitle={(r) => `${authorsOf(r) || r.record.title.slice(0, 50)}${r.record.year ? ` (${r.record.year})` : ""} — ${r.record.title}`} />}
+            {tab === "extract" && <ExtractTab projectId={projectId} protocol={protocol} records={records} setRecords={setRecords} lang={lang} upgraded={upgraded} onInsertMarkdown={onInsertMarkdown} sourceTitle={(r) => `${authorsOf(r) || r.record.title.slice(0, 50)}${r.record.year ? ` (${r.record.year})` : ""} — ${r.record.title}`} />}
             {tab === "diagram" && <Diagram counts={counts} lang={lang} records={records} protocol={protocol} onInsertFigure={onInsertFigure} onInsertMarkdown={onInsertMarkdown} />}
           </>
         )}
@@ -334,8 +360,14 @@ function Diagram({ counts, lang, records, protocol, onInsertFigure, onInsertMark
     const inc = records.filter((r) => r.stage === "included" && r.source_id);
     const map = Object.fromEntries(inc.map((r, i) => [`S${i + 1}`, r.source_id!]));
     const ag = protocol.dual ? agreement(records, "screening") : null;
-    const md = methodsMarkdown({ protocol, counts, lang, agreement: ag, includedLabels: Object.keys(map), extracted: records.filter((r) => r.stage === "included" && r.extraction?.at).length, appraised: records.filter((r) => r.stage === "included" && appraisalSummary(r.appraisal).risk).length });
-    return { md, map };
+    const inc2 = records.filter((r) => r.stage === "included");
+    const withTool = (r: ReviewRecord) => (r.appraisal ? { tool: protocol.appraisalTool ?? "general", ...r.appraisal } : null);
+    const appraisedRecs = inc2.filter((r) => appraisalSummary(withTool(r)).risk);
+    const extracted = inc2.filter((r) => r.extraction?.at).length;
+    const tools = [...new Set(appraisedRecs.map((r) => withTool(r)!.tool!))] as AppraisalToolId[];
+    const md = methodsMarkdown({ protocol, counts, lang, agreement: ag, includedLabels: Object.keys(map), extracted, appraised: appraisedRecs.length, tools });
+    const checklist = prismaChecklist({ protocol, counts, lang, dualKappa: !!(ag && ag.n > 0 && ag.kappa != null), extracted, appraised: appraisedRecs.length });
+    return { md, map, checklist };
   }, [records, protocol, counts, lang]);
   async function insert() {
     if (!onInsertFigure) return;
@@ -359,6 +391,29 @@ function Diagram({ counts, lang, records, protocol, onInsertFigure, onInsertMark
         <div className="mt-2 flex flex-wrap gap-2">
           {onInsertMarkdown && <Button size="sm" onClick={() => { onInsertMarkdown(methods.md, methods.map); toast({ tone: "success", title: t("Yöntem metni belgeye eklendi") }); }}><FilePlus2 className="h-4 w-4" /> {t("Belgeye ekle")}</Button>}
           <Button size="sm" variant="ghost" onClick={() => navigator.clipboard.writeText(methods.md).then(() => toast({ tone: "success", title: t("Kopyalandı") }), () => {})}>{t("Kopyala")}</Button>
+        </div>
+      </details>
+      <details className="rounded-2xl border border-ink-100 p-3">
+        <summary className="flex cursor-pointer items-center gap-2 text-[13.5px] font-semibold text-ink-900"><CheckCircle2 className="h-4 w-4 text-brand-600" /> {t("PRISMA 2020 kontrol listesi (27 madde)")} <span className="font-normal text-ink-500">· {t("{n} madde raporlandı", { n: methods.checklist.filter((x) => x.status === "done").length })}</span></summary>
+        <p className="mt-2 text-[12.5px] text-ink-500">{t("Dergilerin istediği kontrol listesi ekinin taslağı. “Raporlandı”: modülün yöntem metni, akış şeması veya tablolarıyla karşılanan maddeler. “Yazar ekleyecek”: giriş, tartışma ve sentez sonuçları gibi sizin yazacağınız bölümler.")}</p>
+        <div className="mt-2 max-h-72 overflow-auto rounded-xl border border-ink-100">
+          <table className="w-full text-left text-[12px]">
+            <thead className="sticky top-0 bg-ink-50 text-ink-500"><tr><th className="p-2">#</th><th className="p-2">{t("Madde")}</th><th className="p-2">{t("Raporlandığı yer")}</th><th className="p-2">{t("Durum")}</th></tr></thead>
+            <tbody>
+              {methods.checklist.map((x) => (
+                <tr key={x.n} className="border-t border-ink-100 align-top">
+                  <td className="p-2 tabular-nums text-ink-500">{x.n}</td>
+                  <td className="p-2 text-ink-800">{x.item}<span className="block text-[11px] text-ink-400">{x.section}</span></td>
+                  <td className="p-2 text-ink-600">{x.where}</td>
+                  <td className="p-2"><span className={cn("font-medium", x.status === "done" ? "text-emerald-700" : x.status === "partial" ? "text-amber-700" : x.status === "todo" ? "text-rose-700" : "text-ink-600")}>{checklistStatusText(x.status, lang)}</span>{x.note && <span className="block text-[11.5px] text-ink-500">{x.note}</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {onInsertMarkdown && <Button size="sm" onClick={() => { onInsertMarkdown(checklistMarkdown(methods.checklist, lang), {}); toast({ tone: "success", title: t("Kontrol listesi belgeye eklendi") }); }}><FilePlus2 className="h-4 w-4" /> {t("Belgeye ekle")}</Button>}
+          <Button size="sm" variant="ghost" onClick={() => download("prisma-2020-kontrol-listesi.csv", "\ufeff" + [["#", t("Bölüm"), t("Madde"), t("Raporlandığı yer"), t("Durum"), t("Not")], ...methods.checklist.map((x) => [x.n, x.section, x.item, x.where, checklistStatusText(x.status, lang), x.note])].map((row) => row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n"), "text/csv;charset=utf-8")}><Download className="h-4 w-4" /> CSV</Button>
         </div>
       </details>
       <p className="flex items-start gap-1.5 text-[12px] text-ink-500"><Filter className="mt-0.5 h-3.5 w-3.5" />{t("Sayılar kararlarınızdan otomatik hesaplanır. Yöntem bölümünde arama tarihlerini ve ifadelerini (Protokol sekmesi) raporlamayı unutmayın.")}</p>
@@ -404,11 +459,44 @@ function AgreementPanel({ records, phase }: { records: ReviewRecord[]; phase: Vo
   );
 }
 
-const ANSWERS: [AppraisalAnswer, string][] = [["yes", "Evet"], ["no", "Hayır"], ["unclear", "Belirsiz"], ["na", "Uygulanamaz"]];
 const RISK: Record<string, [string, string]> = { low: ["Düşük yanlılık riski", "bg-emerald-50 text-emerald-700"], moderate: ["Orta yanlılık riski", "bg-amber-50 text-amber-800"], high: ["Yüksek yanlılık riski", "bg-rose-50 text-rose-700"] };
 
-function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMarkdown, sourceTitle }: {
-  projectId: string; records: ReviewRecord[]; setRecords: React.Dispatch<React.SetStateAction<ReviewRecord[]>>; lang: "tr" | "en" | "de"; upgraded: boolean;
+/** D222: çalışmanın desenine göre yanlılık riski aracı ve araca özgü yanıtlar */
+function AppraisalBox({ r, defTool, lang, onSave }: { r: ReviewRecord; defTool: AppraisalToolId; lang: "tr" | "en" | "de"; onSave: (a: Appraisal) => void }) {
+  const { t } = useT();
+  const a: Appraisal = { tool: defTool, answers: {}, ...(r.appraisal ?? {}) };
+  const tool = appraisalTool(a.tool);
+  const sum = appraisalSummary(a);
+  const opts = (max?: number) => (tool.scale === "stars" && max === 2 ? [{ v: "2" as AppraisalAnswer, tr: "★★", en: "★★", de: "★★" }, ...SCALE_ANSWERS.stars] : SCALE_ANSWERS[tool.scale]);
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="label mb-0" htmlFor={`f-tool-${r.id}`}>{t("Yanlılık riski aracı")}</label>
+        <select id={`f-tool-${r.id}`} className="input w-auto py-1 text-[12.5px]" value={tool.id} onChange={(e) => onSave({ ...a, tool: e.target.value as AppraisalToolId, answers: {} })}>
+          {APPRAISAL_TOOLS.map((x) => <option key={x.id} value={x.id}>{x.name[lang]} — {x.use[lang]}</option>)}
+        </select>
+      </div>
+      <ul className="mt-1.5 space-y-1">
+        {tool.items.map((it) => (
+          <li key={it.id} className="flex flex-wrap items-center gap-2 text-[12.5px]">
+            <span className="min-w-0 flex-1 text-ink-700">{it[lang]}</span>
+            <span className="flex flex-wrap gap-1">{opts(it.max).map((o) => <button key={o.v} type="button" onClick={() => onSave({ ...a, answers: { ...a.answers, [it.id]: o.v } })} className={cn("rounded-md border px-1.5 py-0.5 text-[11.5px]", a.answers?.[it.id] === o.v ? "border-brand-300 bg-brand-50 text-brand-800" : "border-ink-200 text-ink-500 hover:border-ink-300")}>{o[lang]}</button>)}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-1.5 text-[11.5px] text-ink-500">
+        {tool.scale === "yn" && (sum.score != null ? t("{y}/{a} madde karşılanıyor.", { y: sum.yes, a: sum.applicable }) : t("Risk düzeyi için en az üç maddeyi yanıtlayın."))}
+        {tool.scale === "yn" && ` ${t("“Evet” oranı %75 ve üstü düşük, %50–74 orta, altı yüksek yanlılık riski sayılır.")}`}
+        {tool.scale === "rob2" && t("Genel karar: herhangi bir alan “yüksek” ise yüksek; değilse herhangi biri “bazı endişeler” ise bazı endişeler; tüm alanlar “düşük” ise düşük.")}
+        {tool.scale === "robins" && t("Genel karar en kötü alandır (düşük < orta < ciddi < kritik). “Bilgi yok” varken genel karar verilmez.")}
+        {tool.scale === "stars" && `${t("Toplam yıldız: {n}/9.", { n: sum.yes })} ${t("7–9 yıldız düşük, 5–6 orta, 0–4 yüksek yanlılık riski sayılır.")}`}
+      </p>
+    </div>
+  );
+}
+
+function ExtractTab({ projectId, protocol, records, setRecords, lang, upgraded, onInsertMarkdown, sourceTitle }: {
+  projectId: string; protocol: ReviewProtocol; records: ReviewRecord[]; setRecords: React.Dispatch<React.SetStateAction<ReviewRecord[]>>; lang: "tr" | "en" | "de"; upgraded: boolean;
   onInsertMarkdown?: (md: string, map: Record<string, string>) => void; sourceTitle: (r: ReviewRecord) => string;
 }) {
   const { t } = useT();
@@ -417,6 +505,8 @@ function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMa
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const missing = included.filter((r) => !r.extraction?.at);
+  const extra = protocol.extractionFields ?? [];
+  const defTool = protocol.appraisalTool ?? "general";
 
   async function fill(list: ReviewRecord[]) {
     setBusy(true);
@@ -436,12 +526,17 @@ function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMa
   function tableMd() {
     const labeled = included.map((r, i) => ({ r, label: r.source_id ? `S${i + 1}` : null }));
     const map = Object.fromEntries(labeled.filter((x) => x.label).map((x) => [x.label!, x.r.source_id!]));
-    return { md: characteristicsMarkdown(labeled.map(({ r, label }) => ({ label, title: r.record.title, year: r.record.year, extraction: r.extraction, appraisal: r.appraisal })), lang), map };
+    return { md: characteristicsMarkdown(labeled.map(({ r, label }) => ({ label, title: r.record.title, year: r.record.year, extraction: r.extraction, appraisal: r.appraisal ? { tool: defTool, ...r.appraisal } : r.appraisal })), lang, extra), map };
   }
   function csv() {
     const q = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const head = [t("Çalışma"), t("Yıl"), ...EXTRACTION_FIELDS.map((f) => EXTRACTION_LABELS[f][lang]), ...APPRAISAL_ITEMS.map((i) => i[lang]), t("Yanlılık riski"), t("Dayanak")];
-    const rows = included.map((r) => { const s = appraisalSummary(r.appraisal); return [r.record.title, r.record.year ?? "", ...EXTRACTION_FIELDS.map((f) => r.extraction?.[f]?.value ?? ""), ...APPRAISAL_ITEMS.map((i) => r.appraisal?.answers?.[i.id] ?? ""), s.risk ? t(RISK[s.risk][0]) : "", r.extraction?.basedOn ?? ""]; });
+    const head = [t("Çalışma"), t("Yıl"), ...EXTRACTION_FIELDS.map((f) => EXTRACTION_LABELS[f][lang]), ...extra, t("Yanlılık riski aracı"), t("Alan yanıtları"), t("Yanlılık riski"), t("Dayanak")];
+    const rows = included.map((r) => {
+      const a = r.appraisal ? { tool: defTool, ...r.appraisal } : null;
+      const tool = appraisalTool(a?.tool);
+      const s = appraisalSummary(a);
+      return [r.record.title, r.record.year ?? "", ...EXTRACTION_FIELDS.map((f) => r.extraction?.[f]?.value ?? ""), ...extra.map((f) => r.extraction?.custom?.[f]?.value ?? ""), a ? tool.name[lang] : "", tool.items.map((i) => `${i[lang]}: ${a?.answers?.[i.id] ?? "-"}`).join(" | "), s.risk ? t(RISK[s.risk][0]) : "", r.extraction?.basedOn ?? ""];
+    });
     download("veri-cikarma.csv", "﻿" + [head, ...rows].map((x) => x.map(q).join(";")).join("\r\n"), "text/csv;charset=utf-8");
   }
 
@@ -457,7 +552,7 @@ function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMa
       </div>
       <ul className="max-h-[52vh] space-y-2 overflow-y-auto pr-1">
         {included.map((r) => {
-          const sum = appraisalSummary(r.appraisal);
+          const sum = appraisalSummary(r.appraisal ? { tool: defTool, ...r.appraisal } : null);
           const isOpen = open === r.id;
           return (
             <li key={r.id} className="rounded-2xl border border-ink-100 bg-white">
@@ -479,20 +574,19 @@ function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMa
                         </div>
                       );
                     })}
+                    {extra.map((f, k) => {
+                      const c = r.extraction?.custom?.[f];
+                      return (
+                        <div key={`x-${f}`}>
+                          <label className="label" htmlFor={`f-ext-x${k}`}>{f}</label>
+                          <textarea id={`f-ext-x${k}`} className="input min-h-[52px] text-[13px]" defaultValue={c?.value ?? ""} onBlur={(e) => { const v = e.target.value.trim(); if (v === (c?.value ?? "")) return; save(r, { extraction: { ...(r.extraction ?? {}), custom: { ...(r.extraction?.custom ?? {}), [f]: { value: v, quote: c?.quote ?? null, page: c?.page ?? null, edited: true } } } }); }} />
+                          {c?.quote && <p className="mt-0.5 text-[11.5px] italic text-ink-500">“{c.quote}”{c.page ? ` (s. ${c.page})` : ""}</p>}
+                        </div>
+                      );
+                    })}
                   </div>
                   {r.extraction?.at && <Button size="sm" variant="ghost" onClick={() => fill([r])} loading={busy}><RotateCcw className="h-3.5 w-3.5" /> {t("Yapay zekâ ile yeniden doldur")}</Button>}
-                  <div>
-                    <p className="label">{t("Kalite değerlendirmesi (JBI ve CASP’tan uyarlanmış 7 madde)")}</p>
-                    <ul className="space-y-1">
-                      {APPRAISAL_ITEMS.map((it) => (
-                        <li key={it.id} className="flex flex-wrap items-center gap-2 text-[12.5px]">
-                          <span className="min-w-0 flex-1 text-ink-700">{it[lang]}</span>
-                          <span className="flex gap-1">{ANSWERS.map(([v, l]) => <button key={v} onClick={() => save(r, { appraisal: { ...(r.appraisal ?? { answers: {} }), answers: { ...(r.appraisal?.answers ?? {}), [it.id]: v } } })} className={cn("rounded-md border px-1.5 py-0.5 text-[11.5px]", r.appraisal?.answers?.[it.id] === v ? "border-brand-300 bg-brand-50 text-brand-800" : "border-ink-200 text-ink-500 hover:border-ink-300")}>{t(l)}</button>)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-1.5 text-[11.5px] text-ink-500">{sum.score != null ? t("{y}/{a} madde karşılanıyor.", { y: sum.yes, a: sum.applicable }) : t("Risk düzeyi için en az üç maddeyi yanıtlayın.")} {t("“Evet” oranı %75 ve üstü düşük, %50–74 orta, altı yüksek yanlılık riski sayılır.")}</p>
-                  </div>
+                  <AppraisalBox r={r} defTool={defTool} lang={lang} onSave={(appraisal) => save(r, { appraisal })} />
                 </div>
               )}
             </li>

@@ -16,7 +16,7 @@ export interface SourceInput { id: string; title: string; abstract: string | nul
 export interface PairResult { claimId: string; sourceId: string; verdict: ClaimVerdict; explanation: string; quote: string | null; quotePage: string | null; access: SourceInput["access_level"]; /** Denetim yöntemi sürümü; eski sürüm sonuçları önbellekten kullanılmaz */ av?: number }
 
 /** Karar kuralları değişince artır: önceki denetim sonuçları yeniden değerlendirilir */
-export const AUDIT_VERSION = 4;
+export const AUDIT_VERSION = 5;
 
 /** “Çelişiyor” yalnızca kaynaktan birebir doğrulanmış bir alıntıyla verilebilir; yoksa “desteklenmiyor”a düşer */
 /**
@@ -113,9 +113,10 @@ export async function auditSources(o: { planId: string; lang: Locale; groups: { 
         system: `Akademik atıfları denetleyen deneyimli, adil bir danışmansın. Soru şu: “Bu cümleye bu kaynakla atıf yapmak akademik olarak doğru mu?” Yalnızca verilen KAYNAK METNİNE dayan; kendi bilgini kullanma.
   verdict:
   - "supports": cümlenin ANA bilgisi (bulgu, sayı, yön, örneklem/kapsam) kaynakta var. Başka sözcüklerle anlatım, çeviri, özetleme, kaynakta açıkça tanımlanan şeyin eş anlamlısıyla söylenmesi (ör. “genel nüfus/çok uluslu topluluk örneklemi” → “klinik olmayan örneklem”), küçük ifade farkları ve cümlenin sonunda yazarın kendi yorumunu “düşündürmektedir, olabilir, işaret eder” gibi temkinli dille eklemesi "supports" kalır. Küçük bir not varsa açıklamada belirt ama kararı düşürme.
-  - "partial": cümlenin ANA bilgilerinden biri kaynakta yok ya da önemli ölçüde değiştirilmiş: sayı/oran farklı ya da yanlış niteleniyor (ör. kaynak “en fazla %71” diyor, cümle “%71’i” diyor), ilişki nedensellik olarak sunulmuş (kaynak “ilişkili”, cümle “etkiler”), kaynağın belirli bir örneklem için söylediği genelleştirilmiş, ya da kaynaktaki temkinli ifade kesin hâle getirilmiş.
-  - "not_supported": kaynak metni cümlenin ana bilgisine hiç değinmiyor.
-  - "contradicts": kaynak metni cümlenin tersini ya da onunla bağdaşmayan bir bulguyu AÇIKÇA söylüyor ve bunu alıntılayabiliyorsun (ör. cümle “artırır”, kaynak “anlamlı fark bulunmadı”). “yalnızca, her zaman” gibi aşırı kesinlik ya da kaynağın bir ayrıntıyı belirtmemesi çelişki DEĞİLDİR. Şüphede seçme.
+  - "partial": kaynak cümlenin KONUSUNU ele alıyor ve yönünü/özünü destekliyor, ama ANA bilgilerinden biri yanlış ya da abartılı: sayı, oran, süre, örneklem büyüklüğü, katılımcı sayısı veya istatistik değeri kaynaktakinden farklı (ör. kaynak 90 katılımcı, cümle 900; kaynak 24 hafta, cümle 12 hafta; kaynak “en fazla %71”, cümle “%71’i”), ilişki nedensellik olarak sunulmuş (kaynak “ilişkili”, cümle “neden olur/etkiler”), kaynağın belirli bir örneklem için söylediği genelleştirilmiş, temkinli ifade kesinleştirilmiş, büyüklük abartılmış (“tamamen ortadan kaldırır”, “kesin olarak teşhis eder”, “tek belirleyicidir”) ya da anlamlı olmayan bir fark anlamlıymış gibi sunulmuş. Düzeltilerek aynı kaynakla kullanılabilecek cümle "partial"dır.
+  - "not_supported": kaynak metni cümlenin konusuna/ana bilgisine HİÇ değinmiyor (ölçülmemiş bir değişken, raporlanmamış bir sonuç, yapılmamış bir uygulama). Kaynak konuyu ele alıp sayıyı ya da kapsamı farklı veriyorsa bu "not_supported" değil "partial"dır.
+  - "contradicts": kaynak, cümlenin YÖNÜNÜN ya da OLGUSUNUN tersini açıkça söylüyor ve bunu alıntılayabiliyorsun: artırdı ↔ azalttı/değiştirmedi, anlamlı fark var ↔ anlamlı fark yok, ilişki pozitif ↔ negatif, çoğunluk erkek ↔ kadın, grup A daha yüksek ↔ grup B daha yüksek, ölçüt karşılandı ↔ karşılanmadı, yordayıcıdır ↔ yordayıcı değildir. Yalnızca bir sayının farklı olması (yönü aynı kalan) çelişki değil "partial"dır. “Yalnızca, her zaman” gibi aşırı kesinlik ya da kaynağın bir ayrıntıyı belirtmemesi de çelişki DEĞİLDİR. Şüphede seçme.
+  Karar sırası: (1) Kaynak konuya hiç değinmiyor mu? → not_supported. (2) Kaynak yönü/olguyu tersine mi söylüyor? → contradicts. (3) Konu ve yön doğru ama bir sayı, kapsam, nedensellik ya da kesinlik bozulmuş mu? → partial. (4) Değilse → supports.
   - "insufficient": yalnızca özet var ve cümlenin konusu özette geçmiyor (tam metin okunmadığı için karar verilemez).
   Küçük ayrıntılar yüzünden "partial" verme; bir danışmanın düzeltme isteyeceği bir sorun yoksa "supports" ver.
   quote: kararı dayandırdığın en kısa ifade, kaynak metinden AYNEN kopyala (yoksa boş).

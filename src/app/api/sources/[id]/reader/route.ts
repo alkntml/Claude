@@ -2,6 +2,7 @@ import { json, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { childAccess } from "@/lib/project-access";
 import { loadChunks } from "@/lib/sources/chunk-insert";
+import { printedPagesOf } from "@/lib/sources/chunk-pages";
 import { adminClient } from "@/lib/supabase/admin";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -14,14 +15,14 @@ export const GET = route<Ctx>("source.reader", async (_req, { params }) => {
   const s = await requireUser();
   const { id } = await params;
   const { row: src, access } = await childAccess(s, "sources", id, "read", "id, title, authors, year, pages, container_title, access_level, file_id, oa_url, doi");
-  let pdf: { url: string; name: string } | null = null;
+  let pdf: { url: string; name: string; pageNumbers: (string | null)[] | null } | null = null;
   if (src.file_id) {
     // Dosya, kaynağın sahibine ve aynı çalışmaya ait olmalı (açık kullanıcı ve çalışma filtresi)
     const admin = adminClient();
-    const { data: f } = await admin.from("files").select("name, mime_type, storage_path, user_id, project_id").eq("id", src.file_id).eq("user_id", access.ownerId).maybeSingle();
+    const { data: f } = await admin.from("files").select("name, mime_type, storage_path, user_id, project_id, extraction_meta").eq("id", src.file_id).eq("user_id", access.ownerId).maybeSingle();
     if (f && /pdf/i.test(f.mime_type ?? "") && (!src.project_id || f.project_id === src.project_id) && String(f.storage_path).startsWith(`${access.ownerId}/`)) {
       const { data: signed } = await admin.storage.from("user-files").createSignedUrl(f.storage_path, 600);
-      if (signed?.signedUrl) pdf = { url: signed.signedUrl, name: f.name };
+      if (signed?.signedUrl) pdf = { url: signed.signedUrl, name: f.name, pageNumbers: printedPagesOf(f.extraction_meta) };
     }
   }
   const chunks = src.access_level === "full_text" ? await loadChunks(access.db, { sourceIds: [id], userId: access.ownerId, limit: 4000 }) : [];

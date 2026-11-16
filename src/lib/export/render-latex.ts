@@ -26,6 +26,31 @@ export const BIBLATEX_STYLE: Record<CitationStyleId, { style: string; note?: str
   turabian: { style: "authoryear", note: "Turabian yazar–yıl için biblatex-chicago (style=chicago-authordate) kullanılabilir." },
 };
 
+/**
+ * D222: pdfLaTeX’in utf8 girdisinde tanımlı olmayan ama akademik metinde sık geçen karakterler (Yunan harfleri,
+ * üst simgeler, ≤ ≥ ± × −, η², χ²…) tanımlanır; yoksa derleme “Unicode character … not set up” ile durur.
+ * U+0307: kaynakça stilleri “İ” harfini küçültünce oluşan birleşik nokta (i + ̇) yok sayılır.
+ */
+const UNI: [string, string][] = [
+  ["03B1", "\\ensuremath{\\alpha}"], ["03B2", "\\ensuremath{\\beta}"], ["03B3", "\\ensuremath{\\gamma}"], ["03B4", "\\ensuremath{\\delta}"], ["03B5", "\\ensuremath{\\varepsilon}"],
+  ["03B6", "\\ensuremath{\\zeta}"], ["03B7", "\\ensuremath{\\eta}"], ["03B8", "\\ensuremath{\\theta}"], ["03BA", "\\ensuremath{\\kappa}"], ["03BB", "\\ensuremath{\\lambda}"],
+  ["03BC", "\\ensuremath{\\mu}"], ["03BD", "\\ensuremath{\\nu}"], ["03BE", "\\ensuremath{\\xi}"], ["03C0", "\\ensuremath{\\pi}"], ["03C1", "\\ensuremath{\\rho}"],
+  ["03C3", "\\ensuremath{\\sigma}"], ["03C4", "\\ensuremath{\\tau}"], ["03C6", "\\ensuremath{\\varphi}"], ["03C7", "\\ensuremath{\\chi}"], ["03C8", "\\ensuremath{\\psi}"],
+  ["03C9", "\\ensuremath{\\omega}"], ["0394", "\\ensuremath{\\Delta}"], ["03A3", "\\ensuremath{\\Sigma}"], ["03A9", "\\ensuremath{\\Omega}"], ["03A6", "\\ensuremath{\\Phi}"],
+  ["2070", "\\textsuperscript{0}"], ["2074", "\\textsuperscript{4}"], ["2075", "\\textsuperscript{5}"], ["2076", "\\textsuperscript{6}"], ["2077", "\\textsuperscript{7}"],
+  ["2078", "\\textsuperscript{8}"], ["2079", "\\textsuperscript{9}"], ["2080", "\\textsubscript{0}"], ["2081", "\\textsubscript{1}"], ["2082", "\\textsubscript{2}"],
+  ["2264", "\\ensuremath{\\leq}"], ["2265", "\\ensuremath{\\geq}"], ["2260", "\\ensuremath{\\neq}"], ["2248", "\\ensuremath{\\approx}"], ["2212", "\\ensuremath{-}"],
+  ["221A", "\\ensuremath{\\surd}"], ["221E", "\\ensuremath{\\infty}"], ["2192", "\\ensuremath{\\rightarrow}"], ["2190", "\\ensuremath{\\leftarrow}"], ["2194", "\\ensuremath{\\leftrightarrow}"],
+  ["2022", "\\textbullet{}"], ["2030", "\\textperthousand{}"], ["2032", "\\ensuremath{'}"], ["2033", "\\ensuremath{''}"], ["0307", ""],
+];
+const UNICODE_FALLBACKS = UNI.map(([c, v]) => `\\DeclareUnicodeCharacter{${c}}{${v}}`).join("\n");
+
+/** D222: LaTeX çıktısındaki .bib dosyası: kaynakça stilleri büyük/küçük harf dönüştürürken pdfLaTeX’te “İ” hata
+ * verdiğinden {\\.I} biçiminde korunur (BibTeX/biber standardı; Overleaf’te aynı görünür) */
+export function latexSafeBib(bib: string): string {
+  return bib.replace(/İ/g, "{\\.I}");
+}
+
 /** LaTeX özel karakterlerini kaçırır; Unicode Türkçe karakterler pdfLaTeX (utf8 + T1) ile doğrudan çalışır */
 export function texEscape(s: string): string {
   return s
@@ -135,7 +160,7 @@ function trStrings(lang: string): string {
   volumes = {C\adddot},
   number = {S\adddot},
   nodate = {t\adddot y\adddot},
-  in = {İçinde},
+  in = {{\.I}çinde},
   bibliography = {Kaynakça},
   references = {Kaynakça},
 }
@@ -190,6 +215,7 @@ export function toLatexFiles(doc: ExportDoc, o: { style: CitationStyleId; items:
 ${bl.note ? `%% ${tr ? "Not" : de ? "Hinweis" : "Note"}: ${bl.note}\n` : ""}\\documentclass[${fmtTex.size}pt,a4paper]{article}
 \\usepackage[T1]{fontenc}
 \\usepackage[utf8]{inputenc}
+${UNICODE_FALLBACKS}
 ${fmtTex.font}
 \\usepackage[${bs.babel}]{babel}
 \\usepackage[top=${f.margins.top}cm,bottom=${f.margins.bottom}cm,left=${f.margins.left}cm,right=${f.margins.right}cm]{geometry}
@@ -204,6 +230,13 @@ ${f.justify ? "" : "\\usepackage[document]{ragged2e}\n"}
 \\usepackage[autostyle=false,style=${de ? "german" : "english"}]{csquotes}
 \\usepackage[backend=biber,style=${bl.style}${bs.options}]{biblatex}
 ${bs.preamble}\\addbibresource{references.bib}
+% Uzun URL/DOI’ler kaynakçada satır sonunda bölünebilsin; dar sütunda taşma olmasın (D222)
+\\setcounter{biburlnumpenalty}{9000}
+\\setcounter{biburllcpenalty}{7000}
+\\setcounter{biburlucpenalty}{8000}
+\\setlength{\\emergencystretch}{3em}
+% Türkçe dil ayarında \\textsc küçük harfe çevirirken “I” harfi pdfLaTeX’i durduruyor (DOI, ISBN kısaltmaları); kısaltmalar olduğu gibi yazılır (D222)
+\\renewcommand*{\\mkbibacro}[1]{#1}
 \\usepackage[hidelinks]{hyperref}
 ${f.chapterTitleCenter ? "\\usepackage{sectsty}\n\\sectionfont{\\centering}\n" : ""}
 
@@ -223,7 +256,7 @@ ${bs.bibBegin}\\printbibliography[title={${texEscape(doc.bibliographyTitle)}}]${
     : tr
     ? `Academiana LaTeX çıktısı\n\nDosyalar:\n- main.tex: çalışmanız\n- references.bib: kaynaklarınız (atıf anahtarları metindekiyle aynı)\n- figures/: şekiller\n\nOverleaf: “New Project → Upload Project” ile bu ZIP’i yükleyin; derleyici pdfLaTeX, kaynakça Biber ile oluşur.\nYerel derleme: pdflatex main && biber main && pdflatex main && pdflatex main\nAtıf stili: ${bl.style}${bl.note ? ` (${bl.note})` : ""}\n`
     : `Academiana LaTeX export\n\nFiles:\n- main.tex: your work\n- references.bib: your sources (citation keys match the text)\n- figures/: figures\n\nOverleaf: “New Project → Upload Project” and upload this ZIP; compiler pdfLaTeX, bibliography with Biber.\nLocal build: pdflatex main && biber main && pdflatex main && pdflatex main\nCitation style: ${bl.style}${bl.note ? ` (${bl.note})` : ""}\n`;
-  return [{ name: "main.tex", data: tex }, { name: "references.bib", data: toBibTeX(o.items) }, ...figures, { name: "README.txt", data: readme }];
+  return [{ name: "main.tex", data: tex }, { name: "references.bib", data: latexSafeBib(toBibTeX(o.items)) }, ...figures, { name: "README.txt", data: readme }];
 }
 
 export async function toLatexZip(doc: ExportDoc, o: { style: CitationStyleId; items: CitationItem[] }): Promise<Buffer> {

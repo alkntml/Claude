@@ -5,23 +5,81 @@ import { figurePng, type ExportDoc, type Run } from "./model";
 import { coverLines, resolveFormat, type DocFormat } from "./format";
 
 const FONT_DIR = path.join(process.cwd(), "assets", "fonts");
-const F = {
-  regular: path.join(FONT_DIR, "DejaVuSerif.ttf"),
-  bold: path.join(FONT_DIR, "DejaVuSerif-Bold.ttf"),
-  italic: path.join(FONT_DIR, "DejaVuSerif-Italic.ttf"),
-  boldItalic: path.join(FONT_DIR, "DejaVuSerif-BoldItalic.ttf"),
+/**
+ * D222: PDF, şablonda seçilen yazı tipiyle üretilir. Microsoft yazı tipleri dağıtılamadığı için, harf genişlikleri
+ * aynı (metrik uyumlu) açık lisanslı karşılıkları gömülür: sayfa düzeni Word çıktısıyla aynı kalır.
+ * Times New Roman → Liberation Serif, Arial → Liberation Sans, Calibri → Carlito, Cambria → Caladea,
+ * Georgia → Gelasio, Garamond → EB Garamond. Tanınmayan seçim Liberation Serif’e düşer.
+ */
+const FAMILIES: Record<string, { file: string; name: string }> = {
+  "times new roman": { file: "LiberationSerif", name: "Liberation Serif" },
+  times: { file: "LiberationSerif", name: "Liberation Serif" },
+  arial: { file: "LiberationSans", name: "Liberation Sans" },
+  helvetica: { file: "LiberationSans", name: "Liberation Sans" },
+  calibri: { file: "Carlito", name: "Carlito" },
+  cambria: { file: "Caladea", name: "Caladea" },
+  georgia: { file: "Gelasio", name: "Gelasio" },
+  garamond: { file: "EBGaramond", name: "EB Garamond" },
 };
+export function pdfFontFor(family: string | null | undefined) {
+  const fam = FAMILIES[(family ?? "").trim().toLowerCase()] ?? FAMILIES["times new roman"];
+  const at = (style: string) => path.join(FONT_DIR, `${fam.file}-${style}.ttf`);
+  return { name: fam.name, regular: at("Regular"), bold: at("Bold"), italic: at("Italic"), boldItalic: at("BoldItalic") };
+}
+/** Seçilen yazı tipinde bulunmayan karakterler (ör. Caladea/Gelasio’da Yunan harfleri: η², χ², κ) için yedek: DejaVu Serif */
+const FALLBACK = { regular: path.join(FONT_DIR, "DejaVuSerif.ttf"), bold: path.join(FONT_DIR, "DejaVuSerif-Bold.ttf"), italic: path.join(FONT_DIR, "DejaVuSerif-Italic.ttf"), boldItalic: path.join(FONT_DIR, "DejaVuSerif-BoldItalic.ttf") };
 
 /** PDF: A4, Türkçe karakter destekli gömülü yazı tipi, sayfa numarası, dipnotlar bölüm sonunda. */
 export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise<Buffer> {
   const f = resolveFormat(raw);
   const pt = (cm: number) => Math.round(cm * 28.3465);
   const M = { top: pt(f.margins.top), bottom: pt(f.margins.bottom), left: pt(f.margins.left), right: pt(f.margins.right) };
-  // Gömülü serif yazı tipi kullanılır (Türkçe karakter); punto ve satır aralığı şablondan
-  const base = Math.min(f.fontSizePt, 13) - 0.5;
-  const gap = Math.max(1, (f.lineSpacing - 1) * base * 0.9 + 2);
+  // D222: seçilen yazı tipi (metrik uyumlu karşılığı), şablondaki punto ve Word’deki gibi satır aralığı
+  const F = pdfFontFor(f.fontFamily);
+  const base = f.fontSizePt;
   const doc = new PDFDocument({ size: "A4", margins: M, bufferPages: true, info: { Title: d.title, Author: d.author, Creator: "Academiana" } });
   doc.registerFont("r", F.regular).registerFont("b", F.bold).registerFont("i", F.italic).registerFont("bi", F.boldItalic);
+  doc.registerFont("fr", FALLBACK.regular).registerFont("fb", FALLBACK.bold).registerFont("fi", FALLBACK.italic).registerFont("fbi", FALLBACK.boldItalic);
+  // D222: karakter seçilen yazı tipinde yoksa o parça yedek yazı tipiyle yazılır (kutucuk/boş karakter çıkmaz)
+  const glyphCache = new Map<string, (cp: number) => boolean>();
+  const hasGlyph = (key: string) => {
+    let fn = glyphCache.get(key);
+    if (!fn) {
+      const prev = (doc as unknown as { _font: unknown })._font;
+      doc.font(key);
+      const fk = (doc as unknown as { _font: { font: { hasGlyphForCodePoint(cp: number): boolean } } })._font.font;
+      (doc as unknown as { _font: unknown })._font = prev;
+      fn = (cp: number) => cp < 0x80 || fk.hasGlyphForCodePoint(cp);
+      glyphCache.set(key, fn);
+    }
+    return fn;
+  };
+  /** Metni, seçilen yazı tipinde olan ve olmayan karakter dizilerine böler: [{ text, font }] */
+  const segs = (text: string, key: string): { text: string; font: string }[] => {
+    const ok = hasGlyph(key);
+    const out: { text: string; font: string }[] = [];
+    for (const ch of text) {
+      const cp = ch.codePointAt(0) ?? 0;
+      const font = ok(cp) || /\s/.test(ch) ? key : `f${key}`;
+      const last = out[out.length - 1];
+      if (last && last.font === font) last.text += ch; else out.push({ text: ch, font });
+    }
+    return out;
+  };
+  /** doc.text yerine: yazı tipi + yedek parçalarla yazar (konum yalnızca ilk parçada) */
+  const put = (key: string, text: string, x?: number, y?: number, opts: PDFKit.Mixins.TextOptions = {}) => {
+    const parts = segs(text, key);
+    parts.forEach((p, k) => {
+      doc.font(p.font);
+      const o = { ...opts, continued: k < parts.length - 1 ? true : opts.continued };
+      if (k === 0 && x !== undefined) doc.text(p.text, x, y, o); else doc.text(p.text, o);
+    });
+    if (!parts.length) doc.font(key);
+    return doc;
+  };
+  // Word’de “1,5 satır” = tek satır yüksekliğinin 1,5 katı; pdfkit’te fazlası satırlar arası boşluk olarak verilir
+  doc.font("r").fontSize(base);
+  const gap = Math.max(0, (f.lineSpacing - 1) * doc.currentLineHeight(true));
   const chunks: Buffer[] = [];
   doc.on("data", (c: Buffer) => chunks.push(c));
   const done = new Promise<Buffer>((res) => doc.on("end", () => res(Buffer.concat(chunks))));
@@ -48,7 +106,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     if (page === pageNow()) reserve(h);
   };
   const writeRuns = (runs: Run[], opts: PDFKit.Mixins.TextOptions & { size?: number } = {}) => {
-    const size = opts.size ?? 11.5;
+    const size = opts.size ?? base;
     const list = runs.map((r) => (r.footnote !== undefined ? { text: String(++noteNo), sup: true, bold: false, italic: false, note: r.footnoteRuns?.length ? r.footnoteRuns : [{ text: r.footnote }] } : r)).filter((r) => r.text);
     if (!list.length) return;
     // Dipnot işaretinden sonraki boşluk işarete eklenir (devam eden yazımda satır başındaki boşluk düşürülüyor)
@@ -61,8 +119,8 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       const note = (r as { note?: Run[] }).note;
       const before = pageNow();
       if (note) addNote(parseInt(r.text, 10), note, before, heights[k]);
-      doc.font(fontOf(r)).fontSize(r.sup ? size * 0.65 : size);
-      doc.text(r.text, { ...opts, continued: k < list.length - 1, ...(r.sup ? { rise: size * 0.35 } as object : {}) });
+      doc.fontSize(r.sup ? size * 0.65 : size);
+      put(fontOf(r), r.text, undefined, undefined, { ...opts, continued: k < list.length - 1, ...(r.sup ? { rise: size * 0.35 } as object : {}) });
       // Dipnot işareti bir sonraki sayfaya taştıysa not da o sayfaya taşınır
       if (note && pageNow() !== before) {
         const old = pageNotes.get(before) ?? [];
@@ -84,9 +142,9 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
 
   if (!d.cover) {
     // D170/D178: dergi gönderim düzeni (kapaksız) — başlık ve yazar ilk sayfanın üstünde
-    doc.font("b").fontSize(14).text(d.title, { align: "center" });
+    doc.fontSize(14); put("b", d.title, undefined, undefined, { align: "center" });
     if (d.subtitle) doc.moveDown(0.3).font("i").fontSize(12).text(d.subtitle, { align: "center" });
-    if (d.author) doc.moveDown(0.8).font("r").fontSize(11.5).text(d.author, { align: "center" });
+    if (d.author) doc.moveDown(0.8).font("r").fontSize(base).text(d.author, { align: "center" });
     if (d.institution) doc.font("i").fontSize(10.5).text(d.institution, { align: "center" });
     doc.moveDown(1.5);
   }
@@ -102,7 +160,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
     }
     doc.font("b").fontSize(12);
     for (const tx of cv.top) doc.text(tx, M.left, doc.y, { align: "center", width: doc.page.width - M.left - M.right });
-    doc.moveDown(5).font("b").fontSize(14).text(cv.title, { align: "center" });
+    doc.moveDown(5).fontSize(14); put("b", cv.title, undefined, undefined, { align: "center" });
     if (cv.subtitle) doc.moveDown(0.5).font("i").fontSize(12).text(cv.subtitle, { align: "center" });
     if (cv.thesisType) doc.moveDown(3.5).font("b").fontSize(12).text(cv.thesisType, { align: "center" });
     if (cv.author) doc.moveDown(2.5).font("b").fontSize(12).text(cv.author, { align: "center" });
@@ -141,14 +199,15 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       const htext = b.runs.map((r) => r.text).join("");
       const shown = b.level === 1 && f.chapterTitleUppercase ? htext.toLocaleUpperCase(d.language === "tr" ? "tr" : d.language) : htext;
       const label = `${b.number ? `${b.number}  ` : ""}${shown}`;
-      doc.font("b").fontSize(b.level === 1 ? 15 : b.level === 2 ? 13 : 12).text(label, M.left, doc.y, { align: b.level === 1 && f.chapterTitleCenter ? "center" : "left", width: doc.page.width - M.left - M.right });
+      doc.fontSize(b.level === 1 ? 15 : b.level === 2 ? 13 : 12); put("b", label, M.left, doc.y, { align: b.level === 1 && f.chapterTitleCenter ? "center" : "left", width: doc.page.width - M.left - M.right });
       if (b.level <= 2) doc.outline.addItem(label);
       doc.moveDown(0.5);
     } else if (b.kind === "paragraph") {
       if (!started) { doc.addPage(); started = true; }
       if (b.keep === "abstract") writeRuns(b.runs, { size: absSize, align: "justify", lineGap: absGap, indent: 0 });
       else writeRuns(b.runs, { size: base, align: f.justify ? "justify" : "left", lineGap: gap, indent: b.quote ? 0 : pt(f.firstLineIndentCm), ...(b.quote ? { width: doc.page.width - M.left - M.right - 60 } : {}) });
-      doc.moveDown(0.5);
+      // D222: paragraf sonrası boşluk şablondaki değer (nk); satır aralığı boşluğu son satırdan sonra da eklenir
+      if (b.keep === "abstract") doc.moveDown(0.5); else doc.y += f.paragraphAfterPt;
     } else if (b.kind === "caption") {
       if (b.list) listDefs.find((x) => x.kind === b.list)?.pages.push(currentPage());
       b.lines.forEach((l) => writeRuns(l, { size: 10.5, align: b.align }));
@@ -161,7 +220,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       doc.image(figurePng(b.src), M.left + (doc.page.width - M.left - M.right - w) / 2, doc.y, { width: w, height: h });
       doc.y += h + 10;
     } else if (b.kind === "list") {
-      b.items.forEach((it, k) => { writeRuns([{ text: b.ordered ? `${k + 1}. ` : "•  " }, ...it], { indent: 14, lineGap: 3 }); });
+      b.items.forEach((it, k) => { writeRuns([{ text: b.ordered ? `${k + 1}. ` : "•  " }, ...it], { indent: 14, lineGap: gap }); });
       doc.moveDown(0.5);
     } else if (b.kind === "table") {
       const cols = Math.max(...b.rows.map((r) => r.length));
@@ -173,9 +232,10 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
         let maxH = 0;
         for (let ci = 0; ci < cols; ci++) {
           const text = (row[ci] ?? []).map((r) => r.text).join("");
-          doc.font(ri === 0 && b.header ? "b" : "r").fontSize(10);
+          const key = ri === 0 && b.header ? "b" : "r";
+          doc.font(key).fontSize(10);
           const h = doc.heightOfString(text, { width: colW - 6 });
-          doc.text(text, M.left + ci * colW + 3, y, { width: colW - 6 });
+          put(key, text, M.left + ci * colW + 3, y, { width: colW - 6 });
           maxH = Math.max(maxH, h);
         }
         doc.y = y + maxH + 4;
@@ -198,7 +258,7 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       const runs: Run[] = [...(d.numericBibliography ? [{ text: `[${e.number}] ` }] : []), ...e.rich.map((s) => ({ text: s.text, italic: s.italic, sup: s.sup }))];
       // Asılı girinti: metin bloğu 22pt içeriden başlar, ilk satır sola taşar
       doc.x = M.left + 22;
-      writeRuns(runs, { size: 11, lineGap: 3, indent: -22, width: doc.page.width - M.left - M.right - 22 });
+      writeRuns(runs, { size: base, lineGap: gap, indent: -22, width: doc.page.width - M.left - M.right - 22 });
       doc.x = M.left;
       doc.moveDown(0.4);
     }
@@ -247,9 +307,9 @@ export async function toPdf(d: ExportDoc, raw: Partial<DocFormat> = {}): Promise
       doc.x = M.left; doc.y = y;
       const parts: Run[] = [{ text: `${x.n}. ` }, ...x.runs];
       parts.forEach((r, k) => {
-        doc.font(r.italic ? "i" : "r").fontSize(NOTE_SIZE);
-        if (k === 0) doc.text(r.text, M.left, y, { width: doc.page.width - M.left - M.right, lineGap: NOTE_GAP, continued: parts.length > 1 });
-        else doc.text(r.text, { continued: k < parts.length - 1 });
+        doc.fontSize(NOTE_SIZE);
+        if (k === 0) put(r.italic ? "i" : "r", r.text, M.left, y, { width: doc.page.width - M.left - M.right, lineGap: NOTE_GAP, continued: parts.length > 1 });
+        else put(r.italic ? "i" : "r", r.text, undefined, undefined, { continued: k < parts.length - 1 });
       });
       y += x.h - (x === list[0] ? NOTE_RULE : 0);
     }

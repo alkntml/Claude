@@ -8,7 +8,7 @@ export const DE_8: Record<string, BlogPostEn> = {
     seoTitle: "Einfaktorielle ANOVA durchführen und nach APA 7 berichten",
     description: "Einfaktorielle ANOVA Schritt für Schritt: Voraussetzungen, Levene-Test, F-Tabelle, Eta-Quadrat, Bonferroni-Post-hoc-Tests und APA-7-Bericht mit Rechenbeispiel.",
     keywords: ["einfaktorielle ANOVA durchführen", "ANOVA interpretieren", "ANOVA nach APA berichten", "Bonferroni Post-hoc", "Eta-Quadrat", "Varianzanalyse Abschlussarbeit"],
-    cta: { text: "Laden Sie Ihre Datendatei hoch und wählen Sie „Werkzeuge“ → „Statistische Analyse“ → „Einfaktorielle Varianzanalyse (ANOVA)“: F-Tabelle, Eta-Quadrat und Bonferroni-Vergleiche im APA-Format.", label: "Meine ANOVA rechnen" },
+    cta: { text: "Laden Sie Ihre Datendatei hoch und wählen Sie „Werkzeuge“ → „Statistische Analyse“ → „Einfaktorielle Varianzanalyse (ANOVA)“: F-Tabelle, Eta-Quadrat und Tukey-HSD- bzw. Games-Howell-Vergleiche im APA-Format.", label: "Meine ANOVA rechnen" },
     body: `Die einfaktorielle Varianzanalyse (ANOVA) vergleicht die Mittelwerte von **drei oder mehr unabhängigen Gruppen** in einem einzigen Test. Fragen wie „Welche von drei Lehrmethoden ist am erfolgreichsten?“ oder „Unterscheiden sich Angstwerte nach Studienjahr?“ werden in Abschlussarbeiten meist mit einer ANOVA geprüft. Dieser Leitfaden führt durch alle Schritte, von der Testauswahl bis zum Bericht nach APA 7, und interpretiert jede Zahl am selben Beispiel.
 
 Alle Zahlen in diesem Artikel wurden mit der Statistik-Engine von Academiana aus den unten angegebenen Beispieldaten berechnet. Sie können die Daten in Ihr eigenes Programm eingeben und erhalten dieselben Ergebnisse.
@@ -116,7 +116,7 @@ Hier gibt es nur 10 Studierende pro Gruppe. Dass die Vergleiche mit der Frage-An
 
 ## ANOVA mit Academiana
 
-Nachdem Sie Ihre Datendatei (CSV oder XLSX) in Ihre Arbeit hochgeladen haben, wählen Sie unter „Werkzeuge“ → „Statistische Analyse“ die „Einfaktorielle Varianzanalyse (ANOVA)“ sowie die abhängige und die Gruppierungsvariable. Sie erhalten Gruppenstatistiken, die ANOVA-Tabelle, η² und, falls die ANOVA signifikant ist, Bonferroni-korrigierte Paarvergleiche im APA-Format; mit einem Klick als nummerierte Tabelle in Ihr Dokument. Gruppenmittelwerte mit Fehlerbalken zeigt das Werkzeug „Diagramm erstellen“. Die Zahlen erzeugt nicht die KI; die Statistik-Engine der Website berechnet sie aus Ihren Daten.`,
+Nachdem Sie Ihre Datendatei (CSV oder XLSX) in Ihre Arbeit hochgeladen haben, wählen Sie unter „Werkzeuge“ → „Statistische Analyse“ die „Einfaktorielle Varianzanalyse (ANOVA)“ sowie die abhängige und die Gruppierungsvariable. Sie erhalten Gruppenstatistiken, die ANOVA-Tabelle, η² mit 95 %-KI, den Levene-Test und, falls die ANOVA signifikant ist, Post-hoc-Vergleiche (Tukey-HSD bei Varianzhomogenität, sonst Games-Howell) im APA-Format; mit einem Klick als nummerierte Tabelle in Ihr Dokument. Gruppenmittelwerte mit Fehlerbalken zeigt das Werkzeug „Diagramm erstellen“. Die Zahlen erzeugt nicht die KI; die Statistik-Engine der Website berechnet sie aus Ihren Daten.`,
   },
   "regresyon-analizi-apa-7-raporlama": {
     slug: "regressionsanalyse-nach-apa-7-berichten",

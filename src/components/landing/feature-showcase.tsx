@@ -237,21 +237,22 @@ const CATEGORIES: Category[] = [
     { icon: ClipboardList, title: "Protokol ve arama kaydı", text: "Araştırma sorusu, dahil etme/hariç tutma ölçütleri ve her veri tabanındaki arama ifadesi kayıt altında.", plan: "prisma" },
     { icon: Database, title: "Kayıt toplama ve yinelenen ayıklama", text: "16 veri tabanında arama veya Scopus, Web of Science, PubMed’den RIS/BibTeX; benzer başlıklı yinelenenler de yakalanır.", plan: "prisma" },
     { icon: Users, title: "Çift değerlendirici ve uyum", text: "Ekip üyeleri bağımsız oy verir; anlaşmazlıklar listelenir, Cohen’in kappası hesaplanır. Yapay zekâ yalnızca öneri verir.", plan: "prisma" },
-    { icon: Table2, title: "Veri çıkarma ve kalite değerlendirmesi", text: "Standart form dayanak alıntısıyla doldurulur; 7 maddelik listeyle yanlılık riski değerlendirilir.", plan: "prisma" },
+    { icon: Table2, title: "Veri çıkarma ve kalite değerlendirmesi", text: "Standart form dayanak alıntısıyla doldurulur, kendi alanlarınızı ekleyebilirsiniz; yanlılık riski desene göre RoB 2, ROBINS-I, JBI veya Newcastle–Ottawa ile değerlendirilir.", plan: "prisma" },
+    { icon: FileCheck2, title: "PRISMA 2020 kontrol listesi", text: "27 maddenin hangisinin nerede raporlandığı, hangisinin eksik olduğu tek tabloda; PROSPERO, sentez ve GRADE bilgileri yöntem metnine girer. Ön baskı ile dergi sürümü aynı çalışma sayılır.", plan: "prisma" },
     { icon: FileText, title: "Akış şeması ve yöntem metni", text: "PRISMA akış şeması ile sayıları, gerekçeleri ve arama tablosunu içeren yöntem metni kararlarınızdan otomatik oluşur.", plan: "prisma" },
   ] },
   { id: "veri", icon: BarChart3, title: "Veri ve analiz", lead: "Bulgular sizin verinize dayanır; hesaplamalar yapay zekâya değil, istatistik motoruna yaptırılır.", Visual: DataVisual, features: [
     { icon: ClipboardList, title: "Anket oluşturucu", text: "Yapay zekâ destekli taslak, paylaşım bağlantısı, analize hazır veri tablosu ve kod kitabı.", plan: "surveys" },
-    { icon: BarChart3, title: "İstatistik analizleri", text: "t testleri, ANOVA ve Bonferroni, korelasyon, regresyon, ki-kare, Mann–Whitney, Kruskal–Wallis, Cronbach alfa; APA biçiminde rapor.", plan: "stats" },
+    { icon: BarChart3, title: "İstatistik analizleri", text: "t testleri, ANOVA (Tukey HSD, Games–Howell), korelasyon, regresyon ve varsayım kontrolleri, ki-kare ve Fisher, Mann–Whitney, Kruskal–Wallis, Cronbach alfa, Shapiro–Wilk; etki büyüklüğü güven aralıklarıyla APA raporu. Sonuçlar R ile karşılaştırılarak test edilir.", plan: "stats" },
     { icon: Activity, title: "APA biçiminde grafikler", text: "Verinizden grafik çizilir ve numaralı şekil olarak belgeye eklenir.", plan: "stats" },
     { icon: TestTube2, title: "Ücretsiz araçlar", text: "Örneklem büyüklüğü, Cronbach alfa, kaynakça oluşturucu ve atıf dönüştürücü üyeliksiz kullanılabilir." },
   ] },
   { id: "teslim", icon: FileCheck2, title: "Kalite, dil ve teslim", lead: "Teslim etmeden önce eksikleri görün; çalışmanızı istediğiniz biçimde ve dilde çıkarın.", Visual: QualityVisual, features: [
     { icon: FileCheck2, mark: "Mizan", title: "Grafikli kalite raporu", text: "Puan sabit ve herkese açık bir formülle hesaplanır; rapor neyin doğru olduğunu ve neyin düzeltileceğini alan alan gösterir." },
     { icon: Languages, mark: "Mizan", title: "Dil denetimi ve akademik çeviri", text: "Türkçe, İngilizce ve Almanca arasında çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
-    { icon: FileDown, title: "Kurallara uygun Word ve PDF", text: "Logo yeri, üniversite, fakülte, bölüm ve tarih içeren kapak; içindekiler, tablo ve şekil listeleri; yazım stilinin kenar boşluğu, punto ve başlık kurallarıyla." },
+    { icon: FileDown, title: "Kurallara uygun Word ve PDF", text: "Logo yeri, üniversite, fakülte, bölüm ve tarih içeren kapak; içindekiler, tablo ve şekil listeleri; yazım stilinin kenar boşluğu, punto ve başlık kurallarıyla. PDF’te seçtiğiniz yazı tipinin aynı ölçülü karşılığı kullanılır; sayfa düzeni Word’le aynı kalır." },
     { icon: Ruler, title: "Yazım kılavuzunuza göre biçim", text: "Üniversitenizin veya derginizin kılavuzunu yükleyin; kılavuzda yazan kenar boşlukları, yazı tipi, satır aralığı, başlık ve kapak kuralları kendiliğinden uygulanır.", plan: "guideline" },
-    { icon: Code2, title: "LaTeX, BibTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır. Kaynakçanız ayrıca BibTeX (.bib) olarak da indirilir." },
+    { icon: Code2, title: "LaTeX, BibTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır. Kaynakçanız ayrıca BibTeX (.bib) olarak da indirilir. pdfLaTeX ve Biber ile 11 atıf stilinin hepsinde derleme sınandı." },
     { icon: Globe2, title: "Dergi önerisi ve hakem yanıtı", text: "Çalışmanıza uygun dergiler, ön yazı ve hakem yorumlarına madde madde cevap.", plan: "journals" },
     { icon: Layers, title: "Savunma sunumu ve provası", text: "Tezinizden sunum dosyası ve yapay zekâ jüriyle soru–cevap provası.", plan: "defense" },
   ] },
@@ -262,7 +263,7 @@ const INFRA: { icon: Icon; title: string; text: string }[] = [
   { icon: Lock, title: "Satır düzeyinde erişim denetimi", text: "Her kullanıcının verisi veritabanı düzeyinde ayrılır; çalışmanızı yalnızca siz ve davet ettikleriniz görür." },
   { icon: ShieldCheck, title: "Uygulama güvenliği", text: "Zorunlu HTTPS (HSTS), içerik güvenlik politikası, istek kökeni denetimi ve dış bağlantılarda iç ağ koruması." },
   { icon: Activity, title: "İzleme ve dayanıklılık", text: "Veri tabanı bağlantıları geçici hatalarda yeniden denenir; kaynak sağlığı ve yapay zekâ yanıt süreleri sürekli izlenir." },
-  { icon: TestTube2, title: "Otomatik test güvencesi", text: "600’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır." },
+  { icon: TestTube2, title: "Otomatik test güvencesi", text: "700’den fazla otomatik test her güncellemeden önce çalışır; veri izolasyonu gerçek veritabanı üzerinde sınanır." },
   { icon: FileCheck2, title: "KVKK ve şeffaflık", text: "Verilerinizi indirme ve silme talebi; kaynak doğrulama ve puanlama yöntemi herkese açık." },
 ];
 
@@ -303,7 +304,7 @@ function Connector() {
 export function FeatureShowcase() {
   const { t } = useT();
   const [active, setActive] = useState(CATEGORIES[0].id);
-  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["14", "istatistik analizi"], ["600+", "otomatik test"]];
+  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["22", "istatistik test ve yöntemi"], ["700+", "otomatik test"]];
   return (
     <section id="ozellikler" className="relative scroll-mt-24 py-24">
       <div className="mx-auto max-w-6xl px-6">

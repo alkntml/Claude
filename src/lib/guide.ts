@@ -131,6 +131,11 @@ export const GUIDE: GuideChapter[] = [
         s("“Çevir”, “Dil denetimi”, “Akademikleştir”, “Kısalt”, “Genişlet”, “Asistana sor” seçili metne uygulanır.", "“Translate”, “Language check”, “Make academic”, “Shorten”, “Expand”, “Ask the assistant” apply to the selection."),
         s("Atıflar ve dipnotlar bu işlemlerde korunur.", "Citations and footnotes are preserved."),
       ] },
+      { id: "komut-arama", title: s("Komut arama ve klavye kısayolları", "Command search and keyboard shortcuts"), where: s("Her ekranda Ctrl+K (Mac’te ⌘K) veya menüdeki “Ara”", "Ctrl+K (⌘K on Mac) on any screen, or “Search” in the menu"), steps: [
+        s("Sayfa, çalışma, bölüm, kaynak veya araç adının bir kısmını yazın; ↑↓ ile seçip Enter’a basın.", "Type part of the name of a page, project, section, source or tool; select with ↑↓ and press Enter."),
+        s("Arama büyük/küçük harfe ve Türkçe karakterlere duyarlı değildir; “alinti” yazmak da “Oku ve alıntıla”yı bulur.", "Search ignores case and accents; typing “alinti” also finds “Read and quote”."),
+        s("“?” tuşu klavye kısayolları listesini açar: biçimlendirme, geri alma, bul ve değiştir, Zenit önerisini kabul etme ve diğerleri.", "The “?” key opens the keyboard shortcut list: formatting, undo, find and replace, accepting a Zenit suggestion and more."),
+      ] },
       { id: "tamamlama", title: s("Zenit otomatik tamamlama", "Zenit autocomplete"), where: s("Araç çubuğundaki sihirli değnek", "Magic wand in the toolbar"), steps: [
         s("Paragrafın sonunda yazmayı bırakınca gri renkte bir cümlelik öneri çıkar.", "Pause at the end of a paragraph and a one-sentence suggestion appears in grey."),
         s("Öneri; çalışmanın konusunu ve amacını, bölümler arası akışı, bölümün başlığını ve amacını ve önceki paragrafları dikkate alır.", "Suggestions consider the work’s topic and aim, the flow between sections, the section’s title and purpose, and your previous paragraphs."),

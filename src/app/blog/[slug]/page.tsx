@@ -68,7 +68,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <>
       <SiteHeader signedIn={s} />
       <JsonLd data={jsonLd} />
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-32">
+      <main id="main" className="mx-auto max-w-6xl px-6 pb-24 pt-32">
         <nav aria-label={t("Konum")} className="flex flex-wrap items-center gap-1.5 text-sm text-ink-500">
           <Link href="/" className="hover:text-ink-900">{SITE_NAME}</Link><span>/</span>
           <Link href="/blog" className="inline-flex items-center gap-1 hover:text-ink-900"><ArrowLeft className="h-3.5 w-3.5" /> {t("Blog")}</Link>

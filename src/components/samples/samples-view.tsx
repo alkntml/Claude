@@ -149,7 +149,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
       </div>
     ),
     matris: (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0}>
         <table className="w-full min-w-[640px] text-left text-[13px]">
           <thead><tr className="border-b border-ink-200 text-[12px] uppercase tracking-wide text-ink-400">{[t("Kaynak"), t("Amaç"), t("Örneklem"), t("Yöntem"), t("Temel bulgu")].map((h) => <th key={h} className="py-2 pr-3 font-semibold">{h}</th>)}</tr></thead>
           <tbody>{MATRIX.map((m) => { const s = src(m.src); return <tr key={m.src} className="border-b border-ink-100 align-top text-ink-700"><td className="py-2.5 pr-3 font-medium text-ink-900" dangerouslySetInnerHTML={{ __html: richToHtml(new CitationEngine("apa7", sources, { locale: l }).cite([s.id])) }} /><td className="py-2.5 pr-3">{p(m.aim)}</td><td className="py-2.5 pr-3">{p(m.sample)}</td><td className="py-2.5 pr-3">{p(m.method)}</td><td className="py-2.5 pr-3">{p(m.finding)}</td></tr>; })}</tbody>
@@ -176,7 +176,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
           <div key={r.title}>
             <p className="text-[13px] font-semibold text-ink-900">{t("Tablo {n}", { n: i + 1 })}</p>
             <p className="font-serif text-[14.5px] italic text-ink-800">{r.title}</p>
-            <div className="mt-2 overflow-x-auto" dangerouslySetInnerHTML={{ __html: mdTable(r.table) }} />
+            <div className="mt-2 overflow-x-auto" tabIndex={0} dangerouslySetInnerHTML={{ __html: mdTable(r.table) }} />
             {r.notes.length > 0 && <p className="mt-1 text-[12px] text-ink-500">{r.notes.join(" ")}</p>}
             <p className="mt-2 font-serif text-[15px] leading-7 text-ink-800">{r.text}</p>
           </div>
@@ -192,7 +192,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
     ),
     butunluk: (
       <div className="space-y-4">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" tabIndex={0}>
           <table className="w-full min-w-[460px] text-center text-[13px]">
             <thead><tr className="text-[12px] font-semibold text-ink-500"><th className="py-1.5 text-left font-semibold">{t("Bölüm")}</th>{COHERENCE.cols.map((c) => <th key={c.tr} className="py-1.5 font-semibold">{p(c)}</th>)}</tr></thead>
             <tbody>
@@ -251,7 +251,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
       </div>
     ),
     hakem: (
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0}>
         <table className="w-full min-w-[600px] text-left text-[13.5px]">
           <thead><tr className="border-b border-ink-200 text-[12px] uppercase tracking-wide text-ink-400"><th className="py-2 pr-3 font-semibold">{t("Hakem yorumu")}</th><th className="py-2 pr-3 font-semibold">{t("Yanıtımız")}</th><th className="py-2 font-semibold">{t("Değişiklik")}</th></tr></thead>
           <tbody>{REVIEWER.map((x) => <tr key={x.c.tr} className="border-b border-ink-100 align-top"><td className="py-2.5 pr-3 italic text-ink-600">“{p(x.c)}”</td><td className="py-2.5 pr-3 text-ink-800">{p(x.r)}</td><td className="py-2.5 text-[12.5px] font-medium text-brand-700">{p(x.where)}</td></tr>)}</tbody>
@@ -260,7 +260,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
     ),
     savunma: (
       <div className="space-y-3">
-        <div className="rounded-2xl bg-ink-900 p-4 text-white"><p className="text-[11px] font-semibold uppercase tracking-wider text-white/60">{t("Jüri sorusu")}</p><p className="mt-1 text-[15px]">{p(DEFENSE.q)}</p></div>
+        <div className="rounded-2xl bg-ink-900 p-4 text-white"><p className="text-[11px] font-semibold uppercase tracking-wider text-white/85">{t("Jüri sorusu")}</p><p className="mt-1 text-[15px]">{p(DEFENSE.q)}</p></div>
         <div className="ml-6 rounded-2xl border border-ink-100 p-4"><p className="text-[11px] font-semibold uppercase tracking-wider text-ink-400">{t("Sizin cevabınız")}</p><p className="mt-1 text-[14.5px] text-ink-800">{p(DEFENSE.a)}</p></div>
         <div className="rounded-2xl border border-brand-100 bg-brand-50/50 p-4">
           <div className="flex items-center gap-2"><p className="text-[11px] font-semibold uppercase tracking-wider text-brand-700">{t("Değerlendirme")}</p><span className="ml-auto rounded-full bg-white px-2.5 py-0.5 text-[13px] font-semibold text-ink-900 ring-1 ring-ink-100">{DEFENSE.score}/10</span></div>
@@ -278,7 +278,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
         ].map((sl, i) => (
           <div key={i} className={cn("flex aspect-[16/9] flex-col justify-center rounded-xl p-3 shadow-soft ring-1 ring-ink-100", sl.dark ? "bg-ink-900 text-white" : "bg-white text-ink-900")}>
             <p className={cn("font-serif leading-tight", sl.dark ? "text-[12.5px]" : "text-[13px] font-semibold")}>{sl.h}</p>
-            {sl.s && <p className="mt-1 text-[10px] text-white/60">{sl.s}</p>}
+            {sl.s && <p className="mt-1 text-[10px] text-white/85">{sl.s}</p>}
             {sl.list && <ul className="mt-1.5 list-disc space-y-0.5 pl-3.5 text-[9.5px] leading-snug text-ink-600">{sl.list.map((x) => <li key={x}>{x}</li>)}</ul>}
           </div>
         ))}
@@ -288,7 +288,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="flex aspect-[1/1.414] flex-col items-center justify-between rounded-lg bg-[rgb(255_255_255)] p-6 text-center font-serif text-[rgb(20_20_20)] shadow-soft ring-1 ring-ink-100">
           <div className="flex flex-col items-center gap-1 text-[8.5px] uppercase leading-snug tracking-wide">
-            <span className="mb-1 flex h-9 w-9 items-center justify-center rounded-full border border-dashed border-[rgb(150_150_150)] font-sans text-[6.5px] normal-case text-[rgb(130_130_130)]">{t("Logo")}</span>
+            <span className="mb-1 flex h-9 w-9 items-center justify-center rounded-full border border-dashed border-[rgb(150_150_150)] font-sans text-[6.5px] normal-case text-[rgb(100_100_100)]">{t("Logo")}</span>
             {l === "tr" && !de && <p>T.C.</p>}
             <p className="font-semibold">{de ? "[Name der Universität]" : l === "en" ? "[University name]" : "[Üniversite adı]"}</p>
             <p>{de ? "Institut für Erziehungswissenschaften" : l === "en" ? "Graduate School of Educational Sciences" : "Eğitim Bilimleri Enstitüsü"}</p>
@@ -337,7 +337,7 @@ export function SamplesView({ signedIn: initialSignedIn }: { signedIn: boolean }
         })}
         <div className="rounded-3xl bg-ink-900 p-8 text-center text-white">
           <p className="font-serif text-2xl">{t("Aynısını kendi çalışmanız için yapın.")}</p>
-          <p className="mt-2 text-white/70">{t("Ücretsiz başlayın; kurgudan kaynakçaya kadar her adım bir arada.")}</p>
+          <p className="mt-2 text-white/85">{t("Ücretsiz başlayın; kurgudan kaynakçaya kadar her adım bir arada.")}</p>
           <Link href={signedIn ? "/yeni" : "/kayit"} className="mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-white px-6 text-sm font-medium text-ink-900 transition hover:-translate-y-0.5">{t("Ücretsiz başla")} <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </div>

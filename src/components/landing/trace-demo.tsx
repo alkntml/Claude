@@ -151,8 +151,8 @@ export function TraceDemo() {
                     </div>
                   );
                 })}
-                <div className={cn("rounded-xl border p-3 transition-all duration-300", !cur.source ? "border-amber-300 bg-amber-50" : "border-dashed border-ink-200 opacity-60")}>
-                  <p className="flex items-center gap-2 text-[12.5px] font-medium text-amber-800"><AlertTriangle className="h-3.5 w-3.5" />{t("Bu iddia için kaynak yok")}</p>
+                <div className={cn("rounded-xl border p-3 transition-all duration-300", !cur.source ? "border-amber-300 bg-amber-50" : "border-dashed border-ink-200")}>
+                  <p className={cn("flex items-center gap-2 text-[12.5px] font-medium", !cur.source ? "text-amber-800" : "text-ink-500")}><AlertTriangle className="h-3.5 w-3.5" />{t("Bu iddia için kaynak yok")}</p>
                   {!cur.source && <p className="mt-1.5 flex items-start gap-1.5 text-[11.5px] leading-snug text-ink-600"><Search className="mt-0.5 h-3.5 w-3.5 shrink-0" />{t("Academiana uydurmak yerine işaretledi ve “Literatür araştır” önerdi.")}</p>}
                 </div>
               </div>

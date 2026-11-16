@@ -19,7 +19,7 @@ export default async function Samples() {
     <>
       <SiteHeader signedIn={s} />
       <JsonLd data={[breadcrumbLd(locale, [{ name: t("Örnek çıktılar"), path: localizedPath("/ornekler", locale) }])]} />
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
+      <main id="main" className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Örnek çıktılar")}</h1>
           <p className="mt-4 text-ink-500">{t("Academiana ile neler elde edeceğinizi görün: kurgudan kaynakçaya, istatistik tablosundan savunma provasına kadar her hizmetin örneği.")}</p>

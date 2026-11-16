@@ -352,4 +352,9 @@ export const GUIDE_DE: Record<string, string> = {
   "Yeni çalışma → “Mevcut çalışmamı içe aktar” veya “Araçlar” → “İçe aktarma”": "Neue Arbeit → „Bestehende Arbeit importieren“ oder „Werkzeuge“ → „Import“",
   "“Araçlar” → “İçe aktarma” → “Tüm çalışmayı veya kaynakları içe aktar”": "„Werkzeuge“ → „Import“ → „Gesamte Arbeit oder Quellen importieren“",
   "“Araçlar” → “İçe aktarma” → “Word’den bu bölüme aktar” veya bölüm başlığındaki düğme": "„Werkzeuge“ → „Import“ → „Aus Word in dieses Kapitel importieren“ oder die Schaltfläche im Kapitelkopf",
+  "Komut arama ve klavye kısayolları": "Befehlssuche und Tastenkürzel",
+  "Her ekranda Ctrl+K (Mac’te ⌘K) veya menüdeki “Ara”": "Strg+K (⌘K auf dem Mac) auf jedem Bildschirm oder „Suchen“ im Menü",
+  "Sayfa, çalışma, bölüm, kaynak veya araç adının bir kısmını yazın; ↑↓ ile seçip Enter’a basın.": "Geben Sie einen Teil des Namens einer Seite, eines Projekts, Kapitels, einer Quelle oder eines Werkzeugs ein; mit ↑↓ wählen und Enter drücken.",
+  "Arama büyük/küçük harfe ve Türkçe karakterlere duyarlı değildir; “alinti” yazmak da “Oku ve alıntıla”yı bulur.": "Die Suche ignoriert Groß-/Kleinschreibung und Akzente; „alinti“ findet auch „Lesen und zitieren“.",
+  "“?” tuşu klavye kısayolları listesini açar: biçimlendirme, geri alma, bul ve değiştir, Zenit önerisini kabul etme ve diğerleri.": "Die Taste „?“ öffnet die Liste der Tastenkürzel: Formatierung, Rückgängig, Suchen und Ersetzen, Zenit-Vorschlag übernehmen und mehr.",
 };

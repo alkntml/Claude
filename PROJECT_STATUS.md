@@ -18,6 +18,12 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Güven sinyalleri ve deneyim (D213, 16 Kasım 2026)**
+- Güven merkezi (/guven), “eğitimde kullanılmaz” beyanı (Anthropic ticari koşulları), Sistem durumu (/durum), Erişilebilirlik beyanı (/erisilebilirlik), üyelere Yenilikler sayfası.
+- Ctrl/⌘+K komut arama ve “?” kısayol listesi, İlk adımlar kartı, açılacak sayfanın bulanık önizlemesiyle yükleme ekranları.
+- Erişilebilirlik ve görsel denetim: 80 görünümde axe-core; renk karşıtlığı, gece modu zeminleri, form etiketleri, “İçeriğe geç”.
+- Yönetim → Yapay zekâ → “Mizan doğruluk testi” (6 gerçek makale, 42 etiketli iddia); canlıda yönetici çalıştırır.
+
 **Çalışma alanı düzeni (D212, 16 Kasım 2026)**
 - “Araçlar” menüsü gruplu (Zenit / Rasat / Mizan / Veri / Teslim / İçe aktarma) ve aranabilir; Kaynaklar sekmesinde Rasat şeridi ve sadeleşmiş kart düğmeleri.
 

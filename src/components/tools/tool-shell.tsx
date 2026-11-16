@@ -35,7 +35,7 @@ export async function ToolShell({ path, intro, children, faq }: { path: string; 
     <>
       <SiteHeader signedIn={signedIn} />
       <JsonLd data={[appLd, ...(faqLd ? [faqLd] : []), breadcrumbLd(locale, [{ name: t("Ücretsiz araçlar"), path: localizedPath("/araclar", locale) }, { name: t(tool.title), path: localizedPath(path, locale) }])]} />
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-32">
+      <main id="main" className="mx-auto max-w-6xl px-6 pb-24 pt-32">
         <nav className="mb-4 text-sm text-ink-500"><Link href="/araclar" className="hover:text-ink-800">{t("Ücretsiz araçlar")}</Link> / <span className="text-ink-800">{t(tool.title)}</span></nav>
         <header className="mb-8 max-w-3xl">
           <h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">{t(tool.title)}</h1>

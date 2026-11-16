@@ -38,7 +38,7 @@ function Screen({ children, label, mark }: { children: React.ReactNode; label: s
         <span className="ml-2 text-[11.5px] font-medium text-ink-400"><BrandMark name={mark} /> · {label}</span>
       </div>
       {children}
-      <p className="absolute bottom-3 right-4 text-[10px] text-ink-300">{t("Temsilî görsel")}</p>
+      <p className="absolute bottom-3 right-4 text-[10px] text-ink-400">{t("Temsilî görsel")}</p>
     </div>
   );
 }
@@ -56,7 +56,7 @@ function ZenitDemo() {
       <Screen label={t("Bölüm yazımı")} mark="Zenit">
         <div className="flex flex-wrap gap-1.5">
           {ctx.map(([k, v], i) => (
-            <motion.span key={k} initial={false} animate={{ opacity: step >= 1 ? 1 : 0.35 }} transition={{ delay: step >= 1 ? 0.15 * i : 0 }}
+            <motion.span key={k} initial={false} animate={{ scale: step === 1 ? [1, 1.06, 1] : 1 }} transition={{ delay: step >= 1 ? 0.15 * i : 0, duration: 0.5 }}
               className="rounded-lg border border-brand-100 bg-brand-50/70 px-2 py-1 text-[10.5px] text-brand-700"><b className="font-semibold">{t(k)}:</b> {t(v)}</motion.span>
           ))}
         </div>
@@ -160,7 +160,7 @@ function MizanDemo() {
             </li>
           ))}
         </ul>
-        <motion.div initial={false} animate={{ opacity: step >= 3 ? 1 : 0.25 }} className="mt-3 rounded-xl border border-rose-100 bg-rose-50/60 px-3 py-2 text-[11.5px]">
+        <motion.div initial={false} animate={{ opacity: step >= 3 ? 1 : 0 }} className="mt-3 rounded-xl border border-rose-100 bg-rose-50/60 px-3 py-2 text-[11.5px]">
           <p className="font-semibold text-rose-800">{t("Kaynak bunun tersini söylüyor")} · Kaya (2021), s. 214</p>
           <p className="mt-0.5 font-serif italic text-ink-700">“{t("İki grubun başarı puanları arasında anlamlı bir fark bulunmamıştır.")}”</p>
         </motion.div>
@@ -173,7 +173,7 @@ function MizanDemo() {
           </div>
           <ul className="min-w-0 flex-1 space-y-1 text-[11px] text-ink-600">
             {["Kaynak gerektiren 2 ifade", "Akademik dil: 3 öneri", "Jüri gözüyle: yöntem–soru uyumu"].map((x, i) => (
-              <motion.li key={x} initial={false} animate={{ opacity: step >= 4 ? 1 : 0.3, x: step >= 4 ? 0 : -4 }} transition={{ delay: step >= 4 ? 0.15 * i : 0 }} className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-brand-500" />{t(x)}</motion.li>
+              <motion.li key={x} initial={false} animate={{ opacity: step >= 4 ? 1 : 0, x: step >= 4 ? 0 : -4 }} transition={{ delay: step >= 4 ? 0.15 * i : 0 }} className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-brand-500" />{t(x)}</motion.li>
             ))}
           </ul>
         </div>

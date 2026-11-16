@@ -70,8 +70,8 @@ export function FilesView({ files: initial, projects }: { files: any[]; projects
           <AnimatePresence>{uploading.map((u) => <motion.p key={u} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-2 flex items-center gap-2 text-sm text-brand-700"><Loader2 className="h-4 w-4 animate-spin" /> {t("{u} yükleniyor ve analiz ediliyor…", { u })}</motion.p>)}</AnimatePresence>
         </div>
         <div className="card space-y-3 p-5">
-          <div><label className="label">{t("Proje")}</label><select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}><option value="">{t("Projeye bağlama")}</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select></div>
-          <div><label className="label">{t("Dosya türü")}</label><select className="input" value={purpose} onChange={(e) => setPurpose(e.target.value)}>{Object.entries(PURPOSE).map(([k, v]) => <option key={k} value={k}>{t(v)}</option>)}</select></div>
+          <div><label className="label" htmlFor="f-mponents-dashboard-files-1">{t("Proje")}</label><select id="f-mponents-dashboard-files-1" className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}><option value="">{t("Projeye bağlama")}</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select></div>
+          <div><label className="label" htmlFor="f-mponents-dashboard-files-2">{t("Dosya türü")}</label><select id="f-mponents-dashboard-files-2" className="input" value={purpose} onChange={(e) => setPurpose(e.target.value)}>{Object.entries(PURPOSE).map(([k, v]) => <option key={k} value={k}>{t(v)}</option>)}</select></div>
           <p className="text-xs text-ink-500">{t("CSV ve XLSX dosyaları otomatik olarak “Veri tablosu” kabul edilir.")}</p>
         </div>
       </div>
@@ -141,7 +141,7 @@ function ToSourceModal({ file, onClose }: { file: any | null; onClose: () => voi
   return (
     <Modal open={!!file} onClose={onClose} title={t("Makaleyi kaynak olarak ekle")} footer={<><Button variant="ghost" onClick={onClose}>{t("Vazgeç")}</Button><Button onClick={save} loading={busy}>{t("Ekle")}</Button></>}>
       <p className="mb-4 text-sm text-ink-500">{t("Yüklediğiniz PDF projeye “tam metin okundu” erişim seviyesiyle bağlanır. Asistan doğrudan alıntıyı ve sayfa numarasını yalnızca böyle kaynaklardan yapabilir. DOI girerseniz künye otomatik doldurulur ve doğrulanır.")}</p>
-      <div className="space-y-3"><div><label className="label">{t("DOI (önerilir)")}</label><input className="input" value={doi} onChange={(e) => setDoi(e.target.value)} placeholder="10.xxxx/xxxxx" /></div><div><label className="label">{t("Başlık (DOI yoksa)")}</label><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></div></div>
+      <div className="space-y-3"><div><label className="label" htmlFor="f-mponents-dashboard-files-3">{t("DOI (önerilir)")}</label><input id="f-mponents-dashboard-files-3" className="input" value={doi} onChange={(e) => setDoi(e.target.value)} placeholder="10.xxxx/xxxxx" /></div><div><label className="label" htmlFor="f-mponents-dashboard-files-4">{t("Başlık (DOI yoksa)")}</label><input id="f-mponents-dashboard-files-4" className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></div></div>
     </Modal>
   );
 }

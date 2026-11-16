@@ -40,7 +40,7 @@ function Frame({ children, label }: { children: React.ReactNode; label: string }
     <div className="relative h-full rounded-3xl border border-ink-100 bg-white p-5 shadow-[0_30px_60px_-30px_rgb(21_24_41/0.35)]">
       <div className="mb-4 flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-rose-300" /><span className="h-2.5 w-2.5 rounded-full bg-amber-300" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-300" /><span className="ml-2 text-[11px] font-medium text-ink-400"><WithMarks text={label} /></span></div>
       {children}
-      <p className="absolute bottom-3 right-4 text-[10px] text-ink-300">{t("Temsilî görsel")}</p>
+      <p className="absolute bottom-3 right-4 text-[10px] text-ink-400">{t("Temsilî görsel")}</p>
     </div>
   );
 }
@@ -53,7 +53,7 @@ function WritingVisual() {
       <div className="flex gap-1">{stages.map((s, i) => <span key={s} className={cn("flex-1 truncate rounded-lg px-1.5 py-1.5 text-center text-[10.5px] font-semibold", i < 2 ? "bg-emerald-50 text-emerald-700" : i === 2 ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-400")}>{t(s)}</span>)}</div>
       <div className="mt-4 rounded-2xl border border-ink-100 p-4">
         <p className="text-[11px] font-semibold text-ink-400">2.1 {t("Kuramsal çerçeve")}</p>
-        <p className="mt-2 font-serif text-[14px] leading-7 text-ink-800">{t("Öz düzenleme, uzaktan eğitimde başarının güçlü bir yordayıcısıdır")} <span className="rounded-md border border-brand-100 bg-brand-50 px-1.5 font-sans text-[11px] text-brand-700">(Kaya, 2021, s. 211)</span>. {t("Geri bildirimin zamanlaması bu ilişkide")}<span className="text-ink-300"> {t("aracı rol üstlenir…")}</span><span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 bg-brand-500" /></p>
+        <p className="mt-2 font-serif text-[14px] leading-7 text-ink-800">{t("Öz düzenleme, uzaktan eğitimde başarının güçlü bir yordayıcısıdır")} <span className="rounded-md border border-brand-100 bg-brand-50 px-1.5 font-sans text-[11px] text-brand-700">(Kaya, 2021, s. 211)</span>. {t("Geri bildirimin zamanlaması bu ilişkide")}<span className="text-ink-400"> {t("aracı rol üstlenir…")}</span><span className="ml-0.5 inline-block h-4 w-0.5 translate-y-0.5 bg-brand-500" /></p>
       </div>
       <SpineStrip />
     </Frame>

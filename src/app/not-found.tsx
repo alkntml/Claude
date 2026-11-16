@@ -10,7 +10,7 @@ export default async function NotFound() {
   return (
     <>
       <SiteHeader signedIn={false} />
-      <main className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 pb-24 pt-36 text-center">
+      <main id="main" className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 pb-24 pt-36 text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">404</p>
         <h1 className="mt-2 font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Aradığınız sayfa bulunamadı")}</h1>
         <p className="mt-4 text-ink-500">{t("Sayfa taşınmış veya kaldırılmış olabilir. Aşağıdaki bağlantılardan devam edebilirsiniz.")}</p>

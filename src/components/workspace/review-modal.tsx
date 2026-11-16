@@ -104,10 +104,10 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
             {tab === "protocol" && (
               <div className="space-y-3">
                 <p className="text-[13px] text-ink-600">{t("Sistematik derleme önceden tanımlanmış bir protokole göre yürür. Sorunuzu ve ölçütlerinizi yazın; tarama kararlarında gerekçe olarak bu ölçütler kullanılır ve yöntem bölümünüzde raporlanır.")}</p>
-                <div><label className="label">{t("Araştırma sorusu (ör. PICO)")}</label><textarea className="input min-h-[60px]" value={draft.question} onChange={(e) => setDraft({ ...draft, question: e.target.value })} placeholder={t("Ör. Ortaokul öğrencilerinde oyunlaştırma, matematik başarısını geleneksel öğretime göre artırır mı?")} /></div>
+                <div><label className="label" htmlFor="f-s-workspace-review-modal-1">{t("Araştırma sorusu (ör. PICO)")}</label><textarea id="f-s-workspace-review-modal-1" className="input min-h-[60px]" value={draft.question} onChange={(e) => setDraft({ ...draft, question: e.target.value })} placeholder={t("Ör. Ortaokul öğrencilerinde oyunlaştırma, matematik başarısını geleneksel öğretime göre artırır mı?")} /></div>
                 <div className="grid gap-3 md:grid-cols-2">
-                  <div><label className="label">{t("Dahil etme ölçütleri (her satıra bir)")}</label><textarea className="input min-h-[110px]" value={draft.inclusion} onChange={(e) => setDraft({ ...draft, inclusion: e.target.value })} placeholder={t("Deneysel veya yarı deneysel desen\n2010–2025 arası\nTürkçe veya İngilizce")} /></div>
-                  <div><label className="label">{t("Hariç tutma ölçütleri (her satıra bir)")}</label><textarea className="input min-h-[110px]" value={draft.exclusion} onChange={(e) => setDraft({ ...draft, exclusion: e.target.value })} placeholder={t("Yanlış örneklem (yetişkinler)\nKontrol grubu yok\nTam metne ulaşılamadı")} /></div>
+                  <div><label className="label" htmlFor="f-s-workspace-review-modal-2">{t("Dahil etme ölçütleri (her satıra bir)")}</label><textarea id="f-s-workspace-review-modal-2" className="input min-h-[110px]" value={draft.inclusion} onChange={(e) => setDraft({ ...draft, inclusion: e.target.value })} placeholder={t("Deneysel veya yarı deneysel desen\n2010–2025 arası\nTürkçe veya İngilizce")} /></div>
+                  <div><label className="label" htmlFor="f-s-workspace-review-modal-3">{t("Hariç tutma ölçütleri (her satıra bir)")}</label><textarea id="f-s-workspace-review-modal-3" className="input min-h-[110px]" value={draft.exclusion} onChange={(e) => setDraft({ ...draft, exclusion: e.target.value })} placeholder={t("Yanlış örneklem (yetişkinler)\nKontrol grubu yok\nTam metne ulaşılamadı")} /></div>
                 </div>
                 <label className="flex items-start gap-2 rounded-xl border border-ink-100 p-3 text-[13px] text-ink-700">
                   <input type="checkbox" className="mt-0.5" checked={!!protocol.dual} disabled={!upgraded} onChange={(e) => saveProtocol({ dual: e.target.checked })} />
@@ -473,8 +473,8 @@ function ExtractTab({ projectId, records, setRecords, lang, upgraded, onInsertMa
                       const c = r.extraction?.[f];
                       return (
                         <div key={f}>
-                          <label className="label">{EXTRACTION_LABELS[f][lang]}</label>
-                          <textarea className="input min-h-[52px] text-[13px]" defaultValue={c?.value ?? ""} onBlur={(e) => { const v = e.target.value.trim(); if (v === (c?.value ?? "")) return; save(r, { extraction: { ...(r.extraction ?? {}), [f]: { value: v, quote: c?.quote ?? null, page: c?.page ?? null, edited: true } } }); }} />
+                          <label className="label" htmlFor={`f-ext-${f}`}>{EXTRACTION_LABELS[f][lang]}</label>
+                          <textarea id={`f-ext-${f}`} className="input min-h-[52px] text-[13px]" defaultValue={c?.value ?? ""} onBlur={(e) => { const v = e.target.value.trim(); if (v === (c?.value ?? "")) return; save(r, { extraction: { ...(r.extraction ?? {}), [f]: { value: v, quote: c?.quote ?? null, page: c?.page ?? null, edited: true } } }); }} />
                           {c?.quote && <p className="mt-0.5 text-[11.5px] italic text-ink-500">“{c.quote}”{c.page ? ` (s. ${c.page})` : ""}</p>}
                         </div>
                       );

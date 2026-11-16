@@ -3,7 +3,7 @@ import { deviceId } from "@/lib/device-client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, Building2, ClipboardList, Gift, Lock, Compass, FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket, Zap } from "lucide-react";
+import { BookOpen, Building2, ClipboardList, Gift, Lock, Compass, FolderOpen, Home, Library, LogOut, Menu, MessageSquarePlus, Plus, Settings2, ShieldCheck, UserRound, X, Rocket, Search, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -18,6 +18,7 @@ import { GiftBox } from "@/components/gift-box";
 import { NotificationBell } from "@/components/notifications";
 import { deviceHash } from "@/lib/device-client";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { CommandPalette, openCommandPalette } from "@/components/command-palette";
 
 interface Props { children: React.ReactNode; user: { name: string; email: string; plan: string; isAdmin: boolean; isOrgAdmin?: boolean; orgName?: string | null; memberNo?: string }; limitReached?: boolean; readOnly?: boolean; expiresAt?: string | null }
 
@@ -27,6 +28,7 @@ const NAV = [
   { href: "/dosyalar", label: "Dosyalarım", icon: FolderOpen },
   { href: "/anketler", label: "Anketlerim", icon: ClipboardList },
   { href: "/konu-bul", label: "Konu bulma", icon: Compass },
+  { href: "/yenilikler", label: "Yenilikler", icon: Sparkles },
   { href: "/hesap", label: "Hesap ve abonelik", icon: UserRound },
 ];
 
@@ -105,6 +107,9 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
         <Link href="/yeni" onClick={() => setOpen(false)} className="mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-[14.5px] font-medium text-brand-600 transition hover:bg-brand-50">
           <Plus className="h-[18px] w-[18px] rounded-full border-[1.5px] border-current p-[1px]" /> {t("Yeni çalışma")}
         </Link>
+        <button onClick={() => { setOpen(false); openCommandPalette(); }} className="mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[14.5px] text-ink-600 transition hover:bg-ink-100">
+          <Search className="h-[18px] w-[18px] shrink-0 text-ink-500" strokeWidth={1.75} /><span className="flex-1">{t("Ara")}</span><kbd className="hidden rounded border border-ink-200 px-1 text-[10.5px] text-ink-400 lg:inline">Ctrl K</kbd>
+        </button>
         <nav className="space-y-px">
           {nav.map((n) => {
             const active = path === n.href || path.startsWith(`${n.href}/`);
@@ -131,6 +136,7 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
 
   return (
     <div className="app-ui min-h-screen bg-[rgb(var(--bg))]">
+      <CommandPalette />
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-ink-200/70 bg-white lg:block">{Side}</aside>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink-100 bg-white/95 px-4 py-3 lg:hidden">
         <Logo />
@@ -152,7 +158,7 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
         )}
       </AnimatePresence>
       <GiftBox />
-      <main className="lg:pl-64">
+      <main id="main" className="lg:pl-64">
         <motion.div key={path} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-10">
           {!limitReached && expiresAt && (() => {
             // Paket süresi (D53): son 3 gün uyarısı

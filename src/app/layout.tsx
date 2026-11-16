@@ -4,7 +4,7 @@ import { preload } from "react-dom";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nProvider } from "@/i18n/client";
-import { getLocale } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
 import { PwaRegister } from "@/components/pwa";
 import { ConsentBanner } from "@/components/consent/consent";
 import { Analytics } from "@/components/analytics";
@@ -49,12 +49,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = { themeColor: "#0f1d3d", width: "device-width", initialScale: 1 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [locale, usdTry] = await Promise.all([getLocale(), getUsdTry().catch(() => 48)]);
+  const [locale, usdTry, { t }] = await Promise.all([getLocale(), getUsdTry().catch(() => 48), getT()]);
   for (const href of SERIF_PRELOAD) preload(href, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   return (
     <html lang={locale} className={sans.variable} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} /></head>
       <body className="font-sans min-h-screen">
+        <a href="#main" className="skip-link">{t("İçeriğe geç")}</a>
         <I18nProvider locale={locale}>
           <PriceProvider usdTry={usdTry}><ToastProvider>{children}</ToastProvider>
           <PwaRegister />

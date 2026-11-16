@@ -33,7 +33,7 @@ export default async function Help() {
     <>
       <SiteHeader signedIn={signedIn} />
       <JsonLd data={[breadcrumbLd(locale, [{ name: title, path: self }]), webPageLd(locale, { path: self, name: title, description: lead })]} />
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-32 sm:px-6">
+      <main id="main" className="mx-auto max-w-6xl px-4 pb-24 pt-32 sm:px-6">
         <p className="text-[13px] font-semibold uppercase tracking-wider text-brand-600">{t("Yardım merkezi")}</p>
         <h1 className="mt-1 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-5xl">{title}</h1>
         <p className="mt-4 max-w-2xl text-lg text-ink-500">{lead}</p>

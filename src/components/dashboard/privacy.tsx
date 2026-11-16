@@ -60,7 +60,7 @@ export function PrivacySection() {
   return (
     <section className="card p-6">
       <h2 className="flex items-center gap-2 font-semibold"><ShieldCheck className="h-4 w-4" /> {t("Gizlilik ve Veri Yönetimi")}</h2>
-      <p className="mt-1 text-sm text-ink-500">{t("Tüm projelerinizi, bölümlerinizi, kaynaklarınızı, sohbetlerinizi ve kullanım kayıtlarınızı taşınabilir JSON biçiminde indirebilir veya hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz.")} <Link href="/kvkk" className="text-brand-700 hover:underline">{t("KVKK Aydınlatma Metni")}</Link></p>
+      <p className="mt-1 text-sm text-ink-500">{t("Tüm projelerinizi, bölümlerinizi, kaynaklarınızı, sohbetlerinizi ve kullanım kayıtlarınızı taşınabilir JSON biçiminde indirebilir veya hesabınızı tüm verilerinizle birlikte kalıcı olarak silebilirsiniz.")} <Link href="/kvkk" className="text-brand-700 underline underline-offset-2">{t("KVKK Aydınlatma Metni")}</Link></p>
       <div className="mt-4 flex flex-wrap gap-2">
         {/* D155: hak dolsa da veriler her zaman indirilebilir */}
         <a href="/api/account?export=1" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><Download className="h-4 w-4" /> {t("Verilerimi JSON olarak indir")}</a>

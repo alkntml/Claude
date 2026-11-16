@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { FEATURE_MIN_PLAN, PLAN_NAME, hasFeature, type FeatureId } from "@/lib/features";
+import { matchesAll } from "@/lib/search-norm";
 
 export type ToolId =
   | "assistant" | "language" | "reviewer"
@@ -27,12 +28,10 @@ export type ToolId =
 /** Pakete bağlı araçlar; listede olmayanlar her pakette açıktır */
 export const TOOL_FEATURE: Partial<Record<ToolId, FeatureId>> = { prisma: "prisma", litmap: "litmap", chart: "stats", analysis: "stats", survey: "surveys", reviewer: "reviewer", defense: "defense", multi: "matrix", matrix: "matrix" };
 
-type Tool = { id: ToolId; label: string; hint: string; Icon: typeof Wrench; types?: string[] };
+export type Tool = { id: ToolId; label: string; hint: string; Icon: typeof Wrench; types?: string[] };
 /** Arama için ek anahtar kelimeler (TR/EN/DE; çevrilmez, yalnızca eşleşme için) */
 const KEYWORDS: Partial<Record<ToolId, string>> = {"assistant": "yaz taslak genişlet write draft expand yapay zeka ai", "language": "çeviri ingilizce translate english grammar dil bilgisi übersetzung", "reviewer": "hakem revizyon review revision reviewer gutachter", "find-sources": "kaynak bul literatür tarama search doi pubmed makale ekle literature quelle", "sources": "alıntı pdf oku sor soru quote read ask page sayfa zitat", "multi": "karşılaştır sentez compare synthesis paragraf vergleich", "matrix": "tablo özet table matrix", "litmap": "atıf ağı network citation graph harita map", "consensus": "uzlaşı consensus kanıt evidence", "prisma": "derleme sistematik systematic review screening eleme", "claims": "doğrula doğrulama iddia verify claim atıf citation kontrol check beleg", "fix": "kaynak gerekli missing citation düzelt fix", "quality": "kalite puan rapor score report jüri hakem dil kontrol check qualität", "analysis": "istatistik spss t testi anova regresyon stats statistik", "chart": "grafik şekil figure chart plot", "survey": "anket form survey questionnaire veri umfrage", "format": "biçim kapak kenar yazı tipi format cover margin font kılavuz", "journals": "dergi yayın journal publish ön yazı cover letter zeitschrift", "presentation": "sunum powerpoint pptx slayt slide savunma", "defense": "savunma jüri prova defense viva verteidigung", "hub": "içe aktar import zotero mendeley orcid word pdf bib ris", "import": "word docx içe aktar import"};
-/** Büyük/küçük harf ve aksan duyarsız karşılaştırma (ı/i, ş/s, ü/u …) */
-const norm = (x: string) => x.toLocaleLowerCase("tr").replace(/ı/g, "i").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-type Group = { id: string; title: string; mark?: Signature; tools: Tool[] };
+export type Group = { id: string; title: string; mark?: Signature; tools: Tool[] };
 
 const ARTICLE_TYPES = ["research_article", "journal_article", "literature_review", "grant_proposal"];
 
@@ -73,6 +72,9 @@ export const TOOL_GROUPS: Group[] = [
   ] },
 ];
 
+/** Aramada eşleşecek metin: Türkçe ve çevrilmiş ad/açıklama, grup, imza adı ve anahtar kelimeler */
+export const toolHaystack = (x: Tool, g: Group, t: (s: string) => string) => [x.label, t(x.label), x.hint, t(x.hint), g.title, t(g.title), g.mark ?? "", KEYWORDS[x.id] ?? ""].join(" ");
+
 /** Çalışma türüne uygun araçlar grubunun başına alınır (ör. derlemede PRISMA, makalede hakem cevabı) */
 function ordered(group: Group, workType: string): Tool[] {
   return [...group.tools].sort((a, b) => Number(!!b.types?.includes(workType)) - Number(!!a.types?.includes(workType)));
@@ -99,10 +101,10 @@ export function ToolsMenu({ onPick, workType, variant = "button", planId }: { on
   const badge = (id: ToolId) => { const p = lockOf(id); return p ? <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700"><Lock className="h-3 w-3" />{p}</span> : null; };
 
   const groups = useMemo(() => {
-    const needle = norm(q.trim());
+    const needle = q.trim();
     return TOOL_GROUPS.map((g) => ({
       ...g,
-      tools: ordered(g, workType).filter((x) => !needle || needle.split(/\s+/).every((w) => norm([x.label, t(x.label), x.hint, t(x.hint), g.title, t(g.title), g.mark ?? "", KEYWORDS[x.id] ?? ""].join(" ")).includes(w))),
+      tools: ordered(g, workType).filter((x) => matchesAll(needle, toolHaystack(x, g, t))),
     })).filter((g) => g.tools.length > 0);
   }, [q, workType, t]);
 

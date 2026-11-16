@@ -24,7 +24,7 @@ export default async function Pricing() {
     <>
       <SiteHeader signedIn={s} />
       <JsonLd data={[softwareLd(locale, plans, usdTry), offersLd(locale, plans, usdTry), breadcrumbLd(locale, [{ name: t("Fiyatlar"), path: localizedPath("/fiyatlar", locale) }])]} />
-      <main className="mx-auto max-w-7xl px-6 pb-24 pt-36">
+      <main id="main" className="mx-auto max-w-7xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-14 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Şeffaf fiyatlandırma")}</h1>
           <p className="mt-4 text-ink-500">{t("Her paket, çalışmanızın aşamasına uygun araçlar içerir. Taahhüt yok; ücretsiz başlayıp istediğiniz zaman yükseltebilirsiniz.")}</p>

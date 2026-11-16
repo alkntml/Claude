@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/toast";
 import { api } from "@/lib/client";
 import { PROVIDER_LABELS } from "@/lib/sources/labels";
 import { UserActivity } from "./activity";
+import { MizanBenchCard } from "./mizan-bench";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
 import { CostBreakdown, ProductHealth, TrafficTab } from "./insights";
@@ -430,12 +431,12 @@ function PlansTab() {
           <div key={p.id} className="card space-y-3 p-5">
             <div className="flex items-center justify-between"><input className="input !w-auto !py-1.5 font-semibold" value={p.name} onChange={(e) => edit(p.id, { name: e.target.value })} /><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={p.is_active} onChange={(e) => edit(p.id, { is_active: e.target.checked })} /> Aktif</label></div>
             <input className="input !py-2 text-sm" value={p.description} onChange={(e) => edit(p.id, { description: e.target.value })} />
-            <div className="grid grid-cols-2 gap-2"><div><label className="label">Aylık fiyat ({p.currency})</label><input className="input !py-2" type="number" value={p.price_monthly} onChange={(e) => edit(p.id, { price_monthly: e.target.value })} /></div><div><label className="label">Yıllık toplam (otomatik: %20 indirimli × 12)</label><input className="input !py-2" type="number" value={yearlyTotalPrice(Number(p.price_monthly) || 0)} readOnly disabled /></div></div>
+            <div className="grid grid-cols-2 gap-2"><div><label className="label" htmlFor="f-onents-admin-admin-panel-1">Aylık fiyat ({p.currency})</label><input id="f-onents-admin-admin-panel-1" className="input !py-2" type="number" value={p.price_monthly} onChange={(e) => edit(p.id, { price_monthly: e.target.value })} /></div><div><label className="label" htmlFor="f-onents-admin-admin-panel-2">Yıllık toplam (otomatik: %20 indirimli × 12)</label><input id="f-onents-admin-admin-panel-2" className="input !py-2" type="number" value={yearlyTotalPrice(Number(p.price_monthly) || 0)} readOnly disabled /></div></div>
             <div className="grid grid-cols-2 gap-2">
-              {LIMIT_FIELDS.map(([k, l]) => <div key={k}><label className="label">{l}</label><input className="input !py-2" placeholder="Sınırsız" value={p.limits?.[k] ?? ""} onChange={(e) => edit(p.id, { limits: { ...p.limits, [k]: e.target.value === "" ? null : Number(e.target.value.replace(/\D/g, "")) } })} /></div>)}
+              {LIMIT_FIELDS.map(([k, l]) => <div key={k}><label className="label" htmlFor={`f-limit-${k}`}>{l}</label><input id={`f-limit-${k}`} className="input !py-2" placeholder="Sınırsız" value={p.limits?.[k] ?? ""} onChange={(e) => edit(p.id, { limits: { ...p.limits, [k]: e.target.value === "" ? null : Number(e.target.value.replace(/\D/g, "")) } })} /></div>)}
               <div><label className="label">Dışa aktarma</label><div className="flex flex-wrap gap-2 pt-1">{["txt", "md", "docx", "pdf"].map((f) => <label key={f} className="flex items-center gap-1 text-[13px]"><input type="checkbox" checked={(p.limits?.export_formats ?? []).includes(f)} onChange={(e) => edit(p.id, { limits: { ...p.limits, export_formats: e.target.checked ? [...(p.limits?.export_formats ?? []), f] : (p.limits?.export_formats ?? []).filter((x: string) => x !== f) } })} />{f.toUpperCase()}</label>)}</div></div>
             </div>
-            <div><label className="label">Özellikler (her satır bir madde)</label><textarea className="input min-h-[90px] text-sm" value={(p.features ?? []).join("\n")} onChange={(e) => edit(p.id, { features: e.target.value.split("\n").filter(Boolean) })} /></div>
+            <div><label className="label" htmlFor="f-onents-admin-admin-panel-4">Özellikler (her satır bir madde)</label><textarea id="f-onents-admin-admin-panel-4" className="input min-h-[90px] text-sm" value={(p.features ?? []).join("\n")} onChange={(e) => edit(p.id, { features: e.target.value.split("\n").filter(Boolean) })} /></div>
             <Button size="sm" onClick={() => save(p)}><Save className="h-3.5 w-3.5" /> Kaydet</Button>
           </div>
         ))}
@@ -478,6 +479,7 @@ function AiTab() {
   }
   return (
     <div className="grid gap-4 lg:grid-cols-2">
+      <MizanBenchCard />
       <div className="card space-y-3 p-5">
         <h3 className="font-semibold">Model yapılandırması</h3>
         <p className="text-[13px] text-ink-500">Katmanlar: <code>default</code>, <code>balanced</code>, <code>fast</code>, <code>premium</code>. Her katman bir sağlayıcı (<code>anthropic</code> | <code>openai</code>) ve model kimliği içerir. Model pakete göre değil işe göre seçilir: <code>fast</code> basit düzenlemeler, <code>balanced</code> yazım, <code>default</code> karmaşık analiz; <code>pricing_per_mtok</code> maliyet tahmini içindir.</p>
@@ -504,7 +506,7 @@ function AiTab() {
         </div>
         <div className="card space-y-3 p-5">
           <h3 className="font-semibold">Dakikalık hız sınırları (kullanıcı başına)</h3>
-          <div className="grid grid-cols-2 gap-2"><div><label className="label">AI istekleri</label><input className="input" type="number" value={rate.ai_per_minute} onChange={(e) => setRate({ ...rate, ai_per_minute: Number(e.target.value) })} /></div><div><label className="label">Kaynak taramaları</label><input className="input" type="number" value={rate.search_per_minute} onChange={(e) => setRate({ ...rate, search_per_minute: Number(e.target.value) })} /></div></div>
+          <div className="grid grid-cols-2 gap-2"><div><label className="label" htmlFor="f-onents-admin-admin-panel-5">AI istekleri</label><input id="f-onents-admin-admin-panel-5" className="input" type="number" value={rate.ai_per_minute} onChange={(e) => setRate({ ...rate, ai_per_minute: Number(e.target.value) })} /></div><div><label className="label" htmlFor="f-onents-admin-admin-panel-6">Kaynak taramaları</label><input id="f-onents-admin-admin-panel-6" className="input" type="number" value={rate.search_per_minute} onChange={(e) => setRate({ ...rate, search_per_minute: Number(e.target.value) })} /></div></div>
           <Button size="sm" onClick={() => put("limits.rate", rate)}><Save className="h-3.5 w-3.5" /> Kaydet</Button>
         </div>
       </div>

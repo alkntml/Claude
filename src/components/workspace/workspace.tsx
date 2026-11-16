@@ -10,7 +10,7 @@ import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
-  ArrowLeft, ShieldCheck, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload, EyeOff, SlidersHorizontal, Layers,
+  ArrowLeft, ShieldCheck, BookMarked, FileText, Search, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload, EyeOff, SlidersHorizontal, Layers,
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -57,8 +57,10 @@ import { Tour } from "./tour";
 
 
 
-import { TOOL_FEATURE, ToolsMenu, type ToolId } from "./tools-menu";
+import { TOOL_FEATURE, TOOL_GROUPS, ToolsMenu, type ToolId } from "./tools-menu";
+import { CommandPalette, openCommandPalette, type Command } from "@/components/command-palette";
 import type { SourcesRequest } from "./sources";
+import { FirstSteps, readFirstSteps, saveFirstSteps } from "./first-steps";
 import { defaultSectionOf, RequirementBadge, StageSettingsModal, StructureModal } from "./structure-manager";
 import { SelectionBubble } from "./selection-bubble";
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
@@ -132,6 +134,9 @@ export function Workspace(props: Props) {
   const [save, setSave] = useState<SaveState>("saved");
   /** D212: Araçlar menüsünden Kaynaklar sekmesine iş (arama, liste, birlikte analiz, matris) */
   const [sourcesReq, setSourcesReq] = useState<SourcesRequest | null>(null);
+  /** D213: ilk adımlar rehberinde Mizan adımı (denetim bir kez açıldı mı) */
+  const [mizanSeen, setMizanSeen] = useState(false);
+  useEffect(() => { setMizanSeen(!!readFirstSteps(props.project.id).mizan); }, [props.project.id]);
   const [tab, setTab] = useState<RightTab>(props.role === "commenter" || props.role === "advisor" || props.readOnly ? "comments" : "assistant");
   const [mobilePane, setMobilePane] = useState<"nav" | "editor" | "panel">("editor");
   const [research, setResearch] = useState<{ open: boolean; prefill: string }>({ open: false, prefill: "" });
@@ -757,6 +762,7 @@ export function Workspace(props: Props) {
     setTimeout(() => assistantSend.current?.(msg, action, selection), 350);
   }
   function openTool(id: ToolId) {
+    if (id === "claims" || id === "quality" || id === "fix") { saveFirstSteps(project.id, { mizan: true }); setMizanSeen(true); }
     // Pakete bağlı araçlar (D49): paket yetmiyorsa yükseltme penceresi
     const feature = TOOL_FEATURE[id];
     if (feature && !hasFeature(props.planId, feature)) { openUpgrade({ code: "feature_locked", feature, plan: FEATURE_MIN_PLAN[feature] }); return; }
@@ -1130,6 +1136,12 @@ export function Workspace(props: Props) {
         <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-ink-100"><div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${progress}%` }} /></div>
       </div>
       <div data-tour="goal"><GoalWidget project={project} stages={stages} onOpen={() => setGoalOpen(true)} /></div>
+      {isOwner && canEdit && <FirstSteps projectId={project.id} steps={[
+        { id: "bp", label: "Kurguyu oluşturun ve onaylayın", hint: "Problem, amaç, sorular ve bölüm planı; Zenit bütün bölümleri buna göre yazar.", done: bpApproved, onClick: () => setBpOpen(true) },
+        { id: "src", label: "En az 3 kaynak ekleyin", hint: "Veri tabanlarında arayın, DOI ile ekleyin veya PDF yükleyin.", done: sources.length >= 3, onClick: () => openTool("find-sources") },
+        { id: "write", label: "İlk bölümü Zenit ile yazdırın", hint: "Bir bölüm açın ve asistandan “Bu bölümü yaz” deyin; isterseniz kendiniz yazın.", done: stages.some((st) => st.key !== "references" && (st.word_count ?? 0) > 0), onClick: () => openTool("assistant") },
+        { id: "mizan", label: "Yazdığınızı Mizan ile denetleyin", hint: "İddia denetimi atıflı her cümleyi kaynağıyla karşılaştırır.", done: mizanSeen, onClick: () => openTool("claims") },
+      ]} />}
       <div className="space-y-1.5 px-3 pt-2">
         <button data-tour="blueprint" onClick={() => setBpOpen(true)} className={cn("flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left text-[13px] transition", bpApproved ? "text-ink-600 hover:bg-ink-50" : "bg-brand-50/70 text-brand-800 hover:bg-brand-50")}>
           <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full", bpApproved ? "bg-emerald-50 text-emerald-600" : "bg-brand-600 text-white")}>{bpApproved ? <Check className="h-3 w-3" /> : <Compass className="h-3 w-3" />}</span>
@@ -1154,7 +1166,7 @@ export function Workspace(props: Props) {
               <span title={t("Adım {n}", { n: i + 1 })} className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10.5px] font-semibold lg:h-5 lg:w-5 lg:text-[10px]", s.status === "done" ? "bg-emerald-50 text-emerald-600" : sel ? "bg-brand-600 text-white" : "bg-ink-100 text-ink-500")}>{s.status === "done" ? <Check className="h-3 w-3" /> : i + 1}</span>
               <span className="min-w-0 flex-1">
                 <span className={cn("block truncate text-[14px] leading-tight lg:text-[13.5px]", sel ? "font-medium text-ink-900" : "text-ink-600", s.hidden && "text-ink-400 line-through decoration-ink-300")}>{s.hidden && <EyeOff className="mr-1 inline h-3 w-3 align-[-1px]" aria-label={t("Gizli bölüm")} />}{prefixes[s.id] ? <span className="mr-1 font-mono text-[11.5px] font-medium text-ink-400">{prefixes[s.id]}</span> : null}{s.title}</span>
-                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-600">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}{s.requirement && s.requirement !== "required" && <RequirementBadge value={s.requirement} />}</span>
+                <span className="flex items-center gap-1.5 text-[11px] text-ink-400"><span className={cn("h-1.5 w-1.5 rounded-full", st.dot)} />{s.status === "done" ? <span className="font-medium text-emerald-700">{t("Tamamlandı")}{s.word_count ? ` · ${t("{n} kelime", { n: s.word_count })}` : ""}</span> : targetOf(s.id) ? <span title={t("Kurgudaki hedef uzunluk")}>{t("{n} / ~{t} kelime", { n: (s.word_count ?? 0).toLocaleString(dl), t: targetOf(s.id).toLocaleString(dl) })}</span> : s.word_count ? t("{n} kelime", { n: s.word_count }) : t(st.label)}{s.id === nextId && s.status !== "done" && <span className="rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold text-white">{t("Sıradaki")}</span>}{WRITE_LAST.has(s.key) && s.status !== "done" && s.id !== nextId && <span className="text-[10px] text-ink-400">· {t("en son yazılır")}</span>}{s.requirement && s.requirement !== "required" && <RequirementBadge value={s.requirement} />}</span>
               </span>
               {present.some((p) => p.stageId === s.id) && <span className="flex -space-x-1" title={t("Bu bölümde: {n}", { n: present.filter((p) => p.stageId === s.id).map((p) => p.name).join(", ") })}>{present.filter((p) => p.stageId === s.id).slice(0, 2).map((p) => <Avatar key={p.userId} id={p.userId} name={p.name} size="sm" ring />)}</span>}
               {isOwner && <button onClick={(e) => { e.stopPropagation(); setStageSettings(s.id); }} className="rounded-md p-1.5 text-ink-300 transition hover:bg-ink-100 hover:text-ink-700 lg:opacity-0 lg:group-hover:opacity-100" aria-label={t("Bölüm ayarları")} title={t("Bölüm ayarları")}><SlidersHorizontal className="h-3.5 w-3.5" /></button>}
@@ -1198,9 +1210,18 @@ export function Workspace(props: Props) {
     { key: "more", label: t("Diğer"), icon: <MoreHorizontal className="h-5 w-5" />, active: mobilePane === "panel" && isMore, onClick: () => go("panel", isMore ? tab : "memory") },
   ];
 
+  // D213: Ctrl/⌘+K komut aramasına çalışma alanının araçları, bölümleri ve kaynakları
+  const paletteCmds: Command[] = [
+    ...(canEdit ? TOOL_GROUPS.flatMap((g) => g.tools.map((x): Command => ({ id: `t-${x.id}`, group: g.mark ? `${g.mark} · ${g.title}` : g.title, label: x.label, hint: x.hint, icon: x.Icon, run: () => openTool(x.id), keywords: g.mark }))) : []),
+    ...stages.map((st): Command => ({ id: `s-${st.id}`, group: "Bölümler", label: `${prefixes[st.id] ? `${prefixes[st.id]} ` : ""}${st.title}`, icon: FileText, translate: false, run: () => { void selectStage(st.id); setMobilePane("editor"); } })),
+    ...sources.map((src): Command => ({ id: `r-${src.id}`, group: "Kaynaklar", label: `${src.title ?? ""}${src.year ? ` (${src.year})` : ""}`, icon: BookMarked, translate: false, keywords: (src.authors ?? []).map((a: { family?: string; literal?: string }) => a.family ?? a.literal ?? "").join(" "),
+      run: () => { setTab("sources"); setMobilePane("panel"); setSourcesReq({ kind: "list", n: Date.now() }); setTimeout(() => document.getElementById(`src-${src.id}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 350); } })),
+  ];
+
   return (
     <CitationContext.Provider value={citeCtx}>
       <div className="app-ui flex h-[100dvh] flex-col bg-white">
+        <CommandPalette extra={paletteCmds} />
         {/* Üst çubuk */}
         <header className="relative z-30 flex h-14 shrink-0 items-center gap-1.5 border-b border-ink-200/70 bg-white px-2 sm:gap-2 sm:px-4" style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}>
           <Link href="/panel" className="rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900" aria-label={t("Panele dön")}><ArrowLeft className="h-5 w-5 sm:h-4 sm:w-4" /></Link>
@@ -1216,6 +1237,7 @@ export function Workspace(props: Props) {
           <ProgressButton projectId={project.id} highlight={role === "advisor"} />
           <span data-tour="coauthors" className="flex"><CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} /></span>
           {isOwner && <span data-tour="share" className="flex"><ShareButton projectId={project.id} /></span>}
+          <button onClick={openCommandPalette} className="hidden h-9 items-center gap-2 rounded-lg border border-ink-200 px-2.5 text-[13px] text-ink-500 transition hover:bg-ink-50 hover:text-ink-800 xl:flex" aria-label={t("Komut arama")} title={t("Komut arama (Ctrl+K)")}><Search className="h-3.5 w-3.5" />{t("Ara")}<kbd className="rounded border border-ink-200 px-1 text-[10.5px] text-ink-400">Ctrl K</kbd></button>
           {canEdit && <span data-tour="tools" className="flex"><ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} /></span>}
           <span data-tour="export"><ExportMenu onExport={exportAs} stages={stages.filter((x) => x.key !== "references").map((x) => ({ id: x.id, title: x.title, prefix: prefixes[x.id] ?? "", words: x.word_count ?? 0 }))} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
           <MobileMenu isOwner={isOwner} canEdit={canEdit} coauthors={<CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} variant="row" onCountChange={(n) => setCollaborative(n > 0)} />} projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
@@ -1226,7 +1248,7 @@ export function Workspace(props: Props) {
         <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)_420px] xl:grid-cols-[280px_minmax(0,1fr)_460px]">
           <aside data-tour="nav" className={cn("min-h-0 border-r border-ink-200/70 bg-white", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
 
-          <section className={cn("min-h-0 overflow-y-auto", mobilePane === "editor" ? "block" : "hidden lg:block")}>
+          <section id="main" className={cn("min-h-0 overflow-y-auto", mobilePane === "editor" ? "block" : "hidden lg:block")}>
             {/* D179: kılavuz arka planda analiz edilip uygulandıysa kullanıcı bilgilendirilir */}
             {project.context?.guide && !project.context.guide.seen && isOwner && (
               <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-900 sm:mx-10 lg:mx-auto">
@@ -1451,6 +1473,7 @@ function MobileMenu({ projectId, style, onStyle, onQuality, onSettings, onTour, 
                 {STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}
               </select>
               <div className="mt-4 grid gap-2">
+                <button onClick={() => { setOpen(false); openCommandPalette(); }} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-left text-[15px] font-medium text-ink-800"><Search className="h-5 w-5 text-brand-600" /> {t("Ara: sayfa, bölüm, kaynak, araç")}</button>
                 <Link href={`/proje/${projectId}/kalite`} onClick={onQuality} className="flex items-center gap-3 rounded-2xl border border-ink-100 px-4 py-3 text-[15px] font-medium text-ink-800"><FileCheck2 className="h-5 w-5 text-emerald-600" /> {t("Kalite kontrol")}</Link>
                 {coauthors}
                 {isOwner && <ShareButton projectId={projectId} variant="row" />}
@@ -1653,12 +1676,12 @@ function SettingsModal({ open, onClose, project, patch, files, setFiles, onStage
     <Modal open={open} onClose={onClose} title={t("Proje ayarları")} wide footer={<><Button variant="ghost" onClick={onClose}>{t("Kapat")}</Button><Button onClick={saveAll}>{t("Kaydet")}</Button></>}>
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-3">
-          <div><label className="label">{t("Başlık")}</label><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></div>
-          <div><label className="label">{t("Araştırma konusu")}</label><textarea className="input min-h-[90px]" value={topic} onChange={(e) => setTopic(e.target.value)} /></div>
-          <div><label className="label">{t("Anahtar kelimeler")}</label><input className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} /></div>
+          <div><label className="label" htmlFor="f-ents-workspace-workspace-1">{t("Başlık")}</label><input id="f-ents-workspace-workspace-1" className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+          <div><label className="label" htmlFor="f-ents-workspace-workspace-2">{t("Araştırma konusu")}</label><textarea id="f-ents-workspace-workspace-2" className="input min-h-[90px]" value={topic} onChange={(e) => setTopic(e.target.value)} /></div>
+          <div><label className="label" htmlFor="f-ents-workspace-workspace-3">{t("Anahtar kelimeler")}</label><input id="f-ents-workspace-workspace-3" className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} /></div>
           <div className="grid grid-cols-2 gap-2">
-            <div><label className="label">{t("Disiplin")}</label><input className="input" value={discipline} onChange={(e) => setDiscipline(e.target.value)} /></div>
-            <div><label className="label">{t("Dil")}</label><select className="input" value={language} onChange={(e) => setLanguage(e.target.value)}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option><option value="de">{t("Almanca")}</option></select></div>
+            <div><label className="label" htmlFor="f-ents-workspace-workspace-4">{t("Disiplin")}</label><input id="f-ents-workspace-workspace-4" className="input" value={discipline} onChange={(e) => setDiscipline(e.target.value)} /></div>
+            <div><label className="label" htmlFor="f-ents-workspace-workspace-5">{t("Dil")}</label><select id="f-ents-workspace-workspace-5" className="input" value={language} onChange={(e) => setLanguage(e.target.value)}><option value="tr">{t("Türkçe")}</option><option value="en">{t("İngilizce")}</option><option value="de">{t("Almanca")}</option></select></div>
           </div>
         </div>
         <div className="space-y-4">

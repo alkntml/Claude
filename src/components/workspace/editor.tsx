@@ -12,6 +12,9 @@ import {
 import { useEffect, useMemo, useRef } from "react";
 import { cn } from "@/components/ui/cn";
 import type { JSONNode } from "@/lib/editor/doc";
+
+/** D213: erişilebilirlik — ekran okuyucular için editörün adı (arayüz dilinde) */
+const EDITOR_LABEL = { tr: "Bölüm metni", en: "Section text", de: "Kapiteltext" } as const;
 import { Citation, Figure, Footnote } from "./nodes";
 
 /** Çalışma alanı editörünün düğüm ve biçim uzantıları (önizleme editörleri de aynısını kullanır) */
@@ -53,7 +56,7 @@ export function useAcademicEditor(opts: { content: JSONNode | null; placeholder:
     stable.current = {
       extensions: [...academicExtensions(() => cb.current.placeholder), ...(opts.extensions ?? [])],
       content: (opts.content as object) ?? { type: "doc", content: [{ type: "paragraph" }] },
-      editorProps: { attributes: { class: "prose-academic numbered min-h-[45vh] pb-24 sm:min-h-[55vh] sm:pb-40", spellcheck: "true" } },
+      editorProps: { attributes: { class: "prose-academic numbered min-h-[45vh] pb-24 sm:min-h-[55vh] sm:pb-40", spellcheck: "true", "aria-label": EDITOR_LABEL[(typeof document !== "undefined" ? document.documentElement.lang : "tr") as "tr" | "en" | "de"] ?? EDITOR_LABEL.tr } },
     };
   }
   return useEditor({

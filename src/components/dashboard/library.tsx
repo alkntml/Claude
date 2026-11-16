@@ -29,8 +29,8 @@ export function LibraryView({ projects, sources: initial }: { projects: any[]; s
             </div>
             {projects.length > 0 && (
               <div className="card h-fit p-5">
-                <label className="label">{t("Eklenecek proje")}</label>
-                <select className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}>{projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select>
+                <label className="label" htmlFor="f-onents-dashboard-library-1">{t("Eklenecek proje")}</label>
+                <select id="f-onents-dashboard-library-1" className="input" value={projectId} onChange={(e) => setProjectId(e.target.value)}>{projects.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}</select>
                 <p className="mt-3 text-xs text-ink-500">{t("Eklenen kaynaklar DOI/PMID/arXiv üzerinden otomatik doğrulanır ve eksik künye alanları kayıt otoritesinden tamamlanır.")}</p>
               </div>
             )}

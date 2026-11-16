@@ -305,6 +305,22 @@ export const FAQ: FaqGroup[] = [
         },
       },
       {
+        id: "egitimde-kullanilmaz",
+        q: { tr: "Çalışmalarım yapay zekâ eğitiminde kullanılıyor mu?", en: "Is my work used to train AI?" },
+        a: {
+          tr: "Hayır. Yapay zekâ özellikleri Anthropic’in Claude modelleriyle, ticari hizmet koşulları altında çalışır; bu koşullar Anthropic’in hizmet üzerinden gönderilen içerikle (metniniz, kaynak parçalarınız ve yapay zekânın cevapları) model eğitmesini açıkça yasaklar. Academiana da kendi modelini eğitmez. Verileriniz Frankfurt’ta tutulur; ayrıntılar **Güven merkezi** sayfasındadır.",
+          en: "No. AI features run on Anthropic’s Claude models under Anthropic’s commercial terms of service, which explicitly prohibit Anthropic from training models on content sent through the service (your text, source passages and the AI’s responses). Academiana does not train its own model either. Your data is stored in Frankfurt; details are on the **Trust center** page.",
+        },
+      },
+      {
+        id: "komut-arama",
+        q: { tr: "Aradığım özelliği nasıl hızlıca bulurum?", en: "How do I quickly find a feature?" },
+        a: {
+          tr: "Her ekranda **Ctrl+K** (Mac’te **⌘K**) tuşlarına basın veya menüdeki **Ara**’ya tıklayın: sayfalar, çalışmalarınız, bölümler, kaynaklar ve bütün araçlar tek kutuda aranır; ↑↓ ile seçip Enter’a basın. Çalışma alanında **Araçlar** menüsü de özellikleri Zenit, Rasat, Mizan, Veri, Teslim ve İçe aktarma başlıklarında toplar. **?** tuşu klavye kısayollarının listesini açar.",
+          en: "Press **Ctrl+K** (**⌘K** on Mac) on any screen or click **Search** in the menu: pages, your projects, sections, sources and every tool are searched in one box; select with ↑↓ and press Enter. In the workspace, the **Tools** menu also groups features under Zenit, Rasat, Mizan, Data, Submission and Import. The **?** key opens the list of keyboard shortcuts.",
+        },
+      },
+      {
         id: "pdf-alinti",
         q: { tr: "PDF’ten metin seçip sayfa numarasıyla alıntılayabilir miyim?", en: "Can I select text in a PDF and quote it with the page number?" },
         a: {

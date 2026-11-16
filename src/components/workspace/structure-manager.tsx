@@ -105,20 +105,20 @@ export function StageSettingsModal({ stage, project, open, onClose, onSaved, onD
         {standards.length > 0 && <p><b className="font-medium text-ink-800">{t("Raporlama standardı:")}</b> {standards.join(", ")} <span className="text-ink-400">({t("güncel sürümünü resmi kaynağından kontrol edin")})</span></p>}
         <p className="text-[11.5px] text-ink-400">{t("İşlevler başlık olarak birebir kopyalanmaz; yapay zekâ alt başlıkları konunuza göre adlandırır.")}</p>
       </div>
-      <label className="label">{t("Bölüm adı")}</label>
-      <input className="input" value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
+      <label className="label" htmlFor="f-kspace-structure-manager-1">{t("Bölüm adı")}</label>
+      <input id="f-kspace-structure-manager-1" className="input" value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} />
       <label className="label mt-4">{t("Bölümün amacı / açıklaması")}</label>
       <textarea className="input min-h-[80px]" value={description} maxLength={1000} onChange={(e) => setDescription(e.target.value)} />
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="label">{t("Zorunluluk düzeyi")}</label>
-          <select className="input" value={requirement} onChange={(e) => setRequirement(e.target.value as Requirement)}>
+          <label className="label" htmlFor="f-kspace-structure-manager-2">{t("Zorunluluk düzeyi")}</label>
+          <select id="f-kspace-structure-manager-2" className="input" value={requirement} onChange={(e) => setRequirement(e.target.value as Requirement)}>
             {(Object.keys(REQUIREMENT_LABEL) as Requirement[]).map((k) => <option key={k} value={k}>{t(REQUIREMENT_LABEL[k])}</option>)}
           </select>
         </div>
         <div>
-          <label className="label">{t("Kapsam")}</label>
-          <select className="input" value={scope} onChange={(e) => setScope(e.target.value as Scope)}>
+          <label className="label" htmlFor="f-kspace-structure-manager-3">{t("Kapsam")}</label>
+          <select id="f-kspace-structure-manager-3" className="input" value={scope} onChange={(e) => setScope(e.target.value as Scope)}>
             {(Object.keys(SCOPE_LABEL) as Scope[]).map((k) => <option key={k} value={k}>{t(SCOPE_LABEL[k])}</option>)}
           </select>
           <p className="mt-1 text-[11.5px] text-ink-500">{t("Yapay zekâ bu bölümü yazarken uzunluğu buna göre ayarlar.")}</p>
@@ -238,8 +238,8 @@ export function StructureModal({ open, onClose, project, isOwner, onApplied }: {
 
       <div className="mt-4 flex flex-wrap items-end gap-3">
         <div className="min-w-[220px] flex-1">
-          <label className="label">{t("Karşılaştırılacak yapı")}</label>
-          <select className="input" value={source} onChange={(e) => setSource(e.target.value)}>
+          <label className="label" htmlFor="f-kspace-structure-manager-4">{t("Karşılaştırılacak yapı")}</label>
+          <select id="f-kspace-structure-manager-4" className="input" value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="default">{t("Academiana varsayılan şablonu")}</option>
             {templates.map((x) => <option key={x.id} value={x.id}>{x.name} · {t("{n} bölüm", { n: x.count })}</option>)}
           </select>

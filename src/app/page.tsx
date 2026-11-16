@@ -41,7 +41,7 @@ export default async function Home() {
     <>
       <SiteHeader signedIn={signedIn} />
       <JsonLd data={[softwareLd(locale, plans, usdTry), webPageLd(locale, { path: localizedPath("/", locale), name: pick(PAGE_SEO["/"].title, locale), description: pick(PAGE_SEO["/"].description, locale) }), ...(locale === "tr" ? [promoVideoLd()] : [])]} />
-      <main>
+      <main id="main">
         <Hero signedIn={signedIn} />
         {locale === "tr" && <PromoVideo />}
         <CompareSection />

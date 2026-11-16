@@ -53,9 +53,9 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
         <section className="card p-6">
           <h2 className="flex items-center gap-2 font-semibold"><UserRound className="h-4 w-4" /> {t("Profil")}</h2>
           <div className="mt-4 space-y-3">
-            <div><label className="label">{t("Ad soyad")}</label><input className="input" value={name} onChange={(e) => setName(e.target.value)} /></div>
-            <div><label className="label">{t("Kurum")}</label><input className="input" value={inst} onChange={(e) => setInst(e.target.value)} /></div>
-            <div><label className="label">{t("Varsayılan atıf stili")}</label><select className="input" value={style} onChange={(e) => setStyle(e.target.value)}>{STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}</select></div>
+            <div><label className="label" htmlFor="f-onents-dashboard-account-1">{t("Ad soyad")}</label><input id="f-onents-dashboard-account-1" className="input" value={name} onChange={(e) => setName(e.target.value)} /></div>
+            <div><label className="label" htmlFor="f-onents-dashboard-account-2">{t("Kurum")}</label><input id="f-onents-dashboard-account-2" className="input" value={inst} onChange={(e) => setInst(e.target.value)} /></div>
+            <div><label className="label" htmlFor="f-onents-dashboard-account-3">{t("Varsayılan atıf stili")}</label><select id="f-onents-dashboard-account-3" className="input" value={style} onChange={(e) => setStyle(e.target.value)}>{STYLE_IDS.map((s) => <option key={s} value={s}>{t(STYLES[s].label)}</option>)}</select></div>
             <div className="flex flex-wrap items-center gap-3"><Button onClick={save} loading={saving}>{t("Kaydet")}</Button><a href="/sifre-yenile" className="text-sm font-medium text-brand-600 hover:underline">{t("Şifremi değiştir")}</a></div>
           </div>
         </section>

@@ -34,7 +34,7 @@ export default async function Tools() {
         // D107: araç listesi (arama motorları her aracı ayrı sayfa olarak tanısın)
         { "@context": "https://schema.org", "@type": "ItemList", name: t("Ücretsiz akademik araçlar"), itemListElement: TOOLS.map((x, i) => ({ "@type": "ListItem", position: i + 1, name: t(x.title), url: absoluteUrl(localizedPath(x.path, locale)) })) },
       ]} />
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-36">
+      <main id="main" className="mx-auto max-w-6xl px-6 pb-24 pt-36">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h1 className="font-serif text-5xl font-medium tracking-tight text-ink-950">{t("Ücretsiz akademik araçlar")}</h1>
           <p className="mt-4 text-ink-500">{t("Üyelik gerekmez. Kaynakça hazırlayın, atıf stilini dönüştürün, örneklem ve güvenirlik hesaplayın, kaynaklarınızın gerçekten var olup olmadığını kontrol edin.")}</p>

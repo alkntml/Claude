@@ -47,7 +47,7 @@ export default async function SharedProject({ params }: { params: Promise<{ toke
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3"><Logo /><span className="rounded-full bg-ink-100 px-3 py-1 text-xs text-ink-600">{t("Salt okunur paylaşım")}{share.expires_at ? ` · ${t("{date} tarihine kadar", { date: new Date(share.expires_at).toLocaleDateString(dl) })}` : ""}</span></div>
       </header>
       <div className="mx-auto grid max-w-5xl gap-10 px-5 py-12 lg:grid-cols-[1fr_260px]">
-        <main>
+        <main id="main">
           <p className="text-sm text-ink-400">{doc.author}{doc.institution ? ` · ${doc.institution}` : ""}</p>
           <h1 className="mt-2 font-serif text-4xl font-medium leading-tight tracking-tight text-ink-950">{doc.title}</h1>
           <p className="mt-2 text-sm text-ink-500">{doc.styleLabel} · {t("{n} bölüm", { n: written.length })}</p>

@@ -4,7 +4,7 @@ Yapay zekâ destekli akademik araştırma ve yazım platformu (tez, makale, lite
 
 ## Önce oku
 - `PROJECT_STATUS.md` — yapılanlar, canlı ortam, çalışma şekli
-- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D212)
+- `TODO.md` — kalan işler · `DECISIONS.md` — kararlar (D1…D213)
 - `docs/ARCHITECTURE.md` — mimari, **ayrıntılı modül haritası, API uçları, SEO ayrıntıları**
 - `docs/cost-analysis/README.md` — paket/limit/fiyat/yapay zekâ maliyeti kararlarından önce (D95)
 
@@ -60,6 +60,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
 - **Rasat (D208):** kaynak analizi zekâsının marka adı (Oku ve alıntıla, Kaynağa sor, Birlikte analiz et, kaynaklardan atıflı paragraf). Yalnızca okunan metne dayanır.
 - **Mizan (D209):** denetim zekâsının marka adı (İddia denetimi, Kaynakta doğrula, kaynak gerektiren ifadeler, Kalite kontrol). “Zenit yazar, Rasat okur, Mizan tartar.”
 - **İmza adları (D211):** Zenit/Rasat/Mizan arayüzde `BrandMark`/`WithMarks` (`components/brand-mark.tsx`) ile yazılır; pencere başlıklarında kendiliğinden.
+- **Güven ve deneyim (D213):** yeni kullanıcı özelliği → `lib/changelog.ts` (Yenilikler, TR/EN/DE). Hizmet sağlayıcı/veri konumu değişirse `lib/trust-content.ts` + hukuki metin birlikte. Komut aramaya yeni sayfa/araç: `command-palette.tsx` / `TOOL_GROUPS`. Renk karşıtlığı 4,5:1 (`--ink-400` en soluk okunur yazı; `ink-300` yazıda kullanılmaz). Form etiketi `htmlFor`/`id` ile bağlı olmalı.
 - **Atıflar** editörde `citation` düğümüdür; düz metin “(Yazar, Yıl)” üretme.
 - **Yapay zekâ:**
   - Model işe göre seçilir (D47): `fast` Haiku, `balanced` Sonnet, `default` Opus — `resolveModel(planId, tier)`, eylemler `ACTION_TIER`.

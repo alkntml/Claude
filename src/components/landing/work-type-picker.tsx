@@ -25,7 +25,7 @@ export function WorkTypePicker({ signedIn: initialSignedIn, compact = false }: {
                 <ArrowUpRight className="h-4 w-4 text-ink-300 transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand-600" />
               </div>
               <h3 className="relative mt-4 font-semibold text-ink-900">{t(w.title)}</h3>
-              <p className="relative text-[12.5px] font-medium text-brand-600/80">{t(w.short)}</p>
+              <p className="relative text-[12.5px] font-medium text-brand-700">{t(w.short)}</p>
               <p className="relative mt-2 text-[13.5px] leading-relaxed text-ink-500">{t(w.description)}</p>
             </Link>
           </div>

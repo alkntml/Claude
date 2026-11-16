@@ -32,7 +32,7 @@ export default async function BlogIndex({ searchParams }: { searchParams: Promis
     <>
       <SiteHeader signedIn={s} />
       <JsonLd data={jsonLd} />
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-28">
+      <main id="main" className="mx-auto max-w-6xl px-6 pb-24 pt-28">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Blog")}</p>
         <h1 className="mt-2 font-serif text-4xl font-medium tracking-tight text-ink-950 sm:text-[44px]">{t("Akademik yazım rehberleri")}</h1>
         <p className="mt-3 max-w-2xl text-[17px] text-ink-500">{t("Tez, makale ve araştırma sürecinde en çok merak edilen soruların cevapları: adım adım, örneklerle ve sade bir dille.")}</p>

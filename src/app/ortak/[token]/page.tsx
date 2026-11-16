@@ -32,7 +32,7 @@ export default async function CoauthorInvite({ params }: { params: Promise<{ tok
   const next = encodeURIComponent(`/ortak/${token}`);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-4 py-12">
+    <main id="main" className="flex min-h-screen items-center justify-center bg-ink-50 px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-6 flex justify-center"><Link href="/" aria-label="Academiana"><Logo /></Link></div>
         <div className="card space-y-5 p-6">

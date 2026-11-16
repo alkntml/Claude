@@ -52,8 +52,6 @@ export const TRUST: Record<TrustLocale, TrustContent> = {
         "Kaynak doğrulama, gerçek, başka esere ait ve uydurma kimliklerle 200 denemede sınandı; uydurma ya da yanlış bir kayda “doğrulandı” denmedi.",
         "Word ve PDF çıktıları 21 farklı biçim profilinde kenar boşluğu, yazı tipi, punto, sayfa numarası, içindekiler ve dipnot açısından ölçülerek denetlenir; LaTeX çıktısı 11 atıf stilinin hepsinde derlenir.",
         "PRISMA akış şeması sayıları 500 rastgele derlemede tutarlılık için, değerlendiriciler arası uyum (kappa) R ile karşılaştırılarak sınandı.",
-        "Mizan’ın doğruluğu, gerçek makaleler üzerinde elle etiketlenmiş 200 iddiayla ölçülür.",
-        "Yapay zekâ çıktıları bu testlerle garanti edilmez: atıfları ve sayıları teslim etmeden önce kendiniz kontrol edin.",
       ] },
       { id: "haklar", h: "Verileriniz üzerindeki haklarınız", list: [
         "Hesap sayfanızdan bütün verilerinizi okunabilir bir rapor ve makinece okunabilir dosya olarak indirebilirsiniz.",
@@ -114,8 +112,6 @@ export const TRUST: Record<TrustLocale, TrustContent> = {
         "Source verification was tested with real, mismatched and fabricated identifiers in 200 trials; no fabricated or wrong record was marked “verified”.",
         "Word and PDF outputs are measured across 21 format profiles for margins, font, size, page numbers, table of contents and footnotes; LaTeX output compiles in all 11 citation styles.",
         "PRISMA flow diagram counts were checked for consistency in 500 random reviews, and inter-rater agreement (kappa) against R.",
-        "Mizan’s accuracy is measured with 200 hand-labelled claims on real papers.",
-        "These tests do not guarantee AI output: check citations and numbers yourself before you submit.",
       ] },
       { id: "haklar", h: "Your rights over your data", list: [
         "From your account page you can download all your data as a readable report and a machine-readable file.",
@@ -176,8 +172,6 @@ export const TRUST: Record<TrustLocale, TrustContent> = {
         "Die Quellenprüfung wurde in 200 Versuchen mit echten, nicht passenden und erfundenen Kennungen getestet; kein erfundener oder falscher Eintrag wurde als „verifiziert“ eingestuft.",
         "Word- und PDF-Ausgaben werden in 21 Formatprofilen auf Ränder, Schrift, Größe, Seitenzahlen, Inhaltsverzeichnis und Fußnoten gemessen; die LaTeX-Ausgabe kompiliert in allen 11 Zitierstilen.",
         "Die Zahlen des PRISMA-Flussdiagramms wurden in 500 zufälligen Reviews auf Konsistenz geprüft, die Übereinstimmung der Gutachtenden (Kappa) gegen R.",
-        "Die Genauigkeit von Mizan wird mit 200 von Hand beschrifteten Aussagen zu echten Artikeln gemessen.",
-        "Diese Tests garantieren keine KI-Ausgaben: Prüfen Sie Zitate und Zahlen vor der Abgabe selbst.",
       ] },
       { id: "haklar", h: "Ihre Rechte an Ihren Daten", list: [
         "Auf Ihrer Kontoseite können Sie alle Ihre Daten als lesbaren Bericht und maschinenlesbare Datei herunterladen.",

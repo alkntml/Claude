@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Çalışma alanı düzeni (D212, 16 Kasım 2026)**
+- “Araçlar” menüsü gruplu (Zenit / Rasat / Mizan / Veri / Teslim / İçe aktarma) ve aranabilir; Kaynaklar sekmesinde Rasat şeridi ve sadeleşmiş kart düğmeleri.
+
 **İmza zekâ vitrini (D211, 16 Kasım 2026)**
 - Özellikler bölümünde Zenit/Rasat/Mizan tanıtımı (hareketli temsilî ekranlar), parıltılı indigo imza adı görünümü; adlar kartlarda, “Nasıl çalışır”da, güvence kartlarında, Yöntem sayfasında ve pencere başlıklarında.
 

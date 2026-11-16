@@ -11,7 +11,6 @@ import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
   ArrowLeft, ShieldCheck, BookMarked, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload, EyeOff, SlidersHorizontal, Layers,
-  FileUp,
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -59,6 +58,7 @@ import { Tour } from "./tour";
 
 
 import { TOOL_FEATURE, ToolsMenu, type ToolId } from "./tools-menu";
+import type { SourcesRequest } from "./sources";
 import { defaultSectionOf, RequirementBadge, StageSettingsModal, StructureModal } from "./structure-manager";
 import { SelectionBubble } from "./selection-bubble";
 import { ASSISTANT_ACTIONS } from "@/lib/ai/prompts";
@@ -130,6 +130,8 @@ export function Workspace(props: Props) {
   const [present, setPresent] = useState<PresencePerson[]>([]);
   const [conflict, setConflict] = useState<{ stageId: string; mine: JSONNode; theirs: any; by: string } | null>(null);
   const [save, setSave] = useState<SaveState>("saved");
+  /** D212: Araçlar menüsünden Kaynaklar sekmesine iş (arama, liste, birlikte analiz, matris) */
+  const [sourcesReq, setSourcesReq] = useState<SourcesRequest | null>(null);
   const [tab, setTab] = useState<RightTab>(props.role === "commenter" || props.role === "advisor" || props.readOnly ? "comments" : "assistant");
   const [mobilePane, setMobilePane] = useState<"nav" | "editor" | "panel">("editor");
   const [research, setResearch] = useState<{ open: boolean; prefill: string }>({ open: false, prefill: "" });
@@ -764,6 +766,19 @@ export function Workspace(props: Props) {
       flush(); setLang({ tab: "translate", range: to - from > 2 ? { from, to } : null });
       return;
     }
+    // D212: gruplu menüden panel, kaynak ve teslim işleri
+    if (id === "assistant") { setTab("assistant"); setMobilePane("panel"); return; }
+    if (id === "find-sources" || id === "sources" || id === "multi" || id === "matrix") {
+      setTab("sources"); setMobilePane("panel");
+      setSourcesReq({ kind: id === "find-sources" ? "search" : id === "sources" ? "list" : id, n: Date.now() });
+      return;
+    }
+    if (id === "fix") { flush(); setFixOpen(true); return; }
+    if (id === "quality") { flush(); router.push(`/proje/${project.id}/kalite`); return; }
+    if (id === "hub") { flush(); setHubOpen(true); return; }
+    if (id === "format") { setFormatOpen(true); return; }
+    if (id === "journals") { setJournalOpen(true); return; }
+    if (id === "presentation") { void makePresentation(); return; }
     if (id === "consensus") { setConsensusOpen(true); return; }
     if (id === "prisma") { flush(); setPrismaOpen(true); return; }
     if (id === "litmap") { setMapOpen(true); return; }
@@ -1201,7 +1216,6 @@ export function Workspace(props: Props) {
           <ProgressButton projectId={project.id} highlight={role === "advisor"} />
           <span data-tour="coauthors" className="flex"><CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} onCountChange={(n) => setCollaborative(n > 0)} /></span>
           {isOwner && <span data-tour="share" className="flex"><ShareButton projectId={project.id} /></span>}
-          {canEdit && <button onClick={() => { flush(); setHubOpen(true); }} className="hidden h-9 items-center gap-1.5 rounded-lg px-2.5 text-[13.5px] font-medium text-ink-600 transition hover:bg-ink-100 hover:text-ink-900 lg:flex"><FileUp className="h-4 w-4" /> {t("İçe aktar")}</button>}
           {canEdit && <span data-tour="tools" className="flex"><ToolsMenu onPick={openTool} workType={project.work_type} planId={props.planId} /></span>}
           <span data-tour="export"><ExportMenu onExport={exportAs} stages={stages.filter((x) => x.key !== "references").map((x) => ({ id: x.id, title: x.title, prefix: prefixes[x.id] ?? "", words: x.word_count ?? 0 }))} onFormat={() => setFormatOpen(true)} onPresentation={makePresentation} onJournals={() => setJournalOpen(true)} presenting={presenting} /></span>
           <MobileMenu isOwner={isOwner} canEdit={canEdit} coauthors={<CoauthorsButton projectId={project.id} isOwner={isOwner} planId={props.planId} present={present} variant="row" onCountChange={(n) => setCollaborative(n > 0)} />} projectId={project.id} style={project.citation_style} onStyle={changeStyle} onQuality={() => flush()} onSettings={() => setSettings(true)} onTour={() => setTourOpen(true)} onTool={openTool} workType={project.work_type} planId={props.planId} />
@@ -1322,7 +1336,7 @@ export function Workspace(props: Props) {
               <AnimatePresence mode="wait">
                 <motion.div key={tab} className="h-full" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.18 }}>
                   {tab === "assistant" && <AssistantPanel needsData={active ? stageNeedsData(active.key, project) : false} researchPrefs={project.context?.research} projectId={project.id} stage={active ? { id: active.id, key: active.key, title: active.title } : null} def={def} selection={selection} files={files} onInsert={insertMarkdown} onOpenResearch={(prefill) => setResearch({ open: true, prefill: prefill || (active ? `${project.topic || project.title} — ${active.title}` : "") })} onMemoryChanged={() => api<{ memory: any[] }>(`/api/projects/${project.id}/memory`).then((r) => setMemory(r.memory)).catch(() => {})} onSourcesAdded={addSources} onOpenOutline={canSubdivide ? () => { flush(); setSubOpen(true); } : undefined} onOpenImport={!isBibliography ? () => { flush(); setImportOpen(true); } : undefined} focus={focused ? { number: focused.number, title: focused.text, index: focused.index } : null} onOpenAnalysis={() => setAnalysisOpen(true)} registerSend={registerSend} language={project.language} lowSources={sources.length < minSourcesFor(project.work_type, project.academic_level)} targetWords={active ? targetOf(active.id) : 0} unwrittenMain={unwrittenMain} />}
-                  {tab === "sources" && <ProjectSources projectId={project.id} sources={sources} setSources={setSources} onInsertNodes={!isBibliography && editor ? insertAtCursor : undefined} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
+                  {tab === "sources" && <ProjectSources request={sourcesReq} projectId={project.id} sources={sources} setSources={setSources} onInsertNodes={!isBibliography && editor ? insertAtCursor : undefined} onCite={(id) => { cite(id); setMobilePane("editor"); }} canCite={!!editor && !isBibliography} language={project.language} citedIds={citedSet} onInsertMarkdown={!isBibliography && editor ? (md, map) => { insertMarkdown(md, map, "append"); setMobilePane("editor"); } : undefined} onInsertTable={!isBibliography && editor ? (node) => { editor.chain().focus().insertContent(node.content ?? []).run(); pending.current = { id: activeId, doc: fullDocRef.current() }; flush({ note: t("Literatür tablosu eklendi"), author: "ai" }); setMobilePane("editor"); } : undefined} />}
                   {tab === "memory" && <MemoryPanel projectId={project.id} memory={memory} setMemory={setMemory} />}
                   {tab === "comments" && active && <CommentsPanel stageId={active.id} selection={selection} onApply={canEdit ? applyComment : undefined} isOwner={isOwner} />}
                   {tab === "history" && active && <HistoryPanel stageId={active.id} version={histVer} onSnapshot={() => flush({ note: t("Elle kaydedilen sürüm"), author: "user" })} onRestore={(st) => { setStages((l) => l.map((s) => (s.id === st.id ? st : s))); baseRef.current = st.content; focusRef.current = null; setFocus(null); editor?.commands.setContent(st.content ?? { type: "doc", content: [{ type: "paragraph" }] }, { emitUpdate: false }); }} />}

@@ -190,3 +190,4 @@ Kod hazır ama canlı sitede hiç denenmedi. Kullanıcı dener, ekran görüntü
 - [x] (2026-11-15, D209) Mizan adı ürüne yerleştirildi
 - [ ] (Kullanıcı) “Mizan” için TÜRKPATENT marka araştırması (sınıf 9, 41, 42); uygunsa tescil başvurusu (D209)
 - [x] (2026-11-16, D211) Özellikler bölümünde Zenit/Rasat/Mizan vitrini ve imza adı görünümü
+- [x] (2026-11-16, D212) Çalışma alanı özellikleri gruplu ve aranabilir Araçlar menüsünde

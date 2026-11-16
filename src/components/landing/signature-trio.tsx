@@ -100,10 +100,8 @@ function RasatDemo() {
           <div className="mt-2 space-y-1.5" aria-hidden>{[92, 84, 96].map((w, i) => <span key={i} className="block h-1.5 rounded-full bg-ink-200/80" style={{ width: `${w}%` }} />)}</div>
           <p className="relative mt-2 font-serif text-[12.5px] leading-6 text-ink-700">
             {t("Bulgular,")}{" "}
-            <span className="relative">
-              <motion.span className="absolute inset-y-0 left-0 -z-0 rounded bg-brand-200/70" initial={false} animate={{ width: step >= 1 ? "100%" : "0%" }} transition={{ duration: step >= 1 ? 1.1 : 0.2, ease: "easeInOut" }} />
-              <span className="relative">{quote}</span>
-            </span>.
+            <motion.span className="rounded bg-gradient-to-r from-brand-200 to-brand-200 bg-no-repeat [box-decoration-break:clone]" style={{ backgroundPosition: "0 0" }}
+              initial={false} animate={{ backgroundSize: step >= 1 ? "100% 100%" : "0% 100%" }} transition={{ duration: step >= 1 ? 1.1 : 0.2, ease: "easeInOut" }}>{quote}</motion.span>.
           </p>
           <div className="mt-2 space-y-1.5" aria-hidden>{[88, 70].map((w, i) => <span key={i} className="block h-1.5 rounded-full bg-ink-200/80" style={{ width: `${w}%` }} />)}</div>
           <AnimatePresence>

@@ -10,7 +10,8 @@ import { MultiAnalyzeButton, MultiAnalyzeModal } from "./multi-analyze";
 import { RefsImportExport } from "./refs-io";
 import { motion } from "framer-motion";
 import { BadgeCheck, BookOpenText, MessageCircleQuestion, BookPlus, CircleAlert, ExternalLink, FileText, FileUp, Filter, Loader2, Plus, Quote, Search, ShieldQuestion, Unlock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { BrandMark } from "@/components/brand-mark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
 import { Badge, Empty, Modal } from "@/components/ui/primitives";
@@ -184,10 +185,26 @@ export function SourceSearch({ projectId, onAdded, existingDois }: { projectId?:
   );
 }
 
-export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds, onInsertMarkdown, onInsertNodes }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string>; onInsertMarkdown?: (md: string, sourceMap: Record<string, string>) => void; onInsertNodes?: (nodes: JSONNode[]) => boolean | void }) {
+/** D212: Araçlar menüsünden gelen istek (n her istekte değişir) */
+export type SourcesRequest = { kind: "search" | "list" | "multi" | "matrix"; n: number };
+
+export function ProjectSources({ projectId, sources, setSources, onCite, canCite, language = "tr", onInsertTable, citedIds, onInsertMarkdown, onInsertNodes, request }: { projectId: string; sources: any[]; setSources: (fn: (s: any[]) => any[]) => void; onCite: (id: string) => void; canCite: boolean; language?: string; onInsertTable?: (node: any) => void; citedIds?: Set<string>; onInsertMarkdown?: (md: string, sourceMap: Record<string, string>) => void; onInsertNodes?: (nodes: JSONNode[]) => boolean | void; request?: SourcesRequest | null }) {
   const { t } = useT();
+  const toast = useToast();
   const [matrix, setMatrix] = useState(false);
   const [multi, setMulti] = useState(false);
+  const lastReq = useRef(0);
+  useEffect(() => {
+    if (!request || request.n === lastReq.current) return;
+    lastReq.current = request.n;
+    if (request.kind === "search") { setMode("search"); return; }
+    setMode("list");
+    if (request.kind === "matrix") setMatrix(true);
+    if (request.kind === "multi") {
+      if (sources.length >= 2) setMulti(true);
+      else toast({ tone: "info", title: t("Birlikte analiz için en az 2 kaynak gerekir"), detail: t("Önce “Kaynak ara” ile kaynak ekleyin.") });
+    }
+  }, [request, sources.length, toast, t]);
   const [pdfOpen, setPdfOpen] = useState(false);
   // Kaynağa sor (D112)
   const [askId, setAskId] = useState<string | null>(null);
@@ -213,7 +230,6 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
       toast({ tone: "error", title: t("PDF eklenemedi"), detail: (e as Error).message });
     } finally { setUploading(null); }
   }
-  const toast = useToast();
   const [mode, setMode] = useState<"list" | "search" | "manual">("list");
   const [busy, setBusy] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
@@ -286,10 +302,11 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="flex flex-wrap gap-2">
-                <input className="input !py-2 min-w-0 flex-1 basis-40 text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
-                <MatrixButton onClick={() => setMatrix(true)} />
+              <input className="input !py-2 w-full text-sm" placeholder={t("Kaynaklarda filtrele…")} value={filter} onChange={(e) => setFilter(e.target.value)} />
+              <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-brand-100 bg-brand-50/40 px-2.5 py-2">
+                <BrandMark name="Rasat" className="mr-1 text-[13px]" />
                 {sources.length >= 2 && <MultiAnalyzeButton onClick={() => setMulti(true)} />}
+                <MatrixButton onClick={() => setMatrix(true)} />
               </div>
               <RefsImportExport projectId={projectId} onAdded={(rows) => setSources((l) => [...l, ...rows.filter((r) => !l.some((x) => x.id === r.id))])} />
               {noFull.length > 0 && (
@@ -317,9 +334,9 @@ export function ProjectSources({ projectId, sources, setSources, onCite, canCite
               {shown.map((s) => (
                 <div key={s.id} id={`src-${s.id}`}>
                   <SourceCard s={s} compact actions={<>
+                    <Button size="sm" variant="soft" disabled={!canCite} onClick={() => onCite(s.id)} title={canCite ? t("İmlecin bulunduğu yere atıf ekle") : t("Önce editörde bir yere tıklayın")}><Quote className="h-3.5 w-3.5" /> {t("Atıf ekle")}</Button>
                     <Button size="sm" variant="soft" onClick={() => setAskId(s.id)} title={t("Bu kaynağa soru sorun; cevaplar sayfa numaralı gelir")}><MessageCircleQuestion className="h-3.5 w-3.5" /> {t("Sor")}</Button>
                     {(s.access_level === "full_text" || s.file_id) && <Button size="sm" variant="soft" onClick={() => setReadId(s.id)} title={t("PDF’i veya tam metni açın; seçtiğiniz metni sayfa numarasıyla alıntılayın")}><BookOpenText className="h-3.5 w-3.5" /> {t("Oku ve alıntıla")}</Button>}
-                    <Button size="sm" variant="soft" disabled={!canCite} onClick={() => onCite(s.id)} title={canCite ? t("İmlecin bulunduğu yere atıf ekle") : t("Önce editörde bir yere tıklayın")}><Quote className="h-3.5 w-3.5" /> {t("Atıf ekle")}</Button>
                     {!s.verified && <Button size="sm" variant="ghost" loading={busy === `v${s.id}`} onClick={() => verify(s.id)}><BadgeCheck className="h-3.5 w-3.5" /> {t("Doğrula")}</Button>}
                     {s.access_level !== "full_text" && s.fulltext_status !== "queued" && s.fulltext_status !== "processing" && (s.oa_url || s.doi || s.arxiv_id || s.pmcid) && <Button size="sm" variant="ghost" loading={busy === `f${s.id}`} onClick={() => fulltext(s.id)}><Unlock className="h-3.5 w-3.5" /> {t("Tam metni analiz et")}</Button>}
                     <DeleteButton className="h-8 px-2" label={t("Kaynağı sil")} confirmText={t("“{title}” kaynağı kalıcı olarak silinsin mi? Metinde bu kaynağa verilen atıflar kaynaksız kalır.", { title: s.title.slice(0, 80) })} onDelete={() => api(`/api/sources/${s.id}`, { method: "DELETE" })} onDone={() => setSources((l) => l.filter((x) => x.id !== s.id))} />

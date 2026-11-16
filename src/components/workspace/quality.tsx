@@ -1,4 +1,5 @@
 "use client";
+import { WithMarks } from "@/components/brand-mark";
 import { useT } from "@/i18n/client";
 import { motion } from "framer-motion";
 import { AlertOctagon, ArrowLeft, BookOpenCheck, Check, CheckCircle2, ChevronDown, CircleDashed, Info, Languages, ListChecks, Repeat2, ScanSearch, ShieldAlert, Sparkles, TriangleAlert, XCircle } from "lucide-react";
@@ -72,7 +73,7 @@ export function QualityView({ project, initial, stages, checklist = [], chain = 
       <Link href={`/proje/${project.id}`} className="inline-flex items-center gap-1.5 text-sm text-ink-500 hover:text-ink-900"><ArrowLeft className="h-4 w-4" /> {project.title}</Link>
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950">{t("Mizan · Akademik kalite kontrolü")}</h1>
+          <h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950"><WithMarks text={t("Mizan · Akademik kalite kontrolü")} /></h1>
           <p className="mt-1 text-ink-500">{t("Dil, tutarlılık, atıf ve kaynak kontrolleri. Kural tabanlı kontroller her zaman çalışır; yapay zekâ incelemesi mantıksal bütünlüğü değerlendirir.")}</p>
         </div>
         <div className="flex items-center gap-3">

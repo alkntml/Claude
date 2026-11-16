@@ -1,4 +1,5 @@
 "use client";
+import { WithMarks } from "@/components/brand-mark";
 import { useT } from "@/i18n/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
@@ -69,7 +70,7 @@ export function Modal({ open, onClose, title, children, wide, footer }: { open: 
             transition={{ type: "spring", stiffness: 380, damping: 32 }}
           >
             <div className="flex items-center justify-between border-b border-ink-100 px-6 py-4">
-              <h2 className="text-[17px] font-semibold text-ink-900">{title}</h2>
+              <h2 className="text-[17px] font-semibold text-ink-900"><WithMarks text={title} /></h2>
               <button onClick={onClose} className="rounded-lg p-1.5 text-ink-400 transition hover:bg-ink-100 hover:text-ink-700" aria-label={t("Kapat")}><X className="h-5 w-5" /></button>
             </div>
             <div className="overflow-y-auto px-6 py-5">{children}</div>

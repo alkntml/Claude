@@ -15,12 +15,14 @@ import { useState } from "react";
 import Link from "@/components/l-link";
 import { cn } from "@/components/ui/cn";
 import { FadeIn } from "@/components/ui/fade-in";
+import { BrandMark, WithMarks, type Signature } from "@/components/brand-mark";
+import { SignatureTrio } from "./signature-trio";
 import { useT } from "@/i18n/client";
 import { FEATURE_MIN_PLAN, type FeatureId } from "@/lib/features";
 
 type Icon = typeof Activity;
 type Plan = "basic" | "pro" | null;
-interface Feature { icon: Icon; title: string; text: string; plan?: Plan | FeatureId }
+interface Feature { icon: Icon; title: string; text: string; plan?: Plan | FeatureId; mark?: Signature }
 interface Category { id: string; icon: Icon; title: string; lead: string; features: Feature[]; Visual: () => React.ReactNode }
 
 const planOf = (p?: Plan | FeatureId): Plan => (!p ? null : p === "basic" || p === "pro" ? p : (FEATURE_MIN_PLAN[p] as Plan));
@@ -36,7 +38,7 @@ function Frame({ children, label }: { children: React.ReactNode; label: string }
   const { t } = useT();
   return (
     <div className="relative h-full rounded-3xl border border-ink-100 bg-white p-5 shadow-[0_30px_60px_-30px_rgb(21_24_41/0.35)]">
-      <div className="mb-4 flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-rose-300" /><span className="h-2.5 w-2.5 rounded-full bg-amber-300" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-300" /><span className="ml-2 text-[11px] font-medium text-ink-400">{label}</span></div>
+      <div className="mb-4 flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-rose-300" /><span className="h-2.5 w-2.5 rounded-full bg-amber-300" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-300" /><span className="ml-2 text-[11px] font-medium text-ink-400"><WithMarks text={label} /></span></div>
       {children}
       <p className="absolute bottom-3 right-4 text-[10px] text-ink-300">{t("Temsilî görsel")}</p>
     </div>
@@ -47,7 +49,7 @@ function WritingVisual() {
   const { t } = useT();
   const stages = ["Kurgu", "Giriş", "Kuramsal çerçeve", "Yöntem", "Bulgular", "Tartışma"];
   return (
-    <Frame label={t("Çalışma alanı")}>
+    <Frame label={t("Zenit · Çalışma alanı")}>
       <div className="flex gap-1">{stages.map((s, i) => <span key={s} className={cn("flex-1 truncate rounded-lg px-1.5 py-1.5 text-center text-[10.5px] font-semibold", i < 2 ? "bg-emerald-50 text-emerald-700" : i === 2 ? "bg-brand-600 text-white" : "bg-ink-50 text-ink-400")}>{t(s)}</span>)}</div>
       <div className="mt-4 rounded-2xl border border-ink-100 p-4">
         <p className="text-[11px] font-semibold text-ink-400">2.1 {t("Kuramsal çerçeve")}</p>
@@ -93,7 +95,7 @@ function SourcesVisual() {
           <li key={a} className="flex items-center gap-2 rounded-xl border border-ink-100 px-3 py-2"><BookCheck className="h-4 w-4 shrink-0 text-ink-400" /><span className="min-w-0 flex-1 truncate font-serif text-[12.5px] text-ink-800">{t(a)}</span><span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold", c)}>{t(b)}</span></li>
         ))}
       </ul>
-      <div className="mt-3 rounded-xl bg-ink-900 px-3 py-2.5 text-[11.5px] text-white/90"><MessagesSquare className="mr-1.5 inline h-3.5 w-3.5 text-sky-300" />{t("Kaynağa sor: “Örneklem nasıl seçilmiş?”")} <span className="text-white/50">→ {t("cevap s. 205’ten")}</span></div>
+      <div className="mt-3 rounded-xl bg-ink-900 px-3 py-2.5 text-[11.5px] text-white/90"><MessagesSquare className="mr-1.5 inline h-3.5 w-3.5 text-sky-300" /><WithMarks text={t("Rasat · Kaynağa sor: “Örneklem nasıl seçilmiş?”")} className="sig-on-dark" /> <span className="text-white/50">→ {t("cevap s. 205’ten")}</span></div>
     </Frame>
   );
 }
@@ -102,7 +104,7 @@ function CitationVisual() {
   const { t } = useT();
   const s = [["Öz düzenleme, başarının güçlü bir yordayıcısıdır.", "decoration-emerald-400", "Destekliyor"], ["Bu etki tüm öğrenciler için geçerlidir.", "decoration-amber-400", "Kısmen"], ["Canlı dersler başarıyı iki katına çıkarır.", "decoration-rose-500", "Kaynakla çelişiyor"]];
   return (
-    <Frame label={t("İddia denetimi")}>
+    <Frame label={t("Mizan · İddia denetimi")}>
       <div className="space-y-2.5">
         {s.map(([x, c, l]) => <p key={x} className="flex items-baseline justify-between gap-3 font-serif text-[13.5px] text-ink-800"><span className={cn("underline decoration-[3px] underline-offset-[6px]", c)}>{t(x)}</span><span className="shrink-0 font-sans text-[10.5px] font-semibold text-ink-500">{t(l)}</span></p>)}
       </div>
@@ -179,7 +181,7 @@ function QualityVisual() {
   const { t } = useT();
   const r = 42, c = 2 * Math.PI * r;
   return (
-    <Frame label={t("Teslim öncesi kontrol")}>
+    <Frame label={t("Mizan · Teslim öncesi kontrol")}>
       <div className="flex items-center gap-5">
         <div className="relative h-28 w-28 shrink-0">
           <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90"><circle cx="50" cy="50" r={r} className="fill-none stroke-ink-100" strokeWidth="10" /><circle cx="50" cy="50" r={r} className="fill-none stroke-emerald-500" strokeWidth="10" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * 0.14} /></svg>
@@ -209,26 +211,26 @@ const CATEGORIES: Category[] = [
   { id: "yazim", icon: PenLine, title: "Planlama ve yazım", lead: "Çalışma türünüze göre kurulan yol haritası ve her bölümün kendi asistanı.", Visual: WritingVisual, features: [
     { icon: Workflow, title: "Çalışma türüne özel, esnek yol haritası", text: "Tez, makale, derleme, araştırma önerisi, TÜBİTAK/BAP dahil 9 çalışma türü; bölüm ekleyin, çıkarın, sıralayın, şablon olarak saklayın. Her aşamanın kuralları ve asistanı ayrı." },
     { icon: ClipboardList, title: "Kurgu modülü", text: "Problem, amaç, araştırma soruları, yöntem ve bölüm bazında hedef uzunluk; asistan bütün bölümleri bu kurguya göre yazar." },
-    { icon: Bot, title: "Bölüm bölüm yazım asistanı", text: "Taslak, genişletme, yeniden yazma ve sentez; “şu başlıkları ekle” gibi serbest isteklerinizi de uygular. Her sürüm geçmişte saklanır." },
+    { icon: Bot, mark: "Zenit", title: "Bölüm bölüm yazım asistanı", text: "Taslak, genişletme, yeniden yazma ve sentez; “şu başlıkları ekle” gibi serbest isteklerinizi de uygular. Her sürüm geçmişte saklanır." },
     { icon: Link2, title: "Bölümler arası bütünlük", text: "Amaç, hipotezler ve araştırma soruları her bölüme taşınır; konudan sapan, hipotezi karşılamayan veya soruyu cevapsız bırakan bölüm işaretlenir ve tek tıkla uyumlanır." },
-    { icon: Sparkles, title: "Zenit: çalışmanızın bütününü gören yazım zekâsı", text: "Yazdığınız her cümlede önceki paragrafları, çalışmanın konusunu ve gidişatını, bölümün başlığını ve amacını bilir; asistan kütüphanenizdeki gerçek kaynaklarla yazar. Paragraf sonunda gri öneri belirir, Tab ile kabul edilir." },
+    { icon: Sparkles, mark: "Zenit", title: "Zenit: çalışmanızın bütününü gören yazım zekâsı", text: "Yazdığınız her cümlede önceki paragrafları, çalışmanın konusunu ve gidişatını, bölümün başlığını ve amacını bilir; asistan kütüphanenizdeki gerçek kaynaklarla yazar. Paragraf sonunda gri öneri belirir, Tab ile kabul edilir." },
         { icon: FileText, title: "Word’den içe aktarma", text: "Hazır tezinizi veya makalenizi yükleyin; bölümler, kaynakça ve atıflar otomatik bağlanır." },
     { icon: Users, title: "Ortak yazım", text: "Gerçek zamanlı ortak yazım: kim hangi paragrafta anında görünür, değişiklikler saniyeler içinde yansır ve farklı paragraflarda otomatik birleşir.", plan: "coauthors" },
   ] },
   { id: "literatur", icon: Library, title: "Kaynak ve literatür", lead: "16 akademik veri tabanında 250 milyondan fazla yayın; her kaynağın ne kadarının okunduğu açıkça yazar.", Visual: SourcesVisual, features: [
     { icon: Database, title: "16 veri tabanında eşzamanlı arama", text: "OpenAlex, Crossref, PubMed, arXiv, ERIC, DOAJ, HAL, PLOS ve diğerleri; sonuçlar birleştirilir, tekrarlar ayıklanır." },
     { icon: Globe2, title: "Türkiye kaynakları", text: "DergiPark dergileri dahil Türkçe ve Türkiye adresli yayınlar; TR Dizin ve YÖK Tez Merkezi’nde tek tıkla arama." },
-    { icon: FileSearch2, title: "Tam metin okuma", text: "Açık erişimli metinler otomatik okunur, PDF’iniz yüklenebilir; bölümler tanınır, alıntılar yayındaki sayfa numarasıyla gelir." },
-    { icon: MessagesSquare, title: "Rasat: kaynaklarınızın içine bakan analiz zekâsı", text: "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır." },
-    { icon: Layers, title: "Birlikte analiz et", text: "2–8 makaleyi karşılaştırın: uyuşan noktalar, çelişen bulgular ve araştırma boşlukları tek tabloda.", plan: "matrix" },
-    { icon: Network, title: "Literatür haritası ve matrisi", text: "Atıf, ortak kaynakça ve birlikte atıf ağı; konu kümeleri, zaman çizelgesi, konu haritası, eksik temel ve yeni çalışmalar; amaç–yöntem–bulgu matrisi.", plan: "litmap" },
+    { icon: FileSearch2, mark: "Rasat", title: "Tam metin okuma", text: "Açık erişimli metinler otomatik okunur, PDF’iniz yüklenebilir; bölümler tanınır, alıntılar yayındaki sayfa numarasıyla gelir." },
+    { icon: MessagesSquare, mark: "Rasat", title: "Rasat: kaynaklarınızın içine bakan analiz zekâsı", text: "PDF’ten metni seçip sayfa numarasıyla alıntılayın, makaleye soru sorun, birden çok makaleyi birlikte analiz edin, sentezi atıflı paragraf olarak metne ekleyin; her bilgi okunan metne ve sayfasına dayanır." },
+    { icon: Layers, mark: "Rasat", title: "Birlikte analiz et", text: "2–8 makaleyi karşılaştırın: uyuşan noktalar, çelişen bulgular ve araştırma boşlukları tek tabloda.", plan: "matrix" },
+    { icon: Network, mark: "Rasat", title: "Literatür haritası ve matrisi", text: "Atıf, ortak kaynakça ve birlikte atıf ağı; konu kümeleri, zaman çizelgesi, konu haritası, eksik temel ve yeni çalışmalar; amaç–yöntem–bulgu matrisi.", plan: "litmap" },
     { icon: Table2, title: "Konu bulma ve kütüphane aktarımı", text: "Yıllara göre yayın eğilimleri ve konu önerileri; Zotero, Mendeley, EndNote içe/dışa aktarma; Zotero ve ORCID eşitleme.", plan: "topics" },
   ] },
   { id: "dogruluk", icon: ShieldCheck, title: "Atıf ve doğruluk", lead: "Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. Academiana ikisini de denetler.", Visual: CitationVisual, features: [
     { icon: Quote, title: "Canlı atıflar, 10 atıf stili", text: "APA 7, ISNAD 2, MLA, Chicago, IEEE ve diğerleri; stil değiştiğinde metin ve kaynakça birlikte dönüşür." },
-    { icon: ScanSearch, title: "Mizan: yazdığınızı tartan denetim zekâsı", text: "Atıflı her cümle kaynağın okunan metniyle karşılaştırılır (destekliyor, kısmen, desteklemiyor, çelişiyor; birebir alıntı ve sayfa); kaynak gerektiren iddialar, kaynakların doğrulanabilirliği, akademik dil ve tutarlılık denetlenir; jüri gözüyle hakemin takılacağı noktalar puanlı raporda gösterilir." },
-    { icon: GitFork, title: "Kaynak sorununu kendisi çözer", text: "Kaynak gereken veya doğrulanamayan cümle için kütüphanenizde, gerekirse veri tabanlarında uygun kaynağı bulur; önce tam metni okunan kaynakları kullanır, çelişen bulguyu alıntısıyla uyarır." },
-    { icon: BookCheck, title: "Uydurma kaynak kontrolü", text: "Kaynakçadaki her satır gerçek kayıtlarla eşleştirilir; var olmayan kaynak ve hatalı DOI bulunur." },
+    { icon: ScanSearch, mark: "Mizan", title: "Mizan: yazdığınızı tartan denetim zekâsı", text: "Atıflı her cümle kaynağın okunan metniyle karşılaştırılır (destekliyor, kısmen, desteklemiyor, çelişiyor; birebir alıntı ve sayfa); kaynak gerektiren iddialar, kaynakların doğrulanabilirliği, akademik dil ve tutarlılık denetlenir; jüri gözüyle hakemin takılacağı noktalar puanlı raporda gösterilir." },
+    { icon: GitFork, mark: "Mizan", title: "Kaynak sorununu kendisi çözer", text: "Kaynak gereken veya doğrulanamayan cümle için kütüphanenizde, gerekirse veri tabanlarında uygun kaynağı bulur; önce tam metni okunan kaynakları kullanır, çelişen bulguyu alıntısıyla uyarır." },
+    { icon: BookCheck, mark: "Mizan", title: "Uydurma kaynak kontrolü", text: "Kaynakçadaki her satır gerçek kayıtlarla eşleştirilir; var olmayan kaynak ve hatalı DOI bulunur." },
     { icon: ShieldCheck, title: "Uydurma yok ilkesi", text: "Yapay zekâ yalnızca projenize eklenmiş kaynaklara atıf yapabilir; kaynak yoksa [KAYNAK GEREKLİ] diye işaretler." },
   ] },
   { id: "derleme", icon: GitFork, title: "Sistematik derleme", lead: "PRISMA 2020’ye uygun, uçtan uca sistematik derleme: protokolden yöntem metnine.", Visual: ReviewVisual, features: [
@@ -245,8 +247,8 @@ const CATEGORIES: Category[] = [
     { icon: TestTube2, title: "Ücretsiz araçlar", text: "Örneklem büyüklüğü, Cronbach alfa, kaynakça oluşturucu ve atıf dönüştürücü üyeliksiz kullanılabilir." },
   ] },
   { id: "teslim", icon: FileCheck2, title: "Kalite, dil ve teslim", lead: "Teslim etmeden önce eksikleri görün; çalışmanızı istediğiniz biçimde ve dilde çıkarın.", Visual: QualityVisual, features: [
-    { icon: FileCheck2, title: "Grafikli kalite raporu", text: "Puan sabit ve herkese açık bir formülle hesaplanır; rapor neyin doğru olduğunu ve neyin düzeltileceğini alan alan gösterir." },
-    { icon: Languages, title: "Dil denetimi ve akademik çeviri", text: "Türkçe, İngilizce ve Almanca arasında çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
+    { icon: FileCheck2, mark: "Mizan", title: "Grafikli kalite raporu", text: "Puan sabit ve herkese açık bir formülle hesaplanır; rapor neyin doğru olduğunu ve neyin düzeltileceğini alan alan gösterir." },
+    { icon: Languages, mark: "Mizan", title: "Dil denetimi ve akademik çeviri", text: "Türkçe, İngilizce ve Almanca arasında çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
     { icon: FileDown, title: "Kurallara uygun Word ve PDF", text: "Logo yeri, üniversite, fakülte, bölüm ve tarih içeren kapak; içindekiler, tablo ve şekil listeleri; yazım stilinin kenar boşluğu, punto ve başlık kurallarıyla." },
     { icon: Ruler, title: "Yazım kılavuzunuza göre biçim", text: "Üniversitenizin veya derginizin kılavuzunu yükleyin; kılavuzda yazan kenar boşlukları, yazı tipi, satır aralığı, başlık ve kapak kuralları kendiliğinden uygulanır.", plan: "guideline" },
     { icon: Code2, title: "LaTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır." },
@@ -277,6 +279,7 @@ function Architecture() {
         <Connector />
         <div className={cn(box, "border-brand-200 bg-gradient-to-b from-white to-brand-50/60")}>
           <p className="flex items-center gap-2 text-[13px] font-semibold text-ink-900"><Cloud className="h-4 w-4 text-brand-600" /> {t("Academiana çalışma alanı")}</p>
+          <p className="mt-1.5 flex gap-3 text-[15px]"><BrandMark name="Zenit" /><BrandMark name="Rasat" /><BrandMark name="Mizan" /></p>
           <div className="mt-2 grid grid-cols-2 gap-1.5 text-[11.5px] text-ink-600">{["Yol haritası ve kurgu", "Canlı atıf motoru", "İddia denetimi", "PRISMA modülü", "İstatistik motoru", "Kalite ve teslim"].map((x) => <span key={x} className="rounded-lg bg-white/80 px-2 py-1">{t(x)}</span>)}</div>
         </div>
         <Connector />
@@ -287,7 +290,7 @@ function Architecture() {
       </div>
       <div className="mx-auto my-2 h-6 w-px bg-ink-200" />
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className={cn(box, "border-ink-100")}><p className="flex items-center gap-2 text-[13px] font-semibold text-ink-900"><ScanSearch className="h-4 w-4 text-emerald-600" /> {t("Doğrulama katmanı")}</p><p className="mt-1 text-[12px] text-ink-500">{t("Künye kayıtla eşleşir, alıntı kaynak metninde birebir aranır; doğrulanamayan hiçbir şey kesin bilgi gibi gösterilmez.")}</p></div>
+        <div className={cn(box, "border-ink-100")}><p className="flex items-center gap-2 text-[13px] font-semibold text-ink-900"><ScanSearch className="h-4 w-4 text-emerald-600" /> {t("Doğrulama katmanı")} <BrandMark name="Mizan" className="ml-auto" /></p><p className="mt-1 text-[12px] text-ink-500">{t("Künye kayıtla eşleşir, alıntı kaynak metninde birebir aranır; doğrulanamayan hiçbir şey kesin bilgi gibi gösterilmez.")}</p></div>
         <div className={cn(box, "border-ink-100")}><p className="flex items-center gap-2 text-[13px] font-semibold text-ink-900"><Lock className="h-4 w-4 text-emerald-600" /> {t("Veri katmanı")}</p><p className="mt-1 text-[12px] text-ink-500">{t("AB’de (Frankfurt) veritabanı ve dosya deposu; satır düzeyinde erişim denetimi, şifreli bağlantı.")}</p></div>
       </div>
     </div>
@@ -314,7 +317,15 @@ export function FeatureShowcase() {
           {stats.map(([n, l]) => <div key={l} className="bg-white px-4 py-5 text-center"><p className="font-serif text-3xl font-semibold tracking-tight text-ink-950">{n}</p><p className="mt-1 text-[12px] text-ink-500">{t(l)}</p></div>)}
         </FadeIn>
 
-        <div className="mt-12 -mx-6 overflow-x-auto px-6 pb-1">
+        <SignatureTrio />
+
+        <FadeIn className="mx-auto mt-24 max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">{t("Tüm özellikler")}</p>
+          <h3 className="mt-3 font-serif text-3xl font-medium tracking-tight text-ink-950 sm:text-4xl">{t("Altı alanda, fikirden teslime")}</h3>
+          <p className="mt-3 text-[15.5px] text-ink-500"><WithMarks text={t("Her kartın köşesindeki ad, o özelliğin hangi zekâya bağlı olduğunu gösterir: Zenit, Rasat veya Mizan.")} /></p>
+        </FadeIn>
+
+        <div className="mt-10 -mx-6 overflow-x-auto px-6 pb-1">
           <div className="flex min-w-max gap-2" role="tablist">
             {CATEGORIES.map((c) => (
               <button key={c.id} role="tab" aria-selected={active === c.id} onClick={() => setActive(c.id)} className={cn("relative inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-[14px] font-medium transition", active === c.id ? "text-white" : "bg-white text-ink-600 ring-1 ring-ink-100 hover:text-ink-900")}>
@@ -334,8 +345,8 @@ export function FeatureShowcase() {
                 <ul className="mt-6 grid gap-3 sm:grid-cols-2">
                   {c.features.map((f) => (
                     <li key={f.title} className="group rounded-2xl border border-ink-100 bg-white p-4 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-soft">
-                      <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white"><f.icon className="h-4 w-4" /></span><PlanBadge plan={planOf(f.plan)} /></div>
-                      <p className="mt-3 text-[14.5px] font-semibold text-ink-900">{t(f.title)}</p>
+                      <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition group-hover:bg-brand-600 group-hover:text-white"><f.icon className="h-4 w-4" /></span><span className="flex items-center gap-2">{f.mark && <BrandMark name={f.mark} className="text-[12.5px]" />}<PlanBadge plan={planOf(f.plan)} /></span></div>
+                      <p className="mt-3 text-[14.5px] font-semibold text-ink-900"><WithMarks text={t(f.title)} /></p>
                       <p className="mt-1 text-[13px] leading-relaxed text-ink-500">{t(f.text)}</p>
                     </li>
                   ))}

@@ -1231,3 +1231,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 
 ## D210 — Marka söylemi düzeltmesi (15 Kasım 2026)
 - Kullanıcı düzeltmesi: Rasat’ın işi kanıtlamak değil, kaynakları okumak ve işlemek (PDF okuma, alıntılama, soru sorma, birlikte analiz, kaynaklardan paragraf); kanıt ve doğrulama Mizan’ın işidir. Söylem: “Zenit yazar, Rasat okur, Mizan tartar.” (D208/D209 metinleri buna göre düzeltildi.)
+
+## D211 — Özellikler: üç imza zekâ vitrini ve imza adı görünümü (16 Kasım 2026)
+- Kullanıcı isteği: Zenit, Rasat ve Mizan özellikler bölümünde tanıtılsın; adları indigo renkli, “buğu değil kalite” hissi veren parıltılı yazıyla, elit görünsün; ilgili her yerde adları geçsin.
+- `components/brand-mark.tsx`: `BrandMark` (keskin indigo geçişli yazı + arkasında yumuşak ışık halesi + ince alt çizgi, yavaş parlama; `globals.css` → `.sig-mark`, koyu zemin için `.sig-on-dark`, hareket azaltmada sabit) ve `WithMarks` (metindeki adları otomatik bu görünümle yazar; adlar çevrilmez).
+- `landing/signature-trio.tsx`: özellikler bölümünde istatistiklerin ardından “Zenit yazar, Rasat okur, Mizan tartar.” vitrini; her zekâ için açıklama, yetenek listesi ve görünürken kendiliğinden oynayan temsilî ekran (Zenit: bağlam + gri öneri + Tab; Rasat: PDF’ten seçim → sayfalı alıntı; Mizan: iddiaları tartma + puan). Ardından “Tüm özellikler” başlığıyla altı alan sekmesi; kartlarda ilgili zekânın adı rozet olarak.
+- Adların geçtiği yerler: özellik kartları ve görsel başlıkları, mimari şema, “Nasıl çalışır” adımları, güvence kartları, Yöntem sayfası başlıkları (TR/EN/DE), tüm pencere başlıkları (Modal `WithMarks`), asistan başlığı, kalite kontrol sayfası.

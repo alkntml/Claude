@@ -204,3 +204,18 @@ table.apa tbody tr:last-child td { border-bottom: 1.5px solid rgb(var(--ink-800)
 .faq-list details[open] summary > i { transform: rotate(225deg); margin-top: 0.6rem; }
 .faq-list details > div { @apply px-5 pb-5 text-[15px] leading-relaxed text-ink-600; }
 .faq-list details > div p + p { @apply mt-2; }
+
+/* D211: Zenit · Rasat · Mizan imza adı — keskin indigo yazı + arkasında yumuşak ışık halesi (buğu değil, parıltı) */
+.sig-mark { position: relative; display: inline-block; isolation: isolate; font-weight: 650; letter-spacing: 0.005em; color: transparent;
+  background-image: linear-gradient(100deg, rgb(55 48 163) 0%, rgb(79 70 229) 30%, rgb(129 140 248) 50%, rgb(79 70 229) 70%, rgb(55 48 163) 100%);
+  background-size: 220% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text;
+  animation: sig-sheen 9s ease-in-out infinite; }
+.sig-mark::before { content: attr(data-text); position: absolute; inset: 0; z-index: -1; color: rgb(99 102 241); filter: blur(0.32em); opacity: 0.38; pointer-events: none; }
+.sig-mark::after { content: ""; position: absolute; left: 4%; right: 4%; bottom: -0.08em; height: 1px; z-index: -1;
+  background: linear-gradient(90deg, rgb(99 102 241 / 0), rgb(99 102 241 / 0.55), rgb(99 102 241 / 0)); }
+.dark .sig-mark { background-image: linear-gradient(100deg, rgb(165 180 252) 0%, rgb(199 210 254) 30%, rgb(238 242 255) 50%, rgb(199 210 254) 70%, rgb(165 180 252) 100%); }
+.dark .sig-mark::before { color: rgb(129 140 248); opacity: 0.55; }
+@keyframes sig-sheen { 0%, 100% { background-position: 100% 0; } 50% { background-position: 0% 0; } }
+@media (prefers-reduced-motion: reduce) { .sig-mark { animation: none; background-position: 50% 0; } }
+.sig-on-dark { background-image: linear-gradient(100deg, rgb(165 180 252) 0%, rgb(199 210 254) 30%, rgb(238 242 255) 50%, rgb(199 210 254) 70%, rgb(165 180 252) 100%); }
+.sig-on-dark::before { color: rgb(129 140 248); opacity: 0.55; }

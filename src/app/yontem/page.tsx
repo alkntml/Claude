@@ -25,13 +25,13 @@ export default async function MethodPage() {
         <p>Die Suche läuft gleichzeitig in wissenschaftlichen Datenbanken: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (sowie NASA ADS, Springer Nature und IEEE Xplore, sofern deren Schlüssel hinterlegt sind) und türkische Quellen (DergiPark, TR Dizin, YÖK-Thesenzentrum). Doppelte Datensätze werden zusammengeführt. Zusammen enthalten diese Datenbanken mehr als 250 Millionen verschiedene Publikationen; derselbe Artikel ist oft in mehreren verzeichnet (etwa in Crossref, OpenAlex und OpenAIRE), die Zahl zählt jede Publikation daher nur einmal. Die meisten Datensätze enthalten bibliografische Angaben, ein kleinerer Teil ein Abstract und ein noch kleinerer Teil einen Open-Access-Volltext. Die KI schreibt nie selbst eine Literaturangabe: Sie kann nur Quellen zitieren, die in der Quellenliste Ihres Projekts stehen.</p>
         <h2>2. Gibt es die Quelle? (bibliografische Verifizierung)</h2>
         <p>DOIs werden bei Crossref und DataCite geprüft, PMIDs bei Europe PMC und arXiv-Kennungen bei arXiv. Eine verifizierte Quelle wird als „Verifiziert“ markiert. Das belegt nur, dass die Publikation existiert und ihre bibliografischen Angaben stimmen.</p>
-        <h2>3. Wie viel der Quelle wurde gelesen? (Zugriffsstufe)</h2>
+        <h2>3. Wie viel der Quelle wurde gelesen? (Zugriffsstufe · Rasat)</h2>
         <ul>
           <li><b>Nur bibliografische Angaben:</b> Bekannt sind nur die bibliografischen Daten; der Inhalt wurde nicht gelesen.</li>
           <li><b>Abstract gelesen:</b> Das Abstract liegt vor.</li>
           <li><b>Volltext gelesen:</b> Ein Open-Access-Volltext (oder ein von Ihnen hochgeladenes PDF) wurde auf dem Server tatsächlich gelesen und in Passagen mit Seitenzahlen zerlegt. Diese Kennzeichnung vergibt ausschließlich der Server, und erst nachdem der Text wirklich gelesen wurde.</li>
         </ul>
-        <h2>4. Stützt die Quelle den Satz? (Aussagenprüfung)</h2>
+        <h2>4. Stützt die Quelle den Satz? (Mizan · Aussagenprüfung)</h2>
         <p>Dass eine Quelle existiert, heißt nicht, dass sie Ihren Satz stützt. Die <b>Aussagenprüfung</b> zerlegt einen Abschnitt in Sätze und vergleicht jeden zitierten Satz mit dem Text, der aus der zitierten Quelle gelesen wurde:</p>
         <ul>
           <li>Bei Volltexten werden die für den Satz relevantesten Passagen ausgewählt (in der Sprache des Satzes und anhand englischer Schlüsselwörter); bei Abstracts wird das Abstract verwendet.</li>
@@ -42,14 +42,14 @@ export default async function MethodPage() {
           <li>Unveränderte Satz-Quelle-Paare werden nicht erneut geprüft; eine wiederholte Prüfung verursacht also keine erneuten Kosten.</li>
         </ul>
         <p>Die Prüfung ist eine KI-Einschätzung, die Ihnen hilft; das letzte Urteil liegt bei Ihnen. Sie stützt sich nur auf Gelesenes: Liegt nur das Abstract vor, lassen sich Details, die nur im Volltext stehen, nicht bestätigen.</p>
-        <h2>5. Regeln, denen der Schreibassistent folgt</h2>
+        <h2>5. Regeln, denen der Schreibassistent (Zenit) folgt</h2>
         <ul>
           <li>Er zitiert nur Quellen aus Ihrer Liste und nennt keine Werke, die nicht in der Liste stehen.</li>
           <li>Wo eine Aussage eine Quelle braucht, die nicht vorhanden ist, schreibt er „[QUELLE ERFORDERLICH]“; wo Ihre Daten nötig sind, „[DATEN EINZUTRAGEN]“. Zahlen erfindet er nicht.</li>
           <li>Statistiken erzeugt nicht die KI: Analysen werden auf dem Server aus Ihren eigenen Daten berechnet.</li>
           <li>Aufgaben werden an das jeweils passende Modell (klein, mittel oder groß) geleitet; das Produkt hängt nicht von einem einzigen Modell oder Anbieter ab.</li>
         </ul>
-        <h2>6. Wie die Qualitätsbewertung berechnet wird</h2>
+        <h2>6. Wie die Qualitätsbewertung (Mizan) berechnet wird</h2>
         <p>Die Bewertung beginnt bei 100. Jeder regelbasierte Befund senkt sie je nach Schweregrad: kritisch {W.error}, Warnung {W.warning}, Hinweis {W.info} Punkte (manche geringfügigen Befunde wie doppelte Leerzeichen zählen mit geringerem Gewicht). Befunde der KI-Prüfungskommission werden mit dem Etikett „AI“ angezeigt, verändern die Bewertung aber nicht – derselbe Text erhält also immer dieselbe Bewertung. Gemessen werden die Konsistenz von Zitaten und Literaturverzeichnis, die Verifizierbarkeit der Quellen, fehlende Abschnitte, Regeln der Wissenschaftssprache und Wiederholungen. Nicht gemessen werden wissenschaftlicher Wert, Originalität oder Plagiat; die Bewertung ersetzt keine Prüfungskommission und kein Gutachten.</p>
         <h2>7. „Was sagt die Forschung?“</h2>
         <p>Die Antwort wird ausschließlich aus den Abstracts der gefundenen Artikel (höchstens 14) zusammengestellt; jeder Satz ist mit einem nummerierten Artikel verknüpft, Verweise auf Nummern, die nicht in der Liste stehen, werden entfernt. Die Konsensanzeige erscheint nur bei Ja/Nein-Fragen mit mindestens drei relevanten Studien. Sie ist keine Literaturübersicht.</p>
@@ -76,13 +76,13 @@ export default async function MethodPage() {
         <p>Searches run at the same time in academic databases: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (and NASA ADS, Springer Nature and IEEE Xplore when their keys are configured) and Turkish sources (DergiPark, TR Dizin, YÖK Thesis Centre). Duplicate records are merged. Together these databases hold more than 250 million distinct publications; the same paper is often listed in several of them (for example in Crossref, OpenAlex and OpenAIRE), so the figure counts each publication once. Most records contain bibliographic data; a smaller share has an abstract and an even smaller share an open-access full text. The AI never writes a reference itself: it can only cite sources that are in your project’s source list.</p>
         <h2>2. Does the source exist? (bibliographic verification)</h2>
         <p>DOIs are checked against Crossref and DataCite, PMIDs against Europe PMC and arXiv identifiers against arXiv. A verified source is marked “Verified”. This only proves that the publication exists and its bibliographic data is correct.</p>
-        <h2>3. How much of the source was read? (access level)</h2>
+        <h2>3. How much of the source was read? (access level · Rasat)</h2>
         <ul>
           <li><b>Citation only:</b> only the bibliographic data is known; the content has not been read.</li>
           <li><b>Abstract read:</b> the abstract is available.</li>
           <li><b>Full text read:</b> an open-access full text (or a PDF you uploaded) was actually read on the server and split into page-numbered passages. This label is assigned only by the server, only after the text was really read.</li>
         </ul>
-        <h2>4. Does the source support the sentence? (claim audit)</h2>
+        <h2>4. Does the source support the sentence? (Mizan · claim audit)</h2>
         <p>A source existing does not mean it supports your sentence. The <b>claim audit</b> splits a section into sentences and compares each cited sentence with the text that was read from the cited source:</p>
         <ul>
           <li>For full texts, the passages most relevant to the sentence are selected (in the sentence’s language and in English); for abstracts, the abstract is used.</li>
@@ -93,14 +93,14 @@ export default async function MethodPage() {
           <li>Unchanged sentence–source pairs are not re-checked, so repeating the audit does not repeat the cost.</li>
         </ul>
         <p>The audit is an AI assessment that helps you; the final judgement is yours. It works only on what was read: if only the abstract is available, details found only in the full text cannot be confirmed.</p>
-        <h2>5. Rules the writing assistant follows</h2>
+        <h2>5. Rules the writing assistant (Zenit) follows</h2>
         <ul>
           <li>It cites only sources in your list; it does not mention works that are not in the list.</li>
           <li>Where a claim needs a source that is not available it writes “[CITATION NEEDED]”; where your data is needed it writes “[DATA TO BE ENTERED]”. It does not invent numbers.</li>
           <li>Statistics are not produced by the AI: analyses are calculated on the server from your own data.</li>
           <li>Tasks are routed to the model that suits them (small, medium or large); the product does not depend on a single model or provider.</li>
         </ul>
-        <h2>6. How the quality score is calculated</h2>
+        <h2>6. How the quality score (Mizan) is calculated</h2>
         <p>The score starts at 100. Each rule-based finding lowers it by its severity: critical {W.error}, warning {W.warning}, information {W.info} points (some minor findings, such as double spaces, count with a lower weight). Findings of the AI jury are shown with an “AI” label but do not change the score, so the same text always gets the same score. The score measures citation–reference consistency, source verifiability, missing sections, academic language rules and repetition. It does not measure scientific merit, originality or plagiarism, and it does not replace a jury or reviewer.</p>
         <h2>7. “What does research say?”</h2>
         <p>The answer is compiled only from the abstracts of the papers found (at most 14); each sentence is linked to a numbered paper and references to papers that do not exist in the list are removed. The consensus meter appears only for yes/no questions with at least three relevant studies. It is not a literature review.</p>
@@ -126,13 +126,13 @@ export default async function MethodPage() {
       <p>Aramalar akademik veri tabanlarında eşzamanlı yapılır: OpenAlex, Crossref, Europe PMC (PubMed), arXiv, DOAJ, OpenAIRE, Google Books, Unpaywall, ERIC, DBLP, DataCite, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP (anahtarları tanımlıysa NASA ADS, Springer Nature ve IEEE Xplore) ve Türkiye kaynakları (DergiPark, TR Dizin, YÖK Tez Merkezi). Yinelenen kayıtlar birleştirilir. Bu 16 veri tabanında 250 milyondan fazla farklı yayın bulunur; aynı makale çoğu zaman birkaç veri tabanında birden kayıtlıdır (ör. Crossref, OpenAlex ve OpenAIRE), bu sayı her yayını bir kez sayar. Kayıtların büyük çoğunluğunda künye, daha azında özet, daha da azında açık erişimli tam metin bulunur. Yapay zekâ kendi başına künye yazmaz; yalnızca çalışmanızın kaynak listesindeki kaynaklara atıf yapabilir.</p>
       <h2>2. Kaynak gerçekten var mı? (künye doğrulaması)</h2>
       <p>DOI numaraları Crossref ve DataCite’ta, PMID’ler Europe PMC’de, arXiv kimlikleri arXiv’de kontrol edilir. Doğrulanan kaynak “Doğrulandı” olarak işaretlenir. Bu yalnızca yayının var olduğunu ve künyesinin doğru olduğunu gösterir.</p>
-      <h2>3. Kaynağın ne kadarı okundu? (erişim seviyesi)</h2>
+      <h2>3. Kaynağın ne kadarı okundu? (erişim seviyesi · Rasat)</h2>
       <ul>
         <li><b>Yalnızca künye:</b> yalnızca bibliyografik bilgi biliniyor; içerik okunmadı.</li>
         <li><b>Özet okundu:</b> çalışmanın özeti mevcut.</li>
         <li><b>Tam metin okundu:</b> açık erişimli tam metin (veya sizin yüklediğiniz PDF) sunucuda gerçekten okundu ve sayfa numaralı parçalara bölündü. Bu etiketi yalnızca sunucu, metin gerçekten okunduktan sonra verir.</li>
       </ul>
-      <h2>4. Kaynak cümleyi destekliyor mu? (iddia denetimi)</h2>
+      <h2>4. Kaynak cümleyi destekliyor mu? (Mizan · iddia denetimi)</h2>
       <p>Bir kaynağın var olması, cümlenizi desteklediği anlamına gelmez. <b>İddia denetimi</b> bölümü cümlelere ayırır ve atıflı her cümleyi, atıf yaptığı kaynaktan okunan metinle karşılaştırır:</p>
       <ul>
         <li>Tam metinde cümleyle en ilgili pasajlar (cümlenin dilinde ve İngilizce anahtar kelimelerle) seçilir; tam metin yoksa özet kullanılır.</li>
@@ -143,14 +143,14 @@ export default async function MethodPage() {
         <li>Değişmeyen cümle–kaynak çiftleri yeniden denetlenmez; denetimi tekrarlamak maliyeti tekrarlamaz.</li>
       </ul>
       <p>Denetim size yardımcı olan bir yapay zekâ değerlendirmesidir; son karar sizindir. Yalnızca okunan metne dayanır: yalnızca özet varsa, sadece tam metinde geçen ayrıntılar doğrulanamaz.</p>
-      <h2>5. Yazım asistanının uyduğu kurallar</h2>
+      <h2>5. Yazım asistanının (Zenit) uyduğu kurallar</h2>
       <ul>
         <li>Yalnızca listenizdeki kaynaklara atıf yapar; listede olmayan eser adı anmaz.</li>
         <li>Kaynak gereken ama kaynağı olmayan yerde “[KAYNAK GEREKLİ]”, sizin veriniz gereken yerde “[VERİ GİRİLECEK]” yazar; sayı uydurmaz.</li>
         <li>İstatistikleri yapay zekâ üretmez: analizler sizin verinizden sunucuda hesaplanır.</li>
         <li>Her iş, ona uygun modele (küçük, orta, büyük) yönlendirilir; ürün tek bir modele veya sağlayıcıya bağımlı değildir.</li>
       </ul>
-      <h2>6. Kalite puanı nasıl hesaplanır?</h2>
+      <h2>6. Kalite puanı (Mizan) nasıl hesaplanır?</h2>
       <p>Puan 100’den başlar. Kural tabanlı her bulgu önemine göre puan düşürür: Kritik {W.error}, Uyarı {W.warning}, Bilgi {W.info} puan (çift boşluk gibi küçük bulgular daha düşük ağırlıkla sayılır). Yapay zekâ jürisinin bulguları “AI” etiketiyle gösterilir ama puanı değiştirmez; böylece aynı metin her seferinde aynı puanı alır. Puan; atıf–kaynakça tutarlılığını, kaynakların doğrulanabilirliğini, eksik bölümleri, akademik dil kurallarını ve tekrarları ölçer. Bilimsel değeri, özgünlüğü veya intihali ölçmez; jüri ya da hakem değerlendirmesinin yerine geçmez.</p>
       <h2>7. “Araştırmalar ne diyor?”</h2>
       <p>Cevap yalnızca bulunan makalelerin (en fazla 14) özetlerinden derlenir; her cümle numaralı bir makaleye bağlanır, listede olmayan numaraya yapılan göndermeler silinir. Uzlaşı göstergesi yalnızca evet/hayır sorularında ve en az üç ilgili çalışma varsa görünür. Bir literatür taraması değildir.</p>

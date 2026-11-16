@@ -1,4 +1,5 @@
 "use client";
+import { WithMarks } from "@/components/brand-mark";
 import { AlertTriangle, ArrowRight, CheckCircle2, CircleDashed, FileCheck2, GitFork, ListChecks, Network, ScanSearch } from "lucide-react";
 import Link from "@/components/l-link";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -21,7 +22,7 @@ export function AssuranceSection() {
 
         <div className="grid gap-5 md:grid-cols-2">
           <FadeIn>
-            <Card icon={ScanSearch} title={t("İddia denetimi")} text={t("Atıf verdiğiniz her cümle, kaynağın kendi metniyle karşılaştırılır. Sonuç cümlenin üzerinde renkle görünür; kaynaktaki pasaj birebir gösterilir, tek tıkla düzeltme önerisi alırsınız.")}>
+            <Card icon={ScanSearch} title={t("Mizan · İddia denetimi")} text={t("Atıf verdiğiniz her cümle, kaynağın kendi metniyle karşılaştırılır. Sonuç cümlenin üzerinde renkle görünür; kaynaktaki pasaj birebir gösterilir, tek tıkla düzeltme önerisi alırsınız.")}>
               <p className="font-serif text-[14px] leading-7 text-ink-700">
                 <Mark tone="good">{t("Öz düzenleme, uzaktan eğitimde başarının güçlü bir yordayıcısıdır.")}</Mark>{" "}
                 <Mark tone="partial">{t("Bu etki tüm öğrenciler için geçerlidir.")}</Mark>{" "}
@@ -38,7 +39,7 @@ export function AssuranceSection() {
           </FadeIn>
 
           <FadeIn delay={0.06}>
-            <Card icon={ListChecks} title={t("Kalite puanı ve teslim öncesi kontrol listesi")} text={t("Eksik künye, kullanılmayan kaynak, atıfsız iddia, tablo ve şekil başlıkları, özet ve kaynakça tek listede. Puan sabit bir formülle hesaplanır; yapay zekânın görüşü puanı değiştirmez.")}>
+            <Card icon={ListChecks} title={t("Mizan · Kalite puanı ve teslim öncesi kontrol listesi")} text={t("Eksik künye, kullanılmayan kaynak, atıfsız iddia, tablo ve şekil başlıkları, özet ve kaynakça tek listede. Puan sabit bir formülle hesaplanır; yapay zekânın görüşü puanı değiştirmez.")}>
               <ul className="space-y-1.5 text-[13px]">
                 <Check ok l={t("Her bölüm yazıldı")} />
                 <Check ok l={t("Kaynakçadaki her kaynağa metinde atıf var")} />
@@ -92,7 +93,7 @@ function Card({ icon: Icon, title, text, badge, children }: { icon: typeof ScanS
     <div className="flex h-full flex-col rounded-3xl border border-ink-100 bg-white p-7 shadow-soft">
       <div className="flex items-center gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-ink-900 text-white"><Icon className="h-5 w-5" /></span>
-        <h3 className="text-lg font-semibold text-ink-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-ink-900"><WithMarks text={title} /></h3>
         {badge && <span className="ml-auto shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11.5px] font-semibold text-brand-700">{badge}</span>}
       </div>
       <p className="mt-3 text-[14.5px] leading-relaxed text-ink-500">{text}</p>

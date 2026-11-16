@@ -1,4 +1,5 @@
 "use client";
+import { BrandMark, type Signature } from "@/components/brand-mark";
 import { useSignedIn } from "@/components/use-signed-in";
 import { useT } from "@/i18n/client";
 import { BookCheck, Brain, CheckCircle2, Users, FileDown, Layers3, Library, ListChecks, Lock, ShieldCheck, Sparkles, Workflow } from "lucide-react";
@@ -14,10 +15,10 @@ export function HowItWorks() {
   const { t } = useT();
   const steps = [
     { icon: Layers3, title: "Çalışma türünü seçin", text: "Tez, makale, derleme veya araştırma önerisi seçin. Platform akademik standartlara uygun bir yol haritası çıkarır." },
-    { icon: Brain, title: "Konunuzu tanımlayın", text: "Asistan konunuzu analiz eder, kavramları ayrıştırır ve sizinle birlikte bir çalışma planı yapar." },
+    { icon: Brain, mark: "Zenit" as Signature, title: "Konunuzu tanımlayın", text: "Asistan konunuzu analiz eder, kavramları ayrıştırır ve sizinle birlikte bir çalışma planı yapar." },
     { icon: Library, title: "Literatürü tarayın", text: "Gerçek veri tabanlarında arama yapılır. Hangi kaynakları kütüphanenize ekleyeceğinize siz karar verirsiniz." },
-    { icon: Workflow, title: "Bölümleri geliştirin", text: "Her bölümde yazın, yeniden yazdırın, genişletin. Her iddia bir kaynağa bağlanır, her sürüm geçmişte saklanır." },
-    { icon: ListChecks, title: "Teslimden önce denetleyin", text: "Atıflı her cümle kaynağıyla karşılaştırılır; eksik künye, atıf tutarlılığı ve bölümler arası uyum kontrol edilir. Teslim öncesi kontrol listesi hiçbir şeyin atlanmamasını sağlar." },
+    { icon: Workflow, mark: "Zenit" as Signature, title: "Bölümleri geliştirin", text: "Her bölümde yazın, yeniden yazdırın, genişletin. Her iddia bir kaynağa bağlanır, her sürüm geçmişte saklanır." },
+    { icon: ListChecks, mark: "Mizan" as Signature, title: "Teslimden önce denetleyin", text: "Atıflı her cümle kaynağıyla karşılaştırılır; eksik künye, atıf tutarlılığı ve bölümler arası uyum kontrol edilir. Teslim öncesi kontrol listesi hiçbir şeyin atlanmamasını sağlar." },
     { icon: FileDown, title: "Dışa aktarın", text: "Word, PDF, Markdown veya TXT olarak indirin. İçindekiler, numaralandırma ve kaynakça hazır gelir." },
   ];
   return (
@@ -35,6 +36,7 @@ export function HowItWorks() {
               <div className="flex items-center gap-3">
                 <span className="font-serif text-3xl font-semibold text-brand-300">{String(i + 1).padStart(2, "0")}</span>
                 <s.icon className="h-5 w-5 text-white/70" />
+                {"mark" in s && s.mark && <BrandMark name={s.mark} className="sig-on-dark ml-auto text-[15px]" />}
               </div>
               <h3 className="mt-4 text-lg font-semibold">{t(s.title)}</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-white/60">{t(s.text)}</p>

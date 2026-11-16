@@ -1291,3 +1291,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - `/zenit`, `/rasat`, `/mizan` (+ `/en/…`, `/de/…`), içerik `lib/intelligence-pages.ts`, görünüm `components/intelligence-page.tsx`: tanım, dört yetenek, üç adım, kullanım/şeffaflık bölümleri, 3 SSS, kayıt düğmesi, diğer iki zekâya bağlantı. Yalnızca ürünün gerçekte yaptığı yazılır.
 - SEO: `PUBLIC_PATHS`, `PAGE_SEO` (başlık ≤60, açıklama ≤160, anahtar kelimeler TR/EN/DE), site haritası (öncelik 0,8), canonical + hreflang, `index, follow`, JSON-LD: WebPage + BreadcrumbList + FAQPage (`faqLd`).
 - Site menüsü, altbilgi ve ana sayfada bağlantı verilmez (kullanıcı kararı); sayfalar site haritasıyla keşfedilir. Search Console’dan dizine ekleme istenmesi önerilir.
+
+## D221 — Mizan doğruluk testi 200 iddiaya çıktı; kesinlik/duyarlılık/F1 (16 Kasım 2026)
+- Kullanıcının test programı (5.3): 200 iddialık set, 50 destekleyen / 50 kısmen / 50 desteklemeyen / 50 çelişen.
+- Set: 20 gerçek açık erişimli makale (Europe PMC tam metni, ürünün parçalama motoruyla); yeni 14 makalenin iddiaları yalnızca özette görünen bilgilerden elle yazıldı. “Desteklemiyor” iddiaları metinde hiç geçmeyen bilgiler, “kısmen” sayı/kapsam/nedensellik bozulmaları, “çelişiyor” yön ya da olgu tersine çevirmeleri.
+- Puanlama (`mizan-score.ts`): her sınıf için kesinlik, duyarlılık, F1, yanlış pozitif ve yanlış negatif kimlikleri; makro F1; “sorun var” ikili sınıflaması için P/R/F1.
+- Ölçüm 4 parçada yapılır (sunucu 300 sn sınırı): yönetim kartı parçaları sırayla çağırır, her parça öncekine eklenir; sıra bozulursa 409.

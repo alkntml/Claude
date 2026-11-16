@@ -124,7 +124,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   latex: {
     q: "Kann ich meine Arbeit nach LaTeX oder Overleaf exportieren?",
-    a: "Ja. Exportieren → **LaTeX (.tex + .bib, ZIP)** lädt Ihre Arbeit als main.tex, references.bib und Abbildungen herunter; Ihre Zitate werden zu biblatex-Befehlen (\\parencite, \\textcite), und Seitenzahlen bleiben erhalten. **In Overleaf öffnen** öffnet dieselben Dateien als Overleaf-Projekt in einem neuen Tab. APA, IEEE, MLA, Vancouver und Autor-Jahr-Stile nutzen ihre biblatex-Entsprechungen; bei Stilen ohne Entsprechung wie ISNAD wird der nächstliegende Stil gewählt und in der Datei vermerkt. Kompiliert wird mit pdfLaTeX + Biber (Overleaf-Standard).",
+    a: "Ja. Exportieren → **LaTeX (.tex + .bib, ZIP)** lädt Ihre Arbeit als main.tex, references.bib und Abbildungen herunter; Ihre Zitate werden zu biblatex-Befehlen (\\parencite, \\textcite), und Seitenzahlen bleiben erhalten. **In Overleaf öffnen** öffnet dieselben Dateien als Overleaf-Projekt in einem neuen Tab. APA, IEEE, MLA, Vancouver und Autor-Jahr-Stile nutzen ihre biblatex-Entsprechungen; bei Stilen ohne Entsprechung wie ISNAD wird der nächstliegende Stil gewählt und in der Datei vermerkt. Kompiliert wird mit pdfLaTeX + Biber (Overleaf-Standard). Wenn Sie nur das Literaturverzeichnis brauchen, nutzen Sie Exportieren → **BibTeX (.bib)**.",
   },
   harita: {
     q: "Wozu dient die Literaturkarte?",
@@ -148,7 +148,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   formatlar: {
     q: "In welchen Formaten kann ich meine Arbeit herunterladen?",
-    a: "Word (.docx), PDF, Markdown und reiner Text – mit Titelblatt, Inhaltsverzeichnis, Überschriftennummerierung, Fußnoten und Literaturverzeichnis. Außerdem können Sie eine Präsentation für die Verteidigung (.pptx), Ihr Literaturverzeichnis (BibTeX/RIS) und die Literaturmatrix (CSV für Excel) herunterladen. Einige Formate hängen von Ihrem Tarif ab; siehe Seite „Preise“.",
+    a: "Word (.docx), PDF, Markdown und reiner Text – mit Titelblatt, Inhaltsverzeichnis, Überschriftennummerierung, Fußnoten und Literaturverzeichnis. Außerdem können Sie eine Präsentation für die Verteidigung (.pptx), Ihr Literaturverzeichnis (BibTeX/RIS) und die Literaturmatrix (CSV für Excel) herunterladen. Einige Formate hängen von Ihrem Tarif ab; siehe Seite „Preise“. Neben Word und PDF gibt es **LaTeX (.tex + .bib, ZIP)** mit Öffnen in Overleaf; Ihr Literaturverzeichnis können Sie zusätzlich als **BibTeX (.bib)** herunterladen (Exportieren → BibTeX).",
   },
   bulgular: {
     q: "Kann es den Ergebnisteil schreiben? Macht es Statistik?",

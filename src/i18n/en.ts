@@ -4945,4 +4945,9 @@ export const EN: Record<string, string> = {
   "Mizan iddia denetimi, Word/PDF/LaTeX": "Mizan claim audit, Word/PDF/LaTeX",
   "Zenit yazar, Rasat okur, Mizan tartar: üçünü de ücretsiz hesabınızla deneyin.": "Zenit writes, Rasat reads, Mizan weighs: try all three with your free account.",
   "Örnek çıktıları gör": "See sample outputs",
+  "BibTeX (.bib): kaynakça": "BibTeX (.bib): reference list",
+  "LaTeX, BibTeX ve Overleaf": "LaTeX, BibTeX and Overleaf",
+  "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır. Kaynakçanız ayrıca BibTeX (.bib) olarak da indirilir.": "Your work is exported to LaTeX as .tex and .bib files; citations become biblatex commands and open in Overleaf with one click. Your reference list can also be downloaded as BibTeX (.bib).",
+  "BibTeX (.bib)": "BibTeX (.bib)",
+  "Mizan iddia denetimi, Word/PDF/LaTeX/BibTeX": "Mizan claim audit, Word/PDF/LaTeX/BibTeX",
 };

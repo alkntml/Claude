@@ -1272,3 +1272,7 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 ## D216 — Sistem durumu yalnızca yönetim panelinde (16 Kasım 2026)
 - Kullanıcı kararı: sistem durumu herkese gösterilmez; yalnızca yöneticiye. `/durum` sayfası ve `/api/public/status` kaldırıldı (`/durum` → ana sayfaya yönlenir); yerine Yönetim → “Sistem durumu” sekmesi ve `/api/admin/status` (`requireAdmin`). Altbilgi, site haritası, SEO, komut arama, Güven merkezi ve Yenilikler’deki bağlantı/ifadeler kaldırıldı.
 - Crossref denetimi `works?rows=0` (bütün kayıtları sayan, yavaş ve zaman aşımına düşen sorgu; canlıda “Sorun var” görünüyordu) yerine tek DOI sorgusu ve ürünün kendi User-Agent’ı ile yapılır. Yapay zekâ satırında Anthropic’in bildirdiği aksaklık açıklaması gösterilir.
+
+## D217 — Dışa aktarmada BibTeX ve sitede LaTeX/BibTeX (16 Kasım 2026)
+- Dışa aktar menüsü: LaTeX (.tex + .bib, ZIP) ve Overleaf’in yanında “BibTeX (.bib): kaynakça” (`/api/projects/[id]/sources/export?format=bib`, metinde atıf varsa yalnızca atıf yapılanlar, yoksa bütün kaynaklar; Basic ve üstü, `bib_io`).
+- Sitede: özellik kartı “LaTeX, BibTeX ve Overleaf”, teslim görseli ve açılış adımlarında BibTeX; SSS “Hangi biçimlerde indirebilirim?” ve “LaTeX/Overleaf” cevapları, rehber, yardım asistanı ve Yenilikler (TR/EN/DE).

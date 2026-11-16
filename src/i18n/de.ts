@@ -4937,4 +4937,9 @@ export const DE: Dict = {
   "Mizan iddia denetimi, Word/PDF/LaTeX": "Mizan-Aussagenprüfung, Word/PDF/LaTeX",
   "Zenit yazar, Rasat okur, Mizan tartar: üçünü de ücretsiz hesabınızla deneyin.": "Zenit schreibt, Rasat liest, Mizan wägt ab: Testen Sie alle drei mit Ihrem kostenlosen Konto.",
   "Örnek çıktıları gör": "Beispielausgaben ansehen",
+  "BibTeX (.bib): kaynakça": "BibTeX (.bib): Literaturverzeichnis",
+  "LaTeX, BibTeX ve Overleaf": "LaTeX, BibTeX und Overleaf",
+  "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır. Kaynakçanız ayrıca BibTeX (.bib) olarak da indirilir.": "Ihre Arbeit wird als .tex- und .bib-Dateien nach LaTeX exportiert; Belege werden zu biblatex-Befehlen und öffnen sich mit einem Klick in Overleaf. Ihr Literaturverzeichnis lässt sich auch als BibTeX (.bib) herunterladen.",
+  "BibTeX (.bib)": "BibTeX (.bib)",
+  "Mizan iddia denetimi, Word/PDF/LaTeX/BibTeX": "Mizan-Aussagenprüfung, Word/PDF/LaTeX/BibTeX",
 };

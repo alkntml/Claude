@@ -62,7 +62,7 @@ export function Hero({ signedIn: initialSignedIn }: { signedIn: boolean }) {
         </div>
         {/* Sürecin tamamı: baştan sona adımlar */}
         <ol className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-ink-200 bg-ink-200 text-left sm:grid-cols-3 lg:grid-cols-6">
-          {[["Konu ve başlık", "Konu bulma, başlık önerisi"], ["Kurgu", "Problem, amaç, bölüm planı"], ["Kaynaklar", "16 veri tabanında doğrulanmış tarama · Rasat"], ["Yazım", "Bölüm bölüm, atıflı taslak · Zenit"], ["Analiz", "İstatistik, grafik, anket"], ["Denetim ve teslim", "Mizan iddia denetimi, Word/PDF/LaTeX"]].map(([a, b], i) => (
+          {[["Konu ve başlık", "Konu bulma, başlık önerisi"], ["Kurgu", "Problem, amaç, bölüm planı"], ["Kaynaklar", "16 veri tabanında doğrulanmış tarama · Rasat"], ["Yazım", "Bölüm bölüm, atıflı taslak · Zenit"], ["Analiz", "İstatistik, grafik, anket"], ["Denetim ve teslim", "Mizan iddia denetimi, Word/PDF/LaTeX/BibTeX"]].map(([a, b], i) => (
             <li key={a} className="bg-white p-4">
               <p className="text-[12px] font-semibold tabular-nums text-brand-600">{String(i + 1).padStart(2, "0")}</p>
               <p className="mt-1 text-[14px] font-semibold text-ink-900">{t(a)}</p>

@@ -201,7 +201,7 @@ function QualityVisual() {
         <p className="rounded-xl bg-amber-50/70 px-2.5 py-2 text-amber-800">! {t("Düzeltilecek: 2 madde")}</p>
       </div>
       <p className="mt-2 flex items-center gap-1.5 rounded-xl border border-dashed border-brand-200 px-2.5 py-1.5 text-[11px] text-ink-600"><Ruler className="h-3.5 w-3.5 shrink-0 text-brand-600" />{t("Kılavuz uygulandı: kenarlar 3 / 2,5 cm · Times New Roman 12 · 1,5 satır")}</p>
-      <div className="mt-4 flex flex-wrap gap-1.5">{[[FileDown, "Word"], [FileDown, "PDF"], [Code2, "LaTeX / Overleaf"], [Layers, "Savunma sunumu (.pptx)"], [Languages, "TR ↔ EN ↔ DE çeviri"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="inline-flex items-center gap-1.5 rounded-xl border border-ink-100 px-2.5 py-1.5 text-[11px] font-medium text-ink-700"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}</div>
+      <div className="mt-4 flex flex-wrap gap-1.5">{[[FileDown, "Word"], [FileDown, "PDF"], [Code2, "LaTeX / Overleaf"], [Code2, "BibTeX (.bib)"], [Layers, "Savunma sunumu (.pptx)"], [Languages, "TR ↔ EN ↔ DE çeviri"]].map(([I, l]) => { const C = I as Icon; return <span key={l as string} className="inline-flex items-center gap-1.5 rounded-xl border border-ink-100 px-2.5 py-1.5 text-[11px] font-medium text-ink-700"><C className="h-3.5 w-3.5 text-brand-600" />{t(l as string)}</span>; })}</div>
     </Frame>
   );
 }
@@ -251,7 +251,7 @@ const CATEGORIES: Category[] = [
     { icon: Languages, mark: "Mizan", title: "Dil denetimi ve akademik çeviri", text: "Türkçe, İngilizce ve Almanca arasında çeviride atıflar ve dipnotlar korunur; terim sözlüğü ve üslup önerileri." },
     { icon: FileDown, title: "Kurallara uygun Word ve PDF", text: "Logo yeri, üniversite, fakülte, bölüm ve tarih içeren kapak; içindekiler, tablo ve şekil listeleri; yazım stilinin kenar boşluğu, punto ve başlık kurallarıyla." },
     { icon: Ruler, title: "Yazım kılavuzunuza göre biçim", text: "Üniversitenizin veya derginizin kılavuzunu yükleyin; kılavuzda yazan kenar boşlukları, yazı tipi, satır aralığı, başlık ve kapak kuralları kendiliğinden uygulanır.", plan: "guideline" },
-    { icon: Code2, title: "LaTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır." },
+    { icon: Code2, title: "LaTeX, BibTeX ve Overleaf", text: "Çalışmanız .tex ve .bib dosyalarıyla LaTeX’e aktarılır; atıflar biblatex komutlarına dönüşür, tek tıkla Overleaf’te açılır. Kaynakçanız ayrıca BibTeX (.bib) olarak da indirilir." },
     { icon: Globe2, title: "Dergi önerisi ve hakem yanıtı", text: "Çalışmanıza uygun dergiler, ön yazı ve hakem yorumlarına madde madde cevap.", plan: "journals" },
     { icon: Layers, title: "Savunma sunumu ve provası", text: "Tezinizden sunum dosyası ve yapay zekâ jüriyle soru–cevap provası.", plan: "defense" },
   ] },

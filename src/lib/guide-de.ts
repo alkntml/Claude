@@ -256,7 +256,6 @@ export const GUIDE_DE: Record<string, string> = {
   "Kapak bilgilerini (üniversite, enstitü, danışman) girin → “Kaydet”.": "Geben Sie die Angaben fürs Titelblatt ein (Hochschule, Institut, Betreuung) → „Speichern“.",
   "Üniversitenizin yazım kılavuzunu Proje ayarları → “Kılavuz yükle” ile veya projenin dosyalarına ekleyin; kenar boşlukları, punto, satır aralığı, başlık biçimi, sayfa numarası, kapak ve içindekiler kuralları kendiliğinden uygulanır, bölüm önerisi onayınıza sunulur.": "Fügen Sie die Schreibrichtlinien Ihrer Hochschule über Projekteinstellungen → „Richtlinie hochladen“ oder in den Projektdateien hinzu; Regeln zu Rändern, Schriftgröße, Zeilenabstand, Überschriften, Seitenzahlen, Deckblatt und Inhaltsverzeichnis werden automatisch übernommen, der Kapitelvorschlag wird Ihnen zur Bestätigung angezeigt.",
   "LaTeX ve Overleaf": "LaTeX und Overleaf",
-  "“Dışa aktar” → “LaTeX (.tex + .bib, ZIP)” / “Overleaf’te aç”": "„Exportieren“ → „LaTeX (.tex + .bib, ZIP)“ / „In Overleaf öffnen“",
   "ZIP: main.tex, references.bib ve şekiller; atıflar biblatex komutlarına dönüşür, sayfa numaraları korunur.": "ZIP: main.tex, references.bib und Abbildungen; Zitate werden zu biblatex-Befehlen und behalten ihre Seitenzahlen.",
   "“Overleaf’te aç” aynı dosyaları yeni sekmede Overleaf projesi olarak açar (pdfLaTeX + Biber).": "„In Overleaf öffnen“ öffnet dieselben Dateien als Overleaf-Projekt (pdfLaTeX + Biber).",
   "Savunma sunumu ve provası": "Präsentation und Probe der Verteidigung",
@@ -357,4 +356,6 @@ export const GUIDE_DE: Record<string, string> = {
   "Sayfa, çalışma, bölüm, kaynak veya araç adının bir kısmını yazın; ↑↓ ile seçip Enter’a basın.": "Geben Sie einen Teil des Namens einer Seite, eines Projekts, Kapitels, einer Quelle oder eines Werkzeugs ein; mit ↑↓ wählen und Enter drücken.",
   "Arama büyük/küçük harfe ve Türkçe karakterlere duyarlı değildir; “alinti” yazmak da “Oku ve alıntıla”yı bulur.": "Die Suche ignoriert Groß-/Kleinschreibung und Akzente; „alinti“ findet auch „Lesen und zitieren“.",
   "“?” tuşu klavye kısayolları listesini açar: biçimlendirme, geri alma, bul ve değiştir, Zenit önerisini kabul etme ve diğerleri.": "Die Taste „?“ öffnet die Liste der Tastenkürzel: Formatierung, Rückgängig, Suchen und Ersetzen, Zenit-Vorschlag übernehmen und mehr.",
+  "“Dışa aktar” → “LaTeX (.tex + .bib, ZIP)” / “Overleaf’te aç” / “BibTeX (.bib)”": "„Exportieren“ → „LaTeX (.tex + .bib, ZIP)“ / „In Overleaf öffnen“ / „BibTeX (.bib)“",
+  "“BibTeX (.bib)” yalnızca kaynakçayı indirir: metinde atıf yaptığınız kaynaklar (henüz atıf yoksa projedeki bütün kaynaklar).": "„BibTeX (.bib)“ lädt nur das Literaturverzeichnis herunter: die im Text zitierten Quellen (alle Projektquellen, wenn noch keine Belege vorhanden sind).",
 };

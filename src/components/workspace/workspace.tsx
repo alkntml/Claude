@@ -1016,7 +1016,11 @@ export function Workspace(props: Props) {
     if (format === "overleaf") return openInOverleaf(stageIds, window.open("about:blank", "acd-overleaf"));
     await flush();
     try {
-      const res = await fetch(`/api/projects/${project.id}/export?format=${format}${stageIds?.length ? `&stages=${stageIds.join(",")}` : ""}`);
+      // D217: BibTeX yalnızca kaynakça: metinde atıf yapılan kaynaklar (atıf yoksa projedeki bütün kaynaklar)
+      const url = format === "bibtex"
+        ? `/api/projects/${project.id}/sources/export?format=bib&scope=${citedOrder.length ? "cited" : "all"}`
+        : `/api/projects/${project.id}/export?format=${format}${stageIds?.length ? `&stages=${stageIds.join(",")}` : ""}`;
+      const res = await fetch(url);
       if (!res.ok) { const j = await res.json().catch(() => ({})); handlePlanError(res.status, j); throw new Error(j.error ?? t("Dışa aktarılamadı")); }
       const blob = await res.blob();
       const a = document.createElement("a");
@@ -1535,7 +1539,7 @@ function ExportMenu({ onExport, stages, onFormat, onPresentation, onJournals, pr
   const toggle = (id: string) => setPicked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
   const chosen = scope === "some" ? stages.filter((x) => picked.has(x.id)).map((x) => x.id) : undefined;
   const blocked = scope === "some" && !chosen?.length;
-  const items = [["docx", "Microsoft Word (.docx)"], ["pdf", "PDF"], ["latex", t("LaTeX (.tex + .bib, ZIP)")], ["overleaf", t("Overleaf’te aç")], ["md", "Markdown"], ["txt", t("Düz metin (.txt)")]];
+  const items = [["docx", "Microsoft Word (.docx)"], ["pdf", "PDF"], ["latex", t("LaTeX (.tex + .bib, ZIP)")], ["overleaf", t("Overleaf’te aç")], ["bibtex", t("BibTeX (.bib): kaynakça")], ["md", "Markdown"], ["txt", t("Düz metin (.txt)")]];
   return (
     <div className="relative">
       <Button size="sm" variant="dark" className="!h-9" onClick={() => setOpen((o) => !o)}><Download className="h-4 w-4" /><span className="hidden sm:inline">{t("Dışa aktar")}</span></Button>

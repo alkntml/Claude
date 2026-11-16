@@ -57,7 +57,6 @@ export function SiteFooter() {
             {LEGAL_DOCS.map((d) => <li key={d.id}><Link href={d.path} className="hover:text-ink-900">{t(d.label)}</Link></li>)}
             <li><Link href="/guven" className="hover:text-ink-900">{t("Güven merkezi")}</Link></li>
             <li><Link href="/yontem" className="hover:text-ink-900">{t("Yöntem ve şeffaflık")}</Link></li>
-            <li><Link href="/durum" className="hover:text-ink-900">{t("Sistem durumu")}</Link></li>
             <li><Link href="/erisilebilirlik" className="hover:text-ink-900">{t("Erişilebilirlik")}</Link></li>
           </ul>
         </div>

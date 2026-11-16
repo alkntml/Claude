@@ -6,7 +6,7 @@
  */
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  BookOpen, ClipboardList, Compass, CornerDownLeft, FileText, FolderOpen, HelpCircle, Home, Keyboard, Library, Plus, Search, ShieldCheck, Sparkles, UserRound, Activity,
+  BookOpen, ClipboardList, Compass, CornerDownLeft, FileText, FolderOpen, HelpCircle, Home, Keyboard, Library, Plus, Search, ShieldCheck, Sparkles, UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -72,7 +72,6 @@ export function CommandPalette({ extra = [], projects = true }: { extra?: Comman
     { id: "p-help", group: "Yardım", label: "Yardım ve kullanım rehberi", icon: BookOpen, run: go("/yardim"), keywords: "help guide nasıl" },
     { id: "p-faq", group: "Yardım", label: "Sık sorulan sorular", icon: HelpCircle, run: go("/sss"), keywords: "faq sss" },
     { id: "p-trust", group: "Yardım", label: "Güven merkezi", icon: ShieldCheck, run: go("/guven"), keywords: "trust security gizlilik güvenlik" },
-    { id: "p-status", group: "Yardım", label: "Sistem durumu", icon: Activity, run: go("/durum"), keywords: "status çalışıyor mu" },
     { id: "k-keys", group: "Yardım", label: "Klavye kısayolları", icon: Keyboard, run: () => setKeys(true), keywords: "shortcuts kısayol tuş" },
   ], [go]);
 

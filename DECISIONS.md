@@ -1268,3 +1268,7 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Açılış ekranı: üç zekâ kartı (“Zenit yazar.” vb., #imza-zekalar’a bağlanır); süreç adımlarında ilgili zekâ adı; ikinci düğme “Örnek çıktıları gör”.
 - Örnekler sayfasında ilgili örneklerde zekâ adı (`SECTIONS[].mark`); kayıt ekranında üç zekâ satırı; Hakkımızda’da “Üç zekâ” bölümü (TR/EN/DE).
 - SSS: “Zenit, Rasat ve Mizan nedir?” (ana sayfada ilk soru), ana sayfaya “PDF’ten alıntı” ve “eğitimde kullanılmaz” soruları; ilgili cevaplara hangi zekânın işi olduğu eklendi; SSS listesinde adlar imza görünümüyle yazılır.
+
+## D216 — Sistem durumu yalnızca yönetim panelinde (16 Kasım 2026)
+- Kullanıcı kararı: sistem durumu herkese gösterilmez; yalnızca yöneticiye. `/durum` sayfası ve `/api/public/status` kaldırıldı (`/durum` → ana sayfaya yönlenir); yerine Yönetim → “Sistem durumu” sekmesi ve `/api/admin/status` (`requireAdmin`). Altbilgi, site haritası, SEO, komut arama, Güven merkezi ve Yenilikler’deki bağlantı/ifadeler kaldırıldı.
+- Crossref denetimi `works?rows=0` (bütün kayıtları sayan, yavaş ve zaman aşımına düşen sorgu; canlıda “Sorun var” görünüyordu) yerine tek DOI sorgusu ve ürünün kendi User-Agent’ı ile yapılır. Yapay zekâ satırında Anthropic’in bildirdiği aksaklık açıklaması gösterilir.

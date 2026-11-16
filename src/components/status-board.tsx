@@ -1,12 +1,12 @@
 "use client";
-/** D213: Sistem durumu panosu: /api/public/status’u okur, 60 sn’de bir yeniler. */
+/** D213/D216: Sistem durumu panosu (yalnızca Yönetim paneli): /api/admin/status’u okur, 60 sn’de bir yeniler. */
 import { CheckCircle2, CircleAlert, CircleHelp, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 
 type Level = "ok" | "degraded" | "down" | "unknown";
-interface Report { at: string; overall: Level; items: { id: string; level: Level; ms: number | null }[] }
+interface Report { at: string; overall: Level; items: { id: string; level: Level; ms: number | null; note?: string }[] }
 
 const NAMES: Record<string, [string, string]> = {
   app: ["Web uygulaması", "Sayfalar ve çalışma alanı"],
@@ -30,7 +30,7 @@ export function StatusBoard() {
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     let alive = true;
-    const load = () => fetch("/api/public/status").then((x) => x.json()).then((d: Report) => { if (alive) { setR(d); setFailed(false); } }).catch(() => alive && setFailed(true));
+    const load = () => fetch("/api/admin/status").then((x) => { if (!x.ok) throw new Error(String(x.status)); return x.json(); }).then((d: Report) => { if (alive) { setR(d); setFailed(false); } }).catch(() => alive && setFailed(true));
     load();
     const id = setInterval(load, 60_000);
     return () => { alive = false; clearInterval(id); };
@@ -52,7 +52,7 @@ export function StatusBoard() {
           const L = LEVEL[it?.level ?? "unknown"];
           return (
             <li key={id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-              <div className="min-w-0"><p className="font-medium text-ink-900">{t(n)}</p><p className="text-[13px] text-ink-500">{t(d)}</p></div>
+              <div className="min-w-0"><p className="font-medium text-ink-900">{t(n)}</p><p className="text-[13px] text-ink-500">{t(d)}</p>{it?.note && <p className="mt-0.5 text-[12.5px] text-amber-800">{it.note}</p>}</div>
               <span className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[12.5px] font-semibold", it ? L.cls : "bg-ink-50 text-ink-400")}>
                 {it ? <L.Icon className="h-3.5 w-3.5" /> : null}{it ? t(L.t) : "…"}{it?.ms != null && <span className="font-normal">· {it.ms} ms</span>}
               </span>

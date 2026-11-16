@@ -39,7 +39,7 @@ export const TRUST: Record<TrustLocale, TrustContent> = {
         "Bütün bağlantılar zorunlu HTTPS ile şifrelenir (HSTS).",
         "İçerik güvenlik politikası (CSP), istek kökeni denetimi ve dış bağlantılarda iç ağ koruması uygulanır.",
         "Her güncellemeden önce 700’den fazla otomatik test çalışır; kullanıcı verilerinin birbirinden ayrıldığı gerçek bir veritabanı üzerinde sınanır.",
-        "Hatalar ve yapay zekâ yanıt süreleri sürekli izlenir; sistemin anlık durumu herkese açık “Sistem durumu” sayfasında görünür.",
+        "Hatalar, yapay zekâ yanıt süreleri ve bağlı hizmetlerin durumu sürekli izlenir.",
       ] },
       { id: "dogruluk", h: "Doğruluk ve şeffaflık", list: [
         "Yapay zekâ yalnızca çalışmanıza eklenmiş gerçek kaynaklara atıf yapar; kaynak yoksa [KAYNAK GEREKLİ] diye işaretler.",
@@ -93,7 +93,7 @@ export const TRUST: Record<TrustLocale, TrustContent> = {
         "All connections are encrypted with mandatory HTTPS (HSTS).",
         "A content security policy (CSP), request origin checks and internal-network protection for outbound requests are in place.",
         "More than 700 automated tests run before every update; isolation of user data is tested on a real database.",
-        "Errors and AI response times are monitored continuously; the current state of the system is shown on the public “System status” page.",
+        "Errors, AI response times and the state of connected services are monitored continuously.",
       ] },
       { id: "dogruluk", h: "Accuracy and transparency", list: [
         "The AI cites only real sources added to your project; where there is none, it marks [SOURCE NEEDED].",
@@ -147,7 +147,7 @@ export const TRUST: Record<TrustLocale, TrustContent> = {
         "Alle Verbindungen sind mit verpflichtendem HTTPS verschlüsselt (HSTS).",
         "Content-Security-Policy (CSP), Prüfung der Anfrageherkunft und Schutz des internen Netzes bei ausgehenden Anfragen sind aktiv.",
         "Vor jedem Update laufen über 700 automatische Tests; die Trennung der Nutzerdaten wird auf einer echten Datenbank geprüft.",
-        "Fehler und Antwortzeiten der KI werden fortlaufend überwacht; der aktuelle Zustand steht auf der öffentlichen Seite „Systemstatus“.",
+        "Fehler, Antwortzeiten der KI und der Zustand angebundener Dienste werden fortlaufend überwacht.",
       ] },
       { id: "dogruluk", h: "Genauigkeit und Transparenz", list: [
         "Die KI zitiert nur echte Quellen, die Ihrem Projekt hinzugefügt wurden; fehlt eine, markiert sie [QUELLE ERFORDERLICH].",

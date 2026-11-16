@@ -12,7 +12,6 @@ export async function generateMetadata() {
 const ICONS = [Sparkles, Database, Lock, ShieldCheck];
 const LINKS: Record<string, { tr: string; en: string; de: string; href: string }[]> = {
   dogruluk: [{ tr: "Yöntem ve şeffaflık →", en: "Method and transparency →", de: "Methode und Transparenz →", href: "/yontem" }],
-  guvenlik: [{ tr: "Sistem durumu →", en: "System status →", de: "Systemstatus →", href: "/durum" }],
   haklar: [{ tr: "KVKK aydınlatma metni →", en: "KVKK privacy notice →", de: "KVKK-Datenschutzhinweis →", href: "/kvkk" }, { tr: "GDPR →", en: "GDPR →", de: "DSGVO →", href: "/gdpr" }],
 };
 

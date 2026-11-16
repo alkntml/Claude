@@ -15,6 +15,7 @@ import { api } from "@/lib/client";
 import { PROVIDER_LABELS } from "@/lib/sources/labels";
 import { UserActivity } from "./activity";
 import { MizanBenchCard } from "./mizan-bench";
+import { StatusBoard } from "@/components/status-board";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
 import { CostBreakdown, ProductHealth, TrafficTab } from "./insights";
@@ -22,10 +23,10 @@ import { memberCode } from "@/lib/member";
 import { discountedPrice, discountLabel } from "@/lib/discount";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts";
+type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts" | "status";
 type Term = "monthly" | "days" | "yearly";
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
+  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "status", label: "Sistem durumu", icon: Activity }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
   { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
   { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "KVKK talepleri", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift }, { id: "discounts", label: "İndirim kodları", icon: Percent },
 ];
@@ -61,6 +62,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
       <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
         {tab === "overview" && <Overview />}
         {tab === "alerts" && <AlertsTab />}
+        {tab === "status" && <div className="max-w-3xl"><StatusBoard /><p className="mt-3 text-[12.5px] text-ink-500">Yalnızca yöneticiler görür. Yapay zekâ satırı Anthropic’in kendi durum sayfasından okunur (status.anthropic.com); “Yavaş veya kısmi”, Anthropic’in o an küçük bir aksaklık bildirdiği anlamına gelir. Veri tabanlarından biri yavaşsa arama diğerleriyle sürer.</p></div>}
         {tab === "traffic" && <TrafficTab />}
         {tab === "autopilot" && <AutopilotTab />}
         {tab === "users" && <UsersTab selfId={selfId} />}

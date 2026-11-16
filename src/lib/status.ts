@@ -1,13 +1,13 @@
 import "server-only";
 /**
- * Sistem durumu (D213): herkese açık, kişisel veri içermeyen anlık kontroller. Sonuç 60 sn önbelleklenir; dış servis
+ * Sistem durumu (D213, D216: yalnızca yönetici): kişisel veri içermeyen anlık kontroller. Sonuç 60 sn önbelleklenir; dış servis
  * kontrolleri 4 sn zaman aşımıyla yapılır. Yapay zekâ sağlayıcısının durumu Anthropic’in kendi durum sayfasından okunur.
  */
 import { env } from "@/lib/env";
 import { adminClient } from "@/lib/supabase/admin";
 
 export type StatusLevel = "ok" | "degraded" | "down" | "unknown";
-export interface StatusItem { id: string; level: StatusLevel; ms: number | null }
+export interface StatusItem { id: string; level: StatusLevel; ms: number | null; note?: string }
 export interface StatusReport { at: string; overall: StatusLevel; items: StatusItem[] }
 
 async function timed(fn: () => Promise<boolean>, slowMs: number): Promise<{ level: StatusLevel; ms: number | null }> {
@@ -20,7 +20,8 @@ async function timed(fn: () => Promise<boolean>, slowMs: number): Promise<{ leve
     return { level: "down", ms: null };
   }
 }
-const probe = (url: string) => async () => (await fetch(url, { headers: { "user-agent": "Academiana-status/1.0" }, cache: "no-store" })).ok;
+const UA = "Academiana/1.0 (academic research platform; +https://www.academiana.com.tr)";
+const probe = (url: string) => async () => (await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" }, cache: "no-store" })).ok;
 
 let cached: { at: number; report: StatusReport } | null = null;
 
@@ -28,15 +29,16 @@ export async function systemStatus(): Promise<StatusReport> {
   if (cached && Date.now() - cached.at < 60_000) return cached.report;
   const [db, ai, crossref, epmc, arxiv] = await Promise.all([
     timed(async () => { const { error } = await adminClient().from("app_settings").select("key").eq("key", "site.contact").limit(1); return !error; }, 1500),
-    (async (): Promise<{ level: StatusLevel; ms: number | null }> => {
-      if (!env.anthropicKey) return { level: "down", ms: null };
+    (async (): Promise<{ level: StatusLevel; ms: number | null; note?: string }> => {
+      if (!env.anthropicKey) return { level: "down", ms: null, note: "ANTHROPIC_API_KEY tanımlı değil" };
       try {
         const r = await Promise.race([fetch("https://status.anthropic.com/api/v2/status.json", { cache: "no-store" }), new Promise<never>((_, rej) => setTimeout(() => rej(new Error("timeout")), 4000))]);
-        const ind = (await r.json())?.status?.indicator as string | undefined;
-        return { level: ind === "none" ? "ok" : ind === "minor" ? "degraded" : ind === "major" || ind === "critical" ? "down" : "unknown", ms: null };
+        const st = (await r.json())?.status as { indicator?: string; description?: string } | undefined;
+        const ind = st?.indicator;
+        return { level: ind === "none" ? "ok" : ind === "minor" ? "degraded" : ind === "major" || ind === "critical" ? "down" : "unknown", ms: null, note: ind && ind !== "none" ? `Anthropic: ${st?.description ?? ind}` : undefined };
       } catch { return { level: "unknown", ms: null }; }
     })(),
-    timed(probe("https://api.crossref.org/works?rows=0"), 2500),
+    timed(probe("https://api.crossref.org/works/10.1038/nature12373"), 2500),
     timed(probe("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=test&pageSize=1&format=json"), 2500),
     timed(probe("https://export.arxiv.org/api/query?search_query=all:test&max_results=1"), 2500),
   ]);

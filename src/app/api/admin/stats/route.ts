@@ -1,4 +1,5 @@
 import { json, route } from "@/lib/api";
+import { REVENUE_SINCE, countsAsRevenue } from "@/lib/pricing";
 import { requireAdmin } from "@/lib/auth";
 import { integrationStatus } from "@/lib/env";
 import { availableProviders } from "@/lib/payments";
@@ -33,7 +34,7 @@ export const GET = route("admin.stats", async (req) => {
     db.from("feedback").select("id", { count: "exact", head: true }).eq("status", "open"),
     allRows<{ plan_id: string }>((a, b) => db.from("profiles").select("plan_id").order("id").range(a, b)),
     // Gelir (D52/D53): süresi geçerli ücretli kullanıcılar
-    allRows<{ plan_id: string; plan_expires_at: string | null }>((a, b) => db.from("profiles").select("plan_id, plan_expires_at").neq("plan_id", "free").neq("role", "admin").order("id").range(a, b)),
+    allRows<{ plan_id: string; plan_expires_at: string | null; plan_started_at: string | null }>((a, b) => db.from("profiles").select("plan_id, plan_expires_at, plan_started_at").neq("plan_id", "free").neq("role", "admin").order("id").range(a, b)),
     db.from("plans").select("id, price_monthly"),
     getSetting("billing.margin"),
     // D203: yıl başından beri maliyet (bugün / hafta / ay / yıl dönemleri buradan hesaplanır)
@@ -110,7 +111,10 @@ export const GET = route("admin.stats", async (req) => {
   const price = Object.fromEntries((priceRows.data ?? []).map((p) => [p.id, Number(p.price_monthly)]));
   const activePaid = paid.filter((p) => !p.plan_expires_at || p.plan_expires_at > now);
   // Tek ödemeli paket (D103) aylık gelire eklenmez; ödeme alındığı ay elle değerlendirilir
-  const revenueTry = Math.round(activePaid.reduce((a, p) => a + (price[p.plan_id] ?? 0), 0) / (1 + margin.vat_rate));
+  // D219: 16 Kasım 2026’ya kadar açılan paketlerin hepsi yönetici tarafından ücretsiz atandı; gelire yalnızca bu
+  // tarihten sonra başlayan (yeniden atanan dahil) paketler girer. Ücretsiz atananlar ayrı sayılır.
+  const counted = activePaid.filter((p) => countsAsRevenue(p.plan_started_at));
+  const revenueTry = Math.round(counted.reduce((a, p) => a + (price[p.plan_id] ?? 0), 0) / (1 + margin.vat_rate));
   const costTry = Math.round(monthUsd * margin.usd_try);
 
   return json({
@@ -137,7 +141,7 @@ export const GET = route("admin.stats", async (req) => {
     },
     providerHealth,
     planDist,
-    money: { paidUsers: activePaid.length, revenueTry, costTry, profitTry: revenueTry - costTry, costShare: revenueTry ? Math.round((costTry / revenueTry) * 100) : null, usdTry: margin.usd_try },
+    money: { paidUsers: counted.length, compUsers: activePaid.length - counted.length, revenueSince: REVENUE_SINCE, revenueTry, costTry, profitTry: revenueTry - costTry, costShare: revenueTry ? Math.round((costTry / revenueTry) * 100) : null, usdTry: margin.usd_try },
     expiring: expiring.data ?? [],
     locked: lockedCount.count ?? 0,
     integrations: integrationStatus(),

@@ -123,3 +123,7 @@ export function formatPrice(tl: number, locale: "tr" | "en" | "de", usdTry: numb
 export function priceNumber(tl: number, locale: "tr" | "en" | "de", usdTry: number = DEFAULT_USD_TRY): { amount: number; currency: "TRY" | "USD" } {
   return locale !== "tr" ? { amount: usdFromTry(Number(tl) || 0, usdTry), currency: "USD" } : { amount: Number(tl) || 0, currency: "TRY" };
 }
+
+/** D219: gelir hesabının başlangıcı. Bu andan önce başlayan paketlerin hepsi yönetici tarafından ücretsiz atandı; gelire yalnızca sonrası girer. */
+export const REVENUE_SINCE = "2026-11-16T14:37:00Z";
+export const countsAsRevenue = (planStartedAt: string | null | undefined) => !!planStartedAt && Date.parse(planStartedAt) >= Date.parse(REVENUE_SINCE);

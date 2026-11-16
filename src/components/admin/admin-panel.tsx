@@ -148,9 +148,9 @@ function Overview() {
       {d.costPeriods && <CostPeriods p={d.costPeriods} usdTry={d.money?.usdTry} />}
       {d.money && (
         <div className="card p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Bu ay gelir ve kâr</h3><span className="text-xs text-ink-400">Kur: {d.money.usdTry} TL · gelir KDV hariç, süresi geçerli ücretli kullanıcılardan tahmini</span></div>
+          <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="flex items-center gap-2 font-semibold"><DollarSign className="h-4 w-4" /> Bu ay gelir ve kâr</h3><span className="text-xs text-ink-400">Kur: {d.money.usdTry} TL · gelir KDV hariç, süresi geçerli ücretli kullanıcılardan tahmini · 16 Kasım 2026’dan önce açılan paketler (ücretsiz atama) gelire dahil değil</span></div>
           <div className="mt-3 grid gap-3 sm:grid-cols-4">
-            {[["Ücretli kullanıcı", d.money.paidUsers.toLocaleString("tr-TR"), ""], ["Aylık gelir", `${d.money.revenueTry.toLocaleString("tr-TR")} TL`, ""], ["API maliyeti", `${d.money.costTry.toLocaleString("tr-TR")} TL`, d.money.costShare != null ? `gelirin %${d.money.costShare}’i` : ""], ["Kâr", `${d.money.profitTry.toLocaleString("tr-TR")} TL`, d.money.costShare != null ? (d.money.costShare <= 33 ? "hedefte (≤ %33 maliyet)" : "maliyet hedefin üstünde") : ""]].map(([l, v, sub]) => (
+            {[["Ücretli kullanıcı", d.money.paidUsers.toLocaleString("tr-TR"), d.money.compUsers ? `+${d.money.compUsers} ücretsiz atanmış (gelire dahil değil)` : ""], ["Aylık gelir", `${d.money.revenueTry.toLocaleString("tr-TR")} TL`, ""], ["API maliyeti", `${d.money.costTry.toLocaleString("tr-TR")} TL`, d.money.costShare != null ? `gelirin %${d.money.costShare}’i` : ""], ["Kâr", `${d.money.profitTry.toLocaleString("tr-TR")} TL`, d.money.costShare != null ? (d.money.costShare <= 33 ? "hedefte (≤ %33 maliyet)" : "maliyet hedefin üstünde") : ""]].map(([l, v, sub]) => (
               <div key={l} className="rounded-xl bg-ink-50 p-3"><p className="text-[12.5px] text-ink-500">{l}</p><p className={cn("mt-0.5 text-xl font-semibold", l === "Kâr" && d.money.profitTry < 0 ? "text-rose-600" : "text-ink-900")}>{v}</p>{sub && <p className="text-[11.5px] text-ink-400">{sub}</p>}</div>
             ))}
           </div>
@@ -353,7 +353,7 @@ function UserDetail({ id, plans, onClose, onChanged }: { id: string; plans: any[
               {row("Token", d.usage.tokens, d.limits.tokens_month)}
               {row("Aktif proje", d.usage.projects, d.limits.projects)}
               {row("Depolama (MB)", d.usage.storage_mb, d.limits.storage_mb)}
-              <div className="mt-2 rounded-xl bg-ink-50 p-2.5 text-[13px]">API maliyeti: <b>{d.money.cost_try.toLocaleString("tr-TR")} TL</b> · Gelir (KDV hariç): <b>{d.money.revenue_try.toLocaleString("tr-TR")} TL</b>{d.money.cost_share != null && <> · Maliyet payı: <b className={d.money.cost_share > 33 ? "text-rose-600" : "text-emerald-700"}>%{d.money.cost_share}</b></>}</div>
+              <div className="mt-2 rounded-xl bg-ink-50 p-2.5 text-[13px]">API maliyeti: <b>{d.money.cost_try.toLocaleString("tr-TR")} TL</b> · Gelir (KDV hariç): <b>{d.money.revenue_try.toLocaleString("tr-TR")} TL</b>{d.money.comp && <span className="text-ink-500"> (ücretsiz atama, gelire dahil değil; liste fiyatı {Number(d.money.list_try ?? 0).toLocaleString("tr-TR")} TL)</span>}{d.money.cost_share != null && <> · Maliyet payı: <b className={d.money.cost_share > 33 ? "text-rose-600" : "text-emerald-700"}>%{d.money.cost_share}</b></>}</div>
               {d.single && <div className={cn("mt-2 rounded-xl p-2.5 text-[13px]", Number(d.single.pct) >= 40 ? "bg-amber-50 text-amber-900" : "bg-ink-50")}>Tek Proje (paket başından beri): <b>${Number(d.single.cost_usd).toFixed(2)}</b> maliyet · paket gelirinin <b>%{d.single.pct}</b>’i · %40 sınırı ${d.single.budget_usd}{Number(d.single.pct) >= 40 ? " — sınır geçildi (kullanım kısıtlanmaz)" : ""}</div>}
             </div>
             <div className="rounded-2xl border border-ink-100 p-4">

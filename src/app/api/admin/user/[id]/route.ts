@@ -4,7 +4,7 @@ import { INTERNAL_LINK_RE } from "@/lib/notify";
 import { ApiError, json, parseBody, route } from "@/lib/api";
 import { requireAdmin } from "@/lib/auth";
 import { addDays } from "@/lib/admin-users";
-import { SINGLE_PLAN_DAYS, YEARLY_DAYS } from "@/lib/pricing";
+import { SINGLE_PLAN_DAYS, YEARLY_DAYS, countsAsRevenue } from "@/lib/pricing";
 import { getSetting } from "@/lib/settings";
 import { adminClient } from "@/lib/supabase/admin";
 import { effectiveLimits, lockReasons, setWorkLock, usageSummary } from "@/lib/usage";
@@ -50,7 +50,8 @@ export const GET = route<Ctx>("admin.user", async (_req, { params }) => {
     discount,
     messages: messages.data ?? [],
     single,
-    money: { revenue_try: plan.data ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, cost_try: Math.round(usage.cost_usd * margin.usd_try), cost_share: revenueUsd ? Math.round((usage.cost_usd / revenueUsd) * 100) : null },
+    // D219: 16 Kasım 2026 öncesi başlayan paket ücretsiz atamadır; gelir 0, liste fiyatı ayrıca gösterilir
+    money: { comp: profile.plan_id !== "free" && !countsAsRevenue(profile.plan_started_at), list_try: plan.data ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, revenue_try: plan.data && (profile.plan_id === "free" || countsAsRevenue(profile.plan_started_at)) ? Math.round(Number(plan.data.price_monthly) / (1 + margin.vat_rate)) : 0, cost_try: Math.round(usage.cost_usd * margin.usd_try), cost_share: revenueUsd ? Math.round((usage.cost_usd / revenueUsd) * 100) : null },
   });
 });
 

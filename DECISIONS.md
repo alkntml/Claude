@@ -1280,3 +1280,8 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 ## D218 — Yönetim paneli kategorilere ayrıldı (16 Kasım 2026)
 - Kullanıcı isteği: 17 sekme tek satırda karışık görünüyordu. Sekmeler dört kategoride, solda gruplu menü (telefonda gruplu seçim kutusu): İzleme (Genel bakış, Uyarılar, Sistem durumu, Ziyaretçiler, Hata kayıtları), Kullanıcılar ve satış (Kullanıcılar, Kurumlar, Paketler ve limitler, İndirim kodları, Davetler), Yapay zekâ ve içerik (Yapay zekâ, Veri kaynakları, Otomatik çalışma, Duyurular, Yardım merkezi), Destek ve KVKK (Geri bildirim, KVKK talepleri).
 - Açık sekme adreste (`?sekme=users` vb.) tutulur; sayfa yenilenince aynı bölüm açılır (`?sekme=otomatik` eskisi gibi çalışır). İçerikler değişmedi.
+
+## D219 — Gelir sıfırlandı: ücretsiz atanan paketler gelire girmez (16 Kasım 2026)
+- Kullanıcı kararı: şimdiye kadar açılan bütün paketler yönetici atamasıyla ücretsizdi; gelire dahil edilmez, bundan sonrakiler edilir.
+- `lib/pricing.ts` → `REVENUE_SINCE = 2026-11-16T14:37:00Z`, `countsAsRevenue(plan_started_at)`. Gelir (Genel bakış → “Bu ay gelir ve kâr”) yalnızca bu andan sonra başlayan (yeniden atanan dahil) paketlerden hesaplanır; “Ücretli kullanıcı” bu paketleri sayar, ücretsiz atananlar “+N ücretsiz atanmış (gelire dahil değil)” olarak ayrı gösterilir. Kullanıcı ayrıntısında bu kişilerde gelir 0 ve “ücretsiz atama; liste fiyatı …” yazar. Paket başına maliyet sınırı (D52) liste fiyatıyla çalışmaya devam eder.
+- Not: ödemeler WhatsApp ile alınıp paket yönetici tarafından atandığı için, bundan sonra yapılan ücretsiz bir atama (hediye) da gelire girer; o kişiye atamayı satın alma kaydı olmadan yapmak gelir tahminini şişirir.

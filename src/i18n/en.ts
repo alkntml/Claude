@@ -4928,4 +4928,9 @@ export const EN: Record<string, string> = {
   "İddia denetimi atıflı her cümleyi kaynağıyla karşılaştırır.": "Claim audit compares every cited sentence with its source.",
   "İçeriğe geç": "Skip to content",
   "Erişilebilirlik": "Accessibility",
+  "Sol menüyü gizle": "Hide left menu",
+  "Sağ paneli gizle": "Hide right panel",
+  "Sol menüyü göster": "Show left menu",
+  "Sağ paneli göster": "Show right panel",
+  "Odak modu: çalışma alanında yan panelleri gizler ve geri açar": "Focus mode: hides and restores the side panels in the workspace",
 };

@@ -236,3 +236,9 @@ table.apa tbody tr:last-child td { border-bottom: 1.5px solid rgb(var(--ink-800)
 .skip-link { position: absolute; left: 12px; top: -60px; z-index: 100; border-radius: 10px; background: rgb(79 70 229); color: rgb(255 255 255); padding: 8px 14px; font-weight: 600; font-size: 14px; transition: top .15s; }
 .skip-link:focus { top: 12px; }
 .dark .bg-brand-50\/50, .dark .bg-brand-50\/30 { background-color: rgb(99 102 241 / 0.12); }
+/* D214: çalışma alanı — yan paneller geniş ekranda biraz daha küçük ölçekte (içerik ve kullanım aynı), editör metni ekranda
+   bir tık küçük; dışa aktarmadaki yazı tipi/punto kullanıcının biçim ayarlarından gelir, bundan etkilenmez */
+@media (min-width: 1024px) { .ws-side { zoom: 0.92; } }
+.ws-editor .prose-academic { font-size: 15.5px; line-height: 1.75; }
+.ws-editor .prose-academic h2 { font-size: 1.24em; }
+.ws-editor .prose-academic h3 { font-size: 1.1em; }

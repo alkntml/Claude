@@ -10,7 +10,7 @@ import { SubheadingModal, type SubheadingParent } from "./subheadings";
 import type { ImportResult } from "./import-doc";
 import { AnimatePresence, motion, Reorder } from "framer-motion";
 import { Compass,
-  ArrowLeft, ShieldCheck, BookMarked, FileText, Search, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload, EyeOff, SlidersHorizontal, Layers,
+  ArrowLeft, ShieldCheck, BookMarked, FileText, Search, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Bot, Brain, Check, ChevronDown, CloudCheck, CloudOff, Download, FileCheck2, GripVertical, History, ListTree, Loader2, Wand2, HelpCircle, MessageSquare, MoreHorizontal, PenSquare, Plus, Settings2, Trash2, Upload, EyeOff, SlidersHorizontal, Layers,
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -134,6 +134,17 @@ export function Workspace(props: Props) {
   const [save, setSave] = useState<SaveState>("saved");
   /** D212: Araçlar menüsünden Kaynaklar sekmesine iş (arama, liste, birlikte analiz, matris) */
   const [sourcesReq, setSourcesReq] = useState<SourcesRequest | null>(null);
+  /** D214: geniş ekranda yan panellerin görünürlüğü (Ctrl+\\ odak modu); tarayıcıda hatırlanır */
+  const [layout, setLayout] = useState<{ nav: boolean; panel: boolean }>({ nav: true, panel: true });
+  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("acd_ws_layout") ?? "null"); if (v && typeof v.nav === "boolean" && typeof v.panel === "boolean") setLayout(v); } catch { /* yok say */ } }, []);
+  const setLayoutSaved = useCallback((fn: (l: { nav: boolean; panel: boolean }) => { nav: boolean; panel: boolean }) => setLayout((l) => { const n = fn(l); try { localStorage.setItem("acd_ws_layout", JSON.stringify(n)); } catch { /* yok say */ } return n; }), []);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key === "\\") { e.preventDefault(); setLayoutSaved((l) => (l.nav || l.panel ? { nav: false, panel: false } : { nav: true, panel: true })); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [setLayoutSaved]);
   /** D213: ilk adımlar rehberinde Mizan adımı (denetim bir kez açıldı mı) */
   const [mizanSeen, setMizanSeen] = useState(false);
   useEffect(() => { setMizanSeen(!!readFirstSteps(props.project.id).mizan); }, [props.project.id]);
@@ -1131,7 +1142,7 @@ export function Workspace(props: Props) {
   const Nav = (
     <div className="flex h-full flex-col">
       <div className="border-b border-ink-100 px-4 pb-3 pt-3.5">
-        <div className="flex items-baseline justify-between gap-2"><p className="text-[14px] font-semibold text-ink-900">{t("Yol haritası")}</p><span className="text-[12px] tabular-nums text-ink-400">%{progress}</span></div>
+        <div className="flex items-baseline justify-between gap-2"><p className="text-[14px] font-semibold text-ink-900">{t("Yol haritası")}</p><span className="flex items-center gap-1.5"><span className="text-[12px] tabular-nums text-ink-400">%{progress}</span><button onClick={() => setLayoutSaved((l) => ({ ...l, nav: false }))} className="hidden rounded-md p-1 text-ink-400 transition hover:bg-ink-100 hover:text-ink-800 lg:block" aria-label={t("Sol menüyü gizle")} title={`${t("Sol menüyü gizle")} (Ctrl+\\)`}><PanelLeftClose className="h-4 w-4" /></button></span></div>
         <p className="mt-0.5 truncate text-[12.5px] text-ink-500">{t(wt?.title ?? "")} · {t(LEVEL_LABELS[project.academic_level as AcademicLevel])}</p>
         <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-ink-100"><div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${progress}%` }} /></div>
       </div>
@@ -1245,13 +1256,13 @@ export function Workspace(props: Props) {
           <button onClick={() => setSettings(true)} className="hidden rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-900 md:block" aria-label={t("Proje ayarları")}><Settings2 className="h-4 w-4" /></button>
         </header>
 
-        <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)] lg:grid-cols-[264px_minmax(0,1fr)_420px] xl:grid-cols-[280px_minmax(0,1fr)_460px]">
-          <aside data-tour="nav" className={cn("min-h-0 border-r border-ink-200/70 bg-white", mobilePane === "nav" ? "block" : "hidden lg:block")}>{Nav}</aside>
+        <div className={cn("grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)]", layout.nav ? (layout.panel ? "lg:grid-cols-[236px_minmax(0,1fr)_360px] xl:grid-cols-[252px_minmax(0,1fr)_388px] 2xl:grid-cols-[272px_minmax(0,1fr)_420px]" : "lg:grid-cols-[236px_minmax(0,1fr)] xl:grid-cols-[252px_minmax(0,1fr)] 2xl:grid-cols-[272px_minmax(0,1fr)]") : (layout.panel ? "lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_388px] 2xl:grid-cols-[minmax(0,1fr)_420px]" : "lg:grid-cols-[minmax(0,1fr)]"))}>
+          <aside data-tour="nav" className={cn("ws-side min-h-0 border-r border-ink-200/70 bg-white", mobilePane === "nav" ? "block" : "hidden", layout.nav ? "lg:block" : "lg:hidden")}>{Nav}</aside>
 
           <section id="main" className={cn("min-h-0 overflow-y-auto", mobilePane === "editor" ? "block" : "hidden lg:block")}>
             {/* D179: kılavuz arka planda analiz edilip uygulandıysa kullanıcı bilgilendirilir */}
             {project.context?.guide && !project.context.guide.seen && isOwner && (
-              <div className="mx-auto mt-4 flex max-w-[780px] flex-wrap items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-900 sm:mx-10 lg:mx-auto">
+              <div className="mx-auto mt-4 flex max-w-[880px] flex-wrap items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-900 sm:mx-10 lg:mx-auto">
                 <Check className="h-4 w-4 shrink-0" />
                 <span className="min-w-0 flex-1">{t("Yazım kılavuzunuz ({name}) uygulandı.", { name: project.context.guide.fileName ?? "" })} {project.context.guide.fields?.length ? `${t("Kılavuzdan uygulanan biçim kuralları:")} ${project.context.guide.fields.map((x: string) => t(x)).join(", ")}.` : t("Kılavuzda açık biçim kuralı bulunamadı; yazım stilinizin varsayılanları geçerli.")}</span>
                 {project.context.guide.stages?.length > 0 && !project.context.guide.stagesApplied && <button onClick={() => setSettings(true)} className="font-medium underline">{t("Bölüm önerisini gör")}</button>}
@@ -1259,7 +1270,12 @@ export function Workspace(props: Props) {
               </div>
             )}
             {active && (
-              <div className="mx-auto max-w-[780px] px-4 pb-10 pt-4 sm:px-10 sm:pt-6">
+              <div className="ws-editor relative mx-auto max-w-[880px] px-4 pb-10 pt-4 sm:px-8 sm:pt-6">
+                {/* D214: gizli yan panelleri geri açma */}
+                {(!layout.nav || !layout.panel) && <div className="-mx-1 mb-2 hidden justify-between lg:flex">
+                  {!layout.nav ? <button onClick={() => setLayoutSaved((l) => ({ ...l, nav: true }))} className="rounded-lg border border-ink-200 bg-white p-1.5 text-ink-500 shadow-sm transition hover:text-ink-900" aria-label={t("Sol menüyü göster")} title={t("Sol menüyü göster")}><PanelLeftOpen className="h-4 w-4" /></button> : <span />}
+                  {!layout.panel ? <button onClick={() => setLayoutSaved((l) => ({ ...l, panel: true }))} className="rounded-lg border border-ink-200 bg-white p-1.5 text-ink-500 shadow-sm transition hover:text-ink-900" aria-label={t("Sağ paneli göster")} title={t("Sağ paneli göster")}><PanelRightOpen className="h-4 w-4" /></button> : <span />}
+                </div>}
                 {isBibliography ? (
                   <BibliographyView engine={engine} sources={sources} citedOrder={citedOrder} title={engine.meta.bibliographyTitle[writingLang(project.language)]} stages={stages} onJump={jumpToCitation} />
                 ) : (
@@ -1287,7 +1303,7 @@ export function Workspace(props: Props) {
                           {canEdit && <SuggestSwitch on={autoSuggest} onToggle={toggleSuggest} />}
                           <button onClick={removeFocused} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-ink-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 className="h-3.5 w-3.5" /> {t("Alt başlığı sil")}</button>
                         </div>
-                        <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-semibold leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[26px]" aria-label={t("Alt başlık")} />
+                        <input key={`${active.id}:${focused.index}`} defaultValue={focused.text} onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== focused.text && renameFocused(e.target.value)} className="mt-2 w-full bg-transparent font-serif text-[22px] font-semibold leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[23px]" aria-label={t("Alt başlık")} />
                         <p className="mt-1 text-[13px] text-ink-500">{t("Yalnızca bu alt başlığın metni açık. Yazdıklarınız çalışmada bu başlığın altına kaydedilir; indirirken tüm çalışma tek belge olarak aktarılır.")}</p>
                       </div>
                     ) : (
@@ -1303,7 +1319,7 @@ export function Workspace(props: Props) {
                           ? <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("Bölüm tamamlandı")} · {t("{n} kelime", { n: active.word_count ?? 0 })}</span>
                           : <Button size="sm" variant="secondary" onClick={startComplete} disabled={!(active.word_count > 0)} title={!(active.word_count > 0) ? t("Önce bölümü yazın") : undefined}><Check className="h-3.5 w-3.5" /> {t("Bölümü tamamladım")}</Button>}</span>
                       </div>
-                      <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[24px] font-semibold leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[28px]" aria-label={t("Bölüm başlığı")} />
+                      <input key={active.id} defaultValue={active.title} onBlur={(e) => e.target.value.trim() && e.target.value !== active.title && patchStage(active.id, { title: e.target.value.trim() })} className="mt-2 w-full bg-transparent font-serif text-[22px] font-semibold leading-tight tracking-tight text-ink-950 outline-none sm:mt-3 sm:text-[25px]" aria-label={t("Bölüm başlığı")} />
                       {def && <p className="mt-1 line-clamp-2 text-[13px] text-ink-500 sm:mt-1.5 sm:line-clamp-none sm:text-[14px]">{t(def.purpose)}</p>}
                     </div>
                     )}
@@ -1335,10 +1351,11 @@ export function Workspace(props: Props) {
             )}
           </section>
 
-          <aside className={cn("min-h-0 min-w-0 flex-col border-l border-ink-200/70 bg-white", mobilePane === "panel" ? "flex" : "hidden lg:flex")}>
+          <aside className={cn("ws-side min-h-0 min-w-0 flex-col border-l border-ink-200/70 bg-white", mobilePane === "panel" ? "flex" : "hidden", layout.panel ? "lg:flex" : "lg:hidden")}>
             <div className={cn("border-b border-ink-100 p-2 sm:p-2.5", !isMore && "hidden lg:block")}>
-              <div className="hidden lg:block" data-tour="panel-tabs">
-                <Tabs compact value={tab} onChange={setTab} tabs={[
+              <div className="hidden items-center gap-1 lg:flex" data-tour="panel-tabs">
+                <button onClick={() => setLayoutSaved((l) => ({ ...l, panel: false }))} className="shrink-0 rounded-md p-1.5 text-ink-400 transition hover:bg-ink-100 hover:text-ink-800" aria-label={t("Sağ paneli gizle")} title={`${t("Sağ paneli gizle")} (Ctrl+\\)`}><PanelRightClose className="h-4 w-4" /></button>
+                <Tabs className="min-w-0 flex-1" compact value={tab} onChange={setTab} tabs={[
                   ...(canEdit ? [{ id: "assistant" as const, label: t("Asistan"), icon: <Bot className="h-3.5 w-3.5" /> }] : []),
                   { id: "sources", label: t("Kaynaklar"), icon: <BookMarked className="h-3.5 w-3.5" />, count: sources.length },
                   { id: "memory", label: t("Hafıza"), icon: <Brain className="h-3.5 w-3.5" /> },

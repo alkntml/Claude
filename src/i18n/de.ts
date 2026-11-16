@@ -4920,4 +4920,9 @@ export const DE: Dict = {
   "İddia denetimi atıflı her cümleyi kaynağıyla karşılaştırır.": "Die Aussagenprüfung vergleicht jeden belegten Satz mit seiner Quelle.",
   "İçeriğe geç": "Zum Inhalt springen",
   "Erişilebilirlik": "Barrierefreiheit",
+  "Sol menüyü gizle": "Linkes Menü ausblenden",
+  "Sağ paneli gizle": "Rechtes Panel ausblenden",
+  "Sol menüyü göster": "Linkes Menü einblenden",
+  "Sağ paneli göster": "Rechtes Panel einblenden",
+  "Odak modu: çalışma alanında yan panelleri gizler ve geri açar": "Fokusmodus: blendet die Seitenleisten im Arbeitsbereich aus und wieder ein",
 };

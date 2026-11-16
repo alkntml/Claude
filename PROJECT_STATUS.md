@@ -18,6 +18,9 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - Migration 8 (`20261105000008_grants_surveys.sql`) canlı veritabanında çalıştırıldı (2026-11-02, Success).
 
 ## Tamamlanan özellikler
+**Geniş editör ve odak modu (D214, 16 Kasım 2026)**
+- Yan paneller dar ve küçük ölçekli, editör daha geniş ve ekranda bir tık küçük yazılı; Ctrl/⌘+\ odak modu.
+
 **Güven sinyalleri ve deneyim (D213, 16 Kasım 2026)**
 - Güven merkezi (/guven), “eğitimde kullanılmaz” beyanı (Anthropic ticari koşulları), Sistem durumu (/durum), Erişilebilirlik beyanı (/erisilebilirlik), üyelere Yenilikler sayfası.
 - Ctrl/⌘+K komut arama ve “?” kısayol listesi, İlk adımlar kartı, açılacak sayfanın bulanık önizlemesiyle yükleme ekranları.

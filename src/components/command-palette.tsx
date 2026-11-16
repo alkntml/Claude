@@ -154,7 +154,7 @@ export function CommandPalette({ extra = [], projects = true }: { extra?: Comman
 }
 
 const SHORTCUTS: { group: string; items: [string[], string][] }[] = [
-  { group: "Genel", items: [[["Mod", "K"], "Komut arama: sayfa, çalışma, bölüm, kaynak ve araç bulun"], [["?"], "Bu kısayol listesini açar"], [["Esc"], "Açık pencereyi veya menüyü kapatır"]] },
+  { group: "Genel", items: [[["Mod", "K"], "Komut arama: sayfa, çalışma, bölüm, kaynak ve araç bulun"], [["?"], "Bu kısayol listesini açar"], [["Esc"], "Açık pencereyi veya menüyü kapatır"], [["Mod", "\\"], "Odak modu: çalışma alanında yan panelleri gizler ve geri açar"]] },
   { group: "Editör", items: [
     [["Mod", "B"], "Kalın"], [["Mod", "I"], "İtalik"], [["Mod", "U"], "Altı çizili"],
     [["Mod", "Z"], "Geri al"], [["Mod", "Shift", "Z"], "Yinele"],

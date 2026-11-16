@@ -5,7 +5,7 @@ import { isSafeInternalLink } from "@/lib/notify";
 import { AutopilotTab } from "./autopilot";
 import { DiscountsTab } from "./discounts";
 import { motion } from "framer-motion";
-import { Activity, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell } from "lucide-react";
+import { Activity, Gauge, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -25,11 +25,25 @@ import { discountedPrice, discountLabel } from "@/lib/discount";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts" | "status";
 type Term = "monthly" | "days" | "yearly";
-const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "status", label: "Sistem durumu", icon: Activity }, { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket }, { id: "users", label: "Kullanıcılar", icon: Users }, { id: "plans", label: "Paketler ve limitler", icon: Package }, { id: "orgs", label: "Kurumlar", icon: Building2 },
-  { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "announcements", label: "Duyurular", icon: Megaphone },
-  { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "help", label: "Yardım merkezi", icon: FileQuestion }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon }, { id: "locks", label: "KVKK talepleri", icon: Lock }, { id: "referrals", label: "Davetler", icon: Gift }, { id: "discounts", label: "İndirim kodları", icon: Percent },
+/** D218: sekmeler dört kategoride (sol menü; telefonda gruplu seçim kutusu) */
+const GROUPS: { title: string; hint: string; tabs: { id: Tab; label: string; icon: any }[] }[] = [
+  { title: "İzleme", hint: "Sitenin ve yapay zekânın sağlığı", tabs: [
+    { id: "overview", label: "Genel bakış", icon: Activity }, { id: "alerts", label: "Uyarılar", icon: ShieldAlert }, { id: "status", label: "Sistem durumu", icon: Gauge },
+    { id: "traffic", label: "Ziyaretçiler", icon: BarChart3 }, { id: "errors", label: "Hata kayıtları", icon: AlertOctagon },
+  ] },
+  { title: "Kullanıcılar ve satış", hint: "Hesaplar, paketler, kampanyalar", tabs: [
+    { id: "users", label: "Kullanıcılar", icon: Users }, { id: "orgs", label: "Kurumlar", icon: Building2 }, { id: "plans", label: "Paketler ve limitler", icon: Package },
+    { id: "discounts", label: "İndirim kodları", icon: Percent }, { id: "referrals", label: "Davetler", icon: Gift },
+  ] },
+  { title: "Yapay zekâ ve içerik", hint: "Modeller, kaynaklar, duyurular", tabs: [
+    { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket },
+    { id: "announcements", label: "Duyurular", icon: Megaphone }, { id: "help", label: "Yardım merkezi", icon: FileQuestion },
+  ] },
+  { title: "Destek ve KVKK", hint: "Kullanıcı mesajları ve talepler", tabs: [
+    { id: "feedback", label: "Geri bildirim", icon: MessagesSquare }, { id: "locks", label: "KVKK talepleri", icon: Lock },
+  ] },
 ];
+const TABS = GROUPS.flatMap((g) => g.tabs);
 
 function useRows(resource: string, q = "") {
   const [rows, setRows] = useState<any[]>([]);
@@ -46,20 +60,45 @@ function useRows(resource: string, q = "") {
 export function AdminPanel({ selfId }: { selfId: string }) {
   // ?sekme=otomatik ile doğrudan otomatik çalışma sekmesi açılır
   const [tab, setTab] = useState<Tab>("overview");
-  useEffect(() => { if (new URLSearchParams(window.location.search).get("sekme") === "otomatik") setTab("autopilot"); }, []);
+  // D218: açık sekme adreste tutulur (?sekme=…); sayfa yenilenince aynı bölüm açılır
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("sekme");
+    if (q === "otomatik") setTab("autopilot");
+    else if (q && TABS.some((x) => x.id === q)) setTab(q as Tab);
+  }, []);
+  useEffect(() => {
+    try { const u = new URL(window.location.href); u.searchParams.set("sekme", tab); window.history.replaceState(null, "", u); } catch { /* yok say */ }
+  }, [tab]);
   return (
     <div>
       <h1 className="font-serif text-4xl font-medium tracking-tight text-ink-950">Yönetim paneli</h1>
       <p className="mt-1 text-ink-500">Modeller, promptlar, limitler ve veri kaynakları kod değişikliği gerekmeden buradan yönetilir.</p>
-      <div className="mt-6 flex gap-1 overflow-x-auto rounded-2xl bg-ink-100/70 p-1 [scrollbar-width:none]">
-        {TABS.map((t) => (
-          <button key={t.id} onClick={() => setTab(t.id)} className={cn("relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-medium transition", tab === t.id ? "text-ink-900" : "text-ink-500 hover:text-ink-800")}>
-            {tab === t.id && <motion.span layoutId="admin-tab" className="absolute inset-0 rounded-xl bg-white shadow-sm" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
-            <t.icon className="relative h-4 w-4" /><span className="relative">{t.label}</span>
-          </button>
-        ))}
-      </div>
-      <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[210px_minmax(0,1fr)] [&>*]:min-w-0">
+      <nav aria-label="Yönetim bölümleri" className="lg:sticky lg:top-6 lg:self-start">
+        <label className="sr-only" htmlFor="admin-tab-select">Bölüm</label>
+        <select id="admin-tab-select" className="input lg:hidden" value={tab} onChange={(e) => setTab(e.target.value as Tab)}>
+          {GROUPS.map((g) => <optgroup key={g.title} label={g.title}>{g.tabs.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}</optgroup>)}
+        </select>
+        <div className="hidden space-y-5 lg:block">
+          {GROUPS.map((g) => (
+            <div key={g.title}>
+              <p className="px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-400">{g.title}</p>
+              <ul className="mt-1.5 space-y-0.5">
+                {g.tabs.map((x) => (
+                  <li key={x.id}>
+                    <button onClick={() => setTab(x.id)} aria-current={tab === x.id ? "page" : undefined} className={cn("flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-[13.5px] transition", tab === x.id ? "bg-brand-50 font-medium text-brand-700" : "text-ink-600 hover:bg-ink-100 hover:text-ink-900")}>
+                      <x.icon className="h-4 w-4 shrink-0" />{x.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </nav>
+      <div>
+      <h2 className="mb-1 text-[13px] text-ink-400">{GROUPS.find((g) => g.tabs.some((x) => x.id === tab))?.title} · <span className="font-medium text-ink-700">{TABS.find((x) => x.id === tab)?.label}</span></h2>
+      <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-3">
         {tab === "overview" && <Overview />}
         {tab === "alerts" && <AlertsTab />}
         {tab === "status" && <div className="max-w-3xl"><StatusBoard /><p className="mt-3 text-[12.5px] text-ink-500">Yalnızca yöneticiler görür. Yapay zekâ satırı Anthropic’in kendi durum sayfasından okunur (status.anthropic.com); “Yavaş veya kısmi”, Anthropic’in o an küçük bir aksaklık bildirdiği anlamına gelir. Veri tabanlarından biri yavaşsa arama diğerleriyle sürer.</p></div>}
@@ -78,6 +117,8 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "referrals" && <ReferralsTab />}
         {tab === "discounts" && <DiscountsTab />}
       </motion.div>
+      </div>
+      </div>
     </div>
   );
 }

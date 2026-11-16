@@ -1276,3 +1276,7 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 ## D217 — Dışa aktarmada BibTeX ve sitede LaTeX/BibTeX (16 Kasım 2026)
 - Dışa aktar menüsü: LaTeX (.tex + .bib, ZIP) ve Overleaf’in yanında “BibTeX (.bib): kaynakça” (`/api/projects/[id]/sources/export?format=bib`, metinde atıf varsa yalnızca atıf yapılanlar, yoksa bütün kaynaklar; Basic ve üstü, `bib_io`).
 - Sitede: özellik kartı “LaTeX, BibTeX ve Overleaf”, teslim görseli ve açılış adımlarında BibTeX; SSS “Hangi biçimlerde indirebilirim?” ve “LaTeX/Overleaf” cevapları, rehber, yardım asistanı ve Yenilikler (TR/EN/DE).
+
+## D218 — Yönetim paneli kategorilere ayrıldı (16 Kasım 2026)
+- Kullanıcı isteği: 17 sekme tek satırda karışık görünüyordu. Sekmeler dört kategoride, solda gruplu menü (telefonda gruplu seçim kutusu): İzleme (Genel bakış, Uyarılar, Sistem durumu, Ziyaretçiler, Hata kayıtları), Kullanıcılar ve satış (Kullanıcılar, Kurumlar, Paketler ve limitler, İndirim kodları, Davetler), Yapay zekâ ve içerik (Yapay zekâ, Veri kaynakları, Otomatik çalışma, Duyurular, Yardım merkezi), Destek ve KVKK (Geri bildirim, KVKK talepleri).
+- Açık sekme adreste (`?sekme=users` vb.) tutulur; sayfa yenilenince aynı bölüm açılır (`?sekme=otomatik` eskisi gibi çalışır). İçerikler değişmedi.

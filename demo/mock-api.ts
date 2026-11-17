@@ -132,7 +132,9 @@ const proj = (id: string) => db.projects.find((x) => x.id === id) ?? fail(404, "
 on("GET", "/api/projects/([^/]+)", (m) => ({ project: proj(m[1]) }));
 // Demo: sistematik derleme (D134) — örnek kayıtlar, iki değerlendiricinin oyları, veri çıkarma ve kalite örneği
 const REVIEW_DEMO: { protocol: any; records: any[] } = {
-  protocol: { question: "Bağlanma stilleri ile ilişki odaklı obsesif belirtiler arasında ilişki var mı?", inclusion: ["Yetişkin örneklem", "Nicel desen"], exclusion: ["Çocuk/ergen örneklemi", "Konu dışı"], searches: [{ database: "Scopus", query: "attachment AND (ROCD OR relationship obsessive)", date: "2026-10-01", results: 42 }], dual: true },
+  protocol: { question: "Bağlanma stilleri ile ilişki odaklı obsesif belirtiler arasında ilişki var mı?", inclusion: ["Yetişkin örneklem", "Nicel desen"], exclusion: ["Çocuk/ergen örneklemi", "Konu dışı"], searches: [{ database: "Scopus", query: "attachment AND (ROCD OR relationship obsessive)", date: "2026-10-01", results: 42 }], dual: true,
+    // Örnek meta-analiz girdisi (yalnızca demo; gerçek veri değildir)
+    meta: { type: "or", model: "random", rows: [{ id: "d1", label: "Örnek çalışma A", v: { e1: 4, n1: 123, e2: 11, n2: 139 } }, { id: "d2", label: "Örnek çalışma B", v: { e1: 6, n1: 306, e2: 29, n2: 303 } }, { id: "d3", label: "Örnek çalışma C", v: { e1: 3, n1: 231, e2: 11, n2: 220 } }, { id: "d4", label: "Örnek çalışma D", v: { e1: 62, n1: 13598, e2: 248, n2: 12867 } }, { id: "d5", label: "Örnek çalışma E", v: { e1: 33, n1: 5069, e2: 47, n2: 5808 } }] } },
   records: SAMPLE_RECORDS.map((r, i) => ({
     id: `rv${i}`, key: `t:${i}`, origin: i % 2 ? "Scopus" : "Web of Science", record: { title: r.title, authors: r.authors, year: r.year, containerTitle: r.containerTitle ?? null, doi: r.doi ?? null, abstract: null },
     stage: i < 2 ? "included" : i < 4 ? "identified" : i === 4 ? "excluded_screening" : i === 5 ? "duplicate" : "sought", reason: i === 4 ? "Konu dışı" : i === 5 ? "Olası yinelenen (benzer başlık ve yıl)" : null, ai: null, source_id: null,

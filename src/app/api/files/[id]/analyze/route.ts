@@ -22,6 +22,12 @@ const Spec = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("regression"), dv: Col, ivs: z.array(Col).min(1).max(15) }),
   z.object({ kind: z.literal("chisquare"), a: Col, b: Col }),
   z.object({ kind: z.literal("alpha"), items: z.array(Col).min(2).max(100), scale: z.string().max(200).optional() }),
+  // D224
+  z.object({ kind: z.literal("wilcoxon"), a: Col, b: Col }),
+  z.object({ kind: z.literal("friedman"), vars: z.array(Col).min(3).max(15) }),
+  z.object({ kind: z.literal("anova2"), dv: Col, a: Col, b: Col }),
+  z.object({ kind: z.literal("rmanova"), vars: z.array(Col).min(2).max(15) }),
+  z.object({ kind: z.literal("logistic"), dv: Col, ivs: z.array(Col).min(1).max(15) }),
 ]);
 
 /** Yüklenen veri dosyasında istatistik analizi (deterministik) ve APA raporu */

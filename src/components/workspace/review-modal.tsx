@@ -13,10 +13,12 @@ import { useT } from "@/i18n/client";
 import { api } from "@/lib/client";
 import { agreement, appraisalSummary, appraisalTool, APPRAISAL_TOOLS, characteristicsMarkdown, checklistMarkdown, checklistStatusText, prismaChecklist, REPORTING_FIELDS, REPORTING_LABELS, SCALE_ANSWERS, type AppraisalToolId, EMPTY_PROTOCOL, EXTRACTION_FIELDS, EXTRACTION_LABELS, methodsMarkdown, prismaCounts, prismaSvg, reviewCsv, type Appraisal, type AppraisalAnswer, type Extraction, type ReviewProtocol, type ReviewRecord, type ReviewStage, type VoteDecision, type VotePhase } from "@/lib/prisma";
 import { svgToPng } from "@/lib/svg-png";
+import { META_FIELDS, metaAnalysis, type MetaModel, type MetaRowInput, type MetaType } from "@/lib/meta";
+import { forestSvg, funnelSvg, heterogeneityText, META_FIELD_LABEL, META_TYPE_LABEL, metaResultsMarkdown } from "@/lib/meta-report";
 import { writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "protocol" | "collect" | "screen" | "eligibility" | "extract" | "diagram";
+type Tab = "protocol" | "collect" | "screen" | "eligibility" | "extract" | "diagram" | "meta";
 const STAGE_LABEL: Record<ReviewStage, string> = {
   identified: "Taranmayı bekliyor", duplicate: "Yinelenen", excluded_screening: "Taramada hariç", sought: "Tam metin değerlendirmesinde",
   not_retrieved: "Tam metne ulaşılamadı", excluded_eligibility: "Tam metinde hariç", included: "Dahil edildi",
@@ -60,10 +62,10 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
   const counts = useMemo(() => prismaCounts(records), [records]);
   const reasons = useMemo(() => [...protocol.exclusion, t("Konu dışı"), t("Yayın türü uygun değil"), t("Dil ölçütü dışında")], [protocol.exclusion, t]);
 
-  async function saveProtocol(next?: Partial<ReviewProtocol>) {
+  async function saveProtocol(next?: Partial<ReviewProtocol>, quiet = false) {
     const p = { ...protocol, question: draft.question, inclusion: lines(draft.inclusion), exclusion: lines(draft.exclusion), extractionFields: lines(draft.fields).slice(0, 12), ...next };
     setBusy("protocol");
-    try { const r = await api<{ protocol: ReviewProtocol }>(`/api/projects/${projectId}/review`, { method: "PUT", json: p }); setProtocol(r.protocol); toast({ tone: "success", title: t("Protokol kaydedildi") }); }
+    try { const r = await api<{ protocol: ReviewProtocol }>(`/api/projects/${projectId}/review`, { method: "PUT", json: p }); setProtocol(r.protocol); if (!quiet) toast({ tone: "success", title: t("Protokol kaydedildi") }); }
     catch (e) { toast({ tone: "error", title: t("Kaydedilemedi"), detail: (e as Error).message }); }
     finally { setBusy(null); }
   }
@@ -96,7 +98,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
         <div className="-mx-1 overflow-x-auto px-1 pb-1">
           <Tabs className="min-w-[760px]" value={tab} onChange={(v) => setTab(v as Tab)} tabs={[
             { id: "protocol", label: t("1. Protokol") }, { id: "collect", label: t("2. Kayıt toplama") }, { id: "screen", label: t("3. Tarama"), count: counts.pendingScreening },
-            { id: "eligibility", label: t("4. Tam metin"), count: counts.pendingEligibility }, { id: "extract", label: t("5. Veri ve kalite"), count: counts.included || undefined }, { id: "diagram", label: t("6. Şema ve yöntem") },
+            { id: "eligibility", label: t("4. Tam metin"), count: counts.pendingEligibility }, { id: "extract", label: t("5. Veri ve kalite"), count: counts.included || undefined }, { id: "diagram", label: t("6. Şema ve yöntem") }, { id: "meta", label: t("7. Meta-analiz") },
           ]} />
         </div>
         {loading ? <p className="flex items-center gap-2 text-sm text-ink-500"><Loader2 className="h-4 w-4 animate-spin" /> {t("Yükleniyor…")}</p> : (
@@ -152,6 +154,7 @@ export function ReviewModal({ open, onClose, projectId, language, onInsertFigure
             {tab === "screen" && <Screen projectId={projectId} records={records} reasons={reasons} protocol={protocol} decide={decide} reload={load} setRecords={setRecords} dual={dual} me={me} vote={vote} />}
             {tab === "eligibility" && <Eligibility projectId={projectId} records={records} reasons={reasons} decide={decide} onSourcesAdded={(rows) => { onSourcesAdded(rows); load(); }} dual={dual} me={me} vote={vote} />}
             {tab === "extract" && <ExtractTab projectId={projectId} protocol={protocol} records={records} setRecords={setRecords} lang={lang} upgraded={upgraded} onInsertMarkdown={onInsertMarkdown} sourceTitle={(r) => `${authorsOf(r) || r.record.title.slice(0, 50)}${r.record.year ? ` (${r.record.year})` : ""} — ${r.record.title}`} />}
+            {tab === "meta" && <MetaTab protocol={protocol} records={records} lang={lang} onSave={(meta) => saveProtocol({ meta }, true)} onInsertFigure={onInsertFigure} onInsertMarkdown={onInsertMarkdown} />}
             {tab === "diagram" && <Diagram counts={counts} lang={lang} records={records} protocol={protocol} onInsertFigure={onInsertFigure} onInsertMarkdown={onInsertMarkdown} />}
           </>
         )}
@@ -349,6 +352,104 @@ function Eligibility({ projectId, records, reasons, decide, onSourcesAdded, dual
   );
 }
 
+
+/* ---------------- D224: meta-analiz ---------------- */
+function MetaTab({ protocol, records, lang, onSave, onInsertFigure, onInsertMarkdown }: {
+  protocol: ReviewProtocol; records: ReviewRecord[]; lang: "tr" | "en" | "de"; onSave: (m: NonNullable<ReviewProtocol["meta"]>) => void;
+  onInsertFigure?: (f: { title: string; src: string; alt: string; note: string }) => void; onInsertMarkdown?: (md: string, map: Record<string, string>) => void;
+}) {
+  const { t } = useT();
+  const toast = useToast();
+  const included = records.filter((r) => r.stage === "included");
+  const [type, setType] = useState<MetaType>(protocol.meta?.type ?? "smd");
+  const [model, setModel] = useState<MetaModel>(protocol.meta?.model ?? "random");
+  const [rows, setRows] = useState<MetaRowInput[]>(() => {
+    const saved = protocol.meta?.rows ?? [];
+    const have = new Set(saved.map((r) => r.id));
+    return [...saved, ...included.filter((r) => !have.has(r.id)).map((r) => ({ id: r.id, label: `${authorsOf(r) || r.record.title.slice(0, 30)}${r.record.year ? ` (${r.record.year})` : ""}`, v: {} }))];
+  });
+  const [busy, setBusy] = useState(false);
+  const fields = META_FIELDS[type];
+  const persist = (nt: MetaType, nm: MetaModel, nr: MetaRowInput[]) => onSave({ type: nt, model: nm, rows: nr });
+  const setCell = (id: string, key: string, raw: string) => {
+    const txt = raw.trim().replace(",", "."), num = txt === "" ? null : Number(txt);
+    const nr = rows.map((r) => (r.id === id ? { ...r, v: { ...r.v, [key]: num !== null && Number.isFinite(num) ? num : null } } : r));
+    setRows(nr); persist(type, model, nr);
+  };
+  const setLabel = (id: string, label: string) => { const nr = rows.map((r) => (r.id === id ? { ...r, label: label.slice(0, 80) } : r)); setRows(nr); persist(type, model, nr); };
+  const addRow = () => { const nr = [...rows, { id: `m-${Date.now().toString(36)}`, label: t("Yeni çalışma"), v: {} }]; setRows(nr); persist(type, model, nr); };
+  const delRow = (id: string) => { const nr = rows.filter((r) => r.id !== id); setRows(nr); persist(type, model, nr); };
+  const res = useMemo(() => { try { return metaAnalysis(type, model, rows); } catch { return null; } }, [type, model, rows]);
+  const forest = useMemo(() => (res ? forestSvg(res, lang) : null), [res, lang]);
+  const funnel = useMemo(() => (res ? funnelSvg(res, lang) : null), [res, lang]);
+  const download = (name: string, data: string) => { const url = URL.createObjectURL(new Blob([data], { type: "text/csv;charset=utf-8" })); const a = document.createElement("a"); a.href = url; a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); };
+  async function insertFig(kind: "forest" | "funnel") {
+    if (!onInsertFigure || !forest || !funnel) return;
+    setBusy(true);
+    try {
+      const g = kind === "forest" ? forest : funnel;
+      const title = kind === "forest" ? (lang === "en" ? "Forest plot" : lang === "de" ? "Forest-Plot" : "Orman grafiği") : (lang === "en" ? "Funnel plot" : lang === "de" ? "Funnel-Plot" : "Huni grafiği");
+      onInsertFigure({ title, src: await svgToPng(g.svg, g.width, g.height), alt: title, note: "" });
+      toast({ tone: "success", title: t("Şekil belgeye eklendi") });
+    } finally { setBusy(false); }
+  }
+  const sel = "input";
+  return (
+    <div className="space-y-3">
+      <p className="text-[13px] text-ink-600">{t("Dahil edilen çalışmaların sayısal sonuçlarını girin; birleşik etki, heterojenlik, orman ve huni grafiği ile yayın yanlılığı testi hesaplanır. Sayıları siz girersiniz; Academiana yalnızca hesaplar, yapay zekâ kullanılmaz.")}</p>
+      <div className="grid gap-3 md:grid-cols-2">
+        <div><label className="label" htmlFor="f-meta-type">{t("Etki ölçüsü")}</label>
+          <select id="f-meta-type" className={sel} value={type} onChange={(e) => { const nt = e.target.value as MetaType; setType(nt); persist(nt, model, rows.map((r) => ({ ...r, v: {} }))); setRows((rs) => rs.map((r) => ({ ...r, v: {} }))); }}>
+            {(Object.keys(META_TYPE_LABEL) as MetaType[]).map((k) => <option key={k} value={k}>{META_TYPE_LABEL[k][lang]}</option>)}
+          </select>
+          <p className="mt-1 text-[11.5px] text-ink-500">{t("Etki ölçüsünü değiştirirseniz girdiğiniz sayılar silinir.")}</p></div>
+        <div><label className="label" htmlFor="f-meta-model">{t("Birleştirme modeli")}</label>
+          <select id="f-meta-model" className={sel} value={model} onChange={(e) => { const nm = e.target.value as MetaModel; setModel(nm); persist(type, nm, rows); }}>
+            <option value="random">{t("Rastgele etkiler (DerSimonian–Laird)")}</option><option value="fixed">{t("Sabit etki (ters varyans)")}</option>
+          </select>
+          <p className="mt-1 text-[11.5px] text-ink-500">{t("Çalışmalar birbirinden farklı örneklem ve ölçümler içeriyorsa rastgele etkiler önerilir.")}</p></div>
+      </div>
+      {!rows.length ? <p className="rounded-xl bg-ink-50 p-4 text-[13px] text-ink-600">{t("Henüz dahil edilen çalışma yok. Tam metin sekmesinde çalışmaları dahil edin ya da aşağıdan elle çalışma ekleyin.")}</p> : (
+        <div className="overflow-x-auto rounded-2xl border border-ink-100">
+          <table className="w-full min-w-[640px] text-left text-[12.5px]">
+            <thead className="bg-ink-50 text-ink-500"><tr><th className="p-2">{t("Çalışma")}</th>{fields.map((f) => <th key={f} className="p-2">{META_FIELD_LABEL[f][lang]}</th>)}<th className="p-2" /></tr></thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={`${r.id}-${type}`} className="border-t border-ink-100 align-middle">
+                  <td className="p-1.5"><input aria-label={t("Çalışma adı")} className="input py-1 text-[12.5px]" defaultValue={r.label} onBlur={(e) => e.target.value !== r.label && setLabel(r.id, e.target.value)} /></td>
+                  {fields.map((f) => <td key={f} className="p-1.5"><input aria-label={`${r.label} ${META_FIELD_LABEL[f][lang]}`} className="input w-24 py-1 text-[12.5px]" inputMode="decimal" defaultValue={r.v[f] ?? ""} onBlur={(e) => { if ((e.target.value.trim().replace(",", ".") || "") !== String(r.v[f] ?? "")) setCell(r.id, f, e.target.value); }} /></td>)}
+                  <td className="p-1.5 text-right">{r.id.startsWith("m-") && <button type="button" onClick={() => delRow(r.id)} className="text-[12px] text-rose-600 hover:underline" aria-label={t("Satırı sil")}>{t("Sil")}</button>}</td>
+                  <td className="hidden">{i}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <Button size="sm" variant="secondary" onClick={addRow}><Plus className="h-4 w-4" /> {t("Çalışma ekle")}</Button>
+      {res ? (
+        <div className="space-y-3">
+          <div className="grid gap-2 sm:grid-cols-4">
+            {[[t("Çalışma sayısı"), String(res.k)], [t("Birleşik etki"), `${(res.back(res.pooled.est)).toFixed(2)}`], [t("%95 GA"), `[${res.back(res.pooled.ci[0]).toFixed(2)}, ${res.back(res.pooled.ci[1]).toFixed(2)}]`], ["I²", `%${res.I2.toFixed(1)}`]].map(([a, b]) => (
+              <div key={a} className="rounded-2xl border border-ink-100 p-3"><p className="text-[12px] text-ink-500">{a}</p><p className="text-xl font-semibold text-ink-900">{b}</p></div>
+            ))}
+          </div>
+          <p className="text-[12.5px] text-ink-600">{heterogeneityText(res, lang)}{res.egger ? ` · Egger: t(${res.egger.df}) = ${res.egger.t.toFixed(2)}, p = ${res.egger.p.toFixed(3)}` : ""}{res.k < 10 ? ` · ${t("10’dan az çalışmada Egger testi düşük güçlüdür.")}` : ""}</p>
+          {res.skipped.length > 0 && <p className="rounded-xl bg-amber-50 p-2.5 text-[12.5px] text-amber-800">{t("{n} çalışmanın verisi eksik ya da geçersiz; hesaba katılmadı:", { n: res.skipped.length })} {res.skipped.map((s) => `${s.label} (${s.reason})`).join("; ")}</p>}
+          {forest && <div className="overflow-x-auto rounded-2xl border border-ink-100 bg-white p-2" dangerouslySetInnerHTML={{ __html: forest.svg }} />}
+          {funnel && <div className="overflow-x-auto rounded-2xl border border-ink-100 bg-white p-2" dangerouslySetInnerHTML={{ __html: funnel.svg }} />}
+          <div className="flex flex-wrap gap-2">
+            {onInsertFigure && <><Button size="sm" onClick={() => insertFig("forest")} loading={busy}><FilePlus2 className="h-4 w-4" /> {t("Orman grafiğini belgeye ekle")}</Button><Button size="sm" variant="secondary" onClick={() => insertFig("funnel")} loading={busy}><FilePlus2 className="h-4 w-4" /> {t("Huni grafiğini belgeye ekle")}</Button></>}
+            {onInsertMarkdown && <Button size="sm" variant="secondary" onClick={() => { onInsertMarkdown(metaResultsMarkdown(res, lang), {}); toast({ tone: "success", title: t("Meta-analiz sonuçları belgeye eklendi") }); }}><FileText className="h-4 w-4" /> {t("Sonuç metnini ve tabloyu ekle")}</Button>}
+            <Button size="sm" variant="ghost" onClick={() => download("meta-analiz.csv", "\ufeff" + [[t("Çalışma"), "yi", "SE", t("%95 GA alt"), t("%95 GA üst"), t("Ağırlık (%)")], ...res.studies.map((s) => [s.label, s.yi, s.sei, s.ci[0], s.ci[1], s.wPct])].map((x) => x.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n"))}><Download className="h-4 w-4" /> CSV</Button>
+          </div>
+          <p className="text-[11.5px] text-ink-500">{t("Hesaplamalar R’nin metafor paketiyle karşılaştırılarak test edilmiştir. Meta-analiz yöntemi 6. sekmedeki yöntem metnine, sonuç maddeleri PRISMA kontrol listesine kendiliğinden yansır.")}</p>
+        </div>
+      ) : <p className="rounded-xl bg-ink-50 p-3 text-[12.5px] text-ink-600">{t("Sonuç için en az 2 çalışmanın eksiksiz verisi gerekir.")}</p>}
+    </div>
+  );
+}
+
 function Diagram({ counts, lang, records, protocol, onInsertFigure, onInsertMarkdown }: { counts: ReturnType<typeof prismaCounts>; lang: "tr" | "en" | "de"; records: ReviewRecord[]; protocol: ReviewProtocol; onInsertFigure?: (f: { title: string; src: string; alt: string; note: string }) => void; onInsertMarkdown?: (md: string, map: Record<string, string>) => void }) {
   const { t } = useT();
   const toast = useToast();
@@ -365,8 +466,9 @@ function Diagram({ counts, lang, records, protocol, onInsertFigure, onInsertMark
     const appraisedRecs = inc2.filter((r) => appraisalSummary(withTool(r)).risk);
     const extracted = inc2.filter((r) => r.extraction?.at).length;
     const tools = [...new Set(appraisedRecs.map((r) => withTool(r)!.tool!))] as AppraisalToolId[];
-    const md = methodsMarkdown({ protocol, counts, lang, agreement: ag, includedLabels: Object.keys(map), extracted, appraised: appraisedRecs.length, tools });
-    const checklist = prismaChecklist({ protocol, counts, lang, dualKappa: !!(ag && ag.n > 0 && ag.kappa != null), extracted, appraised: appraisedRecs.length });
+    const metaRes = (() => { try { return protocol.meta ? metaAnalysis(protocol.meta.type, protocol.meta.model, protocol.meta.rows) : null; } catch { return null; } })();
+    const md = methodsMarkdown({ protocol, counts, lang, agreement: ag, includedLabels: Object.keys(map), extracted, appraised: appraisedRecs.length, tools, meta: metaRes && protocol.meta ? { type: protocol.meta.type, model: protocol.meta.model } : null });
+    const checklist = prismaChecklist({ protocol, counts, lang, dualKappa: !!(ag && ag.n > 0 && ag.kappa != null), extracted, appraised: appraisedRecs.length, meta: metaRes ? { k: metaRes.k } : null });
     return { md, map, checklist };
   }, [records, protocol, counts, lang]);
   async function insert() {

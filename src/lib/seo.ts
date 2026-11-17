@@ -38,7 +38,7 @@ export function localizedPath(href: string, locale: Locale): string {
 }
 
 /** Herkese açık sayfaların son içerik güncellemesi (site haritası lastmod); sayfa metinleri değişince güncellenir */
-export const SITE_CONTENT_UPDATED = "2026-11-16";
+export const SITE_CONTENT_UPDATED = "2026-11-17";
 
 export const absoluteUrl = (path: string) => `${SITE_URL}${path === "/" ? "" : path}`;
 

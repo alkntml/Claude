@@ -20,7 +20,13 @@ export type AnalysisSpec =
   | { kind: "correlation"; vars: string[]; method: "pearson" | "spearman" }
   | { kind: "regression"; dv: string; ivs: string[] }
   | { kind: "chisquare"; a: string; b: string }
-  | { kind: "alpha"; items: string[]; scale?: string };
+  | { kind: "alpha"; items: string[]; scale?: string }
+  // D224
+  | { kind: "wilcoxon"; a: string; b: string }
+  | { kind: "friedman"; vars: string[] }
+  | { kind: "anova2"; dv: string; a: string; b: string }
+  | { kind: "rmanova"; vars: string[] }
+  | { kind: "logistic"; dv: string; ivs: string[] };
 
 export interface AnalysisReport {
   title: string;
@@ -32,7 +38,6 @@ export interface AnalysisReport {
   n: number;
 }
 
-type L = "tr" | "en" | "de";
 const T = {
   tr: {
     desc: "Betimsel istatistikler", variable: "Değişken", skew: "Çarpıklık", kurt: "Basıklık", group: "Grup", diff: "Fark",
@@ -63,19 +68,9 @@ const T = {
     item: "Item", itemTotal: "Korrigierte Item-Skala-Korrelation", alphaIf: "α bei Weglassen des Items", mean: "M", sd: "SD",
   },
 } as const;
-/** Üç dilli kısa seçici */
-const L3 = (l: L, tr: string, en: string, de: string) => (l === "tr" ? tr : l === "de" ? de : en);
-
-// ---------------------------------------------------------------------------
-// Biçimlendirme (APA 7): p < .001; r, β, p, α başında sıfırsız
-// ---------------------------------------------------------------------------
-export const f2 = (x: number, d = 2) => (Number.isFinite(x) ? x.toFixed(d) : "—");
-export const noZero = (x: number, d = 2) => (Number.isFinite(x) ? x.toFixed(d).replace(/^(-?)0\./, "$1.") : "—");
-export const pApa = (p: number) => (p < 0.001 ? "p < .001" : `p = ${noZero(p, 3)}`);
-const pCell = (p: number) => (p < 0.001 ? "< .001" : noZero(p, 3));
-const stars = (p: number) => (p < 0.001 ? "***" : p < 0.01 ? "**" : p < 0.05 ? "*" : "");
-const sig = (p: number, l: L) => (p < 0.05 ? L3(l, "anlamlı", "significant", "signifikant") : L3(l, "anlamlı değildir", "not significant", "nicht signifikant"));
-const table = (head: string[], rows: (string | number)[][]) => [`| ${head.join(" | ")} |`, `| ${head.map(() => "---").join(" | ")} |`, ...rows.map((r) => `| ${r.join(" | ")} |`)].join("\n");
+import { f2, L3, noZero, pApa, pCell, sig, stars, table, type L } from "./apa-util";
+import { dunnNote, reportAnova2, reportFriedman, reportLogistic, reportRm, reportWilcoxon } from "./apa2";
+export { f2, noZero, pApa };
 
 // ---------------------------------------------------------------------------
 // Veri erişimi (listwise silme)
@@ -313,6 +308,7 @@ export function runAnalysis(rows: string[][], spec: AnalysisSpec, l: L = "tr"): 
         : l === "tr"
         ? `${spec.dv} puanlarının ${spec.group} değişkenine göre farklılaşıp farklılaşmadığı Kruskal-Wallis H testiyle incelenmiştir; fark ${sig(r.p, l)}${r.p < 0.05 ? "dır" : ""}, H(${r.df}) = ${f2(r.H)}, ${pApa(r.p)}, ε² = ${noZero(r.epsilonSquared)}.`
         : `A Kruskal-Wallis H test examined ${spec.dv} by ${spec.group}; the difference was ${sig(r.p, l)}, H(${r.df}) = ${f2(r.H)}, ${pApa(r.p)}, ε² = ${noZero(r.epsilonSquared)}.`;
+      if (r.p < 0.05 && labels.length > 2) notes.push(dunnNote([...m.values()], labels, l));
       return { title: t.kw, table: tbl, text, notes, n: r.ns.reduce((a, b) => a + b, 0) };
     }
 
@@ -401,6 +397,12 @@ export function runAnalysis(rows: string[][], spec: AnalysisSpec, l: L = "tr"): 
         : `A chi-square test of independence examined the relationship between ${spec.a} and ${spec.b}; it was ${sig(r.p, l)}, χ²(${r.df}, N = ${r.n}) = ${f2(r.chi2)}, ${pApa(r.p)}, Cramér's V = ${noZero(r.cramersV)}.`;
       return { title: t.chisq, table: tbl, text, notes, n: r.n };
     }
+
+    case "wilcoxon": return reportWilcoxon(d, spec.a, spec.b, l);
+    case "friedman": return reportFriedman(d, spec.vars, l);
+    case "anova2": return reportAnova2(d, spec.dv, spec.a, spec.b, l);
+    case "rmanova": return reportRm(d, spec.vars, l);
+    case "logistic": return reportLogistic(d, spec.dv, spec.ivs, l);
 
     case "alpha": {
       const data = d.numeric(spec.items);

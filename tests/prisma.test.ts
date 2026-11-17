@@ -74,3 +74,19 @@ describe("PRISMA geliştirmeleri (D222)", () => {
     expect(checklistMarkdown(rows, "tr")).toContain("| Yöntem | 13 | Sentez yöntemleri |");
   });
 });
+
+describe("Meta-analiz ve PRISMA bağlantısı (D224)", () => {
+  it("yöntem metnine meta-analiz cümlesi girer; kontrol listesi sentez maddelerini tamamlar", async () => {
+    const { methodsMarkdown, prismaChecklist, prismaCounts, EMPTY_PROTOCOL } = await import("@/lib/prisma");
+    const counts = prismaCounts([{ origin: "PubMed", stage: "included", reason: null }]);
+    const protocol = { ...EMPTY_PROTOCOL, question: "Soru?", searches: [{ database: "PubMed", query: "a", date: "2026-11-01", results: 1 }] };
+    const md = methodsMarkdown({ protocol, counts, lang: "tr", meta: { type: "smd", model: "random" } });
+    expect(md).toContain("Hedges g"); expect(md).toContain("DerSimonian–Laird");
+    expect(methodsMarkdown({ protocol, counts, lang: "en", meta: { type: "or", model: "fixed" } })).toContain("odds ratio");
+    expect(methodsMarkdown({ protocol, counts, lang: "tr" })).not.toContain("DerSimonian");
+    const st = (k: number | null) => Object.fromEntries(prismaChecklist({ protocol, counts, lang: "tr", dualKappa: false, extracted: 1, appraised: 0, meta: k ? { k } : null }).map((r) => [r.n, r.status]));
+    expect([st(12)[12], st(12)[13], st(12)[19], st(12)[20], st(12)[21]]).toEqual(["done", "done", "done", "done", "done"]);
+    expect([st(5)[14], st(5)[21]]).toEqual(["partial", "partial"]); // 10’dan az çalışma
+    expect([st(null)[12], st(null)[20]]).toEqual(["todo", "author"]);
+  });
+});

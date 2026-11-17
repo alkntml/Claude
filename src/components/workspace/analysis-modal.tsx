@@ -11,7 +11,7 @@ import { Markdown } from "./markdown";
 import { writingLang } from "@/lib/writing-lang";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Kind = "describe" | "ttest_ind" | "ttest_paired" | "ttest_one" | "anova" | "mannwhitney" | "kruskal" | "correlation" | "regression" | "chisquare" | "alpha";
+type Kind = "describe" | "ttest_ind" | "ttest_paired" | "ttest_one" | "anova" | "mannwhitney" | "kruskal" | "correlation" | "regression" | "chisquare" | "alpha" | "wilcoxon" | "friedman" | "anova2" | "rmanova" | "logistic";
 const KINDS: { id: Kind; label: string; hint: string }[] = [
   { id: "describe", label: "Betimsel istatistikler ve normallik", hint: "Ortalama, standart sapma, çarpıklık, basıklık" },
   { id: "ttest_ind", label: "Bağımsız örneklemler t testi", hint: "İki grubun ortalamasını karşılaştırır (ör. kadın–erkek)" },
@@ -24,6 +24,11 @@ const KINDS: { id: Kind; label: string; hint: string }[] = [
   { id: "regression", label: "Doğrusal regresyon", hint: "Yordayıcıların bağımlı değişkeni açıklama gücü" },
   { id: "chisquare", label: "Ki-kare bağımsızlık testi", hint: "İki kategorik değişken arasındaki ilişki" },
   { id: "alpha", label: "Güvenirlik (Cronbach alfa)", hint: "Ölçek maddelerinin iç tutarlılığı" },
+  { id: "wilcoxon", label: "Wilcoxon işaretli sıralar testi", hint: "Aynı kişilerde iki ölçüm; normal dağılım sağlanmadığında" },
+  { id: "friedman", label: "Friedman testi", hint: "Aynı kişilerde üç ve daha fazla ölçüm; normal dağılım sağlanmadığında" },
+  { id: "anova2", label: "İki yönlü varyans analizi (ANOVA)", hint: "İki faktörün ve etkileşiminin etkisi (ör. yöntem × cinsiyet)" },
+  { id: "rmanova", label: "Tekrarlı ölçümler ANOVA’sı", hint: "Aynı kişilerde üç ve daha fazla ölçüm (küresellik denetimiyle)" },
+  { id: "logistic", label: "İkili lojistik regresyon", hint: "İki kategorili sonucu (ör. geçti–kaldı) yordama" },
 ];
 
 export function AnalysisModal({ open, onClose, files, language, tableNo, style, onInsert }: { open: boolean; onClose: () => void; files: any[]; language: string; tableNo: number; style: string; onInsert?: (md: string) => void }) {
@@ -71,7 +76,10 @@ export function AnalysisModal({ open, onClose, files, language, tableNo, style, 
     switch (kind) {
       case "describe": return { kind, vars: sel.vars ?? [] };
       case "ttest_ind": case "mannwhitney": case "anova": case "kruskal": return { kind, dv: sel.dv, group: sel.group };
-      case "ttest_paired": return { kind, a: sel.a, b: sel.b };
+      case "ttest_paired": case "wilcoxon": return { kind, a: sel.a, b: sel.b };
+      case "friedman": case "rmanova": return { kind, vars: sel.vars ?? [] };
+      case "anova2": return { kind, dv: sel.dv, a: sel.a, b: sel.b };
+      case "logistic": return { kind, dv: sel.dv, ivs: sel.ivs ?? [] };
       case "ttest_one": return { kind, dv: sel.dv, mu: Number(String(sel.mu ?? "").replace(",", ".")) };
       case "correlation": return { kind, vars: sel.vars ?? [], method: sel.method ?? "pearson" };
       case "regression": return { kind, dv: sel.dv, ivs: sel.ivs ?? [] };
@@ -107,7 +115,10 @@ export function AnalysisModal({ open, onClose, files, language, tableNo, style, 
             <div className="grid gap-3 md:grid-cols-2">
               {kind === "describe" && <div className="md:col-span-2">{many("vars", t("Değişkenler"), num)}</div>}
               {(kind === "ttest_ind" || kind === "mannwhitney" || kind === "anova" || kind === "kruskal") && <>{one("dv", t("Bağımlı değişken (sayısal)"), num)}{one("group", t("Gruplama değişkeni"), cat.map((c) => c.name))}</>}
-              {kind === "ttest_paired" && <>{one("a", t("Birinci ölçüm (ör. ön test)"), num)}{one("b", t("İkinci ölçüm (ör. son test)"), num)}</>}
+              {(kind === "ttest_paired" || kind === "wilcoxon") && <>{one("a", t("Birinci ölçüm (ör. ön test)"), num)}{one("b", t("İkinci ölçüm (ör. son test)"), num)}</>}
+              {(kind === "friedman" || kind === "rmanova") && <div className="md:col-span-2">{many("vars", t("Ölçümler (aynı kişilerde, sırayla)"), num)}</div>}
+              {kind === "anova2" && <>{one("dv", t("Bağımlı değişken (sayısal)"), num)}{one("a", t("Birinci faktör"), cat.map((c) => c.name))}{one("b", t("İkinci faktör"), cat.map((c) => c.name))}</>}
+              {kind === "logistic" && <>{one("dv", t("Bağımlı değişken (iki kategorili)"), [...new Set([...cat.map((c) => c.name), ...num])])}<div className="md:col-span-2">{many("ivs", t("Yordayıcılar (sayısal)"), num.filter((n) => n !== sel.dv))}</div></>}
               {kind === "ttest_one" && <>{one("dv", t("Değişken"), num)}<label className="block"><span className="label">{t("Test değeri")}</span><input className="input" inputMode="decimal" value={sel.mu ?? ""} onChange={(e) => setSel((s) => ({ ...s, mu: e.target.value }))} placeholder="3" /></label></>}
               {kind === "correlation" && <><div className="md:col-span-2">{many("vars", t("Değişkenler (en az 2)"), num)}</div><label className="block"><span className="label">{t("Yöntem")}</span><select className="input" value={sel.method ?? "pearson"} onChange={(e) => setSel((s) => ({ ...s, method: e.target.value }))}><option value="pearson">Pearson</option><option value="spearman">Spearman</option></select></label></>}
               {kind === "regression" && <>{one("dv", t("Bağımlı değişken"), num)}<div className="md:col-span-2">{many("ivs", t("Yordayıcılar"), num.filter((n) => n !== sel.dv))}</div></>}

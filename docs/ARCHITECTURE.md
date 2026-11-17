@@ -126,7 +126,7 @@ src/lib/
   export/                model.ts + render-docx/pdf/text + render-latex (D136: LaTeX ZIP, biblatex, Overleaf’te aç; Türkçe biblatex ayarı biblatexSetup)
   files/                 extract, chunk, stats (deterministik istatistik)
   payments/              Stripe/iyzico kütüphanesi (şimdilik kullanılmıyor; rotalar kaldırıldı, D48)
-  stats/                 dist.ts (dağılımlar), tests.ts (t, ANOVA, regresyon…), apa.ts (APA rapor)
+  stats/                 dist.ts (dağılımlar), tests.ts (t, ANOVA, regresyon…), tests2.ts (Wilcoxon, Friedman, Dunn, iki yönlü/tekrarlı ANOVA, lojistik; D224), apa.ts + apa2.ts (APA rapor); meta.ts + meta-report.ts (meta-analiz, D224)
   sources/bib.ts         BibTeX/RIS/CSL-JSON; sources/journals.ts dergi önerisi
   export/presentation.ts Savunma sunumu (.pptx); export/format.ts biçim şablonları
   blog/                  Blog yazıları (posts-1..6.ts, İngilizceleri en-1..6.ts, Almancaları de-1..6.ts; basit Markdown gövde), index.ts (liste, ayrıştırıcı, ilgili yazılar)

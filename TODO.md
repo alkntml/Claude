@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (Kullanıcı) Search Console’da /zenit, /rasat, /mizan ve yeni 8 blog yazısı için dizine ekleme iste
 - [ ] (Kullanıcı) Yönetim → Yapay zekâ → Mizan doğruluk testi → “Yeniden ölç”: yeni karar kurallarıyla (D222) “Kısmen” sınıfının sonucu görülsün
 - [x] (2026-11-14) (D190–D192) Supabase SQL Editor’de migration 44’ü çalıştır (`supabase/migrations/20261208000044_isnad_note_advisor_sync.sql`: ISNAD dipnotlu stil, danışman rolü, Zotero/ORCID bağlantıları); check_status.sql’de “44” YAPILMIŞ görünmeli. Çalıştırılmadan ISNAD dipnotlu seçilemez, danışman daveti ve eşitleme kaydedilemez
 - [ ] (D192, isteğe bağlı) Vercel’e `INTEGRATION_SECRET` (uzun rastgele metin) ekle → Redeploy. Eklenmezse Zotero anahtarları veritabanı sunucu anahtarından türetilen anahtarla şifrelenir (çalışır; sunucu anahtarı yenilenirse kullanıcılar Zotero bağlantısını yeniden kurar)

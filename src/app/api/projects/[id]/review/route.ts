@@ -32,6 +32,11 @@ const Protocol = z.object({
   extractionFields: z.array(z.string().trim().min(1).max(80)).max(12).optional(),
   appraisalTool: z.enum(APPRAISAL_TOOLS.map((x) => x.id) as [AppraisalToolId, ...AppraisalToolId[]]).optional(),
   reporting: z.object(Object.fromEntries(REPORTING_FIELDS.map((f) => [f, z.string().trim().max(1500).optional()]))).optional(),
+  // D224: meta-analiz girdileri
+  meta: z.object({
+    type: z.enum(["smd", "r", "or", "generic"]), model: z.enum(["random", "fixed"]),
+    rows: z.array(z.object({ id: z.string().max(64), label: z.string().max(80), v: z.record(z.string().max(6), z.number().finite().nullable()) })).max(300),
+  }).optional(),
 });
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

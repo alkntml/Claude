@@ -223,7 +223,7 @@ export function linearRegression(y: number[], X: number[][], names: string[]): R
   return { n, k, coefficients, r2, adjR2: 1 - (1 - r2) * (n - 1) / dfR, F, dfModel: dfM, dfResidual: dfR, p: fRightTail(F, dfM, dfR), rmse: Math.sqrt(mse), vif };
 }
 
-function invert(m: number[][]): number[][] | null {
+export function invert(m: number[][]): number[][] | null {
   const n = m.length;
   const a = m.map((row, i) => [...row, ...Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))]);
   for (let c = 0; c < n; c++) {

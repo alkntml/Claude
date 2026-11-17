@@ -243,7 +243,7 @@ const CATEGORIES: Category[] = [
   ] },
   { id: "veri", icon: BarChart3, title: "Veri ve analiz", lead: "Bulgular sizin verinize dayanır; hesaplamalar yapay zekâya değil, istatistik motoruna yaptırılır.", Visual: DataVisual, features: [
     { icon: ClipboardList, title: "Anket oluşturucu", text: "Yapay zekâ destekli taslak, paylaşım bağlantısı, analize hazır veri tablosu ve kod kitabı.", plan: "surveys" },
-    { icon: BarChart3, title: "İstatistik analizleri", text: "t testleri, ANOVA (Tukey HSD, Games–Howell), korelasyon, regresyon ve varsayım kontrolleri, ki-kare ve Fisher, Mann–Whitney, Kruskal–Wallis, Cronbach alfa, Shapiro–Wilk; etki büyüklüğü güven aralıklarıyla APA raporu. Sonuçlar R ile karşılaştırılarak test edilir.", plan: "stats" },
+    { icon: BarChart3, title: "İstatistik analizleri", text: "t testleri, ANOVA (tek yönlü, iki yönlü, tekrarlı ölçümler; Tukey HSD, Games–Howell), korelasyon, doğrusal ve lojistik regresyon, ki-kare ve Fisher, Mann–Whitney, Wilcoxon, Kruskal–Wallis (Dunn), Friedman, Cronbach alfa, Shapiro–Wilk; etki büyüklüğü güven aralıklarıyla APA raporu. Sistematik derlemede meta-analiz. Sonuçlar R ile karşılaştırılarak test edilir.", plan: "stats" },
     { icon: Activity, title: "APA biçiminde grafikler", text: "Verinizden grafik çizilir ve numaralı şekil olarak belgeye eklenir.", plan: "stats" },
     { icon: TestTube2, title: "Ücretsiz araçlar", text: "Örneklem büyüklüğü, Cronbach alfa, kaynakça oluşturucu ve atıf dönüştürücü üyeliksiz kullanılabilir." },
   ] },
@@ -304,7 +304,7 @@ function Connector() {
 export function FeatureShowcase() {
   const { t } = useT();
   const [active, setActive] = useState(CATEGORIES[0].id);
-  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["22", "istatistik test ve yöntemi"], ["700+", "otomatik test"]];
+  const stats: [string, string][] = [["16", "akademik veri tabanı"], ["250M+", "akademik yayın"], ["10", "atıf stili"], ["9", "çalışma türü"], ["30", "istatistik test ve yöntemi"], ["700+", "otomatik test"]];
   return (
     <section id="ozellikler" className="relative scroll-mt-24 py-24">
       <div className="mx-auto max-w-6xl px-6">

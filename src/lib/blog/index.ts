@@ -8,6 +8,7 @@ import { POSTS_7 } from "./posts-7";
 import { POSTS_8 } from "./posts-8";
 import { POSTS_9 } from "./posts-9";
 import { POSTS_10 } from "./posts-10";
+import { POSTS_11 } from "./posts-11";
 import { EN_1 } from "./en-1";
 import { EN_2 } from "./en-2";
 import { EN_3 } from "./en-3";
@@ -18,17 +19,18 @@ import { EN_7 } from "./en-7";
 import { EN_8 } from "./en-8";
 import { EN_9 } from "./en-9";
 import { EN_10 } from "./en-10";
+import { EN_11 } from "./en-11";
 import { DE_POSTS as DE_ALL } from "./de";
 import type { BlogPost, BlogPostEn } from "./types";
 import type { Locale } from "@/i18n";
 
 export type { BlogPost, BlogPostEn } from "./types";
 
-export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5, ...POSTS_6, ...POSTS_7, ...POSTS_8, ...POSTS_9, ...POSTS_10];
+export const POSTS: BlogPost[] = [...POSTS_1, ...POSTS_2, ...POSTS_3, ...POSTS_4, ...POSTS_5, ...POSTS_6, ...POSTS_7, ...POSTS_8, ...POSTS_9, ...POSTS_10, ...POSTS_11];
 export const CATEGORIES = [...new Set(POSTS.map((p) => p.category))];
 
 /** İngilizce sürümler (anahtar: Türkçe adres) */
-export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5, ...EN_6, ...EN_7, ...EN_8, ...EN_9, ...EN_10 };
+export const EN_POSTS: Record<string, BlogPostEn> = { ...EN_1, ...EN_2, ...EN_3, ...EN_4, ...EN_5, ...EN_6, ...EN_7, ...EN_8, ...EN_9, ...EN_10, ...EN_11 };
 /** Almanca sürümler (anahtar: Türkçe adres; D143). Almancası olmayan yazı Almanca sitede İngilizce gösterilir. */
 export const DE_POSTS: Record<string, BlogPostEn> = DE_ALL;
 const TRANSLATED: Record<"en" | "de", Record<string, BlogPostEn>> = { en: EN_POSTS, de: DE_POSTS };

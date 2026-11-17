@@ -1,6 +1,6 @@
 # Proje Durumu
 
-_Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
+_Son güncelleme: 17 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
 
 ## Canlı ortam
 | Bileşen | Durum | Ayrıntı |
@@ -297,6 +297,7 @@ _Son güncelleme: 13 Kasım 2026 — her büyük değişiklik commit’inde gün
 - D94: maliyet denetimi (Opus önbellek %5, Haiku uzun istem, bilinmeyen model, kesilen/okunamayan çağrılar, araç maliyeti toplamlara) + Yönetim → Maliyet sağlığı kartı
 - D93: Semantic Scholar kaldırıldı (toplam 12 veri tabanı); asistan kullanım sorularını rehbere göre yanıtlar (Haiku, bağlamsız)
 
+- **Yeni analizler ve meta-analiz (D224):** Wilcoxon, Friedman, Dunn, iki yönlü ANOVA, tekrarlı ölçümler ANOVA (Mauchly, GG), lojistik regresyon (R ile eşleşir); sistematik derlemede “7. Meta-analiz” (birleşik etki, I², Egger, orman/huni, PRISMA maddeleri); 8 yeni blog yazısı × 3 dil; landing’de 30 test ve yöntem.
 - **Test programı ve düzeltmeler (D221–D222):** 200 iddialık Mizan seti, P/R/F1; PDF yazı tipi, LaTeX 11/11, basılı sayfa numarası, PRISMA (RoB 2, ROBINS-I, JBI, NOS, kontrol listesi), istatistik (Shapiro–Wilk, Fisher, Tukey, Games–Howell, etki büyüklüğü GA, regresyon varsayımları; R ile 120/120), sütun bazında ondalık okuma.
 
 ## Commit geçmişi (özet)

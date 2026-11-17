@@ -3,6 +3,9 @@
  * akış şeması sayıları ve PRISMA 2020 akış şemasının SVG çizimi. Sunucu, istemci ve testler ortak kullanır.
  * Yapay zekâ eleme kararı vermez; yalnızca öneri sunar. Kararı kullanıcı verir ve gerekçesi kaydedilir.
  */
+import type { MetaModel, MetaRowInput, MetaType } from "@/lib/meta";
+import { metaMethodsSentence } from "@/lib/meta-report";
+
 export type ReviewStage = "identified" | "duplicate" | "excluded_screening" | "sought" | "not_retrieved" | "excluded_eligibility" | "included";
 export const REVIEW_STAGES: ReviewStage[] = ["identified", "duplicate", "excluded_screening", "sought", "not_retrieved", "excluded_eligibility", "included"];
 
@@ -33,6 +36,8 @@ export interface ReviewProtocol {
   appraisalTool?: AppraisalToolId;
   /** D222: PRISMA 2020 raporlama maddeleri (araştırmacının kendi yazdığı metin; yöntem metnine aynen aktarılır) */
   reporting?: Partial<Record<ReportingField, string>>;
+  /** D224: meta-analiz girdileri (etki ölçüsü, model ve çalışma başına sayılar) */
+  meta?: { type: MetaType; model: MetaModel; rows: MetaRowInput[] };
 }
 /** D222: PRISMA 2020 maddeleri: 24 kayıt, 12 etki ölçüsü, 13 sentez, 14 raporlama yanlılığı, 15 kesinlik, 25 destek, 26 çıkar çatışması, 27 veri erişimi */
 export const REPORTING_FIELDS = ["registration", "effectMeasures", "synthesis", "reportingBias", "certainty", "funding", "competingInterests", "dataAvailability"] as const;
@@ -437,7 +442,7 @@ const fmtDate = (d: string, lang: "tr" | "en" | "de") => { const x = new Date(d)
  * PRISMA 2020’ye uygun yöntem ve sonuç paragrafları + arama stratejisi tablosu (Markdown). Sayılar kararlardan
  * hesaplanır; dahil edilen çalışmalar kaynaklarda ise [[kaynak:Sx]] ile atıf yapılır (sourceLabels).
  */
-export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCounts; lang: "tr" | "en" | "de"; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[]; tools?: AppraisalToolId[] }): string {
+export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCounts; lang: "tr" | "en" | "de"; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[]; tools?: AppraisalToolId[]; meta?: { type: MetaType; model: MetaModel } | null }): string {
   if (o.lang === "de") return methodsMarkdownDe(o);
   const { protocol: p, counts: c, lang } = o;
   const en = lang === "en";
@@ -463,6 +468,7 @@ export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCou
   const extra = (p.extractionFields ?? []).filter(Boolean);
   if (o.extracted) out.push(en ? `Data were extracted from the included studies using a standard form (design, setting, sample, variables, outcome measures and key findings${extra.length ? `; ${extra.join("; ")}` : ""}).` : `Dahil edilen çalışmalardan standart bir form kullanılarak veri çıkarılmıştır (desen, bağlam, örneklem, değişkenler, sonuç ölçümleri ve temel bulgular${extra.length ? `; ${extra.join("; ")}` : ""}).`);
   if (o.appraised) out.push(appraisalSentence(o.tools, lang));
+  if (o.meta) out.push(metaMethodsSentence(o.meta.type, o.meta.model, lang));
   out.push(...reportingParagraphs(p, lang, ["effectMeasures", "synthesis", "reportingBias", "certainty"]));
   out.push(en ? "### Results of the selection process" : "### Seçim sürecinin sonuçları");
   const reasons = Object.entries(c.excludedEligibility).sort((a, b) => b[1] - a[1]).map(([r, n]) => `${r} (n = ${n})`).join(en ? "; " : "; ");
@@ -482,7 +488,7 @@ export function methodsMarkdown(o: { protocol: ReviewProtocol; counts: PrismaCou
 }
 
 /** Almanca yöntem ve sonuç metni (D144; PRISMA 2020 terminolojisinin Almanca karşılıkları) */
-function methodsMarkdownDe(o: { protocol: ReviewProtocol; counts: PrismaCounts; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[]; tools?: AppraisalToolId[] }): string {
+function methodsMarkdownDe(o: { protocol: ReviewProtocol; counts: PrismaCounts; agreement?: Agreement | null; appraised?: number; extracted?: number; includedLabels?: string[]; tools?: AppraisalToolId[]; meta?: { type: MetaType; model: MetaModel } | null }): string {
   const { protocol: p, counts: c } = o;
   const dbs = [...new Set(p.searches.map((s) => s.database))];
   const dates = p.searches.map((s) => s.date).filter(Boolean).sort();
@@ -502,6 +508,7 @@ function methodsMarkdownDe(o: { protocol: ReviewProtocol; counts: PrismaCounts; 
   const extra = (p.extractionFields ?? []).filter(Boolean);
   if (o.extracted) out.push(`Die Daten der eingeschlossenen Studien wurden mit einem standardisierten Formular extrahiert (Design, Setting, Stichprobe, Variablen, Endpunkte und zentrale Ergebnisse${extra.length ? `; ${extra.join("; ")}` : ""}).`);
   if (o.appraised) out.push(appraisalSentence(o.tools, "de"));
+  if (o.meta) out.push(metaMethodsSentence(o.meta.type, o.meta.model, "de"));
   out.push(...reportingParagraphs(p, "de", ["effectMeasures", "synthesis", "reportingBias", "certainty"]));
   out.push("### Ergebnisse des Auswahlprozesses");
   const reasons = Object.entries(c.excludedEligibility).sort((a, b) => b[1] - a[1]).map(([r, n]) => `${r} (n = ${n})`).join("; ");
@@ -575,6 +582,9 @@ const W: Record<string, L3> = {
   flow: { tr: "Akış şeması ve sonuç metni (dışlama gerekçeleriyle)", en: "Flow diagram and results text (with exclusion reasons)", de: "Flussdiagramm und Ergebnistext (mit Ausschlussgründen)" },
   table2: { tr: "Tablo 2 (çalışma özellikleri)", en: "Table 2 (study characteristics)", de: "Tabelle 2 (Studienmerkmale)" },
   table2rob: { tr: "Tablo 2, yanlılık riski sütunu", en: "Table 2, risk of bias column", de: "Tabelle 2, Spalte Verzerrungsrisiko" },
+  metaText: { tr: "Meta-analiz sonuçları ve orman grafiği", en: "Meta-analysis results and forest plot", de: "Ergebnisse der Metaanalyse und Forest-Plot" },
+  metaTable: { tr: "Meta-analiz tablosu (çalışma etkileri)", en: "Meta-analysis table (study effects)", de: "Metaanalyse-Tabelle (Studieneffekte)" },
+  metaBias: { tr: "Meta-analiz: huni grafiği ve Egger testi", en: "Meta-analysis: funnel plot and Egger’s test", de: "Metaanalyse: Funnel-Plot und Egger-Test" },
   other: { tr: "Yöntem metni, “Diğer bilgiler”", en: "Methods text, “Other information”", de: "Methodentext, „Weitere Angaben“" },
   author: { tr: "Sizin metniniz", en: "Your text", de: "Ihr Text" },
 };
@@ -594,7 +604,7 @@ export interface ChecklistRow { n: number; section: string; item: string; status
  * D222: PRISMA 2020 kontrol listesinin 27 maddesi için modülün neyi raporladığı. “Tamam” yalnızca modülün yöntem/sonuç
  * metni, akış şeması veya tablolarıyla gerçekten karşılanan maddelerdir; araştırmacının yazacağı maddeler açıkça belirtilir.
  */
-export function prismaChecklist(o: { protocol: ReviewProtocol; counts: PrismaCounts; lang: "tr" | "en" | "de"; dualKappa: boolean; extracted: number; appraised: number }): ChecklistRow[] {
+export function prismaChecklist(o: { protocol: ReviewProtocol; counts: PrismaCounts; lang: "tr" | "en" | "de"; dualKappa: boolean; extracted: number; appraised: number; meta?: { k: number } | null }): ChecklistRow[] {
   const { protocol: p, counts: c, lang } = o;
   const rep = (f: ReportingField) => !!p.reporting?.[f]?.trim();
   const searchesDated = p.searches.length > 0 && p.searches.every((s) => s.date);
@@ -611,15 +621,17 @@ export function prismaChecklist(o: { protocol: ReviewProtocol; counts: PrismaCou
       case 9: return o.extracted ? ["partial", "methods", need("Veriyi kaç kişinin, bağımsız olarak mı çıkardığını ekleyin.", "Add how many reviewers extracted data and whether independently.", "Angeben, wie viele Personen unabhängig extrahiert haben.")] : ["todo", "methods", need("Veri çıkarılmadı.", "No data extracted.", "Keine Daten extrahiert.")];
       case 10: return o.extracted ? ["done", "methods", ""] : ["todo", "methods", need("Veri çıkarılmadı.", "No data extracted.", "Keine Daten extrahiert.")];
       case 11: return o.appraised ? ["done", "methods", ""] : ["todo", "methods", need("Yanlılık riski değerlendirilmedi.", "Risk of bias not assessed.", "Verzerrungsrisiko nicht bewertet.")];
-      case 12: return rep("effectMeasures") ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Etki ölçüleri.", "Protocol → Reporting details → Effect measures.", "Protokoll → Berichtsangaben → Effektmaße.")];
-      case 13: return rep("synthesis") ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Sentez yöntemleri.", "Protocol → Reporting details → Synthesis methods.", "Protokoll → Berichtsangaben → Synthesemethoden.")];
-      case 14: return rep("reportingBias") ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Raporlama yanlılığı.", "Protocol → Reporting details → Reporting bias.", "Protokoll → Berichtsangaben → Berichtsverzerrungen.")];
+      case 12: return rep("effectMeasures") || o.meta ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Etki ölçüleri.", "Protocol → Reporting details → Effect measures.", "Protokoll → Berichtsangaben → Effektmaße.")];
+      case 13: return rep("synthesis") || o.meta ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Sentez yöntemleri.", "Protocol → Reporting details → Synthesis methods.", "Protokoll → Berichtsangaben → Synthesemethoden.")];
+      case 14: return o.meta && o.meta.k >= 10 ? ["done", "metaBias", ""] : o.meta ? ["partial", "metaBias", need("Çalışma sayısı 10’dan az: Egger testi düşük güçlü, dikkatle yorumlayın.", "Fewer than 10 studies: Egger’s test has low power; interpret with caution.", "Weniger als 10 Studien: Der Egger-Test hat geringe Power; mit Vorsicht interpretieren.")] : rep("reportingBias") ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Raporlama yanlılığı.", "Protocol → Reporting details → Reporting bias.", "Protokoll → Berichtsangaben → Berichtsverzerrungen.")];
       case 15: return rep("certainty") ? ["done", "methods", ""] : ["todo", "methods", need("Protokol → Raporlama bilgileri → Kanıtın kesinliği.", "Protocol → Reporting details → Certainty of evidence.", "Protokoll → Berichtsangaben → Vertrauenswürdigkeit.")];
       case 16: return c.identified ? (c.pendingScreening + c.pendingEligibility ? ["partial", "flow", need("Karar bekleyen kayıtlar var.", "Some records still await a decision.", "Einige Datensätze sind noch offen.")] : ["done", "flow", ""]) : ["todo", "flow", need("Kayıt yok.", "No records.", "Keine Datensätze.")];
       case 17: return o.extracted ? ["done", "table2", ""] : ["todo", "table2", need("Veri çıkarılmadı.", "No data extracted.", "Keine Daten extrahiert.")];
       case 18: return o.appraised ? ["done", "table2rob", ""] : ["todo", "table2rob", need("Yanlılık riski değerlendirilmedi.", "Risk of bias not assessed.", "Verzerrungsrisiko nicht bewertet.")];
-      case 19: return o.extracted ? ["partial", "table2", TODO[19]![lang]] : ["author", "author", TODO[19]![lang]];
-      case 20: case 21: case 22: return ["author", "author", TODO[n]![lang]];
+      case 19: return o.meta ? ["done", "metaTable", ""] : o.extracted ? ["partial", "table2", TODO[19]![lang]] : ["author", "author", TODO[19]![lang]];
+      case 20: return o.meta ? ["done", "metaText", ""] : ["author", "author", TODO[20]![lang]];
+      case 21: return o.meta ? (o.meta.k >= 10 ? ["done", "metaBias", ""] : ["partial", "metaBias", need("Çalışma sayısı 10’dan az; huni grafiği ve Egger testi sınırlı bilgi verir.", "Fewer than 10 studies; the funnel plot and Egger’s test give limited information.", "Weniger als 10 Studien; Funnel-Plot und Egger-Test sind nur begrenzt aussagekräftig.")]) : ["author", "author", TODO[21]![lang]];
+      case 22: return ["author", "author", TODO[22]![lang]];
       case 24: return rep("registration") ? ["done", "methods", ""] : ["todo", "methods", need("Kayıt yoksa “Protokol kaydedilmemiştir.” diye belirtin.", "If not registered, state that the review was not registered.", "Falls nicht registriert, dies angeben.")];
       case 25: return rep("funding") ? ["done", "other", ""] : ["todo", "other", need("Protokol → Raporlama bilgileri → Destek.", "Protocol → Reporting details → Support.", "Protokoll → Berichtsangaben → Förderung.")];
       case 26: return rep("competingInterests") ? ["done", "other", ""] : ["todo", "other", need("Protokol → Raporlama bilgileri → Çıkar çatışması.", "Protocol → Reporting details → Competing interests.", "Protokoll → Berichtsangaben → Interessenkonflikte.")];

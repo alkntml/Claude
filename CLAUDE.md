@@ -60,7 +60,7 @@ Hangi özelliğin hangi dosyada olduğu: `docs/ARCHITECTURE.md` → Modül harit
 - **Rasat (D208):** kaynak analizi zekâsının marka adı (Oku ve alıntıla, Kaynağa sor, Birlikte analiz et, kaynaklardan atıflı paragraf). Yalnızca okunan metne dayanır.
 - **Mizan (D209):** denetim zekâsının marka adı (İddia denetimi, Kaynakta doğrula, kaynak gerektiren ifadeler, Kalite kontrol). “Zenit yazar, Rasat okur, Mizan tartar.”
 - **İmza adları (D211):** Zenit/Rasat/Mizan arayüzde `BrandMark`/`WithMarks` (`components/brand-mark.tsx`) ile yazılır; pencere başlıklarında kendiliğinden.
-- **Güven ve deneyim (D213):** yeni kullanıcı özelliği → `lib/changelog.ts` (Yenilikler, TR/EN/DE). Hizmet sağlayıcı/veri konumu değişirse `lib/trust-content.ts` + hukuki metin birlikte. Komut aramaya yeni sayfa/araç: `command-palette.tsx` / `TOOL_GROUPS`. Renk karşıtlığı 4,5:1 (`--ink-400` en soluk okunur yazı; `ink-300` yazıda kullanılmaz). Form etiketi `htmlFor`/`id` ile bağlı olmalı.
+- **Güven ve deneyim (D213):** yeni kullanıcı özelliği → `lib/changelog.ts` (Yenilikler, TR/EN/DE). Hizmet sağlayıcı/veri konumu değişirse `lib/trust-content.ts` + hukuki metin birlikte. Yenilikler’de yalnızca yeni olanlar anlatılır; önceki bir şeyin hatalı/eksik olduğu ima edilmez (“düzeltildi”, “artık … değil” yok; kullanıcı kararı, 17 Kasım 2026). Komut aramaya yeni sayfa/araç: `command-palette.tsx` / `TOOL_GROUPS`. Renk karşıtlığı 4,5:1 (`--ink-400` en soluk okunur yazı; `ink-300` yazıda kullanılmaz). Form etiketi `htmlFor`/`id` ile bağlı olmalı.
 - **Atıflar** editörde `citation` düğümüdür; düz metin “(Yazar, Yıl)” üretme.
 - **Yapay zekâ:**
   - Model işe göre seçilir (D47): `fast` Haiku, `balanced` Sonnet, `default` Opus — `resolveModel(planId, tier)`, eylemler `ACTION_TIER`.

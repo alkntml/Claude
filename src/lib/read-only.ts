@@ -22,6 +22,8 @@ export const READ_ONLY_ALLOWED_ROUTES = new Set<string>([
   "shares.revoke", "project.sources.sync.remove",
   // D225: kartla paket almak (salt okunurdan çıkmanın yolu) ve ödeme sonucunu görmek
   "payments.checkout", "payments.order", "payments.orders", "payments.receipt",
+  // D234: otomatik yenilemeyi iptal etmek ve kayıtlı kartı silmek her zaman serbest
+  "payments.autorenew", "payments.autorenew.set",
 ]);
 
 export type ReadOnlyReason = "pages" | "ai_requests" | "tokens" | "cost";

@@ -8,7 +8,7 @@ export interface ReceiptOrder {
   merchant_oid: string; plan_name: string; period: "monthly" | "yearly"; days: number; amount_try: number; list_price_try: number | null;
   discount_code: string | null; status: string; payer_name: string; payer_phone: string; payer_address: string; buyer_email: string | null;
   invoice_type?: string | null; company_title?: string | null; tax_number?: string | null; tax_office?: string | null; buyer_first_name?: string | null; buyer_last_name?: string | null;
-  payment_type: string | null; test_mode: boolean; created_at: string; applied_at: string | null; immediate_start_consent?: boolean | null; distance_version?: string | null;
+  payment_type: string | null; test_mode: boolean; renewal?: boolean | null; auto_renew_consent?: boolean | null; created_at: string; applied_at: string | null; immediate_start_consent?: boolean | null; distance_version?: string | null;
 }
 
 const esc = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -50,7 +50,8 @@ ${row("Toplam bedel", `<b>${tl(Number(o.amount_try))}</b> (vergiler dahil, Türk
 ${row("Ödeme yöntemi", `Kredi / banka kartı, tek çekim — ${esc(PAYMENT_PROVIDER.name)} güvenli ödeme sayfası`)}
 ${row("Ödeme durumu", esc(STATUS[o.status] ?? o.status))}
 ${o.applied_at ? row("Hizmetin başlangıcı", esc(dt(o.applied_at))) : ""}
-${row("Otomatik yenileme", "Yok. Dönem sonunda yenilemeyi siz başlatırsınız; onayınız olmadan ücret alınmaz.")}
+${row("Otomatik yenileme", o.auto_renew_consent ? "Evet. İptal edilmedikçe her dönem sonunda kayıtlı kartınızdan o günkü güncel fiyatla yenilenir; yenilemeden önce bildirim gönderilir. Hesap → Otomatik yenileme bölümünden istediğiniz an iptal edebilirsiniz; iptalde paketiniz ödediğiniz dönemin sonuna kadar sürer." : "Yok. Dönem sonunda yenilemeyi siz başlatırsınız; onayınız olmadan ücret alınmaz.")}
+${o.renewal ? row("Sipariş türü", "Otomatik yenileme") : ""}
 </table>
 <h2>Bilgilendirme</h2>
 <p>Hizmet, ödemenin ödeme kuruluşu tarafından onaylanmasıyla paketin hesaba tanımlandığı anda başlar. ${o.immediate_start_consent ? "Satın alma sırasında hizmetin hemen başlamasını talep ettiniz ve bunun cayma hakkınıza etkisi size bildirildi. " : ""}Cayma hakkı, iade ve şikâyet yolları Mesafeli Sözleşmeler ve Ön Bilgilendirme belgesinde açıklanır${o.distance_version ? ` (sürüm ${esc(o.distance_version)})` : ""}: ${esc(SITE_URL)}/mesafeli-sozlesmeler. Kart bilgileri Academiana’ya iletilmez; ödeme ${esc(PAYMENT_PROVIDER.name)} tarafından işlenir.</p>

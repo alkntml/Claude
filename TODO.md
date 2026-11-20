@@ -1,4 +1,8 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D234) Supabase SQL Editor’de migration 53’ü çalıştır (otomatik yenileme; SQL sohbette verildi, dosya: `supabase/migrations/20261217000053_auto_renewal.sql`)
+- [ ] (D234) PayTR destekten “Kart Saklama (utoken/ctoken) ve kayıtlı kartla tekrarlayan (non-3D, recurring_payment) ödeme” hizmetinin mağazaya açılmasını iste; güncel API belgesini iste (kodun uç nokta/imza alanları teyit edilmeli)
+- [ ] (D234) Vercel: `CRON_SECRET` (uzun rastgele metin) ekle → sonra PayTR teyidi gelince `PAYTR_RECURRING` = `1` → Redeploy. İlk gerçek yenilemeyi 1 kullanıcıyla izle (Yönetim → Ödemeler “Otomatik yenileme” etiketi)
+- [ ] (D234) docs/legal/HUKUKCU_NOTU_YENILEME.md’yi hukukçuya ilet (varsayılan işaretli kutu, bildirim, yenilenen dönemde cayma)
 - [ ] (D233) Supabase SQL Editor’de migration 52’yi çalıştır (1 TL Deneme paketini siler; SQL sohbette verildi, dosya: `supabase/migrations/20261216000052_remove_trial_plan.sql`)
 - [ ] (D232) Supabase SQL Editor’de migration 51’i çalıştır (fatura kesilecekler listesi; SQL sohbette verildi, dosya: `supabase/migrations/20261215000051_invoice_queue.sql`)
 - [ ] (D231) Supabase SQL Editor’de migration 50’yi çalıştır (`supabase/migrations/20261214000050_invoice_info.sql`: fatura türü ve vergi bilgisi sütunları). **Çalıştırılmadan kartla ödeme siparişi açılmaz** (fatura bilgisi kaybolmasın diye); önce 45, 46 ve 50 çalışmış olmalı

@@ -3,6 +3,7 @@ import { requireUser } from "@/lib/auth";
 import { memberCode } from "@/lib/member";
 import { userDiscount } from "@/lib/discount-server";
 import { canPayByCard, paytrCreds } from "@/lib/payments/paytr";
+import { recurringEnabled } from "@/lib/payments/paytr-recurring";
 
 /**
  * Yükseltme penceresi için paketler ve sınırları (D49). Kullanım sınırları tanıtım sayfalarında
@@ -23,5 +24,5 @@ export const GET = route("account.plans", async () => {
   });
   // D145: kayıtta bağlanan indirim kodu (indirimli fiyat gösterilir)
   const discount = await userDiscount(s.profile);
-  return json({ cardPayments: canPayByCard(creds, who), current: s.profile.plan_id, currentPeriod: s.profile.plan_period === "yearly" ? "yearly" : "monthly", email: s.profile.email ?? s.user.email ?? "", memberNo: memberCode(s.profile.member_no), plans, discount });
+  return json({ cardPayments: canPayByCard(creds, who), autoRenewAvailable: !!creds && canPayByCard(creds, who) && recurringEnabled(), current: s.profile.plan_id, currentPeriod: s.profile.plan_period === "yearly" ? "yearly" : "monthly", email: s.profile.email ?? s.user.email ?? "", memberNo: memberCode(s.profile.member_no), plans, discount });
 });

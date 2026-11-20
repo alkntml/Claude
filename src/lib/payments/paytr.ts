@@ -106,6 +106,8 @@ export interface TokenRequest {
   merchantOid: string; email: string; amountTl: number; basket: { name: string; priceTl: number; qty: number }[];
   userIp: string; userName: string; userAddress: string; userPhone: string;
   okUrl: string; failUrl: string; lang: "tr" | "en";
+  /** D234: kart saklama (otomatik yenileme) — kullanıcıya özel anahtar; PayTR sayfasında kart saklama seçeneği sunulur */
+  utoken?: string;
 }
 export type TokenResult = { ok: true; token: string } | { ok: false; reason: string };
 
@@ -122,6 +124,7 @@ export async function requestToken(c: PaytrCreds, r: TokenRequest, fetchImpl: ty
     user_name: r.userName.slice(0, 60), user_address: r.userAddress.slice(0, 400), user_phone: r.userPhone.slice(0, 20),
     merchant_ok_url: r.okUrl, merchant_fail_url: r.failUrl, timeout_limit: String(PAYTR_TIMEOUT_MIN),
     currency: PAYTR_CURRENCY, test_mode: testMode, lang: r.lang,
+    ...(r.utoken ? { utoken: r.utoken } : {}),
   });
   try {
     const res = await fetchImpl(PAYTR_TOKEN_URL, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body, signal: AbortSignal.timeout(20_000) });

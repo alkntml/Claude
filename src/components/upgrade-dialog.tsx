@@ -17,7 +17,7 @@ import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discoun
 import Link from "@/components/l-link";
 
 interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
-interface PlansData { cardPayments?: boolean; current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
+interface PlansData { cardPayments?: boolean; autoRenewAvailable?: boolean; current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
 
 const TITLES: Record<string, string> = {
   limit_pages: "Bu ayki sayfa hakkınız doldu",
@@ -55,6 +55,8 @@ export function UpgradeDialogHost() {
   const [paying, setPaying] = useState(false);
   // D226: dijital hizmetin hemen başlaması talebi (cayma hakkı bilgisi) — ödeme öncesi zorunlu
   const [instant, setInstant] = useState(false);
+  // D234: abonelik iptal edilmedikçe otomatik yenilensin (varsayılan açık)
+  const [autoRenew, setAutoRenew] = useState(true);
   const [payError, setPayError] = useState("");
 
   const load = useCallback(async () => {
@@ -141,7 +143,7 @@ export function UpgradeDialogHost() {
     setPaying(true); setPayError("");
     recordAck(yearlyMode ? `${card.id}-yillik` : card.id);
     try {
-      const res = await fetch("/api/payments/paytr/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: card.id, period, invoice: invoiceBody(invoice), immediateStart: true }) });
+      const res = await fetch("/api/payments/paytr/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: card.id, period, invoice: invoiceBody(invoice), immediateStart: true, autoRenew: data?.autoRenewAvailable ? autoRenew : undefined }) });
       const j = await res.json().catch(() => ({}));
       if (!res.ok || !j.oid) throw new Error(j.error || t("Ödeme sayfası açılamadı. Lütfen biraz sonra tekrar deneyin."));
       window.location.href = `/odeme?siparis=${encodeURIComponent(j.oid)}`;
@@ -188,13 +190,26 @@ export function UpgradeDialogHost() {
                 <p className="font-semibold text-ink-800">{t("Sipariş özeti")}</p>
                 <p className="mt-1"><b className="text-ink-700">{t("Satıcı")}:</b> {SELLER.name} · {t("Vergi no")} {SELLER.taxNo} ({t("{o} Vergi Dairesi", { o: SELLER.taxOffice })}) · {SELLER.address}</p>
                 <p><b className="text-ink-700">{t("Hizmet")}:</b> {t("Academiana {plan} paketi", { plan: t(card.name) })} · {yearlyMode ? t("365 gün; 12 aylık hak baştan tanımlanır") : t("30 gün")}{renew ? ` · ${t("süre, mevcut paketinizin kalan süresine eklenir")}` : ""}</p>
-                <p><b className="text-ink-700">{t("Toplam")}:</b> {q ? formatPrice(q.amount, "tr") : ""} {t("(vergiler dahil, Türk lirası)")} · {t("kredi/banka kartı, tek çekim")} · {t("otomatik yenileme yok")}</p>
+                <p><b className="text-ink-700">{t("Toplam")}:</b> {q ? formatPrice(q.amount, "tr") : ""} {t("(vergiler dahil, Türk lirası)")} · {t("kredi/banka kartı, tek çekim")} · {data?.autoRenewAvailable && autoRenew ? t("iptal edilmedikçe her dönem sonunda otomatik yenilenir") : t("otomatik yenileme yok")}</p>
                 <p><b className="text-ink-700">{t("Başlangıç")}:</b> {t("ödeme onaylanınca hemen")}</p>
               </div>
               <label htmlFor="pay-instant" className="flex items-start gap-2.5 text-[12.5px] text-ink-700">
                 <input id="pay-instant" type="checkbox" checked={instant} onChange={(e) => setInstant(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
                 <span>{t("Hizmetin ödeme onaylanır onaylanmaz başlamasını talep ediyorum. Elektronik ortamda anında ifa edilen bu dijital hizmette, ifaya başlandıktan sonra cayma hakkının mevzuatın öngördüğü ölçüde kullanılamayacağını okudum.")}</span>
               </label>
+              {data?.autoRenewAvailable && (
+                <div>
+                  <label htmlFor="pay-autorenew" className="flex items-start gap-2.5 text-[12.5px] text-ink-700">
+                    <input id="pay-autorenew" type="checkbox" checked={autoRenew} onChange={(e) => setAutoRenew(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
+                    <span>{t("Aboneliğim iptal edilmedikçe her dönem sonunda otomatik yenilensin.")}</span>
+                  </label>
+                  <p className="mt-1 pl-6 text-[11.5px] leading-snug text-ink-500">
+                    {autoRenew
+                      ? t("Kartınız PayTR’de güvenle saklanır; Academiana kart bilgisini görmez. Dönem sonundan önce bildirim göndeririz; yenileme tutarı ({price}) kartınızdan o günkü güncel fiyatla çekilir. Hesap → Otomatik yenileme bölümünden istediğiniz an iptal edebilirsiniz; iptalde paketiniz ödediğiniz dönemin sonuna kadar sürer.", { price: q ? formatPrice(q.amount, "tr") : "" })
+                      : t("Otomatik yenileme kapalı: paketiniz ödediğiniz dönemin sonunda sona erer, kartınızdan yeni ödeme çekilmez.")}
+                  </p>
+                </div>
+              )}
               {payError && <p className="text-sm text-rose-700">{payError}</p>}
               <div className="flex flex-wrap items-center gap-2">
                 <button type="submit" disabled={!instant || paying} className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"><CreditCard className="h-4 w-4" /> {paying ? t("Ödeme sayfası açılıyor…") : t("Güvenli ödemeye geç")}</button>

@@ -4,12 +4,15 @@ import { logError } from "@/lib/api";
 import { setWorkLock } from "@/lib/usage";
 import { paidExpiry } from "@/lib/payments/order";
 import { toKurus, verifyCallback, type PaytrCallback, type PaytrCreds } from "@/lib/payments/paytr";
+import { recurringEnabled } from "@/lib/payments/paytr-recurring";
+import { registerCardAfterPayment, resetRenewalCounters, setAutoRenew } from "@/lib/payments/renewal";
 
 export type CallbackOutcome = "paid" | "already_applied" | "failed" | "unknown_order" | "amount_mismatch" | "ignored";
 
 interface OrderRow {
   merchant_oid: string; user_id: string | null; plan_id: string; period: "monthly" | "yearly"; days: number; amount_try: number;
   status: string; payer_name: string; payer_phone: string; test_mode: boolean; applied_at: string | null;
+  renewal?: boolean | null; auto_renew_consent?: boolean | null;
 }
 
 /** İmza geçersizse fırlatılır; çağıran 400 döner (PayTR “OK” almadığı için bildirimi yeniden dener). */
@@ -24,7 +27,10 @@ export class BadSignatureError extends Error {}
 export async function handlePaytrCallback(creds: PaytrCreds, cb: PaytrCallback): Promise<CallbackOutcome> {
   if (!verifyCallback(creds, cb)) throw new BadSignatureError("PayTR bildirimi: imza geçersiz");
   const db = adminClient();
-  const { data: order } = await db.from("payment_orders").select("merchant_oid, user_id, plan_id, period, days, amount_try, status, payer_name, payer_phone, test_mode, applied_at").eq("merchant_oid", cb.merchantOid).maybeSingle<OrderRow>();
+  const base = "merchant_oid, user_id, plan_id, period, days, amount_try, status, payer_name, payer_phone, test_mode, applied_at";
+  // D234: yenileme sütunları (migration 53) yoksa eski sütunlarla okunur; ödeme bildirimi hiçbir koşulda düşmesin
+  const full = await db.from("payment_orders").select(`${base}, renewal, auto_renew_consent`).eq("merchant_oid", cb.merchantOid).maybeSingle<OrderRow>();
+  const order = full.error ? (await db.from("payment_orders").select(base).eq("merchant_oid", cb.merchantOid).maybeSingle<OrderRow>()).data : full.data;
   if (!order) {
     await logError("payments.paytr.callback", new Error(`Bilinmeyen sipariş: ${cb.merchantOid}`), null, { status: cb.status });
     return "unknown_order";
@@ -76,7 +82,18 @@ export async function handlePaytrCallback(creds: PaytrCreds, cb: PaytrCallback):
     await db.from("payment_orders").update({ applied_at: null }).eq("merchant_oid", order.merchant_oid);
     throw e;
   }
+  // D234: otomatik yenileme — ödeme tanımlandıktan sonra (hata paketi etkilemez, bildirim yeniden denenmesin)
+  try { await afterPaid(creds, { ...order, user_id: order.user_id }); } catch (e) { await logError("payments.renewal.after_paid", e, order.user_id, { oid: order.merchant_oid }); }
   return "paid";
+}
+
+/** Yenileme siparişi: sayaçları sıfırla. İlk ödeme: kart saklama onayı varsa kartı kaydet ve otomatik yenilemeyi aç; onay yoksa kapat. */
+async function afterPaid(creds: PaytrCreds, order: OrderRow & { user_id: string }) {
+  if (order.renewal) { await resetRenewalCounters(order.user_id); return; }
+  if (!recurringEnabled()) return;
+  if (!order.auto_renew_consent) { await setAutoRenew(order.user_id, false); return; }
+  const { data: plan } = await adminClient().from("plans").select("name").eq("id", order.plan_id).maybeSingle();
+  await registerCardAfterPayment(creds, order.user_id, plan?.name ?? order.plan_id);
 }
 
 async function applyPlan(order: OrderRow & { user_id: string }, paidTl: number, test: boolean) {
@@ -89,6 +106,6 @@ async function applyPlan(order: OrderRow & { user_id: string }, paidTl: number, 
   // Yönetim → kullanıcı ayrıntısındaki satın alma kayıtları (WhatsApp ile alınanlarla aynı yerde görünür)
   await db.from("plan_purchases").insert({ user_id: order.user_id, plan_id: order.plan_id, payer_name: order.payer_name, payer_phone: order.payer_phone, amount_try: paidTl, note: `PayTR ${order.merchant_oid}${order.period === "yearly" ? " · yıllık" : ""}${test ? " · TEST" : ""}`, created_by: null }).then(() => undefined, () => undefined);
   const { data: plan } = await db.from("plans").select("name").eq("id", order.plan_id).maybeSingle();
-  await db.from("notifications").insert({ user_id: order.user_id, kind: "payment_success", data: { plan_id: order.plan_id, plan_name: plan?.name ?? order.plan_id, period: order.period, expires_at: expires } }).then(() => undefined, () => undefined);
+  await db.from("notifications").insert({ user_id: order.user_id, kind: "payment_success", data: { plan_id: order.plan_id, plan_name: plan?.name ?? order.plan_id, period: order.period, expires_at: expires, renewal: !!order.renewal } }).then(() => undefined, () => undefined);
   await setWorkLock(order.user_id, false).catch(() => {});
 }

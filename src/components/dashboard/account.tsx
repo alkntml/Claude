@@ -17,6 +17,7 @@ import { usePrice } from "@/components/price-context";
 import { GrowthSection } from "./growth";
 import Link from "@/components/l-link";
 import { PrivacySection } from "./privacy";
+import { AutoRenewSection } from "./auto-renew";
 import { OrdersSection } from "./orders";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -122,6 +123,7 @@ export function AccountView({ profile, usage, limits, plans, discount, cardPayme
         </div>
       </section>
 
+      <AutoRenewSection plan={profile.plan_id} />
       <OrdersSection />
 
       <PrivacySection />

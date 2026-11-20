@@ -3,14 +3,15 @@
 _Son güncelleme: 20 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
 
 ## ⏩ Kaldığımız yer (devir notu, 20 Kasım 2026)
-Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken” bölümünü okusun. Kod tarafında yarım iş yok; her şey `main`’de ve yayında (son commit D233).
+Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken” bölümünü okusun. Kod tarafında yarım iş yok; her şey `main`’de ve yayında (son commit D234).
 
-**Son yapılanlar (D224–D233):**
+**Son yapılanlar (D224–D234):**
 - D224: yeni istatistik analizleri (Wilcoxon, Friedman, Dunn, iki yönlü/tekrarlı ANOVA, lojistik), sistematik derlemede meta-analiz, 8 blog yazısı × 3 dil.
 - D225: PayTR kartla ödeme altyapısı (iFrame API, imzalı bildirim, `payment_orders`, Yönetim → Ödemeler). Kullanıcı PayTR bilgilerini Vercel’e girdi; test modunda test ödemesi BAŞARILI.
 - D226: ödeme altyapısı PayTR olarak site geneline ve hukuki metinlere (KVKK, Çerez, Mesafeli, GDPR; sürüm 2026-11-20) işlendi; satıcı bilgileri `lib/site.ts → SELLER` (vergi levhası; T.C. kimlik no yazılmaz); sipariş özeti + hemen başlama onayı; Hesap → Siparişlerim.
 - D227: güvenlik: test modunda kartla ödeme yalnızca yönetici + `PAYTR_TEST_EMAILS`; canlıda test bildirimi ve TL dışı para birimi reddedilir; Next.js 15.5.29.
 - D233: 1 TL “Deneme” paketi ve Yönetim → Sistem durumu’ndaki “Ödeme testi” kartı tamamen kaldırıldı (migration 52). PayTR test modunda kartla ödeme kısıtı (D227) sürüyor.
+- D234: otomatik yenileme: abonelik iptal edilmedikçe dönem sonunda PayTR’de saklı kartla yenilenir (4 gün önce bildirim, ≥48 saat sonra tahsilat, en çok 3 deneme); Hesap → Otomatik yenileme (iptal / yeniden aç / kartı sil); satın alma ekranında varsayılan işaretli kutu + küçük yazı; hukuki metinler (sürüm 2026-11-22), SSS, yardım, Yenilikler güncel; günlük görev `/api/cron/renewals` (Vercel cron); migration 53. **Canlıya alma koşulları:** PayTR’de kart saklama/tekrarlayan ödeme açılması + `CRON_SECRET` + `PAYTR_RECURRING=1`.
 - D231: ödemede bireysel/ticari fatura seçimi (bireysel: ad, soyad, telefon, e-posta; ticari: unvan, vergi no, vergi dairesi, açık adres, telefon, e-posta; VKN/TCKN sağlama basamağı doğrulanır), migration 50; süren paketten düşük pakete / yıllığın yerine aylığa satın alma sunucuda engellenir; paket/süre/tutar tanımlama ve plan içerikleri testlerle denetlenir; KVKK, GDPR, Mesafeli Sözleşmeler (sürüm 2026-11-21), SSS, yardım, Yenilikler güncellendi.
 - D232: Yönetim → Faturalar (fatura kesilecekler): ticari fatura isteyen ödenmiş siparişler, bilgileri kopyala, “Kesildi” işareti ve fatura no; yeni talep gelince menüde kırmızı bildirim ışığı (migration 51).
 

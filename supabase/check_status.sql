@@ -108,4 +108,9 @@ union all select '51 Fatura kesilecekler listesi',
        then 'YAPILMIŞ' else 'EKSİK' end
 union all select '52 Deneme (1 TL) paketi kaldırıldı',
   case when not exists (select 1 from public.plans where id = 'deneme')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '53 Otomatik yenileme',
+  case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'profiles' and column_name = 'auto_renew')
+        and exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'payment_methods')
+        and exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'auto_renew_consent')
        then 'YAPILMIŞ' else 'EKSİK' end;

@@ -890,6 +890,22 @@ describe("anketler", () => {
     expect(await as(A, `select merchant_oid from public.payment_orders where merchant_oid = 'ACQUEUE001'`)).toHaveLength(0);
   });
 
+  it("migration 53: otomatik yenileme — kart referansı tablosu yalnızca sunucuya açık; sipariş ve profil sütunları (D234)", async () => {
+    const C = "53535353-5353-5353-5353-535353535353";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${C}', 'c53@ornek.com', '{}')`);
+    await db.query(`insert into public.payment_methods (user_id, utoken, ctoken, card_label, payer) values ('${C}', 'UTOKEN12345678', 'CT1', 'VISA •••• 4242', '{"invoice_type":"individual"}')`);
+    // Kullanıcı kendi kart referansını bile okuyamaz (politika yok)
+    expect(await as(C, `select user_id from public.payment_methods`)).toHaveLength(0);
+    expect(await as(A, `select user_id from public.payment_methods`)).toHaveLength(0);
+    const p = (await db.query<{ auto_renew: boolean; renewal_attempts: number }>(`select auto_renew, renewal_attempts from public.profiles where id = '${C}'`)).rows[0];
+    expect(p).toEqual({ auto_renew: false, renewal_attempts: 0 });
+    await db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try, renewal, auto_renew_consent) values ('ACRENEW0001', '${C}', 'pro', 'monthly', 30, 1349, true, true)`);
+    await expectError(db.query(`insert into public.payment_methods (user_id, utoken) values ('${A}', 'kisa')`), /utoken/);
+    // hesap silinince kart referansı da silinir
+    await db.exec(`delete from auth.users where id = '${C}'`);
+    expect((await db.query(`select 1 from public.payment_methods where user_id = '${C}'`)).rows).toHaveLength(0);
+  });
+
   it("D231: paket içerikleri, sınırlar, süreler ve fiyatlar birbiriyle tutarlı (satın alınan paket doğru tanımlanır)", async () => {
     const { yearlyTotalPrice } = await import("@/lib/pricing");
     const rows = (await db.query<{ id: string; price_monthly: string; price_yearly: string; limits: Record<string, number | null>; features: string[]; is_active: boolean }>(`select id, price_monthly, price_yearly, limits, features, is_active from public.plans where is_active order by sort_order`)).rows;

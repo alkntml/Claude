@@ -49,7 +49,7 @@ export default async function Pricing() {
             </div>
           )}
         </div>
-        <p className="mt-10 text-center text-sm text-ink-400">{locale !== "tr" ? t("Dolar fiyatları güncel kurla yaklaşık olarak hesaplanır ve bilgi amaçlıdır; ödeme Türk lirası üzerinden kartla alınır.") : t("Fiyatlara KDV dahildir.")} {t("Ödemeler, lisanslı ödeme kuruluşu PayTR aracılığıyla kredi veya banka kartıyla güvenle alınır; otomatik yenileme yoktur.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
+        <p className="mt-10 text-center text-sm text-ink-400">{locale !== "tr" ? t("Dolar fiyatları güncel kurla yaklaşık olarak hesaplanır ve bilgi amaçlıdır; ödeme Türk lirası üzerinden kartla alınır.") : t("Fiyatlara KDV dahildir.")} {t("Ödemeler, lisanslı ödeme kuruluşu PayTR aracılığıyla kredi veya banka kartıyla güvenle alınır. Abonelikler iptal edilmediği sürece dönem sonunda kayıtlı kartınızdan otomatik yenilenir; istediğiniz an iptal edebilirsiniz.")} {t("Yapay zekâ kullanımında paketlere göre aylık adil kullanım sınırları uygulanır; sınırlar paket yükseltirken gösterilir.")}</p>
       </main>
       <SiteFooter />
     </>

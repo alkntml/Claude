@@ -9,6 +9,8 @@ import { legalDoc } from "@/lib/legal/docs";
 import { isValidPhone, normalizePhone, orderQuote, purchaseBlockReason } from "@/lib/payments/order";
 import { INDIVIDUAL_PAYTR_ADDRESS, InvoiceBody, invoiceErrors, invoiceRecord, isValidEmail, type InvoiceForm } from "@/lib/payments/invoice";
 import { canPayByCard, clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
+import { recurringEnabled } from "@/lib/payments/paytr-recurring";
+import { prepareStoredCard } from "@/lib/payments/renewal";
 
 const Body = z.object({
   planId: z.string().min(1).max(40),
@@ -17,6 +19,8 @@ const Body = z.object({
   invoice: InvoiceBody,
   // D226: dijital hizmetin ödeme onaylanınca hemen başlaması talebi (cayma hakkı bilgisiyle birlikte) zorunlu
   immediateStart: z.literal(true),
+  // D234: abonelik iptal edilmedikçe otomatik yenilensin (kart PayTR’de saklanır). Yenileme kapalıysa (PAYTR_RECURRING) yok sayılır.
+  autoRenew: z.boolean().optional(),
 });
 
 /**
@@ -60,10 +64,17 @@ export const POST = route("payments.checkout", async (req) => {
   if ((count ?? 0) >= 5) throw new ApiError(429, "Çok sayıda ödeme denemesi yapıldı; birkaç dakika sonra tekrar deneyin.");
 
   const oid = newMerchantOid();
+  // D234: otomatik yenileme (varsayılan açık; kullanıcı onay kutusundan kapatabilir)
+  const autoRenew = recurringEnabled() && b.autoRenew !== false;
+  let utoken: string | undefined;
+  if (autoRenew) {
+    try { utoken = await prepareStoredCard(s.user.id, clientIp(req.headers), { ...rec, immediate_start_consent: true }); }
+    catch (e) { throw new ApiError(500, e instanceof Error ? e.message : "Kart bilgisi hazırlanamadı"); }
+  }
   const row = {
     merchant_oid: oid, provider: "paytr", user_id: s.user.id, plan_id: plan.id, period: b.period, days: quote.days,
     amount_try: quote.amount, list_price_try: quote.list, discount_code: quote.discountCode,
-    ...rec, test_mode: creds.testMode,
+    ...rec, test_mode: creds.testMode, ...(autoRenew ? { auto_renew_consent: true } : {}),
   };
   // D226: satın alma onayları ve e-posta (migration 46); sütunlar yoksa (migration çalıştırılmadıysa) onlarsız kaydedilir
   // D231: fatura bilgisi kaybolmamalı; sütunlar yoksa (migration 50) sipariş açılmaz
@@ -76,12 +87,12 @@ export const POST = route("payments.checkout", async (req) => {
     merchantOid: oid, email, amountTl: quote.amount,
     basket: [{ name: `Academiana ${plan.name} (${b.period === "yearly" ? (locale === "tr" ? "Yıllık" : "Yearly") : (locale === "tr" ? "Aylık" : "Monthly")})`, priceTl: quote.amount, qty: 1 }],
     userIp: clientIp(req.headers), userName: rec.payer_name, userAddress: rec.payer_address || INDIVIDUAL_PAYTR_ADDRESS, userPhone: normalizePhone(inv.phone),
-    okUrl: back, failUrl: `${back}&durum=hata`, lang: locale === "tr" ? "tr" : "en",
+    okUrl: back, failUrl: `${back}&durum=hata`, lang: locale === "tr" ? "tr" : "en", utoken,
   });
   if (!tok.ok) {
     await db.from("payment_orders").update({ status: "failed", failed_reason: tok.reason, updated_at: new Date().toISOString() }).eq("merchant_oid", oid);
     throw new ApiError(502, "Ödeme sayfası açılamadı. Lütfen biraz sonra tekrar deneyin.", "paytr_token", { reason: creds.testMode ? tok.reason : undefined });
   }
   await db.from("payment_orders").update({ iframe_token: tok.token }).eq("merchant_oid", oid);
-  return json({ oid, iframeUrl: iframeUrl(tok.token), amount: quote.amount, test: creds.testMode });
+  return json({ oid, iframeUrl: iframeUrl(tok.token), amount: quote.amount, test: creds.testMode, autoRenew });
 });

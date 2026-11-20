@@ -252,7 +252,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   iptal: {
     q: "Gibt es eine Vertragsbindung? Wie kündige ich?",
-    a: "Es gibt keine Vertragsbindung und keine automatische Verlängerung: Jede Zahlung ist einmalig, Ihre Karte wird nie automatisch erneut belastet. Ihr Tarif läuft bis zum Ende des bezahlten Zeitraums; wenn Sie nicht verlängern, wechseln Sie in den kostenlosen Tarif, und Ihre Arbeit wird nicht gelöscht. Sie können jederzeit per Karte auf einen höheren Tarif wechseln. Widerrufs- und Rückerstattungsbedingungen stehen im Dokument „Fernabsatzverträge und vorvertragliche Informationen“; bei Fragen schreiben Sie uns per WhatsApp.",
+    a: "Es gibt keine Vertragsbindung, aber Abonnements **verlängern sich automatisch**: Solange Sie nicht kündigen, verlängert sich Ihr Tarif am Ende jeder Laufzeit zum an diesem Tag geltenden Preis, sofern Ihre Karte bei PayTR gespeichert wurde; wir benachrichtigen Sie vor der Verlängerung. Unter Konto → **Automatische Verlängerung** können Sie jederzeit mit einem Klick kündigen und Ihre gespeicherte Karte löschen. Bei Kündigung läuft Ihr Tarif bis zum Ende des bezahlten Zeitraums, danach wechseln Sie in den kostenlosen Tarif, und Ihre Arbeit wird nicht gelöscht. Lassen Sie „automatisch verlängern“ beim Kauf unangekreuzt, beginnt keine Verlängerung. Sie können jederzeit per Karte auf einen höheren Tarif wechseln. Widerrufs- und Rückerstattungsbedingungen stehen im Dokument „Fernabsatzverträge und vorvertragliche Informationen“; bei Fragen schreiben Sie uns per WhatsApp.",
   },
   ekip: {
     q: "Gibt es einen Rabatt für akademische Teams oder Forschungsgruppen?",

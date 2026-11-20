@@ -8,7 +8,7 @@ import { api } from "@/lib/client";
 interface Order {
   merchant_oid: string; email: string | null; plan_id: string; period: string; amount_try: number; list_price_try: number | null; discount_code: string | null;
   status: "pending" | "paid" | "failed"; payer_name: string; payer_phone: string; test_mode: boolean; paid_amount_try: number | null; payment_type: string | null;
-  failed_reason: string | null; payer_address?: string; buyer_email?: string | null; invoice_type?: "individual" | "commercial"; company_title?: string | null; tax_number?: string | null; tax_office?: string | null; applied_at: string | null; created_at: string;
+  failed_reason: string | null; payer_address?: string; buyer_email?: string | null; invoice_type?: "individual" | "commercial"; renewal?: boolean | null; company_title?: string | null; tax_number?: string | null; tax_office?: string | null; applied_at: string | null; created_at: string;
 }
 interface Data { configured: boolean; testMode: boolean | null; tableMissing: boolean; orders: Order[] }
 
@@ -57,6 +57,7 @@ export function PaymentsTab() {
                   <td className="pr-2 whitespace-nowrap">{tl(o.paid_amount_try ?? o.amount_try)}{o.list_price_try != null && Number(o.list_price_try) !== Number(o.amount_try) ? <span className="text-ink-400"> (liste {tl(o.list_price_try)})</span> : null}</td>
                   <td className="pr-2">
                     <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold", STATUS[o.status][1])}>{STATUS[o.status][0]}</span>
+                    {o.renewal && <span className="ml-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700">Otomatik yenileme</span>}
                     {o.test_mode && <span className="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">TEST</span>}
                     {o.status === "paid" && !o.applied_at && <p className="mt-1 text-[12px] text-rose-700">Paket tanımlanamadı — kullanıcıya elle atayın</p>}
                     {o.failed_reason && <p className="mt-1 max-w-[220px] text-[12px] text-ink-500">{o.failed_reason}</p>}

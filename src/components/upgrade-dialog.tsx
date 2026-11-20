@@ -9,15 +9,15 @@ import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
 import { InvoiceFields } from "@/components/invoice-fields";
 import { emptyInvoice, invoiceBody, invoiceErrors, type InvoiceForm } from "@/lib/payments/invoice";
 import { projectLimitFor, PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, formatPrice, type BillingPeriod } from "@/lib/pricing";
-import { orderQuote } from "@/lib/payments/order";
-import { SELLER } from "@/lib/site";
+import { orderQuote, paidExpiry } from "@/lib/payments/order";
+import { OrderSummary } from "@/components/order-summary";
 import { PeriodToggle } from "@/components/pricing/period-toggle";
 import { usePrice } from "@/components/price-context";
 import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
 import Link from "@/components/l-link";
 
-interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
-interface PlansData { cardPayments?: boolean; autoRenewAvailable?: boolean; current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
+interface PlanRow { id: string; name: string; description?: string | null; features?: string[]; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
+interface PlansData { currentExpiresAt?: string | null; currentPlanId?: string; cardPayments?: boolean; autoRenewAvailable?: boolean; current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
 
 const TITLES: Record<string, string> = {
   limit_pages: "Bu ayki sayfa hakkınız doldu",
@@ -180,19 +180,17 @@ export function UpgradeDialogHost() {
           const q = quote(card);
           const invOk = invoiceErrors(invoice).length === 0;
           const valid = instant && invOk;
-          const renew = card.id === data?.current;
           return (
             <form className="space-y-3 rounded-2xl border border-brand-200 bg-brand-50/40 p-4" onSubmit={(e) => { e.preventDefault(); if (!invOk) { setShowInvErr(true); return; } if (valid && !paying) void pay(); }}>
               <p className="font-semibold text-ink-900">{t("{plan} paketi", { plan: t(card.name) })} · {yearlyMode ? t("Yıllık (tek ödeme)") : t("Aylık")} · {q ? formatPrice(q.amount, "tr") : ""}</p>
               <p className="text-[13px] text-ink-500">{t("Fatura bilgileriniz: bireysel veya ticari fatura seçin. Kart bilgilerinizi bir sonraki adımda PayTR’nin güvenli sayfasında gireceksiniz.")}</p>
               <InvoiceFields value={invoice} onChange={setInvoice} showErrors={showInvErr} />
-              <div className="rounded-xl border border-ink-100 bg-white p-3 text-[12.5px] leading-relaxed text-ink-600">
-                <p className="font-semibold text-ink-800">{t("Sipariş özeti")}</p>
-                <p className="mt-1"><b className="text-ink-700">{t("Satıcı")}:</b> {SELLER.name} · {t("Vergi no")} {SELLER.taxNo} ({t("{o} Vergi Dairesi", { o: SELLER.taxOffice })}) · {SELLER.address}</p>
-                <p><b className="text-ink-700">{t("Hizmet")}:</b> {t("Academiana {plan} paketi", { plan: t(card.name) })} · {yearlyMode ? t("365 gün; 12 aylık hak baştan tanımlanır") : t("30 gün")}{renew ? ` · ${t("süre, mevcut paketinizin kalan süresine eklenir")}` : ""}</p>
-                <p><b className="text-ink-700">{t("Toplam")}:</b> {q ? formatPrice(q.amount, "tr") : ""} {t("(vergiler dahil, Türk lirası)")} · {t("kredi/banka kartı, tek çekim")} · {data?.autoRenewAvailable && autoRenew ? t("iptal edilmedikçe her dönem sonunda otomatik yenilenir") : t("otomatik yenileme yok")}</p>
-                <p><b className="text-ink-700">{t("Başlangıç")}:</b> {t("ödeme onaylanınca hemen")}</p>
-              </div>
+              {q && (() => {
+                const startsAt = new Date();
+                const endsAt = new Date(paidExpiry({ plan_id: data?.currentPlanId ?? null, plan_expires_at: data?.currentExpiresAt ?? null, plan_period: data?.currentPeriod }, { plan_id: card.id, period, days: q.days }, startsAt.getTime()));
+                const extending = endsAt.getTime() - startsAt.getTime() > (q.days * 86400_000) + 60_000;
+                return <OrderSummary planName={card.name} planId={card.id} description={card.description} features={card.features ?? []} yearly={yearlyMode} days={q.days} amount={q.amount} listPrice={q.list} discountCode={q.discountCode} startsAt={startsAt} endsAt={endsAt} extending={extending} autoRenew={!!data?.autoRenewAvailable && autoRenew} />;
+              })()}
               <label htmlFor="pay-instant" className="flex items-start gap-2.5 text-[12.5px] text-ink-700">
                 <input id="pay-instant" type="checkbox" checked={instant} onChange={(e) => setInstant(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
                 <span>{t("Hizmetin ödeme onaylanır onaylanmaz başlamasını talep ediyorum. Elektronik ortamda anında ifa edilen bu dijital hizmette, ifaya başlandıktan sonra cayma hakkının mevzuatın öngördüğü ölçüde kullanılamayacağını okudum.")}</span>

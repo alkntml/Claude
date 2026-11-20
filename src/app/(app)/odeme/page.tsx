@@ -5,6 +5,8 @@ import { getSession } from "@/lib/auth";
 import { getT } from "@/i18n/server";
 import { formatPrice } from "@/lib/pricing";
 import { iframeUrl, PAYTR_TIMEOUT_MIN } from "@/lib/payments/paytr";
+import { OrderSummary } from "@/components/order-summary";
+import { paidExpiry } from "@/lib/payments/order";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +26,13 @@ export default async function PaymentPage({ searchParams }: { searchParams: Prom
   const { data: order } = await s.supabase.from("payment_orders").select("merchant_oid, plan_id, period, amount_try, status, iframe_token, test_mode, created_at, applied_at")
     .eq("merchant_oid", oid).eq("user_id", s.user.id).maybeSingle();
   if (order?.status === "paid") redirect(`/odeme-sonuc?siparis=${oid}`);
-  const { data: plan } = order ? await s.supabase.from("plans").select("name").eq("id", order.plan_id).maybeSingle() : { data: null };
+  const { data: plan } = order ? await s.supabase.from("plans").select("name, description, features").eq("id", order.plan_id).maybeSingle() : { data: null };
+  // D235: sipariş özeti için ek sipariş alanları (auto_renew_consent migration 53 ile gelir; yoksa onsuz okunur)
+  let extra: { days?: number; list_price_try?: number | null; discount_code?: string | null; auto_renew_consent?: boolean | null } | null = null;
+  if (order) {
+    const full = await s.supabase.from("payment_orders").select("days, list_price_try, discount_code, auto_renew_consent").eq("merchant_oid", oid).eq("user_id", s.user.id).maybeSingle();
+    extra = full.error ? (await s.supabase.from("payment_orders").select("days, list_price_try, discount_code").eq("merchant_oid", oid).eq("user_id", s.user.id).maybeSingle()).data : full.data;
+  }
   const expired = !order || order.status !== "pending" || !order.iframe_token || Date.now() - Date.parse(order.created_at) > PAYTR_TIMEOUT_MIN * 60_000;
 
   return (
@@ -44,6 +52,18 @@ export default async function PaymentPage({ searchParams }: { searchParams: Prom
       ) : (
         <>
           <p className="mt-4 flex items-start gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-[13.5px] text-emerald-800"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />{t("Kart bilgileriniz Academiana’ya gelmez; ödeme, lisanslı ödeme kuruluşu PayTR’nin güvenli sayfasında yapılır. Ödemeniz onaylanınca paketiniz hesabınıza kendiliğinden tanımlanır.")}</p>
+          {order && extra?.days && (() => {
+            const startsAt = new Date();
+            const personal = { plan_id: s.profile.personal_plan_id ?? s.profile.plan_id, plan_expires_at: s.profile.plan_expires_at ?? null, plan_period: s.profile.plan_period };
+            const endsAt = new Date(paidExpiry(personal, { plan_id: order.plan_id, period: order.period === "yearly" ? "yearly" : "monthly", days: extra.days }, startsAt.getTime()));
+            return (
+              <div className="mt-5">
+                <OrderSummary planName={plan?.name ?? order.plan_id} planId={order.plan_id} description={plan?.description ?? null} features={(plan?.features as string[] | null) ?? []} yearly={order.period === "yearly"} days={extra.days}
+                  amount={Number(order.amount_try)} listPrice={extra.list_price_try != null ? Number(extra.list_price_try) : null} discountCode={extra.discount_code ?? null} startsAt={startsAt} endsAt={endsAt}
+                  extending={endsAt.getTime() - startsAt.getTime() > extra.days * 86400_000 + 60_000} autoRenew={!!extra.auto_renew_consent} />
+              </div>
+            );
+          })()}
           <div className="mt-5 overflow-hidden rounded-2xl border border-ink-100 bg-white">
             <iframe src={iframeUrl(order!.iframe_token!)} title={t("PayTR güvenli ödeme")} className="block h-[820px] w-full sm:h-[720px]" allow="payment" referrerPolicy="origin" />
           </div>

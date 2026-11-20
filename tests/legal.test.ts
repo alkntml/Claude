@@ -119,3 +119,18 @@ describe("hukuki metinler (D154)", () => {
     expect(consent).toContain('notice: ["kvkk"]');
   });
 });
+
+describe("D235: sipariş özetindeki bağlantılar Mesafeli Sözleşmeler bölümlerine gider", () => {
+  it("bölüm numaraları (b7, b8, b9, b12) her dilde doğru başlığa denk gelir", async () => {
+    const { legalContent } = await import("@/lib/legal/content");
+    const { DISTANCE_ANCHORS } = await import("@/lib/legal/anchors");
+    const expect_: Record<string, RegExp> = { renewal: /^(Paketlerin yenilenmesi|Renewal of plans|Verlängerung der Tarife)$/, start: /^(Hizmetin başlama zamanı ve dijital hizmet|Start of the service and digital service|Beginn der Leistung und digitale Dienstleistung)$/, withdrawal: /^(Cayma hakkı ve iade|Right of withdrawal and refunds|Widerrufsrecht und Rückerstattung)$/, complaints: /^(Şikâyet ve başvuru|Complaints and applications|Beschwerden und Anträge)$/ };
+    for (const lang of ["tr", "en", "de"] as const) {
+      const sections = legalContent(lang).distance;
+      for (const [k, re] of Object.entries(expect_)) {
+        const n = Number(DISTANCE_ANCHORS[k as keyof typeof DISTANCE_ANCHORS].slice(1));
+        expect(sections[n - 1].h, `${lang} ${k}`).toMatch(re);
+      }
+    }
+  });
+});

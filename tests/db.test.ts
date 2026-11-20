@@ -876,6 +876,20 @@ describe("anketler", () => {
     await expectError(ins("ACINV000005", "payer_name, tax_number", "'X', '123456789012'"), /tax_number/);
   });
 
+  it("migration 51: fatura kesilecekler listesi — kesildi işareti ve numara (D232)", async () => {
+    const C = "51515151-5151-5151-5151-515151515151";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${C}', 'c51@ornek.com', '{}')`);
+    await db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try, status, invoice_type, payer_name, company_title, tax_number, tax_office, payer_address) values ('ACQUEUE001', '${C}', 'pro', 'monthly', 30, 1349, 'paid', 'commercial', 'Örnek Ltd.', 'Örnek Ltd.', '8370931187', 'Gölbaşı', 'Ankara Gölbaşı Örencik')`);
+    const pending = async () => Number((await db.query<{ n: string }>(`select count(*) n from public.payment_orders where invoice_type = 'commercial' and status = 'paid' and test_mode = false and invoiced_at is null`)).rows[0].n);
+    expect(await pending()).toBeGreaterThanOrEqual(1);
+    const before = await pending();
+    await db.query(`update public.payment_orders set invoiced_at = now(), invoice_no = 'ACD2026000001' where merchant_oid = 'ACQUEUE001'`);
+    expect(await pending()).toBe(before - 1);
+    await expectError(db.query(`update public.payment_orders set invoice_no = '${"x".repeat(61)}' where merchant_oid = 'ACQUEUE001'`), /invoice_no/);
+    // kullanıcı başkasının/kendi siparişini değiştiremez (yazma politikası yok)
+    expect(await as(A, `select merchant_oid from public.payment_orders where merchant_oid = 'ACQUEUE001'`)).toHaveLength(0);
+  });
+
   it("D231: paket içerikleri, sınırlar, süreler ve fiyatlar birbiriyle tutarlı (satın alınan paket doğru tanımlanır)", async () => {
     const { yearlyTotalPrice } = await import("@/lib/pricing");
     const rows = (await db.query<{ id: string; price_monthly: string; price_yearly: string; limits: Record<string, number | null>; features: string[]; is_active: boolean }>(`select id, price_monthly, price_yearly, limits, features, is_active from public.plans where is_active order by sort_order`)).rows;

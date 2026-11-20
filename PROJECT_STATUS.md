@@ -3,9 +3,9 @@
 _Son güncelleme: 20 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
 
 ## ⏩ Kaldığımız yer (devir notu, 20 Kasım 2026)
-Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken” bölümünü okusun. Kod tarafında yarım iş yok; her şey `main`’de ve yayında (son commit D231).
+Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken” bölümünü okusun. Kod tarafında yarım iş yok; her şey `main`’de ve yayında (son commit D232).
 
-**Son yapılanlar (D224–D231):**
+**Son yapılanlar (D224–D232):**
 - D224: yeni istatistik analizleri (Wilcoxon, Friedman, Dunn, iki yönlü/tekrarlı ANOVA, lojistik), sistematik derlemede meta-analiz, 8 blog yazısı × 3 dil.
 - D225: PayTR kartla ödeme altyapısı (iFrame API, imzalı bildirim, `payment_orders`, Yönetim → Ödemeler). Kullanıcı PayTR bilgilerini Vercel’e girdi; test modunda test ödemesi BAŞARILI.
 - D226: ödeme altyapısı PayTR olarak site geneline ve hukuki metinlere (KVKK, Çerez, Mesafeli, GDPR; sürüm 2026-11-20) işlendi; satıcı bilgileri `lib/site.ts → SELLER` (vergi levhası; T.C. kimlik no yazılmaz); sipariş özeti + hemen başlama onayı; Hesap → Siparişlerim.
@@ -13,6 +13,7 @@ Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken�
 - D228: gizli 1 TL “Deneme (1 TL)” paketi (yalnızca yönetici/test listesi) — kullanıcı kendisi gerçek ödeme deneyecek.
 - D229–D230: “Deneme (1 TL)” paketi önce herkese açıldı (migration 48), sonra kullanıcı isteğiyle her yerden kaldırıldı (migration 49, gizli); yalnızca Yönetim → Sistem durumu → “Ödeme testi (1 TL)” kartından yönetici satın alabilir.
 - D231: ödemede bireysel/ticari fatura seçimi (bireysel: ad, soyad, telefon, e-posta; ticari: unvan, vergi no, vergi dairesi, açık adres, telefon, e-posta; VKN/TCKN sağlama basamağı doğrulanır), migration 50; süren paketten düşük pakete / yıllığın yerine aylığa satın alma sunucuda engellenir; paket/süre/tutar tanımlama ve plan içerikleri testlerle denetlenir; KVKK, GDPR, Mesafeli Sözleşmeler (sürüm 2026-11-21), SSS, yardım, Yenilikler güncellendi.
+- D232: Yönetim → Faturalar (fatura kesilecekler): ticari fatura isteyen ödenmiş siparişler, bilgileri kopyala, “Kesildi” işareti ve fatura no; yeni talep gelince menüde kırmızı bildirim ışığı (migration 51).
 
 **Kullanıcıdan beklenen (henüz teyit edilmedi):** migration 45 ✅ (Ödemeler ekranı tablo uyarısı vermedi), migration 46 ve 47 çalıştırıldı mı bilinmiyor; PayTR canlı mod + Vercel `PAYTR_TEST_MODE=0`; PayTR Mağaza Parola yenileme (sohbette paylaşıldı); 2 adımlı doğrulama; KDV mükellefiyeti mali müşavirle (sitede “Fiyatlara KDV dahildir” yazıyor); hukukçuya `docs/legal/HUKUKCU_NOTU_ODEME.md`; test hesabının paketini geri alma.
 

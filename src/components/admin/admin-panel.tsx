@@ -5,8 +5,9 @@ import { isSafeInternalLink } from "@/lib/notify";
 import { AutopilotTab } from "./autopilot";
 import { DiscountsTab } from "./discounts";
 import { PaymentsTab } from "./payments";
+import { InvoicesTab, usePendingInvoices } from "./invoices";
 import { motion } from "framer-motion";
-import { Activity, Gauge, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell, CreditCard } from "lucide-react";
+import { Receipt, Activity, Gauge, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell, CreditCard } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -25,7 +26,7 @@ import { memberCode } from "@/lib/member";
 import { discountedPrice, discountLabel } from "@/lib/discount";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts" | "payments" | "status";
+type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts" | "payments" | "invoices" | "status";
 type Term = "monthly" | "days" | "yearly";
 /** D218: sekmeler dört kategoride (sol menü; telefonda gruplu seçim kutusu) */
 const GROUPS: { title: string; hint: string; tabs: { id: Tab; label: string; icon: any }[] }[] = [
@@ -35,7 +36,7 @@ const GROUPS: { title: string; hint: string; tabs: { id: Tab; label: string; ico
   ] },
   { title: "Kullanıcılar ve satış", hint: "Hesaplar, paketler, kampanyalar", tabs: [
     { id: "users", label: "Kullanıcılar", icon: Users }, { id: "orgs", label: "Kurumlar", icon: Building2 }, { id: "plans", label: "Paketler ve limitler", icon: Package },
-    { id: "payments", label: "Ödemeler", icon: CreditCard }, { id: "discounts", label: "İndirim kodları", icon: Percent }, { id: "referrals", label: "Davetler", icon: Gift },
+    { id: "payments", label: "Ödemeler", icon: CreditCard }, { id: "invoices", label: "Faturalar", icon: Receipt }, { id: "discounts", label: "İndirim kodları", icon: Percent }, { id: "referrals", label: "Davetler", icon: Gift },
   ] },
   { title: "Yapay zekâ ve içerik", hint: "Modeller, kaynaklar, duyurular", tabs: [
     { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket },
@@ -62,6 +63,8 @@ function useRows(resource: string, q = "") {
 export function AdminPanel({ selfId }: { selfId: string }) {
   // ?sekme=otomatik ile doğrudan otomatik çalışma sekmesi açılır
   const [tab, setTab] = useState<Tab>("overview");
+  // D232: kesilecek ticari fatura sayısı (menüde bildirim ışığı)
+  const [pendingInv, setPendingInv] = usePendingInvoices();
   // D218: açık sekme adreste tutulur (?sekme=…); sayfa yenilenince aynı bölüm açılır
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get("sekme");
@@ -79,7 +82,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
       <nav aria-label="Yönetim bölümleri" className="lg:sticky lg:top-6 lg:self-start">
         <label className="sr-only" htmlFor="admin-tab-select">Bölüm</label>
         <select id="admin-tab-select" className="input lg:hidden" value={tab} onChange={(e) => setTab(e.target.value as Tab)}>
-          {GROUPS.map((g) => <optgroup key={g.title} label={g.title}>{g.tabs.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}</optgroup>)}
+          {GROUPS.map((g) => <optgroup key={g.title} label={g.title}>{g.tabs.map((x) => <option key={x.id} value={x.id}>{x.label}{x.id === "invoices" && pendingInv > 0 ? ` (${pendingInv} yeni)` : ""}</option>)}</optgroup>)}
         </select>
         <div className="hidden space-y-5 lg:block">
           {GROUPS.map((g) => (
@@ -90,6 +93,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
                   <li key={x.id}>
                     <button onClick={() => setTab(x.id)} aria-current={tab === x.id ? "page" : undefined} className={cn("flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-[13.5px] transition", tab === x.id ? "bg-brand-50 font-medium text-brand-700" : "text-ink-600 hover:bg-ink-100 hover:text-ink-900")}>
                       <x.icon className="h-4 w-4 shrink-0" />{x.label}
+                      {x.id === "invoices" && pendingInv > 0 && <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-rose-600 px-1.5 text-[11px] font-semibold text-white" role="status" aria-label={`${pendingInv} kesilecek fatura`}><span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />{pendingInv}</span>}
                     </button>
                   </li>
                 ))}
@@ -119,6 +123,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "referrals" && <ReferralsTab />}
         {tab === "discounts" && <DiscountsTab />}
         {tab === "payments" && <PaymentsTab />}
+        {tab === "invoices" && <InvoicesTab onPending={setPendingInv} />}
       </motion.div>
       </div>
       </div>

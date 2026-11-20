@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D232) Supabase SQL Editor’de migration 51’i çalıştır (fatura kesilecekler listesi; SQL sohbette verildi, dosya: `supabase/migrations/20261215000051_invoice_queue.sql`)
 - [ ] (D231) Supabase SQL Editor’de migration 50’yi çalıştır (`supabase/migrations/20261214000050_invoice_info.sql`: fatura türü ve vergi bilgisi sütunları). **Çalıştırılmadan kartla ödeme siparişi açılmaz** (fatura bilgisi kaybolmasın diye); önce 45, 46 ve 50 çalışmış olmalı
 - [ ] (D231) docs/legal/HUKUKCU_NOTU_FATURA.md’yi hukukçuya ilet (bireysel/ticari fatura; “ticari alıcı tüketici sayılmaz” cümlesi)
 - [ ] (D230) Supabase SQL Editor’de migration 47’yi, sonra 49’u çalıştır (`20261213000049_trial_plan_hidden.sql`; 48 çalıştırıldıysa da 49 onu geri alır). Sonra Yönetim → Sistem durumu → “Ödeme testi (1 TL)”

@@ -108,4 +108,7 @@ union all select '49 1 TL deneme paketi gizli (yalnızca yönetici testi)',
        then 'YAPILMIŞ' else 'EKSİK' end
 union all select '50 Fatura bilgisi (bireysel/ticari)',
   case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'tax_number')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '51 Fatura kesilecekler listesi',
+  case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'invoiced_at')
        then 'YAPILMIŞ' else 'EKSİK' end;

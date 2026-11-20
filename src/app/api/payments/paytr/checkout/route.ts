@@ -6,17 +6,15 @@ import { env } from "@/lib/env";
 import { localeFromRequest } from "@/i18n/server";
 import { adminClient } from "@/lib/supabase/admin";
 import { legalDoc } from "@/lib/legal/docs";
-import { isValidPhone, normalizePhone, orderQuote, TEST_PLAN_ID } from "@/lib/payments/order";
+import { isValidPhone, normalizePhone, orderQuote, purchaseBlockReason, TEST_PLAN_ID } from "@/lib/payments/order";
+import { INDIVIDUAL_PAYTR_ADDRESS, InvoiceBody, invoiceErrors, invoiceRecord, isValidEmail, type InvoiceForm } from "@/lib/payments/invoice";
 import { canPayByCard, clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
 
 const Body = z.object({
   planId: z.string().min(1).max(40),
   period: z.enum(["monthly", "yearly"]),
-  payer: z.object({
-    name: z.string().trim().min(3).max(60),
-    phone: z.string().trim().min(10).max(20),
-    address: z.string().trim().min(10).max(400),
-  }),
+  // D231: fatura bilgisi — bireysel (ad, soyad, telefon, e-posta) veya ticari (unvan, vergi no, vergi dairesi, adres, telefon, e-posta)
+  invoice: InvoiceBody,
   // D226: dijital hizmetin ödeme onaylanınca hemen başlaması talebi (cayma hakkı bilgisiyle birlikte) zorunlu
   immediateStart: z.literal(true),
 });
@@ -33,9 +31,16 @@ export const POST = route("payments.checkout", async (req) => {
   // D227: test modunda yalnızca yönetici ve test listesindekiler (test kartıyla ücretsiz paket alınamasın)
   if (!canPayByCard(creds, { role: s.profile.role, email: s.profile.email ?? s.user.email })) throw new ApiError(503, "Kartla ödeme şu an kullanılamıyor; WhatsApp ile yükseltebilirsiniz.", "payments_disabled");
   const b = await parseBody(req, Body);
-  if (!isValidPhone(b.payer.phone)) throw new ApiError(422, "Geçerli bir telefon numarası yazın", "validation");
-  const email = s.profile.email ?? s.user.email ?? "";
-  if (!email) throw new ApiError(422, "Hesabınızda e-posta adresi yok", "validation");
+  const inv = b.invoice;
+  // D231: fatura alanları istemciyle aynı kuralla doğrulanır (vergi numarası sağlama basamağı dahil)
+  const form: InvoiceForm = { type: inv.type, firstName: inv.type === "individual" ? inv.firstName : "", lastName: inv.type === "individual" ? inv.lastName : "", company: inv.type === "commercial" ? inv.company : "", taxNo: inv.type === "commercial" ? inv.taxNo : "", taxOffice: inv.type === "commercial" ? inv.taxOffice : "", address: inv.type === "commercial" ? inv.address : "", phone: inv.phone, email: inv.email };
+  const bad = invoiceErrors(form);
+  if (bad.includes("phone") || !isValidPhone(inv.phone)) throw new ApiError(422, "Geçerli bir telefon numarası yazın", "validation");
+  if (bad.includes("email") || !isValidEmail(inv.email)) throw new ApiError(422, "Geçerli bir e-posta adresi yazın", "validation");
+  if (bad.includes("taxNo")) throw new ApiError(422, "Vergi numarası geçerli değil (10 haneli vergi kimlik no veya 11 haneli T.C. kimlik no)", "validation");
+  if (bad.length) throw new ApiError(422, "Fatura bilgilerini eksiksiz doldurun", "validation");
+  const rec = invoiceRecord(inv);
+  const email = rec.buyer_email;
 
   const db = adminClient();
   const { data: plan } = await db.from("plans").select("id, name, price_monthly, is_active").eq("id", b.planId).maybeSingle();
@@ -44,6 +49,12 @@ export const POST = route("payments.checkout", async (req) => {
   if (!plan || (plan.is_active === false && !testPlan)) throw new ApiError(404, "Paket bulunamadı");
   const quote = orderQuote({ id: plan.id, price_monthly: Number(plan.price_monthly) }, b.period, b.period === "monthly" ? await userDiscount(s.profile) : null);
   if (!quote) throw new ApiError(422, "Bu paket için kartla ödeme yapılamaz");
+  // D231: süren paketten daha düşük pakete / yıllığın yerine aylığa geçiş reddedilir (yönetici ödeme testi hariç)
+  if (!testPlan && s.profile.role !== "admin") {
+    // Kişisel paket (kurum paketi ve yönetici görünümü değil): profiles.plan_id
+    const block = purchaseBlockReason({ plan_id: s.profile.personal_plan_id ?? s.profile.plan_id, plan_expires_at: s.profile.plan_expires_at ?? null, plan_period: s.profile.plan_period }, { plan_id: plan.id, period: b.period });
+    if (block) throw new ApiError(409, block, "plan_downgrade");
+  }
 
   // Kötüye kullanım: kısa sürede çok sayıda yarım kalan sipariş açılamaz
   const since = new Date(Date.now() - 15 * 60_000).toISOString();
@@ -54,19 +65,19 @@ export const POST = route("payments.checkout", async (req) => {
   const row = {
     merchant_oid: oid, provider: "paytr", user_id: s.user.id, plan_id: plan.id, period: b.period, days: quote.days,
     amount_try: quote.amount, list_price_try: quote.list, discount_code: quote.discountCode,
-    payer_name: b.payer.name, payer_phone: normalizePhone(b.payer.phone), payer_address: b.payer.address, test_mode: creds.testMode,
+    ...rec, test_mode: creds.testMode,
   };
   // D226: satın alma onayları ve e-posta (migration 46); sütunlar yoksa (migration çalıştırılmadıysa) onlarsız kaydedilir
-  let { error } = await db.from("payment_orders").insert({ ...row, immediate_start_consent: b.immediateStart, distance_version: legalDoc("distance").version, buyer_email: email.slice(0, 320) });
-  if (error?.code === "42703" || error?.code === "PGRST204") ({ error } = await db.from("payment_orders").insert(row));
-  if (error) throw new ApiError(500, "Sipariş kaydedilemedi (migration 45 çalıştırıldı mı?)");
+  // D231: fatura bilgisi kaybolmamalı; sütunlar yoksa (migration 50) sipariş açılmaz
+  const { error } = await db.from("payment_orders").insert({ ...row, immediate_start_consent: b.immediateStart, distance_version: legalDoc("distance").version });
+  if (error) throw new ApiError(500, "Sipariş kaydedilemedi (migration 45, 46 ve 50 çalıştırıldı mı?)");
 
   const locale = localeFromRequest(req);
   const back = `${env.appUrl}/odeme-sonuc?siparis=${oid}`;
   const tok = await requestToken(creds, {
     merchantOid: oid, email, amountTl: quote.amount,
     basket: [{ name: `Academiana ${plan.name} (${b.period === "yearly" ? (locale === "tr" ? "Yıllık" : "Yearly") : (locale === "tr" ? "Aylık" : "Monthly")})`, priceTl: quote.amount, qty: 1 }],
-    userIp: clientIp(req.headers), userName: b.payer.name, userAddress: b.payer.address, userPhone: normalizePhone(b.payer.phone),
+    userIp: clientIp(req.headers), userName: rec.payer_name, userAddress: rec.payer_address || INDIVIDUAL_PAYTR_ADDRESS, userPhone: normalizePhone(inv.phone),
     okUrl: back, failUrl: `${back}&durum=hata`, lang: locale === "tr" ? "tr" : "en",
   });
   if (!tok.ok) {

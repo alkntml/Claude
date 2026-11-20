@@ -244,7 +244,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   yukseltme: {
     q: "Wie upgrade und bezahle ich?",
-    a: "Drücken Sie auf der Kontoseite unter dem gewünschten Tarif auf „Upgrade“, wählen Sie monatliche oder jährliche Zahlung und dann **Mit Karte bezahlen**. Nach Prüfung der Bestellübersicht und Eingabe Ihrer Rechnungsdaten zahlen Sie per Kredit- oder Debitkarte als Einmalzahlung auf der sicheren Seite des lizenzierten Zahlungsinstituts **PayTR**. Ihre Kartendaten erreichen Academiana nie. Sobald die Zahlung bestätigt ist, wird Ihr Tarif **automatisch und sofort** freigeschaltet; die Bestellübersicht können Sie unter Konto → Meine Bestellungen herunterladen. Auf demselben Weg verlängern Sie Ihren aktuellen Tarif.",
+    a: "Drücken Sie auf der Kontoseite unter dem gewünschten Tarif auf „Upgrade“, wählen Sie monatliche oder jährliche Zahlung und dann **Mit Karte bezahlen**. Nach Prüfung der Bestellübersicht und Eingabe Ihrer Rechnungsdaten für eine **Rechnung an Privatpersonen oder eine Geschäftsrechnung** (Privatperson: Vorname, Nachname, Telefon, E-Mail; Unternehmen: Firmenname, Steuernummer, Finanzamt, vollständige Adresse, Telefon, E-Mail) zahlen Sie per Kredit- oder Debitkarte als Einmalzahlung auf der sicheren Seite des lizenzierten Zahlungsinstituts **PayTR**. Ihre Kartendaten erreichen Academiana nie. Sobald die Zahlung bestätigt ist, wird Ihr Tarif **automatisch und sofort** freigeschaltet; die Bestellübersicht können Sie unter Konto → Meine Bestellungen herunterladen. Auf demselben Weg verlängern Sie Ihren aktuellen Tarif.",
   },
   yillik: {
     q: "Gibt es eine jährliche Zahlung? Wie funktioniert mein Kontingent?",

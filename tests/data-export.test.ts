@@ -7,7 +7,7 @@ import { renderExportHtml } from "@/lib/data-export-html";
 const KEYS = ["profile", "projects", "project_stages", "stage_revisions", "stage_comments", "project_memory", "sources", "ai_conversations", "ai_messages", "files", "quality_reports", "subscriptions", "usage_events", "feedback",
   "surveys", "survey_responses", "project_shares", "notifications", "usage_credits", "claim_audits", "review_records", "download_passes", "data_requests", "legal_acceptances",
   "activity_log", "user_devices", "export_fingerprints", "plan_purchases", "source_links",
-  "error_logs", "project_memberships", "project_invites_sent", "project_invites_received", "organization_memberships", "tool_usage", "user_templates", "template_change_logs", "org_audit_log"];
+  "error_logs", "project_memberships", "project_invites_sent", "project_invites_received", "organization_memberships", "tool_usage", "user_templates", "template_change_logs", "org_audit_log", "payment_orders"];
 
 describe("D204: veri dökümü rehberi ve raporu", () => {
   it("her bölümün Türkçe adı ve açıklaması var; fazlası yok", () => {

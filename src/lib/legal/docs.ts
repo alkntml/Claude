@@ -27,7 +27,7 @@ export interface LegalDocMeta {
 }
 
 export const LEGAL_DOCS: LegalDocMeta[] = [
-  { id: "kvkk", path: "/kvkk", label: "KVKK Aydınlatma Metni", version: "2026-11-20", original: "tr", requiresAcceptance: false,
+  { id: "kvkk", path: "/kvkk", label: "KVKK Aydınlatma Metni", version: "2026-11-21", original: "tr", requiresAcceptance: false,
     title: { tr: "KVKK Aydınlatma Metni", en: "KVKK Privacy Notice", de: "Datenschutzinformation nach KVKK" } },
   { id: "terms", path: "/kosullar", label: "Kullanım Koşulları", version: "2026-11-15", original: "tr", requiresAcceptance: true,
     title: { tr: "Kullanım Koşulları", en: "Terms of Use", de: "Nutzungsbedingungen" } },
@@ -37,9 +37,9 @@ export const LEGAL_DOCS: LegalDocMeta[] = [
     title: { tr: "Çerez ve Cihaz Tanımlayıcıları Politikası", en: "Cookie and Device Identifier Policy", de: "Richtlinie zu Cookies und Gerätekennungen" } },
   { id: "integrity", path: "/akademik-durustluk", label: "Akademik Dürüstlük", version: "2026-11-14", original: "tr", requiresAcceptance: false,
     title: { tr: "Akademik Dürüstlük ve Sorumlu Yapay Zekâ Kullanımı", en: "Academic Integrity and Responsible AI Use", de: "Wissenschaftliche Integrität und verantwortungsvolle KI-Nutzung" } },
-  { id: "distance", path: "/mesafeli-sozlesmeler", label: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", version: "2026-11-20", original: "tr", requiresAcceptance: false,
+  { id: "distance", path: "/mesafeli-sozlesmeler", label: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", version: "2026-11-21", original: "tr", requiresAcceptance: false,
     title: { tr: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", en: "Distance Contracts and Pre-Contractual Information", de: "Fernabsatzverträge und vorvertragliche Informationen" } },
-  { id: "gdpr", path: "/gdpr", label: "GDPR / Data Protection", version: "2026-11-20", original: "en", requiresAcceptance: false,
+  { id: "gdpr", path: "/gdpr", label: "GDPR / Data Protection", version: "2026-11-21", original: "en", requiresAcceptance: false,
     title: { tr: "GDPR / Veri Koruma Bildirimi", en: "GDPR / Data Protection Notice", de: "DSGVO / Datenschutzhinweis" } },
 ];
 

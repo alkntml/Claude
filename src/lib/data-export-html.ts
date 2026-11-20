@@ -16,7 +16,7 @@ const COLS: Record<string, string> = {
   source: "Kaynak", accepted_at: "Tarih", device: "Cihaz özeti", first_seen: "İlk görülme", last_seen: "Son görülme", score: "Puan",
   summary: "Özet", message: "Mesaj", page: "Sayfa", category: "Kategori", route: "Sayfa / işlem", tool: "Araç", items: "Kayıt",
   provider: "Sağlayıcı", last_synced_at: "Son eşitleme", expires_at: "Bitiş", accepted_at_: "Kabul", joined_at: "Katılım",
-  your_role: "Rolünüz", detail: "Ayrıntı", question_count: "Soru", payer_name: "Ödeyen", amount_try: "Tutar (TL)", size_bytes: "Boyut (bayt)",
+  your_role: "Rolünüz", detail: "Ayrıntı", question_count: "Soru", payer_name: "Ödeyen / unvan", invoice_type: "Fatura türü", company_title: "Şirket unvanı", tax_number: "Vergi no", tax_office: "Vergi dairesi", payer_phone: "Telefon", buyer_email: "Fatura e-postası", payer_address: "Adres", merchant_oid: "Sipariş no", period: "Dönem", amount_try: "Tutar (TL)", size_bytes: "Boyut (bayt)",
   mime_type: "Tür", created_at: "Tarih", updated_at: "Güncelleme", completed_at: "Tamamlanma", read_at: "Okunma",
 };
 /** Bölüm başına gösterilecek sütunlar (yoksa ilk anlamlı sütunlar seçilir) */
@@ -38,6 +38,7 @@ const PICK: Record<string, string[]> = {
   feedback: ["page", "category", "message", "status", "created_at"],
   error_logs: ["route", "message", "created_at"],
   tool_usage: ["tool", "items", "model", "cost_usd", "created_at"],
+  payment_orders: ["merchant_oid", "plan_id", "period", "amount_try", "status", "invoice_type", "payer_name", "tax_number", "tax_office", "buyer_email", "created_at"],
   surveys: ["title", "is_open", "response_count", "created_at"],
   project_memory: ["kind", "content", "created_at"],
   files: ["name", "mime_type", "size_bytes", "created_at"],
@@ -47,8 +48,10 @@ const MAX_ROWS = 300, MAX_CELL = 160;
 const VALUES: Record<string, Record<string, string>> = {
   access_level: { metadata: "Yalnızca künye", abstract: "Özet", full_text: "Tam metin" },
   role: { user: "Siz", assistant: "Asistan", editor: "Düzenleyici", commenter: "Yorumcu", admin: "Yönetici", member: "Üye" },
+  invoice_type: { individual: "Bireysel", commercial: "Ticari" },
+  period: { monthly: "Aylık", yearly: "Yıllık" },
   locale: { tr: "Türkçe", en: "İngilizce", de: "Almanca" },
-  status: { pending: "Bekliyor", completed: "Tamamlandı", rejected: "Reddedildi", open: "Açık", resolved: "Çözüldü", draft: "Taslak", in_progress: "Sürüyor", done: "Tamamlandı" },
+  status: { paid: "Ödendi", failed: "Başarısız", pending: "Bekliyor", completed: "Tamamlandı", rejected: "Reddedildi", open: "Açık", resolved: "Çözüldü", draft: "Taslak", in_progress: "Sürüyor", done: "Tamamlandı" },
   kind: { accept: "Kabul", notice: "Bilgilendirme", export: "Veri indirme", ai_request: "Yapay zekâ isteği", source_search: "Kaynak taraması", upload: "Dosya yükleme", quality_check: "Kalite kontrol" },
   doc: { terms: "Kullanım Koşulları", kvkk: "KVKK Aydınlatma Metni", fair_use: "Adil Kullanım Politikası", cookies: "Çerez Politikası", integrity: "Akademik Dürüstlük", distance: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", gdpr: "GDPR / Data Protection" },
 };

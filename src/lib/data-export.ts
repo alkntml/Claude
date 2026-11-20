@@ -20,7 +20,7 @@ export const SERVER_EXPORT_TABLES = ["activity_log", "user_devices", "export_fin
  */
 async function extraRecords(admin: SupabaseClient, userId: string, email: string | null) {
   const rows = async (q: PromiseLike<{ data: unknown[] | null; error?: unknown }>) => { try { const { data, error } = await q; return error ? [] : (data ?? []); } catch { return []; } };
-  const [errors, memberships, invitesSent, invitesReceived, orgs, tools, templates, templateLogs, orgAudit] = await Promise.all([
+  const [errors, memberships, invitesSent, invitesReceived, orgs, tools, templates, templateLogs, orgAudit, orders] = await Promise.all([
     rows(admin.from("error_logs").select("route, message, created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(5000)),
     rows(admin.from("project_members").select("project_id, role, created_at, projects(title)").eq("user_id", userId).limit(5000)),
     rows(admin.from("project_invites").select("project_id, email, role, created_at, expires_at, accepted_at").eq("invited_by", userId).limit(5000)),
@@ -31,6 +31,8 @@ async function extraRecords(admin: SupabaseClient, userId: string, email: string
     rows(admin.from("template_change_logs").select("project_id, action, detail, created_at").eq("user_id", userId).limit(50000)),
     // Kurum işlem kaydında yalnızca kullanıcının rolü ve işlem türü (başka kişilerin bilgisi içeren ayrıntı verilmez)
     rows(admin.from("org_audit_log").select("org_id, action, actor_id, target_user, created_at").or(`actor_id.eq.${userId},target_user.eq.${userId}`).limit(5000)),
+    // D231: kartla ödeme siparişleri ve fatura bilgileri (ödeme anahtarı iframe_token hariç)
+    rows(admin.from("payment_orders").select("merchant_oid, plan_id, period, days, amount_try, status, invoice_type, payer_name, buyer_first_name, buyer_last_name, company_title, tax_number, tax_office, payer_address, payer_phone, buyer_email, payment_type, immediate_start_consent, created_at, applied_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(1000)),
   ]);
   return {
     error_logs: errors,
@@ -41,6 +43,7 @@ async function extraRecords(admin: SupabaseClient, userId: string, email: string
     tool_usage: tools,
     user_templates: templates,
     template_change_logs: templateLogs,
+    payment_orders: orders,
     org_audit_log: (orgAudit as { org_id: string; action: string; actor_id: string | null; target_user: string | null; created_at: string }[])
       .map((r) => ({ org_id: r.org_id, action: r.action, your_role: r.actor_id === userId ? "işlemi yapan" : "işlemden etkilenen", created_at: r.created_at })),
   };

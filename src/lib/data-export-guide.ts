@@ -46,6 +46,7 @@ export const EXPORT_GUIDE = {
     S("Kullanım", "usage_credits", "Ek kullanım hakları", "Size tanımlanan ek haklar ve geçerlilik süreleri."),
     S("Kullanım", "subscriptions", "Abonelikler", "Ödeme sağlayıcısı üzerinden abonelik kayıtları."),
     S("Kullanım", "plan_purchases", "Paket tanımlama kayıtları", "Paket atamalarında kaydedilen ödeme bilgileri (ödeyen adı, telefon, tutar, not)."),
+    S("Kullanım", "payment_orders", "Kartla ödeme siparişleri ve fatura bilgileri", "Kartla yaptığınız ödemelerin sipariş kaydı: paket, dönem, tutar, durum ve faturada yazılacak bilgiler (bireysel: ad, soyad, telefon, e-posta; ticari: şirket unvanı, vergi numarası, vergi dairesi, adres, telefon, e-posta). Kart bilgileri Academiana’ya gelmez, burada yoktur."),
     S("Kullanım", "download_passes", "İndirme hakları", "Tek Proje paketinde tanımlanan indirme hakları."),
     S("Kullanım", "export_fingerprints", "İndirme izleri", "Tek Proje paketinde indirilen metinlerin kelime sayısı, geri elde edilemeyen özeti ve kapak bilgileri."),
     S("Paylaşım", "project_shares", "Danışman paylaşım bağlantıları", "Oluşturduğunuz salt okunur paylaşım bağlantıları."),

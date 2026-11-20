@@ -7,6 +7,7 @@ import { PAYMENT_PROVIDER, SELLER, SITE_URL } from "@/lib/site";
 export interface ReceiptOrder {
   merchant_oid: string; plan_name: string; period: "monthly" | "yearly"; days: number; amount_try: number; list_price_try: number | null;
   discount_code: string | null; status: string; payer_name: string; payer_phone: string; payer_address: string; buyer_email: string | null;
+  invoice_type?: string | null; company_title?: string | null; tax_number?: string | null; tax_office?: string | null; buyer_first_name?: string | null; buyer_last_name?: string | null;
   payment_type: string | null; test_mode: boolean; created_at: string; applied_at: string | null; immediate_start_consent?: boolean | null; distance_version?: string | null;
 }
 
@@ -14,6 +15,16 @@ const esc = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g,
 const tl = (n: number) => `${Number(n).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL`;
 const dt = (iso: string) => new Date(iso).toLocaleString("tr-TR", { dateStyle: "long", timeStyle: "short", timeZone: "Europe/Istanbul" });
 const STATUS: Record<string, string> = { paid: "Ödendi", pending: "Ödeme bekleniyor", failed: "Ödeme tamamlanmadı" };
+
+/** D231: bireysel faturada ad, soyad, telefon, e-posta; ticari faturada unvan, vergi no, vergi dairesi, adres, telefon, e-posta */
+function buyerRows(o: ReceiptOrder, row: (k: string, v: string) => string): string {
+  if (o.invoice_type === "commercial") {
+    return [row("Fatura türü", "Ticari"), row("Şirket unvanı", esc(o.company_title ?? o.payer_name)), row("Vergi numarası", esc(o.tax_number ?? "—")), row("Vergi dairesi", esc(o.tax_office ?? "—")),
+      row("Açık adres", esc(o.payer_address)), row("Telefon", esc(o.payer_phone)), row("E-posta", esc(o.buyer_email ?? "—"))].join("\n");
+  }
+  const name = o.buyer_first_name || o.buyer_last_name ? [row("Ad", esc(o.buyer_first_name ?? "")), row("Soyad", esc(o.buyer_last_name ?? ""))] : [row("Ad soyad", esc(o.payer_name))];
+  return [row("Fatura türü", "Bireysel"), ...name, row("Telefon", esc(o.payer_phone)), row("E-posta", esc(o.buyer_email ?? "—")), ...(o.payer_address ? [row("Fatura adresi", esc(o.payer_address))] : [])].join("\n");
+}
 
 export function receiptHtml(o: ReceiptOrder): string {
   const row = (k: string, v: string) => `<tr><th>${esc(k)}</th><td>${v}</td></tr>`;
@@ -27,11 +38,8 @@ ${row("Adres", esc(SELLER.address))}
 ${row("Vergi dairesi / vergi no", `${esc(SELLER.taxOffice)} / ${esc(SELLER.taxNo)}`)}
 ${row("İletişim", `WhatsApp ${esc(SELLER.phone)} · ${esc(SITE_URL)}`)}
 </table>
-<h2>Alıcı</h2><table>
-${row("Ad soyad", esc(o.payer_name))}
-${row("E-posta", esc(o.buyer_email ?? "—"))}
-${row("Telefon", esc(o.payer_phone))}
-${row("Fatura adresi", esc(o.payer_address))}
+<h2>Alıcı (fatura bilgileri)</h2><table>
+${buyerRows(o, row)}
 </table>
 <h2>Sipariş</h2><table>
 ${row("Sipariş no", esc(o.merchant_oid))}

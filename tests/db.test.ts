@@ -863,6 +863,49 @@ describe("anketler", () => {
     expect(Number(r.amount_try)).toBe(899);
   });
 
+  it("migration 50: fatura bilgisi (bireysel/ticari) — vergi numarası ve tür kısıtları (D231)", async () => {
+    const C = "50505050-5050-5050-5050-505050505050";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${C}', 'c50@ornek.com', '{}')`);
+    const ins = (oid: string, cols: string, vals: string) => db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try, ${cols}) values ('${oid}', '${C}', 'pro', 'monthly', 30, 1349, ${vals})`);
+    await ins("ACINV000001", "payer_name", "'Ali Veli'"); // varsayılan: bireysel
+    await ins("ACINV000002", "invoice_type, payer_name, company_title, tax_number, tax_office, payer_address", "'commercial', 'Örnek Ltd. Şti.', 'Örnek Ltd. Şti.', '8370931187', 'Gölbaşı', 'Örencik Mah. 3803 Cad. No: 17 Ankara'");
+    const r = (await db.query<{ invoice_type: string }>(`select invoice_type from public.payment_orders where merchant_oid = 'ACINV000001'`)).rows[0];
+    expect(r.invoice_type).toBe("individual");
+    await expectError(ins("ACINV000003", "invoice_type, payer_name", "'sirket', 'X'"), /payment_orders_invoice_type_check/);
+    await expectError(ins("ACINV000004", "payer_name, tax_number", "'X', '12AB'"), /tax_number/);
+    await expectError(ins("ACINV000005", "payer_name, tax_number", "'X', '123456789012'"), /tax_number/);
+  });
+
+  it("D231: paket içerikleri, sınırlar, süreler ve fiyatlar birbiriyle tutarlı (satın alınan paket doğru tanımlanır)", async () => {
+    const { yearlyTotalPrice } = await import("@/lib/pricing");
+    const rows = (await db.query<{ id: string; price_monthly: string; price_yearly: string; limits: Record<string, number | null>; features: string[]; is_active: boolean }>(`select id, price_monthly, price_yearly, limits, features, is_active from public.plans where is_active order by sort_order`)).rows;
+    expect(rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium", "single"]);
+    for (const p of rows) {
+      const l = p.limits, f = p.features.join(" | ");
+      if (p.id !== "free") expect(Number(p.price_yearly)).toBe(yearlyTotalPrice(Number(p.price_monthly))); // yıllık fiyat = aylık %20 indirimli × 12
+      // Kartlarda yazan sayılar gerçek sınırlarla aynı
+      if (l.pages_month != null && p.id !== "single") expect(f).toMatch(new RegExp(`(Ayda|Yapay zekâ ile) (yaklaşık )?${l.pages_month} sayfa`));
+      if (l.projects != null && p.id !== "free") expect(f).toContain(`${l.projects} proje`);
+      if (l.projects == null) expect(f).toContain("Sınırsız proje");
+      if (l.source_searches_month != null && l.source_searches_month <= 400) expect(f).toContain(`Aylık ${l.source_searches_month} kaynak taraması`);
+      if (l.storage_mb === 15000) expect(f).toContain("15 GB");
+      const fmt = l.export_formats as unknown as string[];
+      if (p.id !== "free") expect(fmt).toEqual(expect.arrayContaining(["docx", "pdf"]));
+      if (p.id === "basic") expect(f).toContain("Word dışa aktarma");
+    }
+    // Üst paket alt paketin haklarından aşağı değil
+    const by = Object.fromEntries(rows.map((r) => [r.id, r.limits]));
+    for (const k of ["pages_month", "ai_requests_month", "source_searches_month", "storage_mb"] as const) {
+      expect((by.free[k] as number) <= (by.basic[k] as number)).toBe(true);
+      expect((by.basic[k] as number) <= (by.pro[k] as number)).toBe(true);
+      expect((by.pro[k] as number) <= (by.premium[k] as number)).toBe(true);
+    }
+    // Sınırsız Proje: tek sınır proje sayısı
+    expect(by.single.pages_month).toBeNull();
+    expect(by.single.ai_requests_month).toBeNull();
+    expect(by.single.projects).toBe(5);
+  });
+
   it("migration 47/49: 1 TL deneme paketi gizli (D230), Basic haklarıyla", async () => {
     const r = (await db.query<{ price_monthly: string; is_active: boolean; same: boolean }>(`select d.price_monthly, d.is_active, d.limits = b.limits as same from public.plans d, public.plans b where d.id = 'deneme' and b.id = 'basic'`)).rows[0];
     expect(Number(r.price_monthly)).toBe(1);

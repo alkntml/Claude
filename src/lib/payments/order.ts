@@ -5,7 +5,7 @@
  * indirim koduyla birleştirilmez. Aylık 30 gün, yıllık 365 gün (12 aylık hak baştan).
  */
 import { discountedPrice, type DiscountCode } from "@/lib/discount";
-import { hasYearlyOption, SINGLE_PLAN_DAYS, YEARLY_DAYS, yearlyTotalPrice, type BillingPeriod } from "@/lib/pricing";
+import { hasYearlyOption, PLAN_RANK, SINGLE_PLAN_DAYS, YEARLY_DAYS, yearlyTotalPrice, type BillingPeriod } from "@/lib/pricing";
 
 export const MONTHLY_DAYS = 30;
 /** D228: 1 TL’lik gizli ödeme deneme paketi (yalnızca yönetici ve test listesine; yalnızca aylık) */
@@ -40,3 +40,22 @@ export function normalizePhone(s: string): string {
   return String(s ?? "").replace(/[^\d+]/g, "").slice(0, 20);
 }
 export const isValidPhone = (s: string) => /^\+?\d{10,15}$/.test(normalizePhone(s));
+
+/**
+ * D231: satın alma kuralı (sunucuda zorunlu). Süresi dolmamış bir paketi olan kullanıcı daha düşük bir pakete veya
+ * yıllık paketinin yerine aynı paketin aylığına geçemez (kalan süresi ve hakları kaybolurdu). Aynı paketin aynı dönemi (uzatma)
+ * ve daha yüksek paket serbesttir. Dolu mesaj dönerse satın alma reddedilir; boşsa serbest.
+ */
+export function purchaseBlockReason(
+  profile: { plan_id: string | null; plan_expires_at: string | null; plan_period?: string | null },
+  order: { plan_id: string; period: BillingPeriod },
+  now = Date.now(),
+): string | null {
+  const cur = profile.plan_id ?? "free";
+  const exp = profile.plan_expires_at ? Date.parse(profile.plan_expires_at) : NaN;
+  const active = cur !== "free" && Number.isFinite(exp) && exp > now;
+  if (!active) return null;
+  if ((PLAN_RANK[order.plan_id] ?? 0) < (PLAN_RANK[cur] ?? 0)) return "Süresi devam eden paketinizden daha düşük bir paket satın alınamaz. Paketiniz bitince yeni paket alabilirsiniz.";
+  if (order.plan_id === cur && order.period === "monthly" && profile.plan_period === "yearly") return "Yıllık paketiniz sürerken aynı paketin aylığı alınamaz. Yıllık paketinizi uzatabilir veya daha üst bir pakete geçebilirsiniz.";
+  return null;
+}

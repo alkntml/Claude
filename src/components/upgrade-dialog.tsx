@@ -6,6 +6,8 @@ import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { UPGRADE_EVENT, type UpgradeRequest } from "@/lib/client";
 import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
+import { InvoiceFields } from "@/components/invoice-fields";
+import { emptyInvoice, invoiceBody, invoiceErrors, type InvoiceForm } from "@/lib/payments/invoice";
 import { projectLimitFor, PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, formatPrice, type BillingPeriod } from "@/lib/pricing";
 import { orderQuote } from "@/lib/payments/order";
 import { SELLER } from "@/lib/site";
@@ -47,7 +49,9 @@ export function UpgradeDialogHost() {
   const [period, setPeriod] = useState<BillingPeriod>("monthly");
   // D225: kartla ödeme (PayTR) — fatura bilgisi adımı
   const [card, setCard] = useState<PlanRow | null>(null);
-  const [payer, setPayer] = useState({ name: "", phone: "", address: "" });
+  // D231: fatura bilgisi (bireysel / ticari)
+  const [invoice, setInvoice] = useState<InvoiceForm>(emptyInvoice());
+  const [showInvErr, setShowInvErr] = useState(false);
   const [paying, setPaying] = useState(false);
   // D226: dijital hizmetin hemen başlaması talebi (cayma hakkı bilgisi) — ödeme öncesi zorunlu
   const [instant, setInstant] = useState(false);
@@ -70,7 +74,7 @@ export function UpgradeDialogHost() {
 
   if (!req) return null;
   const workLocked = req.code === "work_locked";
-  const close = () => { setReq(null); setAck(false); setAckError(false); setCard(null); setPayError(""); setInstant(false); };
+  const close = () => { setReq(null); setAck(false); setAckError(false); setCard(null); setPayError(""); setInstant(false); setShowInvErr(false); };
   /** Bilgilendirmenin okunduğu kaydı (satın alma öncesi); bekletmez, WhatsApp hemen açılır */
   const recordAck = (plan: string) => {
     void fetch("/api/legal/accept", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notice: ["distance", "fair_use"], purpose: "purchase", plan }) }).catch(() => {});
@@ -81,7 +85,8 @@ export function UpgradeDialogHost() {
   // Yıllıkta: aynı paketin yıllığına geçiş de seçilebilir (zaten yıllıksa değil)
   // D226: kartla ödemede mevcut paketin süresi de uzatılabilir (aylık ve yıllık)
   const renewable = !!data?.cardPayments;
-  const options = (data?.plans ?? []).filter((p) => renewable
+  const yearlyHolder = data?.currentPeriod === "yearly";
+  const options = (data?.plans ?? []).filter((p) => !(renewable && !yearlyMode && yearlyHolder && p.id === data?.current)).filter((p) => renewable
     ? p.price_monthly > 0 && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && (!yearlyMode || hasYearlyOption(p.id, p.price_monthly))
     : yearlyMode
     ? hasYearlyOption(p.id, p.price_monthly) && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && !(p.id === data?.current && data?.currentPeriod === "yearly")
@@ -136,7 +141,7 @@ export function UpgradeDialogHost() {
     setPaying(true); setPayError("");
     recordAck(yearlyMode ? `${card.id}-yillik` : card.id);
     try {
-      const res = await fetch("/api/payments/paytr/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: card.id, period, payer, immediateStart: true }) });
+      const res = await fetch("/api/payments/paytr/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: card.id, period, invoice: invoiceBody(invoice), immediateStart: true }) });
       const j = await res.json().catch(() => ({}));
       if (!res.ok || !j.oid) throw new Error(j.error || t("Ödeme sayfası açılamadı. Lütfen biraz sonra tekrar deneyin."));
       window.location.href = `/odeme?siparis=${encodeURIComponent(j.oid)}`;
@@ -171,17 +176,14 @@ export function UpgradeDialogHost() {
         {ackError && !ack && <p className="text-sm text-rose-700">{cardOn ? t("Ödemeye geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.") : t("WhatsApp’a geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.")}</p>}
         {card && (() => {
           const q = quote(card);
-          const valid = instant && payer.name.trim().length >= 3 && payer.phone.replace(/[^\d]/g, "").length >= 10 && payer.address.trim().length >= 10;
+          const invOk = invoiceErrors(invoice).length === 0;
+          const valid = instant && invOk;
           const renew = card.id === data?.current;
           return (
-            <form className="space-y-3 rounded-2xl border border-brand-200 bg-brand-50/40 p-4" onSubmit={(e) => { e.preventDefault(); if (valid && !paying) void pay(); }}>
+            <form className="space-y-3 rounded-2xl border border-brand-200 bg-brand-50/40 p-4" onSubmit={(e) => { e.preventDefault(); if (!invOk) { setShowInvErr(true); return; } if (valid && !paying) void pay(); }}>
               <p className="font-semibold text-ink-900">{t("{plan} paketi", { plan: t(card.name) })} · {yearlyMode ? t("Yıllık (tek ödeme)") : t("Aylık")} · {q ? formatPrice(q.amount, "tr") : ""}</p>
-              <p className="text-[13px] text-ink-500">{t("Fatura ve ödeme kaydı için bilgileriniz. Kart bilgilerinizi bir sonraki adımda PayTR’nin güvenli sayfasında gireceksiniz.")}</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label htmlFor="pay-name" className="block"><span className="label">{t("Ad soyad")}</span><input id="pay-name" className="input" autoComplete="name" maxLength={60} value={payer.name} onChange={(e) => setPayer({ ...payer, name: e.target.value })} /></label>
-                <label htmlFor="pay-phone" className="block"><span className="label">{t("Telefon")}</span><input id="pay-phone" className="input" type="tel" autoComplete="tel" maxLength={20} placeholder="05xx xxx xx xx" value={payer.phone} onChange={(e) => setPayer({ ...payer, phone: e.target.value })} /></label>
-              </div>
-              <label htmlFor="pay-address" className="block"><span className="label">{t("Fatura adresi")}</span><textarea id="pay-address" className="input min-h-[72px]" autoComplete="street-address" maxLength={400} value={payer.address} onChange={(e) => setPayer({ ...payer, address: e.target.value })} /></label>
+              <p className="text-[13px] text-ink-500">{t("Fatura bilgileriniz: bireysel veya ticari fatura seçin. Kart bilgilerinizi bir sonraki adımda PayTR’nin güvenli sayfasında gireceksiniz.")}</p>
+              <InvoiceFields value={invoice} onChange={setInvoice} showErrors={showInvErr} />
               <div className="rounded-xl border border-ink-100 bg-white p-3 text-[12.5px] leading-relaxed text-ink-600">
                 <p className="font-semibold text-ink-800">{t("Sipariş özeti")}</p>
                 <p className="mt-1"><b className="text-ink-700">{t("Satıcı")}:</b> {SELLER.name} · {t("Vergi no")} {SELLER.taxNo} ({t("{o} Vergi Dairesi", { o: SELLER.taxOffice })}) · {SELLER.address}</p>
@@ -195,7 +197,7 @@ export function UpgradeDialogHost() {
               </label>
               {payError && <p className="text-sm text-rose-700">{payError}</p>}
               <div className="flex flex-wrap items-center gap-2">
-                <button type="submit" disabled={!valid || paying} className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"><CreditCard className="h-4 w-4" /> {paying ? t("Ödeme sayfası açılıyor…") : t("Güvenli ödemeye geç")}</button>
+                <button type="submit" disabled={!instant || paying} className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"><CreditCard className="h-4 w-4" /> {paying ? t("Ödeme sayfası açılıyor…") : t("Güvenli ödemeye geç")}</button>
                 <button type="button" onClick={() => { setCard(null); setPayError(""); }} className="h-10 rounded-xl px-3 text-sm text-ink-600 hover:bg-ink-50">{t("Geri")}</button>
               </div>
             </form>
@@ -214,7 +216,7 @@ export function UpgradeDialogHost() {
                   {lines(p).map((l) => <li key={l} className="flex items-start gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />{l}</li>)}
                 </ul>
                 {cardOn && quote(p) && (
-                  <button type="button" aria-disabled={!ack} onClick={() => { if (!ack) { needAck(); return; } setCard(p); document.getElementById("upgrade-ack")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700", !ack && "opacity-50")}>
+                  <button type="button" aria-disabled={!ack} onClick={() => { if (!ack) { needAck(); return; } setInvoice((v) => (v.email ? v : { ...v, email: data?.email ?? "" })); setCard(p); document.getElementById("upgrade-ack")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700", !ack && "opacity-50")}>
                     <CreditCard className="h-4 w-4" /> {renewable && p.id === data?.current ? t("Kartla süreyi uzat") : t("Kartla öde")}
                   </button>
                 )}

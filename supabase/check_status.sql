@@ -105,4 +105,7 @@ union all select '47 1 TL deneme paketi',
        then 'YAPILMIŞ' else 'EKSİK' end
 union all select '49 1 TL deneme paketi gizli (yalnızca yönetici testi)',
   case when exists (select 1 from public.plans where id = 'deneme' and price_monthly = 1 and is_active = false)
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '50 Fatura bilgisi (bireysel/ticari)',
+  case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'tax_number')
        then 'YAPILMIŞ' else 'EKSİK' end;

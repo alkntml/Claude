@@ -8,7 +8,7 @@ import { api } from "@/lib/client";
 interface Order {
   merchant_oid: string; email: string | null; plan_id: string; period: string; amount_try: number; list_price_try: number | null; discount_code: string | null;
   status: "pending" | "paid" | "failed"; payer_name: string; payer_phone: string; test_mode: boolean; paid_amount_try: number | null; payment_type: string | null;
-  failed_reason: string | null; applied_at: string | null; created_at: string;
+  failed_reason: string | null; payer_address?: string; buyer_email?: string | null; invoice_type?: "individual" | "commercial"; company_title?: string | null; tax_number?: string | null; tax_office?: string | null; applied_at: string | null; created_at: string;
 }
 interface Data { configured: boolean; testMode: boolean | null; tableMissing: boolean; orders: Order[] }
 
@@ -46,7 +46,7 @@ export function PaymentsTab() {
       {d && !d.tableMissing && (
         <div className="overflow-x-auto rounded-2xl border border-ink-100">
           <table className="w-full min-w-[900px] text-[13px]">
-            <thead className="bg-ink-50 text-left text-xs text-ink-500"><tr><th className="p-2">Tarih</th><th>Kullanıcı</th><th>Paket</th><th>Tutar</th><th>Durum</th><th>Ödeyen</th><th>Sipariş no</th></tr></thead>
+            <thead className="bg-ink-50 text-left text-xs text-ink-500"><tr><th className="p-2">Tarih</th><th>Kullanıcı</th><th>Paket</th><th>Tutar</th><th>Durum</th><th>Fatura bilgisi</th><th>Sipariş no</th></tr></thead>
             <tbody>
               {d.orders.length === 0 && <tr><td colSpan={7} className="p-4 text-center text-ink-400">Henüz kartla ödeme yok.</td></tr>}
               {d.orders.map((o) => (
@@ -61,7 +61,14 @@ export function PaymentsTab() {
                     {o.status === "paid" && !o.applied_at && <p className="mt-1 text-[12px] text-rose-700">Paket tanımlanamadı — kullanıcıya elle atayın</p>}
                     {o.failed_reason && <p className="mt-1 max-w-[220px] text-[12px] text-ink-500">{o.failed_reason}</p>}
                   </td>
-                  <td className="pr-2">{o.payer_name}{o.payer_phone ? <span className="block text-ink-400">{o.payer_phone}</span> : null}</td>
+                  <td className="pr-2 max-w-[260px]">
+                    <span className={cn("mr-1 rounded-full px-2 py-0.5 text-[11px] font-semibold", o.invoice_type === "commercial" ? "bg-indigo-50 text-indigo-700" : "bg-ink-100 text-ink-600")}>{o.invoice_type === "commercial" ? "Ticari fatura" : "Bireysel fatura"}</span>
+                    <span className="block font-medium">{o.payer_name}</span>
+                    {o.invoice_type === "commercial" && <span className="block text-ink-500">VKN/TCKN {o.tax_number ?? "—"} · {o.tax_office ?? "—"} V.D.</span>}
+                    {o.invoice_type === "commercial" && o.payer_address ? <span className="block text-ink-500">{o.payer_address}</span> : null}
+                    {o.payer_phone ? <span className="block text-ink-400">{o.payer_phone}</span> : null}
+                    {o.buyer_email ? <span className="block text-ink-400">{o.buyer_email}</span> : null}
+                  </td>
                   <td className="pr-2 font-mono text-[11.5px] text-ink-500">{o.merchant_oid}</td>
                 </tr>
               ))}

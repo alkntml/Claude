@@ -4,7 +4,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { callbackHash, canPayByCard, clientIp, encodeBasket, newMerchantOid, parseCallback, paytrCreds, requestToken, tokenHash, verifyCallback } from "@/lib/payments/paytr";
-import { orderQuote, paidExpiry, isValidPhone, TEST_PLAN_ID } from "@/lib/payments/order";
+import { orderQuote, paidExpiry, isValidPhone, purchaseBlockReason, TEST_PLAN_ID } from "@/lib/payments/order";
 
 const C = { merchantId: "M123", merchantKey: "KEYABC", merchantSalt: "SALTXYZ", testMode: true };
 const BASKET = "W1siQWNhZGVtaWFuYSBQcm8gKEF5bMSxaykiLCI0OTkuMDAiLDFdXQ==";
@@ -167,5 +167,66 @@ describe("PayTR bildirimi", () => {
   it("bilinmeyen sipariş sessizce kaydedilir", async () => {
     const { handlePaytrCallback } = await import("@/lib/payments/apply");
     expect(await handlePaytrCallback(C, signed("success", "89900", "ACYOK00001"))).toBe("unknown_order");
+  });
+});
+
+describe("D231: her paket ve dönem için doğru paket, süre ve tutar tanımlanır", () => {
+  const plans = [{ id: "basic", price: 749 }, { id: "pro", price: 1349 }, { id: "premium", price: 2249 }, { id: "single", price: 3999 }];
+  const cases = plans.flatMap((p) => (["monthly", "yearly"] as const).map((period) => ({ ...p, period })));
+  beforeEach(() => { for (const k of Object.keys(T)) delete T[k]; });
+  it.each(cases)("$id / $period", async ({ id, price, period }) => {
+    const { handlePaytrCallback } = await import("@/lib/payments/apply");
+    const quote = orderQuote({ id, price_monthly: price }, period)!;
+    // Beklenen: aylık 30 gün ve liste fiyatı; yıllık 365 gün ve %20 indirimli aylık × 12
+    expect(quote.days).toBe(period === "yearly" ? 365 : 30);
+    expect(quote.amount).toBe(period === "yearly" ? Math.round(price * 0.8) * 12 : price);
+    T.payment_orders = [{ merchant_oid: "ACMATRIX01", user_id: "u1", plan_id: id, period, days: quote.days, amount_try: quote.amount, status: "pending", payer_name: "Ali Veli", payer_phone: "05321112233", test_mode: true, applied_at: null }];
+    T.profiles = [{ id: "u1", plan_id: "free", plan_expires_at: null, plan_period: "monthly" }];
+    T.plans = [{ id, name: id }];
+    const kurus = String(Math.round(quote.amount * 100));
+    const cb = { merchantOid: "ACMATRIX01", status: "success", totalAmount: kurus, hash: callbackHash(C, "ACMATRIX01", "success", kurus), paymentAmount: kurus, paymentType: "card", currency: "TL", testMode: "1", failedReasonCode: "", failedReasonMsg: "" };
+    const t0 = Date.now();
+    expect(await handlePaytrCallback(C, cb)).toBe("paid");
+    const prof = T.profiles[0] as { plan_id: string; plan_period: string; plan_expires_at: string; plan_started_at: string };
+    expect(prof.plan_id).toBe(id);
+    expect(prof.plan_period).toBe(period);
+    const days = (Date.parse(prof.plan_expires_at) - Date.parse(prof.plan_started_at)) / 86400_000;
+    expect(Math.round(days)).toBe(quote.days);
+    expect(Math.abs(Date.parse(prof.plan_started_at) - t0)).toBeLessThan(5000);
+    expect(T.plan_purchases).toHaveLength(1);
+    expect(T.plan_purchases[0]).toMatchObject({ user_id: "u1", plan_id: id, amount_try: quote.amount });
+    expect(T.notifications[0]).toMatchObject({ user_id: "u1", kind: "payment_success" });
+    expect((T.notifications[0].data as { plan_id: string; period: string }).plan_id).toBe(id);
+    // tekrar gelen bildirim paketi ikinci kez uzatmaz
+    expect(await handlePaytrCallback(C, cb)).toBe("already_applied");
+    expect(T.profiles[0].plan_expires_at).toBe(prof.plan_expires_at);
+  });
+  it("aynı pakette uzatma: kalan süre korunur ve yeni süre eklenir; farklı pakette bugünden başlar", async () => {
+    const { handlePaytrCallback } = await import("@/lib/payments/apply");
+    const future = new Date(Date.now() + 10 * 86400_000).toISOString();
+    T.payment_orders = [{ merchant_oid: "ACRENEW001", user_id: "u1", plan_id: "pro", period: "monthly", days: 30, amount_try: 1349, status: "pending", payer_name: "A", payer_phone: "05321112233", test_mode: true, applied_at: null }];
+    T.profiles = [{ id: "u1", plan_id: "pro", plan_expires_at: future, plan_period: "monthly" }];
+    T.plans = [{ id: "pro", name: "Pro" }];
+    expect(await handlePaytrCallback(C, { merchantOid: "ACRENEW001", status: "success", totalAmount: "134900", hash: callbackHash(C, "ACRENEW001", "success", "134900"), paymentAmount: "134900", paymentType: "card", currency: "TL", testMode: "1", failedReasonCode: "", failedReasonMsg: "" })).toBe("paid");
+    expect(Math.round((Date.parse(T.profiles[0].plan_expires_at as string) - Date.parse(future)) / 86400_000)).toBe(30);
+  });
+});
+
+describe("D231: satın alma kuralı (düşük pakete / yıllığın yerine aylığa geçiş engellenir)", () => {
+  const now = Date.parse("2026-11-20T00:00:00Z");
+  const active = "2026-12-20T00:00:00.000Z";
+  it("süren paketten düşük paket reddedilir; aynı veya üst paket serbest", () => {
+    expect(purchaseBlockReason({ plan_id: "premium", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "basic", period: "monthly" }, now)).toMatch(/daha düşük/);
+    expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "pro", period: "monthly" }, now)).toBeNull();
+    expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "premium", period: "yearly" }, now)).toBeNull();
+    expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "pro", period: "yearly" }, now)).toBeNull();
+  });
+  it("yıllık paket sürerken aynı paketin aylığı reddedilir; üst paketin aylığı serbest", () => {
+    expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: "2027-06-01T00:00:00.000Z", plan_period: "yearly" }, { plan_id: "pro", period: "monthly" }, now)).toMatch(/Yıllık paketiniz/);
+    expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: "2027-06-01T00:00:00.000Z", plan_period: "yearly" }, { plan_id: "premium", period: "monthly" }, now)).toBeNull();
+  });
+  it("paket bitmişse veya ücretsizse her paket alınabilir", () => {
+    expect(purchaseBlockReason({ plan_id: "premium", plan_expires_at: "2026-11-01T00:00:00.000Z", plan_period: "yearly" }, { plan_id: "basic", period: "monthly" }, now)).toBeNull();
+    expect(purchaseBlockReason({ plan_id: "free", plan_expires_at: null }, { plan_id: "basic", period: "monthly" }, now)).toBeNull();
   });
 });

@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D231) Supabase SQL Editor’de migration 50’yi çalıştır (`supabase/migrations/20261214000050_invoice_info.sql`: fatura türü ve vergi bilgisi sütunları). **Çalıştırılmadan kartla ödeme siparişi açılmaz** (fatura bilgisi kaybolmasın diye); önce 45, 46 ve 50 çalışmış olmalı
+- [ ] (D231) docs/legal/HUKUKCU_NOTU_FATURA.md’yi hukukçuya ilet (bireysel/ticari fatura; “ticari alıcı tüketici sayılmaz” cümlesi)
 - [ ] (D230) Supabase SQL Editor’de migration 47’yi, sonra 49’u çalıştır (`20261213000049_trial_plan_hidden.sql`; 48 çalıştırıldıysa da 49 onu geri alır). Sonra Yönetim → Sistem durumu → “Ödeme testi (1 TL)”
 - [ ] (D228) Supabase SQL Editor’de migration 47’yi çalıştır (`supabase/migrations/20261211000047_test_plan.sql`: gizli 1 TL deneme paketi) → yönetici hesabıyla Hesap → Yükselt → “Deneme (1 TL)” → Kartla öde; sonra Yönetim → Kullanıcılar’dan paketi geri al
 - [ ] (D227) PayTR panelinde Mağaza Parola’yı “Değiştir” ile yenile (sohbette paylaşıldı) → Vercel’de `PAYTR_MERCHANT_KEY`’i güncelle → Redeploy

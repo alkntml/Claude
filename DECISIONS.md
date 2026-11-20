@@ -1357,3 +1357,8 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Migration 48: `deneme` paketi `is_active = true`; sıralama Ücretsiz(0), Deneme(1), Basic(2), Pro(3), Premium(4), Sınırsız Proje(5). Açıklama ve özellikler genel okura göre yeniden yazıldı (TR/EN/DE).
 - Kodda “yalnızca yönetici/test listesi” ayrımı kalktı (`isPaymentTester` yalnızca test modu kartla ödeme kısıtında, D227). Paket yalnızca aylık (`hasYearlyOption` false), `PLAN_RANK.deneme = 1` (Basic özellik düzeyi). Yenilikler’e madde eklendi.
 - **Dikkat:** 1 TL’ye Basic hakları 30 gün verildiği için her ay tekrar alınabilir; Basic aboneleri de seçebilir. Kullanıcıya bildirildi.
+
+## D230 — 1 TL deneme paketi her yerden kaldırıldı; yönetici “Ödeme testi” (20 Kasım 2026)
+- **Kullanıcı isteği:** “1 TL’lik paketi her yerden kaldır; yönetici hesabında veritabanı sağlığı kısmına test olarak ekle.” D229 (herkese açma) geri alındı.
+- Migration 49: `deneme` `is_active = false`, sıralama eski hâline. Fiyatlar, ana sayfa ve yükseltme penceresinde görünmez.
+- Yönetim → Sistem durumu (sistem sağlığı panosu) altına “Ödeme testi (1 TL)” kartı (`admin/payment-test.tsx`): fatura bilgisi → `POST /api/payments/paytr/checkout` (`planId: deneme`) → PayTR sayfası. Sunucu yalnızca `role = admin` için kabul eder (test listesi artık yetmez). Yenilikler maddesi kaldırıldı.

@@ -11,7 +11,7 @@ Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken�
 - D226: ödeme altyapısı PayTR olarak site geneline ve hukuki metinlere (KVKK, Çerez, Mesafeli, GDPR; sürüm 2026-11-20) işlendi; satıcı bilgileri `lib/site.ts → SELLER` (vergi levhası; T.C. kimlik no yazılmaz); sipariş özeti + hemen başlama onayı; Hesap → Siparişlerim.
 - D227: güvenlik: test modunda kartla ödeme yalnızca yönetici + `PAYTR_TEST_EMAILS`; canlıda test bildirimi ve TL dışı para birimi reddedilir; Next.js 15.5.29.
 - D228: gizli 1 TL “Deneme (1 TL)” paketi (yalnızca yönetici/test listesi) — kullanıcı kendisi gerçek ödeme deneyecek.
-- D229: “Deneme (1 TL)” paketi herkese açıldı: fiyatlar sayfasında ve yükseltme penceresinde Ücretsiz ile Basic arasında (migration 48). Test modunda kartla ödeme kısıtı (D227) sürüyor.
+- D229–D230: “Deneme (1 TL)” paketi önce herkese açıldı (migration 48), sonra kullanıcı isteğiyle her yerden kaldırıldı (migration 49, gizli); yalnızca Yönetim → Sistem durumu → “Ödeme testi (1 TL)” kartından yönetici satın alabilir.
 
 **Kullanıcıdan beklenen (henüz teyit edilmedi):** migration 45 ✅ (Ödemeler ekranı tablo uyarısı vermedi), migration 46 ve 47 çalıştırıldı mı bilinmiyor; PayTR canlı mod + Vercel `PAYTR_TEST_MODE=0`; PayTR Mağaza Parola yenileme (sohbette paylaşıldı); 2 adımlı doğrulama; KDV mükellefiyeti mali müşavirle (sitede “Fiyatlara KDV dahildir” yazıyor); hukukçuya `docs/legal/HUKUKCU_NOTU_ODEME.md`; test hesabının paketini geri alma.
 

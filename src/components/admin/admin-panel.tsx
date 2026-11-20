@@ -17,6 +17,7 @@ import { PROVIDER_LABELS } from "@/lib/sources/labels";
 import { UserActivity } from "./activity";
 import { MizanBenchCard } from "./mizan-bench";
 import { StatusBoard } from "@/components/status-board";
+import { PaymentTest } from "./payment-test";
 import { STAGE_LIBRARY } from "@/lib/workflows";
 import { BarList, Donut, RangePicker, StatTile, TimeSeries } from "@/components/ui/charts";
 import { CostBreakdown, ProductHealth, TrafficTab } from "./insights";
@@ -102,7 +103,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
       <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-3">
         {tab === "overview" && <Overview />}
         {tab === "alerts" && <AlertsTab />}
-        {tab === "status" && <div className="max-w-3xl"><StatusBoard /><p className="mt-3 text-[12.5px] text-ink-500">Yalnızca yöneticiler görür. Yapay zekâ satırı Anthropic’in kendi durum sayfasından okunur (status.anthropic.com); “Yavaş veya kısmi”, Anthropic’in o an küçük bir aksaklık bildirdiği anlamına gelir. Veri tabanlarından biri yavaşsa arama diğerleriyle sürer.</p></div>}
+        {tab === "status" && <div className="max-w-3xl"><StatusBoard /><p className="mt-3 text-[12.5px] text-ink-500">Yalnızca yöneticiler görür. Yapay zekâ satırı Anthropic’in kendi durum sayfasından okunur (status.anthropic.com); “Yavaş veya kısmi”, Anthropic’in o an küçük bir aksaklık bildirdiği anlamına gelir. Veri tabanlarından biri yavaşsa arama diğerleriyle sürer.</p><PaymentTest /></div>}
         {tab === "traffic" && <TrafficTab />}
         {tab === "autopilot" && <AutopilotTab />}
         {tab === "users" && <UsersTab selfId={selfId} />}

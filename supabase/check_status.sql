@@ -103,6 +103,6 @@ union all select '46 Ödeme kayıtlarının saklanması ve satın alma onayları
 union all select '47 1 TL deneme paketi',
   case when exists (select 1 from public.plans where id = 'deneme' and price_monthly = 1)
        then 'YAPILMIŞ' else 'EKSİK' end
-union all select '48 1 TL deneme paketi herkese açık',
-  case when exists (select 1 from public.plans where id = 'deneme' and price_monthly = 1 and is_active = true)
+union all select '49 1 TL deneme paketi gizli (yalnızca yönetici testi)',
+  case when exists (select 1 from public.plans where id = 'deneme' and price_monthly = 1 and is_active = false)
        then 'YAPILMIŞ' else 'EKSİK' end;

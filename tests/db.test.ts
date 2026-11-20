@@ -353,8 +353,8 @@ describe("migration'lar ve seed", () => {
     expect([by.free.pages, by.basic.pages, by.pro.pages, by.premium.pages]).toEqual(["5", "25", "50", "85"]);
   });
   it("paketleri ve ayarları oluşturur", async () => {
-    const plans = await db.query<{ id: string }>("select id from public.plans where is_active order by sort_order"); // D229: 1 TL deneme paketi herkese açık, Ücretsiz ile Basic arasında
-    expect(plans.rows.map((r) => r.id)).toEqual(["free", "deneme", "basic", "pro", "premium", "single"]);
+    const plans = await db.query<{ id: string }>("select id from public.plans where is_active order by sort_order"); // D230: 1 TL deneme paketi gizli (yalnızca yönetici Ödeme testi)
+    expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium", "single"]);
     const p = await db.query<{ id: string; price_monthly: string; limits: Record<string, number | null> }>("select id, price_monthly, limits from public.plans order by sort_order");
     const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
     expect(by.free.limits.ai_requests_month).toBe(10); // D52: gelirin 1/3’ü maliyet
@@ -453,7 +453,7 @@ describe("ayrıcalık ve yönetici politikaları", () => {
   it("sistem promptları normal kullanıcıya kapalıdır; paketler herkese açıktır", async () => {
     expect(await as(A, "select * from public.app_settings")).toHaveLength(0);
     expect((await as(ADMIN, "select * from public.app_settings")).length).toBeGreaterThan(0);
-    expect((await as(null, "select id from public.plans")).length).toBe(6);
+    expect((await as(null, "select id from public.plans")).length).toBe(5);
     await expectError(as(A, "update public.plans set price_monthly = 0 where id = 'pro' returning id").then((r) => { if (!r.length) throw new Error("row-level security: güncellenmedi"); }), /row-level security/);
   });
 
@@ -863,12 +863,12 @@ describe("anketler", () => {
     expect(Number(r.amount_try)).toBe(899);
   });
 
-  it("migration 47/48: 1 TL deneme paketi herkese açık (D229), Basic haklarıyla", async () => {
+  it("migration 47/49: 1 TL deneme paketi gizli (D230), Basic haklarıyla", async () => {
     const r = (await db.query<{ price_monthly: string; is_active: boolean; same: boolean }>(`select d.price_monthly, d.is_active, d.limits = b.limits as same from public.plans d, public.plans b where d.id = 'deneme' and b.id = 'basic'`)).rows[0];
     expect(Number(r.price_monthly)).toBe(1);
-    expect(r.is_active).toBe(true);
+    expect(r.is_active).toBe(false);
     expect(r.same).toBe(true);
-    expect(await as(A, `select id from public.plans where id = 'deneme'`)).toHaveLength(1);
+    expect(await as(A, `select id from public.plans where id = 'deneme'`)).toHaveLength(0);
   });
 
   it("migration 43: bölüm ayarları, kullanıcı şablonları (yalnızca sahibi) ve yapı geçmişi (yalnızca sunucu yazar); tekrar çalıştırılabilir (D171)", async () => {

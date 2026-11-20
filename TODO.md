@@ -1,4 +1,7 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D227) PayTR panelinde Mağaza Parola’yı “Değiştir” ile yenile (sohbette paylaşıldı) → Vercel’de `PAYTR_MERCHANT_KEY`’i güncelle → Redeploy
+- [ ] (D227) İki adımlı doğrulamayı aç: Supabase, Vercel, GitHub, PayTR paneli ve yönetici olarak girilen Google hesabı
+- [ ] (D227, isteğe bağlı) Test modunda yönetici olmayan bir hesapla deneme yapılacaksa Vercel’e `PAYTR_TEST_EMAILS` = o hesabın e-postası (virgülle birden fazla) → Redeploy
 - [ ] (D226) Supabase SQL Editor’de migration 46’yı çalıştır (`supabase/migrations/20261210000046_payment_orders_retention.sql`: ödeme kayıtları hesap silinse de saklanır, satın alma onayları)
 - [ ] (D226) Canlıya geçiş: PayTR panelinde “Canlı Mod” (kimlik doğrulama) → Vercel’e `PAYTR_TEST_MODE` = `0` → Redeploy. Bu yapılmadıkça herkes test kartıyla ücretsiz paket alabilir
 - [ ] (D226) Test ödemesi yapılan hesabın paketini Yönetim → Kullanıcılar’dan Ücretsiz’e çevir (gelire girmesin)

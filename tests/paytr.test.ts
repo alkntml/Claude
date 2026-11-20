@@ -3,7 +3,7 @@
  * tutar/süre kuralları ve bildirimin paketi yalnızca bir kez tanımlaması (sahte veritabanıyla).
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { callbackHash, clientIp, encodeBasket, newMerchantOid, parseCallback, paytrCreds, requestToken, tokenHash, verifyCallback } from "@/lib/payments/paytr";
+import { callbackHash, canPayByCard, clientIp, encodeBasket, newMerchantOid, parseCallback, paytrCreds, requestToken, tokenHash, verifyCallback } from "@/lib/payments/paytr";
 import { orderQuote, paidExpiry, isValidPhone } from "@/lib/payments/order";
 
 const C = { merchantId: "M123", merchantKey: "KEYABC", merchantSalt: "SALTXYZ", testMode: true };
@@ -35,6 +35,13 @@ describe("PayTR imzaları", () => {
     expect(paytrCreds({})).toBeNull();
     expect(paytrCreds({ PAYTR_MERCHANT_ID: "1", PAYTR_MERCHANT_KEY: "k", PAYTR_MERCHANT_SALT: "s" })?.testMode).toBe(true);
     expect(paytrCreds({ PAYTR_MERCHANT_ID: "1", PAYTR_MERCHANT_KEY: "k", PAYTR_MERCHANT_SALT: "s", PAYTR_TEST_MODE: "0" })?.testMode).toBe(false);
+  });
+  it("test modunda kartla ödeme yalnızca yönetici ve test listesine açık; canlıda herkese (D227)", () => {
+    expect(canPayByCard(null, { role: "admin" })).toBe(false);
+    expect(canPayByCard(C, { role: "user", email: "x@y.com" }, {})).toBe(false);
+    expect(canPayByCard(C, { role: "admin", email: "x@y.com" }, {})).toBe(true);
+    expect(canPayByCard(C, { role: "user", email: "Test@Ornek.com" }, { PAYTR_TEST_EMAILS: "a@b.c, test@ornek.com" })).toBe(true);
+    expect(canPayByCard({ ...C, testMode: false }, { role: "user", email: "x@y.com" }, {})).toBe(true);
   });
   it("istemci IP’si ve bildirim gövdesi", () => {
     expect(clientIp(new Headers({ "x-forwarded-for": "203.0.113.5, 10.0.0.1" }))).toBe("203.0.113.5");
@@ -143,6 +150,15 @@ describe("PayTR bildirimi", () => {
     const { handlePaytrCallback } = await import("@/lib/payments/apply");
     expect(await handlePaytrCallback(C, signed("failed", "89900"))).toBe("failed");
     expect(T.payment_orders[0].status).toBe("failed");
+    expect(T.profiles[0].plan_id).toBe("free");
+  });
+  it("canlı modda test ödemesi ve TL dışı para birimi kabul edilmez (D227)", async () => {
+    const { handlePaytrCallback } = await import("@/lib/payments/apply");
+    const live = { ...C, testMode: false };
+    expect(await handlePaytrCallback(live, signed("success", "89900"))).toBe("ignored");
+    expect(T.profiles[0].plan_id).toBe("free");
+    T.payment_orders[0].status = "pending";
+    expect(await handlePaytrCallback(C, { ...signed("success", "89900"), currency: "USD" })).toBe("amount_mismatch");
     expect(T.profiles[0].plan_id).toBe("free");
   });
   it("bilinmeyen sipariş sessizce kaydedilir", async () => {

@@ -6,7 +6,7 @@ import { publicPlans } from "@/lib/plans";
 import { effectiveLimits, forClient, usageSummary } from "@/lib/usage";
 import { getWorkLock } from "@/lib/lock";
 import { userDiscount } from "@/lib/discount-server";
-import { paytrCreds } from "@/lib/payments/paytr";
+import { canPayByCard, paytrCreds } from "@/lib/payments/paytr";
 
 export async function generateMetadata() {
   const { t } = await getT();
@@ -22,5 +22,5 @@ export default async function Page() {
     getWorkLock(),
     userDiscount(s.profile),
   ]);
-  return <Suspense><AccountView profile={s.profile} usage={forClient(usage, limits).usage} limits={forClient(usage, limits).limits} plans={plans} locked={lock.locked} discount={discount} cardPayments={!!paytrCreds()} /></Suspense>;
+  return <Suspense><AccountView profile={s.profile} usage={forClient(usage, limits).usage} limits={forClient(usage, limits).limits} plans={plans} locked={lock.locked} discount={discount} cardPayments={canPayByCard(paytrCreds(), { role: s.profile.role, email: s.profile.email ?? s.user.email })} /></Suspense>;
 }

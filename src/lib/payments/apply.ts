@@ -43,6 +43,17 @@ export async function handlePaytrCallback(creds: PaytrCreds, cb: PaytrCallback):
     return "failed";
   }
 
+  // D227: canlı modda test ödemesi kabul edilmez; para birimi yalnızca TL
+  if (cb.testMode === "1" && !creds.testMode) {
+    await db.from("payment_orders").update({ status: "failed", failed_reason: "Canlı modda test ödemesi kabul edilmez", updated_at: now }).eq("merchant_oid", order.merchant_oid).neq("status", "paid");
+    await logError("payments.paytr.callback", new Error(`Canlı modda test ödemesi: ${order.merchant_oid}`), order.user_id);
+    return "ignored";
+  }
+  if (cb.currency && !["TL", "TRY"].includes(cb.currency.toUpperCase())) {
+    await db.from("payment_orders").update({ status: "failed", failed_reason: `Para birimi uyuşmadı: ${cb.currency}`.slice(0, 500), updated_at: now }).eq("merchant_oid", order.merchant_oid).neq("status", "paid");
+    await logError("payments.paytr.callback", new Error(`Para birimi uyuşmadı: ${order.merchant_oid}`), order.user_id, { currency: cb.currency });
+    return "amount_mismatch";
+  }
   // Tutar: PayTR kuruş gönderir. Taksit yok; tahsil edilen tutar sipariş tutarından az olamaz.
   const expected = toKurus(Number(order.amount_try));
   const total = Number(cb.totalAmount), paid = cb.paymentAmount ? Number(cb.paymentAmount) : total;

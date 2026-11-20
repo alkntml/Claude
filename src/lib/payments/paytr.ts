@@ -31,6 +31,18 @@ export function paytrCreds(e: Record<string, string | undefined> = process.env):
   return { merchantId, merchantKey, merchantSalt, testMode: (e.PAYTR_TEST_MODE ?? "1").trim() !== "0" };
 }
 
+/**
+ * D227: test modunda kartla ödeme yalnızca yöneticilere ve `PAYTR_TEST_EMAILS` (virgülle ayrılmış e-postalar) listesindekilere
+ * açıktır. Böylece PayTR’nin herkese açık test kartlarıyla kimse ücretsiz paket alamaz. Canlı modda herkese açıktır.
+ */
+export function canPayByCard(c: PaytrCreds | null, who: { role?: string | null; email?: string | null }, e: Record<string, string | undefined> = process.env): boolean {
+  if (!c) return false;
+  if (!c.testMode) return true;
+  if (who.role === "admin") return true;
+  const list = (e.PAYTR_TEST_EMAILS ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
+  return !!who.email && list.includes(who.email.trim().toLowerCase());
+}
+
 export const hmacB64 = (payload: string, key: string) => crypto.createHmac("sha256", key).update(payload, "utf8").digest("base64");
 
 /** TL → kuruş (PayTR ondalık kabul etmez: 499 TL → 49900) */

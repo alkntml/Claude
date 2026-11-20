@@ -7,7 +7,7 @@ import { localeFromRequest } from "@/i18n/server";
 import { adminClient } from "@/lib/supabase/admin";
 import { legalDoc } from "@/lib/legal/docs";
 import { isValidPhone, normalizePhone, orderQuote } from "@/lib/payments/order";
-import { clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
+import { canPayByCard, clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
 
 const Body = z.object({
   planId: z.string().min(1).max(40),
@@ -30,6 +30,8 @@ export const POST = route("payments.checkout", async (req) => {
   const s = await requireUser();
   const creds = paytrCreds();
   if (!creds) throw new ApiError(503, "Kartla ödeme şu an kullanılamıyor; WhatsApp ile yükseltebilirsiniz.", "payments_disabled");
+  // D227: test modunda yalnızca yönetici ve test listesindekiler (test kartıyla ücretsiz paket alınamasın)
+  if (!canPayByCard(creds, { role: s.profile.role, email: s.profile.email ?? s.user.email })) throw new ApiError(503, "Kartla ödeme şu an kullanılamıyor; WhatsApp ile yükseltebilirsiniz.", "payments_disabled");
   const b = await parseBody(req, Body);
   if (!isValidPhone(b.payer.phone)) throw new ApiError(422, "Geçerli bir telefon numarası yazın", "validation");
   const email = s.profile.email ?? s.user.email ?? "";

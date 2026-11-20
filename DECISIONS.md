@@ -1338,3 +1338,11 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Migration 46:** `payment_orders.user_id` hesap silinince boşaltılır (kayıt saklanır), `immediate_start_consent`, `distance_version`, `buyer_email`. Migration çalıştırılmadıysa ödeme yine çalışır (yeni sütunlar olmadan kaydedilir).
 - **Diğer:** SSS (yükseltme, iptal/yenileme), yardım asistanı bilgisi, rehber, güven merkezi sağlayıcılar (PayTR, Türkiye), fiyatlar notu (“dolar bilgi amaçlı, tahsilat TL”), Yenilikler.
 - **Açık konular:** vergi levhasında yalnızca “yıllık gelir vergisi” görünüyor; sitedeki “Fiyatlara KDV dahildir” ifadesi ve yönetimdeki KDV’li gelir hesabı mali müşavirle teyit edilmeli. `iletisim@academiana.com.tr` adresi henüz çalışmıyor (Workspace alınamadı); hukuki metinlere e-posta yazılmadı.
+
+## D227 — Güvenlik sıkılaştırması (20 Kasım 2026)
+- **Kullanıcı isteği:** “Güvenliği daha iyi sağla.”
+- **Test modu açığı kapatıldı:** PayTR test modundayken kartla ödeme yalnızca yöneticilere ve Vercel’deki `PAYTR_TEST_EMAILS` (virgülle ayrılmış e-postalar) listesindekilere açık (`canPayByCard`): yükseltme penceresi, Hesap sayfası ve ödeme başlatma ucu aynı kuralı uygular. Diğer kullanıcılar test modunda WhatsApp akışını görür; böylece PayTR’nin herkese açık test kartlarıyla kimse ücretsiz paket alamaz. Canlı modda (`PAYTR_TEST_MODE=0`) herkese açık.
+- **Bildirim kontrolleri:** canlı modda gelen test ödemesi bildirimi paket tanımlamaz (sipariş “başarısız”, hata kaydı); para birimi TL/TRY dışındaysa reddedilir. (Önceki kontroller sürüyor: imza, eksik tutar, tek sefer tanımlama.)
+- **Bağımlılıklar:** Next.js 15.5.28 → 15.5.29 (iki orta düzey bilinen açık: görsel optimizasyonunda SVG engelini aşma, Edge’de HttpOnly çerez sızması); `npm audit` üretim bağımlılıklarında 0 açık.
+- **Tarama sonucu:** durum değiştiren bütün API uçları `route()` (aynı köken/CSRF) ile sarılı (PayTR bildirimi bilerek dışında, imzayla korunur); `dangerouslySetInnerHTML` kullanılan SVG/HTML çıktılarında kullanıcı metni kaçışlanıyor; tarayıcıya giden kodda gizli anahtar yok.
+- **Kullanıcı tarafı (koddan bağımsız):** sohbette paylaşılan PayTR Mağaza Parola’nın yenilenmesi; Supabase, Vercel, GitHub, PayTR ve yönetici Google hesabında iki adımlı doğrulama.

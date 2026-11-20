@@ -1351,3 +1351,9 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Kullanıcı isteği:** kendisi gerçek bir satın alma denemek için 1 TL’lik paket.
 - Paket `deneme` (“Deneme (1 TL)”, migration 47): 1 TL, yalnızca aylık, 30 gün, Basic hakları; `is_active = false` olduğu için fiyatlar sayfasında, ana sayfada ve diğer kullanıcılarda görünmez. Yalnızca yöneticiler ve `PAYTR_TEST_EMAILS` listesindekiler (kart açıkken) yükseltme penceresinde “Yalnızca size görünür” etiketiyle görür; ödeme başlatma ucu da aynı kuralı uygular (`isPaymentTester`, `TEST_PLAN_ID`).
 - Deneme sonrası hesabın paketi yönetimden geri alınabilir; paket listede tutulabilir (gizli kalır).
+
+## D229 — 1 TL Deneme paketi herkese açık (20 Kasım 2026)
+- **Kullanıcı isteği:** “Herkese görünsün, sadece bana özel yerden kaldır, normal paketlerin arasında koy.”
+- Migration 48: `deneme` paketi `is_active = true`; sıralama Ücretsiz(0), Deneme(1), Basic(2), Pro(3), Premium(4), Sınırsız Proje(5). Açıklama ve özellikler genel okura göre yeniden yazıldı (TR/EN/DE).
+- Kodda “yalnızca yönetici/test listesi” ayrımı kalktı (`isPaymentTester` yalnızca test modu kartla ödeme kısıtında, D227). Paket yalnızca aylık (`hasYearlyOption` false), `PLAN_RANK.deneme = 1` (Basic özellik düzeyi). Yenilikler’e madde eklendi.
+- **Dikkat:** 1 TL’ye Basic hakları 30 gün verildiği için her ay tekrar alınabilir; Basic aboneleri de seçebilir. Kullanıcıya bildirildi.

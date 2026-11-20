@@ -6,8 +6,8 @@ import { env } from "@/lib/env";
 import { localeFromRequest } from "@/i18n/server";
 import { adminClient } from "@/lib/supabase/admin";
 import { legalDoc } from "@/lib/legal/docs";
-import { isValidPhone, normalizePhone, orderQuote, TEST_PLAN_ID } from "@/lib/payments/order";
-import { canPayByCard, clientIp, iframeUrl, isPaymentTester, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
+import { isValidPhone, normalizePhone, orderQuote } from "@/lib/payments/order";
+import { canPayByCard, clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
 
 const Body = z.object({
   planId: z.string().min(1).max(40),
@@ -39,9 +39,7 @@ export const POST = route("payments.checkout", async (req) => {
 
   const db = adminClient();
   const { data: plan } = await db.from("plans").select("id, name, price_monthly, is_active").eq("id", b.planId).maybeSingle();
-  // D228: gizli 1 TL deneme paketi yalnızca yönetici ve test listesine
-  const testPlan = plan?.id === TEST_PLAN_ID && isPaymentTester({ role: s.profile.role, email: s.profile.email ?? s.user.email });
-  if (!plan || (plan.is_active === false && !testPlan)) throw new ApiError(404, "Paket bulunamadı");
+  if (!plan || plan.is_active === false) throw new ApiError(404, "Paket bulunamadı");
   const quote = orderQuote({ id: plan.id, price_monthly: Number(plan.price_monthly) }, b.period, b.period === "monthly" ? await userDiscount(s.profile) : null);
   if (!quote) throw new ApiError(422, "Bu paket için kartla ödeme yapılamaz");
 

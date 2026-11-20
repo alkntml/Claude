@@ -2,9 +2,7 @@ import { json, route } from "@/lib/api";
 import { requireUser } from "@/lib/auth";
 import { memberCode } from "@/lib/member";
 import { userDiscount } from "@/lib/discount-server";
-import { canPayByCard, isPaymentTester, paytrCreds } from "@/lib/payments/paytr";
-import { TEST_PLAN_ID } from "@/lib/payments/order";
-import { adminClient } from "@/lib/supabase/admin";
+import { canPayByCard, paytrCreds } from "@/lib/payments/paytr";
 
 /**
  * Yükseltme penceresi için paketler ve sınırları (D49). Kullanım sınırları tanıtım sayfalarında
@@ -13,16 +11,13 @@ import { adminClient } from "@/lib/supabase/admin";
 export const GET = route("account.plans", async () => {
   const s = await requireUser();
   const { data: active } = await s.supabase.from("plans").select("id, name, price_monthly, limits, sort_order").eq("is_active", true).order("sort_order");
-  // D228: 1 TL deneme paketi yalnızca yöneticiye ve test listesine (kart açıkken)
   const who = { role: s.profile.role, email: s.profile.email ?? s.user.email };
   const creds = paytrCreds();
-  const tester = !!creds && isPaymentTester(who);
-  const extra = tester ? ((await adminClient().from("plans").select("id, name, price_monthly, limits, sort_order").eq("id", TEST_PLAN_ID).maybeSingle()).data ?? null) : null;
-  const data = [...(active ?? []), ...(extra ? [extra] : [])];
+  const data = active;
   const plans = (data ?? []).map((p) => {
     const l = (p.limits ?? {}) as Record<string, unknown>;
     return {
-      id: p.id as string, name: p.name as string, price_monthly: Number(p.price_monthly), ...(p.id === TEST_PLAN_ID ? { test: true } : {}),
+      id: p.id as string, name: p.name as string, price_monthly: Number(p.price_monthly),
       limits: { pages_month: l.pages_month ?? null, ai_requests_month: l.ai_requests_month ?? null, source_searches_month: l.source_searches_month ?? null, projects: l.projects ?? null, storage_mb: l.storage_mb ?? null, export_formats: l.export_formats ?? null },
     };
   });

@@ -2031,6 +2031,10 @@ export const DE: Dict = {
   "10 atıf stili ve otomatik kaynakça": "10 Zitierstile und automatisches Literaturverzeichnis",
   "Başlık önerisi ve bölüm kontrolü": "Titelvorschläge und Abschnittsprüfungen",
   "Ücretsiz paketteki her şey": "Alles aus Free",
+  "Deneme (1 TL)": "Test (1 TL)",
+  "Kartla ödemeyi 1 TL ile deneyin: Basic paketin hakları, 30 gün.": "Testen Sie die Kartenzahlung für 1 TL: die Rechte des Basic-Pakets, 30 Tage.",
+  "Basic paketin hakları, 30 gün": "Rechte des Basic-Pakets, 30 Tage",
+  "Kartla 1 TL ile ödeme denemesi": "Kartenzahlung als Test für 1 TL",
   "Basic paketteki her şey": "Alles aus Basic",
   "Pro paketteki her şey": "Alles aus Pro",
   "En yüksek yapay zekâ kullanım hakkı": "Höchstes KI-Kontingent",
@@ -5084,5 +5088,4 @@ export const DE: Dict = {
   "Ödemeler, lisanslı ödeme kuruluşu PayTR aracılığıyla kredi veya banka kartıyla güvenle alınır; otomatik yenileme yoktur.": "Zahlungen erfolgen sicher per Kredit- oder Debitkarte über das lizenzierte Zahlungsinstitut PayTR; es gibt keine automatische Verlängerung.",
   "Ödendi": "Bezahlt",
   "ödeme onaylanınca hemen": "sofort nach Zahlungsbestätigung",
-  "Yalnızca size görünür": "Nur für Sie sichtbar",
 };

@@ -1,7 +1,7 @@
 /** Fiyatlandırma ve paket yardımcıları (istemci ve sunucu ortak, saf fonksiyonlar). */
 
 // D158: “Sınırsız Proje” (iç kimlik: single) en üst pakettir
-export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 4 };
+export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 4, deneme: 1 };
 /**
  * Tek ödemeli paketler (fiyat aylık değil tek seferlik). D158: eski “Tek Proje” artık “Sınırsız Proje” adıyla
  * aylık/yıllık ödenen bir pakettir (iç kimliği “single” kaldı); tek ödemeli paket kalmadı.
@@ -28,7 +28,7 @@ export const YEARLY_DISCOUNT_PERCENT = 20;
 export const YEARLY_DAYS = 365;
 
 export function hasYearlyOption(planId: string, priceMonthly: number): boolean {
-  return priceMonthly > 0 && !isOneTimePlan(planId);
+  return priceMonthly > 0 && !isOneTimePlan(planId) && planId !== "deneme"; // D229: 1 TL deneme paketi yalnızca aylık
 }
 /** Yıllık ödemede aylık karşılık (tam TL’ye yuvarlanır) */
 export function yearlyMonthlyPrice(priceMonthly: number): number {

@@ -5,7 +5,7 @@
 import { pick } from "@/i18n/core";
 import type { Locale } from "@/i18n";
 import { absoluteUrl, localizedPath } from "./seo";
-import { CONTACT_EMAIL, INSTAGRAM, PROMO_VIDEO, SITE_NAME, SITE_URL } from "./site";
+import { CONTACT_EMAIL, INSTAGRAM, PROMO_VIDEO, SELLER, SITE_NAME, SITE_URL } from "./site";
 import { priceNumber, WHATSAPP_NUMBER } from "@/lib/pricing";
 
 const LANG_TAG: Record<Locale, string> = { tr: "tr-TR", en: "en", de: "de-DE" };
@@ -34,6 +34,10 @@ export function organizationLd() {
     description: "Yapay zekâ destekli, gerçek akademik kaynaklarla çalışan tez, makale ve araştırma yazım platformu. / AI-assisted academic writing platform that works with real, verified sources.",
     founder: { "@type": "Person", "@id": FOUNDER_ID, name: FOUNDER.name, jobTitle: "Kurucu ve CEO / Founder and CEO" },
     areaServed: ["TR", "Worldwide"],
+    // D226: satıcı (vergi levhası); T.C. kimlik numarası yayımlanmaz
+    legalName: SELLER.name,
+    taxID: SELLER.taxNo,
+    address: { "@type": "PostalAddress", streetAddress: "Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11", addressLocality: "Gölbaşı", addressRegion: "Ankara", addressCountry: "TR" },
     // Sitede herkese açık olarak verilen WhatsApp destek hattı (pricing.ts WHATSAPP_NUMBER)
     contactPoint: { "@type": "ContactPoint", contactType: "customer support", telephone: `+${WHATSAPP_NUMBER}`, email: CONTACT_EMAIL, availableLanguage: ["Turkish", "English"] },
     email: CONTACT_EMAIL,

@@ -5,6 +5,7 @@ import { userDiscount } from "@/lib/discount-server";
 import { env } from "@/lib/env";
 import { localeFromRequest } from "@/i18n/server";
 import { adminClient } from "@/lib/supabase/admin";
+import { legalDoc } from "@/lib/legal/docs";
 import { isValidPhone, normalizePhone, orderQuote } from "@/lib/payments/order";
 import { clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
 
@@ -16,6 +17,8 @@ const Body = z.object({
     phone: z.string().trim().min(10).max(20),
     address: z.string().trim().min(10).max(400),
   }),
+  // D226: dijital hizmetin ödeme onaylanınca hemen başlaması talebi (cayma hakkı bilgisiyle birlikte) zorunlu
+  immediateStart: z.literal(true),
 });
 
 /**
@@ -44,11 +47,14 @@ export const POST = route("payments.checkout", async (req) => {
   if ((count ?? 0) >= 5) throw new ApiError(429, "Çok sayıda ödeme denemesi yapıldı; birkaç dakika sonra tekrar deneyin.");
 
   const oid = newMerchantOid();
-  const { error } = await db.from("payment_orders").insert({
+  const row = {
     merchant_oid: oid, provider: "paytr", user_id: s.user.id, plan_id: plan.id, period: b.period, days: quote.days,
     amount_try: quote.amount, list_price_try: quote.list, discount_code: quote.discountCode,
     payer_name: b.payer.name, payer_phone: normalizePhone(b.payer.phone), payer_address: b.payer.address, test_mode: creds.testMode,
-  });
+  };
+  // D226: satın alma onayları ve e-posta (migration 46); sütunlar yoksa (migration çalıştırılmadıysa) onlarsız kaydedilir
+  let { error } = await db.from("payment_orders").insert({ ...row, immediate_start_consent: b.immediateStart, distance_version: legalDoc("distance").version, buyer_email: email.slice(0, 320) });
+  if (error?.code === "42703" || error?.code === "PGRST204") ({ error } = await db.from("payment_orders").insert(row));
   if (error) throw new ApiError(500, "Sipariş kaydedilemedi (migration 45 çalıştırıldı mı?)");
 
   const locale = localeFromRequest(req);

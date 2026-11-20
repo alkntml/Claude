@@ -511,8 +511,8 @@ export const FAQ: FaqGroup[] = [
         id: "yukseltme",
         q: { tr: "Paketimi nasıl yükseltirim? Ödemeyi nasıl yaparım?", en: "How do I upgrade and pay?" },
         a: {
-          tr: "Hesap ve abonelik sayfasında istediğiniz paketin altındaki “Yükselt” düğmesine basın. Mevcut paketinizi ve seçtiğiniz paketi içeren hazır bir WhatsApp mesajı açılır; mesajı gönderdiğinizde ödeme ayrıntıları size iletilir ve ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır. Kart bilgilerinizi sitemize girmezsiniz.",
-          en: "On the Account page, press “Upgrade” under the plan you want. A ready-made WhatsApp message with your current and chosen plan opens; once you send it, we share the payment details and your plan is activated on your account after payment. You never enter card details on our site.",
+          tr: "Hesap ve abonelik sayfasında istediğiniz paketin altındaki “Yükselt” düğmesine basın, aylık veya yıllık ödemeyi seçin ve **Kartla öde** deyin. Sipariş özetini görüp fatura bilgilerinizi girdikten sonra ödemeyi kredi veya banka kartınızla, lisanslı ödeme kuruluşu **PayTR**’nin güvenli sayfasında tek çekim olarak yaparsınız. Kart bilgileriniz Academiana’ya gelmez. Ödeme onaylanınca paketiniz hesabınıza **kendiliğinden ve hemen** tanımlanır; sipariş özetini Hesap → Siparişlerim’den indirebilirsiniz. Mevcut paketinizin süresini de aynı yoldan uzatabilirsiniz.",
+          en: "On the Account page, press “Upgrade” under the plan you want, choose monthly or annual billing and select **Pay by card**. After reviewing the order summary and entering your billing details, you pay by credit or debit card as a single payment on the secure page of the licensed payment institution **PayTR**. Your card details never reach Academiana. Once the payment is approved, your plan is activated on your account **automatically and immediately**; you can download the order summary from Account → My orders. You can extend your current plan the same way.",
         },
       },
       {
@@ -527,8 +527,8 @@ export const FAQ: FaqGroup[] = [
         id: "iptal",
         q: { tr: "Taahhüt var mı? Paketimi nasıl iptal ederim?", en: "Is there a commitment? How do I cancel?" },
         a: {
-          tr: "Taahhüt yoktur. İptal veya paket değişikliği için WhatsApp üzerinden yazmanız yeterli. İptal ettiğinizde ödediğiniz dönemin sonuna kadar paketiniz devam eder, sonra ücretsiz pakete geçersiniz; çalışmalarınız silinmez.",
-          en: "There is no commitment. To cancel or change your plan, just message us on WhatsApp. Your plan stays active until the end of the paid period, then you move to the free plan; your work is not deleted.",
+          tr: "Taahhüt ve otomatik yenileme yoktur: her ödeme tek seferliktir, kartınızdan kendiliğinden yeni ödeme çekilmez. Paketiniz ödediğiniz dönemin sonuna kadar sürer; yenilemezseniz ücretsiz pakete geçersiniz ve çalışmalarınız silinmez. Daha üst bir pakete istediğiniz zaman kartla geçebilirsiniz. Cayma ve iade koşulları Mesafeli Sözleşmeler ve Ön Bilgilendirme belgesinde yazılıdır; sorularınız için WhatsApp hattımıza yazabilirsiniz.",
+          en: "There is no commitment and no automatic renewal: every payment is a one-off and your card is never charged again automatically. Your plan lasts until the end of the period you paid for; if you don’t renew, you move to the free plan and your work is not deleted. You can switch to a higher plan by card at any time. Withdrawal and refund conditions are set out in the Distance Contracts and Pre-Contractual Information document; for questions you can message our WhatsApp line.",
         },
       },
       {

@@ -8,7 +8,7 @@ import { toKurus, verifyCallback, type PaytrCallback, type PaytrCreds } from "@/
 export type CallbackOutcome = "paid" | "already_applied" | "failed" | "unknown_order" | "amount_mismatch" | "ignored";
 
 interface OrderRow {
-  merchant_oid: string; user_id: string; plan_id: string; period: "monthly" | "yearly"; days: number; amount_try: number;
+  merchant_oid: string; user_id: string | null; plan_id: string; period: "monthly" | "yearly"; days: number; amount_try: number;
   status: string; payer_name: string; payer_phone: string; test_mode: boolean; applied_at: string | null;
 }
 
@@ -30,6 +30,11 @@ export async function handlePaytrCallback(creds: PaytrCreds, cb: PaytrCallback):
     return "unknown_order";
   }
   const now = new Date().toISOString();
+  // D226: hesap silinmiş (kayıt saklanır, user_id boş) — paket tanımlanacak kimse yok; yöneticiye hata kaydı
+  if (!order.user_id) {
+    await logError("payments.paytr.callback", new Error(`Sipariş sahibi hesap silinmiş: ${order.merchant_oid}`), null, { status: cb.status });
+    return "unknown_order";
+  }
 
   if (cb.status !== "success") {
     if (order.status === "pending") {
@@ -55,7 +60,7 @@ export async function handlePaytrCallback(creds: PaytrCreds, cb: PaytrCallback):
   const { data: claimed } = await db.from("payment_orders").update({ applied_at: now }).eq("merchant_oid", order.merchant_oid).eq("status", "paid").is("applied_at", null).select("merchant_oid");
   if (!claimed?.length) return "already_applied";
   try {
-    await applyPlan(order, total / 100, cb.testMode === "1" || order.test_mode);
+    await applyPlan({ ...order, user_id: order.user_id }, total / 100, cb.testMode === "1" || order.test_mode);
   } catch (e) {
     await db.from("payment_orders").update({ applied_at: null }).eq("merchant_oid", order.merchant_oid);
     throw e;
@@ -63,7 +68,7 @@ export async function handlePaytrCallback(creds: PaytrCreds, cb: PaytrCallback):
   return "paid";
 }
 
-async function applyPlan(order: OrderRow, paidTl: number, test: boolean) {
+async function applyPlan(order: OrderRow & { user_id: string }, paidTl: number, test: boolean) {
   const db = adminClient();
   const { data: profile, error: pe } = await db.from("profiles").select("plan_id, plan_expires_at, plan_period").eq("id", order.user_id).maybeSingle();
   if (pe || !profile) throw new Error(`Ödeme alındı ama kullanıcı bulunamadı: ${order.merchant_oid}`);

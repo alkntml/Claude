@@ -17,9 +17,10 @@ import { usePrice } from "@/components/price-context";
 import { GrowthSection } from "./growth";
 import Link from "@/components/l-link";
 import { PrivacySection } from "./privacy";
+import { OrdersSection } from "./orders";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function AccountView({ profile, usage, limits, plans, discount }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean; discount?: DiscountCode | null }) {
+export function AccountView({ profile, usage, limits, plans, discount, cardPayments = false }: { profile: any; usage: any; limits: any; plans: any[]; locked?: boolean; discount?: DiscountCode | null; cardPayments?: boolean }) {
   const { t, dl } = useT();
   const toast = useToast();
   const price = usePrice();
@@ -70,7 +71,9 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
             return (
               <div className={cn("mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm", soon ? "bg-amber-50 text-amber-900" : "bg-ink-50 text-ink-600")}>
                 <span>{t("Paketiniz {date} tarihine kadar geçerli ({n} gün kaldı).", { date: left <= 2 ? end.toLocaleString(dl, { dateStyle: "medium", timeStyle: "short" }) : end.toLocaleDateString(dl), n: Math.max(0, left) })}</span>
-                {soon && <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nÜye no: {no}\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "", no: memberCode(profile.member_no) }))}>{t("Süreyi uzat")}</a>}
+                {soon && (cardPayments
+                  ? <button type="button" className="font-medium underline" onClick={() => openUpgrade({ target: profile.plan_id, period: profile.plan_period === "yearly" ? "yearly" : "monthly" })}>{t("Süreyi uzat")}</button>
+                  : <a className="font-medium underline" target="_blank" rel="noopener noreferrer" href={whatsappLink(t("Merhaba, Academiana {plan} paketimin süresini uzatmak istiyorum.\nÜye no: {no}\nHesap e-postam: {email}", { plan: profile.plan_id, email: profile.email ?? "", no: memberCode(profile.member_no) }))}>{t("Süreyi uzat")}</a>)}
                 {soon && <Link href="/mesafeli-sozlesmeler" target="_blank" className="text-xs text-amber-800 underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link>}
               </div>
             );
@@ -88,7 +91,7 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
 
       <section>
         <h2 className="flex items-center gap-2 font-semibold"><CreditCard className="h-4 w-4" /> {t("Paketler")}</h2>
-        <p className="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm text-emerald-900">{t("Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda paketin kullanım sınırlarını görür, ardından hazır bir mesajla WhatsApp’a geçersiniz. Ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır.")}</p>
+        <p className="mt-2 rounded-xl bg-emerald-50 px-4 py-2.5 text-sm text-emerald-900">{cardPayments ? t("Paketinizi kredi veya banka kartıyla hemen yükseltebilir ya da süresini uzatabilirsiniz. Ödeme, lisanslı ödeme kuruluşu PayTR’nin güvenli sayfasında alınır; ödeme onaylanınca paketiniz hesabınıza kendiliğinden tanımlanır.") : t("Paket yükseltme şimdilik WhatsApp üzerinden yapılıyor: “Yükselt”e bastığınızda paketin kullanım sınırlarını görür, ardından hazır bir mesajla WhatsApp’a geçersiniz. Ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır.")}</p>
         {discount && <p className="mt-2 rounded-xl bg-brand-50 px-4 py-2.5 text-sm text-brand-900">{t("İndirim kodunuz: {code} ({label}). İndirimli fiyatlar aşağıda gösterilir ve yükseltme mesajına eklenir.", { code: discount.code, label: discountLabel(discount) })}</p>}
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => {
@@ -101,9 +104,9 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
                 <p className={cn("text-2xl font-semibold", dp == null && "mt-2")}>{price(dp ?? Number(p.price_monthly))}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme · 1 ay")}` : `/${t("ay")}`}</span></p>
                 <ul className="mt-3 flex-1 space-y-1 text-[13px] text-ink-600">{p.features.map((f: string) => <li key={f}>• {t(f)}</li>)}</ul>
                 {hasYearlyOption(p.id, Number(p.price_monthly)) && <p className="mt-1 text-[12.5px] text-emerald-700">{t("Yıllık ödemede {price}/ay (%{p} indirim)", { price: price(yearlyMonthlyPrice(Number(p.price_monthly))), p: YEARLY_DISCOUNT_PERCENT })}</p>}
-                {(!current || (hasYearlyOption(p.id, Number(p.price_monthly)) && profile.plan_period !== "yearly")) && Number(p.price_monthly) > 0 && (
-                  <button type="button" onClick={() => openUpgrade({ target: p.id, period: params.get("donem") === "yillik" || current ? "yearly" : "monthly" })} className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">
-                    <MessageCircle className="h-4 w-4" /> {current ? t("Yıllık ödemeye geç") : t("Yükselt")}
+                {(cardPayments || !current || (hasYearlyOption(p.id, Number(p.price_monthly)) && profile.plan_period !== "yearly")) && Number(p.price_monthly) > 0 && (
+                  <button type="button" onClick={() => openUpgrade({ target: p.id, period: params.get("donem") === "yillik" || (current && (!cardPayments || profile.plan_period === "yearly")) ? "yearly" : "monthly" })} className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">
+                    {cardPayments ? <CreditCard className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />} {current ? (cardPayments ? t("Süreyi uzat") : t("Yıllık ödemeye geç")) : t("Yükselt")}
                   </button>
                 )}
               </div>
@@ -118,6 +121,8 @@ export function AccountView({ profile, usage, limits, plans, discount }: { profi
           <a href={teamHref} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 items-center gap-2 rounded-xl border border-ink-200 bg-white px-4 text-sm font-medium text-ink-800 transition hover:bg-ink-50"><MessageCircle className="h-4 w-4" /> {t("WhatsApp’tan bilgi al")}</a>
         </div>
       </section>
+
+      <OrdersSection />
 
       <PrivacySection />
     </div>

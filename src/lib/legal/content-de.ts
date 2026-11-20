@@ -1,6 +1,6 @@
 import type { LegalContent } from "./types";
 
-/** Hukuki metinler (DE). Türkçe asıldan (GDPR: İngilizce asıldan) çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). */
+/** Hukuki metinler (DE). Türkçe asıldan (GDPR: İngilizce asıldan) çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). D226: site sahibinin talimatıyla satıcı/veri sorumlusu bilgileri (vergi levhası) ve kartla ödeme (PayTR) akışı KVKK, Çerez, Mesafeli Sözleşmeler ve GDPR metinlerine işlendi. */
 export const CONTENT: LegalContent = {
  "kvkk": [
   {
@@ -8,6 +8,9 @@ export const CONTENT: LegalContent = {
    "b": [
     {
      "p": "Diese Datenschutzinformation wurde erstellt, um über die Verarbeitung personenbezogener Daten bei der Nutzung der unter www.academiana.com.tr angebotenen Plattform Academiana zu informieren. Academiana ist eine KI-gestützte Online-Plattform, die Prozesse der wissenschaftlichen Recherche und des wissenschaftlichen Schreibens unterstützt."
+    },
+    {
+     "p": "Verantwortlicher und Verkäufer: Alkın Mert Temel (Einzelunternehmen). Anschrift: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara, Türkei. Steueramt und Steuernummer: Finanzamt Gölbaşı, 8370931187. Kontakt: WhatsApp +90 542 526 66 50 und der Support-Kanal der Plattform."
     }
    ]
   },
@@ -27,7 +30,7 @@ export const CONTENT: LegalContent = {
       "Nutzungs- und Vorgangsprotokolle: der vollständige Text der KI-Ausgaben, Datum, Name der Arbeit/des Abschnitts, Wortzahl; Zähler für Token, Kosten, Recherchen und Seiten; Löschprotokolle.",
       "Geräte- und Sicherheitsdaten: eine im Browser erzeugte zufällige Gerätekennung, deren auf dem Server gespeicherter, nicht umkehrbarer Hashwert sowie das Datum der ersten/letzten Sichtung.",
       "Nutzungsprotokolle für den Tarif „Tek Proje“ (Einzelprojekt): Wortzahl beim Download, ein nicht wiederherstellbarer Hashwert des Textes und Angaben des Titelblatts (Autorin/Autor, Universität, Fachbereich und Name der Betreuungsperson).",
-      "Zahlungs-/Tarifzuweisungsdaten: Name und Telefonnummer der zahlenden Person, Betrag und Notiz. Kartendaten werden nicht in das System von Academiana eingegeben.",
+      "Bestell-, Zahlungs- und Rechnungsdaten: Name, Telefonnummer, Rechnungsadresse und E-Mail-Adresse der zahlenden Person, Bestellnummer, Tarif, Betrag, Zahlungsstatus und -art, die beim Kauf erteilten Bestätigungen sowie die vom Zahlungsinstitut für den Vorgang verwendete IP-Adresse. Kartendaten werden auf der sicheren Seite des Zahlungsinstituts eingegeben; Academiana erhält und speichert keine Kartendaten.",
       "Einladungs- und Freigabedaten: E-Mail für Einladungen von Mitautorinnen und Mitautoren; Zugriffs- und Kommentarangaben über den Link für die Betreuung.",
       "Daten zur institutionellen Lizenz: institutionelle Mitgliedschaft, Nutzungsstatistiken und institutionelle Vorgangsprotokolle.",
       "Support- und technische Protokolle: Feedback-/Fehlermeldung der Nutzerin bzw. des Nutzers und zugehörige technische Fehlerinformationen.",
@@ -41,7 +44,7 @@ export const CONTENT: LegalContent = {
    "h": "Zwecke der Verarbeitung",
    "b": [
     {
-     "p": "Personenbezogene Daten werden zu folgenden Zwecken verarbeitet: Begründung der Mitgliedschaft und Verwaltung des Kontos, Authentifizierung, Bereitstellung des wissenschaftlichen Arbeitsbereichs und der Dateidienste, Ausführung der KI-Funktionen, Bereitstellung der Quellensuche und Zitierfunktionen, Durchführung statistischer Analysen, Abwicklung der Freigabe an Mitautorinnen, Mitautoren und Betreuende, Verwaltung von Tarifen und Nutzungsrechten, Zuweisung des Tarifs nach der Zahlung, Kundensupport, Gewährleistung der Sicherheit und Verhinderung von Missbrauch, Erkennung technischer Probleme, Messung der Dienstleistung und Erfüllung rechtlicher Pflichten. Daten werden nicht verkauft und nicht zur gezielten Werbung verwendet. Auf der Plattform werden keine Drittanbieter-Cookies für Analyse- oder Werbezwecke verwendet."
+     "p": "Personenbezogene Daten werden zu folgenden Zwecken verarbeitet: Begründung der Mitgliedschaft und Verwaltung des Kontos, Authentifizierung, Bereitstellung des wissenschaftlichen Arbeitsbereichs und der Dateidienste, Ausführung der KI-Funktionen, Bereitstellung der Quellensuche und Zitierfunktionen, Durchführung statistischer Analysen, Abwicklung der Freigabe an Mitautorinnen, Mitautoren und Betreuende, Verwaltung von Tarifen und Nutzungsrechten, Entgegennahme von Zahlungen, Abwicklung von Bestellungen und Rechnungsstellung, Zuweisung des Tarifs nach der Zahlung, Kundensupport, Gewährleistung der Sicherheit und Verhinderung von Missbrauch, Erkennung technischer Probleme, Messung der Dienstleistung und Erfüllung rechtlicher Pflichten. Daten werden nicht verkauft und nicht zur gezielten Werbung verwendet. Auf der Plattform werden keine Drittanbieter-Cookies für Analyse- oder Werbezwecke verwendet."
     }
    ]
   },
@@ -49,7 +52,7 @@ export const CONTENT: LegalContent = {
    "h": "Art der Datenerhebung",
    "b": [
     {
-     "p": "Die Daten werden elektronisch erhoben über die Registrierungs- und Anmeldebildschirme, die Inhalte, die die Nutzerin bzw. der Nutzer auf der Plattform schreibt oder hochlädt, die von ihr bzw. ihm veranlasste Freigabe- und Zahlungskommunikation, die von der Plattform automatisch erzeugten Nutzungs-/Sicherheitsprotokolle sowie die im Gerätespeicher erzeugte zufällige Gerätekennung."
+     "p": "Die Daten werden elektronisch erhoben über die Registrierungs- und Anmeldebildschirme, die Inhalte, die die Nutzerin bzw. der Nutzer auf der Plattform schreibt oder hochlädt, die von ihr bzw. ihm veranlasste Freigabe-, Kauf- und Supportkommunikation, die vom Zahlungsinstitut übermittelten Zahlungsergebnisse, die von der Plattform automatisch erzeugten Nutzungs-/Sicherheitsprotokolle sowie die im Gerätespeicher erzeugte zufällige Gerätekennung."
     }
    ]
   },
@@ -57,7 +60,7 @@ export const CONTENT: LegalContent = {
    "h": "Speicherdauer",
    "b": [
     {
-     "p": "Konto, wissenschaftliche Inhalte, Dateien, Unterhaltungen, Zähler, der Hashwert der Gerätekennung und Benachrichtigungen werden grundsätzlich bis zur Löschung des Kontos gespeichert. Eine Einladung als Mitautorin bzw. Mitautor wird innerhalb von 14 Tagen ungültig; der Einladungsdatensatz kann zusammen mit der Arbeit gespeichert bleiben. Der Freigabelink für die Betreuung bleibt zugänglich, bis die Nutzerin bzw. der Nutzer ihn widerruft. Nutzungsnachweise werden bis zur Löschung des Kontos gespeichert. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden; bei Löschung des Kontos wird ihre Verknüpfung mit der Person entfernt, der Textinhalt kann jedoch bestehen bleiben. Besuchsstatistiken werden unbefristet gespeichert. Die Aufbewahrung von Zahlungsdaten unterliegt den anwendbaren steuer- und handelsrechtlichen Pflichten."
+     "p": "Konto, wissenschaftliche Inhalte, Dateien, Unterhaltungen, Zähler, der Hashwert der Gerätekennung und Benachrichtigungen werden grundsätzlich bis zur Löschung des Kontos gespeichert. Eine Einladung als Mitautorin bzw. Mitautor wird innerhalb von 14 Tagen ungültig; der Einladungsdatensatz kann zusammen mit der Arbeit gespeichert bleiben. Der Freigabelink für die Betreuung bleibt zugänglich, bis die Nutzerin bzw. der Nutzer ihn widerruft. Nutzungsnachweise werden bis zur Löschung des Kontos gespeichert. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden; bei Löschung des Kontos wird ihre Verknüpfung mit der Person entfernt, der Textinhalt kann jedoch bestehen bleiben. Besuchsstatistiken werden unbefristet gespeichert. Bestell-, Zahlungs- und Rechnungsdaten werden für die steuer- und handelsrechtlich vorgeschriebenen Fristen aufbewahrt und auch bei Löschung des Kontos nicht vor Ablauf dieser Fristen gelöscht (die Verknüpfung mit dem Konto wird entfernt)."
     }
    ]
   },
@@ -65,7 +68,7 @@ export const CONTENT: LegalContent = {
    "h": "Empfängergruppen und Übermittlung ins Ausland",
    "b": [
     {
-     "p": "Im Rahmen der Erbringung des Dienstes können Daten übermittelt werden an Supabase für Datenbank-, Authentifizierungs- und Dateispeicherdienste, an Vercel für Hosting- und Auslieferungsdienste sowie bei Nutzung von KI-Funktionen an Anthropic (Claude). Google und Apple sind nur dann am Authentifizierungsprozess beteiligt, wenn die betreffende Social-Login-Methode gewählt wird. Bei der Suche nach wissenschaftlichen Quellen können Suchbegriffe und DOIs an Quellendienste wie OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall gesendet werden; die Identität der Nutzerin bzw. des Nutzers wird nicht an diese Suchdienste übermittelt. Ist ein Schlüssel hinterlegt, können auch die Dienste Springer Nature, IEEE und NASA ADS genutzt werden. Auf Wunsch der Nutzerin bzw. des Nutzers kann eine LaTeX-Datei an Overleaf übermittelt werden; bei der Zotero-Integration wird der eingegebene Schlüssel nicht gespeichert. Die Zahlungskommunikation kann über WhatsApp erfolgen."
+     "p": "Im Rahmen der Erbringung des Dienstes können Daten übermittelt werden an Supabase für Datenbank-, Authentifizierungs- und Dateispeicherdienste, an Vercel für Hosting- und Auslieferungsdienste sowie bei Nutzung von KI-Funktionen an Anthropic (Claude). Google und Apple sind nur dann am Authentifizierungsprozess beteiligt, wenn die betreffende Social-Login-Methode gewählt wird. Bei der Suche nach wissenschaftlichen Quellen können Suchbegriffe und DOIs an Quellendienste wie OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall gesendet werden; die Identität der Nutzerin bzw. des Nutzers wird nicht an diese Suchdienste übermittelt. Ist ein Schlüssel hinterlegt, können auch die Dienste Springer Nature, IEEE und NASA ADS genutzt werden. Auf Wunsch der Nutzerin bzw. des Nutzers kann eine LaTeX-Datei an Overleaf übermittelt werden; bei der Zotero-Integration wird der eingegebene Schlüssel nicht gespeichert. Beim Kauf eines kostenpflichtigen Tarifs wird die Zahlung über das lizenzierte Zahlungsinstitut PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. (Türkei) entgegengenommen; dazu werden Name, E-Mail-Adresse, Telefonnummer, Rechnungsadresse, IP-Adresse, Bestellnummer, Tarifname und Betrag an PayTR übermittelt, und Kartendaten werden direkt auf der sicheren Zahlungsseite von PayTR eingegeben. Die Supportkommunikation kann auf Wunsch über WhatsApp erfolgen."
     }
    ]
   },
@@ -97,7 +100,7 @@ export const CONTENT: LegalContent = {
    "h": "Rechte der betroffenen Person und Antragstellung",
    "b": [
     {
-     "p": "Betroffene Personen können ihre Rechte nach Artikel 11 KVKK ausüben. Auf der Plattform können Nutzerinnen und Nutzer über die Kontoseite ihre Daten im JSON-Format herunterladen, ihr Konto und die mit dem Konto verbundenen Daten löschen sowie eine Datenanfrage stellen. Datenanfragen werden innerhalb von 30 Tagen kostenlos beantwortet."
+     "p": "Betroffene Personen können ihre Rechte nach Artikel 11 KVKK ausüben. Auf der Plattform können Nutzerinnen und Nutzer über die Kontoseite ihre Daten im JSON-Format herunterladen, ihr Konto und die mit dem Konto verbundenen Daten löschen sowie eine Datenanfrage stellen. Datenanfragen werden innerhalb von 30 Tagen kostenlos beantwortet. Anträge können auch schriftlich an die oben genannte Anschrift des Verantwortlichen gerichtet werden."
     }
    ]
   },
@@ -325,7 +328,7 @@ export const CONTENT: LegalContent = {
    "h": "Verbindungen zu Dritten",
    "b": [
     {
-     "p": "Bei von der Nutzerin bzw. dem Nutzer veranlassten Vorgängen wie der Anmeldung mit Google oder Apple, der Verbindung zu Overleaf/Zotero oder der Zahlungskommunikation über WhatsApp können die eigenen Cookie- und Datenschutzrichtlinien der Dritten gelten. Academiana steuert die Datenverarbeitungstätigkeiten Dritter in deren eigenen Umgebungen nicht."
+     "p": "Bei von der Nutzerin bzw. dem Nutzer veranlassten Vorgängen wie der Anmeldung mit Google oder Apple, der Verbindung zu Overleaf/Zotero der bei der Zahlung geöffneten sicheren Zahlungsseite von PayTR (unter der Domain paytr.com, in einem Rahmen auf unserer Website) oder der Supportkommunikation über WhatsApp können die eigenen Cookie- und Datenschutzrichtlinien der Dritten gelten. Academiana steuert die Datenverarbeitungstätigkeiten Dritter in deren eigenen Umgebungen nicht."
     }
    ]
   },
@@ -422,10 +425,25 @@ export const CONTENT: LegalContent = {
  ],
  "distance": [
   {
+   "h": "Angaben zum Verkäufer",
+   "b": [
+    {
+     "ul": [
+      "Name / Firma: Alkın Mert Temel (Einzelunternehmen)",
+      "Anschrift: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara, Türkei",
+      "Finanzamt / Steuernummer: Finanzamt Gölbaşı / 8370931187",
+      "Tätigkeit: 582901 – Verlegen von sonstiger Software",
+      "Website: www.academiana.com.tr",
+      "Kontakt: WhatsApp +90 542 526 66 50 und der Support-Kanal der Plattform"
+     ]
+    }
+   ]
+  },
+  {
    "h": "Wichtiger Hinweis zum Geltungsbereich",
    "b": [
     {
-     "p": "Der derzeitige Verkaufsablauf bei Academiana sieht so aus: Über die Preisseite oder die Schaltfläche „Upgrade“ in der Anwendung wird in WhatsApp eine vorbereitete Nachricht mit dem Tarifnamen und gegebenenfalls dem Rabattcode geöffnet; die Zahlung wird außerhalb der Plattform entgegengenommen und der Tarif von der Administration manuell zugewiesen. Auf der Plattform gibt es keine Online-Zahlungsseite, und Kartendaten werden nicht in das System aufgenommen. Dieses Dokument regelt die allgemeinen vorvertraglichen Informationen und Vertragsgrundsätze nach dem derzeitigen Ablauf."
+     "p": "Bei Academiana werden Tarife auf der Preisseite oder über die Schaltfläche „Upgrade“ in der Anwendung gewählt. Die Zahlung erfolgt per Kredit- oder Debitkarte über die sichere Zahlungsseite des lizenzierten Zahlungsinstituts PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. Kartendaten werden direkt bei PayTR eingegeben; Academiana erhält und speichert keine Kartendaten. Dieses Dokument regelt die vorvertraglichen Informationen und Vertragsgrundsätze für den Verkaufsablauf."
     }
    ]
   },
@@ -441,7 +459,7 @@ export const CONTENT: LegalContent = {
    "h": "Verkauf und Vertragsschluss",
    "b": [
     {
-     "p": "Die Nutzerin bzw. der Nutzer wählt den Tarif auf der Preisseite oder in der Anwendung und nimmt über WhatsApp Kontakt auf. Tarif-, Zahlungs- und Zuweisungsdetails werden mit der Nutzerin bzw. dem Nutzer gesondert bestätigt. Nach der Zahlung weist die Administration den Tarif im System zu und die Leistung beginnt."
+     "p": "Die Nutzerin bzw. der Nutzer wählt Tarif und Abrechnungszeitraum (monatlich oder jährlich), bestätigt, dieses Dokument und die Richtlinie zur fairen Nutzung gelesen zu haben, prüft die auf dem Bildschirm angezeigte Bestellübersicht (Verkäufer, Tarif, Dauer, Gesamtpreis, Zahlungsart, Beginn, automatische Verlängerung und Widerrufsinformation), gibt die Rechnungsdaten ein und zahlt auf der sicheren Zahlungsseite von PayTR. Der Vertrag kommt zustande, sobald die Zahlung vom Zahlungsinstitut bestätigt ist; der Tarif wird dem Konto automatisch zugewiesen. Für besondere Angebote wie institutionelle Lizenzen und den Akademischen Teamrabatt kann gesondert über WhatsApp oder den Support-Kanal Kontakt aufgenommen werden."
     }
    ]
   },
@@ -457,7 +475,7 @@ export const CONTENT: LegalContent = {
    "h": "Preis, Steuern und Zahlung",
    "b": [
     {
-     "p": "Der zu zahlende Gesamtbetrag, gegebenenfalls Steuern und Rabatte, die Zahlungsart und der Zahlungszeitpunkt werden der Nutzerin bzw. dem Nutzer vor dem Vorgang deutlich mitgeteilt. Bei jedem Verkauf gilt der Vertrag erst als abgeschlossen, wenn diese Angaben schriftlich bestätigt sind."
+     "p": "Der zu zahlende Gesamtbetrag, gegebenenfalls Steuern und Rabatte, die Zahlungsart und der Zahlungszeitpunkt werden der Nutzerin bzw. dem Nutzer vor dem Vorgang in der Bestellübersicht deutlich angezeigt. Die Preise werden in türkischen Lira festgelegt und enthalten Steuern; auf fremdsprachigen Seiten angezeigte Fremdwährungsbeträge dienen nur der Information, abgerechnet wird in türkischen Lira. Die Zahlung erfolgt per Kredit- oder Debitkarte als Einmalzahlung über PayTR; Ratenzahlung wird nicht angeboten."
     }
    ]
   },
@@ -465,7 +483,7 @@ export const CONTENT: LegalContent = {
    "h": "Verlängerung der Tarife",
    "b": [
     {
-     "p": "Bei monatlichen und jährlichen Tarifen gibt es keine automatische Verlängerung. Wer am Ende des Zeitraums fortfahren möchte, veranlasst die Verlängerung selbst. Ohne gesonderte Zustimmung der Nutzerin bzw. des Nutzers wird kein Entgelt für einen neuen Zeitraum erhoben."
+     "p": "Bei monatlichen und jährlichen Tarifen gibt es keine automatische Verlängerung. Wer am Ende des Zeitraums fortfahren möchte, veranlasst die Verlängerung selbst. Ohne gesonderte Zustimmung der Nutzerin bzw. des Nutzers wird kein Entgelt für einen neuen Zeitraum erhoben. Ein Monatstarif gilt 30 Tage, ein Jahrestarif 365 Tage. Wird derselbe Tarif vor Ablauf für denselben Abrechnungszeitraum erneut gekauft, wird die neue Laufzeit an die Restlaufzeit angehängt; beim Wechsel zu einem anderen Tarif oder Abrechnungszeitraum beginnt die Laufzeit des neuen Tarifs am Tag der Zahlungsbestätigung."
     }
    ]
   },
@@ -473,7 +491,7 @@ export const CONTENT: LegalContent = {
    "h": "Beginn der Leistung und digitale Dienstleistung",
    "b": [
     {
-     "p": "Die Leistung beginnt, sobald der Tarif nach der Zahlung von der Administration zugewiesen wird. Erforderlichenfalls wird von der Nutzerin bzw. dem Nutzer ein gesondertes und ausdrückliches Verlangen bzw. eine gesonderte Zustimmung dafür eingeholt, dass die Leistung vor Ablauf der Widerrufsfrist beginnt, und die rechtlichen Folgen werden erläutert. Die Annahme der allgemeinen Nutzungsbedingungen allein begründet keinen Verzicht auf das Widerrufsrecht und keine Ausnahme."
+     "p": "Die Leistung beginnt, sobald die Zahlung vom Zahlungsinstitut bestätigt und der Tarif dem Konto zugewiesen ist. Beim Kauf wird von der Nutzerin bzw. dem Nutzer ein gesondertes und ausdrückliches Verlangen bzw. eine gesonderte Zustimmung dafür eingeholt, dass diese sofort elektronisch erbrachte digitale Dienstleistung vor Ablauf der Widerrufsfrist beginnt, und ihre Auswirkung auf das Widerrufsrecht wird erläutert. Die Annahme der allgemeinen Nutzungsbedingungen allein begründet keinen Verzicht auf das Widerrufsrecht und keine Ausnahme."
     }
    ]
   },
@@ -481,7 +499,7 @@ export const CONTENT: LegalContent = {
    "h": "Widerrufsrecht und Rückerstattung",
    "b": [
     {
-     "p": "Das Widerrufsrecht der Verbraucherin bzw. des Verbrauchers und die auf digitale Dienstleistungen anwendbaren Ausnahmen richten sich nach der Art der Leistung, danach, ob mit der Erfüllung begonnen wurde, nach dem vorab erklärten ausdrücklichen Verlangen/der Zustimmung der Nutzerin bzw. des Nutzers und nach dem geltenden Recht. Der Verkäufer teilt der Verbraucherin bzw. dem Verbraucher vor dem Vorgang die anzuwendenden Widerrufs-/Rückerstattungsbedingungen deutlich mit; zwingende Verbraucherrechte bleiben unberührt."
+     "p": "Das Widerrufsrecht der Verbraucherin bzw. des Verbrauchers und die auf digitale Dienstleistungen anwendbaren Ausnahmen richten sich nach der Art der Leistung, danach, ob mit der Erfüllung begonnen wurde, nach dem vorab erklärten ausdrücklichen Verlangen/der Zustimmung der Nutzerin bzw. des Nutzers und nach dem geltenden Recht. Der Verkäufer teilt der Verbraucherin bzw. dem Verbraucher vor dem Vorgang die anzuwendenden Widerrufs-/Rückerstattungsbedingungen deutlich mit; zwingende Verbraucherrechte bleiben unberührt. Ist eine Rückerstattung geschuldet, wird der Betrag über das Zahlungsinstitut auf die für die Zahlung verwendete Karte erstattet."
     }
    ]
   },
@@ -505,7 +523,7 @@ export const CONTENT: LegalContent = {
    "h": "Beschwerden und Anträge",
    "b": [
     {
-     "p": "Die Nutzerin bzw. der Nutzer kann Probleme im Zusammenhang mit dem Kauf oder der Leistung über den Support-Kanal der Plattform melden."
+     "p": "Die Nutzerin bzw. der Nutzer kann Probleme im Zusammenhang mit dem Kauf oder der Leistung über den Support-Kanal der Plattform, die WhatsApp-Nummer oder die oben genannte Anschrift des Verkäufers melden. Verbraucherinnen und Verbraucher können sich innerhalb der geltenden Wertgrenzen an die Verbraucherschiedsstelle (Tüketici Hakem Heyeti) oder das Verbrauchergericht (Tüketici Mahkemesi) wenden."
     }
    ]
   },
@@ -513,7 +531,7 @@ export const CONTENT: LegalContent = {
    "h": "Bestellspezifische Bestätigung",
    "b": [
     {
-     "p": "Bei jedem Kauf werden der Nutzerin bzw. dem Nutzer vor dem Vorgang mindestens Verkäuferangaben, Nutzerangaben, Tarifname, Leistungsumfang, Dauer, Grenzen, Gesamtpreis, Steuern, Zahlungsart, Beginn der Leistung, das Bestehen oder Nichtbestehen einer automatischen Verlängerung sowie die anzuwendenden Widerrufs-/Rückerstattungsbedingungen vorgelegt; Bestellübersicht und Vertrag werden der Nutzerin bzw. dem Nutzer auf einem dauerhaften Datenträger übermittelt."
+     "p": "Bei jedem Kauf werden der Nutzerin bzw. dem Nutzer vor dem Vorgang mindestens Verkäuferangaben, Nutzerangaben, Tarifname, Leistungsumfang, Dauer, Grenzen, Gesamtpreis, Steuern, Zahlungsart, Beginn der Leistung, das Bestehen oder Nichtbestehen einer automatischen Verlängerung sowie die anzuwendenden Widerrufs-/Rückerstattungsbedingungen vorgelegt. Nach der Zahlung wird die Bestellübersicht als herunterladbares Dokument im Bereich „Meine Bestellungen“ der Kontoseite auf einem dauerhaften Datenträger bereitgestellt."
     }
    ]
   }
@@ -524,6 +542,9 @@ export const CONTENT: LegalContent = {
    "b": [
     {
      "p": "Dieser Hinweis beschreibt die Verarbeitung personenbezogener Daten im Zusammenhang mit Academiana, einer KI-gestützten Plattform für wissenschaftliche Recherche und wissenschaftliches Schreiben, die unter www.academiana.com.tr verfügbar ist. Die Plattform ist für Nutzerinnen und Nutzer in der Türkei zugänglich und kann auch aus anderen Ländern aufgerufen werden."
+    },
+    {
+     "p": "Verantwortlicher und Verkäufer: Alkın Mert Temel (Einzelunternehmen). Anschrift: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara, Türkei. Steueramt und Steuernummer: Finanzamt Gölbaşı, 8370931187. Kontakt: WhatsApp +90 542 526 66 50 und der Support-Kanal der Plattform."
     }
    ]
   },
@@ -531,7 +552,7 @@ export const CONTENT: LegalContent = {
    "h": "Kategorien personenbezogener Daten",
    "b": [
     {
-     "p": "Je nach Nutzung des Dienstes kann Academiana verarbeiten: Konto- und Kontaktdaten (Name, E-Mail-Adresse und optional Institution); Authentifizierungsdaten (Daten zur Passwortprüfung oder über die Anmeldung mit Google oder Apple erhaltener Name bzw. erhaltene E-Mail-Adresse); Inhalte des wissenschaftlichen Arbeitsbereichs (Projekte, Abschnitte, Versionsverlauf, Kommentare, Quellen und Notizen); hochgeladene Dateien und extrahierter Text; KI-Eingaben und -Antworten; Nutzungsnachweise einschließlich des vollständigen Textes der KI-Ausgaben, Zeitstempel, Projekt-/Abschnittsnamen und Wortzahlen; Nutzungszähler (Token, Kosten, Recherchen und Seiten); eine zufällig erzeugte Gerätekennung und deren nicht umkehrbarer serverseitiger Hashwert; begrenzte Download-Nachweise für den Tarif „Tek Proje“ (Einzelprojekt), einschließlich Wortzahl, eines nicht umkehrbaren Inhalts-Hashwerts und Angaben des Titelblatts; Zahlungs- und Tarifzuweisungsdaten (Name und Telefonnummer der zahlenden Person, Betrag und Notiz); E-Mail-Adressen für Einladungen von Mitautorinnen und Mitautoren; Zugriffe und Kommentare über den Betreuungslink; institutionelle Mitgliedschaft und Nutzungsstatistiken; Supportnachrichten und technische Fehlerdaten; täglich wechselnde, nicht identifizierende Besuchsstatistiken; sowie Benachrichtigungen innerhalb der Anwendung und Protokolle von Anträgen betroffener Personen."
+     "p": "Je nach Nutzung des Dienstes kann Academiana verarbeiten: Konto- und Kontaktdaten (Name, E-Mail-Adresse und optional Institution); Authentifizierungsdaten (Daten zur Passwortprüfung oder über die Anmeldung mit Google oder Apple erhaltener Name bzw. erhaltene E-Mail-Adresse); Inhalte des wissenschaftlichen Arbeitsbereichs (Projekte, Abschnitte, Versionsverlauf, Kommentare, Quellen und Notizen); hochgeladene Dateien und extrahierter Text; KI-Eingaben und -Antworten; Nutzungsnachweise einschließlich des vollständigen Textes der KI-Ausgaben, Zeitstempel, Projekt-/Abschnittsnamen und Wortzahlen; Nutzungszähler (Token, Kosten, Recherchen und Seiten); eine zufällig erzeugte Gerätekennung und deren nicht umkehrbarer serverseitiger Hashwert; begrenzte Download-Nachweise für den Tarif „Tek Proje“ (Einzelprojekt), einschließlich Wortzahl, eines nicht umkehrbaren Inhalts-Hashwerts und Angaben des Titelblatts; Bestell-, Zahlungs- und Rechnungsdaten (Name, Telefonnummer, Rechnungsadresse und E-Mail-Adresse der zahlenden Person, Bestellnummer, Tarif, Betrag, Zahlungsstatus und die beim Kauf erteilten Bestätigungen; Kartendaten erhält Academiana nicht); E-Mail-Adressen für Einladungen von Mitautorinnen und Mitautoren; Zugriffe und Kommentare über den Betreuungslink; institutionelle Mitgliedschaft und Nutzungsstatistiken; Supportnachrichten und technische Fehlerdaten; täglich wechselnde, nicht identifizierende Besuchsstatistiken; sowie Benachrichtigungen innerhalb der Anwendung und Protokolle von Anträgen betroffener Personen."
     }
    ]
   },
@@ -539,7 +560,7 @@ export const CONTENT: LegalContent = {
    "h": "Zwecke und Rechtsgrundlagen",
    "b": [
     {
-     "p": "Personenbezogene Daten werden verarbeitet, um Konten anzulegen und zu verwalten, Nutzerinnen und Nutzer zu authentifizieren, den wissenschaftlichen Arbeitsbereich und die Dateifunktionen bereitzustellen, KI-Funktionen zu erbringen, wissenschaftliche Quellen zu durchsuchen, Literaturangaben zu verwalten, Statistik- und Umfragewerkzeuge bereitzustellen, Zusammenarbeit und Freigabe an die Betreuung zu ermöglichen, Tarife und Nutzungsgrenzen zu verwalten, kostenpflichtige Tarife zuzuweisen, Support zu leisten, Missbrauch zu verhindern, die Plattformsicherheit aufrechtzuerhalten, Fehler zu beheben, die Leistung des Dienstes zu messen und rechtliche Pflichten zu erfüllen. Die voraussichtlichen Rechtsgrundlagen nach der DSGVO können umfassen: Vertragserfüllung (Artikel 6 Absatz 1 Buchstabe b) für das Konto und angeforderte Leistungen; berechtigte Interessen (Artikel 6 Absatz 1 Buchstabe f) für verhältnismäßige Sicherheit, Missbrauchsprävention und Dienststatistiken; und Erfüllung einer rechtlichen Verpflichtung (Artikel 6 Absatz 1 Buchstabe c) für gesetzlich vorgeschriebene Aufzeichnungen. Diese Grundlagen erfordern eine dokumentierte, zweckspezifische Bewertung durch den Verantwortlichen. Auf eine Einwilligung wird nur gestützt, wo sie tatsächlich erforderlich ist und wirksam eingeholt wurde."
+     "p": "Personenbezogene Daten werden verarbeitet, um Konten anzulegen und zu verwalten, Nutzerinnen und Nutzer zu authentifizieren, den wissenschaftlichen Arbeitsbereich und die Dateifunktionen bereitzustellen, KI-Funktionen zu erbringen, wissenschaftliche Quellen zu durchsuchen, Literaturangaben zu verwalten, Statistik- und Umfragewerkzeuge bereitzustellen, Zusammenarbeit und Freigabe an die Betreuung zu ermöglichen, Tarife und Nutzungsgrenzen zu verwalten, Zahlungen entgegenzunehmen, Bestellungen und Rechnungen abzuwickeln, kostenpflichtige Tarife zuzuweisen, Support zu leisten, Missbrauch zu verhindern, die Plattformsicherheit aufrechtzuerhalten, Fehler zu beheben, die Leistung des Dienstes zu messen und rechtliche Pflichten zu erfüllen. Die voraussichtlichen Rechtsgrundlagen nach der DSGVO können umfassen: Vertragserfüllung (Artikel 6 Absatz 1 Buchstabe b) für das Konto und angeforderte Leistungen; berechtigte Interessen (Artikel 6 Absatz 1 Buchstabe f) für verhältnismäßige Sicherheit, Missbrauchsprävention und Dienststatistiken; und Erfüllung einer rechtlichen Verpflichtung (Artikel 6 Absatz 1 Buchstabe c) für gesetzlich vorgeschriebene Aufzeichnungen. Diese Grundlagen erfordern eine dokumentierte, zweckspezifische Bewertung durch den Verantwortlichen. Auf eine Einwilligung wird nur gestützt, wo sie tatsächlich erforderlich ist und wirksam eingeholt wurde."
     }
    ]
   },
@@ -547,7 +568,7 @@ export const CONTENT: LegalContent = {
    "h": "Speicherdauer",
    "b": [
     {
-     "p": "Kontodaten, wissenschaftliche Inhalte, Dateien, KI-Unterhaltungen, Nutzungszähler, Hashwerte der Gerätekennungen und Benachrichtigungen innerhalb der Anwendung werden grundsätzlich bis zur Löschung des Kontos gespeichert. Einladungen von Mitautorinnen und Mitautoren laufen nach 14 Tagen ab, der Einladungsdatensatz kann jedoch beim Projekt verbleiben. Die Freigabe an die Betreuung bleibt verfügbar, bis die Nutzerin bzw. der Nutzer den Link widerruft. Volltext-Nutzungsnachweise der KI werden bis zur Löschung des Kontos gespeichert. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden, wobei die Verknüpfung mit der Person nach Löschung des Kontos entfernt wird, der Text jedoch bestehen bleiben kann. Besuchsstatistiken werden unbefristet gespeichert. Zahlungsdaten können gesetzlichen handels- und steuerrechtlichen Aufbewahrungspflichten unterliegen."
+     "p": "Kontodaten, wissenschaftliche Inhalte, Dateien, KI-Unterhaltungen, Nutzungszähler, Hashwerte der Gerätekennungen und Benachrichtigungen innerhalb der Anwendung werden grundsätzlich bis zur Löschung des Kontos gespeichert. Einladungen von Mitautorinnen und Mitautoren laufen nach 14 Tagen ab, der Einladungsdatensatz kann jedoch beim Projekt verbleiben. Die Freigabe an die Betreuung bleibt verfügbar, bis die Nutzerin bzw. der Nutzer den Link widerruft. Volltext-Nutzungsnachweise der KI werden bis zur Löschung des Kontos gespeichert. Feedback- und Fehlerprotokolle können unbefristet gespeichert werden, wobei die Verknüpfung mit der Person nach Löschung des Kontos entfernt wird, der Text jedoch bestehen bleiben kann. Besuchsstatistiken werden unbefristet gespeichert. Bestell-, Zahlungs- und Rechnungsdaten werden für die gesetzlichen steuer- und handelsrechtlichen Aufbewahrungsfristen gespeichert und auch bei Löschung des Kontos nicht vor deren Ablauf gelöscht (die Verknüpfung mit dem Konto wird entfernt)."
     }
    ]
   },
@@ -555,7 +576,7 @@ export const CONTENT: LegalContent = {
    "h": "Empfänger und internationale Übermittlungen",
    "b": [
     {
-     "p": "Zu den Dienstleistern und Empfängern können gehören: Supabase für Datenbank, Authentifizierung und Dateispeicherung; Vercel für Hosting und Inhaltsauslieferung; Anthropic für die KI-Verarbeitung, wenn eine KI-Funktion genutzt wird; sowie Google oder Apple, wenn die Nutzerin bzw. der Nutzer die betreffende Anmeldemethode wählt. Wissenschaftliche Suchdienste können Suchbegriffe und DOI-Kennungen ohne die Kontoidentität der Nutzerin bzw. des Nutzers erhalten, darunter OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall; Springer Nature, IEEE und NASA ADS können ebenfalls genutzt werden, wenn API-Zugangsdaten hinterlegt sind. Auf Wunsch der Nutzerin bzw. des Nutzers können LaTeX-Dateien an Overleaf gesendet werden, und von der Nutzerin bzw. dem Nutzer veranlasste Zahlungskommunikation kann über WhatsApp erfolgen."
+     "p": "Zu den Dienstleistern und Empfängern können gehören: Supabase für Datenbank, Authentifizierung und Dateispeicherung; Vercel für Hosting und Inhaltsauslieferung; Anthropic für die KI-Verarbeitung, wenn eine KI-Funktion genutzt wird; sowie Google oder Apple, wenn die Nutzerin bzw. der Nutzer die betreffende Anmeldemethode wählt. Wissenschaftliche Suchdienste können Suchbegriffe und DOI-Kennungen ohne die Kontoidentität der Nutzerin bzw. des Nutzers erhalten, darunter OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP und Unpaywall; Springer Nature, IEEE und NASA ADS können ebenfalls genutzt werden, wenn API-Zugangsdaten hinterlegt sind. Auf Wunsch der Nutzerin bzw. des Nutzers können LaTeX-Dateien an Overleaf gesendet werden, Beim Kauf eines kostenpflichtigen Tarifs wird die Zahlung über PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş., ein in der Türkei lizenziertes Zahlungsinstitut, entgegengenommen; PayTR erhält Bestell- und Zahlungsdaten (Name, E-Mail, Telefon, Rechnungsadresse, IP-Adresse, Bestellnummer, Betrag) sowie die direkt auf seiner sicheren Zahlungsseite eingegebenen Kartendaten. Von der Nutzerin bzw. dem Nutzer veranlasste Supportkommunikation kann über WhatsApp erfolgen."
     }
    ]
   },

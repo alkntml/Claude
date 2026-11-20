@@ -95,4 +95,8 @@ union all select '44 ISNAD dipnotlu, danışman rolü, Zotero/ORCID eşitleme',
 union all select '45 Kartla ödeme (PayTR siparişleri)',
   case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'payment_orders')
         and exists (select 1 from pg_policies where tablename = 'payment_orders' and policyname = 'payment_orders_select_own')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '46 Ödeme kayıtlarının saklanması ve satın alma onayları',
+  case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'immediate_start_consent')
+        and exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'user_id' and is_nullable = 'YES')
        then 'YAPILMIŞ' else 'EKSİK' end;

@@ -8,6 +8,7 @@ import { CONTENT as DE } from "@/lib/legal/content-de";
 import type { LegalSection } from "@/lib/legal/types";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { PAGE_SEO } from "@/lib/seo-pages";
+import { SELLER } from "@/lib/site";
 
 const root = path.resolve(__dirname, "..");
 const pdfText = fs.readFileSync(path.join(root, "docs/legal/yasal-metinler-2026-11-13.txt"), "utf8");
@@ -23,7 +24,7 @@ const docWords = (sections: LegalSection[]) => sections.map((s) => [s.h, ...s.b.
 describe("hukuki metinler (D154)", () => {
   it("bölüm başlıkları hukukçunun metniyle aynı; Sınırsız Proje bölümü güncel (D162)", () => {
     const all = pdfWords();
-    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) for (const s of TR[id]) if (!["Paketlerin yenilenmesi", "Sınırsız Proje paketi"].includes(s.h)) expect(all.includes(s.h), `${id}: ${s.h}`).toBe(true); // D167: iki başlık site sahibince güncellendi
+    for (const id of ["kvkk", "terms", "cookies", "integrity", "distance"] as const) for (const s of TR[id]) if (!["Paketlerin yenilenmesi", "Sınırsız Proje paketi", "Satıcı bilgileri"].includes(s.h)) expect(all.includes(s.h), `${id}: ${s.h}`).toBe(true); // D167: iki başlık site sahibince güncellendi
     for (const s of EN.gdpr) expect(all.includes(s.h), `gdpr: ${s.h}`).toBe(true);
     const fu = JSON.stringify(TR.fair_use);
     const dist = JSON.stringify(TR.distance);
@@ -50,8 +51,13 @@ describe("hukuki metinler (D154)", () => {
     }
   });
 
-  it("metinlerde uydurma iletişim bilgisi yok (e-posta, telefon, vergi/MERSİS numarası)", () => {
-    const text = JSON.stringify([TR, EN, DE]);
+  it("metinlerde uydurma iletişim bilgisi yok (e-posta, telefon, vergi/MERSİS numarası); yalnızca vergi levhasındaki satıcı bilgileri (D226)", () => {
+    // D226: site sahibinin verdiği gerçek bilgiler (lib/site.ts → SELLER) metinlerde geçer; başka numara/e-posta olmamalı
+    const raw = JSON.stringify([TR, EN, DE]);
+    for (const x of [SELLER.taxNo, SELLER.phone, "Alkın Mert Temel", "Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11"]) for (const c of [TR, EN, DE]) expect(JSON.stringify(c.distance), x).toContain(x);
+    expect(JSON.stringify(TR.kvkk)).toContain(SELLER.taxNo);
+    expect(raw).not.toMatch(/T\.?C\.? ?kimlik|TCKN|\b\d{11}\b/i);
+    const text = raw.split(SELLER.phone).join("").split(SELLER.taxNo).join("");
     expect(text).not.toMatch(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
     expect(text).not.toMatch(/\+?\d[\d ()-]{8,}\d/);
     expect(text).not.toMatch(/MERSİS\s*(no|numarası)?\s*:?\s*\d/i);

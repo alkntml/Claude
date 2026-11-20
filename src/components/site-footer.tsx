@@ -4,7 +4,7 @@ import Link from "@/components/l-link";
 import { Logo } from "./icons";
 import { LEGAL_DOCS } from "@/lib/legal/docs";
 import { WHATSAPP_NUMBER } from "@/lib/pricing";
-import { CONTACT_EMAIL, INSTAGRAM } from "@/lib/site";
+import { CONTACT_EMAIL, INSTAGRAM, SELLER } from "@/lib/site";
 
 // Sık aranan rehberler (iç bağlantı): [Türkçe adres, İngilizce adres, başlık, Almanca adres]
 const FOOTER_GUIDES: [string, string, string, string][] = [
@@ -61,7 +61,12 @@ export function SiteFooter() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-ink-100 py-5 text-center text-xs text-ink-400">© {new Date().getFullYear()} Academiana. {t("Platform akademik çalışmanızı destekler; yazarlık ve bilimsel sorumluluk size aittir.")}</div>
+      {/* D226: satıcı bilgileri (vergi levhası) ve ödeme kuruluşu */}
+      <div className="border-t border-ink-100 px-6 py-5 text-center text-xs leading-relaxed text-ink-400">
+        <p>© {new Date().getFullYear()} Academiana. {t("Platform akademik çalışmanızı destekler; yazarlık ve bilimsel sorumluluk size aittir.")}</p>
+        <p className="mt-1.5">{t("Satıcı")}: {SELLER.name} · {SELLER.address} · {t("{o} Vergi Dairesi", { o: SELLER.taxOffice })} · {t("Vergi no")} {SELLER.taxNo}</p>
+        <p className="mt-1">{t("Ödemeler, lisanslı ödeme kuruluşu PayTR aracılığıyla güvenli olarak alınır; kart bilgileriniz Academiana’ya gelmez.")}</p>
+      </div>
     </footer>
   );
 }

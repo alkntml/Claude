@@ -1,6 +1,6 @@
 import type { LegalContent } from "./types";
 
-/** Hukuki metinler (TR). Kaynak: hukukçunun metinleri (docs/legal/yasal-metinler-2026-11-13.txt); GDPR metni İngilizce aslından çeviridir. D162: Adil Kullanım’da “Sınırsız Proje paketi” bölümü site sahibinin talimatıyla güncellendi. D166: site sahibinin talimatıyla metinlerdeki çalışma notları (taslak, yayımdan önce eklenmeli, bilgi notuna göre vb.) kaldırıldı; metinler yürürlükteki hâliyle yayımlanır. */
+/** Hukuki metinler (TR). Kaynak: hukukçunun metinleri (docs/legal/yasal-metinler-2026-11-13.txt); GDPR metni İngilizce aslından çeviridir. D162: Adil Kullanım’da “Sınırsız Proje paketi” bölümü site sahibinin talimatıyla güncellendi. D166: site sahibinin talimatıyla metinlerdeki çalışma notları (taslak, yayımdan önce eklenmeli, bilgi notuna göre vb.) kaldırıldı; metinler yürürlükteki hâliyle yayımlanır. D226: site sahibinin talimatıyla satıcı/veri sorumlusu bilgileri (vergi levhası) ve kartla ödeme (PayTR) akışı KVKK, Çerez, Mesafeli Sözleşmeler ve GDPR metinlerine işlendi. */
 export const CONTENT: LegalContent = {
  "kvkk": [
   {
@@ -8,6 +8,9 @@ export const CONTENT: LegalContent = {
    "b": [
     {
      "p": "Bu aydınlatma metni, www.academiana.com.tr adresinde sunulan Academiana platformunun kullanımı sırasında kişisel verilerin işlenmesine ilişkin bilgi vermek amacıyla hazırlanmıştır. Academiana; akademik araştırma ve yazım süreçlerine yardımcı olan, yapay zekâ destekli çevrim içi bir platformdur."
+    },
+    {
+     "p": "Veri sorumlusu ve satıcı: Alkın Mert Temel (şahıs işletmesi). Adres: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara. Vergi dairesi ve numarası: Gölbaşı Vergi Dairesi, 8370931187. İletişim: WhatsApp +90 542 526 66 50 ve platformdaki destek kanalı."
     }
    ]
   },
@@ -27,7 +30,7 @@ export const CONTENT: LegalContent = {
       "Kullanım ve işlem kayıtları: yapay zekâ çıktılarının tam metni, tarih, çalışma/bölüm adı, kelime sayısı; token, maliyet, tarama ve sayfa sayaçları; silme kayıtları.",
       "Cihaz ve güvenlik verileri: tarayıcıda oluşturulan rastgele cihaz kimliği, bunun sunucuda tutulan geri çözülemeyen özeti ile ilk/son görülme tarihleri.",
       "Tek Proje paketi kullanım kayıtları: indirme kelime sayısı, metnin geri elde edilemeyen özeti ve kapak bilgileri (yazar, üniversite, bölüm ve danışman adı).",
-      "Ödeme/paket tanımlama kayıtları: ödeyenin adı, telefon numarası, tutar ve not. Kart bilgisi Academiana sistemine girilmez.",
+      "Sipariş, ödeme ve fatura kayıtları: ödeyenin adı-soyadı, telefon numarası, fatura adresi, e-posta adresi, sipariş numarası, paket, tutar, ödeme durumu ve türü, satın alma sırasında verilen onaylar ile ödeme kuruluşunun işlem sırasında kullandığı IP adresi. Kart bilgileri ödeme kuruluşunun güvenli sayfasına girilir; Academiana kart bilgisini almaz ve saklamaz.",
       "Davet ve paylaşım verileri: ortak yazar daveti için e-posta; danışman bağlantısı üzerinden erişim ve yorum bilgileri.",
       "Kurum lisansı verileri: kurum üyeliği, kullanım istatistikleri ve kurum işlem kayıtları.",
       "Destek ve teknik kayıtlar: kullanıcının geri bildirim/hata mesajı ve ilgili teknik hata bilgileri.",
@@ -41,7 +44,7 @@ export const CONTENT: LegalContent = {
    "h": "İşleme amaçları",
    "b": [
     {
-     "p": "Kişisel veriler; üyelik oluşturma ve hesabı yönetme, kimlik doğrulama, akademik çalışma alanını ve dosya hizmetlerini sunma, yapay zekâ özelliklerini çalıştırma, kaynak arama ve atıf işlevlerini sağlama, istatistiksel analiz yapma, ortak yazar ve danışman paylaşımını yürütme, paket ve kullanım haklarını yönetme, ödeme sonrasında paketi tanımlama, müşteri desteği sağlama, güvenliği ve kötüye kullanımı önleme, teknik sorunları tespit etme, hizmet performansını ölçme ve hukuki yükümlülükleri yerine getirme amaçlarıyla işlenir. Veriler satılmaz ve reklam hedeflemesi amacıyla kullanılmaz. Platformda analitik veya reklam amaçlı üçüncü taraf çerezleri kullanılmaz."
+     "p": "Kişisel veriler; üyelik oluşturma ve hesabı yönetme, kimlik doğrulama, akademik çalışma alanını ve dosya hizmetlerini sunma, yapay zekâ özelliklerini çalıştırma, kaynak arama ve atıf işlevlerini sağlama, istatistiksel analiz yapma, ortak yazar ve danışman paylaşımını yürütme, paket ve kullanım haklarını yönetme, ödemeyi alma, sipariş ve faturalandırma işlemlerini yürütme, ödeme sonrasında paketi tanımlama, müşteri desteği sağlama, güvenliği ve kötüye kullanımı önleme, teknik sorunları tespit etme, hizmet performansını ölçme ve hukuki yükümlülükleri yerine getirme amaçlarıyla işlenir. Veriler satılmaz ve reklam hedeflemesi amacıyla kullanılmaz. Platformda analitik veya reklam amaçlı üçüncü taraf çerezleri kullanılmaz."
     }
    ]
   },
@@ -49,7 +52,7 @@ export const CONTENT: LegalContent = {
    "h": "Verilerin elde edilme yöntemi",
    "b": [
     {
-     "p": "Veriler; kayıt ve giriş ekranları, kullanıcının platforma yazdığı veya yüklediği içerikler, kullanıcı tarafından başlatılan paylaşım ve ödeme iletişimi, platformun otomatik olarak oluşturduğu kullanım/güvenlik kayıtları ve cihaz belleğinde oluşturulan rastgele cihaz kimliği aracılığıyla elektronik ortamda elde edilir."
+     "p": "Veriler; kayıt ve giriş ekranları, kullanıcının platforma yazdığı veya yüklediği içerikler, kullanıcı tarafından başlatılan paylaşım, satın alma ve destek iletişimi, ödeme kuruluşunun ilettiği ödeme sonucu bildirimleri, platformun otomatik olarak oluşturduğu kullanım/güvenlik kayıtları ve cihaz belleğinde oluşturulan rastgele cihaz kimliği aracılığıyla elektronik ortamda elde edilir."
     }
    ]
   },
@@ -57,7 +60,7 @@ export const CONTENT: LegalContent = {
    "h": "Saklama süreleri",
    "b": [
     {
-     "p": "Hesap, akademik içerik, dosyalar, sohbetler, sayaçlar, cihaz kimliği özeti ve bildirimler kural olarak hesap silinene kadar tutulur. Ortak yazar daveti 14 gün içinde geçersiz olur; davet kaydı çalışma ile birlikte tutulabilir. Danışman paylaşım bağlantısı, kullanıcı bağlantıyı iptal edene kadar erişime açık kalır. Kullanım kanıt kayıtları hesap silinene kadar tutulur. Geri bildirim ve hata kayıtları süresiz tutulabilmekte; hesap silindiğinde kullanıcıyla bağlantısı koparılmakta, metin içeriği kalabilmektedir. Ziyaret istatistikleri süresiz tutulmaktadır. Ödeme kayıtlarının saklanması, uygulanabilir vergi ve muhasebe yükümlülüklerine tabidir."
+     "p": "Hesap, akademik içerik, dosyalar, sohbetler, sayaçlar, cihaz kimliği özeti ve bildirimler kural olarak hesap silinene kadar tutulur. Ortak yazar daveti 14 gün içinde geçersiz olur; davet kaydı çalışma ile birlikte tutulabilir. Danışman paylaşım bağlantısı, kullanıcı bağlantıyı iptal edene kadar erişime açık kalır. Kullanım kanıt kayıtları hesap silinene kadar tutulur. Geri bildirim ve hata kayıtları süresiz tutulabilmekte; hesap silindiğinde kullanıcıyla bağlantısı koparılmakta, metin içeriği kalabilmektedir. Ziyaret istatistikleri süresiz tutulmaktadır. Sipariş, ödeme ve fatura kayıtları; vergi ve ticaret mevzuatında öngörülen süreler boyunca saklanır ve hesap silinse de bu süre dolana kadar silinmez (hesapla bağlantısı kaldırılır)."
     }
    ]
   },
@@ -65,7 +68,7 @@ export const CONTENT: LegalContent = {
    "h": "Verilerin aktarıldığı alıcı grupları ve yurt dışına aktarım",
    "b": [
     {
-     "p": "Hizmetin sunulması kapsamında veriler; veritabanı, kimlik doğrulama ve dosya depolama hizmetleri için Supabase'e; barındırma ve dağıtım hizmetleri için Vercel'e; yapay zekâ özellikleri kullanıldığında Anthropic'e (Claude) aktarılabilir. Google ve Apple, yalnızca ilgili sosyal giriş yöntemi seçildiğinde kimlik doğrulama sürecine dahil olur. Akademik kaynak aramalarında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall gibi kaynak servislerine arama terimleri ve DOI gönderilebilir; kullanıcı kimliği bu arama servislerine gönderilmez. Anahtar tanımlıysa Springer Nature, IEEE ve NASA ADS servisleri de kullanılabilir. Kullanıcının talebiyle Overleaf'e LaTeX dosyası aktarılabilir; Zotero entegrasyonunda kullanıcının girdiği anahtar saklanmaz. Ödeme iletişimi WhatsApp üzerinden yürütülebilir."
+     "p": "Hizmetin sunulması kapsamında veriler; veritabanı, kimlik doğrulama ve dosya depolama hizmetleri için Supabase'e; barındırma ve dağıtım hizmetleri için Vercel'e; yapay zekâ özellikleri kullanıldığında Anthropic'e (Claude) aktarılabilir. Google ve Apple, yalnızca ilgili sosyal giriş yöntemi seçildiğinde kimlik doğrulama sürecine dahil olur. Akademik kaynak aramalarında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall gibi kaynak servislerine arama terimleri ve DOI gönderilebilir; kullanıcı kimliği bu arama servislerine gönderilmez. Anahtar tanımlıysa Springer Nature, IEEE ve NASA ADS servisleri de kullanılabilir. Kullanıcının talebiyle Overleaf'e LaTeX dosyası aktarılabilir; Zotero entegrasyonunda kullanıcının girdiği anahtar saklanmaz. Ücretli paket satın alındığında ödeme, lisanslı ödeme kuruluşu PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. (Türkiye) aracılığıyla alınır; bu amaçla ad-soyad, e-posta adresi, telefon numarası, fatura adresi, IP adresi, sipariş numarası, paket adı ve tutar PayTR’ye aktarılır, kart bilgileri doğrudan PayTR’nin güvenli ödeme sayfasına girilir. Destek iletişimi kullanıcı isterse WhatsApp üzerinden yürütülebilir."
     }
    ]
   },
@@ -97,7 +100,7 @@ export const CONTENT: LegalContent = {
    "h": "İlgili kişinin hakları ve başvuru",
    "b": [
     {
-     "p": "İlgili kişiler, KVKK'nın 11. maddesi kapsamındaki haklarını kullanabilir. Platformda kullanıcılar hesap sayfasından verilerini JSON formatında indirebilir, hesaplarını ve hesapla ilişkili verilerini silebilir ve veri talebi oluşturabilir. Veri talebine 30 gün içinde ücretsiz yanıt verilir."
+     "p": "İlgili kişiler, KVKK'nın 11. maddesi kapsamındaki haklarını kullanabilir. Platformda kullanıcılar hesap sayfasından verilerini JSON formatında indirebilir, hesaplarını ve hesapla ilişkili verilerini silebilir ve veri talebi oluşturabilir. Veri talebine 30 gün içinde ücretsiz yanıt verilir. Başvurular ayrıca veri sorumlusunun yukarıda yazılı adresine yazılı olarak da iletilebilir."
     }
    ]
   },
@@ -325,7 +328,7 @@ export const CONTENT: LegalContent = {
    "h": "Üçüncü taraf bağlantılar",
    "b": [
     {
-     "p": "Kullanıcı tarafından başlatılan Google veya Apple ile giriş, Overleaf/Zotero bağlantısı ya da WhatsApp üzerinden ödeme iletişimi gibi işlemlerde ilgili üçüncü tarafların kendi çerez ve gizlilik politikaları uygulanabilir. Academiana, üçüncü tarafların kendi ortamlarındaki veri işleme faaliyetlerini yönetmez."
+     "p": "Kullanıcı tarafından başlatılan Google veya Apple ile giriş, Overleaf/Zotero bağlantısı ödeme sırasında açılan PayTR güvenli ödeme sayfası (paytr.com alan adında, sitemizde bir çerçeve içinde) ya da WhatsApp üzerinden destek iletişimi gibi işlemlerde ilgili üçüncü tarafların kendi çerez ve gizlilik politikaları uygulanabilir. Academiana, üçüncü tarafların kendi ortamlarındaki veri işleme faaliyetlerini yönetmez."
     }
    ]
   },
@@ -422,10 +425,25 @@ export const CONTENT: LegalContent = {
  ],
  "distance": [
   {
+   "h": "Satıcı bilgileri",
+   "b": [
+    {
+     "ul": [
+      "Ad soyad / unvan: Alkın Mert Temel (şahıs işletmesi)",
+      "Adres: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara",
+      "Vergi dairesi / vergi kimlik no: Gölbaşı Vergi Dairesi / 8370931187",
+      "Faaliyet: 582901 – Diğer yazılım programlarının yayımlanması",
+      "İnternet sitesi: www.academiana.com.tr",
+      "İletişim: WhatsApp +90 542 526 66 50 ve platformdaki destek kanalı"
+     ]
+    }
+   ]
+  },
+  {
    "h": "Önemli kapsam notu",
    "b": [
     {
-     "p": "Academiana'da mevcut satış akışı, fiyat veya uygulama içindeki “Yükselt” düğmesinden WhatsApp'ta paket adı ve varsa indirim kodu bulunan hazır mesaj açılması; ödemenin platform dışında alınması ve paketin yönetici tarafından manuel tanımlanması şeklindedir. Platformda çevrim içi ödeme sayfası bulunmamakta, kart bilgileri sisteme alınmamaktadır. Bu belge, mevcut akışa göre genel ön bilgilendirme ve sözleşme esaslarını düzenler."
+     "p": "Academiana’da paketler fiyatlar sayfasından veya uygulama içindeki “Yükselt” düğmesinden seçilir. Ödeme, lisanslı ödeme kuruluşu PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş.’nin güvenli ödeme sayfası üzerinden kredi veya banka kartıyla alınır. Kart bilgileri doğrudan PayTR’ye girilir; Academiana kart bilgisini almaz ve saklamaz. Bu belge, satış akışına ilişkin ön bilgilendirme ve sözleşme esaslarını düzenler."
     }
    ]
   },
@@ -441,7 +459,7 @@ export const CONTENT: LegalContent = {
    "h": "Satış ve sözleşmenin kurulması",
    "b": [
     {
-     "p": "Kullanıcı paket seçimini fiyatlar sayfasında veya uygulama içinde yapar ve WhatsApp üzerinden iletişim başlatır. Paket, ödeme ve tanımlama ayrıntıları kullanıcıyla ayrıca teyit edilir. Ödeme sonrasında yönetici paketi sistemde tanımlar ve hizmet başlar."
+     "p": "Kullanıcı paketi ve ödeme dönemini (aylık veya yıllık) seçer, bu belgeyi ve Adil Kullanım Politikası’nı okuduğunu onaylar, ekranda gösterilen sipariş özetini (satıcı, paket, süre, toplam bedel, ödeme yöntemi, başlama zamanı, otomatik yenileme ve cayma bilgisi) inceler, fatura bilgilerini girer ve ödemeyi PayTR güvenli ödeme sayfasında yapar. Ödeme, ödeme kuruluşu tarafından onaylandığında sözleşme kurulur ve paket kullanıcının hesabına kendiliğinden tanımlanır. Kurum lisansı ve Akademik Ekip İndirimi gibi özel teklifler için kullanıcıyla WhatsApp veya destek kanalı üzerinden ayrıca iletişim kurulabilir."
     }
    ]
   },
@@ -457,7 +475,7 @@ export const CONTENT: LegalContent = {
    "h": "Fiyat, vergi ve ödeme",
    "b": [
     {
-     "p": "Ödenecek toplam bedel, varsa vergiler ve indirimler, ödeme yöntemi ve ödeme zamanı işlem öncesinde kullanıcıya açıkça bildirilir. Her satışta bu bilgiler yazılı olarak teyit edilmeden sözleşme tamamlanmış sayılmaz."
+     "p": "Ödenecek toplam bedel, varsa vergiler ve indirimler, ödeme yöntemi ve ödeme zamanı işlem öncesinde sipariş özetinde kullanıcıya açıkça gösterilir. Fiyatlar Türk lirası olarak belirlenir ve vergiler dahildir; yabancı dildeki sayfalarda gösterilen döviz karşılıkları bilgi amaçlıdır, tahsilat Türk lirası üzerinden yapılır. Ödeme kredi veya banka kartıyla, tek çekim olarak PayTR aracılığıyla alınır; taksit uygulanmaz."
     }
    ]
   },
@@ -465,7 +483,7 @@ export const CONTENT: LegalContent = {
    "h": "Paketlerin yenilenmesi",
    "b": [
     {
-     "p": "Aylık ve yıllık paketlerde otomatik yenileme bulunmamaktadır. Dönem sonunda devam etmek isteyen kullanıcı yenilemeyi kendisi başlatır. Kullanıcıdan ayrıca onay alınmadan yeni dönem ücreti tahsil edilmez."
+     "p": "Aylık ve yıllık paketlerde otomatik yenileme bulunmamaktadır. Dönem sonunda devam etmek isteyen kullanıcı yenilemeyi kendisi başlatır. Kullanıcıdan ayrıca onay alınmadan yeni dönem ücreti tahsil edilmez. Aylık paket 30 gün, yıllık paket 365 gün geçerlidir. Aynı paket süresi dolmadan aynı dönem için yeniden satın alınırsa yeni süre kalan sürenin üzerine eklenir; başka bir pakete veya döneme geçişte yeni paketin süresi ödemenin onaylandığı gün başlar."
     }
    ]
   },
@@ -473,7 +491,7 @@ export const CONTENT: LegalContent = {
    "h": "Hizmetin başlama zamanı ve dijital hizmet",
    "b": [
     {
-     "p": "Hizmet, ödeme sonrasında paket yönetici tarafından tanımlandığında başlar. Gerekli hâllerde kullanıcıdan, hizmetin cayma süresi dolmadan başlatılmasına ilişkin ayrı ve açık talep/onay alınır ve bunun hukuki sonuçları açıklanır. Genel kullanım koşullarının kabulü, tek başına cayma hakkından feragat veya istisna oluşturmaz."
+     "p": "Hizmet, ödemenin ödeme kuruluşu tarafından onaylanmasıyla paketin hesaba tanımlandığı anda başlar. Satın alma sırasında kullanıcıdan, elektronik ortamda anında ifa edilen bu dijital hizmetin cayma süresi dolmadan başlatılmasına ilişkin ayrı ve açık talep/onay alınır ve bunun cayma hakkına etkisi açıklanır. Genel kullanım koşullarının kabulü, tek başına cayma hakkından feragat veya istisna oluşturmaz."
     }
    ]
   },
@@ -481,7 +499,7 @@ export const CONTENT: LegalContent = {
    "h": "Cayma hakkı ve iade",
    "b": [
     {
-     "p": "Tüketicinin cayma hakkı ve dijital hizmetlerde uygulanabilecek istisnalar, hizmetin niteliğine, ifanın başlayıp başlamadığına, kullanıcının önceden verdiği açık talep/onaya ve yürürlükteki mevzuata göre belirlenir. Satıcı, işlem öncesinde tüketiciye uygulanacak cayma/iade koşullarını açıkça bildirir; zorunlu tüketici hakları saklıdır."
+     "p": "Tüketicinin cayma hakkı ve dijital hizmetlerde uygulanabilecek istisnalar, hizmetin niteliğine, ifanın başlayıp başlamadığına, kullanıcının önceden verdiği açık talep/onaya ve yürürlükteki mevzuata göre belirlenir. Satıcı, işlem öncesinde tüketiciye uygulanacak cayma/iade koşullarını açıkça bildirir; zorunlu tüketici hakları saklıdır. İade gereken hâllerde bedel, ödemenin yapıldığı karta ödeme kuruluşu aracılığıyla iade edilir."
     }
    ]
   },
@@ -505,7 +523,7 @@ export const CONTENT: LegalContent = {
    "h": "Şikâyet ve başvuru",
    "b": [
     {
-     "p": "Kullanıcı, satın alma veya hizmetle ilgili sorunlarını platformun destek kanalı üzerinden bildirebilir."
+     "p": "Kullanıcı, satın alma veya hizmetle ilgili sorunlarını platformun destek kanalı, WhatsApp hattı veya satıcının yukarıdaki adresi üzerinden bildirebilir. Tüketici, yürürlükteki parasal sınırlar dâhilinde Tüketici Hakem Heyetine veya Tüketici Mahkemesine başvurabilir."
     }
    ]
   },
@@ -513,7 +531,7 @@ export const CONTENT: LegalContent = {
    "h": "Siparişe özel teyit",
    "b": [
     {
-     "p": "Her satın alma işleminde en azından satıcı bilgisi, kullanıcı bilgisi, paket adı, hizmet kapsamı, süre, limitler, toplam bedel, vergiler, ödeme yöntemi, hizmetin başlama zamanı, otomatik yenileme olup olmadığı ve uygulanacak cayma/iade şartları kullanıcıya işlemden önce sunulur; sipariş özeti ve sözleşme kalıcı veri saklayıcısıyla kullanıcıya iletilir."
+     "p": "Her satın alma işleminde en azından satıcı bilgisi, kullanıcı bilgisi, paket adı, hizmet kapsamı, süre, limitler, toplam bedel, vergiler, ödeme yöntemi, hizmetin başlama zamanı, otomatik yenileme olup olmadığı ve uygulanacak cayma/iade şartları kullanıcıya işlemden önce sunulur. Ödeme sonrasında sipariş özeti, kullanıcının Hesap sayfasındaki “Siparişlerim” bölümünden indirilebilir bir belge olarak kalıcı veri saklayıcısıyla kullanıcıya sunulur."
     }
    ]
   }
@@ -524,6 +542,9 @@ export const CONTENT: LegalContent = {
    "b": [
     {
      "p": "Bu bildirim, www.academiana.com.tr adresinde sunulan, yapay zekâ destekli bir akademik araştırma ve yazım platformu olan Academiana ile ilişkili kişisel veri işleme faaliyetlerini açıklar. Platform Türkiye’deki kullanıcıların erişimine açıktır ve başka ülkelerden de erişilebilir."
+    },
+    {
+     "p": "Veri sorumlusu ve satıcı: Alkın Mert Temel (şahıs işletmesi). Adres: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara. Vergi dairesi ve numarası: Gölbaşı Vergi Dairesi, 8370931187. İletişim: WhatsApp +90 542 526 66 50 ve platformdaki destek kanalı."
     }
    ]
   },
@@ -531,7 +552,7 @@ export const CONTENT: LegalContent = {
    "h": "Kişisel veri kategorileri",
    "b": [
     {
-     "p": "Hizmetin nasıl kullanıldığına bağlı olarak Academiana şunları işleyebilir: hesap ve iletişim verileri (ad, e-posta adresi ve isteğe bağlı kurum); kimlik doğrulama verileri (parola doğrulama verisi veya Google ya da Apple ile girişte alınan ad/e-posta); akademik çalışma alanı içeriği (projeler, bölümler, sürüm geçmişi, yorumlar, kaynaklar ve notlar); yüklenen dosyalar ve çıkarılan metin; yapay zekâ istemleri ve yanıtları; yapay zekâ çıktılarının tam metni, zaman damgaları, proje/bölüm adları ve kelime sayıları dâhil kullanım kanıt kayıtları; kullanım sayaçları (token, maliyet, arama ve sayfa); rastgele oluşturulan bir cihaz tanımlayıcısı ve bunun sunucu tarafında tutulan geri çözülemeyen özeti; Tek Proje paketi için kelime sayısı, geri çözülemeyen bir içerik özeti ve kapak bilgileri dâhil sınırlı indirme kanıtları; ödeme ve paket tanımlama bilgileri (ödeyenin adı, telefon numarası, tutar ve not); ortak yazar daveti e-posta adresleri; danışman bağlantısı erişimleri ve yorumları; kurum üyeliği ve kullanım istatistikleri; destek mesajları ve teknik hata verileri; günlük değişen, kimlik belirlemeyen ziyaret istatistikleri; uygulama içi bildirimler ve ilgili kişi başvuru kayıtları."
+     "p": "Hizmetin nasıl kullanıldığına bağlı olarak Academiana şunları işleyebilir: hesap ve iletişim verileri (ad, e-posta adresi ve isteğe bağlı kurum); kimlik doğrulama verileri (parola doğrulama verisi veya Google ya da Apple ile girişte alınan ad/e-posta); akademik çalışma alanı içeriği (projeler, bölümler, sürüm geçmişi, yorumlar, kaynaklar ve notlar); yüklenen dosyalar ve çıkarılan metin; yapay zekâ istemleri ve yanıtları; yapay zekâ çıktılarının tam metni, zaman damgaları, proje/bölüm adları ve kelime sayıları dâhil kullanım kanıt kayıtları; kullanım sayaçları (token, maliyet, arama ve sayfa); rastgele oluşturulan bir cihaz tanımlayıcısı ve bunun sunucu tarafında tutulan geri çözülemeyen özeti; Tek Proje paketi için kelime sayısı, geri çözülemeyen bir içerik özeti ve kapak bilgileri dâhil sınırlı indirme kanıtları; sipariş, ödeme ve fatura bilgileri (ödeyenin adı, telefon numarası, fatura adresi, e-posta adresi, sipariş numarası, paket, tutar, ödeme durumu ve satın alma sırasında verilen onaylar; kart bilgileri Academiana tarafından alınmaz); ortak yazar daveti e-posta adresleri; danışman bağlantısı erişimleri ve yorumları; kurum üyeliği ve kullanım istatistikleri; destek mesajları ve teknik hata verileri; günlük değişen, kimlik belirlemeyen ziyaret istatistikleri; uygulama içi bildirimler ve ilgili kişi başvuru kayıtları."
     }
    ]
   },
@@ -539,7 +560,7 @@ export const CONTENT: LegalContent = {
    "h": "Amaçlar ve hukuki dayanaklar",
    "b": [
     {
-     "p": "Kişisel veriler; hesap oluşturmak ve yönetmek, kullanıcıların kimliğini doğrulamak, akademik çalışma alanını ve dosya işlevlerini sunmak, yapay zekâ özelliklerini sağlamak, akademik kaynak aramak, kaynakçayı yönetmek, istatistik ve anket araçları sunmak, iş birliğini ve danışmanla paylaşımı mümkün kılmak, paketleri ve kullanım sınırlarını yönetmek, ücretli paketleri tanımlamak, destek sağlamak, kötüye kullanımı önlemek, platform güvenliğini sürdürmek, hataları gidermek, hizmet performansını ölçmek ve hukuki yükümlülüklere uymak amacıyla işlenir. GDPR kapsamında muhtemel hukuki dayanaklar şunları içerebilir: hesap ve talep edilen hizmetler için sözleşmenin ifası (Madde 6(1)(b)); orantılı güvenlik, kötüye kullanımın önlenmesi ve hizmet istatistikleri için meşru menfaatler (Madde 6(1)(f)); kanunen gerekli kayıtlar için hukuki yükümlülüğe uyum (Madde 6(1)(c)). Bu dayanaklar, veri sorumlusunca belgelenmiş ve amaca özgü bir değerlendirme gerektirir. Açık rızaya yalnızca gerçekten gerekli olduğu ve geçerli biçimde alındığı durumlarda dayanılır."
+     "p": "Kişisel veriler; hesap oluşturmak ve yönetmek, kullanıcıların kimliğini doğrulamak, akademik çalışma alanını ve dosya işlevlerini sunmak, yapay zekâ özelliklerini sağlamak, akademik kaynak aramak, kaynakçayı yönetmek, istatistik ve anket araçları sunmak, iş birliğini ve danışmanla paylaşımı mümkün kılmak, paketleri ve kullanım sınırlarını yönetmek, ödemeleri almak, siparişleri ve faturalandırmayı yürütmek, ücretli paketleri tanımlamak, destek sağlamak, kötüye kullanımı önlemek, platform güvenliğini sürdürmek, hataları gidermek, hizmet performansını ölçmek ve hukuki yükümlülüklere uymak amacıyla işlenir. GDPR kapsamında muhtemel hukuki dayanaklar şunları içerebilir: hesap ve talep edilen hizmetler için sözleşmenin ifası (Madde 6(1)(b)); orantılı güvenlik, kötüye kullanımın önlenmesi ve hizmet istatistikleri için meşru menfaatler (Madde 6(1)(f)); kanunen gerekli kayıtlar için hukuki yükümlülüğe uyum (Madde 6(1)(c)). Bu dayanaklar, veri sorumlusunca belgelenmiş ve amaca özgü bir değerlendirme gerektirir. Açık rızaya yalnızca gerçekten gerekli olduğu ve geçerli biçimde alındığı durumlarda dayanılır."
     }
    ]
   },
@@ -547,7 +568,7 @@ export const CONTENT: LegalContent = {
    "h": "Saklama",
    "b": [
     {
-     "p": "Hesap verileri, akademik içerik, dosyalar, yapay zekâ sohbetleri, kullanım sayaçları, cihaz tanımlayıcısı özetleri ve uygulama içi bildirimler kural olarak hesap silinene kadar saklanır. Ortak yazar davetleri 14 gün sonra geçersiz olur; ancak davet kaydı projeyle birlikte kalabilir. Danışmanla paylaşım, kullanıcı bağlantıyı iptal edene kadar erişilebilir kalır. Tam metinli yapay zekâ kullanım kanıtları hesap silinene kadar saklanır. Geri bildirim ve hata kayıtları süresiz saklanabilir; hesap silindikten sonra kullanıcıyla bağlantısı kaldırılır, ancak metin kalabilir. Ziyaret istatistikleri süresiz saklanır. Ödeme kayıtları kanuni muhasebe ve vergi saklama gerekliliklerine tabi olabilir."
+     "p": "Hesap verileri, akademik içerik, dosyalar, yapay zekâ sohbetleri, kullanım sayaçları, cihaz tanımlayıcısı özetleri ve uygulama içi bildirimler kural olarak hesap silinene kadar saklanır. Ortak yazar davetleri 14 gün sonra geçersiz olur; ancak davet kaydı projeyle birlikte kalabilir. Danışmanla paylaşım, kullanıcı bağlantıyı iptal edene kadar erişilebilir kalır. Tam metinli yapay zekâ kullanım kanıtları hesap silinene kadar saklanır. Geri bildirim ve hata kayıtları süresiz saklanabilir; hesap silindikten sonra kullanıcıyla bağlantısı kaldırılır, ancak metin kalabilir. Ziyaret istatistikleri süresiz saklanır. Sipariş, ödeme ve fatura kayıtları kanuni vergi ve ticaret saklama süreleri boyunca saklanır; hesap silinse de bu süre dolana kadar silinmez (hesapla bağlantısı kaldırılır)."
     }
    ]
   },
@@ -555,7 +576,7 @@ export const CONTENT: LegalContent = {
    "h": "Alıcılar ve uluslararası aktarımlar",
    "b": [
     {
-     "p": "Hizmet sağlayıcılar ve alıcılar şunları içerebilir: veritabanı, kimlik doğrulama ve dosya depolama için Supabase; barındırma ve içerik dağıtımı için Vercel; bir yapay zekâ özelliği kullanıldığında yapay zekâ işlemesi için Anthropic; kullanıcı ilgili giriş yöntemini seçtiğinde Google veya Apple. Akademik arama servisleri, kullanıcının hesap kimliği olmadan arama terimlerini ve DOI tanımlayıcılarını alabilir; bunlar arasında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall bulunur; API erişim bilgileri tanımlandığında Springer Nature, IEEE ve NASA ADS de kullanılabilir. Kullanıcının talebi üzerine LaTeX dosyaları Overleaf’e gönderilebilir ve kullanıcının başlattığı ödeme iletişimi WhatsApp üzerinden yürütülebilir."
+     "p": "Hizmet sağlayıcılar ve alıcılar şunları içerebilir: veritabanı, kimlik doğrulama ve dosya depolama için Supabase; barındırma ve içerik dağıtımı için Vercel; bir yapay zekâ özelliği kullanıldığında yapay zekâ işlemesi için Anthropic; kullanıcı ilgili giriş yöntemini seçtiğinde Google veya Apple. Akademik arama servisleri, kullanıcının hesap kimliği olmadan arama terimlerini ve DOI tanımlayıcılarını alabilir; bunlar arasında OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP ve Unpaywall bulunur; API erişim bilgileri tanımlandığında Springer Nature, IEEE ve NASA ADS de kullanılabilir. Kullanıcının talebi üzerine LaTeX dosyaları Overleaf’e gönderilebilir Ücretli paket satın alındığında ödeme, Türkiye’de lisanslı ödeme kuruluşu PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. aracılığıyla alınır; PayTR ödeme ve sipariş verilerini (ad, e-posta, telefon, fatura adresi, IP adresi, sipariş numarası, tutar) ve doğrudan kendi güvenli ödeme sayfasına girilen kart bilgilerini alır. Kullanıcının başlattığı destek iletişimi WhatsApp üzerinden yürütülebilir."
     }
    ]
   },

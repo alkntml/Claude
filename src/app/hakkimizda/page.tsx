@@ -3,7 +3,7 @@ import { WithMarks } from "@/components/brand-mark";
 import { JsonLd } from "@/components/json-ld";
 import { StaticPage } from "@/components/static-page";
 import { getLocale } from "@/i18n/server";
-import { CONTACT_EMAIL, INSTAGRAM } from "@/lib/site";
+import { CONTACT_EMAIL, INSTAGRAM, SELLER } from "@/lib/site";
 import { FOUNDER, founderLd } from "@/lib/structured-data";
 import { WHATSAPP_NUMBER } from "@/lib/pricing";
 import { pageMeta } from "@/lib/seo-server";
@@ -44,6 +44,8 @@ export default async function AboutPage() {
         <p>Academiana wurde von <strong>{FOUNDER.name}</strong> (Gründer und CEO) gegründet und wird von ihm geleitet.</p>
         <h2>Kontakt</h2>
         <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · E-Mail: <a href={`mailto:${email}`} className="font-medium text-ink-900 underline-offset-2 hover:underline">{email}</a></> : null} · Instagram: <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 underline-offset-2 hover:underline">@{INSTAGRAM.handle}</a></p>
+        <h2>Unternehmensangaben</h2>
+        <p>Verkäufer und Verantwortlicher: <strong>{SELLER.name}</strong> ({SELLER.kind.de}) · Anschrift: {SELLER.address} · Finanzamt {SELLER.taxOffice}, Steuernummer {SELLER.taxNo} · Tätigkeit: {SELLER.activity.de}. Zahlungen werden über das lizenzierte Zahlungsinstitut PayTR entgegengenommen.</p>
       </StaticPage>
     );
   }
@@ -72,6 +74,8 @@ export default async function AboutPage() {
         <p>Academiana was founded and is led by <strong>{FOUNDER.name}</strong>, Founder and CEO.</p>
         <h2>Contact</h2>
         <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · Email: <a href={`mailto:${email}`} className="font-medium text-ink-900 underline-offset-2 hover:underline">{email}</a></> : null} · Instagram: <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 underline-offset-2 hover:underline">@{INSTAGRAM.handle}</a></p>
+        <h2>Company information</h2>
+        <p>Seller and data controller: <strong>{SELLER.name}</strong> ({SELLER.kind.en}) · Address: {SELLER.address} · {SELLER.taxOffice} Tax Office, tax number {SELLER.taxNo} · Activity: {SELLER.activity.en}. Payments are collected through the licensed payment institution PayTR.</p>
       </StaticPage>
     );
   }
@@ -99,6 +103,8 @@ export default async function AboutPage() {
       <p>Academiana, Kurucu ve CEO <strong>{FOUNDER.name}</strong> tarafından kurulmuştur ve yönetilmektedir.</p>
       <h2>İletişim</h2>
       <p>WhatsApp: <span className="select-all font-medium text-ink-900">{phone}</span>{email ? <> · E-posta: <a href={`mailto:${email}`} className="font-medium text-ink-900 underline-offset-2 hover:underline">{email}</a></> : null} · Instagram: <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-900 underline-offset-2 hover:underline">@{INSTAGRAM.handle}</a></p>
+      <h2>Şirket bilgileri</h2>
+      <p>Satıcı ve veri sorumlusu: <strong>{SELLER.name}</strong> ({SELLER.kind.tr}) · Adres: {SELLER.address} · {SELLER.taxOffice} Vergi Dairesi, vergi no {SELLER.taxNo} · Faaliyet: {SELLER.activity.tr}. Ödemeler lisanslı ödeme kuruluşu PayTR aracılığıyla alınır.</p>
     </StaticPage>
   );
 }

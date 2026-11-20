@@ -1,6 +1,6 @@
 import type { LegalContent } from "./types";
 
-/** Hukuki metinler (EN). GDPR metni asıl metindir; diğerleri Türkçe asıldan çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). */
+/** Hukuki metinler (EN). GDPR metni asıl metindir; diğerleri Türkçe asıldan çeviridir. Kaynak PDF metni: docs/legal/yasal-metinler-2026-11-13.txt (tests/legal.test.ts Türkçe metnin kelimesi kelimesine aynı olduğunu denetler). D226: site sahibinin talimatıyla satıcı/veri sorumlusu bilgileri (vergi levhası) ve kartla ödeme (PayTR) akışı KVKK, Çerez, Mesafeli Sözleşmeler ve GDPR metinlerine işlendi. */
 export const CONTENT: LegalContent = {
  "kvkk": [
   {
@@ -8,6 +8,9 @@ export const CONTENT: LegalContent = {
    "b": [
     {
      "p": "This information notice has been prepared to provide information on the processing of personal data during the use of the Academiana platform offered at www.academiana.com.tr. Academiana is an AI-assisted online platform that supports academic research and writing processes."
+    },
+    {
+     "p": "Data controller and seller: Alkın Mert Temel (sole proprietorship). Address: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara, Türkiye. Tax office and number: Gölbaşı Tax Office, 8370931187. Contact: WhatsApp +90 542 526 66 50 and the platform’s support channel."
     }
    ]
   },
@@ -27,7 +30,7 @@ export const CONTENT: LegalContent = {
       "Usage and transaction records: the full text of AI outputs, date, work/section name, word count; token, cost, search and page counters; deletion records.",
       "Device and security data: a random device identifier created in the browser, its non-reversible digest kept on the server, and the first/last seen dates.",
       "Single Project plan usage records: download word count, a non-recoverable digest of the text and cover details (author, university, department and advisor name).",
-      "Payment/plan assignment records: payer’s name, phone number, amount and note. Card details are not entered into the Academiana system.",
+      "Order, payment and invoice records: the payer’s name, phone number, billing address, email address, order number, plan, amount, payment status and type, the confirmations given during purchase, and the IP address used by the payment institution for the transaction. Card details are entered on the payment institution’s secure page; Academiana does not receive or store card details.",
       "Invitation and sharing data: email for co-author invitations; access and comment information via the advisor link.",
       "Institutional licence data: institutional membership, usage statistics and institutional activity records.",
       "Support and technical records: the user’s feedback/error message and related technical error information.",
@@ -41,7 +44,7 @@ export const CONTENT: LegalContent = {
    "h": "Purposes of processing",
    "b": [
     {
-     "p": "Personal data is processed for the purposes of creating membership and managing the account, authentication, providing the academic workspace and file services, running AI features, providing source search and citation functions, performing statistical analysis, carrying out co-author and advisor sharing, managing plans and usage rights, assigning the plan after payment, providing customer support, ensuring security and preventing abuse, detecting technical problems, measuring service performance and fulfilling legal obligations. Data is not sold and is not used for advertising targeting. No third-party cookies for analytics or advertising purposes are used on the platform."
+     "p": "Personal data is processed for the purposes of creating membership and managing the account, authentication, providing the academic workspace and file services, running AI features, providing source search and citation functions, performing statistical analysis, carrying out co-author and advisor sharing, managing plans and usage rights, collecting payments, handling orders and invoicing, assigning the plan after payment, providing customer support, ensuring security and preventing abuse, detecting technical problems, measuring service performance and fulfilling legal obligations. Data is not sold and is not used for advertising targeting. No third-party cookies for analytics or advertising purposes are used on the platform."
     }
    ]
   },
@@ -49,7 +52,7 @@ export const CONTENT: LegalContent = {
    "h": "Method of collecting data",
    "b": [
     {
-     "p": "Data is collected electronically through the registration and sign-in screens, the content the user writes or uploads to the platform, the sharing and payment communication initiated by the user, the usage/security records automatically created by the platform, and the random device identifier created in the device storage."
+     "p": "Data is collected electronically through the registration and sign-in screens, the content the user writes or uploads to the platform, the sharing, purchase and support communication initiated by the user, the payment result notifications sent by the payment institution, the usage/security records automatically created by the platform, and the random device identifier created in the device storage."
     }
    ]
   },
@@ -57,7 +60,7 @@ export const CONTENT: LegalContent = {
    "h": "Retention periods",
    "b": [
     {
-     "p": "Account, academic content, files, conversations, counters, the device identifier digest and notifications are, as a rule, kept until the account is deleted. A co-author invitation becomes invalid within 14 days; the invitation record may be kept together with the work. The advisor sharing link remains accessible until the user revokes the link. Usage evidence records are kept until the account is deleted. Feedback and error records may be kept indefinitely; when the account is deleted, their link to the user is removed, but the text content may remain. Visit statistics are kept indefinitely. The retention of payment records is subject to applicable tax and accounting obligations."
+     "p": "Account, academic content, files, conversations, counters, the device identifier digest and notifications are, as a rule, kept until the account is deleted. A co-author invitation becomes invalid within 14 days; the invitation record may be kept together with the work. The advisor sharing link remains accessible until the user revokes the link. Usage evidence records are kept until the account is deleted. Feedback and error records may be kept indefinitely; when the account is deleted, their link to the user is removed, but the text content may remain. Visit statistics are kept indefinitely. Order, payment and invoice records are kept for the periods required by tax and commercial legislation and are not deleted before that period ends even if the account is deleted (their link to the account is removed)."
     }
    ]
   },
@@ -65,7 +68,7 @@ export const CONTENT: LegalContent = {
    "h": "Recipient groups and transfers abroad",
    "b": [
     {
-     "p": "Within the scope of providing the service, data may be transferred to Supabase for database, authentication and file storage services; to Vercel for hosting and delivery services; and to Anthropic (Claude) when AI features are used. Google and Apple are involved in the authentication process only when the relevant social sign-in method is chosen. In academic source searches, search terms and DOIs may be sent to source services such as OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; the user’s identity is not sent to these search services. If a key is configured, the Springer Nature, IEEE and NASA ADS services may also be used. At the user’s request, a LaTeX file may be transferred to Overleaf; in the Zotero integration the key entered by the user is not stored. Payment communication may be carried out via WhatsApp."
+     "p": "Within the scope of providing the service, data may be transferred to Supabase for database, authentication and file storage services; to Vercel for hosting and delivery services; and to Anthropic (Claude) when AI features are used. Google and Apple are involved in the authentication process only when the relevant social sign-in method is chosen. In academic source searches, search terms and DOIs may be sent to source services such as OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; the user’s identity is not sent to these search services. If a key is configured, the Springer Nature, IEEE and NASA ADS services may also be used. At the user’s request, a LaTeX file may be transferred to Overleaf; in the Zotero integration the key entered by the user is not stored. When a paid plan is purchased, payment is collected through the licensed payment institution PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. (Türkiye); for this purpose name and surname, email address, phone number, billing address, IP address, order number, plan name and amount are transferred to PayTR, and card details are entered directly on PayTR’s secure payment page. Support communication may be carried out via WhatsApp if the user wishes."
     }
    ]
   },
@@ -97,7 +100,7 @@ export const CONTENT: LegalContent = {
    "h": "Rights of the data subject and application",
    "b": [
     {
-     "p": "Data subjects may exercise their rights under Article 11 of the KVKK. On the platform, users can download their data in JSON format from the account page, delete their account and the data associated with the account, and create a data request. Data requests are answered free of charge within 30 days."
+     "p": "Data subjects may exercise their rights under Article 11 of the KVKK. On the platform, users can download their data in JSON format from the account page, delete their account and the data associated with the account, and create a data request. Data requests are answered free of charge within 30 days. Applications may also be sent in writing to the data controller’s address stated above."
     }
    ]
   },
@@ -325,7 +328,7 @@ export const CONTENT: LegalContent = {
    "h": "Third-party links",
    "b": [
     {
-     "p": "In operations initiated by the user, such as signing in with Google or Apple, the Overleaf/Zotero connection or payment communication via WhatsApp, the third parties’ own cookie and privacy policies may apply. Academiana does not manage the data processing activities of third parties in their own environments."
+     "p": "In operations initiated by the user, such as signing in with Google or Apple, the Overleaf/Zotero connection the PayTR secure payment page opened during payment (on the paytr.com domain, within a frame on our site) or support communication via WhatsApp, the third parties’ own cookie and privacy policies may apply. Academiana does not manage the data processing activities of third parties in their own environments."
     }
    ]
   },
@@ -422,10 +425,25 @@ export const CONTENT: LegalContent = {
  ],
  "distance": [
   {
+   "h": "Seller information",
+   "b": [
+    {
+     "ul": [
+      "Name / trade name: Alkın Mert Temel (sole proprietorship)",
+      "Address: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara, Türkiye",
+      "Tax office / tax identification number: Gölbaşı Tax Office / 8370931187",
+      "Activity: 582901 – Other software publishing",
+      "Website: www.academiana.com.tr",
+      "Contact: WhatsApp +90 542 526 66 50 and the platform’s support channel"
+     ]
+    }
+   ]
+  },
+  {
    "h": "Important note on scope",
    "b": [
     {
-     "p": "The current sales flow at Academiana is as follows: from the price page or the “Upgrade” button in the application, a pre-filled WhatsApp message containing the plan name and, if any, the discount code is opened; payment is taken outside the platform and the plan is assigned manually by an administrator. There is no online payment page on the platform and card details are not taken into the system. This document sets out the general pre-contractual information and contract principles according to the current flow."
+     "p": "At Academiana, plans are selected on the prices page or via the “Upgrade” button in the application. Payment is collected by credit or debit card through the secure payment page of the licensed payment institution PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. Card details are entered directly with PayTR; Academiana does not receive or store card details. This document sets out the pre-contractual information and contract principles for the sales flow."
     }
    ]
   },
@@ -441,7 +459,7 @@ export const CONTENT: LegalContent = {
    "h": "Sale and formation of the contract",
    "b": [
     {
-     "p": "The user selects the plan on the prices page or within the application and initiates communication via WhatsApp. The plan, payment and assignment details are confirmed with the user separately. After payment, the administrator assigns the plan in the system and the service begins."
+     "p": "The user selects the plan and billing period (monthly or annual), confirms having read this document and the Fair Use Policy, reviews the order summary shown on screen (seller, plan, duration, total price, payment method, start time, automatic renewal and withdrawal information), enters billing details and pays on PayTR’s secure payment page. The contract is formed when the payment is approved by the payment institution, and the plan is assigned to the user’s account automatically. For special offers such as institutional licences and the Academic Team Discount, separate contact may be made with the user via WhatsApp or the support channel."
     }
    ]
   },
@@ -457,7 +475,7 @@ export const CONTENT: LegalContent = {
    "h": "Price, tax and payment",
    "b": [
     {
-     "p": "The total amount payable, any taxes and discounts, the payment method and the payment time are clearly communicated to the user before the transaction. For each sale, the contract is not considered completed until this information has been confirmed in writing."
+     "p": "The total amount payable, any taxes and discounts, the payment method and the payment time are clearly shown to the user in the order summary before the transaction. Prices are set in Turkish lira and include taxes; foreign-currency equivalents shown on pages in other languages are for information only, and payment is collected in Turkish lira. Payment is taken by credit or debit card as a single payment through PayTR; instalments are not offered."
     }
    ]
   },
@@ -465,7 +483,7 @@ export const CONTENT: LegalContent = {
    "h": "Renewal of plans",
    "b": [
     {
-     "p": "There is no automatic renewal for monthly or annual plans. A user who wishes to continue at the end of the period initiates the renewal themselves. No fee for a new period is charged without separate approval from the user."
+     "p": "There is no automatic renewal for monthly or annual plans. A user who wishes to continue at the end of the period initiates the renewal themselves. No fee for a new period is charged without separate approval from the user. A monthly plan is valid for 30 days and an annual plan for 365 days. If the same plan is purchased again for the same billing period before it expires, the new period is added to the remaining period; when switching to another plan or billing period, the new plan’s period starts on the day the payment is approved."
     }
    ]
   },
@@ -473,7 +491,7 @@ export const CONTENT: LegalContent = {
    "h": "Start of the service and digital service",
    "b": [
     {
-     "p": "The service starts when the plan is assigned by the administrator after payment. Where necessary, a separate and explicit request/approval is obtained from the user for the service to start before the withdrawal period expires, and its legal consequences are explained. Acceptance of the general terms of use does not by itself constitute a waiver of the right of withdrawal or an exception."
+     "p": "The service starts when the payment is approved by the payment institution and the plan is assigned to the account. During purchase, a separate and explicit request/approval is obtained from the user for this digital service, performed instantly in electronic form, to start before the withdrawal period expires, and its effect on the right of withdrawal is explained. Acceptance of the general terms of use does not by itself constitute a waiver of the right of withdrawal or an exception."
     }
    ]
   },
@@ -481,7 +499,7 @@ export const CONTENT: LegalContent = {
    "h": "Right of withdrawal and refunds",
    "b": [
     {
-     "p": "The consumer’s right of withdrawal and the exceptions that may apply to digital services are determined according to the nature of the service, whether performance has begun, the explicit request/approval given in advance by the user and the legislation in force. The seller clearly communicates to the consumer before the transaction the withdrawal/refund conditions to be applied; mandatory consumer rights are reserved."
+     "p": "The consumer’s right of withdrawal and the exceptions that may apply to digital services are determined according to the nature of the service, whether performance has begun, the explicit request/approval given in advance by the user and the legislation in force. The seller clearly communicates to the consumer before the transaction the withdrawal/refund conditions to be applied; mandatory consumer rights are reserved. Where a refund is due, the amount is refunded to the card used for payment through the payment institution."
     }
    ]
   },
@@ -505,7 +523,7 @@ export const CONTENT: LegalContent = {
    "h": "Complaints and applications",
    "b": [
     {
-     "p": "The user may report problems related to the purchase or the service via the platform’s support channel."
+     "p": "The user may report problems related to the purchase or the service via the platform’s support channel, the WhatsApp line or the seller’s address above. Consumers may apply to the Consumer Arbitration Committee or the Consumer Court within the monetary limits in force."
     }
    ]
   },
@@ -513,7 +531,7 @@ export const CONTENT: LegalContent = {
    "h": "Order-specific confirmation",
    "b": [
     {
-     "p": "For each purchase, at least the seller information, user information, plan name, scope of service, duration, limits, total price, taxes, payment method, the start time of the service, whether there is automatic renewal and the withdrawal/refund conditions to be applied are presented to the user before the transaction; the order summary and contract are sent to the user on a durable medium."
+     "p": "For each purchase, at least the seller information, user information, plan name, scope of service, duration, limits, total price, taxes, payment method, the start time of the service, whether there is automatic renewal and the withdrawal/refund conditions to be applied are presented to the user before the transaction. After payment, the order summary is made available to the user on a durable medium as a downloadable document in the “My orders” section of the Account page."
     }
    ]
   }
@@ -524,6 +542,9 @@ export const CONTENT: LegalContent = {
    "b": [
     {
      "p": "This notice describes the personal data processing associated with Academiana, an AI-assisted academic research and writing platform available at www.academiana.com.tr. The platform is accessible to users in Türkiye and may also be accessed from other countries."
+    },
+    {
+     "p": "Data controller and seller: Alkın Mert Temel (sole proprietorship). Address: Örencik Mah. 3803 Cad. No: 17 İç Kapı No: 11, Gölbaşı / Ankara, Türkiye. Tax office and number: Gölbaşı Tax Office, 8370931187. Contact: WhatsApp +90 542 526 66 50 and the platform’s support channel."
     }
    ]
   },
@@ -531,7 +552,7 @@ export const CONTENT: LegalContent = {
    "h": "Categories of personal data",
    "b": [
     {
-     "p": "Depending on how the service is used, Academiana may process: account and contact data (name, email address and optional institution); authentication data (password verification data or name/email received through Google or Apple sign-in); academic workspace content (projects, sections, version history, comments, references and notes); uploaded files and extracted text; AI prompts and responses; usage evidence records including the full text of AI outputs, timestamps, project/section names and word counts; usage counters (tokens, cost, searches and pages); a randomly generated device identifier and its non-reversible server-side hash; limited download evidence for the One Project plan, including word count, a non-reversible content hash and cover details; payment and plan-assignment information (payer name, phone number, amount and note); collaborator invitation email addresses; advisor-link access and comments; institutional membership and usage statistics; support messages and technical error data; daily changing, non-identifying visit statistics; and in-app notifications and data-subject request records."
+     "p": "Depending on how the service is used, Academiana may process: account and contact data (name, email address and optional institution); authentication data (password verification data or name/email received through Google or Apple sign-in); academic workspace content (projects, sections, version history, comments, references and notes); uploaded files and extracted text; AI prompts and responses; usage evidence records including the full text of AI outputs, timestamps, project/section names and word counts; usage counters (tokens, cost, searches and pages); a randomly generated device identifier and its non-reversible server-side hash; limited download evidence for the One Project plan, including word count, a non-reversible content hash and cover details; order, payment and invoice information (payer name, phone number, billing address, email address, order number, plan, amount, payment status and the confirmations given during purchase; card details are not received by Academiana); collaborator invitation email addresses; advisor-link access and comments; institutional membership and usage statistics; support messages and technical error data; daily changing, non-identifying visit statistics; and in-app notifications and data-subject request records."
     }
    ]
   },
@@ -539,7 +560,7 @@ export const CONTENT: LegalContent = {
    "h": "Purposes and legal bases",
    "b": [
     {
-     "p": "Personal data is processed to create and administer accounts, authenticate users, provide the academic workspace and file functions, deliver AI features, search academic sources, manage references, provide statistical and survey tools, enable collaboration and advisor sharing, administer plans and usage limits, assign paid plans, provide support, prevent abuse, maintain platform security, troubleshoot errors, measure service performance and comply with legal obligations. The likely GDPR legal bases may include performance of a contract (Article 6(1)(b)) for account and requested services; legitimate interests (Article 6(1)(f)) for proportionate security, abuse prevention and service statistics; and compliance with a legal obligation (Article 6(1)(c)) for records required by law. These bases require a documented, purpose-specific assessment by the controller. Consent will be relied upon only where it is genuinely required and validly obtained."
+     "p": "Personal data is processed to create and administer accounts, authenticate users, provide the academic workspace and file functions, deliver AI features, search academic sources, manage references, provide statistical and survey tools, enable collaboration and advisor sharing, administer plans and usage limits, collect payments, handle orders and invoicing, assign paid plans, provide support, prevent abuse, maintain platform security, troubleshoot errors, measure service performance and comply with legal obligations. The likely GDPR legal bases may include performance of a contract (Article 6(1)(b)) for account and requested services; legitimate interests (Article 6(1)(f)) for proportionate security, abuse prevention and service statistics; and compliance with a legal obligation (Article 6(1)(c)) for records required by law. These bases require a documented, purpose-specific assessment by the controller. Consent will be relied upon only where it is genuinely required and validly obtained."
     }
    ]
   },
@@ -547,7 +568,7 @@ export const CONTENT: LegalContent = {
    "h": "Retention",
    "b": [
     {
-     "p": "Account data, academic content, files, AI conversations, usage counters, device identifier hashes and in-app notifications are generally retained until the account is deleted. Collaborator invitations expire after 14 days, although the invitation record may remain with the project. Advisor sharing remains available until the user revokes the link. Full-text AI usage evidence is retained until account deletion. Feedback and error records may be retained indefinitely, with the user link removed after account deletion while the text may remain. Visit statistics are retained indefinitely. Payment records may be subject to statutory accounting and tax retention requirements."
+     "p": "Account data, academic content, files, AI conversations, usage counters, device identifier hashes and in-app notifications are generally retained until the account is deleted. Collaborator invitations expire after 14 days, although the invitation record may remain with the project. Advisor sharing remains available until the user revokes the link. Full-text AI usage evidence is retained until account deletion. Feedback and error records may be retained indefinitely, with the user link removed after account deletion while the text may remain. Visit statistics are retained indefinitely. Order, payment and invoice records are retained for statutory tax and commercial retention periods and are not deleted before that period ends even if the account is deleted (the link to the account is removed)."
     }
    ]
   },
@@ -555,7 +576,7 @@ export const CONTENT: LegalContent = {
    "h": "Recipients and international transfers",
    "b": [
     {
-     "p": "Service providers and recipients may include Supabase for database, authentication and file storage; Vercel for hosting and content delivery; Anthropic for AI processing when an AI feature is used; and Google or Apple when the user chooses the relevant sign-in method. Academic search services may receive search terms and DOI identifiers, without the user's account identity, including OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; Springer Nature, IEEE and NASA ADS may also be used where API credentials are configured. At the user's request, LaTeX files may be sent to Overleaf and user-initiated payment communications may take place through WhatsApp."
+     "p": "Service providers and recipients may include Supabase for database, authentication and file storage; Vercel for hosting and content delivery; Anthropic for AI processing when an AI feature is used; and Google or Apple when the user chooses the relevant sign-in method. Academic search services may receive search terms and DOI identifiers, without the user's account identity, including OpenAlex, Crossref, PubMed/Europe PMC, arXiv, DOAJ, DataCite, ERIC, DBLP, PLOS, Zenodo, HAL, Open Library, INSPIRE-HEP and Unpaywall; Springer Nature, IEEE and NASA ADS may also be used where API credentials are configured. At the user's request, LaTeX files may be sent to Overleaf When a paid plan is purchased, payment is collected through PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş., a payment institution licensed in Türkiye, which receives order and payment data (name, email, phone, billing address, IP address, order number, amount) and the card details entered directly on its own secure payment page. User-initiated support communications may take place through WhatsApp."
     }
    ]
   },

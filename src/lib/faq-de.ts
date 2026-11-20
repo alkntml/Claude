@@ -244,7 +244,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   yukseltme: {
     q: "Wie upgrade und bezahle ich?",
-    a: "Drücken Sie auf der Kontoseite unter dem gewünschten Tarif auf „Upgrade“. Es öffnet sich eine vorbereitete WhatsApp-Nachricht mit Ihrem aktuellen und dem gewählten Tarif; sobald Sie sie senden, teilen wir Ihnen die Zahlungsdetails mit, und Ihr Tarif wird nach der Zahlung in Ihrem Konto freigeschaltet. Kartendaten geben Sie auf unserer Website nie ein.",
+    a: "Drücken Sie auf der Kontoseite unter dem gewünschten Tarif auf „Upgrade“, wählen Sie monatliche oder jährliche Zahlung und dann **Mit Karte bezahlen**. Nach Prüfung der Bestellübersicht und Eingabe Ihrer Rechnungsdaten zahlen Sie per Kredit- oder Debitkarte als Einmalzahlung auf der sicheren Seite des lizenzierten Zahlungsinstituts **PayTR**. Ihre Kartendaten erreichen Academiana nie. Sobald die Zahlung bestätigt ist, wird Ihr Tarif **automatisch und sofort** freigeschaltet; die Bestellübersicht können Sie unter Konto → Meine Bestellungen herunterladen. Auf demselben Weg verlängern Sie Ihren aktuellen Tarif.",
   },
   yillik: {
     q: "Gibt es eine jährliche Zahlung? Wie funktioniert mein Kontingent?",
@@ -252,7 +252,7 @@ export const FAQ_DE: Record<string, { q: string; a: string }> = {
   },
   iptal: {
     q: "Gibt es eine Vertragsbindung? Wie kündige ich?",
-    a: "Es gibt keine Vertragsbindung. Um zu kündigen oder den Tarif zu wechseln, schreiben Sie uns einfach per WhatsApp. Ihr Tarif bleibt bis zum Ende des bezahlten Zeitraums aktiv, danach wechseln Sie in den kostenlosen Tarif; Ihre Arbeit wird nicht gelöscht.",
+    a: "Es gibt keine Vertragsbindung und keine automatische Verlängerung: Jede Zahlung ist einmalig, Ihre Karte wird nie automatisch erneut belastet. Ihr Tarif läuft bis zum Ende des bezahlten Zeitraums; wenn Sie nicht verlängern, wechseln Sie in den kostenlosen Tarif, und Ihre Arbeit wird nicht gelöscht. Sie können jederzeit per Karte auf einen höheren Tarif wechseln. Widerrufs- und Rückerstattungsbedingungen stehen im Dokument „Fernabsatzverträge und vorvertragliche Informationen“; bei Fragen schreiben Sie uns per WhatsApp.",
   },
   ekip: {
     q: "Gibt es einen Rabatt für akademische Teams oder Forschungsgruppen?",

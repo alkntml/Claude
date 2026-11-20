@@ -51,7 +51,7 @@ export const GUIDE: GuideChapter[] = [
         s("Her çalışmada ilk kurgu ve ilk başlık önerisi yapay zekâ hakkınızdan düşülmez; hakkınız ilk bölümleri yazmaya kalır.", "In each project, the first blueprint and the first title suggestions do not count against your AI allowance, so it is saved for writing your first sections."),
         s("Sayfa veya yapay zekâ hakkınız dolunca çalışmalarınızı yalnızca görüntüleyip indirebilirsiniz; diğer özellikler yükseltene veya hak yenilenene kadar kapanır. Ücretsiz araçlar açık kalır.", "When your page or AI allowance runs out, you can only view and download your works; other features close until you upgrade or the allowance renews. The free tools stay open."),
         s("Pakete bağlı özelliklerde kilit simgesi görürsünüz; tıklayınca hangi pakette açıldığı gösterilir.", "Plan-gated features show a lock; clicking it shows which plan unlocks it."),
-        s("Yükseltmek için “Yükselt” → “WhatsApp ile yükselt”.", "To upgrade: “Upgrade” → “Upgrade via WhatsApp”."),
+        s("Yükseltmek için “Yükselt” → “Kartla öde”: ödeme PayTR’nin güvenli sayfasında kartla yapılır, paket hemen tanımlanır.", "To upgrade: “Upgrade” → “Pay by card”: you pay by card on PayTR’s secure page and the plan is activated immediately."),
       ], tip: s("Üretilen metni silmek kullanılan hakkı geri vermez; büyük işlerden önce kurguyu onaylamak hakkınızı verimli kullanmanızı sağlar.", "Deleting generated text does not refund the request; approving the blueprint first makes large jobs more efficient.") },
     ],
   },
@@ -370,7 +370,7 @@ export const GUIDE: GuideChapter[] = [
       { id: "abonelik", title: s("Hesap ve abonelik", "Account and subscription"), where: s("Sol menü: “Hesap ve abonelik”", "Left menu: “Account and subscription”"), steps: [
         s("“Profil”: ad soyad ve varsayılan atıf stili; “Şifremi değiştir”.", "“Profile”: name and default citation style; “Change password”."),
         s("“Bu ayki kullanım”: yapay zekâ istekleri, kaynak taramaları, depolama ve aktif projeler.", "“This month’s usage”: AI requests, source searches, storage and active projects."),
-        s("“Paketler” → “Yükselt” → “WhatsApp ile yükselt”; “Süreyi uzat”.", "“Plans” → “Upgrade” → “Upgrade via WhatsApp”; “Extend”."),
+        s("“Paketler” → “Yükselt” → “Kartla öde”; “Süreyi uzat”; “Siparişlerim” → sipariş özetini indir.", "“Plans” → “Upgrade” → “Pay by card”; “Extend”; “My orders” → download the order summary."),
       ] },
       { id: "davet", title: s("Davet et, kazan", "Invite and earn"), where: s("Sol menü altında: “Davet et, kazan”", "Bottom of left menu: “Invite & earn”"), steps: [
         s("Davet bağlantınızı paylaşın.", "Share your invite link."),

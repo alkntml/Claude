@@ -1,6 +1,8 @@
 # Hukukçu için not — kartla ödeme (PayTR) (20 Kasım 2026)
 
-Hukuki metinler değiştirilmedi. Kartla ödeme açılmadan önce aşağıdakilerin mevcut metinlerle uyumunu değerlendirmenizi rica ederiz.
+**Güncelleme (20 Kasım 2026, D226):** Site sahibinin talimatıyla KVKK Aydınlatma Metni, Çerez Politikası, Mesafeli Sözleşmeler ve Ön Bilgilendirme ile GDPR bildirimi aşağıdaki konularda güncellendi (sürüm 2026-11-20): satıcı/veri sorumlusu bilgileri (vergi levhası; T.C. kimlik no yazılmadı), PayTR ile kartla ödeme ve aktarılan veriler, ödeme kayıtlarının hesap silinse de yasal süre saklanması, sözleşmenin ödeme onayıyla kurulması, tek çekim ve TL tahsilat, aylık 30 / yıllık 365 gün ve süre ekleme kuralı, dijital hizmetin hemen başlaması için ayrı onay (ödeme ekranında zorunlu kutu), karta iade, Tüketici Hakem Heyeti/Mahkemesi, sipariş özetinin Hesap → Siparişlerim’den indirilebilir belge olarak verilmesi. Kullanım Koşulları değiştirilmedi. Aşağıdaki sorular ve bu değişikliklerin incelenmesi rica olunur.
+
+Ödeme ekranındaki onay metni: “Hizmetin ödeme onaylanır onaylanmaz başlamasını talep ediyorum. Elektronik ortamda anında ifa edilen bu dijital hizmette, ifaya başlandıktan sonra cayma hakkının mevzuatın öngördüğü ölçüde kullanılamayacağını okudum.”
 
 ## Yeni hizmet
 

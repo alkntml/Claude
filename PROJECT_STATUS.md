@@ -11,7 +11,7 @@ _Son güncelleme: 20 Kasım 2026 — her büyük değişiklik commit’inde gün
 | Yönetici | ✅ | Sahibin hesabı `role = admin`, `plan_id = premium` |
 | Claude API | ✅ Çalışıyor | Opus 5.5 ve Haiku 5.5 canlı anahtarla test edildi. Asistan canlı sitede yanıt veriyor |
 | Akademik veri tabanı araması | ✅ Kullanıcı canlıda çalıştığını doğruladı | Otomatik araştırma ve yazım çalışıyor. Sonraki eklenen özellikler (Türkiye kaynakları, sunum, istatistik, dergi önerisi, kurum lisansı, davet) canlıda henüz denenmedi |
-| Ödeme | ⚠️ PayTR altyapısı hazır, bilgiler bekleniyor (D225) | Şimdilik WhatsApp ile; `PAYTR_*` girilince kartla ödeme açılır. Stripe/iyzico kodu kullanılmıyor |
+| Ödeme | ✅ PayTR (D225/D226) | Kartla ödeme, test ödemesi başarılı; canlı mod için `PAYTR_TEST_MODE=0`. Stripe/iyzico kodu kullanılmıyor |
 | E-posta | ⚠️ Supabase varsayılanı | Saatlik gönderim limiti düşük; özel SMTP (Resend vb.) önerildi |
 | Demo | ✅ | Sunucusuz tarayıcı demosu: https://claude.ai/artifact/6ckTR9LQUpjPv2jNnnrhgG (AI, arama ve dışa aktarma kapalı) |
 
@@ -297,6 +297,7 @@ _Son güncelleme: 20 Kasım 2026 — her büyük değişiklik commit’inde gün
 - D94: maliyet denetimi (Opus önbellek %5, Haiku uzun istem, bilinmeyen model, kesilen/okunamayan çağrılar, araç maliyeti toplamlara) + Yönetim → Maliyet sağlığı kartı
 - D93: Semantic Scholar kaldırıldı (toplam 12 veri tabanı); asistan kullanım sorularını rehbere göre yanıtlar (Haiku, bağlamsız)
 
+- **PayTR ve satıcı bilgileri (D226):** hukuki metinler (KVKK, Çerez, Mesafeli, GDPR) PayTR ve vergi levhası bilgileriyle güncellendi; ödeme öncesi sipariş özeti + hemen başlama onayı; Hesap → Siparişlerim (sipariş özeti indirme); süre uzatma kartla; migration 46.
 - **Kartla ödeme altyapısı (D225):** PayTR iFrame API hazır (sipariş tablosu, imzalı bildirim, paket tek sefer tanımlanır, Yönetim → Ödemeler). PayTR bilgileri Vercel’e girilene kadar kapalı; ödeme WhatsApp’tan sürüyor. Migration 45 kullanıcı tarafından çalıştırılacak.
 - **Yeni analizler ve meta-analiz (D224):** Wilcoxon, Friedman, Dunn, iki yönlü ANOVA, tekrarlı ölçümler ANOVA (Mauchly, GG), lojistik regresyon (R ile eşleşir); sistematik derlemede “7. Meta-analiz” (birleşik etki, I², Egger, orman/huni, PRISMA maddeleri); 8 yeni blog yazısı × 3 dil; landing’de 30 test ve yöntem.
 - **Test programı ve düzeltmeler (D221–D222):** 200 iddialık Mizan seti, P/R/F1; PDF yazı tipi, LaTeX 11/11, basılı sayfa numarası, PRISMA (RoB 2, ROBINS-I, JBI, NOS, kontrol listesi), istatistik (Shapiro–Wilk, Fisher, Tukey, Games–Howell, etki büyüklüğü GA, regresyon varsayımları; R ile 120/120), sütun bazında ondalık okuma.

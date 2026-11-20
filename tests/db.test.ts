@@ -852,6 +852,17 @@ describe("anketler", () => {
     await expectError(db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try) values ('ACDBTEST004', '${A}', 'pro', 'monthly', 30, 0)`), /check/i);
   });
 
+  it("migration 46: hesap silinince ödeme kaydı silinmez, sahibi boşaltılır; satın alma onayları saklanır (D226)", async () => {
+    const C = "46464646-4646-4646-4646-464646464646";
+    await db.exec(`insert into auth.users (id, email, raw_user_meta_data) values ('${C}', 'c@ornek.com', '{}')`);
+    await db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try, immediate_start_consent, distance_version, buyer_email) values ('ACDBKEEP001', '${C}', 'pro', 'monthly', 30, 899, true, '2026-11-20', 'c@ornek.com')`);
+    await db.exec(`delete from auth.users where id = '${C}'`);
+    const r = (await db.query<{ user_id: string | null; immediate_start_consent: boolean; amount_try: string }>(`select user_id, immediate_start_consent, amount_try from public.payment_orders where merchant_oid = 'ACDBKEEP001'`)).rows[0];
+    expect(r.user_id).toBeNull();
+    expect(r.immediate_start_consent).toBe(true);
+    expect(Number(r.amount_try)).toBe(899);
+  });
+
   it("migration 43: bölüm ayarları, kullanıcı şablonları (yalnızca sahibi) ve yapı geçmişi (yalnızca sunucu yazar); tekrar çalıştırılabilir (D171)", async () => {
     const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'D171 deneme', 'thesis', 'master') returning id`)).rows;
     const [st] = (await db.query<{ requirement: string; scope: string; hidden: boolean; critical: boolean; modified: boolean }>(

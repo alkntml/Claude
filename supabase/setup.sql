@@ -2897,3 +2897,15 @@ alter table public.payment_orders add column if not exists invoice_no text check
 create index if not exists payment_orders_invoice_queue_idx on public.payment_orders (created_at desc) where invoice_type = 'commercial' and status = 'paid';
 
 select 'D232 tamam' as durum;
+
+
+-- ---------- 20261216000052_remove_trial_plan ----------
+-- =====================================================================
+-- D233: 1 TL “Deneme (1 TL)” paketi ve ödeme testi kaldırıldı. Pakete bağlı hesaplar Ücretsiz’e alınır, paket silinir.
+-- Sipariş kayıtları (payment_orders, plan_purchases) silinmez; plan kimliği kayıtta kalır. Tekrar çalıştırılabilir.
+-- =====================================================================
+
+update public.profiles set plan_id = 'free', plan_expires_at = null, plan_period = 'monthly' where plan_id = 'deneme';
+delete from public.plans where id = 'deneme';
+
+select 'D233 tamam' as durum;

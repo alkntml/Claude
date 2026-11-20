@@ -1376,3 +1376,8 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - Liste: `status = paid` ve `invoice_type = commercial` siparişler (`lib/payments/invoice-queue.ts`, `GET/POST /api/admin/invoices`). Kart başına unvan, vergi no, vergi dairesi, adres, telefon, e-posta, paket, KDV dahil tutar, sipariş no; “Bilgileri kopyala”; “Kesildi olarak işaretle” (+ isteğe bağlı fatura no, geri alınabilir). Migration 51: `invoiced_at`, `invoice_no`.
 - Bildirim ışığı: menüde “Faturalar” yanında kırmızı, yanıp sönen sayı (telefonda seçim kutusunda “(n yeni)”); 60 sn’de bir yenilenir. Yalnızca gerçek (test olmayan) ödemeli, henüz kesilmemiş siparişler sayılır; test ödemeleri listede “TEST” etiketiyle görünür ama sayılmaz.
 - Bireysel fatura listede yok (istek yalnızca ticari içindi).
+
+## D233 — 1 TL deneme paketi ve ödeme testi kaldırıldı (21 Kasım 2026)
+- **Kullanıcı isteği:** “Test ödemesi kısmını tamamen kaldır, ilgili her şeyi sil.” D228–D230 geri alındı.
+- Kod: `components/admin/payment-test.tsx` ve Sistem durumu’ndaki kart, `TEST_PLAN_ID`, checkout’taki yönetici/test paketi istisnası, `PLAN_RANK.deneme` ve yıllık seçenek istisnası, ilgili testler silindi. Migration 52: bu pakete bağlı hesaplar Ücretsiz’e alınır, `deneme` paketi silinir; sipariş kayıtları (payment_orders, plan_purchases) silinmez. `check_status.sql`’deki 47/49 satırları kaldırıldı, 52 eklendi.
+- **Bilerek kalanlar:** PayTR test modunda kartla ödemeyi yalnızca yönetici ve `PAYTR_TEST_EMAILS` listesine açan güvenlik kuralı (D227) ve canlı modda test bildirimini reddeden kontrol; çünkü PayTR test kartıyla ücretsiz paket alınmasını engeller.

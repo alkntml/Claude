@@ -8,8 +8,6 @@ import { discountedPrice, type DiscountCode } from "@/lib/discount";
 import { hasYearlyOption, PLAN_RANK, SINGLE_PLAN_DAYS, YEARLY_DAYS, yearlyTotalPrice, type BillingPeriod } from "@/lib/pricing";
 
 export const MONTHLY_DAYS = 30;
-/** D228: 1 TL’lik gizli ödeme deneme paketi (yalnızca yönetici ve test listesine; yalnızca aylık) */
-export const TEST_PLAN_ID = "deneme";
 
 export interface OrderQuote { amount: number; list: number; days: number; discountCode: string | null }
 
@@ -17,7 +15,6 @@ export function orderQuote(plan: { id: string; price_monthly: number }, period: 
   const list = Number(plan.price_monthly) || 0;
   if (!(list > 0) || plan.id === "free") return null;
   if (period === "yearly") {
-    if (plan.id === TEST_PLAN_ID) return null;
     if (!hasYearlyOption(plan.id, list)) return null;
     return { amount: yearlyTotalPrice(list), list: list * 12, days: YEARLY_DAYS, discountCode: null };
   }

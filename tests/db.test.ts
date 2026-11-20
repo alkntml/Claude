@@ -353,7 +353,7 @@ describe("migration'lar ve seed", () => {
     expect([by.free.pages, by.basic.pages, by.pro.pages, by.premium.pages]).toEqual(["5", "25", "50", "85"]);
   });
   it("paketleri ve ayarları oluşturur", async () => {
-    const plans = await db.query<{ id: string }>("select id from public.plans where is_active order by sort_order"); // D230: 1 TL deneme paketi gizli (yalnızca yönetici Ödeme testi)
+    const plans = await db.query<{ id: string }>("select id from public.plans where is_active order by sort_order"); 
     expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium", "single"]);
     const p = await db.query<{ id: string; price_monthly: string; limits: Record<string, number | null> }>("select id, price_monthly, limits from public.plans order by sort_order");
     const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
@@ -920,12 +920,8 @@ describe("anketler", () => {
     expect(by.single.projects).toBe(5);
   });
 
-  it("migration 47/49: 1 TL deneme paketi gizli (D230), Basic haklarıyla", async () => {
-    const r = (await db.query<{ price_monthly: string; is_active: boolean; same: boolean }>(`select d.price_monthly, d.is_active, d.limits = b.limits as same from public.plans d, public.plans b where d.id = 'deneme' and b.id = 'basic'`)).rows[0];
-    expect(Number(r.price_monthly)).toBe(1);
-    expect(r.is_active).toBe(false);
-    expect(r.same).toBe(true);
-    expect(await as(A, `select id from public.plans where id = 'deneme'`)).toHaveLength(0);
+  it("migration 52: 1 TL deneme paketi ve kullananlar temizlenir (D233)", async () => {
+    expect((await db.query(`select id from public.plans where id = 'deneme'`)).rows).toHaveLength(0);
   });
 
   it("migration 43: bölüm ayarları, kullanıcı şablonları (yalnızca sahibi) ve yapı geçmişi (yalnızca sunucu yazar); tekrar çalıştırılabilir (D171)", async () => {

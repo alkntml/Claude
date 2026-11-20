@@ -6,7 +6,7 @@ import { env } from "@/lib/env";
 import { localeFromRequest } from "@/i18n/server";
 import { adminClient } from "@/lib/supabase/admin";
 import { legalDoc } from "@/lib/legal/docs";
-import { isValidPhone, normalizePhone, orderQuote, purchaseBlockReason, TEST_PLAN_ID } from "@/lib/payments/order";
+import { isValidPhone, normalizePhone, orderQuote, purchaseBlockReason } from "@/lib/payments/order";
 import { INDIVIDUAL_PAYTR_ADDRESS, InvoiceBody, invoiceErrors, invoiceRecord, isValidEmail, type InvoiceForm } from "@/lib/payments/invoice";
 import { canPayByCard, clientIp, iframeUrl, newMerchantOid, paytrCreds, requestToken } from "@/lib/payments/paytr";
 
@@ -44,13 +44,11 @@ export const POST = route("payments.checkout", async (req) => {
 
   const db = adminClient();
   const { data: plan } = await db.from("plans").select("id, name, price_monthly, is_active").eq("id", b.planId).maybeSingle();
-  // D230: 1 TL deneme paketi herkese kapalı; yalnızca yönetici (Yönetim → Sistem durumu → Ödeme testi) satın alabilir
-  const testPlan = plan?.id === TEST_PLAN_ID && s.profile.role === "admin";
-  if (!plan || (plan.is_active === false && !testPlan)) throw new ApiError(404, "Paket bulunamadı");
+  if (!plan || plan.is_active === false) throw new ApiError(404, "Paket bulunamadı");
   const quote = orderQuote({ id: plan.id, price_monthly: Number(plan.price_monthly) }, b.period, b.period === "monthly" ? await userDiscount(s.profile) : null);
   if (!quote) throw new ApiError(422, "Bu paket için kartla ödeme yapılamaz");
-  // D231: süren paketten daha düşük pakete / yıllığın yerine aylığa geçiş reddedilir (yönetici ödeme testi hariç)
-  if (!testPlan && s.profile.role !== "admin") {
+  // D231: süren paketten daha düşük pakete / yıllığın yerine aylığa geçiş reddedilir
+  {
     // Kişisel paket (kurum paketi ve yönetici görünümü değil): profiles.plan_id
     const block = purchaseBlockReason({ plan_id: s.profile.personal_plan_id ?? s.profile.plan_id, plan_expires_at: s.profile.plan_expires_at ?? null, plan_period: s.profile.plan_period }, { plan_id: plan.id, period: b.period });
     if (block) throw new ApiError(409, block, "plan_downgrade");

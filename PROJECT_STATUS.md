@@ -2,6 +2,22 @@
 
 _Son güncelleme: 20 Kasım 2026 — her büyük değişiklik commit’inde güncellenir_
 
+## ⏩ Kaldığımız yer (devir notu, 20 Kasım 2026)
+Yeni oturum önce bunu, sonra `TODO.md` → “Kullanıcının yapması gereken” bölümünü okusun. Kod tarafında yarım iş yok; her şey `main`’de ve yayında (son commit D228).
+
+**Son yapılanlar (D224–D228):**
+- D224: yeni istatistik analizleri (Wilcoxon, Friedman, Dunn, iki yönlü/tekrarlı ANOVA, lojistik), sistematik derlemede meta-analiz, 8 blog yazısı × 3 dil.
+- D225: PayTR kartla ödeme altyapısı (iFrame API, imzalı bildirim, `payment_orders`, Yönetim → Ödemeler). Kullanıcı PayTR bilgilerini Vercel’e girdi; test modunda test ödemesi BAŞARILI.
+- D226: ödeme altyapısı PayTR olarak site geneline ve hukuki metinlere (KVKK, Çerez, Mesafeli, GDPR; sürüm 2026-11-20) işlendi; satıcı bilgileri `lib/site.ts → SELLER` (vergi levhası; T.C. kimlik no yazılmaz); sipariş özeti + hemen başlama onayı; Hesap → Siparişlerim.
+- D227: güvenlik: test modunda kartla ödeme yalnızca yönetici + `PAYTR_TEST_EMAILS`; canlıda test bildirimi ve TL dışı para birimi reddedilir; Next.js 15.5.29.
+- D228: gizli 1 TL “Deneme (1 TL)” paketi (yalnızca yönetici/test listesi) — kullanıcı kendisi gerçek ödeme deneyecek.
+
+**Kullanıcıdan beklenen (henüz teyit edilmedi):** migration 45 ✅ (Ödemeler ekranı tablo uyarısı vermedi), migration 46 ve 47 çalıştırıldı mı bilinmiyor; PayTR canlı mod + Vercel `PAYTR_TEST_MODE=0`; PayTR Mağaza Parola yenileme (sohbette paylaşıldı); 2 adımlı doğrulama; KDV mükellefiyeti mali müşavirle (sitede “Fiyatlara KDV dahildir” yazıyor); hukukçuya `docs/legal/HUKUKCU_NOTU_ODEME.md`; test hesabının paketini geri alma.
+
+**Bekleyen kararlar / açık konular:** iletisim@academiana.com.tr çalışmıyor (Google Workspace alınamadı) — kullanıcı bir Gmail adresi verecek; o adres sitede iletisim@ yerine yazılacak ve Supabase SMTP’ye (smtp.gmail.com, uygulama şifresi) bağlanacak. Kartla ödeme canlıya geçince SSS/Yenilikler zaten güncel (D226).
+
+**Sohbet dışı çıktılar (depoda değil):** Zenit·Rasat·Mizan reklam videosu (80 sn ve seslendirmeli 81,5 sn), kapaklar ve Instagram metni kullanıcıya dosya olarak iletildi; üretim dosyaları geçici çalışma klasöründeydi (D195: depoda video üretim dosyası tutulmaz).
+
 ## Canlı ortam
 | Bileşen | Durum | Ayrıntı |
 |---|---|---|

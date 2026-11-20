@@ -120,6 +120,8 @@ export function UpgradeDialogHost() {
   };
 
   const cardOn = !!data?.cardPayments;
+  /** Onay işaretlenmeden ödeme düğmesine basılırsa onay kutusuna kaydır (telefonda kutu ekranın dışında kalabilir) */
+  const needAck = () => { setAckError(true); document.getElementById("upgrade-ack")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
   const quote = (p: PlanRow) => orderQuote(p, period, yearlyMode ? null : data?.discount);
   const pay = async () => {
     if (!card) return;
@@ -153,7 +155,7 @@ export function UpgradeDialogHost() {
           </div>
         )}
         {options.length > 0 && (
-          <label className={cn("flex items-start gap-2.5 rounded-xl border p-3 text-[13px] text-ink-700", ackError && !ack ? "border-rose-300 bg-rose-50" : "border-ink-100")}>
+          <label id="upgrade-ack" className={cn("flex items-start gap-2.5 rounded-xl border p-3 text-[13px] text-ink-700 scroll-mt-4", ackError && !ack ? "border-rose-300 bg-rose-50" : "border-ink-100")}>
             <input type="checkbox" checked={ack} onChange={(e) => { setAck(e.target.checked); setAckError(false); }} className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
             <span>{t("Okudum:")} <Link href="/mesafeli-sozlesmeler" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link> {t("ve")} <Link href="/adil-kullanim" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Adil Kullanım Politikası")}</Link>. {cardOn ? t("Kartla ödemede kart bilgileriniz Academiana’ya gelmez, PayTR’nin güvenli sayfasında girilir. WhatsApp’ı seçerseniz fiyat ve paket ayrıntıları size yazılı olarak teyit edilir.") : t("Fiyat, ödeme yöntemi ve paket ayrıntıları WhatsApp’ta size ayrıca yazılı olarak teyit edilir.")}</span>
           </label>
@@ -192,11 +194,11 @@ export function UpgradeDialogHost() {
                   {lines(p).map((l) => <li key={l} className="flex items-start gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />{l}</li>)}
                 </ul>
                 {cardOn && quote(p) && (
-                  <button type="button" aria-disabled={!ack} onClick={() => { if (!ack) { setAckError(true); return; } setCard(p); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700", !ack && "opacity-50")}>
+                  <button type="button" aria-disabled={!ack} onClick={() => { if (!ack) { needAck(); return; } setCard(p); document.getElementById("upgrade-ack")?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700", !ack && "opacity-50")}>
                     <CreditCard className="h-4 w-4" /> {t("Kartla öde")}
                   </button>
                 )}
-                <a href={href(p)} target="_blank" rel="noopener noreferrer" aria-disabled={!ack} onClick={(e) => { if (!ack) { e.preventDefault(); setAckError(true); return; } recordAck(yearlyMode ? `${p.id}-yillik` : p.id); }} className={cn(cardOn ? "mt-2 inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-ink-200 px-4 text-[13px] font-medium text-ink-700 transition hover:bg-ink-50" : "mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800", !ack && "opacity-50")}>
+                <a href={href(p)} target="_blank" rel="noopener noreferrer" aria-disabled={!ack} onClick={(e) => { if (!ack) { e.preventDefault(); needAck(); return; } recordAck(yearlyMode ? `${p.id}-yillik` : p.id); }} className={cn(cardOn ? "mt-2 inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-ink-200 px-4 text-[13px] font-medium text-ink-700 transition hover:bg-ink-50" : "mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800", !ack && "opacity-50")}>
                   <MessageCircle className="h-4 w-4" /> {t("WhatsApp ile yükselt")}
                 </a>
               </div>

@@ -91,4 +91,8 @@ union all select '44 ISNAD dipnotlu, danışman rolü, Zotero/ORCID eşitleme',
   case when exists (select 1 from pg_enum e join pg_type t on t.oid = e.enumtypid where t.typname = 'citation_style' and e.enumlabel = 'isnad_note')
         and exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'source_links')
         and exists (select 1 from pg_constraint where conname = 'project_members_role_check' and pg_get_constraintdef(oid) like '%advisor%')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '45 Kartla ödeme (PayTR siparişleri)',
+  case when exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'payment_orders')
+        and exists (select 1 from pg_policies where tablename = 'payment_orders' and policyname = 'payment_orders_select_own')
        then 'YAPILMIŞ' else 'EKSİK' end;

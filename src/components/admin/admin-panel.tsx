@@ -4,8 +4,9 @@ import { AlertsTab } from "./alerts";
 import { isSafeInternalLink } from "@/lib/notify";
 import { AutopilotTab } from "./autopilot";
 import { DiscountsTab } from "./discounts";
+import { PaymentsTab } from "./payments";
 import { motion } from "framer-motion";
-import { Activity, Gauge, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell } from "lucide-react";
+import { Activity, Gauge, ShieldAlert, BarChart3, Building2, Gift, Lock, AlertOctagon, Bot, CheckCircle2, CircleDashed, Database, DollarSign, FileQuestion, Megaphone, MessagesSquare, Package, Plus, RefreshCw, Save, Search, Trash2, Users, Rocket, Percent, Bell, CreditCard } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/components/ui/cn";
@@ -23,7 +24,7 @@ import { memberCode } from "@/lib/member";
 import { discountedPrice, discountLabel } from "@/lib/discount";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts" | "status";
+type Tab = "alerts" | "autopilot" | "overview" | "traffic" | "users" | "plans" | "orgs" | "ai" | "sources" | "announcements" | "feedback" | "help" | "errors" | "locks" | "referrals" | "discounts" | "payments" | "status";
 type Term = "monthly" | "days" | "yearly";
 /** D218: sekmeler dört kategoride (sol menü; telefonda gruplu seçim kutusu) */
 const GROUPS: { title: string; hint: string; tabs: { id: Tab; label: string; icon: any }[] }[] = [
@@ -33,7 +34,7 @@ const GROUPS: { title: string; hint: string; tabs: { id: Tab; label: string; ico
   ] },
   { title: "Kullanıcılar ve satış", hint: "Hesaplar, paketler, kampanyalar", tabs: [
     { id: "users", label: "Kullanıcılar", icon: Users }, { id: "orgs", label: "Kurumlar", icon: Building2 }, { id: "plans", label: "Paketler ve limitler", icon: Package },
-    { id: "discounts", label: "İndirim kodları", icon: Percent }, { id: "referrals", label: "Davetler", icon: Gift },
+    { id: "payments", label: "Ödemeler", icon: CreditCard }, { id: "discounts", label: "İndirim kodları", icon: Percent }, { id: "referrals", label: "Davetler", icon: Gift },
   ] },
   { title: "Yapay zekâ ve içerik", hint: "Modeller, kaynaklar, duyurular", tabs: [
     { id: "ai", label: "Yapay zekâ", icon: Bot }, { id: "sources", label: "Veri kaynakları", icon: Database }, { id: "autopilot", label: "Otomatik çalışma", icon: Rocket },
@@ -116,6 +117,7 @@ export function AdminPanel({ selfId }: { selfId: string }) {
         {tab === "locks" && <LocksTab />}
         {tab === "referrals" && <ReferralsTab />}
         {tab === "discounts" && <DiscountsTab />}
+        {tab === "payments" && <PaymentsTab />}
       </motion.div>
       </div>
       </div>

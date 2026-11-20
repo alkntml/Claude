@@ -839,6 +839,19 @@ describe("anketler", () => {
     await db.query(`update public.plans set price_monthly = 749 where id = 'basic'`);
   });
 
+  it("migration 45: ödeme siparişlerini kullanıcı yalnızca kendisininkini görür, yazamaz; sipariş no ve durum kuralları (D225)", async () => {
+    await db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try) values ('ACDBTEST001', '${A}', 'pro', 'monthly', 30, 899)`);
+    expect(await as(A, `select merchant_oid from public.payment_orders`)).toHaveLength(1);
+    expect(await as(B, `select merchant_oid from public.payment_orders`)).toHaveLength(0);
+    expect(await as(ADMIN, `select merchant_oid from public.payment_orders`)).toHaveLength(1);
+    await expectError(as(A, `insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try) values ('ACDBTEST002', auth.uid(), 'pro', 'monthly', 30, 1)`), /row-level security/);
+    await as(A, `update public.payment_orders set status = 'paid' where merchant_oid = 'ACDBTEST001'`);
+    expect((await db.query<{ status: string }>(`select status from public.payment_orders where merchant_oid = 'ACDBTEST001'`)).rows[0].status).toBe("pending");
+    await expectError(db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try) values ('AC-BAD_01', '${A}', 'pro', 'monthly', 30, 899)`), /check/i);
+    await expectError(db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try, status) values ('ACDBTEST003', '${A}', 'pro', 'monthly', 30, 899, 'refunded')`), /check/i);
+    await expectError(db.query(`insert into public.payment_orders (merchant_oid, user_id, plan_id, period, days, amount_try) values ('ACDBTEST004', '${A}', 'pro', 'monthly', 30, 0)`), /check/i);
+  });
+
   it("migration 43: bölüm ayarları, kullanıcı şablonları (yalnızca sahibi) ve yapı geçmişi (yalnızca sunucu yazar); tekrar çalıştırılabilir (D171)", async () => {
     const [p] = (await db.query<{ id: string }>(`insert into public.projects (user_id, title, work_type, academic_level) values ('${A}', 'D171 deneme', 'thesis', 'master') returning id`)).rows;
     const [st] = (await db.query<{ requirement: string; scope: string; hidden: boolean; critical: boolean; modified: boolean }>(

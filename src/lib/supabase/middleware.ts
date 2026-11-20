@@ -4,7 +4,7 @@ import { LOCALE_COOKIE, localeForCountry, normalizeLocale } from "@/i18n/core";
 import { SITE_URL } from "@/lib/site";
 import { BOT_UA, isPublicPath, splitLocale } from "@/lib/seo";
 
-const PROTECTED = ["/sozlesme-onayi", "/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni", "/anketler", "/kurum", "/konu-bul"];
+const PROTECTED = ["/sozlesme-onayi", "/panel", "/proje", "/kaynaklar", "/dosyalar", "/hesap", "/yonetim", "/yeni", "/anketler", "/kurum", "/konu-bul", "/odeme"];
 
 /** İlk ziyarette ülkeye göre dil: Türkiye (veya bilinmeyen) → tr, Almanca konuşulan ülkeler → de, diğerleri → en. Kullanıcı seçimi (çerez) her zaman önceliklidir. */
 export async function updateSession(request: NextRequest) {

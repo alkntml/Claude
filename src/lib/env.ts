@@ -41,6 +41,8 @@ export function integrationStatus() {
     ieeeKey: !!env.ieeeKey,
     stripe: !!(env.stripeSecret && env.stripeWebhookSecret),
     iyzico: !!(env.iyzicoKey && env.iyzicoSecret),
+    // D225: PayTR (kartla ödeme); bilgiler girilmedikçe ödeme WhatsApp ile alınır
+    paytr: !!(process.env.PAYTR_MERCHANT_ID && process.env.PAYTR_MERCHANT_KEY && process.env.PAYTR_MERCHANT_SALT),
   };
 }
 

@@ -20,6 +20,8 @@ export const READ_ONLY_ALLOWED_ROUTES = new Set<string>([
   "project.export", "project.sources.export", "file.get",
   // Gizlilik: danışman paylaşım bağlantısını iptal etmek ve saklanan Zotero anahtarını silmek (D192) her zaman serbest
   "shares.revoke", "project.sources.sync.remove",
+  // D225: kartla paket almak (salt okunurdan çıkmanın yolu) ve ödeme sonucunu görmek
+  "payments.checkout", "payments.order",
 ]);
 
 export type ReadOnlyReason = "pages" | "ai_requests" | "tokens" | "cost";

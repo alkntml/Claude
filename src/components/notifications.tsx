@@ -79,6 +79,8 @@ export function NotificationBell({ className, align = "left" }: { className?: st
     }
     // D146: yöneticinin bu kullanıcıya özel mesajı (yazıldığı gibi gösterilir)
     if (n.kind === "admin_message") { const l = String(d0(n).link ?? ""); return { title: String(d0(n).title || t("Academiana’dan mesaj")), body: String(d0(n).message ?? ""), ...(isSafeInternalLink(l) ? { href: l, cta: t("Aç") } : {}) }; }
+    // D225: kartla ödeme onaylandı, paket tanımlandı
+    if (n.kind === "payment_success") { const d = d0(n); return { title: t("Ödemeniz alındı"), body: t("{plan} paketiniz hesabınıza tanımlandı ({period}).", { plan: t(String(d.plan_name ?? d.plan_id ?? "")), period: d.period === "yearly" ? t("yıllık") : t("aylık") }), href: "/hesap", cta: t("Aç") }; }
     if (n.kind === "admin_warning") return { title: t("Hesabınızla ilgili uyarı"), body: d0(n).message ? String(d0(n).message) : t("Kullanımınız paket kurallarına uygun görünmüyor. Ayrıntı için bizimle iletişime geçin.") };
     if (n.kind === "referral_cap") return { title: t("Davetiniz kaydoldu"), body: t("Davet ettiğiniz bir kişi kaydoldu, ancak bu ayki davet ödülü sınırına ({n}) ulaştığınız için ödül tanımlanmadı. Sınır her ayın başında yenilenir.", { n: n.data.cap ?? 0 }) };
     return { title: t("Bildirim"), body: "" };

@@ -1,19 +1,20 @@
 "use client";
-import { CheckCircle2, Lock, MessageCircle, Sparkles } from "lucide-react";
+import { CheckCircle2, CreditCard, Lock, MessageCircle, Sparkles } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Modal } from "@/components/ui/primitives";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { UPGRADE_EVENT, type UpgradeRequest } from "@/lib/client";
 import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
-import { projectLimitFor, PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, type BillingPeriod } from "@/lib/pricing";
+import { projectLimitFor, PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, formatPrice, type BillingPeriod } from "@/lib/pricing";
+import { orderQuote } from "@/lib/payments/order";
 import { PeriodToggle } from "@/components/pricing/period-toggle";
 import { usePrice } from "@/components/price-context";
 import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
 import Link from "@/components/l-link";
 
 interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
-interface PlansData { current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
+interface PlansData { cardPayments?: boolean; current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
 
 const TITLES: Record<string, string> = {
   limit_pages: "Bu ayki sayfa hakkınız doldu",
@@ -43,6 +44,11 @@ export function UpgradeDialogHost() {
   const [ackError, setAckError] = useState(false);
   // D157: aylık / yıllık ödeme
   const [period, setPeriod] = useState<BillingPeriod>("monthly");
+  // D225: kartla ödeme (PayTR) — fatura bilgisi adımı
+  const [card, setCard] = useState<PlanRow | null>(null);
+  const [payer, setPayer] = useState({ name: "", phone: "", address: "" });
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState("");
 
   const load = useCallback(async () => {
     if (data) return;
@@ -61,7 +67,7 @@ export function UpgradeDialogHost() {
 
   if (!req) return null;
   const workLocked = req.code === "work_locked";
-  const close = () => { setReq(null); setAck(false); setAckError(false); };
+  const close = () => { setReq(null); setAck(false); setAckError(false); setCard(null); setPayError(""); };
   /** Bilgilendirmenin okunduğu kaydı (satın alma öncesi); bekletmez, WhatsApp hemen açılır */
   const recordAck = (plan: string) => {
     void fetch("/api/legal/accept", { method: "POST", keepalive: true, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notice: ["distance", "fair_use"], purpose: "purchase", plan }) }).catch(() => {});
@@ -113,6 +119,23 @@ export function UpgradeDialogHost() {
     return whatsappLink(d != null && data?.discount ? `${msg}\n${t("İndirim kodum: {code} ({label}; liste fiyatı {list})", { code: data.discount.code, label: discountLabel(data.discount), list: price(p.price_monthly) })}` : msg);
   };
 
+  const cardOn = !!data?.cardPayments;
+  const quote = (p: PlanRow) => orderQuote(p, period, yearlyMode ? null : data?.discount);
+  const pay = async () => {
+    if (!card) return;
+    setPaying(true); setPayError("");
+    recordAck(yearlyMode ? `${card.id}-yillik` : card.id);
+    try {
+      const res = await fetch("/api/payments/paytr/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: card.id, period, payer }) });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.oid) throw new Error(j.error || t("Ödeme sayfası açılamadı. Lütfen biraz sonra tekrar deneyin."));
+      window.location.href = `/odeme?siparis=${encodeURIComponent(j.oid)}`;
+    } catch (e) {
+      setPayError(e instanceof Error ? e.message : String(e));
+      setPaying(false);
+    }
+  };
+
   return (
     <Modal open onClose={close} title={title} wide>
       <div className="space-y-4">
@@ -132,11 +155,31 @@ export function UpgradeDialogHost() {
         {options.length > 0 && (
           <label className={cn("flex items-start gap-2.5 rounded-xl border p-3 text-[13px] text-ink-700", ackError && !ack ? "border-rose-300 bg-rose-50" : "border-ink-100")}>
             <input type="checkbox" checked={ack} onChange={(e) => { setAck(e.target.checked); setAckError(false); }} className="mt-0.5 h-4 w-4 shrink-0 rounded border-ink-300 text-brand-600" />
-            <span>{t("Okudum:")} <Link href="/mesafeli-sozlesmeler" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link> {t("ve")} <Link href="/adil-kullanim" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Adil Kullanım Politikası")}</Link>. {t("Fiyat, ödeme yöntemi ve paket ayrıntıları WhatsApp’ta size ayrıca yazılı olarak teyit edilir.")}</span>
+            <span>{t("Okudum:")} <Link href="/mesafeli-sozlesmeler" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Mesafeli Sözleşmeler ve Ön Bilgilendirme")}</Link> {t("ve")} <Link href="/adil-kullanim" target="_blank" className="font-medium text-brand-700 hover:underline">{t("Adil Kullanım Politikası")}</Link>. {cardOn ? t("Kartla ödemede kart bilgileriniz Academiana’ya gelmez, PayTR’nin güvenli sayfasında girilir. WhatsApp’ı seçerseniz fiyat ve paket ayrıntıları size yazılı olarak teyit edilir.") : t("Fiyat, ödeme yöntemi ve paket ayrıntıları WhatsApp’ta size ayrıca yazılı olarak teyit edilir.")}</span>
           </label>
         )}
-        {ackError && !ack && <p className="text-sm text-rose-700">{t("WhatsApp’a geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.")}</p>}
-        {options.length > 0 && (
+        {ackError && !ack && <p className="text-sm text-rose-700">{cardOn ? t("Ödemeye geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.") : t("WhatsApp’a geçmeden önce bilgilendirme metinlerini okuduğunuzu işaretleyin.")}</p>}
+        {card && (() => {
+          const q = quote(card);
+          const valid = payer.name.trim().length >= 3 && payer.phone.replace(/[^\d]/g, "").length >= 10 && payer.address.trim().length >= 10;
+          return (
+            <form className="space-y-3 rounded-2xl border border-brand-200 bg-brand-50/40 p-4" onSubmit={(e) => { e.preventDefault(); if (valid && !paying) void pay(); }}>
+              <p className="font-semibold text-ink-900">{t("{plan} paketi", { plan: t(card.name) })} · {yearlyMode ? t("Yıllık (tek ödeme)") : t("Aylık")} · {q ? formatPrice(q.amount, "tr") : ""}</p>
+              <p className="text-[13px] text-ink-500">{t("Fatura ve ödeme kaydı için bilgileriniz. Kart bilgilerinizi bir sonraki adımda PayTR’nin güvenli sayfasında gireceksiniz.")}</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label htmlFor="pay-name" className="block"><span className="label">{t("Ad soyad")}</span><input id="pay-name" className="input" autoComplete="name" maxLength={60} value={payer.name} onChange={(e) => setPayer({ ...payer, name: e.target.value })} /></label>
+                <label htmlFor="pay-phone" className="block"><span className="label">{t("Telefon")}</span><input id="pay-phone" className="input" type="tel" autoComplete="tel" maxLength={20} placeholder="05xx xxx xx xx" value={payer.phone} onChange={(e) => setPayer({ ...payer, phone: e.target.value })} /></label>
+              </div>
+              <label htmlFor="pay-address" className="block"><span className="label">{t("Fatura adresi")}</span><textarea id="pay-address" className="input min-h-[72px]" autoComplete="street-address" maxLength={400} value={payer.address} onChange={(e) => setPayer({ ...payer, address: e.target.value })} /></label>
+              {payError && <p className="text-sm text-rose-700">{payError}</p>}
+              <div className="flex flex-wrap items-center gap-2">
+                <button type="submit" disabled={!valid || paying} className="inline-flex h-10 items-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-50"><CreditCard className="h-4 w-4" /> {paying ? t("Ödeme sayfası açılıyor…") : t("Güvenli ödemeye geç")}</button>
+                <button type="button" onClick={() => { setCard(null); setPayError(""); }} className="h-10 rounded-xl px-3 text-sm text-ink-600 hover:bg-ink-50">{t("Geri")}</button>
+              </div>
+            </form>
+          );
+        })()}
+        {!card && options.length > 0 && (
           <div className={cn("grid gap-3", options.length > 1 && "sm:grid-cols-2", options.length > 2 && "lg:grid-cols-3")}>
             {options.map((p) => (
               <div key={p.id} className={cn("flex flex-col rounded-2xl border p-4", req.target === p.id ? "border-brand-400 ring-2 ring-brand-200" : "border-ink-100")}>
@@ -148,14 +191,19 @@ export function UpgradeDialogHost() {
                 <ul className="mt-3 flex-1 space-y-1.5 text-[13px] text-ink-600">
                   {lines(p).map((l) => <li key={l} className="flex items-start gap-1.5"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />{l}</li>)}
                 </ul>
-                <a href={href(p)} target="_blank" rel="noopener noreferrer" aria-disabled={!ack} onClick={(e) => { if (!ack) { e.preventDefault(); setAckError(true); return; } recordAck(yearlyMode ? `${p.id}-yillik` : p.id); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800", !ack && "opacity-50")}>
+                {cardOn && quote(p) && (
+                  <button type="button" aria-disabled={!ack} onClick={() => { if (!ack) { setAckError(true); return; } setCard(p); }} className={cn("mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white transition hover:bg-brand-700", !ack && "opacity-50")}>
+                    <CreditCard className="h-4 w-4" /> {t("Kartla öde")}
+                  </button>
+                )}
+                <a href={href(p)} target="_blank" rel="noopener noreferrer" aria-disabled={!ack} onClick={(e) => { if (!ack) { e.preventDefault(); setAckError(true); return; } recordAck(yearlyMode ? `${p.id}-yillik` : p.id); }} className={cn(cardOn ? "mt-2 inline-flex h-9 items-center justify-center gap-2 rounded-xl border border-ink-200 px-4 text-[13px] font-medium text-ink-700 transition hover:bg-ink-50" : "mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800", !ack && "opacity-50")}>
                   <MessageCircle className="h-4 w-4" /> {t("WhatsApp ile yükselt")}
                 </a>
               </div>
             ))}
           </div>
         )}
-        <p className="text-xs text-ink-400">{t("Mesajı gönderdiğinizde ödeme ayrıntıları size iletilir; ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır.")}</p>
+        <p className="text-xs text-ink-400">{cardOn ? t("Kartla ödemede paketiniz, ödeme onaylanınca hesabınıza kendiliğinden tanımlanır. WhatsApp’ta ödeme ayrıntıları size iletilir; ödemeniz alındıktan sonra paketiniz tanımlanır.") : t("Mesajı gönderdiğinizde ödeme ayrıntıları size iletilir; ödemeniz alındıktan sonra paketiniz hesabınıza tanımlanır.")}</p>
       </div>
     </Modal>
   );

@@ -29,7 +29,7 @@ function publicCacheHeaders() {
  * Tarayıcıdan dışarıya giden tek bağlantı Supabase (giriş/oturum). Yazı tipleri next/font ile kendi alan adımızdan gelir.
  * Next.js’in sayfa içi başlatma betikleri için 'unsafe-inline' gerekir; geliştirmede hızlı yenileme için 'unsafe-eval'.
  */
-function contentSecurityPolicy(): string {
+function contentSecurityPolicy(opts: { paytrFrame?: boolean; framedByPaytr?: boolean } = {}): string {
   let supabase = "https://*.supabase.co";
   try {
     const u = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
@@ -46,8 +46,9 @@ function contentSecurityPolicy(): string {
     "media-src 'self' blob:",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
-    "frame-src 'none'",
-    "frame-ancestors 'none'",
+    // D225: PayTR güvenli ödeme çerçevesi yalnızca /odeme sayfasında; ödeme sonucu sayfası PayTR çerçevesi içinde açılabilir
+    opts.paytrFrame ? "frame-src https://www.paytr.com" : "frame-src 'none'",
+    opts.framedByPaytr ? "frame-ancestors 'self' https://www.paytr.com" : "frame-ancestors 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -93,6 +94,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },
+      // D225: kartla ödeme (PayTR). Aynı anahtar sonradan tanımlanınca öncekinin yerine geçer.
+      { source: "/odeme", headers: [{ key: "Content-Security-Policy", value: contentSecurityPolicy({ paytrFrame: true }) }] },
+      { source: "/odeme-sonuc", headers: [{ key: "Content-Security-Policy", value: contentSecurityPolicy({ framedByPaytr: true }) }, { key: "X-Frame-Options", value: "SAMEORIGIN" }] },
       ...publicCacheHeaders(),
       // D193: kendi sunucumuzdaki yazı tipleri (dosya adı sürümlü: -v1) uzun süre önbelleklenir
       { source: "/fonts/:file*", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] },

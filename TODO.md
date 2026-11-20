@@ -1,4 +1,10 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D225) Supabase SQL Editor’de migration 45’i çalıştır (`supabase/migrations/20261209000045_payment_orders.sql`: kartla ödeme siparişleri)
+- [ ] (D225) PayTR mağaza panelinden Mağaza No, Mağaza Parola (merchant_key) ve Mağaza Gizli Anahtar (merchant_salt) bilgilerini al → Vercel’e `PAYTR_MERCHANT_ID`, `PAYTR_MERCHANT_KEY`, `PAYTR_MERCHANT_SALT` ekle (önce `PAYTR_TEST_MODE` eklemeden = test modu) → Redeploy
+- [ ] (D225) PayTR paneli → Destek & Kurulum → Ayarlar → Bildirim URL: `https://www.academiana.com.tr/api/payments/paytr/callback` (www ile, https)
+- [ ] (D225) Test modunda bir paket satın al (PayTR test kartı) → paket tanımlandı mı, Yönetim → Ödemeler’de “Ödendi” görünüyor mu kontrol et; sonra Vercel’e `PAYTR_TEST_MODE=0` ekle → Redeploy (canlı)
+- [ ] (D225) docs/legal/HUKUKCU_NOTU_ODEME.md’yi hukukçuya ilet (PayTR aktarımı, ödeme yöntemi, iade, fatura)
+- [ ] (D225, canlıya alınınca — Claude) SSS, yardım ve Yenilikler’e kartla ödemeyi ekle; “ödeme WhatsApp üzerinden” ifadelerini güncelle
 - [ ] (Kullanıcı) Search Console’da /zenit, /rasat, /mizan ve yeni 8 blog yazısı için dizine ekleme iste
 - [ ] (Kullanıcı) Yönetim → Yapay zekâ → Mizan doğruluk testi → “Yeniden ölç”: yeni karar kurallarıyla (D222) “Kısmen” sınıfının sonucu görülsün
 - [x] (2026-11-14) (D190–D192) Supabase SQL Editor’de migration 44’ü çalıştır (`supabase/migrations/20261208000044_isnad_note_advisor_sync.sql`: ISNAD dipnotlu stil, danışman rolü, Zotero/ORCID bağlantıları); check_status.sql’de “44” YAPILMIŞ görünmeli. Çalıştırılmadan ISNAD dipnotlu seçilemez, danışman daveti ve eşitleme kaydedilemez

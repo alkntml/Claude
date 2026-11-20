@@ -5092,4 +5092,5 @@ export const EN: Record<string, string> = {
   "Ödemeler, lisanslı ödeme kuruluşu PayTR aracılığıyla kredi veya banka kartıyla güvenle alınır; otomatik yenileme yoktur.": "Payments are taken securely by credit or debit card through PayTR, a licensed payment institution; there is no automatic renewal.",
   "Ödendi": "Paid",
   "ödeme onaylanınca hemen": "immediately after payment approval",
+  "Yalnızca size görünür": "Visible only to you",
 };

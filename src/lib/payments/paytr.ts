@@ -38,6 +38,10 @@ export function paytrCreds(e: Record<string, string | undefined> = process.env):
 export function canPayByCard(c: PaytrCreds | null, who: { role?: string | null; email?: string | null }, e: Record<string, string | undefined> = process.env): boolean {
   if (!c) return false;
   if (!c.testMode) return true;
+  return isPaymentTester(who, e);
+}
+/** Ödeme deneyebilenler: yöneticiler ve `PAYTR_TEST_EMAILS` listesindekiler (D227/D228: test modu ve 1 TL deneme paketi) */
+export function isPaymentTester(who: { role?: string | null; email?: string | null }, e: Record<string, string | undefined> = process.env): boolean {
   if (who.role === "admin") return true;
   const list = (e.PAYTR_TEST_EMAILS ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
   return !!who.email && list.includes(who.email.trim().toLowerCase());

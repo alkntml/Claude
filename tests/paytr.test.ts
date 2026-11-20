@@ -4,7 +4,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { callbackHash, canPayByCard, clientIp, encodeBasket, newMerchantOid, parseCallback, paytrCreds, requestToken, tokenHash, verifyCallback } from "@/lib/payments/paytr";
-import { orderQuote, paidExpiry, isValidPhone } from "@/lib/payments/order";
+import { orderQuote, paidExpiry, isValidPhone, TEST_PLAN_ID } from "@/lib/payments/order";
 
 const C = { merchantId: "M123", merchantKey: "KEYABC", merchantSalt: "SALTXYZ", testMode: true };
 const BASKET = "W1siQWNhZGVtaWFuYSBQcm8gKEF5bMSxaykiLCI0OTkuMDAiLDFdXQ==";
@@ -70,6 +70,9 @@ describe("Sipariş tutarı ve süresi", () => {
     expect(orderQuote(pro, "yearly", { code: "HOS20", kind: "percent", value: 20, plans: [] })).toEqual({ amount: 719 * 12, list: 899 * 12, days: 365, discountCode: null });
     expect(orderQuote({ id: "free", price_monthly: 0 }, "monthly")).toBeNull();
     expect(orderQuote({ id: "single", price_monthly: 3999 }, "monthly")?.days).toBe(30);
+    // D228: 1 TL deneme paketi yalnızca aylık
+    expect(orderQuote({ id: TEST_PLAN_ID, price_monthly: 1 }, "monthly")).toEqual({ amount: 1, list: 1, days: 30, discountCode: null });
+    expect(orderQuote({ id: TEST_PLAN_ID, price_monthly: 1 }, "yearly")).toBeNull();
   });
   it("bitiş: aynı paket sürüyorsa kalan sürenin üstüne, değilse bugünden", () => {
     const now = Date.parse("2026-11-20T00:00:00Z");

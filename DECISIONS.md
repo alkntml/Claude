@@ -1346,3 +1346,8 @@ Site sahibi, yönetici olarak hangi verilere hangi dayanakla eriştiğini ve han
 - **Bağımlılıklar:** Next.js 15.5.28 → 15.5.29 (iki orta düzey bilinen açık: görsel optimizasyonunda SVG engelini aşma, Edge’de HttpOnly çerez sızması); `npm audit` üretim bağımlılıklarında 0 açık.
 - **Tarama sonucu:** durum değiştiren bütün API uçları `route()` (aynı köken/CSRF) ile sarılı (PayTR bildirimi bilerek dışında, imzayla korunur); `dangerouslySetInnerHTML` kullanılan SVG/HTML çıktılarında kullanıcı metni kaçışlanıyor; tarayıcıya giden kodda gizli anahtar yok.
 - **Kullanıcı tarafı (koddan bağımsız):** sohbette paylaşılan PayTR Mağaza Parola’nın yenilenmesi; Supabase, Vercel, GitHub, PayTR ve yönetici Google hesabında iki adımlı doğrulama.
+
+## D228 — 1 TL’lik gizli ödeme deneme paketi (20 Kasım 2026)
+- **Kullanıcı isteği:** kendisi gerçek bir satın alma denemek için 1 TL’lik paket.
+- Paket `deneme` (“Deneme (1 TL)”, migration 47): 1 TL, yalnızca aylık, 30 gün, Basic hakları; `is_active = false` olduğu için fiyatlar sayfasında, ana sayfada ve diğer kullanıcılarda görünmez. Yalnızca yöneticiler ve `PAYTR_TEST_EMAILS` listesindekiler (kart açıkken) yükseltme penceresinde “Yalnızca size görünür” etiketiyle görür; ödeme başlatma ucu da aynı kuralı uygular (`isPaymentTester`, `TEST_PLAN_ID`).
+- Deneme sonrası hesabın paketi yönetimden geri alınabilir; paket listede tutulabilir (gizli kalır).

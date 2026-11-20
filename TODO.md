@@ -1,4 +1,5 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D228) Supabase SQL Editor’de migration 47’yi çalıştır (`supabase/migrations/20261211000047_test_plan.sql`: gizli 1 TL deneme paketi) → yönetici hesabıyla Hesap → Yükselt → “Deneme (1 TL)” → Kartla öde; sonra Yönetim → Kullanıcılar’dan paketi geri al
 - [ ] (D227) PayTR panelinde Mağaza Parola’yı “Değiştir” ile yenile (sohbette paylaşıldı) → Vercel’de `PAYTR_MERCHANT_KEY`’i güncelle → Redeploy
 - [ ] (D227) İki adımlı doğrulamayı aç: Supabase, Vercel, GitHub, PayTR paneli ve yönetici olarak girilen Google hesabı
 - [ ] (D227, isteğe bağlı) Test modunda yönetici olmayan bir hesapla deneme yapılacaksa Vercel’e `PAYTR_TEST_EMAILS` = o hesabın e-postası (virgülle birden fazla) → Redeploy

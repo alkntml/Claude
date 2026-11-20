@@ -99,4 +99,7 @@ union all select '45 Kartla ödeme (PayTR siparişleri)',
 union all select '46 Ödeme kayıtlarının saklanması ve satın alma onayları',
   case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'immediate_start_consent')
         and exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'user_id' and is_nullable = 'YES')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '47 1 TL deneme paketi (gizli)',
+  case when exists (select 1 from public.plans where id = 'deneme' and price_monthly = 1 and is_active = false)
        then 'YAPILMIŞ' else 'EKSİK' end;

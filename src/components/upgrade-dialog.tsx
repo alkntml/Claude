@@ -14,7 +14,7 @@ import { usePrice } from "@/components/price-context";
 import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discount";
 import Link from "@/components/l-link";
 
-interface PlanRow { id: string; name: string; price_monthly: number; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
+interface PlanRow { id: string; name: string; price_monthly: number; test?: boolean; limits: { pages_month?: number | null; ai_requests_month: number | null; source_searches_month: number | null; projects: number | null; storage_mb: number | null } }
 interface PlansData { cardPayments?: boolean; current: string; currentPeriod?: BillingPeriod; email: string; memberNo?: string; plans: PlanRow[]; discount?: DiscountCode | null }
 
 const TITLES: Record<string, string> = {
@@ -81,7 +81,7 @@ export function UpgradeDialogHost() {
   // Yıllıkta: aynı paketin yıllığına geçiş de seçilebilir (zaten yıllıksa değil)
   // D226: kartla ödemede mevcut paketin süresi de uzatılabilir (aylık ve yıllık)
   const renewable = !!data?.cardPayments;
-  const options = (data?.plans ?? []).filter((p) => renewable
+  const options = (data?.plans ?? []).filter((p) => p.test ? renewable && !yearlyMode : renewable
     ? p.price_monthly > 0 && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && (!yearlyMode || hasYearlyOption(p.id, p.price_monthly))
     : yearlyMode
     ? hasYearlyOption(p.id, p.price_monthly) && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && !(p.id === data?.current && data?.currentPeriod === "yearly")
@@ -205,7 +205,7 @@ export function UpgradeDialogHost() {
           <div className={cn("grid gap-3", options.length > 1 && "sm:grid-cols-2", options.length > 2 && "lg:grid-cols-3")}>
             {options.map((p) => (
               <div key={p.id} className={cn("flex flex-col rounded-2xl border p-4", req.target === p.id ? "border-brand-400 ring-2 ring-brand-200" : "border-ink-100")}>
-                <p className="flex items-center gap-1.5 font-semibold text-ink-900">{p.id === "premium" && <Sparkles className="h-4 w-4 text-amber-500" />}{t(p.name)}{renewable && p.id === data?.current && <span className="ml-auto rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">{t("Mevcut paketiniz")}</span>}</p>
+                <p className="flex items-center gap-1.5 font-semibold text-ink-900">{p.id === "premium" && <Sparkles className="h-4 w-4 text-amber-500" />}{t(p.name)}{renewable && p.id === data?.current && <span className="ml-auto rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">{t("Mevcut paketiniz")}</span>}{p.test && <span className="ml-auto rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800">{t("Yalnızca size görünür")}</span>}</p>
                 {disc(p) != null && <p className="mt-1 text-[12.5px] text-emerald-700">{t("İndirim kodunuz {code} uygulandı", { code: data?.discount?.code ?? "" })} · <s className="text-ink-400">{price(p.price_monthly)}</s></p>}
                 {yearlyMode && <p className="mt-1 text-[12.5px] text-ink-400"><s>{price(p.price_monthly)}</s> <span className="text-emerald-700">{t("%{p} indirim", { p: YEARLY_DISCOUNT_PERCENT })}</span></p>}
                 <p className="mt-1 text-xl font-semibold">{price(yearlyMode ? yearlyMonthlyPrice(p.price_monthly) : disc(p) ?? p.price_monthly)}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme · 1 ay")}` : `/${t("ay")}`}</span></p>

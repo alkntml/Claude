@@ -5084,4 +5084,5 @@ export const DE: Dict = {
   "Ödemeler, lisanslı ödeme kuruluşu PayTR aracılığıyla kredi veya banka kartıyla güvenle alınır; otomatik yenileme yoktur.": "Zahlungen erfolgen sicher per Kredit- oder Debitkarte über das lizenzierte Zahlungsinstitut PayTR; es gibt keine automatische Verlängerung.",
   "Ödendi": "Bezahlt",
   "ödeme onaylanınca hemen": "sofort nach Zahlungsbestätigung",
+  "Yalnızca size görünür": "Nur für Sie sichtbar",
 };

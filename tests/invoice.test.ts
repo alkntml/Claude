@@ -44,3 +44,12 @@ describe("fatura formu", () => {
     expect(isValidEmail("a b@c.com")).toBe(false);
   });
 });
+
+describe("form bileşeni (odak kaybı hatası)", () => {
+  it("InvoiceFields içinde bileşen tanımlanmaz: her tuş vuruşunda yeniden oluşup yazı alanının odağını kaybettirir", async () => {
+    const src = (await import("node:fs")).readFileSync("src/components/invoice-fields.tsx", "utf8");
+    const body = src.slice(src.indexOf("export function InvoiceFields"));
+    expect(body).not.toMatch(/const\s+[A-Z]\w*\s*=\s*\(\s*\{/); // iç içe bileşen tanımı
+    expect(src).toMatch(/\nfunction Field\(/); // üst düzey
+  });
+});

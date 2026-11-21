@@ -67,6 +67,10 @@ export default async function PaymentPage({ searchParams }: { searchParams: Prom
           <div className="mt-5 overflow-hidden rounded-2xl border border-ink-100 bg-white">
             <iframe src={iframeUrl(order!.iframe_token!)} title={t("PayTR güvenli ödeme")} className="block h-[820px] w-full sm:h-[720px]" allow="payment" referrerPolicy="origin" />
           </div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-ink-100 bg-white px-4 py-3 text-[13.5px] text-ink-600">
+            <span>{t("Kart formu görünmüyor veya “Lütfen bekleyin” ekranında kalıyor mu? Ödeme sayfasını yeni sekmede açın; ödeme bitince sonuç ekranına yönlendirilirsiniz.")}</span>
+            <a href={iframeUrl(order!.iframe_token!)} target="_blank" rel="noopener noreferrer" className="inline-flex h-10 shrink-0 items-center gap-2 rounded-xl bg-brand-600 px-4 text-sm font-medium text-white hover:bg-brand-700"><CreditCard className="h-4 w-4" /> {t("Ödeme sayfasını yeni sekmede aç")}</a>
+          </div>
           <p className="mt-3 text-[13px] text-ink-500">{t("Ödemeyi tamamladıktan sonra sonuç ekranı kendiliğinden açılır.")} <Link href={`/odeme-sonuc?siparis=${oid}`} className="font-medium text-brand-700 hover:underline">{t("Sonucu görüntüle")}</Link></p>
         </>
       )}

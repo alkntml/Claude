@@ -2090,6 +2090,8 @@ export const DE: Dict = {
   "Yalnızca istatistik araçlarına ihtiyacı olanlar için: analizler ve grafikler, 30 gün.": "Nur für alle, die ausschließlich die Statistikwerkzeuge brauchen: Analysen und Diagramme, 30 Tage.",
   "CSV / Excel veri dosyası yükleme ve APA biçiminde rapor": "Hochladen von CSV-/Excel-Datendateien und Bericht im APA-Format",
   "3 proje, 200 MB depolama": "3 Projekte, 200 MB Speicher",
+  "Kart formu görünmüyor veya “Lütfen bekleyin” ekranında kalıyor mu? Ödeme sayfasını yeni sekmede açın; ödeme bitince sonuç ekranına yönlendirilirsiniz.": "Kartenformular wird nicht angezeigt oder bleibt bei „Bitte warten“ hängen? Öffnen Sie die Zahlungsseite in einem neuen Tab; nach der Zahlung gelangen Sie zur Ergebnisseite.",
+  "Ödeme sayfasını yeni sekmede aç": "Zahlungsseite in neuem Tab öffnen",
   "Basic paketteki her şey": "Alles aus Basic",
   "Pro paketteki her şey": "Alles aus Pro",
   "En yüksek yapay zekâ kullanım hakkı": "Höchstes KI-Kontingent",

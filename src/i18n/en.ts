@@ -2089,6 +2089,8 @@ export const EN: Record<string, string> = {
   "Yalnızca istatistik araçlarına ihtiyacı olanlar için: analizler ve grafikler, 30 gün.": "For those who only need the statistics tools: analyses and charts, 30 days.",
   "CSV / Excel veri dosyası yükleme ve APA biçiminde rapor": "CSV / Excel data file upload and APA-style report",
   "3 proje, 200 MB depolama": "3 projects, 200 MB storage",
+  "Kart formu görünmüyor veya “Lütfen bekleyin” ekranında kalıyor mu? Ödeme sayfasını yeni sekmede açın; ödeme bitince sonuç ekranına yönlendirilirsiniz.": "Card form not showing or stuck on “Please wait”? Open the payment page in a new tab; when you finish paying you are taken to the result screen.",
+  "Ödeme sayfasını yeni sekmede aç": "Open payment page in a new tab",
   "Basic paketteki her şey": "Everything in Basic",
   "Pro paketteki her şey": "Everything in Pro",
   "En yüksek yapay zekâ kullanım hakkı": "Highest AI usage allowance",

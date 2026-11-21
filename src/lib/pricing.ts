@@ -1,7 +1,12 @@
 /** Fiyatlandırma ve paket yardımcıları (istemci ve sunucu ortak, saf fonksiyonlar). */
 
 // D158: “Sınırsız Proje” (iç kimlik: single) en üst pakettir
-export const PLAN_RANK: Record<string, number> = { free: 0, basic: 1, pro: 2, premium: 3, single: 4 };
+// D236: İstatistik paketi (1 TL) Ücretsiz ile Basic arasındadır; yalnızca istatistik araçlarını açar (features.ts → PLAN_EXTRA_FEATURES)
+export const PLAN_RANK: Record<string, number> = { free: 0, istatistik: 0.5, basic: 1, pro: 2, premium: 3, single: 4 };
+/** Yalnızca aylık satılan paketler (yıllık seçeneği yok) */
+export const MONTHLY_ONLY_PLANS = new Set<string>(["istatistik"]);
+/** İndirim kodu ve ekip indirimi uygulanmayan paketler (1 TL taban fiyat) */
+export const NO_DISCOUNT_PLANS = new Set<string>(["istatistik"]);
 /**
  * Tek ödemeli paketler (fiyat aylık değil tek seferlik). D158: eski “Tek Proje” artık “Sınırsız Proje” adıyla
  * aylık/yıllık ödenen bir pakettir (iç kimliği “single” kaldı); tek ödemeli paket kalmadı.
@@ -28,7 +33,7 @@ export const YEARLY_DISCOUNT_PERCENT = 20;
 export const YEARLY_DAYS = 365;
 
 export function hasYearlyOption(planId: string, priceMonthly: number): boolean {
-  return priceMonthly > 0 && !isOneTimePlan(planId);
+  return priceMonthly > 0 && !isOneTimePlan(planId) && !MONTHLY_ONLY_PLANS.has(planId);
 }
 /** Yıllık ödemede aylık karşılık (tam TL’ye yuvarlanır) */
 export function yearlyMonthlyPrice(priceMonthly: number): number {

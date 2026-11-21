@@ -467,7 +467,7 @@ export const CONTENT: LegalContent = {
    "h": "Paket türleri",
    "b": [
     {
-     "p": "Platformda Ücretsiz paket, aylık veya yıllık ödenen ücretli paketler (Basic, Pro, Premium ve Sınırsız Proje) ve kurum lisansı bulunabilir. Yıllık ödemede aylık fiyata %20 indirim uygulanır; aylık hakların 12 katı paket başında tanımlanır ve 1 yıl içinde kullanılır. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim kodları, davet programı ödülleri ve Basic, Pro ve Premium paketlerde en az üç kişilik Akademik Ekip İndirimi (%20) uygulanabilir. İndirimin kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilir."
+     "p": "Platformda Ücretsiz paket, aylık veya yıllık ödenen ücretli paketler (İstatistik, Basic, Pro, Premium ve Sınırsız Proje) ve kurum lisansı bulunabilir. İstatistik paketi yalnızca aylık ödenir, yalnızca istatistik analizleri ve grafiklerini (diğer hakları Ücretsiz paketle aynı) açar ve indirim kodları bu pakete uygulanmaz. Yıllık ödemede aylık fiyata %20 indirim uygulanır; aylık hakların 12 katı paket başında tanımlanır ve 1 yıl içinde kullanılır. Kurum lisansları kurumla ayrıca yapılacak anlaşmaya tabi olabilir. İndirim kodları, davet programı ödülleri ve Basic, Pro ve Premium paketlerde en az üç kişilik Akademik Ekip İndirimi (%20) uygulanabilir. İndirimin kapsamı ve hangi fiyat üzerinden hesaplandığı, satın alma öncesinde kullanıcıya açıkça bildirilir."
     }
    ]
   },

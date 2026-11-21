@@ -1,4 +1,6 @@
 ## Kullanıcının yapması gereken (öncelikli)
+- [ ] (D236) Supabase SQL Editor’de migration 54’ü çalıştır (İstatistik paketi 1 TL; SQL sohbette verildi, dosya: `supabase/migrations/20261218000054_stats_plan.sql`)
+- [ ] (D236) docs/legal/HUKUKCU_NOTU_ISTATISTIK.md’yi hukukçuya ilet (Kullanım Koşulları’na paket adı eklenmesi yeniden kabul gerektirir)
 - [ ] (D234) Supabase SQL Editor’de migration 53’ü çalıştır (otomatik yenileme; SQL sohbette verildi, dosya: `supabase/migrations/20261217000053_auto_renewal.sql`)
 - [ ] (D234) PayTR destekten “Kart Saklama (utoken/ctoken) ve kayıtlı kartla tekrarlayan (non-3D, recurring_payment) ödeme” hizmetinin mağazaya açılmasını iste; güncel API belgesini iste (kodun uç nokta/imza alanları teyit edilmeli)
 - [ ] (D234) Vercel: `CRON_SECRET` (uzun rastgele metin) ekle → sonra PayTR teyidi gelince `PAYTR_RECURRING` = `1` → Redeploy. İlk gerçek yenilemeyi 1 kullanıcıyla izle (Yönetim → Ödemeler “Otomatik yenileme” etiketi)

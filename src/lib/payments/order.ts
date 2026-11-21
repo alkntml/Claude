@@ -5,7 +5,7 @@
  * indirim koduyla birleştirilmez. Aylık 30 gün, yıllık 365 gün (12 aylık hak baştan).
  */
 import { discountedPrice, type DiscountCode } from "@/lib/discount";
-import { hasYearlyOption, PLAN_RANK, SINGLE_PLAN_DAYS, YEARLY_DAYS, yearlyTotalPrice, type BillingPeriod } from "@/lib/pricing";
+import { hasYearlyOption, NO_DISCOUNT_PLANS, PLAN_RANK, SINGLE_PLAN_DAYS, YEARLY_DAYS, yearlyTotalPrice, type BillingPeriod } from "@/lib/pricing";
 
 export const MONTHLY_DAYS = 30;
 
@@ -18,7 +18,7 @@ export function orderQuote(plan: { id: string; price_monthly: number }, period: 
     if (!hasYearlyOption(plan.id, list)) return null;
     return { amount: yearlyTotalPrice(list), list: list * 12, days: YEARLY_DAYS, discountCode: null };
   }
-  const d = discountedPrice(list, discount, plan.id);
+  const d = NO_DISCOUNT_PLANS.has(plan.id) ? null : discountedPrice(list, discount, plan.id);
   const amount = d ?? list;
   if (!(amount > 0)) return null;
   return { amount, list, days: plan.id === "single" ? SINGLE_PLAN_DAYS : MONTHLY_DAYS, discountCode: d != null && discount ? discount.code : null };

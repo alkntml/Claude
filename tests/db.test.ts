@@ -354,7 +354,7 @@ describe("migration'lar ve seed", () => {
   });
   it("paketleri ve ayarları oluşturur", async () => {
     const plans = await db.query<{ id: string }>("select id from public.plans where is_active order by sort_order"); 
-    expect(plans.rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium", "single"]);
+    expect(plans.rows.map((r) => r.id)).toEqual(["free", "istatistik", "basic", "pro", "premium", "single"]);
     const p = await db.query<{ id: string; price_monthly: string; limits: Record<string, number | null> }>("select id, price_monthly, limits from public.plans order by sort_order");
     const by = Object.fromEntries(p.rows.map((r) => [r.id, r]));
     expect(by.free.limits.ai_requests_month).toBe(10); // D52: gelirin 1/3’ü maliyet
@@ -453,7 +453,7 @@ describe("ayrıcalık ve yönetici politikaları", () => {
   it("sistem promptları normal kullanıcıya kapalıdır; paketler herkese açıktır", async () => {
     expect(await as(A, "select * from public.app_settings")).toHaveLength(0);
     expect((await as(ADMIN, "select * from public.app_settings")).length).toBeGreaterThan(0);
-    expect((await as(null, "select id from public.plans")).length).toBe(5);
+    expect((await as(null, "select id from public.plans")).length).toBe(6);
     await expectError(as(A, "update public.plans set price_monthly = 0 where id = 'pro' returning id").then((r) => { if (!r.length) throw new Error("row-level security: güncellenmedi"); }), /row-level security/);
   });
 
@@ -909,8 +909,8 @@ describe("anketler", () => {
   it("D231: paket içerikleri, sınırlar, süreler ve fiyatlar birbiriyle tutarlı (satın alınan paket doğru tanımlanır)", async () => {
     const { yearlyTotalPrice } = await import("@/lib/pricing");
     const rows = (await db.query<{ id: string; price_monthly: string; price_yearly: string; limits: Record<string, number | null>; features: string[]; is_active: boolean }>(`select id, price_monthly, price_yearly, limits, features, is_active from public.plans where is_active order by sort_order`)).rows;
-    expect(rows.map((r) => r.id)).toEqual(["free", "basic", "pro", "premium", "single"]);
-    for (const p of rows) {
+    expect(rows.map((r) => r.id)).toEqual(["free", "istatistik", "basic", "pro", "premium", "single"]);
+    for (const p of rows.filter((r) => r.id !== "istatistik")) {
       const l = p.limits, f = p.features.join(" | ");
       if (p.id !== "free") expect(Number(p.price_yearly)).toBe(yearlyTotalPrice(Number(p.price_monthly))); // yıllık fiyat = aylık %20 indirimli × 12
       // Kartlarda yazan sayılar gerçek sınırlarla aynı
@@ -923,6 +923,13 @@ describe("anketler", () => {
       if (p.id !== "free") expect(fmt).toEqual(expect.arrayContaining(["docx", "pdf"]));
       if (p.id === "basic") expect(f).toContain("Word dışa aktarma");
     }
+    // D236: İstatistik paketi (1 TL): Ücretsiz’in hakları + biraz geniş proje/depolama; yalnızca istatistik araçları
+    const st = rows.find((r) => r.id === "istatistik")!;
+    const free = rows.find((r) => r.id === "free")!;
+    expect(Number(st.price_monthly)).toBe(1);
+    expect(st.features.join(" | ")).toContain("İstatistik analizleri ve grafikler");
+    expect(st.features.join(" | ")).toContain("3 proje, 200 MB depolama");
+    expect(st.limits).toEqual({ ...free.limits, projects: 3, storage_mb: 200 });
     // Üst paket alt paketin haklarından aşağı değil
     const by = Object.fromEntries(rows.map((r) => [r.id, r.limits]));
     for (const k of ["pages_month", "ai_requests_month", "source_searches_month", "storage_mb"] as const) {

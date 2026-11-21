@@ -37,7 +37,7 @@ export const LEGAL_DOCS: LegalDocMeta[] = [
     title: { tr: "Çerez ve Cihaz Tanımlayıcıları Politikası", en: "Cookie and Device Identifier Policy", de: "Richtlinie zu Cookies und Gerätekennungen" } },
   { id: "integrity", path: "/akademik-durustluk", label: "Akademik Dürüstlük", version: "2026-11-14", original: "tr", requiresAcceptance: false,
     title: { tr: "Akademik Dürüstlük ve Sorumlu Yapay Zekâ Kullanımı", en: "Academic Integrity and Responsible AI Use", de: "Wissenschaftliche Integrität und verantwortungsvolle KI-Nutzung" } },
-  { id: "distance", path: "/mesafeli-sozlesmeler", label: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", version: "2026-11-22", original: "tr", requiresAcceptance: false,
+  { id: "distance", path: "/mesafeli-sozlesmeler", label: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", version: "2026-11-23", original: "tr", requiresAcceptance: false,
     title: { tr: "Mesafeli Sözleşmeler ve Ön Bilgilendirme", en: "Distance Contracts and Pre-Contractual Information", de: "Fernabsatzverträge und vorvertragliche Informationen" } },
   { id: "gdpr", path: "/gdpr", label: "GDPR / Data Protection", version: "2026-11-22", original: "en", requiresAcceptance: false,
     title: { tr: "GDPR / Veri Koruma Bildirimi", en: "GDPR / Data Protection Notice", de: "DSGVO / Datenschutzhinweis" } },

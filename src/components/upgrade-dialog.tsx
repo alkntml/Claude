@@ -5,7 +5,7 @@ import { Modal } from "@/components/ui/primitives";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
 import { UPGRADE_EVENT, type UpgradeRequest } from "@/lib/client";
-import { FEATURE_LABEL, type FeatureId } from "@/lib/features";
+import { FEATURE_LABEL, hasFeature, type FeatureId } from "@/lib/features";
 import { InvoiceFields } from "@/components/invoice-fields";
 import { emptyInvoice, invoiceBody, invoiceErrors, type InvoiceForm } from "@/lib/payments/invoice";
 import { projectLimitFor, PLAN_RANK, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, yearlyTotalPrice, YEARLY_DISCOUNT_PERCENT, formatPrice, type BillingPeriod } from "@/lib/pricing";
@@ -83,16 +83,18 @@ export function UpgradeDialogHost() {
   };
   const currentRank = PLAN_RANK[data?.current ?? "free"] ?? 0;
   const minRank = req.plan ? PLAN_RANK[req.plan] ?? 0 : 0;
+  // D236: kilitli özellik için hangi paketler uygundur (ör. istatistik: İstatistik paketi de Basic’ten düşük sırada olsa da açar)
+  const meets = (id: string) => (req.feature && req.feature in FEATURE_LABEL ? hasFeature(id, req.feature as FeatureId) : (PLAN_RANK[id] ?? 0) >= minRank);
   const yearlyMode = period === "yearly";
   // Yıllıkta: aynı paketin yıllığına geçiş de seçilebilir (zaten yıllıksa değil)
   // D226: kartla ödemede mevcut paketin süresi de uzatılabilir (aylık ve yıllık)
   const renewable = !!data?.cardPayments;
   const yearlyHolder = data?.currentPeriod === "yearly";
   const options = (data?.plans ?? []).filter((p) => !(renewable && !yearlyMode && yearlyHolder && p.id === data?.current)).filter((p) => renewable
-    ? p.price_monthly > 0 && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && (!yearlyMode || hasYearlyOption(p.id, p.price_monthly))
+    ? p.price_monthly > 0 && (PLAN_RANK[p.id] ?? 0) >= currentRank && meets(p.id) && (!yearlyMode || hasYearlyOption(p.id, p.price_monthly))
     : yearlyMode
-    ? hasYearlyOption(p.id, p.price_monthly) && (PLAN_RANK[p.id] ?? 0) >= Math.max(currentRank, minRank) && !(p.id === data?.current && data?.currentPeriod === "yearly")
-    : (PLAN_RANK[p.id] ?? 0) > currentRank && (PLAN_RANK[p.id] ?? 0) >= minRank && p.price_monthly > 0);
+    ? hasYearlyOption(p.id, p.price_monthly) && (PLAN_RANK[p.id] ?? 0) >= currentRank && meets(p.id) && !(p.id === data?.current && data?.currentPeriod === "yearly")
+    : (PLAN_RANK[p.id] ?? 0) > currentRank && meets(p.id) && p.price_monthly > 0);
   const currentName = data?.plans.find((p) => p.id === data.current)?.name ?? data?.current ?? "";
   const monthly = req.code === "limit_pages" || req.code === "limit_ai" || req.code === "limit_tokens" || req.code === "limit_search" || workLocked;
   const title = req.target && renewable && req.target === data?.current ? t("{name} paketinizin süresini uzatın", { name: t(data?.plans.find((p) => p.id === req.target)?.name ?? req.target) })

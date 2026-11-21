@@ -4,7 +4,7 @@
  */
 import { PLAN_RANK } from "./pricing";
 
-export type PlanId = "free" | "basic" | "pro" | "premium" | "single";
+export type PlanId = "free" | "istatistik" | "basic" | "pro" | "premium" | "single";
 
 export type FeatureId =
   | "quality_ai" // yapay zekâ destekli kalite raporu
@@ -54,8 +54,12 @@ export const FEATURE_LABEL: Record<FeatureId, string> = {
   litmap: "Literatür haritası",
 };
 
-export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", basic: "Basic", pro: "Pro", premium: "Premium", single: "Sınırsız Proje" };
+export const PLAN_NAME: Record<PlanId, string> = { free: "Ücretsiz", istatistik: "İstatistik", basic: "Basic", pro: "Pro", premium: "Premium", single: "Sınırsız Proje" };
+
+/** D236: sırası gereği tüm özellikleri açmayan, yalnızca belirli özellikleri açan paketler */
+export const PLAN_EXTRA_FEATURES: Record<string, FeatureId[]> = { istatistik: ["stats"] };
 
 export function hasFeature(planId: string | null | undefined, feature: FeatureId): boolean {
+  if (PLAN_EXTRA_FEATURES[planId ?? ""]?.includes(feature)) return true;
   return (PLAN_RANK[planId ?? "free"] ?? 0) >= PLAN_RANK[FEATURE_MIN_PLAN[feature]];
 }

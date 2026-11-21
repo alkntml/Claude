@@ -1,4 +1,5 @@
 "use client";
+import { PLAN_NAME, type PlanId } from "@/lib/features";
 import { deviceId } from "@/lib/device-client";
 import { LanguageSwitch, useT } from "@/i18n/client";
 import { InstallApp } from "@/components/pwa";
@@ -93,7 +94,7 @@ export function AppShell({ children, user, limitReached, readOnly, expiresAt }: 
             <div className="absolute left-3 right-3 top-14 z-50 rounded-xl border border-ink-200/80 bg-white p-1.5 shadow-xl">
               <div className="px-2.5 pb-2 pt-1.5">
                 <p className="truncate text-[13px] text-ink-500">{user.email}</p>
-                <p className="text-[12px] capitalize text-ink-400">{t("{plan} paket", { plan: user.plan })}{user.memberNo ? <span className="normal-case"> · {user.memberNo}</span> : null}</p>
+                <p className="text-[12px] text-ink-400">{t("{plan} paket", { plan: t(PLAN_NAME[user.plan as PlanId] ?? user.plan) })}{user.memberNo ? <span className="normal-case"> · {user.memberNo}</span> : null}</p>
               </div>
               <Link href="/hesap" onClick={() => { setMenu(false); setOpen(false); }} className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[14px] text-ink-700 hover:bg-ink-50"><Settings2 className="h-4 w-4 text-ink-500" /> {t("Hesap ve abonelik")}</Link>
               <div className="flex items-center justify-between px-2.5 py-1.5"><LanguageSwitch /><ThemeToggle /></div>

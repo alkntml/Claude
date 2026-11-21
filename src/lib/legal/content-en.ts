@@ -467,7 +467,7 @@ export const CONTENT: LegalContent = {
    "h": "Plan types",
    "b": [
     {
-     "p": "The platform may offer a Free plan, paid plans billed monthly or annually (Basic, Pro, Premium and Unlimited Project) and an institutional licence. With annual payment a 20% discount on the monthly price applies; 12 times the monthly allowances are granted at the start of the plan and can be used within 1 year. Institutional licences may be subject to a separate agreement with the institution. Discount codes, referral programme rewards and, for the Basic, Pro and Premium plans, the Academic Team Discount (20%) for at least three people may apply. The scope of the discount and the price on which it is calculated are clearly communicated to the user before purchase."
+     "p": "The platform may offer a Free plan, paid plans billed monthly or annually (Statistics, Basic, Pro, Premium and Unlimited Project) and an institutional licence. The Statistics plan is billed monthly only, unlocks only the statistical analyses and charts (its other allowances are the same as the Free plan) and discount codes do not apply to it. With annual payment a 20% discount on the monthly price applies; 12 times the monthly allowances are granted at the start of the plan and can be used within 1 year. Institutional licences may be subject to a separate agreement with the institution. Discount codes, referral programme rewards and, for the Basic, Pro and Premium plans, the Academic Team Discount (20%) for at least three people may apply. The scope of the discount and the price on which it is calculated are clearly communicated to the user before purchase."
     }
    ]
   },

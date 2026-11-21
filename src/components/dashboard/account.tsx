@@ -1,4 +1,5 @@
 "use client";
+import { PLAN_NAME, type PlanId } from "@/lib/features";
 import { useT } from "@/i18n/client";
 import { CheckCircle2, CreditCard, MessageCircle, UserRound, Users } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,7 +12,7 @@ import { discountedPrice, discountLabel, type DiscountCode } from "@/lib/discoun
 import { useToast } from "@/components/ui/toast";
 import { STYLES, STYLE_IDS } from "@/lib/citations/styles";
 import { api, openUpgrade } from "@/lib/client";
-import { TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, YEARLY_DISCOUNT_PERCENT } from "@/lib/pricing";
+import { NO_DISCOUNT_PLANS, PLAN_RANK, TEAM_DISCOUNT, whatsappLink, isOneTimePlan, hasYearlyOption, yearlyMonthlyPrice, YEARLY_DISCOUNT_PERCENT } from "@/lib/pricing";
 import { memberCode } from "@/lib/member";
 import { usePrice } from "@/components/price-context";
 import { GrowthSection } from "./growth";
@@ -62,7 +63,7 @@ export function AccountView({ profile, usage, limits, plans, discount, cardPayme
           </div>
         </section>
         <section className="card p-6">
-          <div className="flex items-center justify-between"><h2 className="font-semibold">{profile.plan_period === "yearly" && profile.plan_id !== "free" ? t("Yıllık paket kullanımı") : t("Bu ayki kullanım")}</h2><Badge tone="brand" className="capitalize">{t("{plan} paket", { plan: profile.plan_id })}</Badge></div>
+          <div className="flex items-center justify-between"><h2 className="font-semibold">{profile.plan_period === "yearly" && profile.plan_id !== "free" ? t("Yıllık paket kullanımı") : t("Bu ayki kullanım")}</h2><Badge tone="brand">{t("{plan} paket", { plan: t(PLAN_NAME[profile.plan_id as PlanId] ?? profile.plan_id) })}</Badge></div>
           {(() => {
             // Paket süresi (D53): bitiş tarihi ve kalan gün; 7 günden az kaldıysa uzatma bağlantısı
             if (!profile.plan_expires_at || profile.plan_id === "free") return null;
@@ -97,7 +98,7 @@ export function AccountView({ profile, usage, limits, plans, discount, cardPayme
         <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {plans.map((p) => {
             const current = p.id === profile.plan_id;
-            const dp = discountedPrice(Number(p.price_monthly), discount, p.id);
+            const dp = NO_DISCOUNT_PLANS.has(p.id) ? null : discountedPrice(Number(p.price_monthly), discount, p.id);
             return (
               <div key={p.id} className={cn("card flex flex-col p-5 transition", current && "ring-2 ring-brand-400", params.get("paket") === p.id && !current && "ring-2 ring-amber-300")}>
                 <div className="flex items-center justify-between"><h3 className="font-semibold">{t(p.name)}</h3>{current && <Badge tone="green"><CheckCircle2 className="h-3 w-3" /> {t("Mevcut")}</Badge>}</div>
@@ -105,7 +106,7 @@ export function AccountView({ profile, usage, limits, plans, discount, cardPayme
                 <p className={cn("text-2xl font-semibold", dp == null && "mt-2")}>{price(dp ?? Number(p.price_monthly))}<span className="text-sm font-normal text-ink-400">{isOneTimePlan(p.id) ? ` · ${t("tek ödeme · 1 ay")}` : `/${t("ay")}`}</span></p>
                 <ul className="mt-3 flex-1 space-y-1 text-[13px] text-ink-600">{p.features.map((f: string) => <li key={f}>• {t(f)}</li>)}</ul>
                 {hasYearlyOption(p.id, Number(p.price_monthly)) && <p className="mt-1 text-[12.5px] text-emerald-700">{t("Yıllık ödemede {price}/ay (%{p} indirim)", { price: price(yearlyMonthlyPrice(Number(p.price_monthly))), p: YEARLY_DISCOUNT_PERCENT })}</p>}
-                {(cardPayments || !current || (hasYearlyOption(p.id, Number(p.price_monthly)) && profile.plan_period !== "yearly")) && Number(p.price_monthly) > 0 && (
+                {(PLAN_RANK[p.id] ?? 0) >= (PLAN_RANK[profile.plan_id] ?? 0) && (cardPayments || !current || (hasYearlyOption(p.id, Number(p.price_monthly)) && profile.plan_period !== "yearly")) && Number(p.price_monthly) > 0 && (
                   <button type="button" onClick={() => openUpgrade({ target: p.id, period: params.get("donem") === "yillik" || (current && (!cardPayments || profile.plan_period === "yearly")) ? "yearly" : "monthly" })} className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-ink-900 px-4 text-sm font-medium text-white transition hover:bg-ink-800">
                     {cardPayments ? <CreditCard className="h-4 w-4" /> : <MessageCircle className="h-4 w-4" />} {current ? (cardPayments ? t("Süreyi uzat") : t("Yıllık ödemeye geç")) : t("Yükselt")}
                   </button>

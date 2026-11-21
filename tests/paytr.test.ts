@@ -70,6 +70,11 @@ describe("Sipariş tutarı ve süresi", () => {
     expect(orderQuote(pro, "yearly", { code: "HOS20", kind: "percent", value: 20, plans: [] })).toEqual({ amount: 719 * 12, list: 899 * 12, days: 365, discountCode: null });
     expect(orderQuote({ id: "free", price_monthly: 0 }, "monthly")).toBeNull();
     expect(orderQuote({ id: "single", price_monthly: 3999 }, "monthly")?.days).toBe(30);
+    // D236: İstatistik paketi (1 TL): yalnızca aylık, indirim kodu uygulanmaz (tutar hep 1 TL)
+    expect(orderQuote({ id: "istatistik", price_monthly: 1 }, "monthly")).toEqual({ amount: 1, list: 1, days: 30, discountCode: null });
+    expect(orderQuote({ id: "istatistik", price_monthly: 1 }, "yearly")).toBeNull();
+    expect(orderQuote({ id: "istatistik", price_monthly: 1 }, "monthly", { code: "HOS50", kind: "percent", value: 50, plans: [] })).toEqual({ amount: 1, list: 1, days: 30, discountCode: null });
+    expect(orderQuote({ id: "istatistik", price_monthly: 1 }, "monthly", { code: "BIR", kind: "amount_try", value: 1, plans: [] })?.amount).toBe(1);
   });
   it("bitiş: aynı paket sürüyorsa kalan sürenin üstüne, değilse bugünden", () => {
     const now = Date.parse("2026-11-20T00:00:00Z");
@@ -168,8 +173,9 @@ describe("PayTR bildirimi", () => {
 });
 
 describe("D231: her paket ve dönem için doğru paket, süre ve tutar tanımlanır", () => {
-  const plans = [{ id: "basic", price: 749 }, { id: "pro", price: 1349 }, { id: "premium", price: 2249 }, { id: "single", price: 3999 }];
-  const cases = plans.flatMap((p) => (["monthly", "yearly"] as const).map((period) => ({ ...p, period })));
+  const plans = [{ id: "istatistik", price: 1 }, { id: "basic", price: 749 }, { id: "pro", price: 1349 }, { id: "premium", price: 2249 }, { id: "single", price: 3999 }];
+  // İstatistik paketi (1 TL) yalnızca aylıktır
+  const cases = plans.flatMap((p) => (p.id === "istatistik" ? (["monthly"] as const) : (["monthly", "yearly"] as const)).map((period) => ({ ...p, period })));
   beforeEach(() => { for (const k of Object.keys(T)) delete T[k]; });
   it.each(cases)("$id / $period", async ({ id, price, period }) => {
     const { handlePaytrCallback } = await import("@/lib/payments/apply");
@@ -192,6 +198,11 @@ describe("D231: her paket ve dönem için doğru paket, süre ve tutar tanımlan
     expect(Math.abs(Date.parse(prof.plan_started_at) - t0)).toBeLessThan(5000);
     expect(T.plan_purchases).toHaveLength(1);
     expect(T.plan_purchases[0]).toMatchObject({ user_id: "u1", plan_id: id, amount_try: quote.amount });
+    // Satın alan kişiye tanımlanan paketin hakları: hasFeature paket kimliğiyle (profildeki plan_id) hesaplanır
+    const { hasFeature } = await import("@/lib/features");
+    expect(hasFeature(prof.plan_id, "stats")).toBe(true);
+    expect(hasFeature(prof.plan_id, "surveys")).toBe(id !== "istatistik");
+    expect(hasFeature(prof.plan_id, "prisma")).toBe(["pro", "premium", "single"].includes(id));
     expect(T.notifications[0]).toMatchObject({ user_id: "u1", kind: "payment_success" });
     expect((T.notifications[0].data as { plan_id: string; period: string }).plan_id).toBe(id);
     // tekrar gelen bildirim paketi ikinci kez uzatmaz
@@ -221,6 +232,12 @@ describe("D231: satın alma kuralı (düşük pakete / yıllığın yerine aylı
   it("yıllık paket sürerken aynı paketin aylığı reddedilir; üst paketin aylığı serbest", () => {
     expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: "2027-06-01T00:00:00.000Z", plan_period: "yearly" }, { plan_id: "pro", period: "monthly" }, now)).toMatch(/Yıllık paketiniz/);
     expect(purchaseBlockReason({ plan_id: "pro", plan_expires_at: "2027-06-01T00:00:00.000Z", plan_period: "yearly" }, { plan_id: "premium", period: "monthly" }, now)).toBeNull();
+  });
+  it("İstatistik paketi (1 TL): ücretsiz veya kendisi olan alabilir; Basic ve üstü olan düşük pakete geçemez", () => {
+    expect(purchaseBlockReason({ plan_id: "free", plan_expires_at: null }, { plan_id: "istatistik", period: "monthly" }, now)).toBeNull();
+    expect(purchaseBlockReason({ plan_id: "istatistik", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "istatistik", period: "monthly" }, now)).toBeNull();
+    expect(purchaseBlockReason({ plan_id: "istatistik", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "basic", period: "monthly" }, now)).toBeNull();
+    expect(purchaseBlockReason({ plan_id: "basic", plan_expires_at: active, plan_period: "monthly" }, { plan_id: "istatistik", period: "monthly" }, now)).toMatch(/daha düşük/);
   });
   it("paket bitmişse veya ücretsizse her paket alınabilir", () => {
     expect(purchaseBlockReason({ plan_id: "premium", plan_expires_at: "2026-11-01T00:00:00.000Z", plan_period: "yearly" }, { plan_id: "basic", period: "monthly" }, now)).toBeNull();

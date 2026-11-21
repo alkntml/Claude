@@ -113,4 +113,7 @@ union all select '53 Otomatik yenileme',
   case when exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'profiles' and column_name = 'auto_renew')
         and exists (select 1 from information_schema.tables where table_schema = 'public' and table_name = 'payment_methods')
         and exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'payment_orders' and column_name = 'auto_renew_consent')
+       then 'YAPILMIŞ' else 'EKSİK' end
+union all select '54 İstatistik paketi (1 TL)',
+  case when exists (select 1 from public.plans where id = 'istatistik' and price_monthly = 1 and is_active)
        then 'YAPILMIŞ' else 'EKSİK' end;

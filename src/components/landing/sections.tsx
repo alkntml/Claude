@@ -122,7 +122,7 @@ export function PricingCards({ plans, signedIn: initialSignedIn }: { plans: Plan
         ? t("Yıllık ödemede %{p} indirim; kullanım hakları azalmaz: 12 aylık hak baştan tanımlanır ve 1 yıl içinde dilediğiniz gibi kullanılır.", { p: YEARLY_DISCOUNT_PERCENT })
         : t("Aylık ödemede haklar her ayın başında yenilenir.")}</p>
     </div>
-    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+    <div className={`grid gap-5 md:grid-cols-2 lg:grid-cols-3 ${plans.length > 5 ? "" : "xl:grid-cols-5"}`}>
       {plans.map((p, i) => {
         const featured = p.id === "pro";
         const yearly = period === "yearly" && hasYearlyOption(p.id, Number(p.price_monthly));
